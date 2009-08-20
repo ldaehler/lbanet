@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF8" ?>
+<actors>
+    <actor id="0" type="5" posX="28.999001" posY="1.000000" posZ="35.999001" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" zonesizeX="1.999020" zonesizeY="6.996090" zonesizeZ="1.999020" />
+    <actor id="1" type="1" posX="27.999001" posY="0.000000" posZ="3.499020" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" activationdistance="6.000000" textid="91" />
+</actors>

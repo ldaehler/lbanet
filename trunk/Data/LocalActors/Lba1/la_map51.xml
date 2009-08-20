@@ -1,0 +1,15 @@
+<actors>
+<actor id="0" type="2" posX="53.999" posY="0" posZ="58.999" rotation="0" activationdistance="5" deltaY="5" direction="270"/>
+<actor id="1" type="1" posX="48.999" posY="5" posZ="58" rotation="0" activationdistance="6" textid="40" />
+<actor id="2" type="1" posX="52.999" posY="5" posZ="37" rotation="0" activationdistance="6" textid="40" />
+<actor id="3" type="1" posX="58" posY="5" posZ="21.999" rotation="0" activationdistance="6" textid="40" />
+<actor id="4" type="1" posX="58" posY="5" posZ="2.99902" rotation="0" activationdistance="6" textid="189" />
+<actor id="5" type="2" posX="60.999" posY="0" posZ="7.99902" rotation="0" activationdistance="5" deltaY="5" direction="180"/>
+<actor id="6" type="2" posX="59.999" posY="0" posZ="13.999" rotation="0" activationdistance="5" deltaY="5" direction="270"/>
+<actor id="7" type="2" posX="55.999" posY="0" posZ="33.999" rotation="0" activationdistance="5" deltaY="5" direction="270"/>
+<actor id="8" type="2" posX="52.999" posY="0" posZ="49.999" rotation="0" activationdistance="5" deltaY="5" direction="180"/>
+<actor id="9" type="5" posX="59.999" posY="5" posZ="27.999" rotation="0"  zonesizeX="1.99902" zonesizeY="4.99609" zonesizeZ="0.999023" />
+<actor id="10" type="5" posX="53.499" posY="5" posZ="62.499" rotation="0"  zonesizeX="1.49902" zonesizeY="4.99609" zonesizeZ="1.49902" />
+<actor id="11" type="5" posX="56.499" posY="5" posZ="48.499" rotation="0"  zonesizeX="1.49902" zonesizeY="5.99609" zonesizeZ="1.49902" />
+<actor id="12" type="5" posX="59.499" posY="5" posZ="47.999" rotation="0"  zonesizeX="1.49902" zonesizeY="5.99609" zonesizeZ="1.99902" />
+</actors>

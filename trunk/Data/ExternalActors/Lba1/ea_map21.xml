@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF8" ?>
+<actors>
+    <actor id="5" type="4" posX="49.500008" posY="6.000000" posZ="46.499992" sizeX="1.500000" sizeY="10.000000" sizeZ="0.500000" rotation="0.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="36" signaltargets="" renderertype="0" renderertarget="32" zoneSizeX="2.000000" zoneSizeY="10.000000" zoneSizeZ="2.000000" locked="0" keyid="0" hide="0" destroykey="0" OpenTransX="-3.000000" OpenTransY="0.000000" OpenTransZ="0.000000" OpenTransSpeedX="-0.004000" OpenTransSpeedY="0.000000" OpenTransSpeedZ="0.000000" />
+    <actor id="6" type="4" posX="35.499992" posY="6.000000" posZ="46.499992" sizeX="1.500000" sizeY="10.000000" sizeZ="0.500000" rotation="0.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="36" signaltargets="" renderertype="0" renderertarget="32" zoneSizeX="2.000000" zoneSizeY="10.000000" zoneSizeZ="2.000000" locked="0" keyid="0" hide="0" destroykey="0" OpenTransX="3.000000" OpenTransY="0.000000" OpenTransZ="0.000000" OpenTransSpeedX="0.004000" OpenTransSpeedY="0.000000" OpenTransSpeedZ="0.000000" />
+</actors>

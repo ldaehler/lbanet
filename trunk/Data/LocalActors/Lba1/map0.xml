@@ -1,0 +1,6 @@
+<actors>
+	<actor id="1" type="0" passable="0" posX="34" posY="4" posZ="31.5" rotation="0" sizeX="2" sizeY="8" sizeZ="0.5" renderertype="0" renderertarget="16" />	
+	<actor id="2" type="1" posX="30" posY="4" posZ="32" rotation="0" depthmask="false" renderertype="1" renderertarget="0" activationdistance="4" textid="0"/>
+	<actor id="3" type="2" posX="36.5" posY="4" posZ="32" rotation="0" depthmask="false" renderertype="0" renderertarget="83" activationdistance="5" deltaY="11" direction="180"/>	
+	<actor id="4" type="3" posX="11" posY="0" posZ="46" rotation="0" depthmask="false" activationdistance="6" deltaZ="-5" direction="180"/>		
+</actors>

@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<World name="GiantPrincipal" firstmap="Principal_island" firstsparea="FirstSpawning">
+    <description>World reconstructing the principal island in a unique big map! Created using the MapMerger tool.</description>
+    <!--Define the place it is possible to teleport to, the first place is the place where we arrive in the world-->
+    <teleports />
+    <files>
+        <file name="bricks" path="Data/lba_brick_info.txt" />
+        <file name="sprites" path="Data/Sprites/sprites.xml" />
+        <file name="videos" path="Data/Sprites/videos.xml" />
+    </files>
+    <maps>
+        <!--Map of Citadel Island-->
+        <Map name="Principal_island" type="exterior" music="Music/LBA1-Track7.mp3" repeatmusic="-1">
+            <description>Citadel Island</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="Maps" path="Maps/Principal.txt" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+                <sparea name="FirstSpawning" posX="45.000000" posY="7.000000" posZ="45.000000" RotationAtArrival="0" />
+            </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits />
+        </Map>
+    </maps>
+</World>

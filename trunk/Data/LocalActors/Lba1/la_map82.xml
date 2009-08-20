@@ -1,0 +1,4 @@
+<actors>
+<actor id="0" type="5" posX="56" posY="0" posZ="57" rotation="0"  zonesizeX="1" zonesizeY="5" zonesizeZ="1" />
+<actor id="1" type="5" posX="56" posY="0" posZ="59" rotation="0"  zonesizeX="1" zonesizeY="5" zonesizeZ="1" />
+</actors>

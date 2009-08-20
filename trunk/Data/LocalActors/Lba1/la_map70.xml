@@ -1,0 +1,6 @@
+<actors>
+<actor id="0" type="5" posX="47.999" posY="4" posZ="27.999" rotation="0"  zonesizeX="0.999023" zonesizeY="4.99609" zonesizeZ="0.999023" />
+<actor id="1" type="5" posX="43.999" posY="4" posZ="30.499" rotation="0"  zonesizeX="0.999023" zonesizeY="5.99609" zonesizeZ="1.49902" />
+<actor id="2" type="5" posX="45.999" posY="4" posZ="30.499" rotation="0"  zonesizeX="0.999023" zonesizeY="5.99609" zonesizeZ="1.49902" />
+<actor id="3" type="5" posX="49.999" posY="4" posZ="26.999" rotation="0"  zonesizeX="0.999023" zonesizeY="4.99609" zonesizeZ="0.999023" />
+</actors>
