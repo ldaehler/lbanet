@@ -375,7 +375,10 @@
             <description>Emerald Moon, Triangle Room</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Lba2/map112.txt" />
+                <file name="Texts" path="" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -417,7 +420,10 @@
             <description>Emerald Moon, Square Room</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Lba2/map113.txt" />
+                <file name="Texts" path="" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -592,7 +598,10 @@
             <description>Temple of Bu, 1st Scene</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Lba2/map11.txt" />
+                <file name="Texts" path="" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -604,7 +613,7 @@
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
                 <exit name="exit1" TopRightX="1.000000" TopRightY="15.000000" TopRightZ="59.000000" BottomLeftX="0.000000" BottomLeftY="8.000000" BottomLeftZ="56.000000" newMap="Map18_2" spawning="spawning6" />
-                <exit name="exit2" TopRightX="18.000000" TopRightY="14.000000" TopRightZ="21.000000" BottomLeftX="10.000000" BottomLeftY="7.000000" BottomLeftZ="19.000000" newMap="Map12_2" spawning="spawning0" />
+                <exit name="exit2" TopRightX="18.000000" TopRightY="13.000000" TopRightZ="22.000000" BottomLeftX="10.000000" BottomLeftY="6.000000" BottomLeftZ="19.000000" newMap="Map12_2" spawning="spawning0" />
             </exits>
         </Map>
         <!--Map of Citadel Island, Protection Spell Cave 1-->
@@ -612,7 +621,10 @@
             <description>Citadel Island, Protection Spell Cave 1</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Lba2/map128.txt" />
+                <file name="Texts" path="" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -634,7 +646,10 @@
             <description>Citadel Island, Protection Spell Cave 2</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Lba2/map129.txt" />
+                <file name="Texts" path="" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -686,7 +701,10 @@
             <description>Temple of Bu, 2nd Scene</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="ExternalActors/Lba2/map12.xml" />
+                <file name="LocalActors" path="LocalActors/Lba2/map12.xml" />
                 <file name="Maps" path="Maps/Lba2/map12.txt" />
+                <file name="Texts" path="Texts/Lba2/text3.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -752,7 +770,10 @@
             <description>Temple of Bu, Esmer Base</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Lba2/map13.txt" />
+                <file name="Texts" path="" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -793,7 +814,10 @@
             <description>Emerald Moon, Main Building Left Room</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Lba2/map14.txt" />
+                <file name="Texts" path="" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -913,7 +937,10 @@
             <description>Citadel Island, Sewers</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/lbae_map2.txt" />
+                <file name="Texts" path="" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -1019,19 +1046,22 @@
             <description>Citadel Island, Tralue 2nd Scene</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Lba2/map20.txt" />
+                <file name="Texts" path="" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
                 <sparea name="spawning0" posX="62.000000" posY="12.000000" posZ="8.000000" RotationAtArrival="0" />
-                <sparea name="spawning1" posX="56.000000" posY="12.000000" posZ="53.000000" RotationAtArrival="0" />
+                <sparea name="spawning1" posX="56.000000" posY="12.000000" posZ="56.000000" RotationAtArrival="0" />
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
                 <exit name="exit1" TopRightX="63.999989" TopRightY="18.000000" TopRightZ="11.000000" BottomLeftX="63.000000" BottomLeftY="12.000000" BottomLeftZ="8.000000" newMap="Map21_2" spawning="spawning1" />
-                <exit name="exit2" TopRightX="58.000000" TopRightY="19.000000" TopRightZ="55.000000" BottomLeftX="56.000000" BottomLeftY="12.000000" BottomLeftZ="54.000000" newMap="Map3_2" spawning="spawning2" />
+                <exit name="exit2" TopRightX="58.000000" TopRightY="19.000000" TopRightZ="57.999954" BottomLeftX="56.000000" BottomLeftY="12.000000" BottomLeftZ="56.999954" newMap="Map3_2" spawning="spawning2" />
             </exits>
         </Map>
         <!--Map of Citadel Island, secret chamber in the house-->
@@ -1063,7 +1093,10 @@
             <description>Citadel Island, Tralue 3rd Scene</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="ExternalActors/Lba2/map21.xml" />
+                <file name="LocalActors" path="LocalActors/Lba2/map21.xml" />
                 <file name="Maps" path="Maps/Lba2/map21.txt" />
+                <file name="Texts" path="Texts/Lba2/text2.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -1165,7 +1198,10 @@
             <description>Emerald Moon, Building Right Room</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Lba2/map24.txt" />
+                <file name="Texts" path="" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -1255,7 +1291,10 @@
             <description>Citadel Island, Dome of the Slate</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Lba2/map27.txt" />
+                <file name="Texts" path="" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -1415,7 +1454,10 @@
             <description>Emerald Moon, Welcome Building</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Lba2/map32.txt" />
+                <file name="Texts" path="" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -1636,7 +1678,10 @@
             <description>Citadel Island, Tralue 1st Scene</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Lba2/map3.txt" />
+                <file name="Texts" path="" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -1814,7 +1859,10 @@
             <description>Emerald Moon, Circle Room</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Lba2/map44.txt" />
+                <file name="Texts" path="" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -1854,7 +1902,10 @@
             <description>Emerald Moon, X Room</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Lba2/map45.txt" />
+                <file name="Texts" path="" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -1895,7 +1946,10 @@
             <description>Emerald Moon, Baldino&apos;s Cell</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Lba2/map46.txt" />
+                <file name="Texts" path="" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -2202,7 +2256,10 @@
             <description>Wannies Island, Mine 2nd Scene</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="ExternalActors/Lba2/map57.xml" />
+                <file name="LocalActors" path="LocalActors/Lba2/map57.xml" />
                 <file name="Maps" path="Maps/Lba2/map57.txt" />
+                <file name="Texts" path="Texts/Lba2/text13.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -2478,7 +2535,10 @@
             <description>Emerald Moon, Esmer Shuttle</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Lba2/map65.txt" />
+                <file name="Texts" path="" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -2877,7 +2937,10 @@
             <description>Temple of Bu, secret passage</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Lba2/map76.txt" />
+                <file name="Texts" path="" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -2887,7 +2950,7 @@
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
-                <exit name="exit1" TopRightX="8.000000" TopRightY="3.000000" TopRightZ="8.000000" BottomLeftX="4.000000" BottomLeftY="2.000000" BottomLeftZ="4.000000" newMap="Map11_2" spawning="spawning0" />
+                <exit name="exit1" TopRightX="8.000000" TopRightY="4.500000" TopRightZ="8.000000" BottomLeftX="4.000000" BottomLeftY="0.000000" BottomLeftZ="4.000000" newMap="Map11_2" spawning="spawning0" />
             </exits>
         </Map>
         <!--Map of Tippet Island, Secret passage scene 1-->
@@ -3532,7 +3595,10 @@
             <description>Desert Island, Bunker</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/lbae_map0.txt" />
+                <file name="Texts" path="" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -3552,7 +3618,10 @@
             <description>Little Guardhouse</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/lbae_map3.txt" />
+                <file name="Texts" path="" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
