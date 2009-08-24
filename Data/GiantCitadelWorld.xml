@@ -1,79 +1,81 @@
 <?xml version="1.0" ?>
 <World name="GiantCitadel" firstmap="Map0_1" firstsparea="FirstSpawning">
-    <description>World reconstructing the citadel island in a unique big map! 
-    Created using the MapMerger tool.
-    </description>
-     
-     <files>
-	<file name="bricks" path="Data/lba_brick_info.txt" />
-	<file name="sprites" path="Data/Sprites/sprites.xml" />
-	<file name="videos" path="Data/Sprites/videos.xml" />
-    </files>      
-    
+    <description>World reconstructing the citadel island in a unique big map! Created using the MapMerger tool.</description>
+    <!--Define the place it is possible to teleport to, the first place is the place where we arrive in the world-->
+    <teleports />
+    <files>
+        <file name="bricks" path="Data/lba_brick_info.txt" />
+        <file name="sprites" path="Data/Sprites/sprites.xml" />
+        <file name="videos" path="Data/Sprites/videos.xml" />
+    </files>
     <maps>
-        <Map name="Map0_1" type="interior" music="Music/Midi_mi_win18.midi">
-            <description>Citadel Island, Prison</description>
+        <!--Map of Citadel Island-->
+        <Map name="Citadel" type="exterior" music="Music/LBA1-Track9.mp3" repeatmusic="-1">
+            <description>Citadel Island</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
-                <file name="Maps" path="Maps/Lba1/map0.txt" />
+                <file name="ExternalActors" path="ExternalActors/citadel.xml" />
+                <file name="LocalActors" path="LocalActors/citadel.xml" />
+                <file name="Maps" path="Maps/Citadel.txt" />
+                <file name="Texts" path="Texts/citadel.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
-                <sparea name="FirstSpawning" posX="34" posY="4" posZ="34" RotationAtArrival="0" />
-		<sparea name="spawning1" posX="35" posY="13" posZ="10" RotationAtArrival="0" />
-                <sparea name="spawning2" posX="10" posY="0" posZ="46" RotationAtArrival="0" />
+                <sparea name="spawning1" posX="101.000000" posY="17.000000" posZ="13.000000" RotationAtArrival="0" />
+                <sparea name="spawning2" posX="92.000000" posY="1.000000" posZ="229.000000" RotationAtArrival="0" />
+            </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="exit0" TopRightX="90.998047" TopRightY="7.996094" TopRightZ="228.998047" BottomLeftX="90.000000" BottomLeftY="2.000000" BottomLeftZ="226.000000" newMap="Map0_2" spawning="spawning1" />
+                <exit name="exit1" TopRightX="100.000000" TopRightY="25.000000" TopRightZ="18.000000" BottomLeftX="99.000000" BottomLeftY="18.000000" BottomLeftZ="13.000000" newMap="Map0_1" spawning="spawning1" />
+            </exits>
+        </Map>
+        <!--Map of Citadel Island, Prison-->
+        <Map name="Map0_1" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Citadel Island, Prison</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Lba1/map0.txt" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+                <sparea name="FirstSpawning" posX="34.000000" posY="4.000000" posZ="34.000000" RotationAtArrival="0" />
+                <sparea name="spawning1" posX="35.000000" posY="13.000000" posZ="10.000000" RotationAtArrival="0" />
+                <sparea name="spawning2" posX="10.000000" posY="0.000000" posZ="46.000000" RotationAtArrival="0" />
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
                 <exit name="exit0" TopRightX="37.998047" TopRightY="19.996094" TopRightZ="14.998047" BottomLeftX="37.000000" BottomLeftY="14.000000" BottomLeftZ="10.000000" newMap="Citadel" spawning="spawning1" />
                 <exit name="exit17" TopRightX="11.998047" TopRightY="4.996094" TopRightZ="43.998047" BottomLeftX="10.000000" BottomLeftY="1.000000" BottomLeftZ="43.000000" newMap="Citadel" spawning="spawning2" />
             </exits>
-        </Map>    
-    
-    
-        <!--Map of Citadel Island-->
-        <Map name="Citadel" type="exterior" music="Music/LBA1-Track9.mp3" repeatmusic="-1">
-        
-            <description>Citadel Island</description>
-            <!--Give the path of the files containing the island information to be loaded-->
-            <files>
-                <file name="Maps" path="Maps/Citadel.txt" />
-            </files>
-            
-            <!--Describe the lights present in the scene-->
-            <lights />
-            <!--Describe the possible spawning areas of the main character-->
-            <spareas>
-                <sparea name="spawning1" posX="101" posY="17" posZ="13" RotationAtArrival="0" />
-                <sparea name="spawning2" posX="92" posY="1" posZ="229" RotationAtArrival="0" />            	
-             </spareas>           
-            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
-            <exits>
-            	<exit name="exit0" TopRightX="90.998047" TopRightY="7.996094" TopRightZ="228.998047" BottomLeftX="90.000000" BottomLeftY="2.000000" BottomLeftZ="226.000000" newMap="Map0_2" spawning="spawning1" />
-		<exit name="exit1" TopRightX="100.000000" TopRightY="25.000000" TopRightZ="18.000000" BottomLeftX="99.000000" BottomLeftY="18.000000" BottomLeftZ="13.000000" newMap="Map0_1" spawning="spawning1" />
-            </exits>        
         </Map>
-
         <!--Map of Citadel Island, inside Twinsens house-->
-        <Map name="Map0_2" type="interior" music="Music/LBA1-Track6.mp3">
+        <Map name="Map0_2" type="interior" music="Music/LBA1-Track6.mp3" repeatmusic="0">
             <description>Citadel Island, inside Twinsens house</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Lba2/map1.txt" />
+                <file name="Texts" path="" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
-                <sparea name="spawning1" posX="24" posY="2" posZ="17" RotationAtArrival="0" />
+                <sparea name="spawning1" posX="24.000000" posY="2.000000" posZ="17.000000" RotationAtArrival="0" />
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
-		<exit name="exit0" TopRightX="25" TopRightY="10" TopRightZ="21" BottomLeftX="23" BottomLeftY="3" BottomLeftZ="20" newMap="Citadel" spawning="spawning2" />
-	    </exits>
+                <exit name="exit0" TopRightX="25.000000" TopRightY="10.000000" TopRightZ="21.000000" BottomLeftX="23.000000" BottomLeftY="3.000000" BottomLeftZ="20.000000" newMap="Citadel" spawning="spawning2" />
+            </exits>
         </Map>
-
     </maps>
 </World>
