@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF8" ?>
+<actors>
+    <actor id="0" type="2" posX="45.299995" posY="5.000000" posZ="48.000000" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" activationdistance="5.000000" deltaX="0.000000" deltaY="10.100002" deltaZ="0.000000" direction="180" />
+</actors>
