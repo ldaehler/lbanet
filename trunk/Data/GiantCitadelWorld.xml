@@ -57,7 +57,7 @@
             </exits>
         </Map>
         <!--Map of Citadel Island, inside Twinsens house-->
-        <Map name="Map0_2" type="interior" music="Music/LBA1-Track6.mp3" repeatmusic="0">
+        <Map name="Map0_2" type="interior" music="Music/LBA2-Track1.mp3" repeatmusic="0">
             <description>Citadel Island, inside Twinsens house</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
