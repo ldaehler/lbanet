@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF8" ?>
+<models>
+    <model id="0" filename="Data/Models/psionic3d/ant/ant01.ms3d" scaleX="0.1" scaleY="0.1" scaleZ="0.1"/>
+    <model id="1" filename="Data/Models/psionic3d/ant/ant02.ms3d" scaleX="0.1" scaleY="0.1" scaleZ="0.1"/>
+    <model id="2" filename="Data/Models/psionic3d/beast/beast.ms3d" scaleX="0.05" scaleY="0.05" scaleZ="0.05"/> 
+    <model id="3" filename="Data/Models/psionic3d/dogcatrat/cat.ms3d" scaleX="0.1" scaleY="0.1" scaleZ="0.1"/>    
+    <model id="4" filename="Data/Models/psionic3d/dogcatrat/dog.ms3d" scaleX="0.05" scaleY="0.05" scaleZ="0.05"/>
+    <model id="5" filename="Data/Models/psionic3d/dogcatrat/rat.ms3d" scaleX="0.1" scaleY="0.1" scaleZ="0.1"/>  
+    <model id="6" filename="Data/Models/psionic3d/toonturtle/turtle1.ms3d" scaleX="0.1" scaleY="0.1" scaleZ="0.1"/>      
+</models>
