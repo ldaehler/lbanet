@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+
+<sprites>
+	<sprite id="0" filename="Data/Sprites/videos/Face2.avi">
+		<textpart BottomLeftCornerX="-1" BottomLeftCornerY="1" BottomLeftCornerZ="0.05" TopRightCornerX="1" TopRightCornerY="5" TopRightCornerZ="0.05" TopLeftCornerX="-1" TopLeftCornerY="5" TopLeftCornerZ="0.05" BottomRightCornerX="1" BottomRightCornerY="1" BottomRightCornerZ="0.05"/>
+	</sprite>
+
+</sprites>
