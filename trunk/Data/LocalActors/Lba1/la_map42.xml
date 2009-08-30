@@ -1,14 +1,16 @@
+<?xml version="1.0" encoding="UTF8" ?>
 <actors>
-<actor id="0" type="5" posX="8.25293" posY="5" posZ="24.0029" rotation="0"  zonesizeX="1.25293" zonesizeY="5.82422" zonesizeZ="1.50293" />
-<actor id="1" type="5" posX="19.999" posY="1" posZ="29.499" rotation="0"  zonesizeX="0.999023" zonesizeY="4.99609" zonesizeZ="1.49902" />
-<actor id="2" type="1" posX="8" posY="5" posZ="31.8438" rotation="0" activationdistance="6" textid="1" />
-<actor id="3" type="1" posX="27" posY="1" posZ="46" rotation="0" activationdistance="6" textid="2" />
-<actor id="4" type="1" posX="31.999" posY="1" posZ="15.3584" rotation="0" activationdistance="6" textid="0" />
-<actor id="5" type="1" posX="25" posY="4" posZ="12" rotation="0" activationdistance="6" textid="3" />
-<actor id="6" type="5" posX="24.999" posY="5" posZ="38.999" rotation="0"  zonesizeX="0.999023" zonesizeY="4.99609" zonesizeZ="0.999023" />
-<actor id="7" type="5" posX="31.5938" posY="1" posZ="11.625" rotation="0"  zonesizeX="1" zonesizeY="5" zonesizeZ="1" />
-<actor id="8" type="1" posX="9" posY="5" posZ="5.99902" rotation="0" activationdistance="6" textid="51" />
-<actor id="9" type="1" posX="2" posY="5" posZ="26" rotation="0" activationdistance="6" textid="51" />
-<actor id="10" type="5" posX="1.99902" posY="2" posZ="38.999" rotation="0"  zonesizeX="0.999023" zonesizeY="4.99609" zonesizeZ="0.999023" />
-<actor id="11" type="5" posX="46.999" posY="4" posZ="46.499" rotation="0"  zonesizeX="0.999023" zonesizeY="5.99609" zonesizeZ="1.49902" />
+    <actor id="0" type="5" posX="8.252930" posY="5.000000" posZ="24.002899" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" zonesizeX="1.252930" zonesizeY="5.824220" zonesizeZ="1.502930" />
+    <actor id="1" type="5" posX="19.999001" posY="1.000000" posZ="29.499001" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" zonesizeX="0.999023" zonesizeY="4.996090" zonesizeZ="1.499020" />
+    <actor id="2" type="1" posX="8.000000" posY="5.000000" posZ="31.843800" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" activationdistance="6.000000" textid="1" />
+    <actor id="3" type="1" posX="27.000000" posY="1.000000" posZ="46.000000" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" activationdistance="6.000000" textid="2" />
+    <actor id="4" type="1" posX="31.999001" posY="1.000000" posZ="15.358400" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" activationdistance="6.000000" textid="0" />
+    <actor id="5" type="1" posX="25.000000" posY="4.000000" posZ="12.000000" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" activationdistance="6.000000" textid="3" />
+    <actor id="6" type="5" posX="24.999001" posY="5.000000" posZ="38.999001" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" zonesizeX="0.999023" zonesizeY="4.996090" zonesizeZ="0.999023" />
+    <actor id="7" type="5" posX="31.593800" posY="1.000000" posZ="11.625000" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" zonesizeX="1.000000" zonesizeY="5.000000" zonesizeZ="1.000000" />
+    <actor id="8" type="1" posX="9.000000" posY="5.000000" posZ="5.999020" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" activationdistance="6.000000" textid="51" />
+    <actor id="9" type="1" posX="2.000000" posY="5.000000" posZ="26.000000" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" activationdistance="6.000000" textid="51" />
+    <actor id="10" type="5" posX="1.999020" posY="2.000000" posZ="38.999001" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" zonesizeX="0.999023" zonesizeY="4.996090" zonesizeZ="0.999023" />
+    <actor id="11" type="5" posX="46.999001" posY="4.000000" posZ="46.499001" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" zonesizeX="0.999023" zonesizeY="5.996090" zonesizeZ="1.499020" />
+    <actor id="13" type="9" posX="24.000000" posY="4.000000" posZ="58.000000" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="5" attachedsound="-1" signaltargets="12" zonesizeX="1.000000" zonesizeY="2.000000" zonesizeZ="1.000000" />
 </actors>

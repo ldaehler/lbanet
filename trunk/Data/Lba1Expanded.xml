@@ -1765,7 +1765,7 @@
                 <sparea name="spawning10" posX="50.000000" posY="4.000000" posZ="1.000000" RotationAtArrival="0" />
                 <sparea name="spawning11" posX="26.000000" posY="1.000000" posZ="50.000000" RotationAtArrival="0" />
                 <sparea name="spawning12" posX="6.000000" posY="1.000000" posZ="19.000000" RotationAtArrival="0" />
-                <sparea name="spawning13" posX="23.000000" posY="1.000000" posZ="57.000000" RotationAtArrival="0" />
+                <sparea name="spawning13" posX="23.000000" posY="5.000000" posZ="57.000000" RotationAtArrival="0" />
                 <sparea name="spawning14" posX="4.000000" posY="5.000000" posZ="8.000000" RotationAtArrival="0" />
                 <sparea name="spawning15" posX="0.000000" posY="3.000000" posZ="63.000000" RotationAtArrival="0" />
                 <sparea name="spawning16" posX="0.000000" posY="3.000000" posZ="63.000000" RotationAtArrival="0" />
@@ -2109,11 +2109,11 @@
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
-                <sparea name="spawning1" posX="47.000000" posY="11.500000" posZ="60.000000" RotationAtArrival="0" />
+                <sparea name="spawning1" posX="47.000000" posY="5.000000" posZ="60.000000" RotationAtArrival="0" />
                 <sparea name="spawning2" posX="60.000000" posY="11.500000" posZ="1.000000" RotationAtArrival="0" />
                 <sparea name="spawning3" posX="49.000000" posY="11.500000" posZ="46.000000" RotationAtArrival="0" />
                 <sparea name="spawning4" posX="56.000000" posY="11.500000" posZ="26.000000" RotationAtArrival="0" />
-                <sparea name="spawning5" posX="57.000000" posY="11.500000" posZ="17.000000" RotationAtArrival="0" />
+                <sparea name="spawning5" posX="57.000000" posY="5.000000" posZ="16.000000" RotationAtArrival="0" />
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
