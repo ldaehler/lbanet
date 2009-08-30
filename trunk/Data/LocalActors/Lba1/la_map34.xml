@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="UTF8" ?>
 <actors>
-<actor id="0" type="2" posX="59.001" posY="0" posZ="58" rotation="0" activationdistance="5" deltaY="5" direction="180"/>
-<actor id="1" type="5" posX="59.499" posY="5" posZ="47.499" rotation="0"  zonesizeX="1.49902" zonesizeY="5.99609" zonesizeZ="1.49902" />
-<actor id="2" type="1" posX="45" posY="5" posZ="54.999" rotation="0" activationdistance="6" textid="100" />
-<actor id="3" type="5" posX="62.499" posY="5" posZ="47.499" rotation="0"  zonesizeX="1.49902" zonesizeY="5.99609" zonesizeZ="1.49902" />
+    <actor id="0" type="2" posX="59.000999" posY="0.000000" posZ="58.000000" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" activationdistance="5.000000" deltaX="0.000000" deltaY="5.000000" deltaZ="0.000000" direction="180" />
+    <actor id="1" type="5" posX="59.499001" posY="5.000000" posZ="47.499001" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" zonesizeX="1.499020" zonesizeY="5.996090" zonesizeZ="1.499020" />
+    <actor id="2" type="1" posX="45.000000" posY="5.000000" posZ="54.999001" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" activationdistance="6.000000" textid="100" />
+    <actor id="3" type="5" posX="62.499001" posY="5.000000" posZ="47.499001" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" zonesizeX="1.499020" zonesizeY="5.996090" zonesizeZ="1.499020" />
+    <actor id="5" type="9" posX="47.000000" posY="6.000000" posZ="53.000000" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="5" attachedsound="-1" signaltargets="4" zonesizeX="1.000000" zonesizeY="2.000000" zonesizeZ="1.000000" />
 </actors>
