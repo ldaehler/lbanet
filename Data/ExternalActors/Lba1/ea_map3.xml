@@ -4,4 +4,11 @@
     <actor id="11" type="4" posX="18.499990" posY="0.000000" posZ="28.500002" sizeX="0.500000" sizeY="8.000000" sizeZ="1.600000" rotation="0.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="0" renderertarget="11" zoneSizeX="0.000000" zoneSizeY="0.000000" zoneSizeZ="0.000000" locked="1" keyid="0" hide="0" destroykey="0" OpenTransX="0.000000" OpenTransY="0.000000" OpenTransZ="0.000000" OpenTransSpeedX="0.000000" OpenTransSpeedY="0.000000" OpenTransSpeedZ="0.000000" />
     <actor id="12" type="4" posX="15.499994" posY="0.000000" posZ="41.500008" sizeX="0.500000" sizeY="8.000000" sizeZ="1.600000" rotation="0.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="36" signaltargets="" renderertype="0" renderertarget="11" zoneSizeX="2.000000" zoneSizeY="8.000000" zoneSizeZ="2.000000" locked="0" keyid="0" hide="0" destroykey="0" OpenTransX="0.000000" OpenTransY="0.000000" OpenTransZ="-3.000000" OpenTransSpeedX="0.000000" OpenTransSpeedY="0.000000" OpenTransSpeedZ="-0.004000" />
     <actor id="13" type="4" posX="2.500000" posY="5.000000" posZ="63.499962" sizeX="1.600000" sizeY="5.000000" sizeZ="0.500000" rotation="0.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="0" renderertarget="18" zoneSizeX="2.200000" zoneSizeY="5.000000" zoneSizeZ="2.500000" locked="0" keyid="0" hide="1" destroykey="0" OpenTransX="0.000000" OpenTransY="0.000000" OpenTransZ="0.000000" OpenTransSpeedX="0.000000" OpenTransSpeedY="0.000000" OpenTransSpeedZ="0.000000" />
+    <actor id="14" type="10" posX="38.000000" posY="14.000000" posZ="7.000000" sizeX="1.000000" sizeY="1.000000" sizeZ="1.000000" rotation="0.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="0" renderertarget="27">
+        <scripts>
+            <script type="4" ValueA="5.000000" ValueB="-1.000000" ValueC="-1.000000" Speed="-1.000000" Sound="-1.000000" />
+            <script type="1" ValueA="38.000000" ValueB="5.000000" ValueC="7.000000" Speed="0.005000" Sound="73.000000" />
+            <script type="1" ValueA="38.000000" ValueB="14.000000" ValueC="7.000000" Speed="0.005000" Sound="73.000000" />
+        </scripts>
+    </actor>
 </actors>
