@@ -1,2 +1,11 @@
+<?xml version="1.0" encoding="UTF8" ?>
 <actors>
+    <actor id="2" type="10" posX="4.000000" posY="16.000000" posZ="8.000000" sizeX="1.000000" sizeY="1.000000" sizeZ="1.000000" rotation="0.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="0" renderertarget="14">
+        <scripts>
+            <script type="4" ValueA="5.000000" ValueB="-1.000000" ValueC="-1.000000" Speed="-1.000000" Sound="-1.000000" />
+            <script type="1" ValueA="4.000000" ValueB="16.000000" ValueC="8.000000" Speed="0.005000" Sound="73.000000" />
+            <script type="4" ValueA="5.000000" ValueB="-1.000000" ValueC="-1.000000" Speed="-1.000000" Sound="-1.000000" />
+            <script type="1" ValueA="4.000000" ValueB="0.000000" ValueC="8.000000" Speed="0.005000" Sound="73.000000" />
+        </scripts>
+    </actor>
 </actors>
