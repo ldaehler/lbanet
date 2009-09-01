@@ -361,4 +361,9 @@
     <sprite id="119" filename="Data/Sprites/sprites/LBA1/119.png">
         <textpart UseFullImage="0" BottomLeftCornerX="0.000000" BottomLeftCornerY="0.000000" BottomLeftCornerZ="0.000000" TopRightCornerX="0.000000" TopRightCornerY="0.000000" TopRightCornerZ="0.000000" BottomRightCornerX="0.000000" BottomRightCornerY="0.000000" BottomRightCornerZ="0.000000" TopLeftCornerX="0.000000" TopLeftCornerY="0.000000" TopLeftCornerZ="0.000000" BottomLeftTextcoordX="0" BottomLeftTextcoordY="0" BottomRightTextcoordX="0" BottomRightTextcoordY="0" TopLeftTextcoordX="0" TopLeftTextcoordY="0" TopRightTextcoordX="0" TopRightTextcoordY="0" />
     </sprite>
+    <sprite id="120" filename="Data/Sprites/sprites/LBA1/25.png">
+        <textpart UseFullImage="0" BottomLeftCornerX="-0.500000" BottomLeftCornerY="4.000000" BottomLeftCornerZ="0.010000" TopRightCornerX="0.500000" TopRightCornerY="1.000000" TopRightCornerZ="0.010000" BottomRightCornerX="0.500000" BottomRightCornerY="4.000000" BottomRightCornerZ="0.010000" TopLeftCornerX="-0.500000" TopLeftCornerY="1.000000" TopLeftCornerZ="0.010000" BottomLeftTextcoordX="0" BottomLeftTextcoordY="12" BottomRightTextcoordX="24" BottomRightTextcoordY="0" TopLeftTextcoordX="0" TopLeftTextcoordY="56" TopRightTextcoordX="24" TopRightTextcoordY="44" />
+    </sprite>
+
+
 </sprites>
