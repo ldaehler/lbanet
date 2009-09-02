@@ -66,7 +66,7 @@
 		<server-template id="LBANetServer">
 			<parameter name="index"/>
 			<parameter name="exepath"
-			default="LBA_Server.exe"/>				
+			default="../bin/lbaserver"/>				
 			<parameter name="RoomManager"/>
 			<parameter name="ConnectedTracker"/>
 			
@@ -95,7 +95,7 @@
 		<server-template id="RoomManager">
 			<parameter name="index"/>
 			<parameter name="exepath"
-			default="RoomManagerServer.exe"/>		
+			default="../bin/roommanager"/>		
 			<parameter name="IceStorm"/>
 			
 			<server id="RoomManagerServer-${index}" 
@@ -122,7 +122,7 @@
 		<server-template id="ConnectedTracker">
 			<parameter name="index"/>
 			<parameter name="exepath"
-			default="ConnectedTracker.exe"/>		
+			default="../bin/connectedtracker"/>		
 			<parameter name="IceStorm"/>
 			
 			<server id="ConnectedTrackerServer-${index}" 
