@@ -1,18 +1,18 @@
 
-OBJ=ActorInfo.o ChatInfo.o ClientSession.o ConnectedTracker.o MapManager.o MapObserver.o RoomManager.o
+OBJ=ActorsParticipantServant.o ChatParticipantServant.o ClientSessionManagerServant.o ClientSessionService.o main.o RoomManagerServant.o SessionServant.o
 
 CC=g++
-INCDIR=-I. -I../include -I/usr/include
-LIBDIR=-L/usr/lib
-LIBS=-lIce -lIceStorm -lIceutil -lGlacier2
+INCDIR=-I. -I../infrastructure/include -I/usr/include
+LIBDIR=-L/usr/lib -L../infrastructure/lib
+LIBS=-lIce -lIceStorm -lIceutil -lGlacier2 -lgenerated
 
 
-all: clean depend libgenerated.a install
+all: clean depend lbaserver install
 
 
-libgenerated.a: $(OBJ)
-	@echo "\n         **********creation de la bibliotheque************\n"
-	ar rv libgenerated.a $(OBJ)
+lbaserver: $(OBJ)
+	@echo "\n         **********creation de l'exe************\n"
+	$(CC) $(INCDIR) $(OBJ) -o lbaserver $(LIBDIR) $(LIBS) 
 	@echo "\n"		
 
 .cpp.o:
@@ -28,11 +28,11 @@ depend:
 
 install:
 	@echo "\n         ********** copie des fichiers dans include & bib ************\n"
-	cp *.a ../lib
+	cp lbaserver ../bin
 	@echo "\n"
 clean:
 	@echo "\n        ********** nettoyage ************\n"
-	rm -f $(OBJ) libgenerated.a dep
+	rm -f $(OBJ) lbaserver dep
 	@touch dep
 	@echo "\n"
 		
