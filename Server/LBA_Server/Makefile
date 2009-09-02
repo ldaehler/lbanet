@@ -1,5 +1,5 @@
 
-OBJ=ActorsParticipantServant.o ChatParticipantServant.o ClientSessionManagerServant.o main.o RoomManagerServant.o SessionServant.o
+OBJ=ActorsParticipantServant.o ChatParticipantServant.o ClientSessionManagerServant.o main.o SessionServant.o
 
 CC=g++
 INCDIR=-I. -I../infrastructure/include -I/usr/include
