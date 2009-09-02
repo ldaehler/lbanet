@@ -4,7 +4,7 @@ OBJ=ActorsParticipantServant.o ChatParticipantServant.o ClientSessionManagerServ
 CC=g++
 INCDIR=-I. -I../infrastructure/include -I/usr/include
 LIBDIR=-L/usr/lib -L../infrastructure/lib
-LIBS=-lIce -lIceStorm -lIceutil -lGlacier2 -lgenerated
+LIBS=-lIce -lIceStorm -lIceUtil -lGlacier2 -lgenerated
 
 
 all: clean depend lbaserver install
