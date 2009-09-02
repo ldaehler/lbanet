@@ -28,7 +28,7 @@ depend:
 
 install:
 	@echo "\n         ********** copie des fichiers dans include & bib ************\n"
-	cp lbaserver ../bin
+	cp $(TARGET) ../bin
 	@echo "\n"
 clean:
 	@echo "\n        ********** nettoyage ************\n"
