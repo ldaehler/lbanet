@@ -1,5 +1,5 @@
-
-OBJ=ActorsParticipantServant.o ChatParticipantServant.o ClientSessionManagerServant.o main.o SessionServant.o
+TARGET=connectedtraker
+OBJ=ConnectedTrackerServant.o PermissionsVerifierServant.o SharedData.o main.o
 
 CC=g++
 INCDIR=-I. -I../infrastructure/include -I/usr/include
@@ -7,12 +7,12 @@ LIBDIR=-L/usr/lib -L../infrastructure/lib
 LIBS=-lIce -lIceStorm -lIceUtil -lGlacier2 -lgenerated
 
 
-all: clean depend lbaserver install
+all: clean depend $(TARGET) install
 
 
-lbaserver: $(OBJ)
+$(TARGET): $(OBJ)
 	@echo "\n         **********creation de l'exe************\n"
-	$(CC) $(INCDIR) $(OBJ) -o lbaserver $(LIBDIR) $(LIBS) 
+	$(CC) $(INCDIR) $(OBJ) -o $(TARGET) $(LIBDIR) $(LIBS) 
 	@echo "\n"		
 
 .cpp.o:
@@ -32,7 +32,7 @@ install:
 	@echo "\n"
 clean:
 	@echo "\n        ********** nettoyage ************\n"
-	rm -f $(OBJ) lbaserver dep
+	rm -f $(OBJ) $(TARGET) dep
 	@touch dep
 	@echo "\n"
 		
