@@ -1,11 +1,10 @@
 
-OBJ= ActorInfo.o ChatInfo.o ClientSession.o ConnectedTracker.o MapManager.o MapObserver.o RoomManager.o
+OBJ=ActorInfo.o ChatInfo.o ClientSession.o ConnectedTracker.o MapManager.o MapObserver.o RoomManager.o
 
 CC=g++
-
-INCDIR  = -I. -I../include -I/usr/include
-LIBDIR  = -L/usr/lib
-LIBS    = -lIce -lIceStorm -lIceutil -lGlacier2
+INCDIR=-I. -I../include -I/usr/include
+LIBDIR=-L/usr/lib
+LIBS=-lIce -lIceStorm -lIceutil -lGlacier2
 
 
 all: clean depend libgenerated.a install
@@ -16,14 +15,14 @@ libgenerated.a: $(OBJ)
 	ar rv libgenerated.a $(OBJ)
 	@echo "\n"		
 
-.cc.o:
+.cpp.o:
 	@echo "\n         **********creation des .o************\n"
-	$(CC) $(INCDIR) -c $<
+	$(CC) -I. $(INCDIR) -c $<
 	@echo "\n"
 
 depend: 
 	@echo "\n         **********creation des dependances************\n"	
-	@$(CC) $(INCDIR) -MM *.cc  > dep
+	@$(CC) $(INCDIR) -MM *.cpp  > dep
 
 
 
