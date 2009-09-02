@@ -3,12 +3,12 @@ OBJ= ActorInfo.o ChatInfo.o ClientSession.o ConnectedTracker.o MapManager.o MapO
 
 CC=g++
 
-INCDIR  = -I. -I../include
+INCDIR  = -I. -I../include -I/usr/include
 LIBDIR  = -L/usr/lib
 LIBS    = -lIce -lIceStorm -lIceutil -lGlacier2
 
 
-all: clean dep libgenerated.a install
+all: clean depend libgenerated.a install
 
 
 libgenerated.a: $(OBJ)
@@ -18,12 +18,12 @@ libgenerated.a: $(OBJ)
 
 .cc.o:
 	@echo "\n         **********creation des .o************\n"
-	$(CC) -c $(INCDIR) $<
+	$(CC) $(INCDIR) -c $<
 	@echo "\n"
 
-dep: 
+depend: 
 	@echo "\n         **********creation des dependances************\n"	
-	@$(CC) -MM *.cc  > dep
+	@$(CC) $(INCDIR) -MM *.cc  > dep
 
 
 
