@@ -122,7 +122,7 @@
 		<server-template id="ConnectedTracker">
 			<parameter name="index"/>
 			<parameter name="exepath"
-			default="../bin/connectedtracker"/>		
+			default="../bin/connectedtraker"/>		
 			<parameter name="IceStorm"/>
 			
 			<server id="ConnectedTrackerServer-${index}" 
