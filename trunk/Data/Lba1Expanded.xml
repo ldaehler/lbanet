@@ -324,7 +324,7 @@
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
                 <exit name="exit0" TopRightX="0.998047" TopRightY="6.996094" TopRightZ="43.998047" BottomLeftX="0.000000" BottomLeftY="3.000000" BottomLeftZ="40.000000" newMap="Map108_1" spawning="spawning3" />
-                <exit name="exit1" TopRightX="35.998047" TopRightY="15.000000" TopRightZ="44.998047" BottomLeftX="34.000000" BottomLeftY="14.000000" BottomLeftZ="43.000000" newMap="Map111_1" spawning="spawning1" />
+                <exit name="exit1" TopRightX="35.998047" TopRightY="26.000000" TopRightZ="44.998047" BottomLeftX="34.000000" BottomLeftY="24.000000" BottomLeftZ="43.000000" newMap="Map111_1" spawning="spawning1" />
             </exits>
         </Map>
         <!--Map of Polar Island, on the rocky peak-->
