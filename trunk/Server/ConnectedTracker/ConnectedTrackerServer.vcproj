@@ -138,7 +138,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ice.lib iceutil.lib icestorm.lib glacier2.lib icebox.lib"
-				OutputFile="$(OutDir)\ConnectedTracker.exe"
+				OutputFile="$(OutDir)\connectedtraker.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="c:\Ice-3.3.1-VC90\lib"
 				GenerateDebugInformation="true"
@@ -167,6 +167,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="copy $(TargetPath) $(ProjectDir)..\bin"
 			/>
 		</Configuration>
 	</Configurations>
