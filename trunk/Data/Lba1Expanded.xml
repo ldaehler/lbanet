@@ -1080,7 +1080,7 @@
             <spareas>
                 <sparea name="spawning1" posX="31.000000" posY="3.000000" posZ="62.000000" RotationAtArrival="0" />
                 <sparea name="spawning2" posX="31.000000" posY="3.000000" posZ="62.000000" RotationAtArrival="0" />
-                <sparea name="spawning3" posX="53.000000" posY="4.000000" posZ="59.000000" RotationAtArrival="15" />
+                <sparea name="spawning3" posX="53.000000" posY="4.000000" posZ="58.000015" RotationAtArrival="15" />
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
@@ -2348,9 +2348,9 @@
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
-                <sparea name="spawning1" posX="56.000000" posY="7.000000" posZ="27.000000" RotationAtArrival="0" />
+                <sparea name="spawning1" posX="56.999985" posY="7.000000" posZ="27.000000" RotationAtArrival="0" />
                 <sparea name="spawning2" posX="23.000000" posY="5.000000" posZ="21.000000" RotationAtArrival="0" />
-                <sparea name="spawning3" posX="21.000000" posY="4.000000" posZ="9.000000" RotationAtArrival="0" />
+                <sparea name="spawning3" posX="18.999992" posY="2.000002" posZ="11.000008" RotationAtArrival="0" />
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
