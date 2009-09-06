@@ -1382,6 +1382,7 @@
                 <exit name="exit4" TopRightX="49.998047" TopRightY="9.996094" TopRightZ="63.998047" BottomLeftX="41.000000" BottomLeftY="1.000000" BottomLeftZ="63.000000" newMap="Map4_1" spawning="spawning2" />
                 <exit name="exit5" TopRightX="2.998047" TopRightY="6.996094" TopRightZ="42.998047" BottomLeftX="2.000000" BottomLeftY="1.000000" BottomLeftZ="35.000000" newMap="Map6_1" spawning="spawning1" />
                 <exit name="exit6" TopRightX="41.998047" TopRightY="7.996094" TopRightZ="12.998047" BottomLeftX="39.000000" BottomLeftY="1.000000" BottomLeftZ="12.000000" newMap="Map14_1" spawning="spawning1" />
+                <exit name="exit7" TopRightX="34.000000" TopRightY="2.000000" TopRightZ="40.000000" BottomLeftX="32.000000" BottomLeftY="0.000000" BottomLeftZ="38.000000" newMap="Map55_1" spawning="spawning2" />
             </exits>
         </Map>
         <!--Map of Principal Island, Tavern-->
@@ -2204,6 +2205,7 @@
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
                 <sparea name="spawning1" posX="62.000000" posY="8.000000" posZ="54.000000" RotationAtArrival="0" />
+                <sparea name="spawning2" posX="55.000000" posY="8.000000" posZ="50.000000" RotationAtArrival="0" />
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
