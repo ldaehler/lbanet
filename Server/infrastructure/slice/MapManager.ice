@@ -7,7 +7,6 @@ module LbaNet
 {
 	interface MapManager
 	{
-   
 	    MapObserver* JoinMap(string mapName, long PlayerId);
 	    void LeaveMap(string mapName, long PlayerId);	    
 	};

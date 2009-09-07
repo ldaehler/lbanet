@@ -5,6 +5,7 @@
 #include <RoomManager.h>
 #include <ActorInfo.h>
 #include <ConnectedTracker.h>
+#include <MapManager.h>
 
 #include <map>
 
@@ -19,7 +20,7 @@ class SessionServant : public ClientSession, public IceUtil::Mutex
 public:
 	//! constructor
 	SessionServant(const std::string& userId, const RoomManagerPrx& manager, 
-					const ConnectedTrackerPrx& ctracker);
+					const ConnectedTrackerPrx& ctracker, const MapManagerPrx& map_manager);
 
 	//! the client join a chat room
     virtual ChatRoomParticipantPrx JoinChat(const std::string& room, const ChatRoomObserverPrx& observer, 
@@ -42,6 +43,17 @@ public:
 	//! get the list of people connected
 	LbaNet::ConnectedList GetConnected(Ice::Long & ownid, const Ice::Current&);
 
+
+	// callback function called when an actor id activated
+    virtual void ActivateActor(const LbaNet::ActorActivationInfo& ai, const Ice::Current&);
+
+	// callback function called when an actor id signaled
+    virtual void SignalActor(const LbaNet::ActorSignalInfo& ai, const Ice::Current&);
+
+	//get updated info
+	virtual LbaNet::UpdateSeq GetUpdatedInfo(const Ice::Current&);
+
+
 	//! get server time
 	Ice::Long GetTime(const Ice::Current&);
 
@@ -53,9 +65,11 @@ private:
 
 	std::string							_curr_actor_room;
 	ActorsParticipantPrx				_actors_room;
+	LbaNet::MapObserverPrx				_actors_manager;
 
 	const RoomManagerPrx				_manager;
 	const ConnectedTrackerPrx			_ctracker;
+	const MapManagerPrx					_map_manager;
 
 };
 

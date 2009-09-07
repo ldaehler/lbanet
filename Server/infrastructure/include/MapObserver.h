@@ -83,13 +83,13 @@ namespace LbaNet
 
 struct ActorActivationInfo
 {
+    ::Ice::Long ActivatedId;
+    bool Activate;
     ::Ice::Long ActorId;
-    ::Ice::Long PlayerId;
     ::Ice::Float X;
     ::Ice::Float Y;
     ::Ice::Float Z;
     ::Ice::Float Rotation;
-    bool NeedDesactivation;
 
     bool operator==(const ActorActivationInfo&) const;
     bool operator<(const ActorActivationInfo&) const;
@@ -113,6 +113,78 @@ struct ActorActivationInfo
     void __write(::IceInternal::BasicStream*) const;
     void __read(::IceInternal::BasicStream*);
 };
+
+typedef ::std::vector< ::Ice::Long> TargetSeq;
+
+struct ActorSignalInfo
+{
+    ::LbaNet::TargetSeq Targets;
+    ::Ice::Long SignalId;
+    ::Ice::Long ActorId;
+
+    bool operator==(const ActorSignalInfo&) const;
+    bool operator<(const ActorSignalInfo&) const;
+    bool operator!=(const ActorSignalInfo& __rhs) const
+    {
+        return !operator==(__rhs);
+    }
+    bool operator<=(const ActorSignalInfo& __rhs) const
+    {
+        return operator<(__rhs) || operator==(__rhs);
+    }
+    bool operator>(const ActorSignalInfo& __rhs) const
+    {
+        return !operator<(__rhs) && !operator==(__rhs);
+    }
+    bool operator>=(const ActorSignalInfo& __rhs) const
+    {
+        return !operator<(__rhs);
+    }
+
+    void __write(::IceInternal::BasicStream*) const;
+    void __read(::IceInternal::BasicStream*);
+};
+
+struct ActorUpdateInfo
+{
+    ::Ice::Long ActorId;
+    bool On;
+    bool Open;
+    ::Ice::Int Counter;
+    bool SignalOn;
+    ::Ice::Long CurrentScript;
+    ::LbaNet::TargetSeq CurrentSignals;
+    ::Ice::Float X;
+    ::Ice::Float Y;
+    ::Ice::Float Z;
+    ::Ice::Float Rotation;
+
+    bool operator==(const ActorUpdateInfo&) const;
+    bool operator<(const ActorUpdateInfo&) const;
+    bool operator!=(const ActorUpdateInfo& __rhs) const
+    {
+        return !operator==(__rhs);
+    }
+    bool operator<=(const ActorUpdateInfo& __rhs) const
+    {
+        return operator<(__rhs) || operator==(__rhs);
+    }
+    bool operator>(const ActorUpdateInfo& __rhs) const
+    {
+        return !operator<(__rhs) && !operator==(__rhs);
+    }
+    bool operator>=(const ActorUpdateInfo& __rhs) const
+    {
+        return !operator<(__rhs);
+    }
+
+    void __write(::IceInternal::BasicStream*) const;
+    void __read(::IceInternal::BasicStream*);
+};
+
+typedef ::std::vector< ::LbaNet::ActorUpdateInfo> UpdateSeq;
+void __writeUpdateSeq(::IceInternal::BasicStream*, const ::LbaNet::ActorUpdateInfo*, const ::LbaNet::ActorUpdateInfo*);
+void __readUpdateSeq(::IceInternal::BasicStream*, UpdateSeq&);
 
 }
 
@@ -141,18 +213,33 @@ private:
     
 public:
 
-    void DesactivateActor(const ::LbaNet::ActorActivationInfo& ai)
+    void SignalActor(const ::LbaNet::ActorSignalInfo& ai)
     {
-        DesactivateActor(ai, 0);
+        SignalActor(ai, 0);
     }
-    void DesactivateActor(const ::LbaNet::ActorActivationInfo& ai, const ::Ice::Context& __ctx)
+    void SignalActor(const ::LbaNet::ActorSignalInfo& ai, const ::Ice::Context& __ctx)
     {
-        DesactivateActor(ai, &__ctx);
+        SignalActor(ai, &__ctx);
     }
     
 private:
 
-    void DesactivateActor(const ::LbaNet::ActorActivationInfo&, const ::Ice::Context*);
+    void SignalActor(const ::LbaNet::ActorSignalInfo&, const ::Ice::Context*);
+    
+public:
+
+    ::LbaNet::UpdateSeq GetUpdatedInfo()
+    {
+        return GetUpdatedInfo(0);
+    }
+    ::LbaNet::UpdateSeq GetUpdatedInfo(const ::Ice::Context& __ctx)
+    {
+        return GetUpdatedInfo(&__ctx);
+    }
+    
+private:
+
+    ::LbaNet::UpdateSeq GetUpdatedInfo(const ::Ice::Context*);
     
 public:
     
@@ -371,7 +458,9 @@ public:
 
     virtual void ActivateActor(const ::LbaNet::ActorActivationInfo&, const ::Ice::Context*) = 0;
 
-    virtual void DesactivateActor(const ::LbaNet::ActorActivationInfo&, const ::Ice::Context*) = 0;
+    virtual void SignalActor(const ::LbaNet::ActorSignalInfo&, const ::Ice::Context*) = 0;
+
+    virtual ::LbaNet::UpdateSeq GetUpdatedInfo(const ::Ice::Context*) = 0;
 };
 
 }
@@ -391,7 +480,9 @@ public:
 
     virtual void ActivateActor(const ::LbaNet::ActorActivationInfo&, const ::Ice::Context*);
 
-    virtual void DesactivateActor(const ::LbaNet::ActorActivationInfo&, const ::Ice::Context*);
+    virtual void SignalActor(const ::LbaNet::ActorSignalInfo&, const ::Ice::Context*);
+
+    virtual ::LbaNet::UpdateSeq GetUpdatedInfo(const ::Ice::Context*);
 };
 
 }
@@ -411,7 +502,9 @@ public:
 
     virtual void ActivateActor(const ::LbaNet::ActorActivationInfo&, const ::Ice::Context*);
 
-    virtual void DesactivateActor(const ::LbaNet::ActorActivationInfo&, const ::Ice::Context*);
+    virtual void SignalActor(const ::LbaNet::ActorSignalInfo&, const ::Ice::Context*);
+
+    virtual ::LbaNet::UpdateSeq GetUpdatedInfo(const ::Ice::Context*);
 };
 
 }
@@ -438,8 +531,11 @@ public:
     virtual void ActivateActor(const ::LbaNet::ActorActivationInfo&, const ::Ice::Current& = ::Ice::Current()) = 0;
     ::Ice::DispatchStatus ___ActivateActor(::IceInternal::Incoming&, const ::Ice::Current&);
 
-    virtual void DesactivateActor(const ::LbaNet::ActorActivationInfo&, const ::Ice::Current& = ::Ice::Current()) = 0;
-    ::Ice::DispatchStatus ___DesactivateActor(::IceInternal::Incoming&, const ::Ice::Current&);
+    virtual void SignalActor(const ::LbaNet::ActorSignalInfo&, const ::Ice::Current& = ::Ice::Current()) = 0;
+    ::Ice::DispatchStatus ___SignalActor(::IceInternal::Incoming&, const ::Ice::Current&);
+
+    virtual ::LbaNet::UpdateSeq GetUpdatedInfo(const ::Ice::Current& = ::Ice::Current()) = 0;
+    ::Ice::DispatchStatus ___GetUpdatedInfo(::IceInternal::Incoming&, const ::Ice::Current&);
 
     virtual ::Ice::DispatchStatus __dispatch(::IceInternal::Incoming&, const ::Ice::Current&);
 

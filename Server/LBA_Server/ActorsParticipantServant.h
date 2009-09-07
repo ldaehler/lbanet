@@ -20,9 +20,7 @@ public:
 
 	//! update
 	virtual void Update(const ActorInfo& asi, const Ice::Current &current);
-	
-	//! update
-	virtual void Activate(const ActivationInfo &ai, const Ice::Current &current);
+
 
 private:
 	const std::string _room;

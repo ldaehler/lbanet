@@ -1,6 +1,9 @@
 #ifndef LBANET_ACTOR_HANDLER
 #define LBANET_ACTOR_HANDLER
 
+
+#include <MapObserver.ice>
+
 module LbaNet
 {
 	struct ActorInfo
@@ -40,29 +43,6 @@ module LbaNet
 	};
 
 	
-	struct ActivationInfo
-	{
-		// id of the activate object
-		long			ActivatedId;
-		
-		// true if activating - false if desactivating
-		bool			Activate;
-		
-		// send signal instead of activate
-		bool			Signal;
-		long			SignalId;
-	
-	
-		// activator id
-		long			ActorId;
-		
-		// activator coordinates
-		float			X;
-		float			Y;
-		float			Z;
-		float			Rotation;
-	};
-	
 	
 
 	
@@ -71,15 +51,14 @@ module LbaNet
 	    void UpdatedInfo(ActorInfo asi);
 	    void Quitted(string ActorName);
 	    
-	    void Activated(ActivationInfo ai);    
+	    void ActivatedActor(ActorActivationInfo ai);  
+	    void SignaledActor(ActorSignalInfo ai);	
 	};
 	
 	
 	interface ActorsParticipant
 	{
 	    void Update(ActorInfo asi);
-	    
-	    void Activate(ActivationInfo ai);
 	};		
 };
 
