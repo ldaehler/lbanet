@@ -1,3 +1,28 @@
+/*
+------------------------[ Lbanet Source ]-------------------------
+Copyright (C) 2009
+Author: Vivien Delage [Rincevent_123]
+Email : vdelage@gmail.com
+
+-------------------------------[ GNU License ]-------------------------------
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-----------------------------------------------------------------------------
+*/
+
+
 #ifndef __LBA_NET_MAP_WORLD_INFO_H__
 #define __LBA_NET_MAP_WORLD_INFO_H__
 
@@ -105,7 +130,7 @@ struct MapInfo
 
 	// exit points
 	std::map<std::string, ExitInfo>	Exits;
-	
+
 };
 
 // contains information about an LBA world
@@ -141,39 +166,39 @@ struct QuadImageInfo
 {
 	// top left corner
 	float BottomLeftCornerX;
-	float BottomLeftCornerY; 
+	float BottomLeftCornerY;
 	float BottomLeftCornerZ;
-	
+
 	float BottomRightCornerX;
-	float BottomRightCornerY; 
+	float BottomRightCornerY;
 	float BottomRightCornerZ;
 
 	// bottom right corner
 	float TopRightCornerX;
-	float TopRightCornerY; 
-	float TopRightCornerZ; 
+	float TopRightCornerY;
+	float TopRightCornerZ;
 
 	float TopLeftCornerX;
-	float TopLeftCornerY; 
-	float TopLeftCornerZ; 
+	float TopLeftCornerY;
+	float TopLeftCornerZ;
 
 	// flag saying if we use full image
 	bool UseFullImage;
 
 	// top left texture coordinate
-	int TopLeftTextcoordX; 
+	int TopLeftTextcoordX;
 	int TopLeftTextcoordY;
 
 	// top right texture coordinate
-	int TopRightTextcoordX; 
+	int TopRightTextcoordX;
 	int TopRightTextcoordY;
 
 	// bottom left texture coordinate
-	int BottomLeftTextcoordX; 
+	int BottomLeftTextcoordX;
 	int BottomLeftTextcoordY;
 
 	// bottom right texture coordinate
-	int BottomRightTextcoordX; 
+	int BottomRightTextcoordX;
 	int BottomRightTextcoordY;
 };
 

@@ -1,3 +1,28 @@
+/*
+------------------------[ Lbanet Source ]-------------------------
+Copyright (C) 2009
+Author: Vivien Delage [Rincevent_123]
+Email : vdelage@gmail.com
+
+-------------------------------[ GNU License ]-------------------------------
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-----------------------------------------------------------------------------
+*/
+
+
 #include "MapInfoXmlReader.h"
 #include "tinyxml.h"
 
@@ -68,11 +93,11 @@ static void StringTokenize(const std::string& str,
 }
 
 // get world description
-void MapInfoXmlReader::GetWorldDescription(const std::string &Filename, 
+void MapInfoXmlReader::GetWorldDescription(const std::string &Filename,
 									std::string &WorldName, std::string &WorldDesc)
 {
 	TiXmlDocument doc(Filename);
-	if (!doc.LoadFile()) 
+	if (!doc.LoadFile())
 		return;
 
 	TiXmlHandle hDoc(&doc);
@@ -84,7 +109,7 @@ void MapInfoXmlReader::GetWorldDescription(const std::string &Filename,
 		pElem=hDoc.FirstChildElement().Element();
 
 		// should always have a valid root but handle gracefully if it does
-		if (!pElem) 
+		if (!pElem)
 			return;
 
 		WorldName = pElem->Attribute("name");
@@ -105,7 +130,7 @@ void MapInfoXmlReader::GetWorldDescription(const std::string &Filename,
 bool MapInfoXmlReader::LoadWorld(const std::string &Filename, WorldInfo & res)
 {
 	TiXmlDocument doc(Filename);
-	if (!doc.LoadFile()) 
+	if (!doc.LoadFile())
 		return false;
 
 
@@ -119,7 +144,7 @@ bool MapInfoXmlReader::LoadWorld(const std::string &Filename, WorldInfo & res)
 		pElem=hDoc.FirstChildElement().Element();
 
 		// should always have a valid root but handle gracefully if it does
-		if (!pElem) 
+		if (!pElem)
 			return false;
 
 		res.Name = pElem->Attribute("name");
@@ -187,7 +212,7 @@ MapInfo MapInfoXmlReader::LoadMap(TiXmlElement* pElem)
 	// block: map attributes
 	{
 		// should always have a valid root but handle gracefully if it does
-		if (!pElem) 
+		if (!pElem)
 			return res;
 
 		res.Name = pElem->Attribute("name");
@@ -228,7 +253,7 @@ MapInfo MapInfoXmlReader::LoadMap(TiXmlElement* pElem)
 			LighInfo l;
 			l.Name=pElem->Attribute("name");
 			l.Type=pElem->Attribute("type");
-		
+
 			pElem->QueryIntAttribute("posX", &l.PosX);
 			pElem->QueryIntAttribute("posY", &l.PosY);
 			pElem->QueryIntAttribute("posZ", &l.PosZ);
@@ -248,7 +273,7 @@ MapInfo MapInfoXmlReader::LoadMap(TiXmlElement* pElem)
 			SpawningInfo sp;
 			sp.Rotation = 0;
 			sp.Name=pElem->Attribute("name");
-		
+
 			pElem->QueryFloatAttribute("posX", &sp.PosX);
 			pElem->QueryFloatAttribute("posY", &sp.PosY);
 			pElem->QueryFloatAttribute("posZ", &sp.PosZ);
@@ -294,15 +319,15 @@ MapInfo MapInfoXmlReader::LoadMap(TiXmlElement* pElem)
 --------------------------------------------------------------------------------------------------
 */
 bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, SpriteInfo> &spinfos,
-									std::map<long, SpriteInfo> &vidinfos,  
-									std::map<long, ModelInfo> &modelinfos, 
+									std::map<long, SpriteInfo> &vidinfos,
+									std::map<long, ModelInfo> &modelinfos,
 									std::map<long, Actor *> & vec,
 									SignalerBase * signaler)
 {
 	vec.clear();
 
 	TiXmlDocument doc(Filename);
-	if (!doc.LoadFile()) 
+	if (!doc.LoadFile())
 		return false;
 
 
@@ -315,7 +340,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 		pElem=hDoc.FirstChildElement().Element();
 
 		// should always have a valid root but handle gracefully if it does
-		if (!pElem) 
+		if (!pElem)
 			return false;
 
 
@@ -357,7 +382,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 
 
 			pElem->QueryValueAttribute("id", &id);
-			pElem->QueryValueAttribute("type", &type); 
+			pElem->QueryValueAttribute("type", &type);
 			pElem->QueryFloatAttribute("posX", &posX);
 			pElem->QueryFloatAttribute("posY", &posY);
 			pElem->QueryFloatAttribute("posZ", &posZ);
@@ -385,8 +410,8 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 									std::map<long, SpriteInfo>::iterator itsp = spinfos.find(renderertarget[itar]);
 									if(itsp != spinfos.end())
 										vectmp.push_back(&itsp->second);
-								}	
-								
+								}
+
 								if(vectmp.size() > 0)
 								{
 									SpriteRenderer * tmp = new SpriteRenderer();
@@ -479,7 +504,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 					float OpenTransSpeedY=0;
 					float OpenTransSpeedZ=0;
 					bool destroykey = false;
-					
+
 					pElem->QueryValueAttribute("zoneSizeX", &zoneSizeX);
 					pElem->QueryValueAttribute("zoneSizeY", &zoneSizeY);
 					pElem->QueryValueAttribute("zoneSizeZ", &zoneSizeZ);
@@ -506,14 +531,14 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 
 				case 5:	//container actor class
 				{
-					float zoneSizeX=0, zoneSizeY=0, zoneSizeZ=0;			
+					float zoneSizeX=0, zoneSizeY=0, zoneSizeZ=0;
 					pElem->QueryValueAttribute("zonesizeX", &zoneSizeX);
 					pElem->QueryValueAttribute("zonesizeY", &zoneSizeY);
 					pElem->QueryValueAttribute("zonesizeZ", &zoneSizeZ);
 
 					act = new ContainerActor(zoneSizeX, zoneSizeY, zoneSizeZ);
 				}
-				break;		
+				break;
 
 				case 6:	//up exit actor class
 				{
@@ -535,7 +560,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 
 				case 8:	//area switch actor class
 				{
-					float zoneSizeX=0, zoneSizeY=0, zoneSizeZ=0;			
+					float zoneSizeX=0, zoneSizeY=0, zoneSizeZ=0;
 					pElem->QueryValueAttribute("zonesizeX", &zoneSizeX);
 					pElem->QueryValueAttribute("zonesizeY", &zoneSizeY);
 					pElem->QueryValueAttribute("zonesizeZ", &zoneSizeZ);
@@ -545,7 +570,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 
 				case 9:	//floor switch actor class
 				{
-					float zoneSizeX=0, zoneSizeY=0, zoneSizeZ=0;			
+					float zoneSizeX=0, zoneSizeY=0, zoneSizeZ=0;
 					pElem->QueryValueAttribute("zonesizeX", &zoneSizeX);
 					pElem->QueryValueAttribute("zonesizeY", &zoneSizeY);
 					pElem->QueryValueAttribute("zonesizeZ", &zoneSizeZ);
@@ -593,7 +618,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 			act->SetRendererType(renderertype, renderertarget);
 			act->SetAttachedSound(attachedsound);
 			act->SetSignaler(signaler);
-			
+
 			// add it to the vector
 			vec[id] = act;
 		}
@@ -615,7 +640,7 @@ bool MapInfoXmlReader::LoadSprites(const std::string &Filename, std::map<long, S
 
 
 	TiXmlDocument doc(Filename);
-	if (!doc.LoadFile()) 
+	if (!doc.LoadFile())
 		return false;
 
 	TiXmlHandle hDoc(&doc);
@@ -626,7 +651,7 @@ bool MapInfoXmlReader::LoadSprites(const std::string &Filename, std::map<long, S
 		pElem=hDoc.FirstChildElement().Element();
 
 		// should always have a valid root but handle gracefully if it does
-		if (!pElem) 
+		if (!pElem)
 			return false;
 
 
@@ -644,17 +669,17 @@ bool MapInfoXmlReader::LoadSprites(const std::string &Filename, std::map<long, S
 				qi.UseFullImage = true;
 
 				pElemC->QueryFloatAttribute("BottomLeftCornerX", &qi.BottomLeftCornerX);
-				pElemC->QueryFloatAttribute("BottomLeftCornerY", &qi.BottomLeftCornerY); 
+				pElemC->QueryFloatAttribute("BottomLeftCornerY", &qi.BottomLeftCornerY);
 				pElemC->QueryFloatAttribute("BottomLeftCornerZ", &qi.BottomLeftCornerZ);
 				pElemC->QueryFloatAttribute("TopRightCornerX", &qi.TopRightCornerX);
-				pElemC->QueryFloatAttribute("TopRightCornerY", &qi.TopRightCornerY); 
+				pElemC->QueryFloatAttribute("TopRightCornerY", &qi.TopRightCornerY);
 				pElemC->QueryFloatAttribute("TopRightCornerZ", &qi.TopRightCornerZ);
 
 				pElemC->QueryFloatAttribute("BottomRightCornerX", &qi.BottomRightCornerX);
-				pElemC->QueryFloatAttribute("BottomRightCornerY", &qi.BottomRightCornerY); 
+				pElemC->QueryFloatAttribute("BottomRightCornerY", &qi.BottomRightCornerY);
 				pElemC->QueryFloatAttribute("BottomRightCornerZ", &qi.BottomRightCornerZ);
 				pElemC->QueryFloatAttribute("TopLeftCornerX", &qi.TopLeftCornerX);
-				pElemC->QueryFloatAttribute("TopLeftCornerY", &qi.TopLeftCornerY); 
+				pElemC->QueryFloatAttribute("TopLeftCornerY", &qi.TopLeftCornerY);
 				pElemC->QueryFloatAttribute("TopLeftCornerZ", &qi.TopLeftCornerZ);
 
 
@@ -662,11 +687,11 @@ bool MapInfoXmlReader::LoadSprites(const std::string &Filename, std::map<long, S
 					qi.UseFullImage = false;
 
 				pElemC->QueryIntAttribute("TopLeftTextcoordY", &qi.TopLeftTextcoordY);
-				pElemC->QueryIntAttribute("TopRightTextcoordX", &qi.TopRightTextcoordX); 
+				pElemC->QueryIntAttribute("TopRightTextcoordX", &qi.TopRightTextcoordX);
 				pElemC->QueryIntAttribute("TopRightTextcoordY", &qi.TopRightTextcoordY);
 				pElemC->QueryIntAttribute("BottomLeftTextcoordX", &qi.BottomLeftTextcoordX);
 				pElemC->QueryIntAttribute("BottomLeftTextcoordY", &qi.BottomLeftTextcoordY);
-				pElemC->QueryIntAttribute("BottomRightTextcoordX", &qi.BottomRightTextcoordX); 
+				pElemC->QueryIntAttribute("BottomRightTextcoordX", &qi.BottomRightTextcoordX);
 				pElemC->QueryIntAttribute("BottomRightTextcoordY", &qi.BottomRightTextcoordY);
 
 				spi.quadsInfo.push_back(qi);
@@ -689,7 +714,7 @@ std::string MapInfoXmlReader::GetText(const std::string &Filename, long textid)
 	std::string res;
 
 	TiXmlDocument doc(Filename);
-	if (!doc.LoadFile()) 
+	if (!doc.LoadFile())
 		return res;
 
 	TiXmlHandle hDoc(&doc);
@@ -700,7 +725,7 @@ std::string MapInfoXmlReader::GetText(const std::string &Filename, long textid)
 		pElem=hDoc.FirstChildElement().Element();
 
 		// should always have a valid root but handle gracefully if it does
-		if (!pElem) 
+		if (!pElem)
 			return res;
 
 
@@ -710,7 +735,7 @@ std::string MapInfoXmlReader::GetText(const std::string &Filename, long textid)
 		{
 			long ctid = -1;
 			pElem->QueryValueAttribute("id", &ctid);
-			if(ctid == textid)	
+			if(ctid == textid)
 			{
 				if(pElem->FirstChild())
 					return pElem->FirstChild()->Value();
@@ -720,7 +745,7 @@ std::string MapInfoXmlReader::GetText(const std::string &Filename, long textid)
 		}
 	}
 
-	return res;	
+	return res;
 }
 
 
@@ -735,7 +760,7 @@ void MapInfoXmlReader::GetAllTexts(const std::string &Filename, std::map<long, s
 	std::string res;
 
 	TiXmlDocument doc(Filename);
-	if (!doc.LoadFile()) 
+	if (!doc.LoadFile())
 		return;
 
 	TiXmlHandle hDoc(&doc);
@@ -746,7 +771,7 @@ void MapInfoXmlReader::GetAllTexts(const std::string &Filename, std::map<long, s
 		pElem=hDoc.FirstChildElement().Element();
 
 		// should always have a valid root but handle gracefully if it does
-		if (!pElem) 
+		if (!pElem)
 			return;
 
 
@@ -776,7 +801,7 @@ std::string MapInfoXmlReader::GetSoundPath(const std::string &Filename, long id)
 	std::string res;
 
 	TiXmlDocument doc(Filename);
-	if (!doc.LoadFile()) 
+	if (!doc.LoadFile())
 		return res;
 
 	TiXmlHandle hDoc(&doc);
@@ -787,7 +812,7 @@ std::string MapInfoXmlReader::GetSoundPath(const std::string &Filename, long id)
 		pElem=hDoc.FirstChildElement().Element();
 
 		// should always have a valid root but handle gracefully if it does
-		if (!pElem) 
+		if (!pElem)
 			return res;
 
 
@@ -797,12 +822,12 @@ std::string MapInfoXmlReader::GetSoundPath(const std::string &Filename, long id)
 		{
 			long ctid = -1;
 			pElem->QueryValueAttribute("id", &ctid);
-			if(ctid == id)	
+			if(ctid == id)
 				return pElem->Attribute("path");
 		}
 	}
 
-	return res;	
+	return res;
 }
 
 
@@ -817,7 +842,7 @@ bool MapInfoXmlReader::LoadModels(const std::string &Filename, std::map<long, Mo
 
 
 	TiXmlDocument doc(Filename);
-	if (!doc.LoadFile()) 
+	if (!doc.LoadFile())
 		return false;
 
 	TiXmlHandle hDoc(&doc);
@@ -828,7 +853,7 @@ bool MapInfoXmlReader::LoadModels(const std::string &Filename, std::map<long, Mo
 		pElem=hDoc.FirstChildElement().Element();
 
 		// should always have a valid root but handle gracefully if it does
-		if (!pElem) 
+		if (!pElem)
 			return false;
 
 
@@ -840,7 +865,7 @@ bool MapInfoXmlReader::LoadModels(const std::string &Filename, std::map<long, Mo
 			spi.filename = pElem->Attribute("filename");
 			pElem->QueryValueAttribute("id", &spi.id);
 			pElem->QueryFloatAttribute("scaleX", &spi.ScaleX);
-			pElem->QueryFloatAttribute("scaleY", &spi.ScaleY); 
+			pElem->QueryFloatAttribute("scaleY", &spi.ScaleY);
 			pElem->QueryFloatAttribute("scaleZ", &spi.ScaleZ);
 
 			vec[spi.id] = spi;

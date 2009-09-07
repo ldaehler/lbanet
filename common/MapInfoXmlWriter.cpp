@@ -1,3 +1,28 @@
+/*
+------------------------[ Lbanet Source ]-------------------------
+Copyright (C) 2009
+Author: Vivien Delage [Rincevent_123]
+Email : vdelage@gmail.com
+
+-------------------------------[ GNU License ]-------------------------------
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-----------------------------------------------------------------------------
+*/
+
+
 #include "MapInfoXmlWriter.h"
 #include "tinyxml.h"
 #include "TextActor.h"
@@ -18,40 +43,40 @@
 // save world information into file
 void MapInfoXmlWriter::SaveWorld(const std::string Filename, const WorldInfo & wi)
 {
-	TiXmlDocument doc;  
+	TiXmlDocument doc;
 	TiXmlComment * comment;
 	std::string s;
 
- 	TiXmlDeclaration* decl = new TiXmlDeclaration( "1.0", "", "" );  
-	doc.LinkEndChild( decl ); 
- 
-	TiXmlElement * root = new TiXmlElement("World");  
-	doc.LinkEndChild( root );  
+ 	TiXmlDeclaration* decl = new TiXmlDeclaration( "1.0", "", "" );
+	doc.LinkEndChild( decl );
+
+	TiXmlElement * root = new TiXmlElement("World");
+	doc.LinkEndChild( root );
 	root->SetAttribute("name", wi.Name);
 	root->SetAttribute("firstmap", wi.FirstMap);
 	root->SetAttribute("firstsparea", wi.FirstSpawning);
 
-	TiXmlElement * desc = new TiXmlElement( "description" );  
-	root->LinkEndChild(desc);  
-	desc->LinkEndChild(new TiXmlText(wi.Description));  
+	TiXmlElement * desc = new TiXmlElement( "description" );
+	root->LinkEndChild(desc);
+	desc->LinkEndChild(new TiXmlText(wi.Description));
 
 	// block: teleport
 	{
 		comment = new TiXmlComment();
 		s="Define the place it is possible to teleport to, the first place is the place where we arrive in the world";
-		comment->SetValue(s.c_str());  
-		root->LinkEndChild( comment );  
+		comment->SetValue(s.c_str());
+		root->LinkEndChild( comment );
 
-		TiXmlElement * tps = new TiXmlElement( "teleports" );  
-		root->LinkEndChild(tps);  
+		TiXmlElement * tps = new TiXmlElement( "teleports" );
+		root->LinkEndChild(tps);
 
-		
+
 		std::map<std::string, TPInfo>::const_iterator it = wi.Teleports.begin();
 		std::map<std::string, TPInfo>::const_iterator end = wi.Teleports.end();
 		for(; it != end; ++it)
 		{
-			TiXmlElement * tp = new TiXmlElement( "teleport" );  
-			tps->LinkEndChild(tp);  	
+			TiXmlElement * tp = new TiXmlElement( "teleport" );
+			tps->LinkEndChild(tp);
 
 			tp->SetAttribute("name", it->second.Name);
 			tp->SetAttribute("map", it->second.NewMap);
@@ -61,15 +86,15 @@ void MapInfoXmlWriter::SaveWorld(const std::string Filename, const WorldInfo & w
 
 		// file info block
 		{
-			TiXmlElement * files = new TiXmlElement( "files" );  
+			TiXmlElement * files = new TiXmlElement( "files" );
 			root->LinkEndChild(files);
 
 			std::map<std::string, std::string>::const_iterator it2 = wi.Files.begin();
 			std::map<std::string, std::string>::const_iterator end2 = wi.Files.end();
 			for(; it2 != end2; ++it2)
 			{
-				TiXmlElement * file = new TiXmlElement( "file" );  
-				files->LinkEndChild(file);  	
+				TiXmlElement * file = new TiXmlElement( "file" );
+				files->LinkEndChild(file);
 
 				file->SetAttribute("name", it2->first);
 				file->SetAttribute("path", it2->second);
@@ -78,8 +103,8 @@ void MapInfoXmlWriter::SaveWorld(const std::string Filename, const WorldInfo & w
 
 
 
-	TiXmlElement * maps = new TiXmlElement( "maps" );  
-	root->LinkEndChild(maps);  
+	TiXmlElement * maps = new TiXmlElement( "maps" );
+	root->LinkEndChild(maps);
 
 	std::map<std::string, MapInfo>::const_iterator it = wi.Maps.begin();
 	std::map<std::string, MapInfo>::const_iterator end = wi.Maps.end();
@@ -87,12 +112,12 @@ void MapInfoXmlWriter::SaveWorld(const std::string Filename, const WorldInfo & w
 	{
 		comment = new TiXmlComment();
 		s="Map of "+it->second.Description;
-		comment->SetValue(s.c_str());  
-		maps->LinkEndChild( comment );  
+		comment->SetValue(s.c_str());
+		maps->LinkEndChild( comment );
 
 
-		TiXmlElement * map = new TiXmlElement( "Map" );  
-		maps->LinkEndChild(map);  	
+		TiXmlElement * map = new TiXmlElement( "Map" );
+		maps->LinkEndChild(map);
 
 		map->SetAttribute("name", it->first);
 		map->SetAttribute("type", it->second.Type);
@@ -100,27 +125,27 @@ void MapInfoXmlWriter::SaveWorld(const std::string Filename, const WorldInfo & w
 		map->SetAttribute("repeatmusic", it->second.MusicLoop);
 
 
-		TiXmlElement * descm = new TiXmlElement( "description" );  
-		map->LinkEndChild(descm);  
-		descm->LinkEndChild(new TiXmlText(it->second.Description));  
+		TiXmlElement * descm = new TiXmlElement( "description" );
+		map->LinkEndChild(descm);
+		descm->LinkEndChild(new TiXmlText(it->second.Description));
 
 
 		// file info block
 		{
 			comment = new TiXmlComment();
 			s="Give the path of the files containing the island information to be loaded";
-			comment->SetValue(s.c_str());  
-			map->LinkEndChild( comment );  
+			comment->SetValue(s.c_str());
+			map->LinkEndChild( comment );
 
-			TiXmlElement * files = new TiXmlElement( "files" );  
+			TiXmlElement * files = new TiXmlElement( "files" );
 			map->LinkEndChild(files);
 
 			std::map<std::string, std::string>::const_iterator it2 = it->second.Files.begin();
 			std::map<std::string, std::string>::const_iterator end2 = it->second.Files.end();
 			for(; it2 != end2; ++it2)
 			{
-				TiXmlElement * file = new TiXmlElement( "file" );  
-				files->LinkEndChild(file);  	
+				TiXmlElement * file = new TiXmlElement( "file" );
+				files->LinkEndChild(file);
 
 				file->SetAttribute("name", it2->first);
 				file->SetAttribute("path", it2->second);
@@ -132,18 +157,18 @@ void MapInfoXmlWriter::SaveWorld(const std::string Filename, const WorldInfo & w
 		{
 			comment = new TiXmlComment();
 			s="Describe the lights present in the scene";
-			comment->SetValue(s.c_str());  
-			map->LinkEndChild( comment );  
+			comment->SetValue(s.c_str());
+			map->LinkEndChild( comment );
 
-			TiXmlElement * lights = new TiXmlElement( "lights" );  
+			TiXmlElement * lights = new TiXmlElement( "lights" );
 			map->LinkEndChild(lights);
 
 			std::map<std::string, LighInfo>::const_iterator it2 = it->second.Lights.begin();
 			std::map<std::string, LighInfo>::const_iterator end2 = it->second.Lights.end();
 			for(; it2 != end2; ++it2)
 			{
-				TiXmlElement * light = new TiXmlElement( "light" );  
-				lights->LinkEndChild(light);  	
+				TiXmlElement * light = new TiXmlElement( "light" );
+				lights->LinkEndChild(light);
 
 				light->SetAttribute("name", it2->first);
 				light->SetAttribute("type", it2->second.Type);
@@ -162,18 +187,18 @@ void MapInfoXmlWriter::SaveWorld(const std::string Filename, const WorldInfo & w
 		{
 			comment = new TiXmlComment();
 			s="Describe the possible spawning areas of the main character";
-			comment->SetValue(s.c_str());  
-			map->LinkEndChild( comment );  
+			comment->SetValue(s.c_str());
+			map->LinkEndChild( comment );
 
-			TiXmlElement * spareas = new TiXmlElement( "spareas" );  
+			TiXmlElement * spareas = new TiXmlElement( "spareas" );
 			map->LinkEndChild(spareas);
 
 			std::map<std::string, SpawningInfo>::const_iterator it2 = it->second.Spawnings.begin();
 			std::map<std::string, SpawningInfo>::const_iterator end2 = it->second.Spawnings.end();
 			for(; it2 != end2; ++it2)
 			{
-				TiXmlElement * sparea = new TiXmlElement( "sparea" );  
-				spareas->LinkEndChild(sparea);  	
+				TiXmlElement * sparea = new TiXmlElement( "sparea" );
+				spareas->LinkEndChild(sparea);
 
 				sparea->SetAttribute("name", it2->first);
 
@@ -189,18 +214,18 @@ void MapInfoXmlWriter::SaveWorld(const std::string Filename, const WorldInfo & w
 		{
 			comment = new TiXmlComment();
 			s="Describe the possible map exit places using square areas from TopLeft point to BottomRight point";
-			comment->SetValue(s.c_str());  
-			map->LinkEndChild( comment );  
+			comment->SetValue(s.c_str());
+			map->LinkEndChild( comment );
 
-			TiXmlElement * exits = new TiXmlElement( "exits" );  
+			TiXmlElement * exits = new TiXmlElement( "exits" );
 			map->LinkEndChild(exits);
 
 			std::map<std::string, ExitInfo>::const_iterator it2 = it->second.Exits.begin();
 			std::map<std::string, ExitInfo>::const_iterator end2 = it->second.Exits.end();
 			for(; it2 != end2; ++it2)
 			{
-				TiXmlElement * exit = new TiXmlElement( "exit" );  
-				exits->LinkEndChild(exit);  	
+				TiXmlElement * exit = new TiXmlElement( "exit" );
+				exits->LinkEndChild(exit);
 
 				exit->SetAttribute("name", it2->first);
 
@@ -219,7 +244,7 @@ void MapInfoXmlWriter::SaveWorld(const std::string Filename, const WorldInfo & w
 
 	}
 
-	doc.SaveFile(Filename); 
+	doc.SaveFile(Filename);
 }
 
 
@@ -227,25 +252,25 @@ void MapInfoXmlWriter::SaveWorld(const std::string Filename, const WorldInfo & w
 // save world information into file
 void MapInfoXmlWriter::SaveTexts(const std::string Filename, const std::map<long, std::string> &txts)
 {
-	TiXmlDocument doc;  
- 	TiXmlDeclaration* decl = new TiXmlDeclaration( "1.0", "UTF8", "" );  
-	doc.LinkEndChild( decl ); 
- 
-	TiXmlElement * root = new TiXmlElement("texts");  
-	doc.LinkEndChild( root );  
+	TiXmlDocument doc;
+ 	TiXmlDeclaration* decl = new TiXmlDeclaration( "1.0", "UTF8", "" );
+	doc.LinkEndChild( decl );
+
+	TiXmlElement * root = new TiXmlElement("texts");
+	doc.LinkEndChild( root );
 
 	std::map<long, std::string>::const_iterator it = txts.begin();
 	std::map<long, std::string>::const_iterator end = txts.end();
 	for(; it != end; ++it)
 	{
-		TiXmlElement * txt = new TiXmlElement( "text" );  
+		TiXmlElement * txt = new TiXmlElement( "text" );
 		txt->SetAttribute("id", it->first);
-		root->LinkEndChild(txt);  
-		txt->LinkEndChild(new TiXmlText(it->second)); 
+		root->LinkEndChild(txt);
+		txt->LinkEndChild(new TiXmlText(it->second));
 	}
 
 
-	doc.SaveFile(Filename); 
+	doc.SaveFile(Filename);
 }
 
 
@@ -253,21 +278,21 @@ void MapInfoXmlWriter::SaveTexts(const std::string Filename, const std::map<long
 // save map actors into memory
 void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Actor *> * vec)
 {
-	TiXmlDocument doc;  
- 	TiXmlDeclaration* decl = new TiXmlDeclaration( "1.0", "UTF8", "" );  
-	doc.LinkEndChild( decl ); 
- 
-	TiXmlElement * root = new TiXmlElement("actors");  
-	doc.LinkEndChild( root );  
+	TiXmlDocument doc;
+ 	TiXmlDeclaration* decl = new TiXmlDeclaration( "1.0", "UTF8", "" );
+	doc.LinkEndChild( decl );
+
+	TiXmlElement * root = new TiXmlElement("actors");
+	doc.LinkEndChild( root );
 
 	std::map<long, Actor *>::const_iterator it = vec->begin();
 	std::map<long, Actor *>::const_iterator end = vec->end();
 	for(; it != end; ++it)
 	{
-		TiXmlElement * act = new TiXmlElement( "actor" );  
-		root->LinkEndChild(act);  
+		TiXmlElement * act = new TiXmlElement( "actor" );
+		root->LinkEndChild(act);
 		act->SetAttribute("id", it->second->GetId());
-		act->SetAttribute("type", it->second->GetType()); 
+		act->SetAttribute("type", it->second->GetType());
 		act->SetDoubleAttribute("posX", it->second->GetPosX());
 		act->SetDoubleAttribute("posY", it->second->GetPosY());
 		act->SetDoubleAttribute("posZ", it->second->GetPosZ());
@@ -424,15 +449,15 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 			case 10:	//lift actor class
 			{
 				{
-					TiXmlElement * scripts = new TiXmlElement( "scripts" );  
-					act->LinkEndChild(scripts);  
+					TiXmlElement * scripts = new TiXmlElement( "scripts" );
+					act->LinkEndChild(scripts);
 
 					LiftActor * tmpa = static_cast<LiftActor *>(it->second);
 					const std::vector<PlayerScriptPart> & scriptsV = tmpa->GetScripts();
 					for(size_t cci=0; cci<scriptsV.size(); ++cci)
 					{
-						TiXmlElement * script = new TiXmlElement( "script" );  
-						scripts->LinkEndChild(script);  
+						TiXmlElement * script = new TiXmlElement( "script" );
+						scripts->LinkEndChild(script);
 
 						script->SetAttribute("type", scriptsV[cci].Type);
 						script->SetDoubleAttribute("ValueA", scriptsV[cci].ValueA);
@@ -450,35 +475,35 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 	}
 
 
-	doc.SaveFile(Filename); 
+	doc.SaveFile(Filename);
 }
 
 
 // save all sprites info
 void MapInfoXmlWriter::SaveSprites(const std::string &Filename, std::map<long, SpriteInfo> *vec)
 {
-	TiXmlDocument doc;  
- 	TiXmlDeclaration* decl = new TiXmlDeclaration( "1.0", "UTF8", "" );  
-	doc.LinkEndChild( decl ); 
- 
-	TiXmlElement * root = new TiXmlElement("sprites");  
-	doc.LinkEndChild( root );  
+	TiXmlDocument doc;
+ 	TiXmlDeclaration* decl = new TiXmlDeclaration( "1.0", "UTF8", "" );
+	doc.LinkEndChild( decl );
+
+	TiXmlElement * root = new TiXmlElement("sprites");
+	doc.LinkEndChild( root );
 
 	std::map<long, SpriteInfo>::const_iterator it = vec->begin();
 	std::map<long, SpriteInfo>::const_iterator end = vec->end();
 	for(; it != end; ++it)
 	{
-		TiXmlElement * act = new TiXmlElement( "sprite" );  
-		root->LinkEndChild(act);  
+		TiXmlElement * act = new TiXmlElement( "sprite" );
+		root->LinkEndChild(act);
 		act->SetAttribute("id", it->first);
-		act->SetAttribute("filename", it->second.filename); 
+		act->SetAttribute("filename", it->second.filename);
 
 		std::vector<QuadImageInfo>::const_iterator itq = it->second.quadsInfo.begin();
 		std::vector<QuadImageInfo>::const_iterator endq = it->second.quadsInfo.end();
 		for(; itq != endq; ++itq)
 		{
-			TiXmlElement * quad = new TiXmlElement( "textpart" );  
-			act->LinkEndChild(quad);  
+			TiXmlElement * quad = new TiXmlElement( "textpart" );
+			act->LinkEndChild(quad);
 			quad->SetAttribute("UseFullImage", itq->UseFullImage);
 
 			quad->SetDoubleAttribute("BottomLeftCornerX", itq->BottomLeftCornerX);
@@ -517,5 +542,5 @@ void MapInfoXmlWriter::SaveSprites(const std::string &Filename, std::map<long, S
 	}
 
 
-	doc.SaveFile(Filename); 
+	doc.SaveFile(Filename);
 }

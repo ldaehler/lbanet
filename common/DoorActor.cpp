@@ -1,3 +1,28 @@
+/*
+------------------------[ Lbanet Source ]-------------------------
+Copyright (C) 2009
+Author: Vivien Delage [Rincevent_123]
+Email : vdelage@gmail.com
+
+-------------------------------[ GNU License ]-------------------------------
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-----------------------------------------------------------------------------
+*/
+
+
 #include "DoorActor.h"
 #include <math.h>
 
@@ -18,11 +43,11 @@ DoorActor::DoorActor(float zoneSizeX, float zoneSizeY, float zoneSizeZ, bool Loc
 						bool Hide, float OpenTransX, float OpenTransY, float OpenTransZ,
 						float OpenTransSpeedX, float OpenTransSpeedY, float OpenTransSpeedZ, bool destroykey)
 : ZoneActor(zoneSizeX, zoneSizeY, zoneSizeZ), _locked(Locked), _KeyId(KeyId), _state(CLOSED),
-	_Hide(Hide),_OpenTransSpeedX(OpenTransSpeedX), _OpenTransSpeedY(OpenTransSpeedY), 
+	_Hide(Hide),_OpenTransSpeedX(OpenTransSpeedX), _OpenTransSpeedY(OpenTransSpeedY),
 		_OpenTransSpeedZ(OpenTransSpeedZ), _opencounter(0), _signalon(false),
 		_OpenTransX(OpenTransX), _OpenTransY(OpenTransY), _OpenTransZ(OpenTransZ), _destroykey(destroykey)
 {
-	
+
 }
 
 /***********************************************************
@@ -117,7 +142,7 @@ int DoorActor::Process(double tnow, float tdiff)
 /***********************************************************
 	process zone activation
 ***********************************************************/
-void DoorActor::ProcessActivation(float PlayerPosX, float PlayerPosY, float PlayerPosZ, 
+void DoorActor::ProcessActivation(float PlayerPosX, float PlayerPosY, float PlayerPosZ,
 									  float PlayerRotation)
 {
 	if(!_locked)
@@ -126,11 +151,11 @@ void DoorActor::ProcessActivation(float PlayerPosX, float PlayerPosY, float Play
 		SendSignal(1, _targets);
 	}
 }
-	
+
 /***********************************************************
 	process zone desactivation
 ***********************************************************/
-void DoorActor::ProcessDesactivation(float PlayerPosX, float PlayerPosY, float PlayerPosZ, 
+void DoorActor::ProcessDesactivation(float PlayerPosX, float PlayerPosY, float PlayerPosZ,
 										 float PlayerRotation)
 {
 	if(!_locked)
@@ -140,7 +165,7 @@ void DoorActor::ProcessDesactivation(float PlayerPosX, float PlayerPosY, float P
 	}
 }
 
-	
+
 /***********************************************************
 	called on signal
 ***********************************************************/
@@ -176,7 +201,7 @@ bool DoorActor::OnSignal(long SignalNumber)
 	return false;
 }
 
-	
+
 /***********************************************************
 open the door
 ***********************************************************/
@@ -201,7 +226,7 @@ bool DoorActor::Open()
 	return false;
 }
 
-	
+
 /***********************************************************
 open the door
 ***********************************************************/
@@ -227,7 +252,7 @@ bool DoorActor::Close()
 	return false;
 }
 
-	
+
 /***********************************************************
 set actor position in the scene
 ***********************************************************/
@@ -239,7 +264,7 @@ void DoorActor::SetPosition(float  posX, float  posY, float  posZ)
 }
 
 
-	
+
 /***********************************************************
 update info
 ***********************************************************/
@@ -254,7 +279,7 @@ void DoorActor::UpdateCLoseOpen()
 	_ClosedZ = _posZ;
 }
 
-	
+
 /***********************************************************
 render editor part
 ***********************************************************/
@@ -288,7 +313,7 @@ void DoorActor::RenderEditor()
 	#endif
 }
 
-	
+
 /***********************************************************
 get current actor state
 return false if the actor is stateless
@@ -300,7 +325,7 @@ bool DoorActor::Getstate(ActorStateInfo & currState)
 	currState.SignalOn = _signalon;
 	return true;
 }
-	
+
 /***********************************************************
 set the actor state
 ***********************************************************/
