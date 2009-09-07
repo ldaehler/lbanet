@@ -1,3 +1,28 @@
+/*
+------------------------[ Lbanet Source ]-------------------------
+Copyright (C) 2009
+Author: Vivien Delage [Rincevent_123]
+Email : vdelage@gmail.com
+
+-------------------------------[ GNU License ]-------------------------------
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-----------------------------------------------------------------------------
+*/
+
+
 #include "ZoneActor.h"
 
 #ifndef _LBANET_SERVER_SIDE_
@@ -11,7 +36,7 @@
 ZoneActor::ZoneActor(float zoneSizeX, float zoneSizeY, float zoneSizeZ)
 : _zoneSizeX(zoneSizeX), _zoneSizeY(zoneSizeY), _zoneSizeZ(zoneSizeZ), _activated(false)
 {
-	
+
 }
 
 /***********************************************************
@@ -34,7 +59,7 @@ int ZoneActor::ActivateZone(float PlayerPosX, float PlayerPosY, float PlayerPosZ
 	float posZ = GetZoneCenterZ();
 
 
-	if( (PlayerPosX >= (posX-_zoneSizeX) && PlayerPosX < (posX+_zoneSizeX)) && 
+	if( (PlayerPosX >= (posX-_zoneSizeX) && PlayerPosX < (posX+_zoneSizeX)) &&
 		(PlayerPosY >= (posY)				&& PlayerPosY < (posY+_zoneSizeY)) &&
 		(PlayerPosZ >= (posZ-_zoneSizeZ) && PlayerPosZ < (posZ+_zoneSizeZ)))
 	{
@@ -56,7 +81,7 @@ int ZoneActor::ActivateZone(float PlayerPosX, float PlayerPosY, float PlayerPosZ
 		_activated = false;
 		return -1;
 	}
-		
+
 
 	return 0;
 }

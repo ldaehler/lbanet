@@ -1,3 +1,28 @@
+/*
+------------------------[ Lbanet Source ]-------------------------
+Copyright (C) 2009
+Author: Vivien Delage [Rincevent_123]
+Email : vdelage@gmail.com
+
+-------------------------------[ GNU License ]-------------------------------
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-----------------------------------------------------------------------------
+*/
+
+
 #include "Actor.h"
 
 #ifndef _LBANET_SERVER_SIDE_
@@ -13,7 +38,7 @@
 	Constructor
 ***********************************************************/
 Actor::Actor()
-: _posX(0),_posY(0), _posZ(0), _rotation(0), 
+: _posX(0),_posY(0), _posZ(0), _rotation(0),
 	_passable(true), _depthmask(true), _Renderer(NULL),
 	_VelocityX(0), _VelocityY(0), _VelocityZ(0), _movable(false),
 	_sizeX(0),_sizeY(0), _sizeZ(0), _visible(true), _outputsignal(-1),
@@ -142,7 +167,7 @@ short Actor::GetStructure(int X, int Y, int Z)
 	if(_passable || !_visible)
 		return 0;
 
-	if(	(X >= (_posX-_sizeX) && X < (_posX+_sizeX)) && 
+	if(	(X >= (_posX-_sizeX) && X < (_posX+_sizeX)) &&
 		(Y >= (_posY)		&& Y < (_posY+_sizeY)) &&
 		(Z >= (_posZ-_sizeZ) && Z < (_posZ+_sizeZ)))
 		return 1;

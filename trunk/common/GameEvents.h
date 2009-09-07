@@ -1,3 +1,28 @@
+/*
+------------------------[ Lbanet Source ]-------------------------
+Copyright (C) 2009
+Author: Vivien Delage [Rincevent_123]
+Email : vdelage@gmail.com
+
+-------------------------------[ GNU License ]-------------------------------
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-----------------------------------------------------------------------------
+*/
+
+
 #ifndef __LBANET_GAME_EVENTS_H__
 #define __LBANET_GAME_EVENTS_H__
 
@@ -65,7 +90,7 @@ public:
 ************************************************************************************************************************
 *                                                  class ChangeWorldEvent
 *
-*	used when the user is changing world 
+*	used when the user is changing world
 ************************************************************************************************************************
 */
 class ChangeWorldEvent : public GameEvent
@@ -105,7 +130,7 @@ public:
 ************************************************************************************************************************
 *                                                  class ScreenResEvent
 *
-*	used when the user is changing screen resolution 
+*	used when the user is changing screen resolution
 ************************************************************************************************************************
 */
 class ScreenResEvent : public GameEvent
@@ -127,7 +152,7 @@ public:
 ************************************************************************************************************************
 *                                                  class DisplayFPSEvent
 *
-*	used when the user is changing screen resolution 
+*	used when the user is changing screen resolution
 ************************************************************************************************************************
 */
 class DisplayFPSEvent : public GameEvent
@@ -148,7 +173,7 @@ public:
 ************************************************************************************************************************
 *                                                  class ChangeMainBodyEvent
 *
-*	used when the user is changing screen resolution 
+*	used when the user is changing screen resolution
 ************************************************************************************************************************
 */
 class ChangeMainBodyEvent : public GameEvent
@@ -168,7 +193,7 @@ public:
 ************************************************************************************************************************
 *                                                  class NewFontSizeEvent
 *
-*	used when the user is changing screen resolution 
+*	used when the user is changing screen resolution
 ************************************************************************************************************************
 */
 class NewFontSizeEvent : public GameEvent
@@ -186,7 +211,7 @@ public:
 ************************************************************************************************************************
 *                                                  class TeleportEvent
 *
-*	used when the user is changing screen resolution 
+*	used when the user is changing screen resolution
 ************************************************************************************************************************
 */
 class TeleportEvent : public GameEvent
@@ -209,7 +234,7 @@ public:
 ************************************************************************************************************************
 *                                                  class ChangeMainBodyColorEvent
 *
-*	used when the user is changing screen resolution 
+*	used when the user is changing screen resolution
 ************************************************************************************************************************
 */
 class ChangeMainBodyColorEvent : public GameEvent
@@ -257,7 +282,7 @@ public:
 */
 struct PlayerScriptPart
 {
-	int Type;	//0 = rotation - 1=translation - 2=animation - 3=inform targetA - 
+	int Type;	//0 = rotation - 1=translation - 2=animation - 3=inform targetA -
 				// 4=wait fo signal -5= wait number of ms
 	int Animation;
 	int Sound;
@@ -324,7 +349,7 @@ public:
 ************************************************************************************************************************
 *                                                  class TeleportEvent
 *
-*	used when the user is changing screen resolution 
+*	used when the user is changing screen resolution
 ************************************************************************************************************************
 */
 class TeleportAnyEvent : public GameEvent
@@ -348,7 +373,7 @@ public:
 ************************************************************************************************************************
 *                                                  class ChangePerspectiveEvent
 *
-*	used when the user is changing screen resolution 
+*	used when the user is changing screen resolution
 ************************************************************************************************************************
 */
 class ChangePerspectiveEvent : public GameEvent
