@@ -1,3 +1,28 @@
+/*
+------------------------[ Lbanet Source ]-------------------------
+Copyright (C) 2009
+Author: Vivien Delage [Rincevent_123]
+Email : vdelage@gmail.com
+
+-------------------------------[ GNU License ]-------------------------------
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-----------------------------------------------------------------------------
+*/
+
+
 #ifndef _SESSION_SERVANT_H
 #define _SESSION_SERVANT_H
 
@@ -19,20 +44,20 @@ class SessionServant : public ClientSession, public IceUtil::Mutex
 {
 public:
 	//! constructor
-	SessionServant(const std::string& userId, const RoomManagerPrx& manager, 
+	SessionServant(const std::string& userId, const RoomManagerPrx& manager,
 					const ConnectedTrackerPrx& ctracker, const MapManagerPrx& map_manager);
 
 	//! the client join a chat room
-    virtual ChatRoomParticipantPrx JoinChat(const std::string& room, const ChatRoomObserverPrx& observer, 
+    virtual ChatRoomParticipantPrx JoinChat(const std::string& room, const ChatRoomObserverPrx& observer,
 												const Ice::Current&);
 
 	//! the client leave a chat room
-    virtual void LeaveChat(const std::string& room, const ChatRoomObserverPrx& observer, 
+    virtual void LeaveChat(const std::string& room, const ChatRoomObserverPrx& observer,
 								const Ice::Current&);
 
 
 	//! the client change actor information room
-	virtual ActorsParticipantPrx ChangeRoom(	const std::string& newroom, 
+	virtual ActorsParticipantPrx ChangeRoom(	const std::string& newroom,
 												const std::string & actorname,
 												const ActorsObserverPrx& observer, const Ice::Current&);
 
@@ -60,7 +85,7 @@ public:
 private:
 	std::string							_userId;
 	Ice::Long							_userNum;
-	
+
 	std::map<std::string, ChatRoomParticipantPrx>	_chat_rooms;
 
 	std::string							_curr_actor_room;
