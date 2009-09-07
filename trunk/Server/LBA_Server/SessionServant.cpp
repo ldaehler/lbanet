@@ -1,3 +1,28 @@
+/*
+------------------------[ Lbanet Source ]-------------------------
+Copyright (C) 2009
+Author: Vivien Delage [Rincevent_123]
+Email : vdelage@gmail.com
+
+-------------------------------[ GNU License ]-------------------------------
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-----------------------------------------------------------------------------
+*/
+
+
 #include "SessionServant.h"
 #include <IceUtil/UUID.h>
 #include <Ice/Ice.h>
@@ -5,7 +30,7 @@
 /***********************************************************
 constructor
 ***********************************************************/
-SessionServant::SessionServant(const std::string& userId, const RoomManagerPrx& manager, 
+SessionServant::SessionServant(const std::string& userId, const RoomManagerPrx& manager,
 									const ConnectedTrackerPrx& ctracker, const MapManagerPrx& map_manager)
 : _manager(manager), _curr_actor_room(""), _userId(userId), _ctracker(ctracker), _map_manager(map_manager),
 	_userNum(-1)
@@ -17,8 +42,8 @@ SessionServant::SessionServant(const std::string& userId, const RoomManagerPrx& 
 /***********************************************************
 the client join a chat room
 ***********************************************************/
-ChatRoomParticipantPrx SessionServant::JoinChat(	const std::string& room, 
-														const ChatRoomObserverPrx& observer, 
+ChatRoomParticipantPrx SessionServant::JoinChat(	const std::string& room,
+														const ChatRoomObserverPrx& observer,
 														const Ice::Current& current)
 {
     Lock sync(*this);
@@ -48,7 +73,7 @@ ChatRoomParticipantPrx SessionServant::JoinChat(	const std::string& room,
 /***********************************************************
 the client leave a chat room
 ***********************************************************/
-void SessionServant::LeaveChat(	const std::string& room, const ChatRoomObserverPrx& observer, 
+void SessionServant::LeaveChat(	const std::string& room, const ChatRoomObserverPrx& observer,
 										const Ice::Current& current)
 {
     Lock sync(*this);
@@ -73,9 +98,9 @@ void SessionServant::LeaveChat(	const std::string& room, const ChatRoomObserverP
 /***********************************************************
 the client change actor information room
 ***********************************************************/
-ActorsParticipantPrx SessionServant::ChangeRoom(		const std::string& newroom, 
+ActorsParticipantPrx SessionServant::ChangeRoom(		const std::string& newroom,
 														const std::string & actorname,
-														const ActorsObserverPrx& observer, 
+														const ActorsObserverPrx& observer,
 														const Ice::Current& current)
 {
     Lock sync(*this);
