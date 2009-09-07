@@ -37,6 +37,12 @@ static const ::std::string __LbaNet__ClientSession__ChangeRoom_name = "ChangeRoo
 
 static const ::std::string __LbaNet__ClientSession__GetConnected_name = "GetConnected";
 
+static const ::std::string __LbaNet__ClientSession__ActivateActor_name = "ActivateActor";
+
+static const ::std::string __LbaNet__ClientSession__SignalActor_name = "SignalActor";
+
+static const ::std::string __LbaNet__ClientSession__GetUpdatedInfo_name = "GetUpdatedInfo";
+
 static const ::std::string __LbaNet__ClientSession__GetTime_name = "GetTime";
 
 ::Ice::Object* IceInternal::upCast(::LbaNet::ClientSession* p) { return p; }
@@ -184,6 +190,90 @@ IceProxy::LbaNet::ClientSession::GetConnected(::Ice::Long& ownid, const ::Ice::C
             __delBase = __getDelegate(false);
             ::IceDelegate::LbaNet::ClientSession* __del = dynamic_cast< ::IceDelegate::LbaNet::ClientSession*>(__delBase.get());
             return __del->GetConnected(ownid, __ctx);
+        }
+        catch(const ::IceInternal::LocalExceptionWrapper& __ex)
+        {
+            __handleExceptionWrapper(__delBase, __ex, 0);
+        }
+        catch(const ::Ice::LocalException& __ex)
+        {
+            __handleException(__delBase, __ex, 0, __cnt);
+        }
+    }
+}
+
+void
+IceProxy::LbaNet::ClientSession::ActivateActor(const ::LbaNet::ActorActivationInfo& ai, const ::Ice::Context* __ctx)
+{
+    int __cnt = 0;
+    while(true)
+    {
+        ::IceInternal::Handle< ::IceDelegate::Ice::Object> __delBase;
+        try
+        {
+#if defined(__BCPLUSPLUS__) && (__BCPLUSPLUS__ >= 0x0600) // C++Builder 2009 compiler bug
+            IceUtil::DummyBCC dummy;
+#endif
+            __delBase = __getDelegate(false);
+            ::IceDelegate::LbaNet::ClientSession* __del = dynamic_cast< ::IceDelegate::LbaNet::ClientSession*>(__delBase.get());
+            __del->ActivateActor(ai, __ctx);
+            return;
+        }
+        catch(const ::IceInternal::LocalExceptionWrapper& __ex)
+        {
+            __handleExceptionWrapper(__delBase, __ex, 0);
+        }
+        catch(const ::Ice::LocalException& __ex)
+        {
+            __handleException(__delBase, __ex, 0, __cnt);
+        }
+    }
+}
+
+void
+IceProxy::LbaNet::ClientSession::SignalActor(const ::LbaNet::ActorSignalInfo& ai, const ::Ice::Context* __ctx)
+{
+    int __cnt = 0;
+    while(true)
+    {
+        ::IceInternal::Handle< ::IceDelegate::Ice::Object> __delBase;
+        try
+        {
+#if defined(__BCPLUSPLUS__) && (__BCPLUSPLUS__ >= 0x0600) // C++Builder 2009 compiler bug
+            IceUtil::DummyBCC dummy;
+#endif
+            __delBase = __getDelegate(false);
+            ::IceDelegate::LbaNet::ClientSession* __del = dynamic_cast< ::IceDelegate::LbaNet::ClientSession*>(__delBase.get());
+            __del->SignalActor(ai, __ctx);
+            return;
+        }
+        catch(const ::IceInternal::LocalExceptionWrapper& __ex)
+        {
+            __handleExceptionWrapper(__delBase, __ex, 0);
+        }
+        catch(const ::Ice::LocalException& __ex)
+        {
+            __handleException(__delBase, __ex, 0, __cnt);
+        }
+    }
+}
+
+::LbaNet::UpdateSeq
+IceProxy::LbaNet::ClientSession::GetUpdatedInfo(const ::Ice::Context* __ctx)
+{
+    int __cnt = 0;
+    while(true)
+    {
+        ::IceInternal::Handle< ::IceDelegate::Ice::Object> __delBase;
+        try
+        {
+#if defined(__BCPLUSPLUS__) && (__BCPLUSPLUS__ >= 0x0600) // C++Builder 2009 compiler bug
+            IceUtil::DummyBCC dummy;
+#endif
+            __checkTwowayOnly(__LbaNet__ClientSession__GetUpdatedInfo_name);
+            __delBase = __getDelegate(false);
+            ::IceDelegate::LbaNet::ClientSession* __del = dynamic_cast< ::IceDelegate::LbaNet::ClientSession*>(__delBase.get());
+            return __del->GetUpdatedInfo(__ctx);
         }
         catch(const ::IceInternal::LocalExceptionWrapper& __ex)
         {
@@ -397,6 +487,116 @@ IceDelegateM::LbaNet::ClientSession::GetConnected(::Ice::Long& ownid, const ::Ic
         __is->startReadEncaps();
         __is->read(ownid);
         ::LbaNet::__readConnectedList(__is, __ret);
+        __is->endReadEncaps();
+        return __ret;
+    }
+    catch(const ::Ice::LocalException& __ex)
+    {
+        throw ::IceInternal::LocalExceptionWrapper(__ex, false);
+    }
+}
+
+void
+IceDelegateM::LbaNet::ClientSession::ActivateActor(const ::LbaNet::ActorActivationInfo& ai, const ::Ice::Context* __context)
+{
+    ::IceInternal::Outgoing __og(__handler.get(), __LbaNet__ClientSession__ActivateActor_name, ::Ice::Normal, __context);
+    try
+    {
+        ::IceInternal::BasicStream* __os = __og.os();
+        ai.__write(__os);
+    }
+    catch(const ::Ice::LocalException& __ex)
+    {
+        __og.abort(__ex);
+    }
+    bool __ok = __og.invoke();
+    if(!__og.is()->b.empty())
+    {
+        try
+        {
+            if(!__ok)
+            {
+                try
+                {
+                    __og.throwUserException();
+                }
+                catch(const ::Ice::UserException& __ex)
+                {
+                    ::Ice::UnknownUserException __uue(__FILE__, __LINE__, __ex.ice_name());
+                    throw __uue;
+                }
+            }
+            __og.is()->skipEmptyEncaps();
+        }
+        catch(const ::Ice::LocalException& __ex)
+        {
+            throw ::IceInternal::LocalExceptionWrapper(__ex, false);
+        }
+    }
+}
+
+void
+IceDelegateM::LbaNet::ClientSession::SignalActor(const ::LbaNet::ActorSignalInfo& ai, const ::Ice::Context* __context)
+{
+    ::IceInternal::Outgoing __og(__handler.get(), __LbaNet__ClientSession__SignalActor_name, ::Ice::Normal, __context);
+    try
+    {
+        ::IceInternal::BasicStream* __os = __og.os();
+        ai.__write(__os);
+    }
+    catch(const ::Ice::LocalException& __ex)
+    {
+        __og.abort(__ex);
+    }
+    bool __ok = __og.invoke();
+    if(!__og.is()->b.empty())
+    {
+        try
+        {
+            if(!__ok)
+            {
+                try
+                {
+                    __og.throwUserException();
+                }
+                catch(const ::Ice::UserException& __ex)
+                {
+                    ::Ice::UnknownUserException __uue(__FILE__, __LINE__, __ex.ice_name());
+                    throw __uue;
+                }
+            }
+            __og.is()->skipEmptyEncaps();
+        }
+        catch(const ::Ice::LocalException& __ex)
+        {
+            throw ::IceInternal::LocalExceptionWrapper(__ex, false);
+        }
+    }
+}
+
+::LbaNet::UpdateSeq
+IceDelegateM::LbaNet::ClientSession::GetUpdatedInfo(const ::Ice::Context* __context)
+{
+    ::IceInternal::Outgoing __og(__handler.get(), __LbaNet__ClientSession__GetUpdatedInfo_name, ::Ice::Normal, __context);
+    bool __ok = __og.invoke();
+    ::LbaNet::UpdateSeq __ret;
+    try
+    {
+        if(!__ok)
+        {
+            try
+            {
+                __og.throwUserException();
+            }
+            catch(const ::Ice::UserException& __ex)
+            {
+                ::Ice::UnknownUserException __uue(__FILE__, __LINE__, __ex.ice_name());
+                throw __uue;
+            }
+        }
+        ::IceInternal::BasicStream* __is = __og.is();
+        __is->startReadEncaps();
+        ::LbaNet::__readUpdateSeq(__is, __ret);
         __is->endReadEncaps();
         return __ret;
     }
@@ -714,6 +914,200 @@ IceDelegateD::LbaNet::ClientSession::GetConnected(::Ice::Long& ownid, const ::Ic
     return __result;
 }
 
+void
+IceDelegateD::LbaNet::ClientSession::ActivateActor(const ::LbaNet::ActorActivationInfo& ai, const ::Ice::Context* __context)
+{
+    class _DirectI : public ::IceInternal::Direct
+    {
+    public:
+
+        _DirectI(const ::LbaNet::ActorActivationInfo& ai, const ::Ice::Current& __current) : 
+            ::IceInternal::Direct(__current),
+            _m_ai(ai)
+        {
+        }
+        
+        virtual ::Ice::DispatchStatus
+        run(::Ice::Object* object)
+        {
+            ::LbaNet::ClientSession* servant = dynamic_cast< ::LbaNet::ClientSession*>(object);
+            if(!servant)
+            {
+                throw ::Ice::OperationNotExistException(__FILE__, __LINE__, _current.id, _current.facet, _current.operation);
+            }
+            servant->ActivateActor(_m_ai, _current);
+            return ::Ice::DispatchOK;
+        }
+        
+    private:
+        
+        const ::LbaNet::ActorActivationInfo& _m_ai;
+    };
+    
+    ::Ice::Current __current;
+    __initCurrent(__current, __LbaNet__ClientSession__ActivateActor_name, ::Ice::Normal, __context);
+    try
+    {
+        _DirectI __direct(ai, __current);
+        try
+        {
+            __direct.servant()->__collocDispatch(__direct);
+        }
+        catch(...)
+        {
+            __direct.destroy();
+            throw;
+        }
+        __direct.destroy();
+    }
+    catch(const ::Ice::SystemException&)
+    {
+        throw;
+    }
+    catch(const ::IceInternal::LocalExceptionWrapper&)
+    {
+        throw;
+    }
+    catch(const ::std::exception& __ex)
+    {
+        ::IceInternal::LocalExceptionWrapper::throwWrapper(__ex);
+    }
+    catch(...)
+    {
+        throw ::IceInternal::LocalExceptionWrapper(::Ice::UnknownException(__FILE__, __LINE__, "unknown c++ exception"), false);
+    }
+}
+
+void
+IceDelegateD::LbaNet::ClientSession::SignalActor(const ::LbaNet::ActorSignalInfo& ai, const ::Ice::Context* __context)
+{
+    class _DirectI : public ::IceInternal::Direct
+    {
+    public:
+
+        _DirectI(const ::LbaNet::ActorSignalInfo& ai, const ::Ice::Current& __current) : 
+            ::IceInternal::Direct(__current),
+            _m_ai(ai)
+        {
+        }
+        
+        virtual ::Ice::DispatchStatus
+        run(::Ice::Object* object)
+        {
+            ::LbaNet::ClientSession* servant = dynamic_cast< ::LbaNet::ClientSession*>(object);
+            if(!servant)
+            {
+                throw ::Ice::OperationNotExistException(__FILE__, __LINE__, _current.id, _current.facet, _current.operation);
+            }
+            servant->SignalActor(_m_ai, _current);
+            return ::Ice::DispatchOK;
+        }
+        
+    private:
+        
+        const ::LbaNet::ActorSignalInfo& _m_ai;
+    };
+    
+    ::Ice::Current __current;
+    __initCurrent(__current, __LbaNet__ClientSession__SignalActor_name, ::Ice::Normal, __context);
+    try
+    {
+        _DirectI __direct(ai, __current);
+        try
+        {
+            __direct.servant()->__collocDispatch(__direct);
+        }
+        catch(...)
+        {
+            __direct.destroy();
+            throw;
+        }
+        __direct.destroy();
+    }
+    catch(const ::Ice::SystemException&)
+    {
+        throw;
+    }
+    catch(const ::IceInternal::LocalExceptionWrapper&)
+    {
+        throw;
+    }
+    catch(const ::std::exception& __ex)
+    {
+        ::IceInternal::LocalExceptionWrapper::throwWrapper(__ex);
+    }
+    catch(...)
+    {
+        throw ::IceInternal::LocalExceptionWrapper(::Ice::UnknownException(__FILE__, __LINE__, "unknown c++ exception"), false);
+    }
+}
+
+::LbaNet::UpdateSeq
+IceDelegateD::LbaNet::ClientSession::GetUpdatedInfo(const ::Ice::Context* __context)
+{
+    class _DirectI : public ::IceInternal::Direct
+    {
+    public:
+
+        _DirectI(::LbaNet::UpdateSeq& __result, const ::Ice::Current& __current) : 
+            ::IceInternal::Direct(__current),
+            _result(__result)
+        {
+        }
+        
+        virtual ::Ice::DispatchStatus
+        run(::Ice::Object* object)
+        {
+            ::LbaNet::ClientSession* servant = dynamic_cast< ::LbaNet::ClientSession*>(object);
+            if(!servant)
+            {
+                throw ::Ice::OperationNotExistException(__FILE__, __LINE__, _current.id, _current.facet, _current.operation);
+            }
+            _result = servant->GetUpdatedInfo(_current);
+            return ::Ice::DispatchOK;
+        }
+        
+    private:
+        
+        ::LbaNet::UpdateSeq& _result;
+    };
+    
+    ::Ice::Current __current;
+    __initCurrent(__current, __LbaNet__ClientSession__GetUpdatedInfo_name, ::Ice::Normal, __context);
+    ::LbaNet::UpdateSeq __result;
+    try
+    {
+        _DirectI __direct(__result, __current);
+        try
+        {
+            __direct.servant()->__collocDispatch(__direct);
+        }
+        catch(...)
+        {
+            __direct.destroy();
+            throw;
+        }
+        __direct.destroy();
+    }
+    catch(const ::Ice::SystemException&)
+    {
+        throw;
+    }
+    catch(const ::IceInternal::LocalExceptionWrapper&)
+    {
+        throw;
+    }
+    catch(const ::std::exception& __ex)
+    {
+        ::IceInternal::LocalExceptionWrapper::throwWrapper(__ex);
+    }
+    catch(...)
+    {
+        throw ::IceInternal::LocalExceptionWrapper(::Ice::UnknownException(__FILE__, __LINE__, "unknown c++ exception"), false);
+    }
+    return __result;
+}
+
 ::Ice::Long
 IceDelegateD::LbaNet::ClientSession::GetTime(const ::Ice::Context* __context)
 {
@@ -883,6 +1277,50 @@ LbaNet::ClientSession::___GetConnected(::IceInternal::Incoming& __inS, const ::I
 }
 
 ::Ice::DispatchStatus
+LbaNet::ClientSession::___ActivateActor(::IceInternal::Incoming& __inS, const ::Ice::Current& __current)
+{
+    __checkMode(::Ice::Normal, __current.mode);
+    ::IceInternal::BasicStream* __is = __inS.is();
+    __is->startReadEncaps();
+    ::LbaNet::ActorActivationInfo ai;
+    ai.__read(__is);
+    __is->endReadEncaps();
+    ActivateActor(ai, __current);
+    return ::Ice::DispatchOK;
+}
+
+::Ice::DispatchStatus
+LbaNet::ClientSession::___SignalActor(::IceInternal::Incoming& __inS, const ::Ice::Current& __current)
+{
+    __checkMode(::Ice::Normal, __current.mode);
+    ::IceInternal::BasicStream* __is = __inS.is();
+    __is->startReadEncaps();
+    ::LbaNet::ActorSignalInfo ai;
+    ai.__read(__is);
+    __is->endReadEncaps();
+    SignalActor(ai, __current);
+    return ::Ice::DispatchOK;
+}
+
+::Ice::DispatchStatus
+LbaNet::ClientSession::___GetUpdatedInfo(::IceInternal::Incoming& __inS, const ::Ice::Current& __current)
+{
+    __checkMode(::Ice::Normal, __current.mode);
+    __inS.is()->skipEmptyEncaps();
+    ::IceInternal::BasicStream* __os = __inS.os();
+    ::LbaNet::UpdateSeq __ret = GetUpdatedInfo(__current);
+    if(__ret.size() == 0)
+    {
+        __os->writeSize(0);
+    }
+    else
+    {
+        ::LbaNet::__writeUpdateSeq(__os, &__ret[0], &__ret[0] + __ret.size());
+    }
+    return ::Ice::DispatchOK;
+}
+
+::Ice::DispatchStatus
 LbaNet::ClientSession::___GetTime(::IceInternal::Incoming& __inS, const ::Ice::Current& __current)
 {
     __checkMode(::Ice::Normal, __current.mode);
@@ -895,11 +1333,14 @@ LbaNet::ClientSession::___GetTime(::IceInternal::Incoming& __inS, const ::Ice::C
 
 static ::std::string __LbaNet__ClientSession_all[] =
 {
+    "ActivateActor",
     "ChangeRoom",
     "GetConnected",
     "GetTime",
+    "GetUpdatedInfo",
     "JoinChat",
     "LeaveChat",
+    "SignalActor",
     "destroy",
     "ice_id",
     "ice_ids",
@@ -910,7 +1351,7 @@ static ::std::string __LbaNet__ClientSession_all[] =
 ::Ice::DispatchStatus
 LbaNet::ClientSession::__dispatch(::IceInternal::Incoming& in, const ::Ice::Current& current)
 {
-    ::std::pair< ::std::string*, ::std::string*> r = ::std::equal_range(__LbaNet__ClientSession_all, __LbaNet__ClientSession_all + 10, current.operation);
+    ::std::pair< ::std::string*, ::std::string*> r = ::std::equal_range(__LbaNet__ClientSession_all, __LbaNet__ClientSession_all + 13, current.operation);
     if(r.first == r.second)
     {
         throw ::Ice::OperationNotExistException(__FILE__, __LINE__, current.id, current.facet, current.operation);
@@ -920,41 +1361,53 @@ LbaNet::ClientSession::__dispatch(::IceInternal::Incoming& in, const ::Ice::Curr
     {
         case 0:
         {
-            return ___ChangeRoom(in, current);
+            return ___ActivateActor(in, current);
         }
         case 1:
         {
-            return ___GetConnected(in, current);
+            return ___ChangeRoom(in, current);
         }
         case 2:
         {
-            return ___GetTime(in, current);
+            return ___GetConnected(in, current);
         }
         case 3:
         {
-            return ___JoinChat(in, current);
+            return ___GetTime(in, current);
         }
         case 4:
         {
-            return ___LeaveChat(in, current);
+            return ___GetUpdatedInfo(in, current);
         }
         case 5:
         {
-            return ___destroy(in, current);
+            return ___JoinChat(in, current);
         }
         case 6:
         {
-            return ___ice_id(in, current);
+            return ___LeaveChat(in, current);
         }
         case 7:
         {
-            return ___ice_ids(in, current);
+            return ___SignalActor(in, current);
         }
         case 8:
         {
-            return ___ice_isA(in, current);
+            return ___destroy(in, current);
         }
         case 9:
+        {
+            return ___ice_id(in, current);
+        }
+        case 10:
+        {
+            return ___ice_ids(in, current);
+        }
+        case 11:
+        {
+            return ___ice_isA(in, current);
+        }
+        case 12:
         {
             return ___ice_ping(in, current);
         }

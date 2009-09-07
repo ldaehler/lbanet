@@ -4,6 +4,7 @@
 #include <Glacier2/Session.ice>
 #include <ActorInfo.ice>
 #include <ChatInfo.ice>
+#include <MapObserver.ice>
 
 module LbaNet
 {
@@ -20,6 +21,11 @@ module LbaNet
 
 	    ConnectedList GetConnected(out long ownid);       
 	    
+	    
+	    void ActivateActor(ActorActivationInfo ai);  
+	    void SignalActor(ActorSignalInfo ai);
+	    
+	    UpdateSeq GetUpdatedInfo();	    
 	    
 	    long GetTime();
 	};

@@ -24,6 +24,7 @@
 #include <Ice/Incoming.h>
 #include <Ice/Direct.h>
 #include <Ice/StreamF.h>
+#include <MapObserver.h>
 #include <Ice/UndefSysMacros.h>
 
 #ifndef ICE_IGNORE_VERSION
@@ -167,41 +168,6 @@ struct CurrentAndFutureInfo
     void __read(::IceInternal::BasicStream*);
 };
 
-struct ActivationInfo
-{
-    ::Ice::Long ActivatedId;
-    bool Activate;
-    bool Signal;
-    ::Ice::Long SignalId;
-    ::Ice::Long ActorId;
-    ::Ice::Float X;
-    ::Ice::Float Y;
-    ::Ice::Float Z;
-    ::Ice::Float Rotation;
-
-    bool operator==(const ActivationInfo&) const;
-    bool operator<(const ActivationInfo&) const;
-    bool operator!=(const ActivationInfo& __rhs) const
-    {
-        return !operator==(__rhs);
-    }
-    bool operator<=(const ActivationInfo& __rhs) const
-    {
-        return operator<(__rhs) || operator==(__rhs);
-    }
-    bool operator>(const ActivationInfo& __rhs) const
-    {
-        return !operator<(__rhs) && !operator==(__rhs);
-    }
-    bool operator>=(const ActivationInfo& __rhs) const
-    {
-        return !operator<(__rhs);
-    }
-
-    void __write(::IceInternal::BasicStream*) const;
-    void __read(::IceInternal::BasicStream*);
-};
-
 }
 
 namespace IceProxy
@@ -244,18 +210,33 @@ private:
     
 public:
 
-    void Activated(const ::LbaNet::ActivationInfo& ai)
+    void ActivatedActor(const ::LbaNet::ActorActivationInfo& ai)
     {
-        Activated(ai, 0);
+        ActivatedActor(ai, 0);
     }
-    void Activated(const ::LbaNet::ActivationInfo& ai, const ::Ice::Context& __ctx)
+    void ActivatedActor(const ::LbaNet::ActorActivationInfo& ai, const ::Ice::Context& __ctx)
     {
-        Activated(ai, &__ctx);
+        ActivatedActor(ai, &__ctx);
     }
     
 private:
 
-    void Activated(const ::LbaNet::ActivationInfo&, const ::Ice::Context*);
+    void ActivatedActor(const ::LbaNet::ActorActivationInfo&, const ::Ice::Context*);
+    
+public:
+
+    void SignaledActor(const ::LbaNet::ActorSignalInfo& ai)
+    {
+        SignaledActor(ai, 0);
+    }
+    void SignaledActor(const ::LbaNet::ActorSignalInfo& ai, const ::Ice::Context& __ctx)
+    {
+        SignaledActor(ai, &__ctx);
+    }
+    
+private:
+
+    void SignaledActor(const ::LbaNet::ActorSignalInfo&, const ::Ice::Context*);
     
 public:
     
@@ -476,21 +457,6 @@ private:
     void Update(const ::LbaNet::ActorInfo&, const ::Ice::Context*);
     
 public:
-
-    void Activate(const ::LbaNet::ActivationInfo& ai)
-    {
-        Activate(ai, 0);
-    }
-    void Activate(const ::LbaNet::ActivationInfo& ai, const ::Ice::Context& __ctx)
-    {
-        Activate(ai, &__ctx);
-    }
-    
-private:
-
-    void Activate(const ::LbaNet::ActivationInfo&, const ::Ice::Context*);
-    
-public:
     
     ::IceInternal::ProxyHandle<ActorsParticipant> ice_context(const ::Ice::Context& __context) const
     {
@@ -709,7 +675,9 @@ public:
 
     virtual void Quitted(const ::std::string&, const ::Ice::Context*) = 0;
 
-    virtual void Activated(const ::LbaNet::ActivationInfo&, const ::Ice::Context*) = 0;
+    virtual void ActivatedActor(const ::LbaNet::ActorActivationInfo&, const ::Ice::Context*) = 0;
+
+    virtual void SignaledActor(const ::LbaNet::ActorSignalInfo&, const ::Ice::Context*) = 0;
 };
 
 class ActorsParticipant : virtual public ::IceDelegate::Ice::Object
@@ -717,8 +685,6 @@ class ActorsParticipant : virtual public ::IceDelegate::Ice::Object
 public:
 
     virtual void Update(const ::LbaNet::ActorInfo&, const ::Ice::Context*) = 0;
-
-    virtual void Activate(const ::LbaNet::ActivationInfo&, const ::Ice::Context*) = 0;
 };
 
 }
@@ -740,7 +706,9 @@ public:
 
     virtual void Quitted(const ::std::string&, const ::Ice::Context*);
 
-    virtual void Activated(const ::LbaNet::ActivationInfo&, const ::Ice::Context*);
+    virtual void ActivatedActor(const ::LbaNet::ActorActivationInfo&, const ::Ice::Context*);
+
+    virtual void SignaledActor(const ::LbaNet::ActorSignalInfo&, const ::Ice::Context*);
 };
 
 class ActorsParticipant : virtual public ::IceDelegate::LbaNet::ActorsParticipant,
@@ -749,8 +717,6 @@ class ActorsParticipant : virtual public ::IceDelegate::LbaNet::ActorsParticipan
 public:
 
     virtual void Update(const ::LbaNet::ActorInfo&, const ::Ice::Context*);
-
-    virtual void Activate(const ::LbaNet::ActivationInfo&, const ::Ice::Context*);
 };
 
 }
@@ -772,7 +738,9 @@ public:
 
     virtual void Quitted(const ::std::string&, const ::Ice::Context*);
 
-    virtual void Activated(const ::LbaNet::ActivationInfo&, const ::Ice::Context*);
+    virtual void ActivatedActor(const ::LbaNet::ActorActivationInfo&, const ::Ice::Context*);
+
+    virtual void SignaledActor(const ::LbaNet::ActorSignalInfo&, const ::Ice::Context*);
 };
 
 class ActorsParticipant : virtual public ::IceDelegate::LbaNet::ActorsParticipant,
@@ -781,8 +749,6 @@ class ActorsParticipant : virtual public ::IceDelegate::LbaNet::ActorsParticipan
 public:
 
     virtual void Update(const ::LbaNet::ActorInfo&, const ::Ice::Context*);
-
-    virtual void Activate(const ::LbaNet::ActivationInfo&, const ::Ice::Context*);
 };
 
 }
@@ -812,8 +778,11 @@ public:
     virtual void Quitted(const ::std::string&, const ::Ice::Current& = ::Ice::Current()) = 0;
     ::Ice::DispatchStatus ___Quitted(::IceInternal::Incoming&, const ::Ice::Current&);
 
-    virtual void Activated(const ::LbaNet::ActivationInfo&, const ::Ice::Current& = ::Ice::Current()) = 0;
-    ::Ice::DispatchStatus ___Activated(::IceInternal::Incoming&, const ::Ice::Current&);
+    virtual void ActivatedActor(const ::LbaNet::ActorActivationInfo&, const ::Ice::Current& = ::Ice::Current()) = 0;
+    ::Ice::DispatchStatus ___ActivatedActor(::IceInternal::Incoming&, const ::Ice::Current&);
+
+    virtual void SignaledActor(const ::LbaNet::ActorSignalInfo&, const ::Ice::Current& = ::Ice::Current()) = 0;
+    ::Ice::DispatchStatus ___SignaledActor(::IceInternal::Incoming&, const ::Ice::Current&);
 
     virtual ::Ice::DispatchStatus __dispatch(::IceInternal::Incoming&, const ::Ice::Current&);
 
@@ -839,9 +808,6 @@ public:
 
     virtual void Update(const ::LbaNet::ActorInfo&, const ::Ice::Current& = ::Ice::Current()) = 0;
     ::Ice::DispatchStatus ___Update(::IceInternal::Incoming&, const ::Ice::Current&);
-
-    virtual void Activate(const ::LbaNet::ActivationInfo&, const ::Ice::Current& = ::Ice::Current()) = 0;
-    ::Ice::DispatchStatus ___Activate(::IceInternal::Incoming&, const ::Ice::Current&);
 
     virtual ::Ice::DispatchStatus __dispatch(::IceInternal::Incoming&, const ::Ice::Current&);
 

@@ -6,10 +6,11 @@
 constructor
 ***********************************************************/
 SessionServant::SessionServant(const std::string& userId, const RoomManagerPrx& manager, 
-									const ConnectedTrackerPrx& ctracker)
-: _manager(manager), _curr_actor_room(""), _userId(userId), _ctracker(ctracker), _userNum(-1)
+									const ConnectedTrackerPrx& ctracker, const MapManagerPrx& map_manager)
+: _manager(manager), _curr_actor_room(""), _userId(userId), _ctracker(ctracker), _map_manager(map_manager),
+	_userNum(-1)
 {
-
+	_userNum = _ctracker->Connect(_userId);
 }
 
 
@@ -37,7 +38,6 @@ ChatRoomParticipantPrx SessionServant::JoinChat(	const std::string& room,
 	if(room == "World")
 	{
 		proxy->Say("info", "#joined " +_userId);
-		_userNum = _ctracker->Connect(_userId);
 	}
 
 	_chat_rooms[room] = proxy;
@@ -87,7 +87,11 @@ ActorsParticipantPrx SessionServant::ChangeRoom(		const std::string& newroom,
 
 	// delete old room pointer
 	if(_curr_actor_room != "")
+	{
 		current.adapter->remove(_actors_room->ice_getIdentity());
+		_map_manager->LeaveMap(_curr_actor_room, _userNum);
+		_actors_manager = NULL;
+	}
 
 
 	// create new room handler
@@ -98,6 +102,7 @@ ActorsParticipantPrx SessionServant::ChangeRoom(		const std::string& newroom,
 	ActorsParticipantServant *actors_room_ptr = new ActorsParticipantServant(newroom, actorname, observer, _manager);
     _actors_room = ActorsParticipantPrx::uncheckedCast(current.adapter->add(actors_room_ptr, id));
 	_curr_actor_room = newroom;
+	_actors_manager = _map_manager->JoinMap(_curr_actor_room, _userNum);
 
     return _actors_room;
 }
@@ -116,6 +121,7 @@ void SessionServant::destroy(const Ice::Current& current)
 	{
 		worldit->second->Say("info", "#left " + _userId);
 		_ctracker->Disconnect(_userNum);
+		_map_manager->LeaveMap(_curr_actor_room, _userNum);
 	}
 
 
@@ -168,4 +174,69 @@ get server time
 Ice::Long SessionServant::GetTime(const Ice::Current&)
 {
 	return IceUtil::Time::now().toMilliSeconds();
+}
+
+
+
+/***********************************************************
+callback function called when an actor id activated
+***********************************************************/
+void SessionServant::ActivateActor(const LbaNet::ActorActivationInfo& ai, const Ice::Current&)
+{
+	try
+	{
+		if(_actors_manager)
+			_actors_manager->ActivateActor(ai);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		std::cout<<"SessionServant - Exception during ActivateActor: "<< ex.what()<<std::endl;
+    }
+    catch(...)
+    {
+		std::cout<<"SessionServant - Unknown exception during ActivateActor"<<std::endl;
+    }
+}
+
+/***********************************************************
+callback function called when an actor id signaled
+***********************************************************/
+void SessionServant::SignalActor(const LbaNet::ActorSignalInfo& ai, const Ice::Current&)
+{
+	try
+	{
+		if(_actors_manager)
+			_actors_manager->SignalActor(ai);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		std::cout<<"SessionServant - Exception during SignalActor: "<< ex.what()<<std::endl;
+    }
+    catch(...)
+    {
+		std::cout<<"SessionServant - Unknown exception during SignalActor"<<std::endl;
+    }
+}
+
+
+/***********************************************************
+get updated info
+***********************************************************/
+LbaNet::UpdateSeq SessionServant::GetUpdatedInfo(const Ice::Current&)
+{
+	try
+	{
+		if(_actors_manager)
+			return _actors_manager->GetUpdatedInfo();
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		std::cout<<"SessionServant - Exception during GetUpdatedInfo: "<< ex.what()<<std::endl;
+    }
+    catch(...)
+    {
+		std::cout<<"SessionServant - Unknown exception during GetUpdatedInfo"<<std::endl;
+    }
+
+	return LbaNet::UpdateSeq();
 }

@@ -69,6 +69,7 @@
 			default="../bin/lbaserver"/>				
 			<parameter name="RoomManager"/>
 			<parameter name="ConnectedTracker"/>
+			<parameter name="MapManager"/>
 			
 			<server id="LBANetServer-${index}" 
 			exe="${exepath}"
@@ -82,7 +83,12 @@
 				<property name="SessionMServantName" value="LBANetServer${index}-SessionManager"/>	
 				<property name="RoomManager" value="${RoomManager}"/>	
 				<property name="ConnectedTracker" value="${ConnectedTracker}"/>
+				<property name="MapManager" value="${MapManager}"/>				
 				<property name="Ice.MessageSizeMax" value="4096"/>
+				<property name="Ice.ThreadPool.Client.Size" value="2"/>
+				<property name="Ice.ThreadPool.Server.Size" value="2"/>	
+				<property name="Ice.ThreadPool.Client.SizeMax" value="10"/>
+				<property name="Ice.ThreadPool.Server.SizeMax" value="10"/>					
 			</server>
 		</server-template>
 		
@@ -111,6 +117,10 @@
 				<property name="RoomServantName" value="LBANetServer${index}-RoomManager"/>				
 				<property name="TopicManagerProxy" value="${IceStorm}/TopicManager"/>	
 				<property name="Ice.MessageSizeMax" value="4096"/>
+				<property name="Ice.ThreadPool.Client.Size" value="2"/>
+				<property name="Ice.ThreadPool.Server.Size" value="2"/>	
+				<property name="Ice.ThreadPool.Client.SizeMax" value="10"/>
+				<property name="Ice.ThreadPool.Server.SizeMax" value="10"/>				
 			</server>
 		</server-template>	
 			
@@ -139,10 +149,46 @@
 				<property name="ConnectedServantName" value="LBANetServer${index}-ConnectedTracker"/>	
 				<property name="VerifierServantName" value="LBANetServer${index}-Verifier"/>				
 				<property name="Ice.MessageSizeMax" value="4096"/>
+				<property name="Ice.ThreadPool.Client.Size" value="2"/>
+				<property name="Ice.ThreadPool.Server.Size" value="2"/>	
+				<property name="Ice.ThreadPool.Client.SizeMax" value="10"/>
+				<property name="Ice.ThreadPool.Server.SizeMax" value="10"/>				
 			</server>
 		</server-template>			
 		
 		
+		
+		<!--
+		**********************************************************************
+		Configuration of MapManager Server
+		-->
+		<server-template id="MapManager">
+			<parameter name="index"/>
+			<parameter name="exepath"
+			default="../bin/mapmanager"/>		
+			<parameter name="IceStorm"/>
+			
+			<server id="MapManagerServer-${index}" 
+			exe="${exepath}"
+	
+			activation="on-demand">
+				<adapter name="MapManagerServer${index}-Adapter" register-process="true"
+				endpoints="tcp">
+					<object identity="LBANetServer${index}-MapManager" type="LbaNet::MapManager"/>
+				</adapter>
+
+				<property name="IdentityAdapter" value="MapManagerServer${index}-Adapter"/>
+				<property name="MapManagerServantName" value="LBANetServer${index}-MapManager"/>				
+				<property name="TopicManagerProxy" value="${IceStorm}/TopicManager"/>	
+				<property name="Ice.MessageSizeMax" value="4096"/>
+				<property name="Ice.ThreadPool.Client.Size" value="2"/>
+				<property name="Ice.ThreadPool.Server.Size" value="2"/>	
+				<property name="Ice.ThreadPool.Client.SizeMax" value="10"/>
+				<property name="Ice.ThreadPool.Server.SizeMax" value="10"/>				
+			</server>
+		</server-template>		
+	
+	
 	
 		<!--
 		**********************************************************************
@@ -203,9 +249,10 @@
 		<node name="LbaNetMainNode">
 			<server-instance template="Glacier2" instance-name="LBANetGlacier2" session-manager="LBANetServer1-SessionManager" permissions-verifier="LBANetServer1-Verifier"/>		
 			<server-instance template="IceStorm" index="1" IceStorm="IceStormLbaNet" />
-			<server-instance template="LBANetServer" index="1" RoomManager="LBANetServer1-RoomManager" ConnectedTracker="LBANetServer1-ConnectedTracker"/>		
+			<server-instance template="LBANetServer" index="1" RoomManager="LBANetServer1-RoomManager" ConnectedTracker="LBANetServer1-ConnectedTracker" MapManager="LBANetServer1-MapManager"/>		
 			<server-instance template="RoomManager" index="1" IceStorm="IceStormLbaNet" />	
-			<server-instance template="ConnectedTracker" index="1" IceStorm="IceStormLbaNet" />			
+			<server-instance template="ConnectedTracker" index="1" IceStorm="IceStormLbaNet" />	
+			<server-instance template="MapManager" index="1" IceStorm="IceStormLbaNet" />				
 		</node>	
 	
 	

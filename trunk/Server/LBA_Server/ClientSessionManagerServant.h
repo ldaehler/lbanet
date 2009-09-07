@@ -5,6 +5,7 @@
 #include <Glacier2/Session.h>
 #include <RoomManager.h>
 #include <ConnectedTracker.h>
+#include <MapManager.h>
 
 class ClientSessionManagerServant : public Glacier2::SessionManager
 {
@@ -19,7 +20,7 @@ public:
 private:
 	LbaNet::RoomManagerPrx			_manager;
 	LbaNet::ConnectedTrackerPrx		_ctracker;
-
+	LbaNet::MapManagerPrx			_map_manager;
 };
 
 #endif

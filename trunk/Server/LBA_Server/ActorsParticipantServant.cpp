@@ -54,22 +54,3 @@ void ActorsParticipantServant::Update(const ActorInfo& asi, const Ice::Current &
 }
 
 
-
-/***********************************************************
-update
-***********************************************************/  
-void ActorsParticipantServant::Activate(const ActivationInfo &ai, const Ice::Current &current)
-{
-    try
-    {
-		_publish->Activated(ai);
-	}
-	catch(const IceUtil::Exception& ex)
-	{
-		std::cout<<"Exception updating activation info: "<<ex.what()<<std::endl;
-	}
-	catch(...)
-	{
-		std::cout<<"Unknown exception updating activation info. "<<std::endl;
-	}
-}

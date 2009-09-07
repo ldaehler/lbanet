@@ -31,7 +31,9 @@
 
 static const ::std::string __LbaNet__MapObserver__ActivateActor_name = "ActivateActor";
 
-static const ::std::string __LbaNet__MapObserver__DesactivateActor_name = "DesactivateActor";
+static const ::std::string __LbaNet__MapObserver__SignalActor_name = "SignalActor";
+
+static const ::std::string __LbaNet__MapObserver__GetUpdatedInfo_name = "GetUpdatedInfo";
 
 ::Ice::Object* IceInternal::upCast(::LbaNet::MapObserver* p) { return p; }
 ::IceProxy::Ice::Object* IceInternal::upCast(::IceProxy::LbaNet::MapObserver* p) { return p; }
@@ -59,11 +61,15 @@ LbaNet::ActorActivationInfo::operator==(const ActorActivationInfo& __rhs) const
     {
         return true;
     }
-    if(ActorId != __rhs.ActorId)
+    if(ActivatedId != __rhs.ActivatedId)
     {
         return false;
     }
-    if(PlayerId != __rhs.PlayerId)
+    if(Activate != __rhs.Activate)
+    {
+        return false;
+    }
+    if(ActorId != __rhs.ActorId)
     {
         return false;
     }
@@ -83,10 +89,6 @@ LbaNet::ActorActivationInfo::operator==(const ActorActivationInfo& __rhs) const
     {
         return false;
     }
-    if(NeedDesactivation != __rhs.NeedDesactivation)
-    {
-        return false;
-    }
     return true;
 }
 
@@ -97,19 +99,27 @@ LbaNet::ActorActivationInfo::operator<(const ActorActivationInfo& __rhs) const
     {
         return false;
     }
+    if(ActivatedId < __rhs.ActivatedId)
+    {
+        return true;
+    }
+    else if(__rhs.ActivatedId < ActivatedId)
+    {
+        return false;
+    }
+    if(Activate < __rhs.Activate)
+    {
+        return true;
+    }
+    else if(__rhs.Activate < Activate)
+    {
+        return false;
+    }
     if(ActorId < __rhs.ActorId)
     {
         return true;
     }
     else if(__rhs.ActorId < ActorId)
-    {
-        return false;
-    }
-    if(PlayerId < __rhs.PlayerId)
-    {
-        return true;
-    }
-    else if(__rhs.PlayerId < PlayerId)
     {
         return false;
     }
@@ -145,11 +155,83 @@ LbaNet::ActorActivationInfo::operator<(const ActorActivationInfo& __rhs) const
     {
         return false;
     }
-    if(NeedDesactivation < __rhs.NeedDesactivation)
+    return false;
+}
+
+void
+LbaNet::ActorActivationInfo::__write(::IceInternal::BasicStream* __os) const
+{
+    __os->write(ActivatedId);
+    __os->write(Activate);
+    __os->write(ActorId);
+    __os->write(X);
+    __os->write(Y);
+    __os->write(Z);
+    __os->write(Rotation);
+}
+
+void
+LbaNet::ActorActivationInfo::__read(::IceInternal::BasicStream* __is)
+{
+    __is->read(ActivatedId);
+    __is->read(Activate);
+    __is->read(ActorId);
+    __is->read(X);
+    __is->read(Y);
+    __is->read(Z);
+    __is->read(Rotation);
+}
+
+bool
+LbaNet::ActorSignalInfo::operator==(const ActorSignalInfo& __rhs) const
+{
+    if(this == &__rhs)
     {
         return true;
     }
-    else if(__rhs.NeedDesactivation < NeedDesactivation)
+    if(Targets != __rhs.Targets)
+    {
+        return false;
+    }
+    if(SignalId != __rhs.SignalId)
+    {
+        return false;
+    }
+    if(ActorId != __rhs.ActorId)
+    {
+        return false;
+    }
+    return true;
+}
+
+bool
+LbaNet::ActorSignalInfo::operator<(const ActorSignalInfo& __rhs) const
+{
+    if(this == &__rhs)
+    {
+        return false;
+    }
+    if(Targets < __rhs.Targets)
+    {
+        return true;
+    }
+    else if(__rhs.Targets < Targets)
+    {
+        return false;
+    }
+    if(SignalId < __rhs.SignalId)
+    {
+        return true;
+    }
+    else if(__rhs.SignalId < SignalId)
+    {
+        return false;
+    }
+    if(ActorId < __rhs.ActorId)
+    {
+        return true;
+    }
+    else if(__rhs.ActorId < ActorId)
     {
         return false;
     }
@@ -157,27 +239,244 @@ LbaNet::ActorActivationInfo::operator<(const ActorActivationInfo& __rhs) const
 }
 
 void
-LbaNet::ActorActivationInfo::__write(::IceInternal::BasicStream* __os) const
+LbaNet::ActorSignalInfo::__write(::IceInternal::BasicStream* __os) const
+{
+    if(Targets.size() == 0)
+    {
+        __os->writeSize(0);
+    }
+    else
+    {
+        __os->write(&Targets[0], &Targets[0] + Targets.size());
+    }
+    __os->write(SignalId);
+    __os->write(ActorId);
+}
+
+void
+LbaNet::ActorSignalInfo::__read(::IceInternal::BasicStream* __is)
+{
+    __is->read(Targets);
+    __is->read(SignalId);
+    __is->read(ActorId);
+}
+
+bool
+LbaNet::ActorUpdateInfo::operator==(const ActorUpdateInfo& __rhs) const
+{
+    if(this == &__rhs)
+    {
+        return true;
+    }
+    if(ActorId != __rhs.ActorId)
+    {
+        return false;
+    }
+    if(On != __rhs.On)
+    {
+        return false;
+    }
+    if(Open != __rhs.Open)
+    {
+        return false;
+    }
+    if(Counter != __rhs.Counter)
+    {
+        return false;
+    }
+    if(SignalOn != __rhs.SignalOn)
+    {
+        return false;
+    }
+    if(CurrentScript != __rhs.CurrentScript)
+    {
+        return false;
+    }
+    if(CurrentSignals != __rhs.CurrentSignals)
+    {
+        return false;
+    }
+    if(X != __rhs.X)
+    {
+        return false;
+    }
+    if(Y != __rhs.Y)
+    {
+        return false;
+    }
+    if(Z != __rhs.Z)
+    {
+        return false;
+    }
+    if(Rotation != __rhs.Rotation)
+    {
+        return false;
+    }
+    return true;
+}
+
+bool
+LbaNet::ActorUpdateInfo::operator<(const ActorUpdateInfo& __rhs) const
+{
+    if(this == &__rhs)
+    {
+        return false;
+    }
+    if(ActorId < __rhs.ActorId)
+    {
+        return true;
+    }
+    else if(__rhs.ActorId < ActorId)
+    {
+        return false;
+    }
+    if(On < __rhs.On)
+    {
+        return true;
+    }
+    else if(__rhs.On < On)
+    {
+        return false;
+    }
+    if(Open < __rhs.Open)
+    {
+        return true;
+    }
+    else if(__rhs.Open < Open)
+    {
+        return false;
+    }
+    if(Counter < __rhs.Counter)
+    {
+        return true;
+    }
+    else if(__rhs.Counter < Counter)
+    {
+        return false;
+    }
+    if(SignalOn < __rhs.SignalOn)
+    {
+        return true;
+    }
+    else if(__rhs.SignalOn < SignalOn)
+    {
+        return false;
+    }
+    if(CurrentScript < __rhs.CurrentScript)
+    {
+        return true;
+    }
+    else if(__rhs.CurrentScript < CurrentScript)
+    {
+        return false;
+    }
+    if(CurrentSignals < __rhs.CurrentSignals)
+    {
+        return true;
+    }
+    else if(__rhs.CurrentSignals < CurrentSignals)
+    {
+        return false;
+    }
+    if(X < __rhs.X)
+    {
+        return true;
+    }
+    else if(__rhs.X < X)
+    {
+        return false;
+    }
+    if(Y < __rhs.Y)
+    {
+        return true;
+    }
+    else if(__rhs.Y < Y)
+    {
+        return false;
+    }
+    if(Z < __rhs.Z)
+    {
+        return true;
+    }
+    else if(__rhs.Z < Z)
+    {
+        return false;
+    }
+    if(Rotation < __rhs.Rotation)
+    {
+        return true;
+    }
+    else if(__rhs.Rotation < Rotation)
+    {
+        return false;
+    }
+    return false;
+}
+
+void
+LbaNet::ActorUpdateInfo::__write(::IceInternal::BasicStream* __os) const
 {
     __os->write(ActorId);
-    __os->write(PlayerId);
+    __os->write(On);
+    __os->write(Open);
+    __os->write(Counter);
+    __os->write(SignalOn);
+    __os->write(CurrentScript);
+    if(CurrentSignals.size() == 0)
+    {
+        __os->writeSize(0);
+    }
+    else
+    {
+        __os->write(&CurrentSignals[0], &CurrentSignals[0] + CurrentSignals.size());
+    }
     __os->write(X);
     __os->write(Y);
     __os->write(Z);
     __os->write(Rotation);
-    __os->write(NeedDesactivation);
 }
 
 void
-LbaNet::ActorActivationInfo::__read(::IceInternal::BasicStream* __is)
+LbaNet::ActorUpdateInfo::__read(::IceInternal::BasicStream* __is)
 {
     __is->read(ActorId);
-    __is->read(PlayerId);
+    __is->read(On);
+    __is->read(Open);
+    __is->read(Counter);
+    __is->read(SignalOn);
+    __is->read(CurrentScript);
+    __is->read(CurrentSignals);
     __is->read(X);
     __is->read(Y);
     __is->read(Z);
     __is->read(Rotation);
-    __is->read(NeedDesactivation);
+}
+
+void
+LbaNet::__writeUpdateSeq(::IceInternal::BasicStream* __os, const ::LbaNet::ActorUpdateInfo* begin, const ::LbaNet::ActorUpdateInfo* end)
+{
+    ::Ice::Int size = static_cast< ::Ice::Int>(end - begin);
+    __os->writeSize(size);
+    for(int i = 0; i < size; ++i)
+    {
+        begin[i].__write(__os);
+    }
+}
+
+void
+LbaNet::__readUpdateSeq(::IceInternal::BasicStream* __is, ::LbaNet::UpdateSeq& v)
+{
+    ::Ice::Int sz;
+    __is->readSize(sz);
+    __is->startSeq(sz, 40);
+    v.resize(sz);
+    for(int i = 0; i < sz; ++i)
+    {
+        v[i].__read(__is);
+        __is->checkSeq();
+        __is->endElement();
+    }
+    __is->endSeq(sz);
 }
 
 void
@@ -209,7 +508,7 @@ IceProxy::LbaNet::MapObserver::ActivateActor(const ::LbaNet::ActorActivationInfo
 }
 
 void
-IceProxy::LbaNet::MapObserver::DesactivateActor(const ::LbaNet::ActorActivationInfo& ai, const ::Ice::Context* __ctx)
+IceProxy::LbaNet::MapObserver::SignalActor(const ::LbaNet::ActorSignalInfo& ai, const ::Ice::Context* __ctx)
 {
     int __cnt = 0;
     while(true)
@@ -222,8 +521,36 @@ IceProxy::LbaNet::MapObserver::DesactivateActor(const ::LbaNet::ActorActivationI
 #endif
             __delBase = __getDelegate(false);
             ::IceDelegate::LbaNet::MapObserver* __del = dynamic_cast< ::IceDelegate::LbaNet::MapObserver*>(__delBase.get());
-            __del->DesactivateActor(ai, __ctx);
+            __del->SignalActor(ai, __ctx);
             return;
+        }
+        catch(const ::IceInternal::LocalExceptionWrapper& __ex)
+        {
+            __handleExceptionWrapper(__delBase, __ex, 0);
+        }
+        catch(const ::Ice::LocalException& __ex)
+        {
+            __handleException(__delBase, __ex, 0, __cnt);
+        }
+    }
+}
+
+::LbaNet::UpdateSeq
+IceProxy::LbaNet::MapObserver::GetUpdatedInfo(const ::Ice::Context* __ctx)
+{
+    int __cnt = 0;
+    while(true)
+    {
+        ::IceInternal::Handle< ::IceDelegate::Ice::Object> __delBase;
+        try
+        {
+#if defined(__BCPLUSPLUS__) && (__BCPLUSPLUS__ >= 0x0600) // C++Builder 2009 compiler bug
+            IceUtil::DummyBCC dummy;
+#endif
+            __checkTwowayOnly(__LbaNet__MapObserver__GetUpdatedInfo_name);
+            __delBase = __getDelegate(false);
+            ::IceDelegate::LbaNet::MapObserver* __del = dynamic_cast< ::IceDelegate::LbaNet::MapObserver*>(__delBase.get());
+            return __del->GetUpdatedInfo(__ctx);
         }
         catch(const ::IceInternal::LocalExceptionWrapper& __ex)
         {
@@ -300,9 +627,9 @@ IceDelegateM::LbaNet::MapObserver::ActivateActor(const ::LbaNet::ActorActivation
 }
 
 void
-IceDelegateM::LbaNet::MapObserver::DesactivateActor(const ::LbaNet::ActorActivationInfo& ai, const ::Ice::Context* __context)
+IceDelegateM::LbaNet::MapObserver::SignalActor(const ::LbaNet::ActorSignalInfo& ai, const ::Ice::Context* __context)
 {
-    ::IceInternal::Outgoing __og(__handler.get(), __LbaNet__MapObserver__DesactivateActor_name, ::Ice::Normal, __context);
+    ::IceInternal::Outgoing __og(__handler.get(), __LbaNet__MapObserver__SignalActor_name, ::Ice::Normal, __context);
     try
     {
         ::IceInternal::BasicStream* __os = __og.os();
@@ -335,6 +662,38 @@ IceDelegateM::LbaNet::MapObserver::DesactivateActor(const ::LbaNet::ActorActivat
         {
             throw ::IceInternal::LocalExceptionWrapper(__ex, false);
         }
+    }
+}
+
+::LbaNet::UpdateSeq
+IceDelegateM::LbaNet::MapObserver::GetUpdatedInfo(const ::Ice::Context* __context)
+{
+    ::IceInternal::Outgoing __og(__handler.get(), __LbaNet__MapObserver__GetUpdatedInfo_name, ::Ice::Normal, __context);
+    bool __ok = __og.invoke();
+    ::LbaNet::UpdateSeq __ret;
+    try
+    {
+        if(!__ok)
+        {
+            try
+            {
+                __og.throwUserException();
+            }
+            catch(const ::Ice::UserException& __ex)
+            {
+                ::Ice::UnknownUserException __uue(__FILE__, __LINE__, __ex.ice_name());
+                throw __uue;
+            }
+        }
+        ::IceInternal::BasicStream* __is = __og.is();
+        __is->startReadEncaps();
+        ::LbaNet::__readUpdateSeq(__is, __ret);
+        __is->endReadEncaps();
+        return __ret;
+    }
+    catch(const ::Ice::LocalException& __ex)
+    {
+        throw ::IceInternal::LocalExceptionWrapper(__ex, false);
     }
 }
 
@@ -403,13 +762,13 @@ IceDelegateD::LbaNet::MapObserver::ActivateActor(const ::LbaNet::ActorActivation
 }
 
 void
-IceDelegateD::LbaNet::MapObserver::DesactivateActor(const ::LbaNet::ActorActivationInfo& ai, const ::Ice::Context* __context)
+IceDelegateD::LbaNet::MapObserver::SignalActor(const ::LbaNet::ActorSignalInfo& ai, const ::Ice::Context* __context)
 {
     class _DirectI : public ::IceInternal::Direct
     {
     public:
 
-        _DirectI(const ::LbaNet::ActorActivationInfo& ai, const ::Ice::Current& __current) : 
+        _DirectI(const ::LbaNet::ActorSignalInfo& ai, const ::Ice::Current& __current) : 
             ::IceInternal::Direct(__current),
             _m_ai(ai)
         {
@@ -423,17 +782,17 @@ IceDelegateD::LbaNet::MapObserver::DesactivateActor(const ::LbaNet::ActorActivat
             {
                 throw ::Ice::OperationNotExistException(__FILE__, __LINE__, _current.id, _current.facet, _current.operation);
             }
-            servant->DesactivateActor(_m_ai, _current);
+            servant->SignalActor(_m_ai, _current);
             return ::Ice::DispatchOK;
         }
         
     private:
         
-        const ::LbaNet::ActorActivationInfo& _m_ai;
+        const ::LbaNet::ActorSignalInfo& _m_ai;
     };
     
     ::Ice::Current __current;
-    __initCurrent(__current, __LbaNet__MapObserver__DesactivateActor_name, ::Ice::Normal, __context);
+    __initCurrent(__current, __LbaNet__MapObserver__SignalActor_name, ::Ice::Normal, __context);
     try
     {
         _DirectI __direct(ai, __current);
@@ -464,6 +823,72 @@ IceDelegateD::LbaNet::MapObserver::DesactivateActor(const ::LbaNet::ActorActivat
     {
         throw ::IceInternal::LocalExceptionWrapper(::Ice::UnknownException(__FILE__, __LINE__, "unknown c++ exception"), false);
     }
+}
+
+::LbaNet::UpdateSeq
+IceDelegateD::LbaNet::MapObserver::GetUpdatedInfo(const ::Ice::Context* __context)
+{
+    class _DirectI : public ::IceInternal::Direct
+    {
+    public:
+
+        _DirectI(::LbaNet::UpdateSeq& __result, const ::Ice::Current& __current) : 
+            ::IceInternal::Direct(__current),
+            _result(__result)
+        {
+        }
+        
+        virtual ::Ice::DispatchStatus
+        run(::Ice::Object* object)
+        {
+            ::LbaNet::MapObserver* servant = dynamic_cast< ::LbaNet::MapObserver*>(object);
+            if(!servant)
+            {
+                throw ::Ice::OperationNotExistException(__FILE__, __LINE__, _current.id, _current.facet, _current.operation);
+            }
+            _result = servant->GetUpdatedInfo(_current);
+            return ::Ice::DispatchOK;
+        }
+        
+    private:
+        
+        ::LbaNet::UpdateSeq& _result;
+    };
+    
+    ::Ice::Current __current;
+    __initCurrent(__current, __LbaNet__MapObserver__GetUpdatedInfo_name, ::Ice::Normal, __context);
+    ::LbaNet::UpdateSeq __result;
+    try
+    {
+        _DirectI __direct(__result, __current);
+        try
+        {
+            __direct.servant()->__collocDispatch(__direct);
+        }
+        catch(...)
+        {
+            __direct.destroy();
+            throw;
+        }
+        __direct.destroy();
+    }
+    catch(const ::Ice::SystemException&)
+    {
+        throw;
+    }
+    catch(const ::IceInternal::LocalExceptionWrapper&)
+    {
+        throw;
+    }
+    catch(const ::std::exception& __ex)
+    {
+        ::IceInternal::LocalExceptionWrapper::throwWrapper(__ex);
+    }
+    catch(...)
+    {
+        throw ::IceInternal::LocalExceptionWrapper(::Ice::UnknownException(__FILE__, __LINE__, "unknown c++ exception"), false);
+    }
+    return __result;
 }
 
 ::Ice::ObjectPtr
@@ -517,22 +942,41 @@ LbaNet::MapObserver::___ActivateActor(::IceInternal::Incoming& __inS, const ::Ic
 }
 
 ::Ice::DispatchStatus
-LbaNet::MapObserver::___DesactivateActor(::IceInternal::Incoming& __inS, const ::Ice::Current& __current)
+LbaNet::MapObserver::___SignalActor(::IceInternal::Incoming& __inS, const ::Ice::Current& __current)
 {
     __checkMode(::Ice::Normal, __current.mode);
     ::IceInternal::BasicStream* __is = __inS.is();
     __is->startReadEncaps();
-    ::LbaNet::ActorActivationInfo ai;
+    ::LbaNet::ActorSignalInfo ai;
     ai.__read(__is);
     __is->endReadEncaps();
-    DesactivateActor(ai, __current);
+    SignalActor(ai, __current);
+    return ::Ice::DispatchOK;
+}
+
+::Ice::DispatchStatus
+LbaNet::MapObserver::___GetUpdatedInfo(::IceInternal::Incoming& __inS, const ::Ice::Current& __current)
+{
+    __checkMode(::Ice::Normal, __current.mode);
+    __inS.is()->skipEmptyEncaps();
+    ::IceInternal::BasicStream* __os = __inS.os();
+    ::LbaNet::UpdateSeq __ret = GetUpdatedInfo(__current);
+    if(__ret.size() == 0)
+    {
+        __os->writeSize(0);
+    }
+    else
+    {
+        ::LbaNet::__writeUpdateSeq(__os, &__ret[0], &__ret[0] + __ret.size());
+    }
     return ::Ice::DispatchOK;
 }
 
 static ::std::string __LbaNet__MapObserver_all[] =
 {
     "ActivateActor",
-    "DesactivateActor",
+    "GetUpdatedInfo",
+    "SignalActor",
     "ice_id",
     "ice_ids",
     "ice_isA",
@@ -542,7 +986,7 @@ static ::std::string __LbaNet__MapObserver_all[] =
 ::Ice::DispatchStatus
 LbaNet::MapObserver::__dispatch(::IceInternal::Incoming& in, const ::Ice::Current& current)
 {
-    ::std::pair< ::std::string*, ::std::string*> r = ::std::equal_range(__LbaNet__MapObserver_all, __LbaNet__MapObserver_all + 6, current.operation);
+    ::std::pair< ::std::string*, ::std::string*> r = ::std::equal_range(__LbaNet__MapObserver_all, __LbaNet__MapObserver_all + 7, current.operation);
     if(r.first == r.second)
     {
         throw ::Ice::OperationNotExistException(__FILE__, __LINE__, current.id, current.facet, current.operation);
@@ -556,21 +1000,25 @@ LbaNet::MapObserver::__dispatch(::IceInternal::Incoming& in, const ::Ice::Curren
         }
         case 1:
         {
-            return ___DesactivateActor(in, current);
+            return ___GetUpdatedInfo(in, current);
         }
         case 2:
         {
-            return ___ice_id(in, current);
+            return ___SignalActor(in, current);
         }
         case 3:
         {
-            return ___ice_ids(in, current);
+            return ___ice_id(in, current);
         }
         case 4:
         {
-            return ___ice_isA(in, current);
+            return ___ice_ids(in, current);
         }
         case 5:
+        {
+            return ___ice_isA(in, current);
+        }
+        case 6:
         {
             return ___ice_ping(in, current);
         }

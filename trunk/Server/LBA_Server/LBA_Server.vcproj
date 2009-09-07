@@ -211,6 +211,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\infrastructure\cpp\MapManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\infrastructure\cpp\MapObserver.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\infrastructure\cpp\RoomManager.cpp"
 				>
 			</File>
