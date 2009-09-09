@@ -137,7 +137,13 @@
                         <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
                         <Property Name="UnifiedAreaRect" Value="{{0.5,-200},{0,200},{0.5,0},{0,220}}" />
                     </Window>                    
-                    
+
+                    <Window Type="TaharezLook/Checkbox" Name="OptionsTab/Video/displayexits" >
+                        <Property Name="Text" Value="Display exits" />
+                        <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+                        <Property Name="UnifiedAreaRect" Value="{{0.5,-250},{0,200},{0.5,0},{0,270}}" />
+                    </Window>                    
+                                        
                     
                 </Window>
                 <Window Type="DefaultWindow" Name="OptionsTab/Sound" >
