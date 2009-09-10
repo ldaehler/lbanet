@@ -1,5 +1,5 @@
 TARGET=mapmanager
-OBJ=ActorReceiverServant.o InfosReceiverServant.o main.o MapHandler.o MapHandlerThread.o MapManagerServant.o SharedData.o
+OBJ=ActorReceiverServant.o InfosReceiverServant.o main.o MapHandler.o MapHandlerThread.o MapManagerServant.o SharedData.o ../../common/ActivableActor.o ../../common/Actor.o ../../common/MapInfoXmlReader.o
 
 CC=g++
 INCDIR=-I. -I../infrastructure/include -I/usr/include -I../../common
