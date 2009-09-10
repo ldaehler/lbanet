@@ -4,7 +4,7 @@ OBJ=ActorReceiverServant.o InfosReceiverServant.o main.o MapHandler.o MapHandler
 CC=g++
 INCDIR=-I. -I../infrastructure/include -I/usr/include -I../../common -I../../tinyxml/include
 LIBDIR=-L/usr/lib -L../infrastructure/lib -L../../tinyxml/lib
-LIBS=-lIce -lIceStorm -lIceUtil -lGlacier2 -lgenerated -l
+LIBS=-lIce -lIceStorm -lIceUtil -lGlacier2 -lgenerated -ltinyxml
 
 
 all: clean depend $(TARGET) install
