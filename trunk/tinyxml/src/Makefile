@@ -83,7 +83,7 @@ CXXFLAGS := ${CXXFLAGS} ${DEFS}
 
 OUTPUT := xmltest
 
-all: ${OUTPUT}
+all: ${OUTPUT} libtinyxml.a
 
 
 #****************************************************************************
@@ -103,6 +103,12 @@ OBJS := $(addsuffix .o,$(basename ${SRCS}))
 
 ${OUTPUT}: ${OBJS}
 	${LD} -o $@ ${LDFLAGS} ${OBJS} ${LIBS} ${EXTRA_LIBS}
+
+
+libtinyxml.a: ${OBJS}
+	ar rv ../lib/libtinyxml.a ${OBJS}
+
+
 
 #****************************************************************************
 # common rules
