@@ -1,5 +1,5 @@
 TARGET=mapmanager
-OBJ=ActorReceiverServant.o InfosReceiverServant.o main.o MapHandler.o MapHandlerThread.o MapManagerServant.o SharedData.o ../../common/ActivableActor.o ../../common/Actor.o ../../common/MapInfoXmlReader.o
+OBJ=ActorReceiverServant.o InfosReceiverServant.o main.o MapHandler.o MapHandlerThread.o MapManagerServant.o SharedData.o ../../common/ActivableActor.o ../../common/Actor.o ../../common/MapInfoXmlReader.o ../../common/AreaSwitch.o ../../common/ContainerActor.o ../../common/DoorActor.o ../../common/ExitActor.o ../../common/FloorSwitch.o ../../common/LadderActor.o ../../common/LiftActor.o ../../common/ivingActor.o ../../common/SwitchActor.o ../../common/TextActor.o ../../common/UpExitActor.o ../../common/ZoneActivableActor.o ../../common/ZoneActor.o ../../common/Player.o
 
 CC=g++
 INCDIR=-I. -I../infrastructure/include -I/usr/include -I../../common -I../../tinyxml/include
