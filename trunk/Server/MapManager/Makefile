@@ -12,7 +12,7 @@ all: clean depend $(TARGET) install
 
 $(TARGET): $(OBJ)
 	@echo "\n         **********creation de l'exe************\n"
-	$(CC) $(INCDIR) $(OBJ) -o $(TARGET) $(LIBDIR) $(LIBS) 
+	$(CC) $(INCDIR) *.o -o $(TARGET) $(LIBDIR) $(LIBS) 
 	@echo "\n"		
 
 .cpp.o:
