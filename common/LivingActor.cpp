@@ -66,14 +66,16 @@ void LivingActor::Render(int RoomCut)
 
 	if(_DisplayName && _Name != "")
 	{
+		std::string dispname = _Name;
+
 		glEnable(GL_DEPTH_TEST);
 		{
 		double X = _posX + 0.5;
 		double Y = _posY + GetTextHeight();
 		double Z = _posZ + 0.5;
 
-		double xOffset = _Name.length() / 8.0;
-		double zOffset = _Name.length() / 8.0;
+		double xOffset = dispname.length() / 8.0;
+		double zOffset = dispname.length() / 8.0;
 
 		glPushMatrix();
 		glTranslated(X-xOffset,Y/2,Z+zOffset);
@@ -85,10 +87,10 @@ void LivingActor::Render(int RoomCut)
 
 		#ifdef _LBANET_SET_EDITOR_
 		std::stringstream strs;
-		strs<<_Name<<" X:"<<_posX<<" Y:"<<_posY<<" Z:"<<_posZ;
+		strs<<dispname<<" X:"<<_posX<<" Y:"<<_posY<<" Z:"<<_posZ;
 		TextWritter::getInstance()->glPrintText(strs.str(), 0);
 		#else
-		TextWritter::getInstance()->glPrintText(_Name, 0);
+		TextWritter::getInstance()->glPrintText(dispname, 0);
 		#endif
 
 
@@ -100,8 +102,8 @@ void LivingActor::Render(int RoomCut)
 		double Y = _posY + GetTextHeight();
 		double Z = _posZ + 0.5;
 
-		double xOffset = _Name.length() / 8.0;
-		double zOffset = _Name.length() / 8.0;
+		double xOffset = dispname.length() / 8.0;
+		double zOffset = dispname.length() / 8.0;
 
 
 
@@ -113,10 +115,10 @@ void LivingActor::Render(int RoomCut)
 
 		#ifdef _LBANET_SET_EDITOR_
 		std::stringstream strs;
-		strs<<_Name<<" X:"<<_posX<<" Y:"<<_posY<<" Z:"<<_posZ;
+		strs<<dispname<<" X:"<<_posX<<" Y:"<<_posY<<" Z:"<<_posZ;
 		TextWritter::getInstance()->glPrintText(strs.str(), 0);
 		#else
-		TextWritter::getInstance()->glPrintText(_Name, 0);
+		TextWritter::getInstance()->glPrintText(dispname, 0);
 		#endif
 
 

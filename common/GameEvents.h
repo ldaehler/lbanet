@@ -392,4 +392,25 @@ public:
 
 
 
+/*
+************************************************************************************************************************
+*                                                  class DisplayExitsEvent
+*
+*	used when the user is changing screen resolution
+************************************************************************************************************************
+*/
+class DisplayExitsEvent : public GameEvent
+{
+public:
+	//! constructor
+	DisplayExitsEvent(bool display)
+		: _display(display)
+	{
+		_type = 16;
+	}
+
+	bool _display;
+};
+
+
 #endif

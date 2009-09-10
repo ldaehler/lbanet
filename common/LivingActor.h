@@ -72,6 +72,7 @@ public:
 	bool GetDisplayName()
 	{return _DisplayName;}
 
+
 	//! set body color
 	void SetBodyColor(short newColor);
 
