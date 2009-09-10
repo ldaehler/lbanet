@@ -1,8 +1,8 @@
 TARGET=mapmanager
-OBJ=RoomManagerServant.o main.o
+OBJ=ActorReceiverServant.o InfosReceiverServant.o main.o MapHandler.o MapHandlerThread.o MapManagerServant.o SharedData.o
 
 CC=g++
-INCDIR=-I. -I../infrastructure/include -I/usr/include -I../common
+INCDIR=-I. -I../infrastructure/include -I/usr/include -I../../common
 LIBDIR=-L/usr/lib -L../infrastructure/lib
 LIBS=-lIce -lIceStorm -lIceUtil -lGlacier2 -lgenerated
 
