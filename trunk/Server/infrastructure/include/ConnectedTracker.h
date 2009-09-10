@@ -81,7 +81,35 @@ void __patch__ConnectedTrackerPtr(void*, ::Ice::ObjectPtr&);
 namespace LbaNet
 {
 
-typedef ::std::map< ::std::string, ::Ice::Long> ConnectedL;
+struct PlayerInfo
+{
+    ::Ice::Long Id;
+    ::std::string Status;
+
+    bool operator==(const PlayerInfo&) const;
+    bool operator<(const PlayerInfo&) const;
+    bool operator!=(const PlayerInfo& __rhs) const
+    {
+        return !operator==(__rhs);
+    }
+    bool operator<=(const PlayerInfo& __rhs) const
+    {
+        return operator<(__rhs) || operator==(__rhs);
+    }
+    bool operator>(const PlayerInfo& __rhs) const
+    {
+        return !operator<(__rhs) && !operator==(__rhs);
+    }
+    bool operator>=(const PlayerInfo& __rhs) const
+    {
+        return !operator<(__rhs);
+    }
+
+    void __write(::IceInternal::BasicStream*) const;
+    void __read(::IceInternal::BasicStream*);
+};
+
+typedef ::std::map< ::std::string, ::LbaNet::PlayerInfo> ConnectedL;
 void __writeConnectedL(::IceInternal::BasicStream*, const ConnectedL&);
 void __readConnectedL(::IceInternal::BasicStream*, ConnectedL&);
 
@@ -124,6 +152,21 @@ public:
 private:
 
     void Disconnect(::Ice::Long, const ::Ice::Context*);
+    
+public:
+
+    void ChangeStatus(const ::std::string& Nickname, const ::std::string& NewStatus)
+    {
+        ChangeStatus(Nickname, NewStatus, 0);
+    }
+    void ChangeStatus(const ::std::string& Nickname, const ::std::string& NewStatus, const ::Ice::Context& __ctx)
+    {
+        ChangeStatus(Nickname, NewStatus, &__ctx);
+    }
+    
+private:
+
+    void ChangeStatus(const ::std::string&, const ::std::string&, const ::Ice::Context*);
     
 public:
 
@@ -359,6 +402,8 @@ public:
 
     virtual void Disconnect(::Ice::Long, const ::Ice::Context*) = 0;
 
+    virtual void ChangeStatus(const ::std::string&, const ::std::string&, const ::Ice::Context*) = 0;
+
     virtual ::LbaNet::ConnectedL GetConnected(const ::Ice::Context*) = 0;
 };
 
@@ -381,6 +426,8 @@ public:
 
     virtual void Disconnect(::Ice::Long, const ::Ice::Context*);
 
+    virtual void ChangeStatus(const ::std::string&, const ::std::string&, const ::Ice::Context*);
+
     virtual ::LbaNet::ConnectedL GetConnected(const ::Ice::Context*);
 };
 
@@ -402,6 +449,8 @@ public:
     virtual ::Ice::Long Connect(const ::std::string&, const ::Ice::Context*);
 
     virtual void Disconnect(::Ice::Long, const ::Ice::Context*);
+
+    virtual void ChangeStatus(const ::std::string&, const ::std::string&, const ::Ice::Context*);
 
     virtual ::LbaNet::ConnectedL GetConnected(const ::Ice::Context*);
 };
@@ -432,6 +481,9 @@ public:
 
     virtual void Disconnect(::Ice::Long, const ::Ice::Current& = ::Ice::Current()) = 0;
     ::Ice::DispatchStatus ___Disconnect(::IceInternal::Incoming&, const ::Ice::Current&);
+
+    virtual void ChangeStatus(const ::std::string&, const ::std::string&, const ::Ice::Current& = ::Ice::Current()) = 0;
+    ::Ice::DispatchStatus ___ChangeStatus(::IceInternal::Incoming&, const ::Ice::Current&);
 
     virtual ::LbaNet::ConnectedL GetConnected(const ::Ice::Current& = ::Ice::Current()) = 0;
     ::Ice::DispatchStatus ___GetConnected(::IceInternal::Incoming&, const ::Ice::Current&);

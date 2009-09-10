@@ -34,6 +34,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <IceUtil/Monitor.h>
 #include <Ice/Config.h>
 
+#include <ConnectedTracker.h>
+
 /***********************************************************************
  * Module:  SharedData.h
  * Author:  vivien
@@ -54,18 +56,21 @@ public:
 	bool TryLogin(const std::string & PlayerName);
 
 	//! get connected list
-	const std::map<std::string, Ice::Long> & GetConnected();
+	const LbaNet::ConnectedL & GetConnected();
 
 	//! disconnect player
 	bool Disconnect(Ice::Long playerid);
+
+	//! change player status
+	void ChangeStatus(const std::string& Nickname, const std::string& NewStatus);
 
 protected:
 	SharedData(const SharedData &);
 	const SharedData & operator=(const SharedData &);
 
 private:
-	Ice::Long								m_current_id;
-	std::map<std::string, Ice::Long>		m_connected_users;
+	Ice::Long				m_current_id;
+	LbaNet::ConnectedL 		m_connected_users;
 
 };
 

@@ -31,6 +31,7 @@
 #include <ActorInfo.h>
 #include <ChatInfo.h>
 #include <MapObserver.h>
+#include <ConnectedTracker.h>
 #include <Ice/UndefSysMacros.h>
 
 #ifndef ICE_IGNORE_VERSION
@@ -82,15 +83,6 @@ typedef ::IceInternal::ProxyHandle< ::IceProxy::LbaNet::ClientSession> ClientSes
 
 void __read(::IceInternal::BasicStream*, ClientSessionPrx&);
 void __patch__ClientSessionPtr(void*, ::Ice::ObjectPtr&);
-
-}
-
-namespace LbaNet
-{
-
-typedef ::std::map< ::std::string, ::Ice::Long> ConnectedList;
-void __writeConnectedList(::IceInternal::BasicStream*, const ConnectedList&);
-void __readConnectedList(::IceInternal::BasicStream*, ConnectedList&);
 
 }
 
@@ -149,18 +141,18 @@ private:
     
 public:
 
-    ::LbaNet::ConnectedList GetConnected(::Ice::Long& ownid)
+    ::LbaNet::ConnectedL GetConnected(::Ice::Long& ownid)
     {
         return GetConnected(ownid, 0);
     }
-    ::LbaNet::ConnectedList GetConnected(::Ice::Long& ownid, const ::Ice::Context& __ctx)
+    ::LbaNet::ConnectedL GetConnected(::Ice::Long& ownid, const ::Ice::Context& __ctx)
     {
         return GetConnected(ownid, &__ctx);
     }
     
 private:
 
-    ::LbaNet::ConnectedList GetConnected(::Ice::Long&, const ::Ice::Context*);
+    ::LbaNet::ConnectedL GetConnected(::Ice::Long&, const ::Ice::Context*);
     
 public:
 
@@ -206,6 +198,21 @@ public:
 private:
 
     ::LbaNet::UpdateSeq GetUpdatedInfo(const ::Ice::Context*);
+    
+public:
+
+    void ChangeStatus(const ::std::string& Status)
+    {
+        ChangeStatus(Status, 0);
+    }
+    void ChangeStatus(const ::std::string& Status, const ::Ice::Context& __ctx)
+    {
+        ChangeStatus(Status, &__ctx);
+    }
+    
+private:
+
+    void ChangeStatus(const ::std::string&, const ::Ice::Context*);
     
 public:
 
@@ -443,13 +450,15 @@ public:
 
     virtual ::LbaNet::ActorsParticipantPrx ChangeRoom(const ::std::string&, const ::std::string&, const ::LbaNet::ActorsObserverPrx&, const ::Ice::Context*) = 0;
 
-    virtual ::LbaNet::ConnectedList GetConnected(::Ice::Long&, const ::Ice::Context*) = 0;
+    virtual ::LbaNet::ConnectedL GetConnected(::Ice::Long&, const ::Ice::Context*) = 0;
 
     virtual void ActivateActor(const ::LbaNet::ActorActivationInfo&, const ::Ice::Context*) = 0;
 
     virtual void SignalActor(const ::LbaNet::ActorSignalInfo&, const ::Ice::Context*) = 0;
 
     virtual ::LbaNet::UpdateSeq GetUpdatedInfo(const ::Ice::Context*) = 0;
+
+    virtual void ChangeStatus(const ::std::string&, const ::Ice::Context*) = 0;
 
     virtual ::Ice::Long GetTime(const ::Ice::Context*) = 0;
 };
@@ -475,13 +484,15 @@ public:
 
     virtual ::LbaNet::ActorsParticipantPrx ChangeRoom(const ::std::string&, const ::std::string&, const ::LbaNet::ActorsObserverPrx&, const ::Ice::Context*);
 
-    virtual ::LbaNet::ConnectedList GetConnected(::Ice::Long&, const ::Ice::Context*);
+    virtual ::LbaNet::ConnectedL GetConnected(::Ice::Long&, const ::Ice::Context*);
 
     virtual void ActivateActor(const ::LbaNet::ActorActivationInfo&, const ::Ice::Context*);
 
     virtual void SignalActor(const ::LbaNet::ActorSignalInfo&, const ::Ice::Context*);
 
     virtual ::LbaNet::UpdateSeq GetUpdatedInfo(const ::Ice::Context*);
+
+    virtual void ChangeStatus(const ::std::string&, const ::Ice::Context*);
 
     virtual ::Ice::Long GetTime(const ::Ice::Context*);
 };
@@ -507,13 +518,15 @@ public:
 
     virtual ::LbaNet::ActorsParticipantPrx ChangeRoom(const ::std::string&, const ::std::string&, const ::LbaNet::ActorsObserverPrx&, const ::Ice::Context*);
 
-    virtual ::LbaNet::ConnectedList GetConnected(::Ice::Long&, const ::Ice::Context*);
+    virtual ::LbaNet::ConnectedL GetConnected(::Ice::Long&, const ::Ice::Context*);
 
     virtual void ActivateActor(const ::LbaNet::ActorActivationInfo&, const ::Ice::Context*);
 
     virtual void SignalActor(const ::LbaNet::ActorSignalInfo&, const ::Ice::Context*);
 
     virtual ::LbaNet::UpdateSeq GetUpdatedInfo(const ::Ice::Context*);
+
+    virtual void ChangeStatus(const ::std::string&, const ::Ice::Context*);
 
     virtual ::Ice::Long GetTime(const ::Ice::Context*);
 };
@@ -548,7 +561,7 @@ public:
     virtual ::LbaNet::ActorsParticipantPrx ChangeRoom(const ::std::string&, const ::std::string&, const ::LbaNet::ActorsObserverPrx&, const ::Ice::Current& = ::Ice::Current()) = 0;
     ::Ice::DispatchStatus ___ChangeRoom(::IceInternal::Incoming&, const ::Ice::Current&);
 
-    virtual ::LbaNet::ConnectedList GetConnected(::Ice::Long&, const ::Ice::Current& = ::Ice::Current()) = 0;
+    virtual ::LbaNet::ConnectedL GetConnected(::Ice::Long&, const ::Ice::Current& = ::Ice::Current()) = 0;
     ::Ice::DispatchStatus ___GetConnected(::IceInternal::Incoming&, const ::Ice::Current&);
 
     virtual void ActivateActor(const ::LbaNet::ActorActivationInfo&, const ::Ice::Current& = ::Ice::Current()) = 0;
@@ -559,6 +572,9 @@ public:
 
     virtual ::LbaNet::UpdateSeq GetUpdatedInfo(const ::Ice::Current& = ::Ice::Current()) = 0;
     ::Ice::DispatchStatus ___GetUpdatedInfo(::IceInternal::Incoming&, const ::Ice::Current&);
+
+    virtual void ChangeStatus(const ::std::string&, const ::Ice::Current& = ::Ice::Current()) = 0;
+    ::Ice::DispatchStatus ___ChangeStatus(::IceInternal::Incoming&, const ::Ice::Current&);
 
     virtual ::Ice::Long GetTime(const ::Ice::Current& = ::Ice::Current()) = 0;
     ::Ice::DispatchStatus ___GetTime(::IceInternal::Incoming&, const ::Ice::Current&);

@@ -23,41 +23,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#ifndef __INFO_RECEIVER_SERVANT_H_
-#define __INFO_RECEIVER_SERVANT_H_
+#include "ActorReceiverServant.h"
+#include "MapHandlerThread.h"
 
-#include <ActorInfo.h>
-#include <string>
-
-#include "SharedData.h"
 
 /***********************************************************
-  Wrapper class containing the callback function used when a
-  message is received in IceStorm
+	callback function called when an actor id activated
 ***********************************************************/
-class InfosReceiverServant : public LbaNet::ActorsObserver
+void ActorReceiverServant::ActivateActor(const LbaNet::ActorActivationInfo& ai, const Ice::Current&)
 {
-public:
+	_SD->ActivateActor(ai);
+}
 
-	explicit InfosReceiverServant(SharedData * SD)
-		: _SD(SD)
-	{}
-
-	// callback function called when a message is received from IceStorm
-	virtual void UpdatedInfo(const LbaNet::ActorInfo& asi, const Ice::Current&);
-
-	// callback function called when a message is received from IceStorm
-	virtual void Quitted(const std::string& ActorName, const Ice::Current&){}
-
-	// callback function called when a message is received from IceStorm
-	virtual void ActivatedActor(const LbaNet::ActorActivationInfo &ai, const Ice::Current&){}
-
-	// callback function called when a message is received from IceStorm
-	virtual void SignaledActor(const LbaNet::ActorSignalInfo &ai, const Ice::Current&){}
+/***********************************************************
+	callback function called when an actor id signaled
+***********************************************************/
+void ActorReceiverServant::SignalActor(const LbaNet::ActorSignalInfo& ai, const Ice::Current&)
+{
+	_SD->SignalActor(ai);
+}
 
 
-private:
-	SharedData * _SD;
-};
-
-#endif
+/***********************************************************
+	get updated info
+***********************************************************/
+LbaNet::UpdateSeq ActorReceiverServant::GetUpdatedInfo(const Ice::Current&)
+{
+	return _mthread->GetUpdatedInfo();
+}

@@ -3,7 +3,14 @@
 
 module LbaNet
 {
-	dictionary<string, long> ConnectedL;
+	struct PlayerInfo
+	{
+		long Id;
+		string Status;
+	};
+
+
+	dictionary<string, PlayerInfo> ConnectedL;
 
 
 	interface ConnectedTracker
@@ -11,6 +18,7 @@ module LbaNet
 		// return the id of the player
 		long Connect(string Nickname);
 		void Disconnect(long PlayerId);
+		void ChangeStatus(string Nickname, string NewStatus);
 
 		ConnectedL GetConnected();   
 	};

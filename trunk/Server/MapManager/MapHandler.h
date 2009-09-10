@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _MAP_HANDLER_H
 #define _MAP_HANDLER_H
 
-#include <MapObserver.h>
+
 #include <ActorInfo.h>
 
 #include <Ice/Ice.h>
@@ -35,29 +35,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Actor.h"
 #include <IceUtil/Thread.h>
 
-using namespace LbaNet;
-class ServerSignaler;
+#include "SharedData.h"
 
-class MapHandler : public MapObserver,  public IceUtil::Mutex, public IceUtil::Thread
+using namespace LbaNet;
+class MapManagerServant;
+
+class MapHandler
 
 {
 public:
 	//! constructor
     MapHandler(const Ice::CommunicatorPtr& communicator, const Ice::ObjectAdapterPtr & adapter,
-					const std::string mapName);
+					const std::string mapName, MapManagerServant *	stopper);
 
 	//! destructor
     ~MapHandler();
 
-	// callback function called when an actor id activated
-    virtual void ActivateActor(const LbaNet::ActorActivationInfo& ai, const Ice::Current&);
-
-	// callback function called when an actor id signaled
-    virtual void SignalActor(const LbaNet::ActorSignalInfo& ai, const Ice::Current&);
-
-
-	// callback function called when a message is received from IceStorm
-	void UpdatedInfo(const LbaNet::ActorInfo& asi);
 
 	// get proxy to the map observer
 	LbaNet::MapObserverPrx GetMapProxy();
@@ -66,19 +59,8 @@ public:
 	void Join(Ice::Long PlayerId);
 
 	//! a player leave a map
-    bool Leave(Ice::Long PlayerId);
+    void Leave(Ice::Long PlayerId);
 
-	//! send signal
-	void SendSignal(long signal, const std::vector<long> &targets);
-
-	//! running thread
-	virtual void run();
-
-	//! get updated info
-	LbaNet::UpdateSeq GetUpdatedInfo(const Ice::Current&);
-
-	//! destroy the map handler
-	void Destroy();
 
 protected:
 	//! subscribe to icestorm
@@ -89,28 +71,20 @@ protected:
 
 
 private:
-	IceUtil::Mutex								m_mutex_players;
 
 	const Ice::CommunicatorPtr&					_communicator;
 	Ice::ObjectAdapterPtr						_adapter;
 	std::string									_mapName;
-	LbaNet::MapObserverPrx						_proxy;
+
 
 	IceStorm::TopicPrx							_topic;
 	ActorsObserverPrx							_publisher;
 	ActorsObserverPrx							_observer;
+	MapObserverPrx								_mapproxy;
 
-	std::map<Ice::Long, LbaNet::ActorInfo>		_players;
-
-	std::map<long, Actor *>						_actors;
-
-	ServerSignaler *							_signaler;
-
-	std::map<Ice::Long, Ice::Long>				_todeactivate;
 
 	IceUtil::ThreadControl						_threadC;
-	bool										_stop;
-	double										_lasttime;
+	SharedData									_SD;
 };
 
 #endif

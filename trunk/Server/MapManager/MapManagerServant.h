@@ -51,10 +51,19 @@ public:
     virtual void LeaveMap(const std::string& mapName, Ice::Long PlayerId, const Ice::Current&);
 
 
+	//! stop the thread for map mapName
+	void StopThread(const std::string& mapName);
+
+protected:
+	//! clean thread to be stopped
+	void CleanThreads();
+
 private:
 	std::map<std::string, MapHandler *> _running_maps;
 	const Ice::CommunicatorPtr&			_communicator;
 	Ice::ObjectAdapterPtr				_adapter;
+
+	std::vector<std::string>			_tostop;
 };
 
 #endif

@@ -66,7 +66,7 @@ public:
 	virtual void destroy(const Ice::Current&);
 
 	//! get the list of people connected
-	LbaNet::ConnectedList GetConnected(Ice::Long & ownid, const Ice::Current&);
+	LbaNet::ConnectedL GetConnected(Ice::Long & ownid, const Ice::Current&);
 
 
 	// callback function called when an actor id activated
@@ -78,6 +78,8 @@ public:
 	//get updated info
 	virtual LbaNet::UpdateSeq GetUpdatedInfo(const Ice::Current&);
 
+	// change player status 
+	virtual void ChangeStatus(const std::string& Status, const Ice::Current&);
 
 	//! get server time
 	Ice::Long GetTime(const Ice::Current&);

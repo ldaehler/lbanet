@@ -51,9 +51,10 @@ public:
 	//! get list of connected people
     virtual LbaNet::ConnectedL GetConnected(const Ice::Current&);
 
+	//! change status of one player
+    virtual void ChangeStatus(const std::string& Nickname, const std::string& NewStatus, const Ice::Current&);
 
 private:
-	LbaNet::ConnectedL			_connected;
 	const Ice::CommunicatorPtr& _communicator;
 
 	SharedData *				_shd;

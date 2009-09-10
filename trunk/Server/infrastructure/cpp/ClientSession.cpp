@@ -43,6 +43,8 @@ static const ::std::string __LbaNet__ClientSession__SignalActor_name = "SignalAc
 
 static const ::std::string __LbaNet__ClientSession__GetUpdatedInfo_name = "GetUpdatedInfo";
 
+static const ::std::string __LbaNet__ClientSession__ChangeStatus_name = "ChangeStatus";
+
 static const ::std::string __LbaNet__ClientSession__GetTime_name = "GetTime";
 
 ::Ice::Object* IceInternal::upCast(::LbaNet::ClientSession* p) { return p; }
@@ -61,32 +63,6 @@ LbaNet::__read(::IceInternal::BasicStream* __is, ::LbaNet::ClientSessionPrx& v)
     {
         v = new ::IceProxy::LbaNet::ClientSession;
         v->__copyFrom(proxy);
-    }
-}
-
-void
-LbaNet::__writeConnectedList(::IceInternal::BasicStream* __os, const ::LbaNet::ConnectedList& v)
-{
-    __os->writeSize(::Ice::Int(v.size()));
-    ::LbaNet::ConnectedList::const_iterator p;
-    for(p = v.begin(); p != v.end(); ++p)
-    {
-        __os->write(p->first);
-        __os->write(p->second);
-    }
-}
-
-void
-LbaNet::__readConnectedList(::IceInternal::BasicStream* __is, ::LbaNet::ConnectedList& v)
-{
-    ::Ice::Int sz;
-    __is->readSize(sz);
-    while(sz--)
-    {
-        ::std::pair<const  ::std::string, ::Ice::Long> pair;
-        __is->read(const_cast< ::std::string&>(pair.first));
-        ::LbaNet::ConnectedList::iterator __i = v.insert(v.end(), pair);
-        __is->read(__i->second);
     }
 }
 
@@ -174,7 +150,7 @@ IceProxy::LbaNet::ClientSession::ChangeRoom(const ::std::string& newroom, const 
     }
 }
 
-::LbaNet::ConnectedList
+::LbaNet::ConnectedL
 IceProxy::LbaNet::ClientSession::GetConnected(::Ice::Long& ownid, const ::Ice::Context* __ctx)
 {
     int __cnt = 0;
@@ -274,6 +250,34 @@ IceProxy::LbaNet::ClientSession::GetUpdatedInfo(const ::Ice::Context* __ctx)
             __delBase = __getDelegate(false);
             ::IceDelegate::LbaNet::ClientSession* __del = dynamic_cast< ::IceDelegate::LbaNet::ClientSession*>(__delBase.get());
             return __del->GetUpdatedInfo(__ctx);
+        }
+        catch(const ::IceInternal::LocalExceptionWrapper& __ex)
+        {
+            __handleExceptionWrapper(__delBase, __ex, 0);
+        }
+        catch(const ::Ice::LocalException& __ex)
+        {
+            __handleException(__delBase, __ex, 0, __cnt);
+        }
+    }
+}
+
+void
+IceProxy::LbaNet::ClientSession::ChangeStatus(const ::std::string& Status, const ::Ice::Context* __ctx)
+{
+    int __cnt = 0;
+    while(true)
+    {
+        ::IceInternal::Handle< ::IceDelegate::Ice::Object> __delBase;
+        try
+        {
+#if defined(__BCPLUSPLUS__) && (__BCPLUSPLUS__ >= 0x0600) // C++Builder 2009 compiler bug
+            IceUtil::DummyBCC dummy;
+#endif
+            __delBase = __getDelegate(false);
+            ::IceDelegate::LbaNet::ClientSession* __del = dynamic_cast< ::IceDelegate::LbaNet::ClientSession*>(__delBase.get());
+            __del->ChangeStatus(Status, __ctx);
+            return;
         }
         catch(const ::IceInternal::LocalExceptionWrapper& __ex)
         {
@@ -463,12 +467,12 @@ IceDelegateM::LbaNet::ClientSession::ChangeRoom(const ::std::string& newroom, co
     }
 }
 
-::LbaNet::ConnectedList
+::LbaNet::ConnectedL
 IceDelegateM::LbaNet::ClientSession::GetConnected(::Ice::Long& ownid, const ::Ice::Context* __context)
 {
     ::IceInternal::Outgoing __og(__handler.get(), __LbaNet__ClientSession__GetConnected_name, ::Ice::Normal, __context);
     bool __ok = __og.invoke();
-    ::LbaNet::ConnectedList __ret;
+    ::LbaNet::ConnectedL __ret;
     try
     {
         if(!__ok)
@@ -486,7 +490,7 @@ IceDelegateM::LbaNet::ClientSession::GetConnected(::Ice::Long& ownid, const ::Ic
         ::IceInternal::BasicStream* __is = __og.is();
         __is->startReadEncaps();
         __is->read(ownid);
-        ::LbaNet::__readConnectedList(__is, __ret);
+        ::LbaNet::__readConnectedL(__is, __ret);
         __is->endReadEncaps();
         return __ret;
     }
@@ -603,6 +607,45 @@ IceDelegateM::LbaNet::ClientSession::GetUpdatedInfo(const ::Ice::Context* __cont
     catch(const ::Ice::LocalException& __ex)
     {
         throw ::IceInternal::LocalExceptionWrapper(__ex, false);
+    }
+}
+
+void
+IceDelegateM::LbaNet::ClientSession::ChangeStatus(const ::std::string& Status, const ::Ice::Context* __context)
+{
+    ::IceInternal::Outgoing __og(__handler.get(), __LbaNet__ClientSession__ChangeStatus_name, ::Ice::Normal, __context);
+    try
+    {
+        ::IceInternal::BasicStream* __os = __og.os();
+        __os->write(Status);
+    }
+    catch(const ::Ice::LocalException& __ex)
+    {
+        __og.abort(__ex);
+    }
+    bool __ok = __og.invoke();
+    if(!__og.is()->b.empty())
+    {
+        try
+        {
+            if(!__ok)
+            {
+                try
+                {
+                    __og.throwUserException();
+                }
+                catch(const ::Ice::UserException& __ex)
+                {
+                    ::Ice::UnknownUserException __uue(__FILE__, __LINE__, __ex.ice_name());
+                    throw __uue;
+                }
+            }
+            __og.is()->skipEmptyEncaps();
+        }
+        catch(const ::Ice::LocalException& __ex)
+        {
+            throw ::IceInternal::LocalExceptionWrapper(__ex, false);
+        }
     }
 }
 
@@ -846,14 +889,14 @@ IceDelegateD::LbaNet::ClientSession::ChangeRoom(const ::std::string& newroom, co
     return __result;
 }
 
-::LbaNet::ConnectedList
+::LbaNet::ConnectedL
 IceDelegateD::LbaNet::ClientSession::GetConnected(::Ice::Long& ownid, const ::Ice::Context* __context)
 {
     class _DirectI : public ::IceInternal::Direct
     {
     public:
 
-        _DirectI(::LbaNet::ConnectedList& __result, ::Ice::Long& ownid, const ::Ice::Current& __current) : 
+        _DirectI(::LbaNet::ConnectedL& __result, ::Ice::Long& ownid, const ::Ice::Current& __current) : 
             ::IceInternal::Direct(__current),
             _result(__result),
             _m_ownid(ownid)
@@ -874,13 +917,13 @@ IceDelegateD::LbaNet::ClientSession::GetConnected(::Ice::Long& ownid, const ::Ic
         
     private:
         
-        ::LbaNet::ConnectedList& _result;
+        ::LbaNet::ConnectedL& _result;
         ::Ice::Long& _m_ownid;
     };
     
     ::Ice::Current __current;
     __initCurrent(__current, __LbaNet__ClientSession__GetConnected_name, ::Ice::Normal, __context);
-    ::LbaNet::ConnectedList __result;
+    ::LbaNet::ConnectedL __result;
     try
     {
         _DirectI __direct(__result, ownid, __current);
@@ -1108,6 +1151,70 @@ IceDelegateD::LbaNet::ClientSession::GetUpdatedInfo(const ::Ice::Context* __cont
     return __result;
 }
 
+void
+IceDelegateD::LbaNet::ClientSession::ChangeStatus(const ::std::string& Status, const ::Ice::Context* __context)
+{
+    class _DirectI : public ::IceInternal::Direct
+    {
+    public:
+
+        _DirectI(const ::std::string& Status, const ::Ice::Current& __current) : 
+            ::IceInternal::Direct(__current),
+            _m_Status(Status)
+        {
+        }
+        
+        virtual ::Ice::DispatchStatus
+        run(::Ice::Object* object)
+        {
+            ::LbaNet::ClientSession* servant = dynamic_cast< ::LbaNet::ClientSession*>(object);
+            if(!servant)
+            {
+                throw ::Ice::OperationNotExistException(__FILE__, __LINE__, _current.id, _current.facet, _current.operation);
+            }
+            servant->ChangeStatus(_m_Status, _current);
+            return ::Ice::DispatchOK;
+        }
+        
+    private:
+        
+        const ::std::string& _m_Status;
+    };
+    
+    ::Ice::Current __current;
+    __initCurrent(__current, __LbaNet__ClientSession__ChangeStatus_name, ::Ice::Normal, __context);
+    try
+    {
+        _DirectI __direct(Status, __current);
+        try
+        {
+            __direct.servant()->__collocDispatch(__direct);
+        }
+        catch(...)
+        {
+            __direct.destroy();
+            throw;
+        }
+        __direct.destroy();
+    }
+    catch(const ::Ice::SystemException&)
+    {
+        throw;
+    }
+    catch(const ::IceInternal::LocalExceptionWrapper&)
+    {
+        throw;
+    }
+    catch(const ::std::exception& __ex)
+    {
+        ::IceInternal::LocalExceptionWrapper::throwWrapper(__ex);
+    }
+    catch(...)
+    {
+        throw ::IceInternal::LocalExceptionWrapper(::Ice::UnknownException(__FILE__, __LINE__, "unknown c++ exception"), false);
+    }
+}
+
 ::Ice::Long
 IceDelegateD::LbaNet::ClientSession::GetTime(const ::Ice::Context* __context)
 {
@@ -1270,9 +1377,9 @@ LbaNet::ClientSession::___GetConnected(::IceInternal::Incoming& __inS, const ::I
     __inS.is()->skipEmptyEncaps();
     ::IceInternal::BasicStream* __os = __inS.os();
     ::Ice::Long ownid;
-    ::LbaNet::ConnectedList __ret = GetConnected(ownid, __current);
+    ::LbaNet::ConnectedL __ret = GetConnected(ownid, __current);
     __os->write(ownid);
-    ::LbaNet::__writeConnectedList(__os, __ret);
+    ::LbaNet::__writeConnectedL(__os, __ret);
     return ::Ice::DispatchOK;
 }
 
@@ -1321,6 +1428,19 @@ LbaNet::ClientSession::___GetUpdatedInfo(::IceInternal::Incoming& __inS, const :
 }
 
 ::Ice::DispatchStatus
+LbaNet::ClientSession::___ChangeStatus(::IceInternal::Incoming& __inS, const ::Ice::Current& __current)
+{
+    __checkMode(::Ice::Normal, __current.mode);
+    ::IceInternal::BasicStream* __is = __inS.is();
+    __is->startReadEncaps();
+    ::std::string Status;
+    __is->read(Status);
+    __is->endReadEncaps();
+    ChangeStatus(Status, __current);
+    return ::Ice::DispatchOK;
+}
+
+::Ice::DispatchStatus
 LbaNet::ClientSession::___GetTime(::IceInternal::Incoming& __inS, const ::Ice::Current& __current)
 {
     __checkMode(::Ice::Normal, __current.mode);
@@ -1335,6 +1455,7 @@ static ::std::string __LbaNet__ClientSession_all[] =
 {
     "ActivateActor",
     "ChangeRoom",
+    "ChangeStatus",
     "GetConnected",
     "GetTime",
     "GetUpdatedInfo",
@@ -1351,7 +1472,7 @@ static ::std::string __LbaNet__ClientSession_all[] =
 ::Ice::DispatchStatus
 LbaNet::ClientSession::__dispatch(::IceInternal::Incoming& in, const ::Ice::Current& current)
 {
-    ::std::pair< ::std::string*, ::std::string*> r = ::std::equal_range(__LbaNet__ClientSession_all, __LbaNet__ClientSession_all + 13, current.operation);
+    ::std::pair< ::std::string*, ::std::string*> r = ::std::equal_range(__LbaNet__ClientSession_all, __LbaNet__ClientSession_all + 14, current.operation);
     if(r.first == r.second)
     {
         throw ::Ice::OperationNotExistException(__FILE__, __LINE__, current.id, current.facet, current.operation);
@@ -1369,45 +1490,49 @@ LbaNet::ClientSession::__dispatch(::IceInternal::Incoming& in, const ::Ice::Curr
         }
         case 2:
         {
-            return ___GetConnected(in, current);
+            return ___ChangeStatus(in, current);
         }
         case 3:
         {
-            return ___GetTime(in, current);
+            return ___GetConnected(in, current);
         }
         case 4:
         {
-            return ___GetUpdatedInfo(in, current);
+            return ___GetTime(in, current);
         }
         case 5:
         {
-            return ___JoinChat(in, current);
+            return ___GetUpdatedInfo(in, current);
         }
         case 6:
         {
-            return ___LeaveChat(in, current);
+            return ___JoinChat(in, current);
         }
         case 7:
         {
-            return ___SignalActor(in, current);
+            return ___LeaveChat(in, current);
         }
         case 8:
         {
-            return ___destroy(in, current);
+            return ___SignalActor(in, current);
         }
         case 9:
         {
-            return ___ice_id(in, current);
+            return ___destroy(in, current);
         }
         case 10:
         {
-            return ___ice_ids(in, current);
+            return ___ice_id(in, current);
         }
         case 11:
         {
-            return ___ice_isA(in, current);
+            return ___ice_ids(in, current);
         }
         case 12:
+        {
+            return ___ice_isA(in, current);
+        }
+        case 13:
         {
             return ___ice_ping(in, current);
         }

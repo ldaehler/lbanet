@@ -24,11 +24,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include "InfosReceiverServant.h"
-#include "MapHandler.h"
+
 
 // callback function called when a message is received from IceStorm
 void InfosReceiverServant::UpdatedInfo(const LbaNet::ActorInfo& asi, const Ice::Current&)
 {
-	_MH->UpdatedInfo(asi);
+	_SD->UpdatedInfo(asi);
 }
 

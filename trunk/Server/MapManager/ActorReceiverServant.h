@@ -23,41 +23,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#ifndef __INFO_RECEIVER_SERVANT_H_
-#define __INFO_RECEIVER_SERVANT_H_
+#ifndef __ACTORS_RECEIVER_SERVANT_H_
+#define __ACTORS_RECEIVER_SERVANT_H_
 
-#include <ActorInfo.h>
+#include <MapObserver.h>
 #include <string>
 
 #include "SharedData.h"
+class MapHandlerThread;
 
 /***********************************************************
   Wrapper class containing the callback function used when a
   message is received in IceStorm
 ***********************************************************/
-class InfosReceiverServant : public LbaNet::ActorsObserver
+class ActorReceiverServant : public LbaNet::MapObserver  
 {
 public:
 
-	explicit InfosReceiverServant(SharedData * SD)
-		: _SD(SD)
+	explicit ActorReceiverServant(SharedData * SD, MapHandlerThread *mthread)
+		: _SD(SD), _mthread(mthread)
 	{}
 
-	// callback function called when a message is received from IceStorm
-	virtual void UpdatedInfo(const LbaNet::ActorInfo& asi, const Ice::Current&);
+	// callback function called when an actor id activated
+    virtual void ActivateActor(const LbaNet::ActorActivationInfo& ai, const Ice::Current&);
 
-	// callback function called when a message is received from IceStorm
-	virtual void Quitted(const std::string& ActorName, const Ice::Current&){}
+	// callback function called when an actor id signaled
+    virtual void SignalActor(const LbaNet::ActorSignalInfo& ai, const Ice::Current&);
 
-	// callback function called when a message is received from IceStorm
-	virtual void ActivatedActor(const LbaNet::ActorActivationInfo &ai, const Ice::Current&){}
-
-	// callback function called when a message is received from IceStorm
-	virtual void SignaledActor(const LbaNet::ActorSignalInfo &ai, const Ice::Current&){}
-
+	//! get updated info
+	virtual LbaNet::UpdateSeq GetUpdatedInfo(const Ice::Current&);
 
 private:
 	SharedData * _SD;
+	MapHandlerThread *	_mthread;
 };
 
 #endif

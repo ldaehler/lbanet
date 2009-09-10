@@ -194,6 +194,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ActorReceiverServant.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\AreaSwitch.cpp"
 				>
 			</File>
@@ -238,6 +242,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MapHandlerThread.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\MapInfoXmlReader.cpp"
 				>
 			</File>
@@ -251,6 +259,10 @@
 			</File>
 			<File
 				RelativePath="..\infrastructure\cpp\MapObserver.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SharedData.cpp"
 				>
 			</File>
 			<File
@@ -280,6 +292,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\ActorReceiverServant.h"
+				>
+			</File>
+			<File
 				RelativePath=".\InfosReceiverServant.h"
 				>
 			</File>
@@ -288,11 +304,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MapHandlerThread.h"
+				>
+			</File>
+			<File
 				RelativePath=".\MapManagerServant.h"
 				>
 			</File>
 			<File
 				RelativePath=".\ServerSignaler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SharedData.h"
 				>
 			</File>
 			<File
