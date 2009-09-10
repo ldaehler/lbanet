@@ -2,9 +2,9 @@ TARGET=mapmanager
 OBJ=ActorReceiverServant.o InfosReceiverServant.o main.o MapHandler.o MapHandlerThread.o MapManagerServant.o SharedData.o ../../common/ActivableActor.o ../../common/Actor.o ../../common/MapInfoXmlReader.o
 
 CC=g++
-INCDIR=-I. -I../infrastructure/include -I/usr/include -I../../common
-LIBDIR=-L/usr/lib -L../infrastructure/lib
-LIBS=-lIce -lIceStorm -lIceUtil -lGlacier2 -lgenerated
+INCDIR=-I. -I../infrastructure/include -I/usr/include -I../../common -I../../tinyxml/include
+LIBDIR=-L/usr/lib -L../infrastructure/lib -L../../tinyxml/lib
+LIBS=-lIce -lIceStorm -lIceUtil -lGlacier2 -lgenerated -l
 
 
 all: clean depend $(TARGET) install
@@ -17,7 +17,7 @@ $(TARGET): $(OBJ)
 
 .cpp.o:
 	@echo "\n         **********creation des .o************\n"
-	$(CC) -D_LBANET_SERVER_SIDE_ -I. $(INCDIR) -c $<
+	$(CC) -O2 -D_LBANET_SERVER_SIDE_ -DTIXML_USE_STL -I. $(INCDIR) -c $<
 	@echo "\n"
 
 depend: 
