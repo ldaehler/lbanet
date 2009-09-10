@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define __LBANET_SIGNALER_SERVER_H__
 
 #include "SignalerBase.h"
-#include "MapHandler.h"
+#include "MapHandlerThread.h"
 /*
 ************************************************************************************************************************
 *                                                  class ServerSignaler
@@ -38,7 +38,7 @@ class ServerSignaler : public SignalerBase
 
 public:
 	//! constructor
-	ServerSignaler(MapHandler * MH)
+	ServerSignaler(MapHandlerThread * MH)
 		: _MH(MH)
 	{}
 
@@ -52,7 +52,7 @@ public:
 	}
 
 private:
-	MapHandler * _MH;
+	MapHandlerThread * _MH;
 };
 
 

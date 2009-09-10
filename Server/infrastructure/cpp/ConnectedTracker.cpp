@@ -33,6 +33,8 @@ static const ::std::string __LbaNet__ConnectedTracker__Connect_name = "Connect";
 
 static const ::std::string __LbaNet__ConnectedTracker__Disconnect_name = "Disconnect";
 
+static const ::std::string __LbaNet__ConnectedTracker__ChangeStatus_name = "ChangeStatus";
+
 static const ::std::string __LbaNet__ConnectedTracker__GetConnected_name = "GetConnected";
 
 ::Ice::Object* IceInternal::upCast(::LbaNet::ConnectedTracker* p) { return p; }
@@ -54,6 +56,64 @@ LbaNet::__read(::IceInternal::BasicStream* __is, ::LbaNet::ConnectedTrackerPrx& 
     }
 }
 
+bool
+LbaNet::PlayerInfo::operator==(const PlayerInfo& __rhs) const
+{
+    if(this == &__rhs)
+    {
+        return true;
+    }
+    if(Id != __rhs.Id)
+    {
+        return false;
+    }
+    if(Status != __rhs.Status)
+    {
+        return false;
+    }
+    return true;
+}
+
+bool
+LbaNet::PlayerInfo::operator<(const PlayerInfo& __rhs) const
+{
+    if(this == &__rhs)
+    {
+        return false;
+    }
+    if(Id < __rhs.Id)
+    {
+        return true;
+    }
+    else if(__rhs.Id < Id)
+    {
+        return false;
+    }
+    if(Status < __rhs.Status)
+    {
+        return true;
+    }
+    else if(__rhs.Status < Status)
+    {
+        return false;
+    }
+    return false;
+}
+
+void
+LbaNet::PlayerInfo::__write(::IceInternal::BasicStream* __os) const
+{
+    __os->write(Id);
+    __os->write(Status);
+}
+
+void
+LbaNet::PlayerInfo::__read(::IceInternal::BasicStream* __is)
+{
+    __is->read(Id);
+    __is->read(Status);
+}
+
 void
 LbaNet::__writeConnectedL(::IceInternal::BasicStream* __os, const ::LbaNet::ConnectedL& v)
 {
@@ -62,7 +122,7 @@ LbaNet::__writeConnectedL(::IceInternal::BasicStream* __os, const ::LbaNet::Conn
     for(p = v.begin(); p != v.end(); ++p)
     {
         __os->write(p->first);
-        __os->write(p->second);
+        p->second.__write(__os);
     }
 }
 
@@ -73,10 +133,10 @@ LbaNet::__readConnectedL(::IceInternal::BasicStream* __is, ::LbaNet::ConnectedL&
     __is->readSize(sz);
     while(sz--)
     {
-        ::std::pair<const  ::std::string, ::Ice::Long> pair;
+        ::std::pair<const  ::std::string, ::LbaNet::PlayerInfo> pair;
         __is->read(const_cast< ::std::string&>(pair.first));
         ::LbaNet::ConnectedL::iterator __i = v.insert(v.end(), pair);
-        __is->read(__i->second);
+        __i->second.__read(__is);
     }
 }
 
@@ -123,6 +183,34 @@ IceProxy::LbaNet::ConnectedTracker::Disconnect(::Ice::Long PlayerId, const ::Ice
             __delBase = __getDelegate(false);
             ::IceDelegate::LbaNet::ConnectedTracker* __del = dynamic_cast< ::IceDelegate::LbaNet::ConnectedTracker*>(__delBase.get());
             __del->Disconnect(PlayerId, __ctx);
+            return;
+        }
+        catch(const ::IceInternal::LocalExceptionWrapper& __ex)
+        {
+            __handleExceptionWrapper(__delBase, __ex, 0);
+        }
+        catch(const ::Ice::LocalException& __ex)
+        {
+            __handleException(__delBase, __ex, 0, __cnt);
+        }
+    }
+}
+
+void
+IceProxy::LbaNet::ConnectedTracker::ChangeStatus(const ::std::string& Nickname, const ::std::string& NewStatus, const ::Ice::Context* __ctx)
+{
+    int __cnt = 0;
+    while(true)
+    {
+        ::IceInternal::Handle< ::IceDelegate::Ice::Object> __delBase;
+        try
+        {
+#if defined(__BCPLUSPLUS__) && (__BCPLUSPLUS__ >= 0x0600) // C++Builder 2009 compiler bug
+            IceUtil::DummyBCC dummy;
+#endif
+            __delBase = __getDelegate(false);
+            ::IceDelegate::LbaNet::ConnectedTracker* __del = dynamic_cast< ::IceDelegate::LbaNet::ConnectedTracker*>(__delBase.get());
+            __del->ChangeStatus(Nickname, NewStatus, __ctx);
             return;
         }
         catch(const ::IceInternal::LocalExceptionWrapper& __ex)
@@ -237,6 +325,46 @@ IceDelegateM::LbaNet::ConnectedTracker::Disconnect(::Ice::Long PlayerId, const :
     {
         ::IceInternal::BasicStream* __os = __og.os();
         __os->write(PlayerId);
+    }
+    catch(const ::Ice::LocalException& __ex)
+    {
+        __og.abort(__ex);
+    }
+    bool __ok = __og.invoke();
+    if(!__og.is()->b.empty())
+    {
+        try
+        {
+            if(!__ok)
+            {
+                try
+                {
+                    __og.throwUserException();
+                }
+                catch(const ::Ice::UserException& __ex)
+                {
+                    ::Ice::UnknownUserException __uue(__FILE__, __LINE__, __ex.ice_name());
+                    throw __uue;
+                }
+            }
+            __og.is()->skipEmptyEncaps();
+        }
+        catch(const ::Ice::LocalException& __ex)
+        {
+            throw ::IceInternal::LocalExceptionWrapper(__ex, false);
+        }
+    }
+}
+
+void
+IceDelegateM::LbaNet::ConnectedTracker::ChangeStatus(const ::std::string& Nickname, const ::std::string& NewStatus, const ::Ice::Context* __context)
+{
+    ::IceInternal::Outgoing __og(__handler.get(), __LbaNet__ConnectedTracker__ChangeStatus_name, ::Ice::Normal, __context);
+    try
+    {
+        ::IceInternal::BasicStream* __os = __og.os();
+        __os->write(Nickname);
+        __os->write(NewStatus);
     }
     catch(const ::Ice::LocalException& __ex)
     {
@@ -432,6 +560,72 @@ IceDelegateD::LbaNet::ConnectedTracker::Disconnect(::Ice::Long PlayerId, const :
     }
 }
 
+void
+IceDelegateD::LbaNet::ConnectedTracker::ChangeStatus(const ::std::string& Nickname, const ::std::string& NewStatus, const ::Ice::Context* __context)
+{
+    class _DirectI : public ::IceInternal::Direct
+    {
+    public:
+
+        _DirectI(const ::std::string& Nickname, const ::std::string& NewStatus, const ::Ice::Current& __current) : 
+            ::IceInternal::Direct(__current),
+            _m_Nickname(Nickname),
+            _m_NewStatus(NewStatus)
+        {
+        }
+        
+        virtual ::Ice::DispatchStatus
+        run(::Ice::Object* object)
+        {
+            ::LbaNet::ConnectedTracker* servant = dynamic_cast< ::LbaNet::ConnectedTracker*>(object);
+            if(!servant)
+            {
+                throw ::Ice::OperationNotExistException(__FILE__, __LINE__, _current.id, _current.facet, _current.operation);
+            }
+            servant->ChangeStatus(_m_Nickname, _m_NewStatus, _current);
+            return ::Ice::DispatchOK;
+        }
+        
+    private:
+        
+        const ::std::string& _m_Nickname;
+        const ::std::string& _m_NewStatus;
+    };
+    
+    ::Ice::Current __current;
+    __initCurrent(__current, __LbaNet__ConnectedTracker__ChangeStatus_name, ::Ice::Normal, __context);
+    try
+    {
+        _DirectI __direct(Nickname, NewStatus, __current);
+        try
+        {
+            __direct.servant()->__collocDispatch(__direct);
+        }
+        catch(...)
+        {
+            __direct.destroy();
+            throw;
+        }
+        __direct.destroy();
+    }
+    catch(const ::Ice::SystemException&)
+    {
+        throw;
+    }
+    catch(const ::IceInternal::LocalExceptionWrapper&)
+    {
+        throw;
+    }
+    catch(const ::std::exception& __ex)
+    {
+        ::IceInternal::LocalExceptionWrapper::throwWrapper(__ex);
+    }
+    catch(...)
+    {
+        throw ::IceInternal::LocalExceptionWrapper(::Ice::UnknownException(__FILE__, __LINE__, "unknown c++ exception"), false);
+    }
+}
+
 ::LbaNet::ConnectedL
 IceDelegateD::LbaNet::ConnectedTracker::GetConnected(const ::Ice::Context* __context)
 {
@@ -564,6 +758,21 @@ LbaNet::ConnectedTracker::___Disconnect(::IceInternal::Incoming& __inS, const ::
 }
 
 ::Ice::DispatchStatus
+LbaNet::ConnectedTracker::___ChangeStatus(::IceInternal::Incoming& __inS, const ::Ice::Current& __current)
+{
+    __checkMode(::Ice::Normal, __current.mode);
+    ::IceInternal::BasicStream* __is = __inS.is();
+    __is->startReadEncaps();
+    ::std::string Nickname;
+    ::std::string NewStatus;
+    __is->read(Nickname);
+    __is->read(NewStatus);
+    __is->endReadEncaps();
+    ChangeStatus(Nickname, NewStatus, __current);
+    return ::Ice::DispatchOK;
+}
+
+::Ice::DispatchStatus
 LbaNet::ConnectedTracker::___GetConnected(::IceInternal::Incoming& __inS, const ::Ice::Current& __current)
 {
     __checkMode(::Ice::Normal, __current.mode);
@@ -576,6 +785,7 @@ LbaNet::ConnectedTracker::___GetConnected(::IceInternal::Incoming& __inS, const 
 
 static ::std::string __LbaNet__ConnectedTracker_all[] =
 {
+    "ChangeStatus",
     "Connect",
     "Disconnect",
     "GetConnected",
@@ -588,7 +798,7 @@ static ::std::string __LbaNet__ConnectedTracker_all[] =
 ::Ice::DispatchStatus
 LbaNet::ConnectedTracker::__dispatch(::IceInternal::Incoming& in, const ::Ice::Current& current)
 {
-    ::std::pair< ::std::string*, ::std::string*> r = ::std::equal_range(__LbaNet__ConnectedTracker_all, __LbaNet__ConnectedTracker_all + 7, current.operation);
+    ::std::pair< ::std::string*, ::std::string*> r = ::std::equal_range(__LbaNet__ConnectedTracker_all, __LbaNet__ConnectedTracker_all + 8, current.operation);
     if(r.first == r.second)
     {
         throw ::Ice::OperationNotExistException(__FILE__, __LINE__, current.id, current.facet, current.operation);
@@ -598,29 +808,33 @@ LbaNet::ConnectedTracker::__dispatch(::IceInternal::Incoming& in, const ::Ice::C
     {
         case 0:
         {
-            return ___Connect(in, current);
+            return ___ChangeStatus(in, current);
         }
         case 1:
         {
-            return ___Disconnect(in, current);
+            return ___Connect(in, current);
         }
         case 2:
         {
-            return ___GetConnected(in, current);
+            return ___Disconnect(in, current);
         }
         case 3:
         {
-            return ___ice_id(in, current);
+            return ___GetConnected(in, current);
         }
         case 4:
         {
-            return ___ice_ids(in, current);
+            return ___ice_id(in, current);
         }
         case 5:
         {
-            return ___ice_isA(in, current);
+            return ___ice_ids(in, current);
         }
         case 6:
+        {
+            return ___ice_isA(in, current);
+        }
+        case 7:
         {
             return ___ice_ping(in, current);
         }

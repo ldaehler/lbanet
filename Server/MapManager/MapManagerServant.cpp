@@ -48,18 +48,22 @@ MapManagerServant::~MapManagerServant()
 LbaNet::MapObserverPrx MapManagerServant::JoinMap(const std::string& mapName,
 										Ice::Long PlayerId, const Ice::Current&)
 {
-	Lock sync(*this);
-	MapHandler * MH = NULL;
+	// clean old threads
+	CleanThreads();
 
-	std::map<std::string, MapHandler *>::iterator it = _running_maps.find(mapName);
-	if(it != _running_maps.end())
+	MapHandler * MH = NULL;
 	{
-		MH = it->second;
-	}
-	else
-	{
-		MH = new MapHandler(_communicator, _adapter, mapName);
-		_running_maps[mapName] = MH;
+		Lock sync(*this);
+		std::map<std::string, MapHandler *>::iterator it = _running_maps.find(mapName);
+		if(it != _running_maps.end())
+		{
+			MH = it->second;
+		}
+		else
+		{
+			MH = new MapHandler(_communicator, _adapter, mapName, this);
+			_running_maps[mapName] = MH;
+		}
 	}
 
 	MH->Join(PlayerId);
@@ -72,10 +76,34 @@ void MapManagerServant::LeaveMap(const std::string& mapName, Ice::Long PlayerId,
 	Lock sync(*this);
 	std::map<std::string, MapHandler *>::iterator it = _running_maps.find(mapName);
 	if(it != _running_maps.end())
+		it->second->Leave(PlayerId);
+}
+
+
+//! stop the thread for map mapName
+void MapManagerServant::StopThread(const std::string& mapName)
+{
+	Lock sync(*this);
+	_tostop.push_back(mapName);
+}
+
+
+//! clean thread to be stopped
+void MapManagerServant::CleanThreads()
+{
+	std::vector<std::string> tostoptmp;
 	{
-		if(it->second->Leave(PlayerId))
+		Lock sync(*this);
+		tostoptmp.swap(_tostop);
+	}
+
+
+	for(size_t i=0; i<tostoptmp.size(); ++i)
+	{
+		std::map<std::string, MapHandler *>::iterator it = _running_maps.find(tostoptmp[i]);
+		if(it != _running_maps.end())
 		{
-			it->second->Destroy();
+			delete it->second;
 			_running_maps.erase(it);
 		}
 	}

@@ -59,3 +59,13 @@ LbaNet::ConnectedL ConnectedTrackerServant::GetConnected(const Ice::Current&)
 {
 	return _shd->GetConnected();
 }
+
+
+/***********************************************************
+change status of one player
+***********************************************************/
+void ConnectedTrackerServant::ChangeStatus(const std::string& Nickname, 
+												   const std::string& NewStatus, const Ice::Current&)
+{
+	return _shd->ChangeStatus(Nickname, NewStatus);
+}

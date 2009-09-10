@@ -41,11 +41,18 @@ get player id
 Ice::Long SharedData::GetId(const std::string & PlayerName)
 {
 	Lock sync(*this);
-	std::map<std::string, Ice::Long>::iterator it = m_connected_users.find(PlayerName);
+	LbaNet::ConnectedL::iterator it = m_connected_users.find(PlayerName);
 	if(it != m_connected_users.end())
-		return it->second;
+		return -1;
 
-	return -1;
+	LbaNet::PlayerInfo pi;
+	pi.Id = m_current_id;
+	m_connected_users[PlayerName] = pi;
+	++m_current_id;
+
+	std::cout<<IceUtil::Time::now().toDateTime()<<": "<<PlayerName<<" connected"<<std::endl;
+
+	return pi.Id;
 }
 
 /***********************************************************
@@ -55,22 +62,18 @@ if not log him in
 bool SharedData::TryLogin(const std::string & PlayerName)
 {
 	Lock sync(*this);
-
-	std::map<std::string, Ice::Long>::iterator it = m_connected_users.find(PlayerName);
+	LbaNet::ConnectedL::iterator it = m_connected_users.find(PlayerName);
 	if(it != m_connected_users.end())
 		return false;
 
-	m_connected_users[PlayerName] = m_current_id;
-	++m_current_id;
 
-	std::cout<<IceUtil::Time::now().toDateTime()<<": "<<PlayerName<<" connected"<<std::endl;
 	return true;
 }
 
 /***********************************************************
 get connected list
 ***********************************************************/
-const std::map<std::string, Ice::Long> & SharedData::GetConnected()
+const LbaNet::ConnectedL & SharedData::GetConnected()
 {
 	Lock sync(*this);
 	return m_connected_users;
@@ -83,12 +86,12 @@ bool SharedData::Disconnect(Ice::Long playerid)
 {
 	Lock sync(*this);
 
-	std::map<std::string, Ice::Long>::iterator it = m_connected_users.begin();
-	std::map<std::string, Ice::Long>::iterator end = m_connected_users.end();
+	LbaNet::ConnectedL::iterator it = m_connected_users.begin();
+	LbaNet::ConnectedL::iterator end = m_connected_users.end();
 
 	for(; it != end; ++it)
 	{
-		if(it->second == playerid)
+		if(it->second.Id == playerid)
 		{
 			std::cout<<IceUtil::Time::now().toDateTime()<<": "<<it->first<<" disconnected"<<std::endl;
 			m_connected_users.erase(it);
@@ -97,4 +100,16 @@ bool SharedData::Disconnect(Ice::Long playerid)
 	}
 
 	return false;
+}
+
+
+/***********************************************************
+change player status
+***********************************************************/
+void SharedData::ChangeStatus(const std::string& Nickname, const std::string& NewStatus)
+{
+	Lock sync(*this);
+	LbaNet::ConnectedL::iterator it = m_connected_users.find(Nickname);
+	if(it != m_connected_users.end())
+		it->second.Status = NewStatus;
 }

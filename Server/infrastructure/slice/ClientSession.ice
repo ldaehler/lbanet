@@ -5,12 +5,10 @@
 #include <ActorInfo.ice>
 #include <ChatInfo.ice>
 #include <MapObserver.ice>
+#include <ConnectedTracker.ice>
 
 module LbaNet
 {
-	dictionary<string, long> ConnectedList;
-	
-
 	interface ClientSession extends Glacier2::Session
 	{
 	    ChatRoomParticipant* JoinChat(string room, ChatRoomObserver* view);
@@ -19,13 +17,15 @@ module LbaNet
 	    ActorsParticipant* ChangeRoom(string newroom, string actorname,  ActorsObserver* view);
 	    
 
-	    ConnectedList GetConnected(out long ownid);       
+	    ConnectedL GetConnected(out long ownid);       
 	    
 	    
 	    void ActivateActor(ActorActivationInfo ai);  
 	    void SignalActor(ActorSignalInfo ai);
 	    
 	    UpdateSeq GetUpdatedInfo();	    
+	    
+	    void ChangeStatus(string Status);
 	    
 	    long GetTime();
 	};

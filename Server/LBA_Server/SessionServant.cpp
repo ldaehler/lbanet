@@ -144,14 +144,28 @@ void SessionServant::destroy(const Ice::Current& current)
 	std::map<std::string, ChatRoomParticipantPrx>::iterator worldit = _chat_rooms.find("World");
 	if(worldit != _chat_rooms.end())
 	{
-		worldit->second->Say("info", "#left " + _userId);
-		_ctracker->Disconnect(_userNum);
-		_map_manager->LeaveMap(_curr_actor_room, _userNum);
+		try
+		{
+			worldit->second->Say("info", "#left " + _userId);
+			_ctracker->Disconnect(_userNum);
+			_map_manager->LeaveMap(_curr_actor_room, _userNum);
+		}
+		catch(...)
+		{
+			// Ignore. The ice mediated invocation can throw an
+			// exception on shutdown.
+		}
 	}
 
-
-	current.adapter->remove(current.id);
-
+	try
+	{
+		current.adapter->remove(current.id);
+	}
+	catch(...)
+	{
+		// Ignore. The ice mediated invocation can throw an
+		// exception on shutdown.
+	}
 
 	for(std::map<std::string, ChatRoomParticipantPrx>::const_iterator p = _chat_rooms.begin(); p != _chat_rooms.end(); ++p)
 	{
@@ -179,14 +193,22 @@ void SessionServant::destroy(const Ice::Current& current)
 		}
 	}
 
-	_chat_rooms.clear();
+	try
+	{
+		_chat_rooms.clear();
+	}
+	catch(...)
+	{
+		// Ignore. The ice mediated invocation can throw an
+		// exception on shutdown.
+	}
 }
 
 
 /***********************************************************
 get the list of people connected
 ***********************************************************/
-LbaNet::ConnectedList SessionServant::GetConnected(Ice::Long & ownid, const Ice::Current&)
+LbaNet::ConnectedL SessionServant::GetConnected(Ice::Long & ownid, const Ice::Current&)
 {
 	ownid = _userNum;
 	return _ctracker->GetConnected();
@@ -264,4 +286,27 @@ LbaNet::UpdateSeq SessionServant::GetUpdatedInfo(const Ice::Current&)
     }
 
 	return LbaNet::UpdateSeq();
+}
+
+
+/***********************************************************
+change player status 
+***********************************************************/
+void SessionServant::ChangeStatus(const std::string& Status, const Ice::Current&)
+{
+	try
+	{
+		_ctracker->ChangeStatus(_userId, Status);
+
+		std::map<std::string, ChatRoomParticipantPrx>::iterator worldit = _chat_rooms.find("World");
+		if(worldit != _chat_rooms.end())
+		{
+			worldit->second->Say("info", "#status " + _userId + " " + Status);
+		}
+	}
+	catch(...)
+	{
+		// Ignore. The ice mediated invocation can throw an
+		// exception on shutdown.
+	}
 }
