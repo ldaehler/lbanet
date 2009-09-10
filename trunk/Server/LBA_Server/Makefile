@@ -17,7 +17,7 @@ lbaserver: $(OBJ)
 
 .cpp.o:
 	@echo "\n         **********creation des .o************\n"
-	$(CC) -I. $(INCDIR) -c $<
+	$(CC) -O2 -I. $(INCDIR) -c $<
 	@echo "\n"
 
 depend: 
