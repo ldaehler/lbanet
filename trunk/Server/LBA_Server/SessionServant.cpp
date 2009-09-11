@@ -31,9 +31,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 constructor
 ***********************************************************/
 SessionServant::SessionServant(const std::string& userId, const RoomManagerPrx& manager,
-									const ConnectedTrackerPrx& ctracker, const MapManagerPrx& map_manager)
+									const ConnectedTrackerPrx& ctracker, const MapManagerPrx& map_manager,
+									std::string	version)
 : _manager(manager), _curr_actor_room(""), _userId(userId), _ctracker(ctracker), _map_manager(map_manager),
-	_userNum(-1)
+	_userNum(-1), _version(version)
 {
 	_userNum = _ctracker->Connect(_userId);
 }
@@ -140,6 +141,15 @@ destroy the session
 void SessionServant::destroy(const Ice::Current& current)
 {
     Lock sync(*this);
+	try
+	{
+		_ctracker->Disconnect(_userNum);
+	}
+	catch(...)
+	{
+		// Ignore. The ice mediated invocation can throw an
+		// exception on shutdown.
+	}
 
 	std::map<std::string, ChatRoomParticipantPrx>::iterator worldit = _chat_rooms.find("World");
 	if(worldit != _chat_rooms.end())
@@ -147,7 +157,6 @@ void SessionServant::destroy(const Ice::Current& current)
 		try
 		{
 			worldit->second->Say("info", "#left " + _userId);
-			_ctracker->Disconnect(_userNum);
 			_map_manager->LeaveMap(_curr_actor_room, _userNum);
 		}
 		catch(...)
@@ -309,4 +318,13 @@ void SessionServant::ChangeStatus(const std::string& Status, const Ice::Current&
 		// Ignore. The ice mediated invocation can throw an
 		// exception on shutdown.
 	}
+}
+
+
+/***********************************************************
+get server version
+***********************************************************/
+std::string SessionServant::GetVersion(const Ice::Current&)
+{
+	return _version;
 }

@@ -46,6 +46,8 @@ private:
 	LbaNet::RoomManagerPrx			_manager;
 	LbaNet::ConnectedTrackerPrx		_ctracker;
 	LbaNet::MapManagerPrx			_map_manager;
+
+	std::string						_version;
 };
 
 #endif

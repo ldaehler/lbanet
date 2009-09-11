@@ -33,6 +33,8 @@ ClientSessionManagerServant::ClientSessionManagerServant(const Ice::Communicator
 {
 	try
 	{
+		_version = communicator->getProperties()->getProperty("LbanetVersion");
+
 		_manager = RoomManagerPrx::checkedCast(communicator->stringToProxy(
 												communicator->getProperties()->getProperty("RoomManager")));
 	}
@@ -88,5 +90,5 @@ Glacier2::SessionPrx ClientSessionManagerServant::create(	const std::string & us
     id.category = "_" + userId;
     id.name = IceUtil::generateUUID();
     return Glacier2::SessionPrx::uncheckedCast(current.adapter->add
-										(new SessionServant(userId, _manager, _ctracker, _map_manager), id));
+							(new SessionServant(userId, _manager, _ctracker, _map_manager, _version), id));
 }

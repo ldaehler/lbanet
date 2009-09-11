@@ -70,6 +70,7 @@
 			<parameter name="RoomManager"/>
 			<parameter name="ConnectedTracker"/>
 			<parameter name="MapManager"/>
+			<parameter name="ServVersion"/>			
 			
 			<server id="LBANetServer-${index}" 
 			exe="${exepath}"
@@ -88,7 +89,8 @@
 				<property name="Ice.ThreadPool.Client.Size" value="2"/>
 				<property name="Ice.ThreadPool.Server.Size" value="2"/>	
 				<property name="Ice.ThreadPool.Client.SizeMax" value="10"/>
-				<property name="Ice.ThreadPool.Server.SizeMax" value="10"/>					
+				<property name="Ice.ThreadPool.Server.SizeMax" value="10"/>	
+				<property name="LbanetVersion" value="${ServVersion}"/>					
 			</server>
 		</server-template>
 		
@@ -249,7 +251,7 @@
 		<node name="LbaNetMainNode">
 			<server-instance template="Glacier2" instance-name="LBANetGlacier2" session-manager="LBANetServer1-SessionManager" permissions-verifier="LBANetServer1-Verifier"/>		
 			<server-instance template="IceStorm" index="1" IceStorm="IceStormLbaNet" />
-			<server-instance template="LBANetServer" index="1" RoomManager="LBANetServer1-RoomManager" ConnectedTracker="LBANetServer1-ConnectedTracker" MapManager="LBANetServer1-MapManager"/>		
+			<server-instance template="LBANetServer" index="1" ServVersion="ver. 0.5" RoomManager="LBANetServer1-RoomManager" ConnectedTracker="LBANetServer1-ConnectedTracker" MapManager="LBANetServer1-MapManager"/>		
 			<server-instance template="RoomManager" index="1" IceStorm="IceStormLbaNet" />	
 			<server-instance template="ConnectedTracker" index="1" IceStorm="IceStormLbaNet" />	
 			<server-instance template="MapManager" index="1" IceStorm="IceStormLbaNet" />				
