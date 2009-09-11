@@ -45,7 +45,8 @@ class SessionServant : public ClientSession, public IceUtil::Mutex
 public:
 	//! constructor
 	SessionServant(const std::string& userId, const RoomManagerPrx& manager,
-					const ConnectedTrackerPrx& ctracker, const MapManagerPrx& map_manager);
+					const ConnectedTrackerPrx& ctracker, const MapManagerPrx& map_manager,
+					std::string	version);
 
 	//! the client join a chat room
     virtual ChatRoomParticipantPrx JoinChat(const std::string& room, const ChatRoomObserverPrx& observer,
@@ -84,6 +85,9 @@ public:
 	//! get server time
 	Ice::Long GetTime(const Ice::Current&);
 
+	//! get server version
+	std::string GetVersion(const Ice::Current&);
+
 private:
 	std::string							_userId;
 	Ice::Long							_userNum;
@@ -97,6 +101,8 @@ private:
 	const RoomManagerPrx				_manager;
 	const ConnectedTrackerPrx			_ctracker;
 	const MapManagerPrx					_map_manager;
+
+	std::string							_version;
 
 };
 
