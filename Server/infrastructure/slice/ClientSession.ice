@@ -28,6 +28,8 @@ module LbaNet
 	    void ChangeStatus(string Status);
 	    
 	    long GetTime();
+	    
+	    string GetVersion();
 	};
 
 };
