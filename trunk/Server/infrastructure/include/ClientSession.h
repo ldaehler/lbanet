@@ -230,6 +230,21 @@ private:
     ::Ice::Long GetTime(const ::Ice::Context*);
     
 public:
+
+    ::std::string GetVersion()
+    {
+        return GetVersion(0);
+    }
+    ::std::string GetVersion(const ::Ice::Context& __ctx)
+    {
+        return GetVersion(&__ctx);
+    }
+    
+private:
+
+    ::std::string GetVersion(const ::Ice::Context*);
+    
+public:
     
     ::IceInternal::ProxyHandle<ClientSession> ice_context(const ::Ice::Context& __context) const
     {
@@ -461,6 +476,8 @@ public:
     virtual void ChangeStatus(const ::std::string&, const ::Ice::Context*) = 0;
 
     virtual ::Ice::Long GetTime(const ::Ice::Context*) = 0;
+
+    virtual ::std::string GetVersion(const ::Ice::Context*) = 0;
 };
 
 }
@@ -495,6 +512,8 @@ public:
     virtual void ChangeStatus(const ::std::string&, const ::Ice::Context*);
 
     virtual ::Ice::Long GetTime(const ::Ice::Context*);
+
+    virtual ::std::string GetVersion(const ::Ice::Context*);
 };
 
 }
@@ -529,6 +548,8 @@ public:
     virtual void ChangeStatus(const ::std::string&, const ::Ice::Context*);
 
     virtual ::Ice::Long GetTime(const ::Ice::Context*);
+
+    virtual ::std::string GetVersion(const ::Ice::Context*);
 };
 
 }
@@ -578,6 +599,9 @@ public:
 
     virtual ::Ice::Long GetTime(const ::Ice::Current& = ::Ice::Current()) = 0;
     ::Ice::DispatchStatus ___GetTime(::IceInternal::Incoming&, const ::Ice::Current&);
+
+    virtual ::std::string GetVersion(const ::Ice::Current& = ::Ice::Current()) = 0;
+    ::Ice::DispatchStatus ___GetVersion(::IceInternal::Incoming&, const ::Ice::Current&);
 
     virtual ::Ice::DispatchStatus __dispatch(::IceInternal::Incoming&, const ::Ice::Current&);
 
