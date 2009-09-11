@@ -47,6 +47,8 @@ static const ::std::string __LbaNet__ClientSession__ChangeStatus_name = "ChangeS
 
 static const ::std::string __LbaNet__ClientSession__GetTime_name = "GetTime";
 
+static const ::std::string __LbaNet__ClientSession__GetVersion_name = "GetVersion";
+
 ::Ice::Object* IceInternal::upCast(::LbaNet::ClientSession* p) { return p; }
 ::IceProxy::Ice::Object* IceInternal::upCast(::IceProxy::LbaNet::ClientSession* p) { return p; }
 
@@ -306,6 +308,34 @@ IceProxy::LbaNet::ClientSession::GetTime(const ::Ice::Context* __ctx)
             __delBase = __getDelegate(false);
             ::IceDelegate::LbaNet::ClientSession* __del = dynamic_cast< ::IceDelegate::LbaNet::ClientSession*>(__delBase.get());
             return __del->GetTime(__ctx);
+        }
+        catch(const ::IceInternal::LocalExceptionWrapper& __ex)
+        {
+            __handleExceptionWrapper(__delBase, __ex, 0);
+        }
+        catch(const ::Ice::LocalException& __ex)
+        {
+            __handleException(__delBase, __ex, 0, __cnt);
+        }
+    }
+}
+
+::std::string
+IceProxy::LbaNet::ClientSession::GetVersion(const ::Ice::Context* __ctx)
+{
+    int __cnt = 0;
+    while(true)
+    {
+        ::IceInternal::Handle< ::IceDelegate::Ice::Object> __delBase;
+        try
+        {
+#if defined(__BCPLUSPLUS__) && (__BCPLUSPLUS__ >= 0x0600) // C++Builder 2009 compiler bug
+            IceUtil::DummyBCC dummy;
+#endif
+            __checkTwowayOnly(__LbaNet__ClientSession__GetVersion_name);
+            __delBase = __getDelegate(false);
+            ::IceDelegate::LbaNet::ClientSession* __del = dynamic_cast< ::IceDelegate::LbaNet::ClientSession*>(__delBase.get());
+            return __del->GetVersion(__ctx);
         }
         catch(const ::IceInternal::LocalExceptionWrapper& __ex)
         {
@@ -655,6 +685,38 @@ IceDelegateM::LbaNet::ClientSession::GetTime(const ::Ice::Context* __context)
     ::IceInternal::Outgoing __og(__handler.get(), __LbaNet__ClientSession__GetTime_name, ::Ice::Normal, __context);
     bool __ok = __og.invoke();
     ::Ice::Long __ret;
+    try
+    {
+        if(!__ok)
+        {
+            try
+            {
+                __og.throwUserException();
+            }
+            catch(const ::Ice::UserException& __ex)
+            {
+                ::Ice::UnknownUserException __uue(__FILE__, __LINE__, __ex.ice_name());
+                throw __uue;
+            }
+        }
+        ::IceInternal::BasicStream* __is = __og.is();
+        __is->startReadEncaps();
+        __is->read(__ret);
+        __is->endReadEncaps();
+        return __ret;
+    }
+    catch(const ::Ice::LocalException& __ex)
+    {
+        throw ::IceInternal::LocalExceptionWrapper(__ex, false);
+    }
+}
+
+::std::string
+IceDelegateM::LbaNet::ClientSession::GetVersion(const ::Ice::Context* __context)
+{
+    ::IceInternal::Outgoing __og(__handler.get(), __LbaNet__ClientSession__GetVersion_name, ::Ice::Normal, __context);
+    bool __ok = __og.invoke();
+    ::std::string __ret;
     try
     {
         if(!__ok)
@@ -1281,6 +1343,72 @@ IceDelegateD::LbaNet::ClientSession::GetTime(const ::Ice::Context* __context)
     return __result;
 }
 
+::std::string
+IceDelegateD::LbaNet::ClientSession::GetVersion(const ::Ice::Context* __context)
+{
+    class _DirectI : public ::IceInternal::Direct
+    {
+    public:
+
+        _DirectI(::std::string& __result, const ::Ice::Current& __current) : 
+            ::IceInternal::Direct(__current),
+            _result(__result)
+        {
+        }
+        
+        virtual ::Ice::DispatchStatus
+        run(::Ice::Object* object)
+        {
+            ::LbaNet::ClientSession* servant = dynamic_cast< ::LbaNet::ClientSession*>(object);
+            if(!servant)
+            {
+                throw ::Ice::OperationNotExistException(__FILE__, __LINE__, _current.id, _current.facet, _current.operation);
+            }
+            _result = servant->GetVersion(_current);
+            return ::Ice::DispatchOK;
+        }
+        
+    private:
+        
+        ::std::string& _result;
+    };
+    
+    ::Ice::Current __current;
+    __initCurrent(__current, __LbaNet__ClientSession__GetVersion_name, ::Ice::Normal, __context);
+    ::std::string __result;
+    try
+    {
+        _DirectI __direct(__result, __current);
+        try
+        {
+            __direct.servant()->__collocDispatch(__direct);
+        }
+        catch(...)
+        {
+            __direct.destroy();
+            throw;
+        }
+        __direct.destroy();
+    }
+    catch(const ::Ice::SystemException&)
+    {
+        throw;
+    }
+    catch(const ::IceInternal::LocalExceptionWrapper&)
+    {
+        throw;
+    }
+    catch(const ::std::exception& __ex)
+    {
+        ::IceInternal::LocalExceptionWrapper::throwWrapper(__ex);
+    }
+    catch(...)
+    {
+        throw ::IceInternal::LocalExceptionWrapper(::Ice::UnknownException(__FILE__, __LINE__, "unknown c++ exception"), false);
+    }
+    return __result;
+}
+
 ::Ice::ObjectPtr
 LbaNet::ClientSession::ice_clone() const
 {
@@ -1451,6 +1579,17 @@ LbaNet::ClientSession::___GetTime(::IceInternal::Incoming& __inS, const ::Ice::C
     return ::Ice::DispatchOK;
 }
 
+::Ice::DispatchStatus
+LbaNet::ClientSession::___GetVersion(::IceInternal::Incoming& __inS, const ::Ice::Current& __current)
+{
+    __checkMode(::Ice::Normal, __current.mode);
+    __inS.is()->skipEmptyEncaps();
+    ::IceInternal::BasicStream* __os = __inS.os();
+    ::std::string __ret = GetVersion(__current);
+    __os->write(__ret);
+    return ::Ice::DispatchOK;
+}
+
 static ::std::string __LbaNet__ClientSession_all[] =
 {
     "ActivateActor",
@@ -1459,6 +1598,7 @@ static ::std::string __LbaNet__ClientSession_all[] =
     "GetConnected",
     "GetTime",
     "GetUpdatedInfo",
+    "GetVersion",
     "JoinChat",
     "LeaveChat",
     "SignalActor",
@@ -1472,7 +1612,7 @@ static ::std::string __LbaNet__ClientSession_all[] =
 ::Ice::DispatchStatus
 LbaNet::ClientSession::__dispatch(::IceInternal::Incoming& in, const ::Ice::Current& current)
 {
-    ::std::pair< ::std::string*, ::std::string*> r = ::std::equal_range(__LbaNet__ClientSession_all, __LbaNet__ClientSession_all + 14, current.operation);
+    ::std::pair< ::std::string*, ::std::string*> r = ::std::equal_range(__LbaNet__ClientSession_all, __LbaNet__ClientSession_all + 15, current.operation);
     if(r.first == r.second)
     {
         throw ::Ice::OperationNotExistException(__FILE__, __LINE__, current.id, current.facet, current.operation);
@@ -1506,33 +1646,37 @@ LbaNet::ClientSession::__dispatch(::IceInternal::Incoming& in, const ::Ice::Curr
         }
         case 6:
         {
-            return ___JoinChat(in, current);
+            return ___GetVersion(in, current);
         }
         case 7:
         {
-            return ___LeaveChat(in, current);
+            return ___JoinChat(in, current);
         }
         case 8:
         {
-            return ___SignalActor(in, current);
+            return ___LeaveChat(in, current);
         }
         case 9:
         {
-            return ___destroy(in, current);
+            return ___SignalActor(in, current);
         }
         case 10:
         {
-            return ___ice_id(in, current);
+            return ___destroy(in, current);
         }
         case 11:
         {
-            return ___ice_ids(in, current);
+            return ___ice_id(in, current);
         }
         case 12:
         {
-            return ___ice_isA(in, current);
+            return ___ice_ids(in, current);
         }
         case 13:
+        {
+            return ___ice_isA(in, current);
+        }
+        case 14:
         {
             return ___ice_ping(in, current);
         }
