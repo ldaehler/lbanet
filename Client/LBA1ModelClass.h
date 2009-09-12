@@ -5,7 +5,7 @@ Copyright (C) 2004
 
 Author: Alexandre Fontoura [alexfont]
 Begin : Fri Aug 21 2004
-Email : alexandrefontoura@oninetspeed.pt
+Email : alexandrefontoura@gmail.com
 
 Info: some codes from yazor TwinEngine taken and modified by alexfont
 Sligtly modified by Rincevent_123 to fit lbanet
