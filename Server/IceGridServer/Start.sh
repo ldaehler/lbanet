@@ -5,3 +5,4 @@ icegridnode --Ice.Config=config.grid &
 sleep 5
 icegridadmin --Ice.Config=config.grid -e "application add 'application.xml'"
 icegridadmin --Ice.Config=config.grid -e "server start LBANetGlacier2"
+icepatch2server --IcePatch2.Endpoints="tcp -p 10000" ../../patch_client &
