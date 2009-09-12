@@ -79,6 +79,9 @@ public:
 	//get updated info
 	virtual LbaNet::UpdateSeq GetUpdatedInfo(const Ice::Current&);
 
+	//! get player info
+	virtual LbaNet::PlayerSeq GetPlayersInfo(const Ice::Current&);
+
 	// change player status 
 	virtual void ChangeStatus(const std::string& Status, const Ice::Current&);
 

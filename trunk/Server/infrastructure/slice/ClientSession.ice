@@ -23,7 +23,8 @@ module LbaNet
 	    void ActivateActor(ActorActivationInfo ai);  
 	    void SignalActor(ActorSignalInfo ai);
 	    
-	    UpdateSeq GetUpdatedInfo();	    
+	    UpdateSeq GetUpdatedInfo();	   
+	    PlayerSeq GetPlayersInfo();		    
 	    
 	    void ChangeStatus(string Status);
 	    

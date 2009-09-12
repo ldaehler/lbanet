@@ -81,6 +81,49 @@ void __patch__MapObserverPtr(void*, ::Ice::ObjectPtr&);
 namespace LbaNet
 {
 
+struct ActorInfo
+{
+    ::Ice::Double Time;
+    ::Ice::Long ActorId;
+    ::std::string MapName;
+    ::std::string Name;
+    bool DisplayName;
+    ::Ice::Float X;
+    ::Ice::Float Y;
+    ::Ice::Float Z;
+    ::Ice::Float Rotation;
+    ::Ice::Int Model;
+    ::Ice::Int Body;
+    ::Ice::Int Animation;
+    ::Ice::Short BodyColor;
+    ::Ice::Float vX;
+    ::Ice::Float vY;
+    ::Ice::Float vZ;
+    ::Ice::Float vRotation;
+
+    bool operator==(const ActorInfo&) const;
+    bool operator<(const ActorInfo&) const;
+    bool operator!=(const ActorInfo& __rhs) const
+    {
+        return !operator==(__rhs);
+    }
+    bool operator<=(const ActorInfo& __rhs) const
+    {
+        return operator<(__rhs) || operator==(__rhs);
+    }
+    bool operator>(const ActorInfo& __rhs) const
+    {
+        return !operator<(__rhs) && !operator==(__rhs);
+    }
+    bool operator>=(const ActorInfo& __rhs) const
+    {
+        return !operator<(__rhs);
+    }
+
+    void __write(::IceInternal::BasicStream*) const;
+    void __read(::IceInternal::BasicStream*);
+};
+
 struct ActorActivationInfo
 {
     ::Ice::Long ActivatedId;
@@ -186,6 +229,10 @@ typedef ::std::vector< ::LbaNet::ActorUpdateInfo> UpdateSeq;
 void __writeUpdateSeq(::IceInternal::BasicStream*, const ::LbaNet::ActorUpdateInfo*, const ::LbaNet::ActorUpdateInfo*);
 void __readUpdateSeq(::IceInternal::BasicStream*, UpdateSeq&);
 
+typedef ::std::vector< ::LbaNet::ActorInfo> PlayerSeq;
+void __writePlayerSeq(::IceInternal::BasicStream*, const ::LbaNet::ActorInfo*, const ::LbaNet::ActorInfo*);
+void __readPlayerSeq(::IceInternal::BasicStream*, PlayerSeq&);
+
 }
 
 namespace IceProxy
@@ -240,6 +287,21 @@ public:
 private:
 
     ::LbaNet::UpdateSeq GetUpdatedInfo(const ::Ice::Context*);
+    
+public:
+
+    ::LbaNet::PlayerSeq GetPlayersInfo()
+    {
+        return GetPlayersInfo(0);
+    }
+    ::LbaNet::PlayerSeq GetPlayersInfo(const ::Ice::Context& __ctx)
+    {
+        return GetPlayersInfo(&__ctx);
+    }
+    
+private:
+
+    ::LbaNet::PlayerSeq GetPlayersInfo(const ::Ice::Context*);
     
 public:
     
@@ -461,6 +523,8 @@ public:
     virtual void SignalActor(const ::LbaNet::ActorSignalInfo&, const ::Ice::Context*) = 0;
 
     virtual ::LbaNet::UpdateSeq GetUpdatedInfo(const ::Ice::Context*) = 0;
+
+    virtual ::LbaNet::PlayerSeq GetPlayersInfo(const ::Ice::Context*) = 0;
 };
 
 }
@@ -483,6 +547,8 @@ public:
     virtual void SignalActor(const ::LbaNet::ActorSignalInfo&, const ::Ice::Context*);
 
     virtual ::LbaNet::UpdateSeq GetUpdatedInfo(const ::Ice::Context*);
+
+    virtual ::LbaNet::PlayerSeq GetPlayersInfo(const ::Ice::Context*);
 };
 
 }
@@ -505,6 +571,8 @@ public:
     virtual void SignalActor(const ::LbaNet::ActorSignalInfo&, const ::Ice::Context*);
 
     virtual ::LbaNet::UpdateSeq GetUpdatedInfo(const ::Ice::Context*);
+
+    virtual ::LbaNet::PlayerSeq GetPlayersInfo(const ::Ice::Context*);
 };
 
 }
@@ -536,6 +604,9 @@ public:
 
     virtual ::LbaNet::UpdateSeq GetUpdatedInfo(const ::Ice::Current& = ::Ice::Current()) = 0;
     ::Ice::DispatchStatus ___GetUpdatedInfo(::IceInternal::Incoming&, const ::Ice::Current&);
+
+    virtual ::LbaNet::PlayerSeq GetPlayersInfo(const ::Ice::Current& = ::Ice::Current()) = 0;
+    ::Ice::DispatchStatus ___GetPlayersInfo(::IceInternal::Incoming&, const ::Ice::Current&);
 
     virtual ::Ice::DispatchStatus __dispatch(::IceInternal::Incoming&, const ::Ice::Current&);
 

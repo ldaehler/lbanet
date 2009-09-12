@@ -201,6 +201,21 @@ private:
     
 public:
 
+    ::LbaNet::PlayerSeq GetPlayersInfo()
+    {
+        return GetPlayersInfo(0);
+    }
+    ::LbaNet::PlayerSeq GetPlayersInfo(const ::Ice::Context& __ctx)
+    {
+        return GetPlayersInfo(&__ctx);
+    }
+    
+private:
+
+    ::LbaNet::PlayerSeq GetPlayersInfo(const ::Ice::Context*);
+    
+public:
+
     void ChangeStatus(const ::std::string& Status)
     {
         ChangeStatus(Status, 0);
@@ -473,6 +488,8 @@ public:
 
     virtual ::LbaNet::UpdateSeq GetUpdatedInfo(const ::Ice::Context*) = 0;
 
+    virtual ::LbaNet::PlayerSeq GetPlayersInfo(const ::Ice::Context*) = 0;
+
     virtual void ChangeStatus(const ::std::string&, const ::Ice::Context*) = 0;
 
     virtual ::Ice::Long GetTime(const ::Ice::Context*) = 0;
@@ -509,6 +526,8 @@ public:
 
     virtual ::LbaNet::UpdateSeq GetUpdatedInfo(const ::Ice::Context*);
 
+    virtual ::LbaNet::PlayerSeq GetPlayersInfo(const ::Ice::Context*);
+
     virtual void ChangeStatus(const ::std::string&, const ::Ice::Context*);
 
     virtual ::Ice::Long GetTime(const ::Ice::Context*);
@@ -544,6 +563,8 @@ public:
     virtual void SignalActor(const ::LbaNet::ActorSignalInfo&, const ::Ice::Context*);
 
     virtual ::LbaNet::UpdateSeq GetUpdatedInfo(const ::Ice::Context*);
+
+    virtual ::LbaNet::PlayerSeq GetPlayersInfo(const ::Ice::Context*);
 
     virtual void ChangeStatus(const ::std::string&, const ::Ice::Context*);
 
@@ -593,6 +614,9 @@ public:
 
     virtual ::LbaNet::UpdateSeq GetUpdatedInfo(const ::Ice::Current& = ::Ice::Current()) = 0;
     ::Ice::DispatchStatus ___GetUpdatedInfo(::IceInternal::Incoming&, const ::Ice::Current&);
+
+    virtual ::LbaNet::PlayerSeq GetPlayersInfo(const ::Ice::Current& = ::Ice::Current()) = 0;
+    ::Ice::DispatchStatus ___GetPlayersInfo(::IceInternal::Incoming&, const ::Ice::Current&);
 
     virtual void ChangeStatus(const ::std::string&, const ::Ice::Current& = ::Ice::Current()) = 0;
     ::Ice::DispatchStatus ___ChangeStatus(::IceInternal::Incoming&, const ::Ice::Current&);

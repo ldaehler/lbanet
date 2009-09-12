@@ -6,35 +6,6 @@
 
 module LbaNet
 {
-	struct ActorInfo
-	{
-		double			Time;
-	
-		// actor name
-		long			ActorId;
-		string			MapName;		
-		string			Name;
-		bool			DisplayName;
-
-		// actor coordinates
-		float			X;
-		float			Y;
-		float			Z;
-		float			Rotation;
-
-		// actor display
-		int			Model;
-		int			Body;
-		int			Animation;
-		short			BodyColor;
-
-		// actor velocity
-		float			vX;
-		float			vY;
-		float			vZ;
-		float			vRotation;		
-	};
-
 	
 	struct CurrentAndFutureInfo
 	{

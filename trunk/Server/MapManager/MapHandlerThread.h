@@ -63,6 +63,9 @@ public:
 	//! get updated info
 	LbaNet::UpdateSeq GetUpdatedInfo();
 
+	//! get player info
+	LbaNet::PlayerSeq GetPlayersInfo();
+
 protected:
 	// a player join a map
 	void Join(Ice::Long PlayerId);
