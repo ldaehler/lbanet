@@ -10,7 +10,7 @@ __________________________
 Version 0.5 changes:
 - added this release note file
 - added setup program to install the client
-- added away feature. The client will be automatically be set to away after 5min of inactivity. However you can manually set/reset the away state by typping /afk /back in the chatbox
+- added away feature. The client will automatically be set to away after 5min of inactivity. However you can manually set/reset the away state by typping /afk /back in the chatbox
 - added version check between client and server
 - the server is now synchronizing all map objects
 - added some new entities like lifts or doors all over the maps
