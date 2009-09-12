@@ -1,5 +1,5 @@
 /*
-------------------------[ LBA Screen Viewer Source ]-------------------------
+------------------------[ LBAnimator studio Source ]-------------------------
 Copyright (C) 2004
 --------------------------------[ HQRLib.h ]---------------------------------
 
@@ -7,7 +7,8 @@ Author: Alexandre Fontoura [alexfont]
 Begin : Fri Aug 21 2004
 Email : alexandrefontoura@oninetspeed.pt
 
-Info: some codes from yazor TwinEngine taken and modified by me
+Info: some codes from yazor TwinEngine taken and modified by alexfont
+Sligtly modified by Rincevent_123 to fit lbanet
 
 -------------------------------[ GNU License ]-------------------------------
 
