@@ -51,3 +51,12 @@ LbaNet::UpdateSeq ActorReceiverServant::GetUpdatedInfo(const Ice::Current&)
 {
 	return _mthread->GetUpdatedInfo();
 }
+
+
+/***********************************************************
+	get player info
+***********************************************************/
+LbaNet::PlayerSeq ActorReceiverServant::GetPlayersInfo(const Ice::Current&)
+{
+	return _mthread->GetPlayersInfo();
+}

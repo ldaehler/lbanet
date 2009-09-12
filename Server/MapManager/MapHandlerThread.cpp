@@ -331,3 +331,19 @@ LbaNet::UpdateSeq MapHandlerThread::GetUpdatedInfo()
 
 	return res;
 }
+
+/***********************************************************
+get player info
+***********************************************************/
+LbaNet::PlayerSeq MapHandlerThread::GetPlayersInfo()
+{
+	LbaNet::PlayerSeq res;
+	Lock sync(*this);
+
+	std::map<Ice::Long, LbaNet::ActorInfo>::iterator it =_players.begin();
+	std::map<Ice::Long, LbaNet::ActorInfo>::iterator end =_players.end();
+	for(; it != end; ++it)
+		res.push_back(it->second);
+
+	return res;
+}

@@ -97,49 +97,6 @@ void __patch__ActorsParticipantPtr(void*, ::Ice::ObjectPtr&);
 namespace LbaNet
 {
 
-struct ActorInfo
-{
-    ::Ice::Double Time;
-    ::Ice::Long ActorId;
-    ::std::string MapName;
-    ::std::string Name;
-    bool DisplayName;
-    ::Ice::Float X;
-    ::Ice::Float Y;
-    ::Ice::Float Z;
-    ::Ice::Float Rotation;
-    ::Ice::Int Model;
-    ::Ice::Int Body;
-    ::Ice::Int Animation;
-    ::Ice::Short BodyColor;
-    ::Ice::Float vX;
-    ::Ice::Float vY;
-    ::Ice::Float vZ;
-    ::Ice::Float vRotation;
-
-    bool operator==(const ActorInfo&) const;
-    bool operator<(const ActorInfo&) const;
-    bool operator!=(const ActorInfo& __rhs) const
-    {
-        return !operator==(__rhs);
-    }
-    bool operator<=(const ActorInfo& __rhs) const
-    {
-        return operator<(__rhs) || operator==(__rhs);
-    }
-    bool operator>(const ActorInfo& __rhs) const
-    {
-        return !operator<(__rhs) && !operator==(__rhs);
-    }
-    bool operator>=(const ActorInfo& __rhs) const
-    {
-        return !operator<(__rhs);
-    }
-
-    void __write(::IceInternal::BasicStream*) const;
-    void __read(::IceInternal::BasicStream*);
-};
-
 struct CurrentAndFutureInfo
 {
     ::LbaNet::ActorInfo CurrentState;

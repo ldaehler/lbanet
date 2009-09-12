@@ -298,6 +298,30 @@ LbaNet::UpdateSeq SessionServant::GetUpdatedInfo(const Ice::Current&)
 }
 
 
+
+/***********************************************************
+	get player info
+***********************************************************/
+LbaNet::PlayerSeq SessionServant::GetPlayersInfo(const Ice::Current&)
+{
+	try
+	{
+		if(_actors_manager)
+			return _actors_manager->GetPlayersInfo();
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		std::cout<<"SessionServant - Exception during GetUpdatedInfo: "<< ex.what()<<std::endl;
+    }
+    catch(...)
+    {
+		std::cout<<"SessionServant - Unknown exception during GetUpdatedInfo"<<std::endl;
+    }
+
+	return LbaNet::PlayerSeq();
+}
+
+
 /***********************************************************
 change player status 
 ***********************************************************/

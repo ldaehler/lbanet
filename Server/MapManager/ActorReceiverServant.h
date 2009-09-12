@@ -53,6 +53,10 @@ public:
 	//! get updated info
 	virtual LbaNet::UpdateSeq GetUpdatedInfo(const Ice::Current&);
 
+
+	//! get player info
+	virtual LbaNet::PlayerSeq GetPlayersInfo(const Ice::Current&);
+
 private:
 	SharedData * _SD;
 	MapHandlerThread *	_mthread;
