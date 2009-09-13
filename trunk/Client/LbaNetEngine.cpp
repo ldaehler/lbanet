@@ -92,6 +92,8 @@ initialize the class
 ***********************************************************/
 void LbaNetEngine::Initialize(void)
 {
+	LogHandler::getInstance()->LogToFile("Initializing SDL...");
+
     /* Initialize the SDL library */
     if( SDL_Init(SDL_INIT_VIDEO) < 0 )
 	{
@@ -110,6 +112,7 @@ void LbaNetEngine::Initialize(void)
      * Initialize the display in 8-bit palettized mode,
      * requesting a software surface
      */
+	LogHandler::getInstance()->LogToFile("Initializing screen display...");
     ResetScreen();
     if ( m_screen == NULL )
 	{
@@ -123,10 +126,12 @@ void LbaNetEngine::Initialize(void)
 
 
 	// initialize the music
+	LogHandler::getInstance()->LogToFile("Initializing music engine...");
 	MusicHandler::getInstance()->Initialize();
 
 
 	// Initialize IL
+	LogHandler::getInstance()->LogToFile("Initializing devil lib...");
 	ilInit();
 
 	// Initialize ILU
@@ -139,16 +144,16 @@ void LbaNetEngine::Initialize(void)
 	SDL_EnableUNICODE (1);
 	SDL_EnableKeyRepeat (SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 
+	LogHandler::getInstance()->LogToFile("Initializing gui...");
 	m_guiHandler.Initialize(m_screen_size_X, m_screen_size_Y, m_serverConnectionHandler->ServerOn(), m_clientV);
 	m_lbaNetModel.Initialize();
 	m_lbaNetModel.SetScreenSize(m_screen_size_X, m_screen_size_Y);
 
 	m_guiHandler.SetActors(m_lbaNetModel.GetLActors(), m_lbaNetModel.GetEActors());
 
+	LogHandler::getInstance()->LogToFile("Displaying login window...");
 	PlayMenuMusic();
 	SwitchGuiToLogin();
-
-
 }
 
 

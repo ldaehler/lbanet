@@ -35,6 +35,7 @@ ServerConnectionHandler::ServerConnectionHandler(Ice::CommunicatorPtr communicat
 : _communicator(communicator), _adapter(NULL), _session(NULL), _router(NULL),
 	_thread_started(false), _ircOn(false), _ircth(NULL), _serveron(false)
 {
+	LogHandler::getInstance()->LogToFile("Trying to connect to glacier");
 	Ice::RouterPrx defaultRouter = _communicator->getDefaultRouter();
 	if(defaultRouter)
 	{
@@ -43,16 +44,19 @@ ServerConnectionHandler::ServerConnectionHandler(Ice::CommunicatorPtr communicat
 			// timeout after 2 seconds if the serve does not respond
 			Glacier2::RouterPrx::checkedCast(defaultRouter->ice_timeout(2000));
 		}
-		catch(const IceUtil::Exception&)
+		catch(const IceUtil::Exception& ex)
 		{
+			LogHandler::getInstance()->LogToFile(std::string("Connection to server failed") + ex.what());
 			return;
 		}
 		catch(...)
 		{
+			LogHandler::getInstance()->LogToFile("Connection to server failed");
 			return;
 		}
 
 		_serveron = true;
+		LogHandler::getInstance()->LogToFile("Connection to server ok");
 	}
 }
 

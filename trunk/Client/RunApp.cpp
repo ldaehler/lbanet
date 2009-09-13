@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ServerConnectionHandler.h"
 #include "LbaNetEngine.h"
 #include "RunApp.h"
-
+#include "LogHandler.h"
 
 class IceClient : public Ice::Application
 {
@@ -36,12 +36,16 @@ public:
     virtual int run(int argc, char* argv[])
     {
 		shutdownOnInterrupt();
+		LogHandler::getInstance()->LogToFile("Checking connection with the server...");
 		ServerConnectionHandler serverH(communicator());
 
+		LogHandler::getInstance()->LogToFile("Reading properties...");
 		Ice::PropertiesPtr prop = communicator()->getProperties();
 		std::string clientV = prop->getPropertyWithDefault("LbanetClientVersion", "v0");
 
+		LogHandler::getInstance()->LogToFile("Initializing the game engine...");
 		LbaNetEngine engine(&serverH, clientV);
+		LogHandler::getInstance()->LogToFile("Starting the game engine...");
 		engine.run();
 
 
@@ -58,6 +62,7 @@ run function
 ***********************************************************/
 int RunApp::Run(int argc, char *argv[])
 {
+	LogHandler::getInstance()->LogToFile("Entering main program...");
     IceClient app;
     return app.main(argc, argv, "config.client");
 }

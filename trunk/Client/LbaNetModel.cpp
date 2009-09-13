@@ -40,6 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "LocalActorsHandler.h"
 #include "SynchronizedTimeHandler.h"
 #include "ExternalActorsHandler.h"
+#include "LogHandler.h"
 
 #include <windows.h>    // Header File For Windows
 #include <GL/gl.h>      // Header File For The OpenGL32 Library
@@ -49,9 +50,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 const short	LbaNetModel::m_body_color_map[] = {-1, 2, 19, 32, 36, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 243};
 
 
-#ifndef _LBANET_SET_EDITOR_
-#define _LBANET_SET_EDITOR_
-#endif
+//#ifndef _LBANET_SET_EDITOR_
+//#define _LBANET_SET_EDITOR_
+//#endif
 
 
 /***********************************************************
@@ -61,6 +62,8 @@ LbaNetModel::LbaNetModel(GuiHandler*	guiH)
 : _current_room_cut(-1), m_current_main_state(0), _game_paused(false),
 	m_current_main_body(0), _guiH(guiH), m_current_main_body_color(0), m_debug_map(0), m_room_y_cut(-1)
 {
+	LogHandler::getInstance()->LogToFile("Initializing model class...");
+
     _camera= new Camera();
 	_mapRenderer = new MapRenderer();
 	_localActorsHandler = new LocalActorsHandler();
@@ -69,6 +72,7 @@ LbaNetModel::LbaNetModel(GuiHandler*	guiH)
 	_localActorsHandler->SetPhysic(_physicHandler);
 	_externalActorsHandler->SetPhysic(_physicHandler);
 
+	LogHandler::getInstance()->LogToFile("Reading configuration from file...");
 	ConfigurationManager *	cm = ConfigurationManager::GetInstance();
 
 	float NormalSpeed, SportySpeed, FightSpeed, DiscreteSpeed, HorseSpeed, DinoSpeed, JumpSpeed, JumpHeight, AnimationSpeed;
@@ -82,6 +86,7 @@ LbaNetModel::LbaNetModel(GuiHandler*	guiH)
 	cm->GetFloat("Speed.JumpHeight", JumpHeight);
 	cm->GetFloat("Speed.AnimationSpeed", AnimationSpeed);
 
+	LogHandler::getInstance()->LogToFile("Creating main player character...");
 	_mainPlayerHandler = new MainPlayerHandler(NormalSpeed, SportySpeed,
 								FightSpeed, DiscreteSpeed, HorseSpeed, DinoSpeed, AnimationSpeed,
 								JumpSpeed,JumpHeight,  _physicHandler, _camera);
@@ -101,6 +106,8 @@ LbaNetModel::LbaNetModel(GuiHandler*	guiH)
 	ConfigurationManager::GetInstance()->GetInt("Player.BodyColor", bcolor);
 	for(int i=0; i<bcolor; ++i)
 		IncreasePlayerBodyColor();
+
+	LogHandler::getInstance()->LogToFile("Initializing camera...");
 
 	bool perspec;
 	double camdistance, camzenit;
