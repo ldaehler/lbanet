@@ -339,14 +339,14 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 			_nbYFall= 0;
 			_state = Ac_hurt;
 
-			bool waitforanim = ChangeAnimToHurt(_keepYfall > 6);
-
 			if(_camptr)
 				_camptr->SetTarget(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ());
 
 			if(_RoomP && _RoomP->StepOnWater(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ()))
 				return 1;	// the actor should die in water
 
+			// playing sound only if not in water
+			bool waitforanim = ChangeAnimToHurt(_keepYfall > 6);
 
 			if(_state != Ac_Flying && _player->GetPosY() == -1) // the actor should die by falling out of the map
 				return 2;
@@ -390,7 +390,11 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 		}
 		else if(_state != Ac_Dying && _RoomP)
 		{
-			if((_state != Ac_Flying) && ((_state != Ac_protopack) || !_up_key_pressed) && (_state != Ac_Jumping))
+			float pY = _player->GetPosY();
+			float tmpY;
+			float cY = modf(pY, &tmpY);
+
+			if((cY < 0.000001) && (_state != Ac_Flying) && ((_state != Ac_protopack) || !_up_key_pressed) && (_state != Ac_Jumping))
 				if(_RoomP && _RoomP->StepOnWater(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ()))
 					return 1;	// the actor should die in water
 

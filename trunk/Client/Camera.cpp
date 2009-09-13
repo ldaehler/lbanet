@@ -70,11 +70,14 @@ void Camera::SetTarget(double x, double y, double z)
 void Camera::SetDistance(double dist)
 {
 	_distance = dist;
+	int maxdistance = 150;
+	if(!IsPerspective())
+		maxdistance = 1000;
 
 	if(_distance < 10)
 		_distance = 10;
-	if(_distance > 150)
-		_distance = 150;
+	if(_distance > maxdistance)
+		_distance = maxdistance;
 
 	_fov=atan(_size/2./_distance)*180./M_PI;
 }

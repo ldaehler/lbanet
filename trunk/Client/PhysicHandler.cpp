@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --------------------------------------------------------------------------------------------------
 */
 PhysicHandler::PhysicHandler(LocalActorsHandler * LAH, ExternalActorsHandler * EAH)
-: _physicCube(NULL), _localAH(LAH), _EAH(EAH)
+: _physicCube(NULL), _localAH(LAH), _EAH(EAH), _materialCube(NULL)
 {
 
 }
@@ -379,7 +379,11 @@ void PhysicHandler::ClearMemory()
 	if(_physicCube != NULL)
 		delete _physicCube;
 
+	if(_materialCube != NULL)
+		delete _materialCube;
+
 	_physicCube = NULL;
+	_materialCube =NULL;
 }
 
 
@@ -391,6 +395,7 @@ void PhysicHandler::ClearMemory()
 void PhysicHandler::AllocateMemory(int sizeX, int sizeY, int sizeZ)
 {
 	_physicCube = new short [sizeY*sizeX*sizeZ];
+	_materialCube = new short [sizeY*sizeX*sizeZ];
 
 	_sizeX = sizeX;
 	_sizeY = sizeY;
@@ -476,7 +481,8 @@ short PhysicHandler::GetStructure(int X, int Y, int Z)
 */
 bool PhysicHandler::StepOnWater(int X, int Y, int Z)
 {
-	return (GetStructure(X, Y, Z) == 15);
+	short stru = GetStructure(X, Y, Z);
+	return ( stru == 15 || stru == 16 || stru == 17);
 }
 
 /*
@@ -627,5 +633,23 @@ int PhysicHandler::GetFloorY(int X, int Y, int Z)
 
 	return res;
 
+}
+
+
+/*
+--------------------------------------------------------------------------------------------------
+return the sound of a specific brick
+--------------------------------------------------------------------------------------------------
+*/
+short PhysicHandler::GetSound(int X, int Y, int Z)
+{
+	if(X < 0 || Y < 0 || Z < 0 || X >= _sizeX || Y >= _sizeY || Z >= _sizeZ)
+		return 0;
+
+	if(!_materialCube)
+		return 0;
+
+	short res = _materialCube[Y*_sizeX*_sizeZ + X*_sizeZ + Z];
+	return res;
 }
 
