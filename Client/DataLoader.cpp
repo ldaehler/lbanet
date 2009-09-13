@@ -45,6 +45,7 @@ DataLoader* DataLoader::_singletonInstance = NULL;
 DataLoader::DataLoader()
 : _brickInfo(NULL), _lang("fr")
 {
+	LogHandler::getInstance()->LogToFile("Initializing data handler class...");
 	_estruct = parseEntities(DataFileHandler::GetPath("FILE3D"));
 }
 
