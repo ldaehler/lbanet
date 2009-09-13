@@ -54,6 +54,9 @@ public:
 	short * GetBufferPtr()
 	{ return _physicCube; }
 
+	short * GetMaterialBufferPtr()
+	{ return _materialCube; }
+
 
 	// check if it is possible to move from one position to a certain X and Z offset
 	// change the offset if the move is not possible
@@ -103,6 +106,9 @@ public:
 	// clean the memory
 	void ClearMemory();
 
+	// return the sound of a specific brick
+	short GetSound(int X, int Y, int Z);
+
 protected:
 
 	// allocate a memory buffer of given size
@@ -125,6 +131,7 @@ private:
 
 	// cube representing the map physic
 	short *	_physicCube;
+	short *	_materialCube;
 	LocalActorsHandler*	_localAH;
 	ExternalActorsHandler * _EAH;
 

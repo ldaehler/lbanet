@@ -199,6 +199,7 @@ void LBA_MAP_GL::LoadMap(const std::string &filename)
 
 		int *	brickbufferPtr = _brickbuffer;
 		short *	physicbufferPtr = _phH->GetBufferPtr();
+		short *	materialbufferPtr = _phH->GetMaterialBufferPtr();
 
 		for(int y=0; y<_sizeY; ++y)
 		{
@@ -217,6 +218,15 @@ void LBA_MAP_GL::LoadMap(const std::string &filename)
 				{
 					fileM >> *physicbufferPtr;
 					++physicbufferPtr;
+				}
+			}
+
+			for(int x=0; x<_sizeX; ++x)
+			{
+				for(int z=0; z<_sizeZ; ++z)
+				{
+					fileM >> *materialbufferPtr;
+					++materialbufferPtr;
 				}
 			}
 		}
@@ -343,7 +353,7 @@ void LBA_MAP_GL::RecompileRoom(int Cut)
 
 			short shp = _phH->GetStructure(X, Y, Z);
 
-			if(shp == 0 || shp == 1 || shp == 15)
+			if(shp == 0 || shp == 1 || shp > 13)
 			{
 				glNormal3d(0,0,1);glTexCoord2d((texture_x+0.) /2048.,(texture_y+25.)/2048.);  glVertex3d( X+0.,Y/2.+0. , Z+1.);
 				glNormal3d(0,0,1);glTexCoord2d((texture_x+23.)/2048.,(texture_y+36.)/2048.);  glVertex3d( X+1.,Y/2.+0. , Z+1.);
