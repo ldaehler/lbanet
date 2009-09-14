@@ -1,0 +1,5 @@
+cliff.gr1 : 1-island
+lbae_map0.gr1 : 7-yelow brick
+lbae_map1.gr1 : 0-factory
+lbae_map3.gr1 : 0-factory
+lbae_map4.gr1 : 5-houses
