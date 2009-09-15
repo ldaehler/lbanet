@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="UTF8" ?>
 <actors>
-<actor id="0" type="5" posX="51.9063" posY="1" posZ="51.5" rotation="0"  zonesizeX="0.90625" zonesizeY="4.25391" zonesizeZ="0.5" />
-<actor id="1" type="5" posX="51.9365" posY="1" posZ="55.5" rotation="0"  zonesizeX="0.936523" zonesizeY="4.375" zonesizeZ="0.5" />
-<actor id="2" type="5" posX="61.5195" posY="1" posZ="52.3477" rotation="0"  zonesizeX="1.45703" zonesizeY="4.45703" zonesizeZ="1.34766" />
+    <actor id="0" type="5" posX="51.906300" posY="1.000000" posZ="51.500000" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" zonesizeX="0.906250" zonesizeY="4.253910" zonesizeZ="0.500000" />
+    <actor id="1" type="5" posX="51.936501" posY="1.000000" posZ="55.500000" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" zonesizeX="0.936523" zonesizeY="4.375000" zonesizeZ="0.500000" />
+    <actor id="2" type="5" posX="61.519501" posY="1.000000" posZ="52.347698" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" zonesizeX="1.457030" zonesizeY="4.457030" zonesizeZ="1.347660" />
+    <actor id="3" type="6" posX="51.000000" posY="1.000000" posZ="58.000000" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="1" attachedsound="-1" signaltargets="4" activationdistance="6.000000" direction="270" />
 </actors>

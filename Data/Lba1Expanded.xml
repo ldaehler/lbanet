@@ -1280,6 +1280,7 @@
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
                 <sparea name="spawning1" posX="58.000000" posY="2.000000" posZ="62.000000" RotationAtArrival="0" />
+                <sparea name="spawning2" posX="60.000000" posY="2.000000" posZ="50.000000" RotationAtArrival="0" />
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
@@ -1326,6 +1327,7 @@
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
                 <exit name="exit0" TopRightX="63.998047" TopRightY="6.996094" TopRightZ="60.998047" BottomLeftX="63.000000" BottomLeftY="2.000000" BottomLeftZ="58.000000" newMap="Map13_1" spawning="spawning6" />
+                <exit name="exit1" TopRightX="50.000000" TopRightY="7.000000" TopRightZ="60.000000" BottomLeftX="49.000000" BottomLeftY="4.000000" BottomLeftZ="57.000000" newMap="Map27_1" spawning="spawning2" />
             </exits>
         </Map>
         <!--Map of Principal Island, Astronimers House-->
@@ -1979,13 +1981,13 @@
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
-                <sparea name="spawning1" posX="39.000000" posY="1.000000" posZ="54.000000" RotationAtArrival="0" />
+                <sparea name="spawning1" posX="39.000000" posY="1.000000" posZ="52.000000" RotationAtArrival="0" />
                 <sparea name="spawning2" posX="40.000000" posY="2.000000" posZ="42.000000" RotationAtArrival="0" />
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
                 <exit name="exit1" TopRightX="43.000000" TopRightY="9.000000" TopRightZ="42.000000" BottomLeftX="41.000000" BottomLeftY="1.000000" BottomLeftZ="41.000000" newMap="Map46_1" spawning="spawning1" />
-                <exit name="exit4" TopRightX="44.000000" TopRightY="7.000000" TopRightZ="59.000000" BottomLeftX="40.000000" BottomLeftY="1.000000" BottomLeftZ="57.000000" newMap="Map42_1" spawning="spawning10" />
+                <exit name="exit4" TopRightX="44.000000" TopRightY="7.000000" TopRightZ="57.000000" BottomLeftX="40.000000" BottomLeftY="1.000000" BottomLeftZ="55.000000" newMap="Map42_1" spawning="spawning10" />
             </exits>
         </Map>
         <!--Map of Proxima Island, Forgers house-->
