@@ -2510,7 +2510,7 @@
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
                 <exit name="exit0" TopRightX="63.998047" TopRightY="5.996094" TopRightZ="41.998047" BottomLeftX="63.000000" BottomLeftY="1.000000" BottomLeftZ="36.000000" newMap="Map70_1" spawning="spawning1" />
-                <exit name="exit1" TopRightX="25.000000" TopRightY="21.000000" TopRightZ="2.000000" BottomLeftX="23.000000" BottomLeftY="13.000000" BottomLeftZ="1.000000" newMap="Map82_1" spawning="spawning0" />
+                <exit name="exit1" TopRightX="25.000000" TopRightY="21.000000" TopRightZ="1.000000" BottomLeftX="23.000000" BottomLeftY="13.000000" BottomLeftZ="0.000000" newMap="Map82_1" spawning="spawning0" />
             </exits>
         </Map>
         <!--Map of Hamalayi Mountains, outside the transporter-->
@@ -3119,7 +3119,7 @@
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
                 <exit name="exit0" TopRightX="59.998047" TopRightY="5.996094" TopRightZ="63.998047" BottomLeftX="58.000000" BottomLeftY="1.000000" BottomLeftZ="63.000000" newMap="Map64_1" spawning="spawning2" />
-                <exit name="exit1" TopRightX="61.000000" TopRightY="8.000000" TopRightZ="52.000000" BottomLeftX="57.000000" BottomLeftY="1.000000" BottomLeftZ="51.000000" newMap="Map96_1" spawning="spawning0" />
+                <exit name="exit1" TopRightX="64.000000" TopRightY="8.000000" TopRightZ="52.000000" BottomLeftX="54.000000" BottomLeftY="0.000000" BottomLeftZ="51.000000" newMap="Map96_1" spawning="spawning0" />
             </exits>
         </Map>
         <!--Map of Fortress Island, inside the fortress-->

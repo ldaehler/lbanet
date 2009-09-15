@@ -1,2 +1,4 @@
+<?xml version="1.0" encoding="UTF8" ?>
 <actors>
+    <actor id="11" type="4" posX="24.000000" posY="15.000000" posZ="0.500000" sizeX="1.000000" sizeY="4.000000" sizeZ="0.500000" rotation="0.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="0" renderertarget="34" zoneSizeX="0.000000" zoneSizeY="0.000000" zoneSizeZ="0.000000" locked="0" keyid="0" hide="0" destroykey="0" OpenTransX="2.000000" OpenTransY="0.000000" OpenTransZ="0.000000" OpenTransSpeedX="0.005000" OpenTransSpeedY="0.000000" OpenTransSpeedZ="0.000000" />
 </actors>
