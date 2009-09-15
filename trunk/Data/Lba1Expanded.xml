@@ -1642,7 +1642,7 @@
                 <exit name="exit7" TopRightX="1.998047" TopRightY="7.996094" TopRightZ="50.998047" BottomLeftX="0.000000" BottomLeftY="4.000000" BottomLeftZ="50.000000" newMap="Map59_1" spawning="spawning3" />
                 <exit name="exit8" TopRightX="1.998047" TopRightY="7.996094" TopRightZ="51.998047" BottomLeftX="0.000000" BottomLeftY="4.000000" BottomLeftZ="51.000000" newMap="Map42_1" spawning="spawning4" />
                 <exit name="exit9" TopRightX="1.998047" TopRightY="7.996094" TopRightZ="52.998047" BottomLeftX="0.000000" BottomLeftY="4.000000" BottomLeftZ="52.000000" newMap="Map24_1" spawning="spawning3" />
-                <exit name="myexit1" TopRightX="11.000000" TopRightY="7.000000" TopRightZ="33.000000" BottomLeftX="10.000000" BottomLeftY="1.000000" BottomLeftZ="30.000000" newMap="MyMap0_1" spawning="spawning1" />
+                <exit name="myexit1" TopRightX="12.000004" TopRightY="7.000000" TopRightZ="33.000000" BottomLeftX="11.000004" BottomLeftY="1.000000" BottomLeftZ="30.000000" newMap="MyMap0_1" spawning="spawning1" />
             </exits>
         </Map>
         <!--Map of Citadel Island, near the pharmacy-->
