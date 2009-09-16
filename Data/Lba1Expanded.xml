@@ -2054,6 +2054,7 @@
             <spareas>
                 <sparea name="spawning0" posX="27.000000" posY="1.000000" posZ="37.000000" RotationAtArrival="0" />
                 <sparea name="spawning1" posX="17.500000" posY="0.000000" posZ="1.500000" RotationAtArrival="0" />
+                <sparea name="spawning10" posX="4.000000" posY="16.000000" posZ="56.000000" RotationAtArrival="0" />
                 <sparea name="spawning2" posX="41.000000" posY="0.000000" posZ="1.000000" RotationAtArrival="0" />
                 <sparea name="spawning3" posX="51.000000" posY="1.000000" posZ="24.000000" RotationAtArrival="0" />
                 <sparea name="spawning4" posX="15.000000" posY="0.000000" posZ="50.000000" RotationAtArrival="0" />
@@ -2360,6 +2361,7 @@
             <exits>
                 <exit name="exit1" TopRightX="59.000000" TopRightY="15.000000" TopRightZ="30.000000" BottomLeftX="58.000000" BottomLeftY="8.000000" BottomLeftZ="27.000000" newMap="Map4_1" spawning="spawning0" />
                 <exit name="exit2" TopRightX="22.999989" TopRightY="4.999998" TopRightZ="9.000000" BottomLeftX="19.999989" BottomLeftY="1.000000" BottomLeftZ="7.000000" newMap="Map21_1" spawning="spawning3" />
+                <exit name="exit3" TopRightX="23.000000" TopRightY="11.000000" TopRightZ="21.000000" BottomLeftX="22.000000" BottomLeftY="6.000000" BottomLeftZ="20.000000" newMap="Map4_1" spawning="spawning10" />
             </exits>
         </Map>
         <!--Map of Rebelion Island, Rebel camp-->
