@@ -850,13 +850,15 @@
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
-                <sparea name="spawning1" posX="50.000000" posY="0.000000" posZ="2.000000" RotationAtArrival="0" />
+                <sparea name="spawning1" posX="55.000000" posY="0.000000" posZ="3.000000" RotationAtArrival="0" />
                 <sparea name="spawning2" posX="1.000000" posY="0.000000" posZ="7.000000" RotationAtArrival="0" />
                 <sparea name="spawning3" posX="1.000000" posY="7.000000" posZ="55.000000" RotationAtArrival="0" />
+                <sparea name="spawning4" posX="38.000000" posY="5.000000" posZ="44.000000" RotationAtArrival="0" />
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
-                <exit name="exit1" TopRightX="63.998047" TopRightY="7.996094" TopRightZ="5.998047" BottomLeftX="63.000000" BottomLeftY="4.000000" BottomLeftZ="5.000000" newMap="Map68_1" spawning="spawning1" />
+                <exit name="exit1" TopRightX="63.998047" TopRightY="4.996094" TopRightZ="8.000000" BottomLeftX="63.000000" BottomLeftY="1.000000" BottomLeftZ="3.000000" newMap="Map68_1" spawning="spawning1" />
+                <exit name="exit2" TopRightX="43.000000" TopRightY="4.000000" TopRightZ="49.000000" BottomLeftX="41.000000" BottomLeftY="3.000000" BottomLeftZ="47.000000" newMap="Map65_1" spawning="spawning3" />
                 <exit name="exit5" TopRightX="0.998047" TopRightY="6.996094" TopRightZ="8.998047" BottomLeftX="0.000000" BottomLeftY="1.000000" BottomLeftZ="7.000000" newMap="Map81_1" spawning="spawning1" />
                 <exit name="exit8" TopRightX="0.998047" TopRightY="11.996094" TopRightZ="59.998047" BottomLeftX="0.000000" BottomLeftY="8.000000" BottomLeftZ="54.000000" newMap="Map96_1" spawning="spawning1" />
             </exits>
@@ -2531,10 +2533,12 @@
             <spareas>
                 <sparea name="spawning1" posX="2.000000" posY="2.000000" posZ="38.000000" RotationAtArrival="0" />
                 <sparea name="spawning2" posX="31.000000" posY="2.000000" posZ="5.000000" RotationAtArrival="0" />
+                <sparea name="spawning3" posX="11.000000" posY="12.000000" posZ="8.000000" RotationAtArrival="0" />
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
                 <exit name="exit0" TopRightX="34.998047" TopRightY="7.996094" TopRightZ="4.998047" BottomLeftX="31.000000" BottomLeftY="3.000000" BottomLeftZ="4.000000" newMap="Map66_1" spawning="spawning1" />
+                <exit name="exit1" TopRightX="14.000000" TopRightY="11.000000" TopRightZ="7.000000" BottomLeftX="11.000000" BottomLeftY="10.000000" BottomLeftZ="4.000000" newMap="Map15_1" spawning="spawning4" />
                 <exit name="exit4" TopRightX="0.998047" TopRightY="6.996094" TopRightZ="41.998047" BottomLeftX="0.000000" BottomLeftY="3.000000" BottomLeftZ="38.000000" newMap="Map9_1" spawning="spawning3" />
             </exits>
         </Map>
@@ -2598,7 +2602,7 @@
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
-                <sparea name="spawning0" posX="56.000000" posY="5.000000" posZ="58.000000" RotationAtArrival="0" />
+                <sparea name="spawning0" posX="54.000000" posY="5.000000" posZ="58.000000" RotationAtArrival="0" />
                 <sparea name="spawning1" posX="27.000000" posY="12.000000" posZ="21.000000" RotationAtArrival="0" />
                 <sparea name="spawning2" posX="33.000000" posY="5.000000" posZ="54.000000" RotationAtArrival="0" />
             </spareas>
@@ -2606,7 +2610,7 @@
             <exits>
                 <exit name="exit0" TopRightX="26.998047" TopRightY="16.996094" TopRightZ="25.998047" BottomLeftX="26.000000" BottomLeftY="13.000000" BottomLeftZ="20.000000" newMap="Map68_1" spawning="spawning2" />
                 <exit name="exit1" TopRightX="32.998047" TopRightY="9.996094" TopRightZ="62.998047" BottomLeftX="32.000000" BottomLeftY="6.000000" BottomLeftZ="54.000000" newMap="Map68_1" spawning="spawning3" />
-                <exit name="exit11" TopRightX="62.998047" TopRightY="9.996094" TopRightZ="59.998047" BottomLeftX="62.000000" BottomLeftY="6.000000" BottomLeftZ="58.000000" newMap="Map66_1" spawning="spawning2" />
+                <exit name="exit11" TopRightX="58.998047" TopRightY="9.996094" TopRightZ="60.000000" BottomLeftX="58.000000" BottomLeftY="6.000000" BottomLeftZ="57.000000" newMap="Map66_1" spawning="spawning2" />
             </exits>
         </Map>
         <!--Map of Wannies Island, Mine Temple-->
@@ -2641,7 +2645,7 @@
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
-                <sparea name="spawning1" posX="37.000000" posY="0.000000" posZ="51.000000" RotationAtArrival="0" />
+                <sparea name="spawning1" posX="37.000000" posY="0.000000" posZ="58.000000" RotationAtArrival="0" />
                 <sparea name="spawning2" posX="62.000000" posY="6.000000" posZ="17.000000" RotationAtArrival="0" />
                 <sparea name="spawning3" posX="62.000000" posY="0.000000" posZ="38.000000" RotationAtArrival="0" />
             </spareas>
@@ -2649,7 +2653,7 @@
             <exits>
                 <exit name="exit0" TopRightX="63.998047" TopRightY="10.996094" TopRightZ="22.998047" BottomLeftX="63.000000" BottomLeftY="7.000000" BottomLeftZ="18.000000" newMap="Map67_1" spawning="spawning1" />
                 <exit name="exit1" TopRightX="63.998047" TopRightY="4.996094" TopRightZ="46.998047" BottomLeftX="63.000000" BottomLeftY="1.000000" BottomLeftZ="38.000000" newMap="Map67_1" spawning="spawning2" />
-                <exit name="exit14" TopRightX="39.998047" TopRightY="7.996094" TopRightZ="63.998047" BottomLeftX="39.000000" BottomLeftY="4.000000" BottomLeftZ="63.000000" newMap="Map15_1" spawning="spawning1" />
+                <exit name="exit14" TopRightX="43.000000" TopRightY="4.996094" TopRightZ="63.998047" BottomLeftX="38.000000" BottomLeftY="1.000000" BottomLeftZ="63.000000" newMap="Map15_1" spawning="spawning1" />
             </exits>
         </Map>
         <!--Map of Hamalayi Mountains, 3rd fighting scene-->
