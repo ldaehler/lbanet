@@ -1,0 +1,1 @@
+icepatch2client --IcePatch2.Remove=0 --IcePatch2.Endpoints="tcp -h 88.191.15.204 -p 10000" .
