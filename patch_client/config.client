@@ -24,5 +24,12 @@ IrcChannel=lba
 #
 # Version
 #
-LbanetClientVersion=ver. 0.5
+LbanetClientVersion=ver. 0.52
 LbanetServerVersion=ver. 0.5
+
+#
+# Patcher
+#
+IcePatch2.Endpoints=tcp -h 127.0.0.1 -p 10000
+IcePatch2.Directory=.
+IcePatch2.Remove=0
