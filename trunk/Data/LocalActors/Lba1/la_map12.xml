@@ -1,7 +1,9 @@
+<?xml version="1.0" encoding="UTF8" ?>
 <actors>
-<actor id="0" type="5" posX="34.8115" posY="4" posZ="22.7959" rotation="0"  zonesizeX="0.811523" zonesizeY="4.99609" zonesizeZ="0.795898" />
-<actor id="1" type="1" posX="37.999" posY="4" posZ="48.999" rotation="0" activationdistance="6" textid="7" />
-<actor id="2" type="1" posX="24.999" posY="4" posZ="48.999" rotation="0" activationdistance="6" textid="7" />
-<actor id="3" type="2" posX="41.7705" posY="0" posZ="31" rotation="0" activationdistance="5" deltaY="4" direction="180"/>
-<actor id="4" type="2" posX="21.8652" posY="0" posZ="30.9688" rotation="0" activationdistance="5" deltaY="4" direction="180"/>
+    <actor id="0" type="5" posX="34.811501" posY="4.000000" posZ="22.795900" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" zonesizeX="0.811523" zonesizeY="4.996090" zonesizeZ="0.795898" />
+    <actor id="1" type="1" posX="37.999001" posY="4.000000" posZ="48.999001" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" activationdistance="6.000000" textid="7" />
+    <actor id="2" type="1" posX="24.999001" posY="4.000000" posZ="48.999001" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" activationdistance="6.000000" textid="7" />
+    <actor id="3" type="2" posX="41.770500" posY="0.000000" posZ="31.000000" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" activationdistance="5.000000" deltaX="0.000000" deltaY="4.000000" deltaZ="0.000000" direction="180" />
+    <actor id="4" type="2" posX="21.865200" posY="0.000000" posZ="30.968800" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" activationdistance="5.000000" deltaX="0.000000" deltaY="4.000000" deltaZ="0.000000" direction="180" />
+    <actor id="5" type="6" posX="54.000000" posY="4.000000" posZ="3.000000" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" activationdistance="6.000000" direction="270" />
 </actors>
