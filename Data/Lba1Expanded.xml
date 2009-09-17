@@ -180,11 +180,12 @@
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
                 <sparea name="spawning1" posX="37.000000" posY="13.000000" posZ="9.000000" RotationAtArrival="0" />
+                <sparea name="spawning2" posX="61.000000" posY="0.000000" posZ="34.000000" RotationAtArrival="0" />
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
                 <exit name="exit0" TopRightX="38.998047" TopRightY="18.996094" TopRightZ="13.998047" BottomLeftX="38.000000" BottomLeftY="14.000000" BottomLeftZ="9.000000" newMap="Map12_1" spawning="spawning6" />
-                <exit name="exit8" TopRightX="63.998047" TopRightY="12.996094" TopRightZ="34.998047" BottomLeftX="63.000000" BottomLeftY="10.000000" BottomLeftZ="32.000000" newMap="Map12_1" spawning="spawning7" />
+                <exit name="exit8" TopRightX="63.998047" TopRightY="9.000000" TopRightZ="35.000000" BottomLeftX="63.000000" BottomLeftY="4.000000" BottomLeftZ="33.000000" newMap="Map12_1" spawning="spawning7" />
             </exits>
         </Map>
         <!--Map of Polar Island, 2nd scene-->
@@ -692,6 +693,7 @@
                 <exit name="exit19" TopRightX="60.998047" TopRightY="14.996094" TopRightZ="0.998047" BottomLeftX="54.000000" BottomLeftY="5.000000" BottomLeftZ="0.000000" newMap="Map18_1" spawning="spawning2" />
                 <exit name="exit2" TopRightX="0.998047" TopRightY="8.996094" TopRightZ="55.998047" BottomLeftX="0.000000" BottomLeftY="5.000000" BottomLeftZ="48.000000" newMap="Map13_1" spawning="spawning1" />
                 <exit name="exit23" TopRightX="4.998047" TopRightY="19.996094" TopRightZ="8.998047" BottomLeftX="4.000000" BottomLeftY="15.000000" BottomLeftZ="4.000000" newMap="Map105_1" spawning="spawning1" />
+                <exit name="exit3" TopRightX="54.000000" TopRightY="11.000000" TopRightZ="4.000000" BottomLeftX="53.000000" BottomLeftY="7.000000" BottomLeftZ="2.000000" newMap="Map105_1" spawning="spawning2" />
                 <exit name="exit8" TopRightX="63.998047" TopRightY="10.996094" TopRightZ="41.998047" BottomLeftX="63.000000" BottomLeftY="5.000000" BottomLeftZ="36.000000" newMap="Map17_1" spawning="spawning1" />
                 <exit name="exit9" TopRightX="20.998047" TopRightY="10.996094" TopRightZ="63.998047" BottomLeftX="17.000000" BottomLeftY="5.000000" BottomLeftZ="63.000000" newMap="Map11_1" spawning="spawning3" />
             </exits>
