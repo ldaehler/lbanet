@@ -293,7 +293,6 @@ void SendingLoopThread::run()
 		if(ThreadSafeWorkpile::getInstance()->HasMapChanged(NewWorldName, NewMapName))
 		{
 			ChangeMap(NewWorldName, NewMapName);
-
 		}
 
 
@@ -469,6 +468,17 @@ void SendingLoopThread::HandleChatText()
 
 	try
 	{
+		if(texts.size() > 0)
+		{
+			_refresh_counter = 0;
+			_afk_counter = 0;
+			if(_afked)
+			{
+				_afked = false;
+				_connectionMananger.ChangeStatus("");
+			}
+		}
+
 		std::vector<std::string>::const_iterator it = texts.begin();
 		std::vector<std::string>::const_iterator end = texts.end();
 		for(;it != end; ++it)

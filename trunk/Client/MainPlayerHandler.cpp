@@ -611,9 +611,11 @@ void MainPlayerHandler::PlayerStartMove(int moveDirection)
 		if(_up_key_pressed || _down_key_pressed)
 			return;
 
-	if(moveDirection == 3 || moveDirection == 4)
-		if(_left_key_pressed || _right_key_pressed)
-			return;
+	if(moveDirection == 3 && _left_key_pressed)
+		return;
+
+	if(moveDirection == 4 && _right_key_pressed)
+		return;
 
 	if(_state == Ac_Jumping && moveDirection == 2)
 	{
@@ -651,8 +653,10 @@ void MainPlayerHandler::PlayerStartMove(int moveDirection)
 		break;
 		case 3:
 			_left_key_pressed = true;
+			_right_key_pressed = false;
 		break;
 		case 4:
+			_left_key_pressed = false;
 			 _right_key_pressed = true;
 		break;
 	}
@@ -783,13 +787,16 @@ void MainPlayerHandler::PlayerStopMoveUpDown(bool Up)
 /***********************************************************
 player moves
 ***********************************************************/
-void MainPlayerHandler::PlayerChangeStance(int StanceNumber)
+void MainPlayerHandler::PlayerChangeStance(int StanceNumber, bool forced)
 {
-	if(_state == Ac_Drowning || _state == Ac_Dying || _state == Ac_FallingDown || _state == Ac_hurt || _state == Ac_Jumping  || _state == Ac_scripted)
-		return;
+	if(!forced)
+	{
+		if(_state == Ac_Drowning || _state == Ac_Dying || _state == Ac_FallingDown || _state == Ac_hurt || _state == Ac_Jumping  || _state == Ac_scripted)
+			return;
 
-	if(StanceNumber == _currentstance)
-		return;
+		if(StanceNumber == _currentstance)
+			return;
+	}
 
 	if(_state == Ac_protopack)
 		MusicHandler::getInstance()->StopSample(_sound_proto);
@@ -1252,15 +1259,15 @@ void MainPlayerHandler::Resume(bool interior, bool reinit)
 		if(_state != Ac_Normal && _state != Ac_protopack && _state != Ac_Flying)
 			Stopstate();
 
-		StopJump();
 
 		// remove horse or dino inside rooms
 		if(interior)
 		{
 			if(GetStance() == 5 || GetStance() == 6)
-				PlayerChangeStance(1);
+				PlayerChangeStance(1, true);
 		}
 
+		StopJump();
 		CheckY();
 	}
 }
@@ -1454,6 +1461,9 @@ return true if the player is in activation mode
 ***********************************************************/
 bool MainPlayerHandler::ActivationMode(bool ForcedNormalAction)
 {
+	if(_state == Ac_Drowning || _state == Ac_Dying || _state == Ac_FallingDown || _state == Ac_hurt || _state == Ac_Jumping  || _state == Ac_scripted)
+		return false;
+
 	if(_currentstance==1 || _currentstance==2 || _currentstance==3 || _currentstance==4)
 		return (_currentstance==1 || ForcedNormalAction);
 
