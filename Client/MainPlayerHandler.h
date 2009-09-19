@@ -180,7 +180,7 @@ public:
 	void PlayerStopMove(int moveDirection);
 	void PlayerStartMoveUpDown(bool Up);
 	void PlayerStopMoveUpDown(bool Up);
-	void PlayerChangeStance(int StanceNumber);
+	void PlayerChangeStance(int StanceNumber, bool forced = false);
 
 
 	//return true if actor is hidden under roof

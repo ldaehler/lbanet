@@ -50,7 +50,7 @@ constructor
 ***********************************************************/
 ChatBox::ChatBox(GameGUI * gamgui)
 : _control_key_on(false), _shift_key_on(false),
-	_gamgui(gamgui), _IRC(NULL), _currSelectedch(0)
+	_gamgui(gamgui), _IRC(NULL), _currSelectedch(0), _itltext(_lasttexts.end())
 {
 	_channels.push_back("World");
 	_channels.push_back("Map");
@@ -317,6 +317,10 @@ send text outside
 ***********************************************************/
 void ChatBox::SendText(const std::string & channel, const std::string & Text)
 {
+	_lasttexts.push_front(Text);
+	if(_lasttexts.size() > 10)
+		_lasttexts.pop_back();
+
 	if(Text == "")
 		return;
 
@@ -398,21 +402,39 @@ bool ChatBox::HandleEnterKey (const CEGUI::EventArgs& e)
 
 		if(we.scancode == CEGUI::Key::ArrowUp)
 		{
-
-
-			++_currSelectedch;
-			if(_currSelectedch >= (int)_channels.size())
-				--_currSelectedch;
+			if(_itltext == _lasttexts.end())
+				_itltext = _lasttexts.begin();
 			else
 			{
-				std::list<std::string>::const_iterator it = _channels.begin();
-				std::list<std::string>::const_iterator end = _channels.end();
-				for(int cc=0; cc<_currSelectedch && it != end; ++it, ++cc);
-
-				CEGUI::PushButton * bch = static_cast<CEGUI::PushButton *>
-					(CEGUI::WindowManager::getSingleton().getWindow("Chat/bChannel"));
-				bch->setProperty("Text", *it);
+				std::list<std::string>::iterator ittmp = _itltext;
+				++ittmp;
+				if(ittmp != _lasttexts.end())
+					++_itltext;
 			}
+
+			if(_itltext != _lasttexts.end())
+			{
+				CEGUI::WindowManager::getSingleton().getWindow("Chat/edit")->setText(
+													(const unsigned char *)_itltext->c_str());
+			}
+			else
+			{
+				CEGUI::WindowManager::getSingleton().getWindow("Chat/edit")->setText("");
+			}
+
+			//++_currSelectedch;
+			//if(_currSelectedch >= (int)_channels.size())
+			//	--_currSelectedch;
+			//else
+			//{
+			//	std::list<std::string>::const_iterator it = _channels.begin();
+			//	std::list<std::string>::const_iterator end = _channels.end();
+			//	for(int cc=0; cc<_currSelectedch && it != end; ++it, ++cc);
+
+			//	CEGUI::PushButton * bch = static_cast<CEGUI::PushButton *>
+			//		(CEGUI::WindowManager::getSingleton().getWindow("Chat/bChannel"));
+			//	bch->setProperty("Text", *it);
+			//}
 
 
 
@@ -420,19 +442,38 @@ bool ChatBox::HandleEnterKey (const CEGUI::EventArgs& e)
 		}
 		if(we.scancode == CEGUI::Key::ArrowDown)
 		{
-			--_currSelectedch;
-			if(_currSelectedch < 0)
-				++_currSelectedch;
+			if(_itltext != _lasttexts.end())
+			{
+				if(_itltext != _lasttexts.begin())
+					--_itltext;
+				else
+					_itltext = _lasttexts.end();
+			}
+
+			if(_itltext != _lasttexts.end())
+			{
+				CEGUI::WindowManager::getSingleton().getWindow("Chat/edit")->setText(
+													(const unsigned char *)_itltext->c_str());
+			}
 			else
 			{
-				std::list<std::string>::const_iterator it = _channels.begin();
-				std::list<std::string>::const_iterator end = _channels.end();
-				for(int cc=0; cc<_currSelectedch && it != end; ++it, ++cc);
-
-				CEGUI::PushButton * bch = static_cast<CEGUI::PushButton *>
-					(CEGUI::WindowManager::getSingleton().getWindow("Chat/bChannel"));
-				bch->setProperty("Text", *it);
+				CEGUI::WindowManager::getSingleton().getWindow("Chat/edit")->setText("");
 			}
+
+
+			//--_currSelectedch;
+			//if(_currSelectedch < 0)
+			//	++_currSelectedch;
+			//else
+			//{
+			//	std::list<std::string>::const_iterator it = _channels.begin();
+			//	std::list<std::string>::const_iterator end = _channels.end();
+			//	for(int cc=0; cc<_currSelectedch && it != end; ++it, ++cc);
+
+			//	CEGUI::PushButton * bch = static_cast<CEGUI::PushButton *>
+			//		(CEGUI::WindowManager::getSingleton().getWindow("Chat/bChannel"));
+			//	bch->setProperty("Text", *it);
+			//}
 
 			return true;
 		}

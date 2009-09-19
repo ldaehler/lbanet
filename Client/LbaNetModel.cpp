@@ -173,11 +173,13 @@ void LbaNetModel::SetScreenSize(int screenX, int screenY)
 	// reload the room
 	if(_current_map != "")
 	{
+		Pause();
 		MapInfo * MI = DataLoader::getInstance()->GetMapInfo();
 		std::string mapN = "Data/" + MI->Files["Maps"];
 		_mapRenderer->LoadMap(mapN, _physicHandler, MI);
 		_localActorsHandler->Reload();
 		_externalActorsHandler->Reload();
+		Resume(false);
 	}
 }
 
@@ -345,7 +347,7 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float 
 	m_main_actor_starting_Z = Z;
 	_mainPlayerHandler->SetAttached(false);
 	ReplaceMain();
-	_mainPlayerHandler->CheckY();
+	
 }
 
 
@@ -633,6 +635,13 @@ void LbaNetModel::ReplaceMain()
 						m_main_actor_starting_Z);
 
 	_mainPlayerHandler->UpdateFloorY();
+	_mainPlayerHandler->CheckY();
+
+	if(!_localActorsHandler->ActivateZone(_mainPlayerHandler->GetPosX(), _mainPlayerHandler->GetPosY(),
+									_mainPlayerHandler->GetPosZ(), _mainPlayerHandler->GetRotation()))
+
+	_externalActorsHandler->ActivateZone(_mainPlayerHandler->GetPosX(), _mainPlayerHandler->GetPosY(),
+									_mainPlayerHandler->GetPosZ(), _mainPlayerHandler->GetRotation());
 }
 
 

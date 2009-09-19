@@ -128,6 +128,8 @@ private:
 	std::string				_currentWorld;
 	std::string				_currentMap;
 	std::list<std::string>	_channels;
+	std::list<std::string>	_lasttexts;
+	std::list<std::string>::iterator	_itltext;
 
 	IrcThread *				_IRC;
 
