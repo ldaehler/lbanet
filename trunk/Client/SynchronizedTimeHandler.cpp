@@ -90,3 +90,10 @@ double SynchronizedTimeHandler::GetCurrentTimeDouble()
 {
 	return (IceUtil::Time::now().toMilliSecondsDouble() + _offset);
 }
+
+
+//! get current time in string format 
+std::string SynchronizedTimeHandler::GetTimeString()
+{
+	return (IceUtil::Time::now().toDateTime());
+}

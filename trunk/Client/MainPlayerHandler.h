@@ -295,6 +295,7 @@ protected:
 
 	bool			_isMovingForward;
 	bool			_isMovingRotation;
+	bool			_isDiscrete;
 
 	int				_remembermodel;
 	int				_rememberbody;

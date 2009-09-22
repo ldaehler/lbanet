@@ -70,6 +70,11 @@ public:
 	void StopMusic();
 
 
+	// music accessor
+	const std::string & GetCurrentMusic()
+	{return _current_music;}
+
+
 	// to be called in beginnning and end of program
 	bool Initialize();
 	void Unitialize();

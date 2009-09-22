@@ -53,7 +53,8 @@ public:
 	//! get synchronized current time
 	double GetCurrentTimeDouble();
 
-
+	//! get current time in string format 
+	std::string GetTimeString();
 
 
 protected:
