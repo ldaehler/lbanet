@@ -97,7 +97,7 @@ MainPlayerHandler::MainPlayerHandler(float speedNormal, float speedSport,
 	_speedHorse(speedHorse), _speedDino(speedDino),
 	_speedJump(speedJump), _heightJump(heightJump),
 	_RoomP(RoomP), _currentstance(0), _camptr(cam),
-	_isAttached(false)
+	_isAttached(false), _isDiscrete(false)
 {
 	_player = new Player(animationSpeed, true);
 	_player->DisplayName(true);
@@ -607,6 +607,8 @@ player moves
 ***********************************************************/
 void MainPlayerHandler::PlayerStartMove(int moveDirection)
 {
+	_isDiscrete = false;
+
 	if(moveDirection == 1 || moveDirection == 2)
 		if(_up_key_pressed || _down_key_pressed)
 			return;
@@ -797,6 +799,8 @@ void MainPlayerHandler::PlayerChangeStance(int StanceNumber, bool forced)
 		if(StanceNumber == _currentstance)
 			return;
 	}
+
+	_isDiscrete = false;
 
 	if(_state == Ac_protopack)
 		MusicHandler::getInstance()->StopSample(_sound_proto);
@@ -1128,8 +1132,9 @@ void MainPlayerHandler::DoAction()
 		StartJump();
 
 	// go discrete
-	if(_player->GetModel() == 3)
+	if(_player->GetModel() == 3 && !_isDiscrete && !_isMovingForward && !_isMovingRotation)
 	{
+		_isDiscrete = true;
 		_player->setActorAnimation(5);
 
 		std::string soundp = DataLoader::getInstance()->GetSoundPath(M_SOUND_DISCRETE);
@@ -1328,6 +1333,15 @@ bool MainPlayerHandler::ChangeAnimToHurt(bool StrongHurt)
 	if(_player->GetModel() == 4)
 	{
 		_player->setActorAnimation(12);
+
+		if(_currMoveType == 1)
+		{
+			MusicHandler::getInstance()->StopSample(_sound_proto);
+			std::string soundp = DataLoader::getInstance()->GetSoundPath(M_SOUND_PROTO_PACK);
+			if(soundp != "")
+				_sound_proto = MusicHandler::getInstance()->PlaySample(soundp, -1);
+		}
+
 		return true;
 	}
 

@@ -86,6 +86,9 @@ public:
 	// debug function
 	void GoNextRoom();
 
+	//take screen function
+	void TakeScreenshot();
+
 protected:
 	//! process function
 	bool Process(void);
@@ -153,6 +156,7 @@ private:
 	EngineState							m_oldstate;
 
 	std::string							m_clientV;
+	std::string							m_lastmusic;
 };
 
 #endif

@@ -316,6 +316,10 @@ bool EventHandler::Handle(SDL_Event flevent)
 					_lbaNetEngine->ReplaceMain();
 					break;
 
+				case SDLK_F11:
+					_lbaNetEngine->TakeScreenshot();
+					break;
+
 				case SDLK_F12:
 					_lbaNetEngine->ChangeFullScreen();
 					break;

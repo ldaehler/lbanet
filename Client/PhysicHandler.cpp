@@ -118,6 +118,8 @@ void PhysicHandler::Move(float currX, float currY, float currZ,
 	float tmp;
 	float cY = modf(currY, &tmp);
 
+	short currstr = GetStructure(currX, currY+0.9, currZ);
+
 
 	// check if a move in the X side is possible
 	if(MoveX != 0)
@@ -149,7 +151,7 @@ void PhysicHandler::Move(float currX, float currY, float currZ,
 			for(; ZBegin<=ZEnd; ++ZBegin)
 			{
 				int yOffset = 0;
-				if(cY!=0 && !jump)
+				if(!jump && cY!=0 && (currstr > 1) && (currstr != 3) && (currstr != 4))
 					yOffset = 1;
 
 				int YBegin = (int)currY + 1 + yOffset;
@@ -213,7 +215,7 @@ void PhysicHandler::Move(float currX, float currY, float currZ,
 			for(; XBegin<=XEnd; ++XBegin)
 			{
 				int yOffset = 0;
-				if(cY!=0 && !jump)
+				if(cY!=0 && !jump && (currstr > 2) && (currstr != 5))
 					yOffset = 1;
 
 				int YBegin = (int)currY + 1 + yOffset;

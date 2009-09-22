@@ -529,6 +529,9 @@ void LbaNetEngine::SwitchGuiToGame()
 	if(m_currentstate == EGaming)
 		return;
 
+	if(m_lastmusic != "")
+		MusicHandler::getInstance()->PlayMusic(m_lastmusic, 0);
+
 	m_lbaNetModel.Resume(false);
 	m_guiHandler.SwitchGUI(2);
 	m_oldstate = m_currentstate;
@@ -678,7 +681,14 @@ called to play the assigned music when menu
 ***********************************************************/
 void LbaNetEngine::PlayMenuMusic()
 {
-	MusicHandler::getInstance()->PlayMusic("Data/Music/LBA1-Track9.mp3", -1);
+	std::string mmusic = "Data/Music/LBA1-Track9.mp3";
+
+	std::string tmp = MusicHandler::getInstance()->GetCurrentMusic();
+	if(tmp != mmusic)
+	{
+		m_lastmusic = tmp;
+		MusicHandler::getInstance()->PlayMusic(mmusic, -1);
+	}
 }
 
 
@@ -768,4 +778,32 @@ debug function
 void LbaNetEngine::GoNextRoom()
 {
 	m_lbaNetModel.GoNextRoom();
+}
+
+
+/***********************************************************
+take screen function
+***********************************************************/
+void LbaNetEngine::TakeScreenshot()
+{
+	std::string imname = SynchronizedTimeHandler::getInstance()->GetTimeString() + ".png";
+	imname.replace(2, 1, "-");
+	imname.replace(5, 1, "-");
+	imname.replace(8, 1, "_");
+	imname.replace(11, 1, "_");
+	imname.replace(14, 1, "_");
+	imname.replace(17, 1, "_");
+
+	ILuint imn;
+	ilGenImages(1, &imn);
+	ilBindImage(imn);
+	ilutGLScreen(); 
+	if(!ilSaveImage(imname.c_str()))
+	{
+		ILenum Error;
+		while ((Error = ilGetError()) != IL_NO_ERROR) {
+			printf("%d: %s/n", Error, iluErrorString(Error));
+		} 
+	}
+	ilDeleteImages(1, &imn);
 }
