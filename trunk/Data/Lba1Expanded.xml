@@ -2554,10 +2554,10 @@
             <description>Emerald Moon, Esmer Shuttle</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
+                <file name="ExternalActors" path="ExternalActors/Lba2/map65.xml" />
+                <file name="LocalActors" path="LocalActors/Lba2/map65.xml" />
                 <file name="Maps" path="Maps/Lba2/map65.txt" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Lba2/text6.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
