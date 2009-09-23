@@ -1349,9 +1349,12 @@
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
                 <sparea name="spawning1" posX="51.000000" posY="14.000000" posZ="56.000000" RotationAtArrival="0" />
+                <sparea name="spawning2" posX="55.000000" posY="4.000000" posZ="58.500000" RotationAtArrival="0" />
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
-            <exits />
+            <exits>
+                <exit name="exit1" TopRightX="53.000000" TopRightY="9.000000" TopRightZ="59.000000" BottomLeftX="52.000000" BottomLeftY="5.000000" BottomLeftZ="58.000000" newMap="Map31_1" spawning="spawning2" />
+            </exits>
         </Map>
         <!--Map of Citadel Island, near the tavern-->
         <Map name="Map2_1" type="exterior" music="Music/LBA1-Track5.mp3" repeatmusic="0">
@@ -1427,10 +1430,12 @@
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
                 <sparea name="spawning1" posX="62.000000" posY="1.000000" posZ="55.000000" RotationAtArrival="0" />
+                <sparea name="spawning2" posX="56.000000" posY="1.000000" posZ="51.000000" RotationAtArrival="0" />
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
                 <exit name="exit0" TopRightX="63.998047" TopRightY="7.996094" TopRightZ="58.998047" BottomLeftX="63.000000" BottomLeftY="2.000000" BottomLeftZ="56.000000" newMap="Map13_1" spawning="spawning8" />
+                <exit name="exit1" TopRightX="57.000000" TopRightY="6.000000" TopRightZ="49.000000" BottomLeftX="56.000000" BottomLeftY="2.000000" BottomLeftZ="48.000000" newMap="Map29_1" spawning="spawning2" />
             </exits>
         </Map>
         <!--Map of Principal Island, Stables-->
