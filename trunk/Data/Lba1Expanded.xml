@@ -1350,12 +1350,12 @@
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
-                <sparea name="spawning1" posX="51.000000" posY="14.000000" posZ="56.000000" RotationAtArrival="0" />
+                <sparea name="spawning1" posX="50.000015" posY="14.000000" posZ="56.000000" RotationAtArrival="0" />
                 <sparea name="spawning2" posX="55.000000" posY="4.000000" posZ="58.500000" RotationAtArrival="0" />
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
-                <exit name="exit1" TopRightX="53.000000" TopRightY="9.000000" TopRightZ="59.000000" BottomLeftX="52.000000" BottomLeftY="5.000000" BottomLeftZ="58.000000" newMap="Map31_1" spawning="spawning2" />
+                <exit name="exit1" TopRightX="53.000000" TopRightY="7.000000" TopRightZ="59.000000" BottomLeftX="52.000000" BottomLeftY="5.000000" BottomLeftZ="58.000000" newMap="Map31_1" spawning="spawning2" />
             </exits>
         </Map>
         <!--Map of Citadel Island, near the tavern-->
