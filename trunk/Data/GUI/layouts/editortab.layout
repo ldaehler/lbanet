@@ -1420,6 +1420,54 @@
                         <Property Name="UnifiedAreaRect" Value="{{0.451999,0},{0.835384,0},{0.678448,0},{0.983936,0}}" />
                     </Window>
                 </Window>
+                
+                <Window Type="DefaultWindow" Name="EditorWindow/tabcontrol/Actors/hurtareawin" >
+                    <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.316434,0},{0.53811,0},{0.987401,0},{0.910567,0}}" />
+                    <Window Type="TaharezLook/StaticText" Name="EditorWindow/tabcontrol/Actors/hurtareawin/stzsx" >
+                        <Property Name="Text" Value="Zone size X:" />
+                        <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+                        <Property Name="UnifiedAreaRect" Value="{{0.0338708,0},{0.0597286,0},{0.262675,0},{0.224299,0}}" />
+                    </Window>
+                    <Window Type="TaharezLook/StaticText" Name="EditorWindow/tabcontrol/Actors/hurtareawin/lbzsy" >
+                        <Property Name="Text" Value="Zone size Y:" />
+                        <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+                        <Property Name="UnifiedAreaRect" Value="{{0.0362259,0},{0.241267,0},{0.257965,0},{0.427195,0}}" />
+                    </Window>
+                    <Window Type="TaharezLook/StaticText" Name="EditorWindow/tabcontrol/Actors/hurtareawin/lblzsz" >
+                        <Property Name="Text" Value="Zone size Z:" />
+                        <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+                        <Property Name="UnifiedAreaRect" Value="{{0.0349554,0},{0.426697,0},{0.259049,0},{0.617964,0}}" />
+                    </Window>
+                    <Window Type="TaharezLook/Spinner" Name="EditorWindow/tabcontrol/Actors/hurtareawin/zsxsp" >
+                        <Property Name="StepSize" Value="0.1" />
+                        <Property Name="CurrentValue" Value="0" />
+                        <Property Name="MaximumValue" Value="1000" />
+                        <Property Name="MinimumValue" Value="-1000" />
+                        <Property Name="TextInputMode" Value="FloatingPoint" />
+                        <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+                        <Property Name="UnifiedAreaRect" Value="{{0.306879,0},{0.0461542,0},{0.434413,0},{0.226743,0}}" />
+                    </Window>
+                    <Window Type="TaharezLook/Spinner" Name="EditorWindow/tabcontrol/Actors/hurtareawin/zsysp" >
+                        <Property Name="StepSize" Value="0.1" />
+                        <Property Name="CurrentValue" Value="0" />
+                        <Property Name="MaximumValue" Value="1000" />
+                        <Property Name="MinimumValue" Value="-1000" />
+                        <Property Name="TextInputMode" Value="FloatingPoint" />
+                        <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+                        <Property Name="UnifiedAreaRect" Value="{{0.305981,0},{0.232036,0},{0.433514,0},{0.412624,0}}" />
+                    </Window>
+                    <Window Type="TaharezLook/Spinner" Name="EditorWindow/tabcontrol/Actors/hurtareawin/zszsp" >
+                        <Property Name="StepSize" Value="0.1" />
+                        <Property Name="CurrentValue" Value="0" />
+                        <Property Name="MaximumValue" Value="1000" />
+                        <Property Name="MinimumValue" Value="-1000" />
+                        <Property Name="TextInputMode" Value="FloatingPoint" />
+                        <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+                        <Property Name="UnifiedAreaRect" Value="{{0.297645,0},{0.438823,0},{0.427534,0},{0.603393,0}}" />
+                    </Window>
+                </Window>                
+                
                 <Window Type="TaharezLook/StaticText" Name="EditorWindow/tabcontrol/Actors/sound" >
                     <Property Name="Text" Value="Sound:" />
                     <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
