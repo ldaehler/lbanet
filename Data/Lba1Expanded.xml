@@ -582,7 +582,7 @@
                 <sparea name="spawning4" posX="7.000000" posY="12.000000" posZ="2.000000" RotationAtArrival="0" />
                 <sparea name="spawning5" posX="11.000000" posY="4.000000" posZ="14.000000" RotationAtArrival="0" />
                 <sparea name="spawning6" posX="10.000000" posY="4.000000" posZ="37.000000" RotationAtArrival="0" />
-                <sparea name="spawning7" posX="5.000000" posY="6.000000" posZ="48.000000" RotationAtArrival="0" />
+                <sparea name="spawning7" posX="5.000000" posY="6.000000" posZ="48.999985" RotationAtArrival="0" />
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
@@ -1159,7 +1159,7 @@
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
                 <exit name="exit0" TopRightX="63.998047" TopRightY="7.996094" TopRightZ="51.998047" BottomLeftX="63.000000" BottomLeftY="2.000000" BottomLeftZ="49.000000" newMap="Map11_1" spawning="spawning6" />
-                <exit name="exit3" TopRightX="59.998047" TopRightY="9.996094" TopRightZ="62.998047" BottomLeftX="58.000000" BottomLeftY="5.000000" BottomLeftZ="62.000000" newMap="Map11_1" spawning="spawning7" />
+                <exit name="exit3" TopRightX="59.998047" TopRightY="7.996094" TopRightZ="63.998062" BottomLeftX="58.000000" BottomLeftY="3.000000" BottomLeftZ="63.000015" newMap="Map11_1" spawning="spawning7" />
             </exits>
         </Map>
         <!--Map of Principal Island, Port Belooga-->
@@ -2463,7 +2463,10 @@
             <description>Wannies Island, Mine 4th Scene</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Lba2/map62.txt" />
+                <file name="Texts" path="" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -2627,7 +2630,10 @@
             <description>Wannies Island, Mine Temple</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Lba2/map67.txt" />
+                <file name="Texts" path="" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -2842,7 +2848,10 @@
             <description>Wannies Island, Box Transport Building</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Lba2/map73.txt" />
+                <file name="Texts" path="" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -2915,7 +2924,10 @@
             <description>Wannies Island, Warehouse</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Lba2/map75.txt" />
+                <file name="Texts" path="" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
