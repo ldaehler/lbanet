@@ -740,6 +740,7 @@
                 <sparea name="spawning10" posX="11.000000" posY="3.000000" posZ="55.000000" RotationAtArrival="0" />
                 <sparea name="spawning11" posX="24.000000" posY="10.000000" posZ="28.000000" RotationAtArrival="0" />
                 <sparea name="spawning12" posX="56.000000" posY="0.000000" posZ="41.000000" RotationAtArrival="0" />
+                <sparea name="spawning13" posX="31.000000" posY="6.000000" posZ="12.000000" RotationAtArrival="0" />
                 <sparea name="spawning2" posX="56.000000" posY="0.000000" posZ="1.000000" RotationAtArrival="0" />
                 <sparea name="spawning3" posX="56.000000" posY="0.000000" posZ="62.000000" RotationAtArrival="0" />
                 <sparea name="spawning4" posX="17.000000" posY="6.000000" posZ="32.000000" RotationAtArrival="0" />
@@ -758,13 +759,14 @@
                 <exit name="exit18" TopRightX="36.998047" TopRightY="5.996094" TopRightZ="56.998047" BottomLeftX="36.000000" BottomLeftY="1.000000" BottomLeftZ="52.000000" newMap="Map28_1" spawning="spawning1" />
                 <exit name="exit2" TopRightX="40.000000" TopRightY="19.000000" TopRightZ="3.000000" BottomLeftX="38.000000" BottomLeftY="11.000000" BottomLeftZ="1.000000" newMap="Map99_1" spawning="spawning3" />
                 <exit name="exit20" TopRightX="5.998047" TopRightY="12.996094" TopRightZ="41.998047" BottomLeftX="5.000000" BottomLeftY="7.000000" BottomLeftZ="37.000000" newMap="Map30_1" spawning="spawning1" />
-                <exit name="exit21" TopRightX="8.998047" TopRightY="19.996094" TopRightZ="4.998047" BottomLeftX="7.000000" BottomLeftY="17.000000" BottomLeftZ="3.000000" newMap="Map29_1" spawning="spawning1" />
+                <exit name="exit21" TopRightX="10.000000" TopRightY="20.000000" TopRightZ="6.000000" BottomLeftX="7.000000" BottomLeftY="17.000000" BottomLeftZ="3.000000" newMap="Map29_1" spawning="spawning1" />
                 <exit name="exit22" TopRightX="8.998047" TopRightY="14.996094" TopRightZ="22.998047" BottomLeftX="8.000000" BottomLeftY="10.000000" BottomLeftZ="18.000000" newMap="Map31_1" spawning="spawning1" />
                 <exit name="exit23" TopRightX="23.998047" TopRightY="9.996094" TopRightZ="54.998047" BottomLeftX="19.000000" BottomLeftY="4.000000" BottomLeftZ="54.000000" newMap="Map32_1" spawning="spawning1" />
                 <exit name="exit26" TopRightX="62.998047" TopRightY="13.996094" TopRightZ="63.998047" BottomLeftX="56.000000" BottomLeftY="1.000000" BottomLeftZ="63.000000" newMap="Map25_1" spawning="spawning1" />
                 <exit name="exit27" TopRightX="14.998047" TopRightY="8.996094" TopRightZ="54.998047" BottomLeftX="10.000000" BottomLeftY="4.000000" BottomLeftZ="54.000000" newMap="Map32_1" spawning="spawning2" />
                 <exit name="exit30" TopRightX="55.998047" TopRightY="8.996094" TopRightZ="43.998047" BottomLeftX="55.000000" BottomLeftY="1.000000" BottomLeftZ="41.000000" newMap="Map58_1" spawning="spawning1" />
                 <exit name="exit31" TopRightX="23.998047" TopRightY="7.996094" TopRightZ="29.998047" BottomLeftX="22.000000" BottomLeftY="7.000000" BottomLeftZ="28.000000" newMap="Map56_1" spawning="spawning1" />
+                <exit name="exit32" TopRightX="31.000000" TopRightY="13.000000" TopRightZ="16.000000" BottomLeftX="30.000000" BottomLeftY="6.000000" BottomLeftZ="12.000000" newMap="polaris_map1" spawning="spawning1" />
             </exits>
         </Map>
         <!--Map of Temple of Bu, Esmer Base-->
@@ -3652,6 +3654,27 @@
             <exits>
                 <exit name="exit1" TopRightX="4.000000" TopRightY="8.000000" TopRightZ="9.000000" BottomLeftX="2.000000" BottomLeftY="1.000000" BottomLeftZ="7.000000" newMap="Map18_2" spawning="spawning0" />
                 <exit name="exit2" TopRightX="8.000000" TopRightY="8.000000" TopRightZ="11.000000" BottomLeftX="4.000000" BottomLeftY="0.000000" BottomLeftZ="10.000000" newMap="Map19_1" spawning="spawningX" />
+            </exits>
+        </Map>
+        <!--Map of Principal Island, house-->
+        <Map name="polaris_map1" type="interior" music="Music/LBA1-Track6.mp3" repeatmusic="0">
+            <description>Principal Island, house</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="ExternalActors/old_burg_house.xml" />
+                <file name="LocalActors" path="LocalActors/old_burg_house.xml" />
+                <file name="Maps" path="Maps/old_burg_house.txt" />
+                <file name="Texts" path="Texts/Lba1/text4.xml" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+                <sparea name="spawning1" posX="62.000000" posY="1.000000" posZ="56.000000" RotationAtArrival="0" />
+            </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="exit1" TopRightX="64.000000" TopRightY="9.000000" TopRightZ="59.000000" BottomLeftX="63.000000" BottomLeftY="1.000000" BottomLeftZ="56.000000" newMap="Map13_1" spawning="spawning13" />
             </exits>
         </Map>
     </maps>
