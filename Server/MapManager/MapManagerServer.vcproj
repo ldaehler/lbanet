@@ -218,6 +218,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\HurtArea.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\InfosReceiverServant.cpp"
 				>
 			</File>
@@ -293,6 +297,10 @@
 			>
 			<File
 				RelativePath=".\ActorReceiverServant.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\HurtArea.h"
 				>
 			</File>
 			<File

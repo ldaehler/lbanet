@@ -91,6 +91,18 @@ public:
 	//! get server version
 	std::string GetVersion(const Ice::Current&);
 
+	//! return the current life state
+    virtual LbaNet::ActorLifeInfo GetLifeInfo(const Ice::Current&);
+
+	//! called when actor have been hurt
+    virtual void GotHurtByActor(Ice::Long hurtingactorid, const Ice::Current&);
+
+	//! called when actor have been hurt
+    virtual void GotHurtByFalling(Ice::Float fallingdistance, const Ice::Current&);
+
+	//! player is dead and reborn
+    virtual void PlayerRaisedFromDead(const Ice::Current&);
+
 private:
 	std::string							_userId;
 	Ice::Long							_userNum;
@@ -107,6 +119,7 @@ private:
 
 	std::string							_version;
 
+	LbaNet::ActorLifeInfo				_lifeinfo;
 };
 
 #endif

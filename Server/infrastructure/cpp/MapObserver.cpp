@@ -37,6 +37,12 @@ static const ::std::string __LbaNet__MapObserver__GetUpdatedInfo_name = "GetUpda
 
 static const ::std::string __LbaNet__MapObserver__GetPlayersInfo_name = "GetPlayersInfo";
 
+static const ::std::string __LbaNet__MapObserver__GotHurtByActor_name = "GotHurtByActor";
+
+static const ::std::string __LbaNet__MapObserver__GotHurtByFalling_name = "GotHurtByFalling";
+
+static const ::std::string __LbaNet__MapObserver__RaisedFromDead_name = "RaisedFromDead";
+
 ::Ice::Object* IceInternal::upCast(::LbaNet::MapObserver* p) { return p; }
 ::IceProxy::Ice::Object* IceInternal::upCast(::IceProxy::LbaNet::MapObserver* p) { return p; }
 
@@ -453,6 +459,178 @@ LbaNet::ActorActivationInfo::__read(::IceInternal::BasicStream* __is)
 }
 
 bool
+LbaNet::ActorLifeInfo::operator==(const ActorLifeInfo& __rhs) const
+{
+    if(this == &__rhs)
+    {
+        return true;
+    }
+    if(ActorId != __rhs.ActorId)
+    {
+        return false;
+    }
+    if(Name != __rhs.Name)
+    {
+        return false;
+    }
+    if(CurrentLife != __rhs.CurrentLife)
+    {
+        return false;
+    }
+    if(MaxLife != __rhs.MaxLife)
+    {
+        return false;
+    }
+    if(CurrentMana != __rhs.CurrentMana)
+    {
+        return false;
+    }
+    if(MaxMana != __rhs.MaxMana)
+    {
+        return false;
+    }
+    return true;
+}
+
+bool
+LbaNet::ActorLifeInfo::operator<(const ActorLifeInfo& __rhs) const
+{
+    if(this == &__rhs)
+    {
+        return false;
+    }
+    if(ActorId < __rhs.ActorId)
+    {
+        return true;
+    }
+    else if(__rhs.ActorId < ActorId)
+    {
+        return false;
+    }
+    if(Name < __rhs.Name)
+    {
+        return true;
+    }
+    else if(__rhs.Name < Name)
+    {
+        return false;
+    }
+    if(CurrentLife < __rhs.CurrentLife)
+    {
+        return true;
+    }
+    else if(__rhs.CurrentLife < CurrentLife)
+    {
+        return false;
+    }
+    if(MaxLife < __rhs.MaxLife)
+    {
+        return true;
+    }
+    else if(__rhs.MaxLife < MaxLife)
+    {
+        return false;
+    }
+    if(CurrentMana < __rhs.CurrentMana)
+    {
+        return true;
+    }
+    else if(__rhs.CurrentMana < CurrentMana)
+    {
+        return false;
+    }
+    if(MaxMana < __rhs.MaxMana)
+    {
+        return true;
+    }
+    else if(__rhs.MaxMana < MaxMana)
+    {
+        return false;
+    }
+    return false;
+}
+
+void
+LbaNet::ActorLifeInfo::__write(::IceInternal::BasicStream* __os) const
+{
+    __os->write(ActorId);
+    __os->write(Name);
+    __os->write(CurrentLife);
+    __os->write(MaxLife);
+    __os->write(CurrentMana);
+    __os->write(MaxMana);
+}
+
+void
+LbaNet::ActorLifeInfo::__read(::IceInternal::BasicStream* __is)
+{
+    __is->read(ActorId);
+    __is->read(Name);
+    __is->read(CurrentLife);
+    __is->read(MaxLife);
+    __is->read(CurrentMana);
+    __is->read(MaxMana);
+}
+
+bool
+LbaNet::PlayerFullInfo::operator==(const PlayerFullInfo& __rhs) const
+{
+    if(this == &__rhs)
+    {
+        return true;
+    }
+    if(ai != __rhs.ai)
+    {
+        return false;
+    }
+    if(li != __rhs.li)
+    {
+        return false;
+    }
+    return true;
+}
+
+bool
+LbaNet::PlayerFullInfo::operator<(const PlayerFullInfo& __rhs) const
+{
+    if(this == &__rhs)
+    {
+        return false;
+    }
+    if(ai < __rhs.ai)
+    {
+        return true;
+    }
+    else if(__rhs.ai < ai)
+    {
+        return false;
+    }
+    if(li < __rhs.li)
+    {
+        return true;
+    }
+    else if(__rhs.li < li)
+    {
+        return false;
+    }
+    return false;
+}
+
+void
+LbaNet::PlayerFullInfo::__write(::IceInternal::BasicStream* __os) const
+{
+    ai.__write(__os);
+    li.__write(__os);
+}
+
+void
+LbaNet::PlayerFullInfo::__read(::IceInternal::BasicStream* __is)
+{
+    ai.__read(__is);
+    li.__read(__is);
+}
+
+bool
 LbaNet::ActorSignalInfo::operator==(const ActorSignalInfo& __rhs) const
 {
     if(this == &__rhs)
@@ -750,7 +928,7 @@ LbaNet::__readUpdateSeq(::IceInternal::BasicStream* __is, ::LbaNet::UpdateSeq& v
 }
 
 void
-LbaNet::__writePlayerSeq(::IceInternal::BasicStream* __os, const ::LbaNet::ActorInfo* begin, const ::LbaNet::ActorInfo* end)
+LbaNet::__writePlayerSeq(::IceInternal::BasicStream* __os, const ::LbaNet::PlayerFullInfo* begin, const ::LbaNet::PlayerFullInfo* end)
 {
     ::Ice::Int size = static_cast< ::Ice::Int>(end - begin);
     __os->writeSize(size);
@@ -765,7 +943,7 @@ LbaNet::__readPlayerSeq(::IceInternal::BasicStream* __is, ::LbaNet::PlayerSeq& v
 {
     ::Ice::Int sz;
     __is->readSize(sz);
-    __is->startSeq(sz, 65);
+    __is->startSeq(sz, 90);
     v.resize(sz);
     for(int i = 0; i < sz; ++i)
     {
@@ -876,6 +1054,90 @@ IceProxy::LbaNet::MapObserver::GetPlayersInfo(const ::Ice::Context* __ctx)
             __delBase = __getDelegate(false);
             ::IceDelegate::LbaNet::MapObserver* __del = dynamic_cast< ::IceDelegate::LbaNet::MapObserver*>(__delBase.get());
             return __del->GetPlayersInfo(__ctx);
+        }
+        catch(const ::IceInternal::LocalExceptionWrapper& __ex)
+        {
+            __handleExceptionWrapper(__delBase, __ex, 0);
+        }
+        catch(const ::Ice::LocalException& __ex)
+        {
+            __handleException(__delBase, __ex, 0, __cnt);
+        }
+    }
+}
+
+void
+IceProxy::LbaNet::MapObserver::GotHurtByActor(::Ice::Long ActorId, ::Ice::Long HurtingActorId, const ::Ice::Context* __ctx)
+{
+    int __cnt = 0;
+    while(true)
+    {
+        ::IceInternal::Handle< ::IceDelegate::Ice::Object> __delBase;
+        try
+        {
+#if defined(__BCPLUSPLUS__) && (__BCPLUSPLUS__ >= 0x0600) // C++Builder 2009 compiler bug
+            IceUtil::DummyBCC dummy;
+#endif
+            __delBase = __getDelegate(false);
+            ::IceDelegate::LbaNet::MapObserver* __del = dynamic_cast< ::IceDelegate::LbaNet::MapObserver*>(__delBase.get());
+            __del->GotHurtByActor(ActorId, HurtingActorId, __ctx);
+            return;
+        }
+        catch(const ::IceInternal::LocalExceptionWrapper& __ex)
+        {
+            __handleExceptionWrapper(__delBase, __ex, 0);
+        }
+        catch(const ::Ice::LocalException& __ex)
+        {
+            __handleException(__delBase, __ex, 0, __cnt);
+        }
+    }
+}
+
+void
+IceProxy::LbaNet::MapObserver::GotHurtByFalling(::Ice::Long ActorId, ::Ice::Float FallingDistance, const ::Ice::Context* __ctx)
+{
+    int __cnt = 0;
+    while(true)
+    {
+        ::IceInternal::Handle< ::IceDelegate::Ice::Object> __delBase;
+        try
+        {
+#if defined(__BCPLUSPLUS__) && (__BCPLUSPLUS__ >= 0x0600) // C++Builder 2009 compiler bug
+            IceUtil::DummyBCC dummy;
+#endif
+            __delBase = __getDelegate(false);
+            ::IceDelegate::LbaNet::MapObserver* __del = dynamic_cast< ::IceDelegate::LbaNet::MapObserver*>(__delBase.get());
+            __del->GotHurtByFalling(ActorId, FallingDistance, __ctx);
+            return;
+        }
+        catch(const ::IceInternal::LocalExceptionWrapper& __ex)
+        {
+            __handleExceptionWrapper(__delBase, __ex, 0);
+        }
+        catch(const ::Ice::LocalException& __ex)
+        {
+            __handleException(__delBase, __ex, 0, __cnt);
+        }
+    }
+}
+
+void
+IceProxy::LbaNet::MapObserver::RaisedFromDead(::Ice::Long ActorId, const ::Ice::Context* __ctx)
+{
+    int __cnt = 0;
+    while(true)
+    {
+        ::IceInternal::Handle< ::IceDelegate::Ice::Object> __delBase;
+        try
+        {
+#if defined(__BCPLUSPLUS__) && (__BCPLUSPLUS__ >= 0x0600) // C++Builder 2009 compiler bug
+            IceUtil::DummyBCC dummy;
+#endif
+            __delBase = __getDelegate(false);
+            ::IceDelegate::LbaNet::MapObserver* __del = dynamic_cast< ::IceDelegate::LbaNet::MapObserver*>(__delBase.get());
+            __del->RaisedFromDead(ActorId, __ctx);
+            return;
         }
         catch(const ::IceInternal::LocalExceptionWrapper& __ex)
         {
@@ -1051,6 +1313,125 @@ IceDelegateM::LbaNet::MapObserver::GetPlayersInfo(const ::Ice::Context* __contex
     catch(const ::Ice::LocalException& __ex)
     {
         throw ::IceInternal::LocalExceptionWrapper(__ex, false);
+    }
+}
+
+void
+IceDelegateM::LbaNet::MapObserver::GotHurtByActor(::Ice::Long ActorId, ::Ice::Long HurtingActorId, const ::Ice::Context* __context)
+{
+    ::IceInternal::Outgoing __og(__handler.get(), __LbaNet__MapObserver__GotHurtByActor_name, ::Ice::Normal, __context);
+    try
+    {
+        ::IceInternal::BasicStream* __os = __og.os();
+        __os->write(ActorId);
+        __os->write(HurtingActorId);
+    }
+    catch(const ::Ice::LocalException& __ex)
+    {
+        __og.abort(__ex);
+    }
+    bool __ok = __og.invoke();
+    if(!__og.is()->b.empty())
+    {
+        try
+        {
+            if(!__ok)
+            {
+                try
+                {
+                    __og.throwUserException();
+                }
+                catch(const ::Ice::UserException& __ex)
+                {
+                    ::Ice::UnknownUserException __uue(__FILE__, __LINE__, __ex.ice_name());
+                    throw __uue;
+                }
+            }
+            __og.is()->skipEmptyEncaps();
+        }
+        catch(const ::Ice::LocalException& __ex)
+        {
+            throw ::IceInternal::LocalExceptionWrapper(__ex, false);
+        }
+    }
+}
+
+void
+IceDelegateM::LbaNet::MapObserver::GotHurtByFalling(::Ice::Long ActorId, ::Ice::Float FallingDistance, const ::Ice::Context* __context)
+{
+    ::IceInternal::Outgoing __og(__handler.get(), __LbaNet__MapObserver__GotHurtByFalling_name, ::Ice::Normal, __context);
+    try
+    {
+        ::IceInternal::BasicStream* __os = __og.os();
+        __os->write(ActorId);
+        __os->write(FallingDistance);
+    }
+    catch(const ::Ice::LocalException& __ex)
+    {
+        __og.abort(__ex);
+    }
+    bool __ok = __og.invoke();
+    if(!__og.is()->b.empty())
+    {
+        try
+        {
+            if(!__ok)
+            {
+                try
+                {
+                    __og.throwUserException();
+                }
+                catch(const ::Ice::UserException& __ex)
+                {
+                    ::Ice::UnknownUserException __uue(__FILE__, __LINE__, __ex.ice_name());
+                    throw __uue;
+                }
+            }
+            __og.is()->skipEmptyEncaps();
+        }
+        catch(const ::Ice::LocalException& __ex)
+        {
+            throw ::IceInternal::LocalExceptionWrapper(__ex, false);
+        }
+    }
+}
+
+void
+IceDelegateM::LbaNet::MapObserver::RaisedFromDead(::Ice::Long ActorId, const ::Ice::Context* __context)
+{
+    ::IceInternal::Outgoing __og(__handler.get(), __LbaNet__MapObserver__RaisedFromDead_name, ::Ice::Normal, __context);
+    try
+    {
+        ::IceInternal::BasicStream* __os = __og.os();
+        __os->write(ActorId);
+    }
+    catch(const ::Ice::LocalException& __ex)
+    {
+        __og.abort(__ex);
+    }
+    bool __ok = __og.invoke();
+    if(!__og.is()->b.empty())
+    {
+        try
+        {
+            if(!__ok)
+            {
+                try
+                {
+                    __og.throwUserException();
+                }
+                catch(const ::Ice::UserException& __ex)
+                {
+                    ::Ice::UnknownUserException __uue(__FILE__, __LINE__, __ex.ice_name());
+                    throw __uue;
+                }
+            }
+            __og.is()->skipEmptyEncaps();
+        }
+        catch(const ::Ice::LocalException& __ex)
+        {
+            throw ::IceInternal::LocalExceptionWrapper(__ex, false);
+        }
     }
 }
 
@@ -1314,6 +1695,202 @@ IceDelegateD::LbaNet::MapObserver::GetPlayersInfo(const ::Ice::Context* __contex
     return __result;
 }
 
+void
+IceDelegateD::LbaNet::MapObserver::GotHurtByActor(::Ice::Long ActorId, ::Ice::Long HurtingActorId, const ::Ice::Context* __context)
+{
+    class _DirectI : public ::IceInternal::Direct
+    {
+    public:
+
+        _DirectI(::Ice::Long ActorId, ::Ice::Long HurtingActorId, const ::Ice::Current& __current) : 
+            ::IceInternal::Direct(__current),
+            _m_ActorId(ActorId),
+            _m_HurtingActorId(HurtingActorId)
+        {
+        }
+        
+        virtual ::Ice::DispatchStatus
+        run(::Ice::Object* object)
+        {
+            ::LbaNet::MapObserver* servant = dynamic_cast< ::LbaNet::MapObserver*>(object);
+            if(!servant)
+            {
+                throw ::Ice::OperationNotExistException(__FILE__, __LINE__, _current.id, _current.facet, _current.operation);
+            }
+            servant->GotHurtByActor(_m_ActorId, _m_HurtingActorId, _current);
+            return ::Ice::DispatchOK;
+        }
+        
+    private:
+        
+        ::Ice::Long _m_ActorId;
+        ::Ice::Long _m_HurtingActorId;
+    };
+    
+    ::Ice::Current __current;
+    __initCurrent(__current, __LbaNet__MapObserver__GotHurtByActor_name, ::Ice::Normal, __context);
+    try
+    {
+        _DirectI __direct(ActorId, HurtingActorId, __current);
+        try
+        {
+            __direct.servant()->__collocDispatch(__direct);
+        }
+        catch(...)
+        {
+            __direct.destroy();
+            throw;
+        }
+        __direct.destroy();
+    }
+    catch(const ::Ice::SystemException&)
+    {
+        throw;
+    }
+    catch(const ::IceInternal::LocalExceptionWrapper&)
+    {
+        throw;
+    }
+    catch(const ::std::exception& __ex)
+    {
+        ::IceInternal::LocalExceptionWrapper::throwWrapper(__ex);
+    }
+    catch(...)
+    {
+        throw ::IceInternal::LocalExceptionWrapper(::Ice::UnknownException(__FILE__, __LINE__, "unknown c++ exception"), false);
+    }
+}
+
+void
+IceDelegateD::LbaNet::MapObserver::GotHurtByFalling(::Ice::Long ActorId, ::Ice::Float FallingDistance, const ::Ice::Context* __context)
+{
+    class _DirectI : public ::IceInternal::Direct
+    {
+    public:
+
+        _DirectI(::Ice::Long ActorId, ::Ice::Float FallingDistance, const ::Ice::Current& __current) : 
+            ::IceInternal::Direct(__current),
+            _m_ActorId(ActorId),
+            _m_FallingDistance(FallingDistance)
+        {
+        }
+        
+        virtual ::Ice::DispatchStatus
+        run(::Ice::Object* object)
+        {
+            ::LbaNet::MapObserver* servant = dynamic_cast< ::LbaNet::MapObserver*>(object);
+            if(!servant)
+            {
+                throw ::Ice::OperationNotExistException(__FILE__, __LINE__, _current.id, _current.facet, _current.operation);
+            }
+            servant->GotHurtByFalling(_m_ActorId, _m_FallingDistance, _current);
+            return ::Ice::DispatchOK;
+        }
+        
+    private:
+        
+        ::Ice::Long _m_ActorId;
+        ::Ice::Float _m_FallingDistance;
+    };
+    
+    ::Ice::Current __current;
+    __initCurrent(__current, __LbaNet__MapObserver__GotHurtByFalling_name, ::Ice::Normal, __context);
+    try
+    {
+        _DirectI __direct(ActorId, FallingDistance, __current);
+        try
+        {
+            __direct.servant()->__collocDispatch(__direct);
+        }
+        catch(...)
+        {
+            __direct.destroy();
+            throw;
+        }
+        __direct.destroy();
+    }
+    catch(const ::Ice::SystemException&)
+    {
+        throw;
+    }
+    catch(const ::IceInternal::LocalExceptionWrapper&)
+    {
+        throw;
+    }
+    catch(const ::std::exception& __ex)
+    {
+        ::IceInternal::LocalExceptionWrapper::throwWrapper(__ex);
+    }
+    catch(...)
+    {
+        throw ::IceInternal::LocalExceptionWrapper(::Ice::UnknownException(__FILE__, __LINE__, "unknown c++ exception"), false);
+    }
+}
+
+void
+IceDelegateD::LbaNet::MapObserver::RaisedFromDead(::Ice::Long ActorId, const ::Ice::Context* __context)
+{
+    class _DirectI : public ::IceInternal::Direct
+    {
+    public:
+
+        _DirectI(::Ice::Long ActorId, const ::Ice::Current& __current) : 
+            ::IceInternal::Direct(__current),
+            _m_ActorId(ActorId)
+        {
+        }
+        
+        virtual ::Ice::DispatchStatus
+        run(::Ice::Object* object)
+        {
+            ::LbaNet::MapObserver* servant = dynamic_cast< ::LbaNet::MapObserver*>(object);
+            if(!servant)
+            {
+                throw ::Ice::OperationNotExistException(__FILE__, __LINE__, _current.id, _current.facet, _current.operation);
+            }
+            servant->RaisedFromDead(_m_ActorId, _current);
+            return ::Ice::DispatchOK;
+        }
+        
+    private:
+        
+        ::Ice::Long _m_ActorId;
+    };
+    
+    ::Ice::Current __current;
+    __initCurrent(__current, __LbaNet__MapObserver__RaisedFromDead_name, ::Ice::Normal, __context);
+    try
+    {
+        _DirectI __direct(ActorId, __current);
+        try
+        {
+            __direct.servant()->__collocDispatch(__direct);
+        }
+        catch(...)
+        {
+            __direct.destroy();
+            throw;
+        }
+        __direct.destroy();
+    }
+    catch(const ::Ice::SystemException&)
+    {
+        throw;
+    }
+    catch(const ::IceInternal::LocalExceptionWrapper&)
+    {
+        throw;
+    }
+    catch(const ::std::exception& __ex)
+    {
+        ::IceInternal::LocalExceptionWrapper::throwWrapper(__ex);
+    }
+    catch(...)
+    {
+        throw ::IceInternal::LocalExceptionWrapper(::Ice::UnknownException(__FILE__, __LINE__, "unknown c++ exception"), false);
+    }
+}
+
 ::Ice::ObjectPtr
 LbaNet::MapObserver::ice_clone() const
 {
@@ -1413,11 +1990,57 @@ LbaNet::MapObserver::___GetPlayersInfo(::IceInternal::Incoming& __inS, const ::I
     return ::Ice::DispatchOK;
 }
 
+::Ice::DispatchStatus
+LbaNet::MapObserver::___GotHurtByActor(::IceInternal::Incoming& __inS, const ::Ice::Current& __current)
+{
+    __checkMode(::Ice::Normal, __current.mode);
+    ::IceInternal::BasicStream* __is = __inS.is();
+    __is->startReadEncaps();
+    ::Ice::Long ActorId;
+    ::Ice::Long HurtingActorId;
+    __is->read(ActorId);
+    __is->read(HurtingActorId);
+    __is->endReadEncaps();
+    GotHurtByActor(ActorId, HurtingActorId, __current);
+    return ::Ice::DispatchOK;
+}
+
+::Ice::DispatchStatus
+LbaNet::MapObserver::___GotHurtByFalling(::IceInternal::Incoming& __inS, const ::Ice::Current& __current)
+{
+    __checkMode(::Ice::Normal, __current.mode);
+    ::IceInternal::BasicStream* __is = __inS.is();
+    __is->startReadEncaps();
+    ::Ice::Long ActorId;
+    ::Ice::Float FallingDistance;
+    __is->read(ActorId);
+    __is->read(FallingDistance);
+    __is->endReadEncaps();
+    GotHurtByFalling(ActorId, FallingDistance, __current);
+    return ::Ice::DispatchOK;
+}
+
+::Ice::DispatchStatus
+LbaNet::MapObserver::___RaisedFromDead(::IceInternal::Incoming& __inS, const ::Ice::Current& __current)
+{
+    __checkMode(::Ice::Normal, __current.mode);
+    ::IceInternal::BasicStream* __is = __inS.is();
+    __is->startReadEncaps();
+    ::Ice::Long ActorId;
+    __is->read(ActorId);
+    __is->endReadEncaps();
+    RaisedFromDead(ActorId, __current);
+    return ::Ice::DispatchOK;
+}
+
 static ::std::string __LbaNet__MapObserver_all[] =
 {
     "ActivateActor",
     "GetPlayersInfo",
     "GetUpdatedInfo",
+    "GotHurtByActor",
+    "GotHurtByFalling",
+    "RaisedFromDead",
     "SignalActor",
     "ice_id",
     "ice_ids",
@@ -1428,7 +2051,7 @@ static ::std::string __LbaNet__MapObserver_all[] =
 ::Ice::DispatchStatus
 LbaNet::MapObserver::__dispatch(::IceInternal::Incoming& in, const ::Ice::Current& current)
 {
-    ::std::pair< ::std::string*, ::std::string*> r = ::std::equal_range(__LbaNet__MapObserver_all, __LbaNet__MapObserver_all + 8, current.operation);
+    ::std::pair< ::std::string*, ::std::string*> r = ::std::equal_range(__LbaNet__MapObserver_all, __LbaNet__MapObserver_all + 11, current.operation);
     if(r.first == r.second)
     {
         throw ::Ice::OperationNotExistException(__FILE__, __LINE__, current.id, current.facet, current.operation);
@@ -1450,21 +2073,33 @@ LbaNet::MapObserver::__dispatch(::IceInternal::Incoming& in, const ::Ice::Curren
         }
         case 3:
         {
-            return ___SignalActor(in, current);
+            return ___GotHurtByActor(in, current);
         }
         case 4:
         {
-            return ___ice_id(in, current);
+            return ___GotHurtByFalling(in, current);
         }
         case 5:
         {
-            return ___ice_ids(in, current);
+            return ___RaisedFromDead(in, current);
         }
         case 6:
         {
-            return ___ice_isA(in, current);
+            return ___SignalActor(in, current);
         }
         case 7:
+        {
+            return ___ice_id(in, current);
+        }
+        case 8:
+        {
+            return ___ice_ids(in, current);
+        }
+        case 9:
+        {
+            return ___ice_isA(in, current);
+        }
+        case 10:
         {
             return ___ice_ping(in, current);
         }

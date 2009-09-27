@@ -45,10 +45,10 @@ public:
 
 	//! a player join a map
 	virtual LbaNet::MapObserverPrx JoinMap(const std::string& mapName,
-											Ice::Long PlayerId, const Ice::Current&);
+											Ice::Long PlayerId, const ActorLifeInfo &ali, const Ice::Current&);
 
 	//! a player leave a map
-    virtual void LeaveMap(const std::string& mapName, Ice::Long PlayerId, const Ice::Current&);
+    virtual ActorLifeInfo LeaveMap(const std::string& mapName, Ice::Long PlayerId, const Ice::Current&);
 
 
 	//! stop the thread for map mapName

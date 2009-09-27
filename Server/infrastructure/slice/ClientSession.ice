@@ -31,6 +31,14 @@ module LbaNet
 	    long GetTime();
 	    
 	    string GetVersion();
+	    
+	    ActorLifeInfo GetLifeInfo();
+	    
+	    void GotHurtByActor(long HurtingActorId);
+	    
+	    void GotHurtByFalling(float FallingDistance);
+	    
+	    void PlayerRaisedFromDead();
 	};
 
 };

@@ -37,6 +37,13 @@ SessionServant::SessionServant(const std::string& userId, const RoomManagerPrx& 
 	_userNum(-1), _version(version)
 {
 	_userNum = _ctracker->Connect(_userId);
+
+	_lifeinfo.CurrentLife = 40;
+	_lifeinfo.MaxLife = 40;
+	_lifeinfo.CurrentMana = 40;
+	_lifeinfo.MaxMana = 40;
+	_lifeinfo.ActorId = _userNum;
+	_lifeinfo.Name = _userId;
 }
 
 
@@ -115,7 +122,7 @@ ActorsParticipantPrx SessionServant::ChangeRoom(		const std::string& newroom,
 	if(_curr_actor_room != "")
 	{
 		current.adapter->remove(_actors_room->ice_getIdentity());
-		_map_manager->LeaveMap(_curr_actor_room, _userNum);
+		_lifeinfo = _map_manager->LeaveMap(_curr_actor_room, _userNum);
 		_actors_manager = NULL;
 	}
 
@@ -128,7 +135,7 @@ ActorsParticipantPrx SessionServant::ChangeRoom(		const std::string& newroom,
 	ActorsParticipantServant *actors_room_ptr = new ActorsParticipantServant(newroom, actorname, observer, _manager);
     _actors_room = ActorsParticipantPrx::uncheckedCast(current.adapter->add(actors_room_ptr, id));
 	_curr_actor_room = newroom;
-	_actors_manager = _map_manager->JoinMap(_curr_actor_room, _userNum);
+	_actors_manager = _map_manager->JoinMap(_curr_actor_room, _userNum, _lifeinfo);
 
     return _actors_room;
 }
@@ -351,4 +358,74 @@ get server version
 std::string SessionServant::GetVersion(const Ice::Current&)
 {
 	return _version;
+}
+
+
+/***********************************************************
+return the current life state
+***********************************************************/
+LbaNet::ActorLifeInfo SessionServant::GetLifeInfo(const Ice::Current&)
+{
+	return _lifeinfo;
+}
+
+/***********************************************************
+called when actor have been hurt
+***********************************************************/
+void SessionServant::GotHurtByActor(Ice::Long hurtingactorid, const Ice::Current&)
+{
+	try
+	{
+		if(_actors_manager)
+			return _actors_manager->GotHurtByActor(_userNum, hurtingactorid);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		std::cout<<"SessionServant - Exception during GotHurtByActor: "<< ex.what()<<std::endl;
+    }
+    catch(...)
+    {
+		std::cout<<"SessionServant - Unknown exception during GotHurtByActor"<<std::endl;
+    }
+}
+
+/***********************************************************
+called when actor have been hurt
+***********************************************************/
+void SessionServant::GotHurtByFalling(Ice::Float fallingdistance, const Ice::Current&)
+{
+	try
+	{
+		if(_actors_manager)
+			return _actors_manager->GotHurtByFalling(_userNum, fallingdistance);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		std::cout<<"SessionServant - Exception during GotHurtByFalling: "<< ex.what()<<std::endl;
+    }
+    catch(...)
+    {
+		std::cout<<"SessionServant - Unknown exception during GotHurtByFalling"<<std::endl;
+    }
+}
+
+
+/***********************************************************
+player is dead and reborn
+***********************************************************/
+void SessionServant::PlayerRaisedFromDead(const Ice::Current&)
+{
+	try
+	{
+		if(_actors_manager)
+			return _actors_manager->RaisedFromDead(_userNum);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		std::cout<<"SessionServant - Exception during GotHurtByFalling: "<< ex.what()<<std::endl;
+    }
+    catch(...)
+    {
+		std::cout<<"SessionServant - Unknown exception during GotHurtByFalling"<<std::endl;
+    }
 }
