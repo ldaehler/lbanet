@@ -50,6 +50,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "FloorSwitch.h"
 #include "AreaSwitch.h"
 #include "LiftActor.h"
+#include "HurtArea.h"
+
 
 
 // Sample sub-class for ListboxTextItem that auto-sets the selection brush
@@ -361,6 +363,7 @@ void EditorBox::Initialize(CEGUI::Window* Root)
 			cbatype->addItem(new MyEditorListItem("Area Switch"));
 			cbatype->addItem(new MyEditorListItem("Floor Switch"));
 			cbatype->addItem(new MyEditorListItem("Lift Actor"));
+			cbatype->addItem(new MyEditorListItem("Hurting zone"));
 		}
 
 		{
@@ -870,6 +873,29 @@ void EditorBox::Initialize(CEGUI::Window* Root)
 		CEGUI::WindowManager::getSingleton().getWindow("EditorWindow/tabcontrol/Actors/liftactorwin/remb"))
 		->subscribeEvent (CEGUI::PushButton::EventClicked,
 		CEGUI::Event::Subscriber (&EditorBox::Handleliftscriptsremoved, this));
+
+
+
+	static_cast<CEGUI::Spinner *> (
+	CEGUI::WindowManager::getSingleton().getWindow("EditorWindow/tabcontrol/Actors/hurtareawin/zsxsp"))
+			->subscribeEvent(CEGUI::Spinner::EventValueChanged,
+							CEGUI::Event::Subscriber (&EditorBox::Handlehurtareachanged, this));
+
+	static_cast<CEGUI::Spinner *> (
+	CEGUI::WindowManager::getSingleton().getWindow("EditorWindow/tabcontrol/Actors/hurtareawin/zsysp"))
+			->subscribeEvent(CEGUI::Spinner::EventValueChanged,
+							CEGUI::Event::Subscriber (&EditorBox::Handlehurtareachanged, this));
+
+	static_cast<CEGUI::Spinner *> (
+	CEGUI::WindowManager::getSingleton().getWindow("EditorWindow/tabcontrol/Actors/hurtareawin/zszsp"))
+			->subscribeEvent(CEGUI::Spinner::EventValueChanged,
+							CEGUI::Event::Subscriber (&EditorBox::Handlehurtareachanged, this));
+
+	static_cast<CEGUI::Spinner *> (
+	CEGUI::WindowManager::getSingleton().getWindow("EditorWindow/tabcontrol/Actors/hurtareawin/lifetaken"))
+			->subscribeEvent(CEGUI::Spinner::EventValueChanged,
+							CEGUI::Event::Subscriber (&EditorBox::Handlehurtareachanged, this));
+
 
 
 
@@ -1933,6 +1959,9 @@ bool EditorBox::Handleactorselected (const CEGUI::EventArgs& e)
 			case 10:
 				types = "Lift Actor";
 			break;
+			case 11:
+				types = "Hurting zone";
+			break;
 		}
 
 
@@ -2340,6 +2369,34 @@ bool EditorBox::Handleactorselected (const CEGUI::EventArgs& e)
 				}
 			break;
 
+			case 11: //hurt zone
+				{
+				HurtArea * tmpa = static_cast<HurtArea *>(_selActor);
+
+				float zx = tmpa->GetZoneX();
+				float zy = tmpa->GetZoneY();
+				float zz = tmpa->GetZoneZ();
+				int lifetaken = tmpa->GetLifeTaken();
+
+				static_cast<CEGUI::Spinner *> (
+				CEGUI::WindowManager::getSingleton().getWindow("EditorWindow/tabcontrol/Actors/hurtareawin/zsxsp"))
+				->setCurrentValue(zx);
+
+				static_cast<CEGUI::Spinner *> (
+				CEGUI::WindowManager::getSingleton().getWindow("EditorWindow/tabcontrol/Actors/hurtareawin/zsysp"))
+				->setCurrentValue(zy);
+
+				static_cast<CEGUI::Spinner *> (
+				CEGUI::WindowManager::getSingleton().getWindow("EditorWindow/tabcontrol/Actors/hurtareawin/zszsp"))
+				->setCurrentValue(zz);
+
+				static_cast<CEGUI::Spinner *> (
+				CEGUI::WindowManager::getSingleton().getWindow("EditorWindow/tabcontrol/Actors/hurtareawin/lifetaken"))
+				->setCurrentValue((float)lifetaken);
+
+				CEGUI::WindowManager::getSingleton().getWindow("EditorWindow/tabcontrol/Actors/hurtareawin")->show();
+				}
+			break;
 		}
 
 
@@ -2667,6 +2724,18 @@ bool EditorBox::Handleactoradded(const CEGUI::EventArgs& e)
 				(*_Eactors)[newid] = act;
 			}
 			break;
+
+			case 11:	//hurt area actor class
+			{
+				float zoneSizeX=0, zoneSizeY=0, zoneSizeZ=0;
+				int lifetaken=5;
+
+				act = new HurtArea(zoneSizeX, zoneSizeY, zoneSizeZ, lifetaken);
+				act->SetId(newid);
+				act->SetType(idx);
+				(*_Lactors)[newid] = act;
+			}
+			break;
 		}
 
 
@@ -2740,6 +2809,7 @@ void EditorBox::HideAllactorviews()
 	CEGUI::WindowManager::getSingleton().getWindow("EditorWindow/tabcontrol/Actors/areaswitchwin")->hide();
 	CEGUI::WindowManager::getSingleton().getWindow("EditorWindow/tabcontrol/Actors/floorswitchwin")->hide();
 	CEGUI::WindowManager::getSingleton().getWindow("EditorWindow/tabcontrol/Actors/liftactorwin")->hide();
+	CEGUI::WindowManager::getSingleton().getWindow("EditorWindow/tabcontrol/Actors/hurtareawin")->hide();
 }
 
 
@@ -3716,6 +3786,36 @@ bool EditorBox::Handleliftscriptsremoved (const CEGUI::EventArgs& e)
 		Handleactorselected(e);
 	 }
 
+
+	return true;
+}
+
+
+/***********************************************************
+hide all specific views
+***********************************************************/
+bool EditorBox::Handlehurtareachanged (const CEGUI::EventArgs& e)
+{
+	if(!_selActor)
+		return true;
+
+	HurtArea * tmpa = static_cast<HurtArea *>(_selActor);
+
+	tmpa->SetZoneX(static_cast<CEGUI::Spinner *> (
+	CEGUI::WindowManager::getSingleton().getWindow("EditorWindow/tabcontrol/Actors/hurtareawin/zsxsp"))
+	->getCurrentValue());
+
+	tmpa->SetZoneY(static_cast<CEGUI::Spinner *> (
+	CEGUI::WindowManager::getSingleton().getWindow("EditorWindow/tabcontrol/Actors/hurtareawin/zsysp"))
+	->getCurrentValue());
+
+	tmpa->SetZoneZ(static_cast<CEGUI::Spinner *> (
+	CEGUI::WindowManager::getSingleton().getWindow("EditorWindow/tabcontrol/Actors/hurtareawin/zszsp"))
+	->getCurrentValue());
+
+	tmpa->SetLifeTaken((int) static_cast<CEGUI::Spinner *> (
+	CEGUI::WindowManager::getSingleton().getWindow("EditorWindow/tabcontrol/Actors/hurtareawin/lifetaken"))
+	->getCurrentValue());
 
 	return true;
 }

@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ChatReceiverServant.h"
 #include "ThreadSafeWorkpile.h"
 #include "LogHandler.h"
+#include "GameEvents.h"
 
 #include <cctype>
 #include <Ice/Application.h>
@@ -202,7 +203,10 @@ bool IceConnectionManager::ChangeActorsRoom(const std::string& newRoom, const st
 		// add players already present in the map
 		LbaNet::PlayerSeq players =_session->GetPlayersInfo();
 		for(size_t i=0; i<players.size(); ++i)
-			ThreadSafeWorkpile::getInstance()->UpdateActor(players[i]);
+		{
+			ThreadSafeWorkpile::getInstance()->UpdateActor(players[i].ai);
+			ThreadSafeWorkpile::getInstance()->UpdateActorLife(players[i].li);
+		}
 
 	}
     catch(const IceUtil::Exception& ex)
@@ -255,13 +259,97 @@ void IceConnectionManager::ChangeStatus(const std::string& status)
 	{
 		_session->ChangeStatus(status);
 	}
-	catch(...)
-	{
-	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception by ChangeStatus: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception by ChangeStatus "));
+    }
 }
 
 
 
+/***********************************************************
+return current player life state
+***********************************************************/
+LbaNet::ActorLifeInfo IceConnectionManager::GetPlayerLife()
+{
+	try
+	{
+		return _session->GetLifeInfo();
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception GetPlayerLife: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception GetPlayerLife "));
+    }
+
+	return LbaNet::ActorLifeInfo ();
+}
+
+
+/***********************************************************
+send player hurt event
+***********************************************************/
+void IceConnectionManager::AddPlayerHurt(long hurtingid)
+{
+	try
+	{
+		_session->GotHurtByActor(hurtingid);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception AddPlayerHurt: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception AddPlayerHurt "));
+    }
+}
+
+/***********************************************************
+send player hurt fall event
+***********************************************************/
+void IceConnectionManager::AddPlayerHurtFall(float fallingdistance)
+{
+	try
+	{
+		_session->GotHurtByFalling(fallingdistance);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception AddPlayerHurtFall: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception AddPlayerHurtFall "));
+    }
+}
+
+
+/***********************************************************
+player has been raised
+***********************************************************/
+void IceConnectionManager::PlayerRaised()
+{
+	try
+	{
+		_session->PlayerRaisedFromDead();
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception PlayerRaised: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception PlayerRaised "));
+    }
+}
 
 
 
@@ -286,6 +374,29 @@ void SendingLoopThread::run()
 	while(ThreadSafeWorkpile::getInstance()->WaitOneSendingCycle())
 	{
 		HandleChatText();
+
+
+		//-----------------------------------
+		// player raised
+		{
+			if(ThreadSafeWorkpile::getInstance()->IsRaised())
+				_connectionMananger.PlayerRaised();
+		}
+
+		//-----------------------------------
+		// process hurt info
+		{
+			std::vector<long>  vechurt;
+			std::vector<float>  vechurtfall;
+			ThreadSafeWorkpile::getInstance()->GetPlayerHurts(vechurt);
+			ThreadSafeWorkpile::getInstance()->GetPlayerHurtFalls(vechurtfall);
+
+			for(size_t i=0; i<vechurt.size(); ++i)
+				_connectionMananger.AddPlayerHurt(vechurt[i]);
+
+			for(size_t i=0; i<vechurtfall.size(); ++i)
+				_connectionMananger.AddPlayerHurtFall(vechurtfall[i]);
+		}
 
 		//-----------------------------------
 		// process info
@@ -371,6 +482,10 @@ bool SendingLoopThread::ChangeMap(const std::string & NewWorldName, const std::s
 	{
 		_current_world = NewWorldName;
 		_current_map = NewMapName;
+
+		LbaNet::ActorLifeInfo ai = _connectionMananger.GetPlayerLife();
+		ThreadSafeWorkpile::getInstance()->AddEvent(new PlayerLifeChangedEvent(ai.CurrentLife, 
+													ai.MaxLife, ai.CurrentMana, ai.MaxMana));
 	}
 	else
 	{

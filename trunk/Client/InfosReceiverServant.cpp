@@ -55,10 +55,17 @@ void InfosReceiverServant::SignaledActor(const LbaNet::ActorSignalInfo &ai, cons
 	LbaNet::TargetSeq::const_iterator it = ai.Targets.begin();
 	LbaNet::TargetSeq::const_iterator end = ai.Targets.end();
 	for(; it != end; ++it)
-		vectar.push_back(*it);
+		vectar.push_back((long)*it);
 
-	long targetsignal = ai.SignalId;
+	long targetsignal = (long)ai.SignalId;
 	ThreadSafeWorkpile::getInstance()->AddEvent(new GameSignalvent(targetsignal, vectar));
+}
+
+
+// update actor life
+void InfosReceiverServant::UpdatedLife(const LbaNet::ActorLifeInfo& ali, const Ice::Current&)
+{
+	ThreadSafeWorkpile::getInstance()->UpdateActorLife(ali);
 }
 
 

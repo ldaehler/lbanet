@@ -30,6 +30,7 @@ class PhysicHandler;
 #include <vector>
 #include <map>
 struct ActorStateInfo;
+class MainPlayerHandler;
 
 /***********************************************************************
  * Module:  ExternalActorsHandler.h
@@ -72,7 +73,8 @@ public:
 	bool Activate(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation);
 
 	//! check zone activation
-	bool ActivateZone(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation);
+	bool ActivateZone(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation, 
+							MainPlayerHandler  * _mph);
 
 	//! called to reload element when resizing screen
 	void Reload();

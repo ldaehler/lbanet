@@ -214,6 +214,8 @@ class EditorBox
 	//! handle event when list is selected
 	bool Handleliftscriptsremoved (const CEGUI::EventArgs& e);
 
+	//! handle event when list is selected
+	bool Handlehurtareachanged (const CEGUI::EventArgs& e);
 
 private:
 	CEGUI::Window*			_myBox;

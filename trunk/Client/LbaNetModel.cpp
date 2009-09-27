@@ -50,9 +50,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 const short	LbaNetModel::m_body_color_map[] = {-1, 2, 19, 32, 36, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 243};
 
 
-//#ifndef _LBANET_SET_EDITOR_
-//#define _LBANET_SET_EDITOR_
-//#endif
+#ifndef _LBANET_SET_EDITOR_
+#define _LBANET_SET_EDITOR_
+#endif
 
 
 /***********************************************************
@@ -60,7 +60,8 @@ const short	LbaNetModel::m_body_color_map[] = {-1, 2, 19, 32, 36, 48, 64, 80, 96
 ***********************************************************/
 LbaNetModel::LbaNetModel(GuiHandler*	guiH)
 : _current_room_cut(-1), m_current_main_state(0), _game_paused(false),
-	m_current_main_body(0), _guiH(guiH), m_current_main_body_color(0), m_debug_map(0), m_room_y_cut(-1)
+	m_current_main_body(0), _guiH(guiH), m_current_main_body_color(0), m_debug_map(0), 
+	m_room_y_cut(-1), m_need_full_check(false)
 {
 	LogHandler::getInstance()->LogToFile("Initializing model class...");
 
@@ -89,7 +90,7 @@ LbaNetModel::LbaNetModel(GuiHandler*	guiH)
 	LogHandler::getInstance()->LogToFile("Creating main player character...");
 	_mainPlayerHandler = new MainPlayerHandler(NormalSpeed, SportySpeed,
 								FightSpeed, DiscreteSpeed, HorseSpeed, DinoSpeed, AnimationSpeed,
-								JumpSpeed,JumpHeight,  _physicHandler, _camera);
+								JumpSpeed, JumpHeight, NormalSpeed/3, _physicHandler, _camera);
 
 	m_main_actor_starting_X = 0;
 	m_main_actor_starting_Y = 0;
@@ -422,7 +423,8 @@ int LbaNetModel::Process()
 	}
 
 
-	if(_mainPlayerHandler->IsMoving() || _mainPlayerHandler->IsScriptedEvent() || _mainPlayerHandler->IsAttached())
+	if(_mainPlayerHandler->IsMoving() || _mainPlayerHandler->IsScriptedEvent() || 
+		_mainPlayerHandler->IsAttached() || _mainPlayerHandler->NeedCheck() || NeedFullCheck())
 	{
 		std::string newRoom = "";
 		std::string newSpawning = "";
@@ -442,10 +444,10 @@ int LbaNetModel::Process()
 		//else
 		{
 			if(!_localActorsHandler->ActivateZone(_mainPlayerHandler->GetPosX(), _mainPlayerHandler->GetPosY(),
-											_mainPlayerHandler->GetPosZ(), _mainPlayerHandler->GetRotation()))
+											_mainPlayerHandler->GetPosZ(), _mainPlayerHandler->GetRotation(), _mainPlayerHandler))
 
 			_externalActorsHandler->ActivateZone(_mainPlayerHandler->GetPosX(), _mainPlayerHandler->GetPosY(),
-											_mainPlayerHandler->GetPosZ(), _mainPlayerHandler->GetRotation());
+											_mainPlayerHandler->GetPosZ(), _mainPlayerHandler->GetRotation(), _mainPlayerHandler);
 
 
 			if(_mainPlayerHandler->IsAttached())
@@ -638,10 +640,10 @@ void LbaNetModel::ReplaceMain()
 	_mainPlayerHandler->CheckY();
 
 	if(!_localActorsHandler->ActivateZone(_mainPlayerHandler->GetPosX(), _mainPlayerHandler->GetPosY(),
-									_mainPlayerHandler->GetPosZ(), _mainPlayerHandler->GetRotation()))
+									_mainPlayerHandler->GetPosZ(), _mainPlayerHandler->GetRotation(), _mainPlayerHandler))
 
 	_externalActorsHandler->ActivateZone(_mainPlayerHandler->GetPosX(), _mainPlayerHandler->GetPosY(),
-									_mainPlayerHandler->GetPosZ(), _mainPlayerHandler->GetRotation());
+									_mainPlayerHandler->GetPosZ(), _mainPlayerHandler->GetRotation(), _mainPlayerHandler);
 }
 
 
@@ -814,11 +816,33 @@ void LbaNetModel::ChangePespective(bool perspective)
 
 
 /***********************************************************
-display map extis
+display map exits
 ***********************************************************/
 void LbaNetModel::DisplayExits(bool display)
 {
 	_mapRenderer->DisplayExits(display);
+}
+
+
+
+
+/***********************************************************
+player is hurt by an actor
+***********************************************************/
+void LbaNetModel::PlayerHurt(long actorid)
+{
+	_mainPlayerHandler->PlayerHurt(actorid);
+}
+
+
+
+/***********************************************************
+player life changed
+***********************************************************/
+void LbaNetModel::PlayerLifeChanged(float CurLife, float MaxLife, float CurMana, float MaxMana)
+{
+	if(_mainPlayerHandler->PlayerLifeChanged(CurLife, MaxLife, CurMana, MaxMana))
+		m_current_main_state = 2;
 }
 
 

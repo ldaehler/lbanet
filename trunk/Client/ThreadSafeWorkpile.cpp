@@ -429,3 +429,91 @@ bool ThreadSafeWorkpile::ActorStatesUpdated(std::vector<ActorStateInfo> & newsta
 	return res;
 }
 
+
+/***********************************************************
+update actor life
+***********************************************************/
+void ThreadSafeWorkpile::UpdateActorLife(const LbaNet::ActorLifeInfo& ali)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_ext_actor_life_info);
+	m_ext_life_info.push_back(ali);
+}
+
+
+/***********************************************************
+get the last update info
+***********************************************************/
+void ThreadSafeWorkpile::GetExtActorLifeUpdate(std::vector<LbaNet::ActorLifeInfo> & vec)
+{
+	vec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_ext_actor_life_info);
+	m_ext_life_info.swap(vec);
+}
+
+
+
+/***********************************************************
+add player hurted by another actor
+***********************************************************/
+void ThreadSafeWorkpile::AddPlayerHurt(long hurtingactorid)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_player_hurt);
+	m_player_hurts.push_back(hurtingactorid);
+}
+
+
+/***********************************************************
+add player hurted by falling down
+***********************************************************/
+void ThreadSafeWorkpile::AddPlayerHurtFall(float fallingdistance)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_player_hurt);
+	m_player_hurt_falls.push_back(fallingdistance);
+}
+
+
+/***********************************************************
+add player hurted by another actor
+***********************************************************/
+void ThreadSafeWorkpile::GetPlayerHurts(std::vector<long> & vec)
+{
+	vec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_player_hurt);
+	m_player_hurts.swap(vec);
+}
+
+
+/***********************************************************
+add player hurted by falling down
+***********************************************************/
+void ThreadSafeWorkpile::GetPlayerHurtFalls(std::vector<float> & vec)
+{
+	vec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_player_hurt);
+	m_player_hurt_falls.swap(vec);
+}
+
+
+/***********************************************************
+add a raised event
+***********************************************************/
+void ThreadSafeWorkpile::AddRaisedEvent()
+{
+	IceUtil::Mutex::Lock lock(m_mutex_player_raised);
+	m_player_raised = true;
+}
+
+/***********************************************************
+return true if there was a raised event
+***********************************************************/
+bool ThreadSafeWorkpile::IsRaised()
+{
+	bool res = false;
+	IceUtil::Mutex::Lock lock(m_mutex_player_raised);
+	if(m_player_raised)
+		res = true;
+
+	m_player_raised = false;
+	return res;
+}
+
