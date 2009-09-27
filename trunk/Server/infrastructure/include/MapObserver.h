@@ -157,6 +157,66 @@ struct ActorActivationInfo
     void __read(::IceInternal::BasicStream*);
 };
 
+struct ActorLifeInfo
+{
+    ::Ice::Long ActorId;
+    ::std::string Name;
+    ::Ice::Float CurrentLife;
+    ::Ice::Float MaxLife;
+    ::Ice::Float CurrentMana;
+    ::Ice::Float MaxMana;
+
+    bool operator==(const ActorLifeInfo&) const;
+    bool operator<(const ActorLifeInfo&) const;
+    bool operator!=(const ActorLifeInfo& __rhs) const
+    {
+        return !operator==(__rhs);
+    }
+    bool operator<=(const ActorLifeInfo& __rhs) const
+    {
+        return operator<(__rhs) || operator==(__rhs);
+    }
+    bool operator>(const ActorLifeInfo& __rhs) const
+    {
+        return !operator<(__rhs) && !operator==(__rhs);
+    }
+    bool operator>=(const ActorLifeInfo& __rhs) const
+    {
+        return !operator<(__rhs);
+    }
+
+    void __write(::IceInternal::BasicStream*) const;
+    void __read(::IceInternal::BasicStream*);
+};
+
+struct PlayerFullInfo
+{
+    ::LbaNet::ActorInfo ai;
+    ::LbaNet::ActorLifeInfo li;
+
+    bool operator==(const PlayerFullInfo&) const;
+    bool operator<(const PlayerFullInfo&) const;
+    bool operator!=(const PlayerFullInfo& __rhs) const
+    {
+        return !operator==(__rhs);
+    }
+    bool operator<=(const PlayerFullInfo& __rhs) const
+    {
+        return operator<(__rhs) || operator==(__rhs);
+    }
+    bool operator>(const PlayerFullInfo& __rhs) const
+    {
+        return !operator<(__rhs) && !operator==(__rhs);
+    }
+    bool operator>=(const PlayerFullInfo& __rhs) const
+    {
+        return !operator<(__rhs);
+    }
+
+    void __write(::IceInternal::BasicStream*) const;
+    void __read(::IceInternal::BasicStream*);
+};
+
 typedef ::std::vector< ::Ice::Long> TargetSeq;
 
 struct ActorSignalInfo
@@ -229,8 +289,8 @@ typedef ::std::vector< ::LbaNet::ActorUpdateInfo> UpdateSeq;
 void __writeUpdateSeq(::IceInternal::BasicStream*, const ::LbaNet::ActorUpdateInfo*, const ::LbaNet::ActorUpdateInfo*);
 void __readUpdateSeq(::IceInternal::BasicStream*, UpdateSeq&);
 
-typedef ::std::vector< ::LbaNet::ActorInfo> PlayerSeq;
-void __writePlayerSeq(::IceInternal::BasicStream*, const ::LbaNet::ActorInfo*, const ::LbaNet::ActorInfo*);
+typedef ::std::vector< ::LbaNet::PlayerFullInfo> PlayerSeq;
+void __writePlayerSeq(::IceInternal::BasicStream*, const ::LbaNet::PlayerFullInfo*, const ::LbaNet::PlayerFullInfo*);
 void __readPlayerSeq(::IceInternal::BasicStream*, PlayerSeq&);
 
 }
@@ -302,6 +362,51 @@ public:
 private:
 
     ::LbaNet::PlayerSeq GetPlayersInfo(const ::Ice::Context*);
+    
+public:
+
+    void GotHurtByActor(::Ice::Long ActorId, ::Ice::Long HurtingActorId)
+    {
+        GotHurtByActor(ActorId, HurtingActorId, 0);
+    }
+    void GotHurtByActor(::Ice::Long ActorId, ::Ice::Long HurtingActorId, const ::Ice::Context& __ctx)
+    {
+        GotHurtByActor(ActorId, HurtingActorId, &__ctx);
+    }
+    
+private:
+
+    void GotHurtByActor(::Ice::Long, ::Ice::Long, const ::Ice::Context*);
+    
+public:
+
+    void GotHurtByFalling(::Ice::Long ActorId, ::Ice::Float FallingDistance)
+    {
+        GotHurtByFalling(ActorId, FallingDistance, 0);
+    }
+    void GotHurtByFalling(::Ice::Long ActorId, ::Ice::Float FallingDistance, const ::Ice::Context& __ctx)
+    {
+        GotHurtByFalling(ActorId, FallingDistance, &__ctx);
+    }
+    
+private:
+
+    void GotHurtByFalling(::Ice::Long, ::Ice::Float, const ::Ice::Context*);
+    
+public:
+
+    void RaisedFromDead(::Ice::Long ActorId)
+    {
+        RaisedFromDead(ActorId, 0);
+    }
+    void RaisedFromDead(::Ice::Long ActorId, const ::Ice::Context& __ctx)
+    {
+        RaisedFromDead(ActorId, &__ctx);
+    }
+    
+private:
+
+    void RaisedFromDead(::Ice::Long, const ::Ice::Context*);
     
 public:
     
@@ -525,6 +630,12 @@ public:
     virtual ::LbaNet::UpdateSeq GetUpdatedInfo(const ::Ice::Context*) = 0;
 
     virtual ::LbaNet::PlayerSeq GetPlayersInfo(const ::Ice::Context*) = 0;
+
+    virtual void GotHurtByActor(::Ice::Long, ::Ice::Long, const ::Ice::Context*) = 0;
+
+    virtual void GotHurtByFalling(::Ice::Long, ::Ice::Float, const ::Ice::Context*) = 0;
+
+    virtual void RaisedFromDead(::Ice::Long, const ::Ice::Context*) = 0;
 };
 
 }
@@ -549,6 +660,12 @@ public:
     virtual ::LbaNet::UpdateSeq GetUpdatedInfo(const ::Ice::Context*);
 
     virtual ::LbaNet::PlayerSeq GetPlayersInfo(const ::Ice::Context*);
+
+    virtual void GotHurtByActor(::Ice::Long, ::Ice::Long, const ::Ice::Context*);
+
+    virtual void GotHurtByFalling(::Ice::Long, ::Ice::Float, const ::Ice::Context*);
+
+    virtual void RaisedFromDead(::Ice::Long, const ::Ice::Context*);
 };
 
 }
@@ -573,6 +690,12 @@ public:
     virtual ::LbaNet::UpdateSeq GetUpdatedInfo(const ::Ice::Context*);
 
     virtual ::LbaNet::PlayerSeq GetPlayersInfo(const ::Ice::Context*);
+
+    virtual void GotHurtByActor(::Ice::Long, ::Ice::Long, const ::Ice::Context*);
+
+    virtual void GotHurtByFalling(::Ice::Long, ::Ice::Float, const ::Ice::Context*);
+
+    virtual void RaisedFromDead(::Ice::Long, const ::Ice::Context*);
 };
 
 }
@@ -607,6 +730,15 @@ public:
 
     virtual ::LbaNet::PlayerSeq GetPlayersInfo(const ::Ice::Current& = ::Ice::Current()) = 0;
     ::Ice::DispatchStatus ___GetPlayersInfo(::IceInternal::Incoming&, const ::Ice::Current&);
+
+    virtual void GotHurtByActor(::Ice::Long, ::Ice::Long, const ::Ice::Current& = ::Ice::Current()) = 0;
+    ::Ice::DispatchStatus ___GotHurtByActor(::IceInternal::Incoming&, const ::Ice::Current&);
+
+    virtual void GotHurtByFalling(::Ice::Long, ::Ice::Float, const ::Ice::Current& = ::Ice::Current()) = 0;
+    ::Ice::DispatchStatus ___GotHurtByFalling(::IceInternal::Incoming&, const ::Ice::Current&);
+
+    virtual void RaisedFromDead(::Ice::Long, const ::Ice::Current& = ::Ice::Current()) = 0;
+    ::Ice::DispatchStatus ___RaisedFromDead(::IceInternal::Incoming&, const ::Ice::Current&);
 
     virtual ::Ice::DispatchStatus __dispatch(::IceInternal::Incoming&, const ::Ice::Current&);
 

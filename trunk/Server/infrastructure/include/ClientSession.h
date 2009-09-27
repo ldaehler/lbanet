@@ -260,6 +260,66 @@ private:
     ::std::string GetVersion(const ::Ice::Context*);
     
 public:
+
+    ::LbaNet::ActorLifeInfo GetLifeInfo()
+    {
+        return GetLifeInfo(0);
+    }
+    ::LbaNet::ActorLifeInfo GetLifeInfo(const ::Ice::Context& __ctx)
+    {
+        return GetLifeInfo(&__ctx);
+    }
+    
+private:
+
+    ::LbaNet::ActorLifeInfo GetLifeInfo(const ::Ice::Context*);
+    
+public:
+
+    void GotHurtByActor(::Ice::Long HurtingActorId)
+    {
+        GotHurtByActor(HurtingActorId, 0);
+    }
+    void GotHurtByActor(::Ice::Long HurtingActorId, const ::Ice::Context& __ctx)
+    {
+        GotHurtByActor(HurtingActorId, &__ctx);
+    }
+    
+private:
+
+    void GotHurtByActor(::Ice::Long, const ::Ice::Context*);
+    
+public:
+
+    void GotHurtByFalling(::Ice::Float FallingDistance)
+    {
+        GotHurtByFalling(FallingDistance, 0);
+    }
+    void GotHurtByFalling(::Ice::Float FallingDistance, const ::Ice::Context& __ctx)
+    {
+        GotHurtByFalling(FallingDistance, &__ctx);
+    }
+    
+private:
+
+    void GotHurtByFalling(::Ice::Float, const ::Ice::Context*);
+    
+public:
+
+    void PlayerRaisedFromDead()
+    {
+        PlayerRaisedFromDead(0);
+    }
+    void PlayerRaisedFromDead(const ::Ice::Context& __ctx)
+    {
+        PlayerRaisedFromDead(&__ctx);
+    }
+    
+private:
+
+    void PlayerRaisedFromDead(const ::Ice::Context*);
+    
+public:
     
     ::IceInternal::ProxyHandle<ClientSession> ice_context(const ::Ice::Context& __context) const
     {
@@ -495,6 +555,14 @@ public:
     virtual ::Ice::Long GetTime(const ::Ice::Context*) = 0;
 
     virtual ::std::string GetVersion(const ::Ice::Context*) = 0;
+
+    virtual ::LbaNet::ActorLifeInfo GetLifeInfo(const ::Ice::Context*) = 0;
+
+    virtual void GotHurtByActor(::Ice::Long, const ::Ice::Context*) = 0;
+
+    virtual void GotHurtByFalling(::Ice::Float, const ::Ice::Context*) = 0;
+
+    virtual void PlayerRaisedFromDead(const ::Ice::Context*) = 0;
 };
 
 }
@@ -533,6 +601,14 @@ public:
     virtual ::Ice::Long GetTime(const ::Ice::Context*);
 
     virtual ::std::string GetVersion(const ::Ice::Context*);
+
+    virtual ::LbaNet::ActorLifeInfo GetLifeInfo(const ::Ice::Context*);
+
+    virtual void GotHurtByActor(::Ice::Long, const ::Ice::Context*);
+
+    virtual void GotHurtByFalling(::Ice::Float, const ::Ice::Context*);
+
+    virtual void PlayerRaisedFromDead(const ::Ice::Context*);
 };
 
 }
@@ -571,6 +647,14 @@ public:
     virtual ::Ice::Long GetTime(const ::Ice::Context*);
 
     virtual ::std::string GetVersion(const ::Ice::Context*);
+
+    virtual ::LbaNet::ActorLifeInfo GetLifeInfo(const ::Ice::Context*);
+
+    virtual void GotHurtByActor(::Ice::Long, const ::Ice::Context*);
+
+    virtual void GotHurtByFalling(::Ice::Float, const ::Ice::Context*);
+
+    virtual void PlayerRaisedFromDead(const ::Ice::Context*);
 };
 
 }
@@ -626,6 +710,18 @@ public:
 
     virtual ::std::string GetVersion(const ::Ice::Current& = ::Ice::Current()) = 0;
     ::Ice::DispatchStatus ___GetVersion(::IceInternal::Incoming&, const ::Ice::Current&);
+
+    virtual ::LbaNet::ActorLifeInfo GetLifeInfo(const ::Ice::Current& = ::Ice::Current()) = 0;
+    ::Ice::DispatchStatus ___GetLifeInfo(::IceInternal::Incoming&, const ::Ice::Current&);
+
+    virtual void GotHurtByActor(::Ice::Long, const ::Ice::Current& = ::Ice::Current()) = 0;
+    ::Ice::DispatchStatus ___GotHurtByActor(::IceInternal::Incoming&, const ::Ice::Current&);
+
+    virtual void GotHurtByFalling(::Ice::Float, const ::Ice::Current& = ::Ice::Current()) = 0;
+    ::Ice::DispatchStatus ___GotHurtByFalling(::IceInternal::Incoming&, const ::Ice::Current&);
+
+    virtual void PlayerRaisedFromDead(const ::Ice::Current& = ::Ice::Current()) = 0;
+    ::Ice::DispatchStatus ___PlayerRaisedFromDead(::IceInternal::Incoming&, const ::Ice::Current&);
 
     virtual ::Ice::DispatchStatus __dispatch(::IceInternal::Incoming&, const ::Ice::Current&);
 

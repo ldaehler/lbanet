@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace LbaNet;
 class MapManagerServant;
+class MapHandlerThread;
 
 class MapHandler
 
@@ -56,10 +57,10 @@ public:
 	LbaNet::MapObserverPrx GetMapProxy();
 
 	//! a player join a map
-	void Join(Ice::Long PlayerId);
+	void Join(Ice::Long PlayerId, const ActorLifeInfo & ali);
 
 	//! a player leave a map
-    void Leave(Ice::Long PlayerId);
+    ActorLifeInfo Leave(Ice::Long PlayerId);
 
 
 protected:
@@ -85,6 +86,8 @@ private:
 
 	IceUtil::ThreadControl						_threadC;
 	SharedData									_SD;
+
+	MapHandlerThread *							_mapthread;
 };
 
 #endif

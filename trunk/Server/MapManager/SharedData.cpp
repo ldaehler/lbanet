@@ -29,10 +29,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /***********************************************************
 a player join a map
 ***********************************************************/
-void SharedData::Join(Ice::Long PlayerId)
+void SharedData::Join(Ice::Long PlayerId, const ActorLifeInfo & ali)
 {
+	ActorLifeInfo push(ali);
+	push.ActorId = PlayerId;
 	IceUtil::Mutex::Lock lock(m_mutex_players);
-	m_joined_players.push_back(std::make_pair<Ice::Long, bool>(PlayerId, true));
+	m_joined_players.push_back(std::make_pair<ActorLifeInfo, bool>(push, true));
 }
 
 /***********************************************************
@@ -40,8 +42,10 @@ a player leave a map
 ***********************************************************/
 void SharedData::Leave(Ice::Long PlayerId)
 {
+	ActorLifeInfo push;
+	push.ActorId = PlayerId;
 	IceUtil::Mutex::Lock lock(m_mutex_players);
-	m_joined_players.push_back(std::make_pair<Ice::Long, bool>(PlayerId, false));
+	m_joined_players.push_back(std::make_pair<ActorLifeInfo, bool>(push, false));
 }
 
 /***********************************************************
@@ -74,7 +78,7 @@ void SharedData::SignalActor(const LbaNet::ActorSignalInfo& ai)
 /***********************************************************
 get joined/left players
 ***********************************************************/
-void SharedData::GetJoined(std::vector<std::pair<Ice::Long, bool> > & joinedmap)
+void SharedData::GetJoined(std::vector<std::pair<ActorLifeInfo, bool> > & joinedmap)
 {
 	joinedmap.clear();
 	IceUtil::Mutex::Lock lock(m_mutex_players);
@@ -133,4 +137,67 @@ void SharedData::Quit()
 	IceUtil::Monitor<IceUtil::Mutex>::Lock lock(m_monitor_thread);
 	m_running = false;
 	m_monitor_thread.notifyAll();
+}
+
+
+/***********************************************************
+called when an actor has been hurt
+***********************************************************/
+void SharedData::GotHurtByActor(Ice::Long ActorId, Ice::Long HurtingId)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_actor_hurt);
+	m_hurt_players.push_back(std::make_pair(ActorId, HurtingId));
+}
+
+
+/***********************************************************
+called when an actor has been hurt
+***********************************************************/
+void SharedData::GotHurtByFalling(Ice::Long ActorId, Ice::Float FallingDistance)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_actor_hurt);
+	m_hurt_fall_players.push_back(std::make_pair(ActorId, FallingDistance));
+}
+
+
+/***********************************************************
+get actor info
+***********************************************************/
+void SharedData::GetHurtedPlayer(std::vector<std::pair<Ice::Long, Ice::Long> > & pinfos)
+{
+	pinfos.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_actor_hurt);
+	m_hurt_players.swap(pinfos);
+}
+
+
+/***********************************************************
+get actor info
+***********************************************************/
+void SharedData::GetHurtedFallPlayer(std::vector<std::pair<Ice::Long, Ice::Float> > & pinfos)
+{
+	pinfos.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_actor_hurt);
+	m_hurt_fall_players.swap(pinfos);
+}
+
+
+/***********************************************************
+actor dead and reborn
+***********************************************************/
+void SharedData::RaisedFromDead(Ice::Long ActorId)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_actor_raised);
+	m_raised_info.push_back(ActorId);
+}
+
+
+/***********************************************************
+actor dead and reborn
+***********************************************************/
+void SharedData::GetRaisedFromDead(std::vector<Ice::Long> & pinfos)
+{
+	pinfos.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_actor_raised);
+	m_raised_info.swap(pinfos);
 }

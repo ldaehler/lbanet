@@ -94,39 +94,6 @@ void __patch__ActorsParticipantPtr(void*, ::Ice::ObjectPtr&);
 
 }
 
-namespace LbaNet
-{
-
-struct CurrentAndFutureInfo
-{
-    ::LbaNet::ActorInfo CurrentState;
-    ::LbaNet::ActorInfo FutureState;
-
-    bool operator==(const CurrentAndFutureInfo&) const;
-    bool operator<(const CurrentAndFutureInfo&) const;
-    bool operator!=(const CurrentAndFutureInfo& __rhs) const
-    {
-        return !operator==(__rhs);
-    }
-    bool operator<=(const CurrentAndFutureInfo& __rhs) const
-    {
-        return operator<(__rhs) || operator==(__rhs);
-    }
-    bool operator>(const CurrentAndFutureInfo& __rhs) const
-    {
-        return !operator<(__rhs) && !operator==(__rhs);
-    }
-    bool operator>=(const CurrentAndFutureInfo& __rhs) const
-    {
-        return !operator<(__rhs);
-    }
-
-    void __write(::IceInternal::BasicStream*) const;
-    void __read(::IceInternal::BasicStream*);
-};
-
-}
-
 namespace IceProxy
 {
 
@@ -194,6 +161,21 @@ public:
 private:
 
     void SignaledActor(const ::LbaNet::ActorSignalInfo&, const ::Ice::Context*);
+    
+public:
+
+    void UpdatedLife(const ::LbaNet::ActorLifeInfo& ali)
+    {
+        UpdatedLife(ali, 0);
+    }
+    void UpdatedLife(const ::LbaNet::ActorLifeInfo& ali, const ::Ice::Context& __ctx)
+    {
+        UpdatedLife(ali, &__ctx);
+    }
+    
+private:
+
+    void UpdatedLife(const ::LbaNet::ActorLifeInfo&, const ::Ice::Context*);
     
 public:
     
@@ -635,6 +617,8 @@ public:
     virtual void ActivatedActor(const ::LbaNet::ActorActivationInfo&, const ::Ice::Context*) = 0;
 
     virtual void SignaledActor(const ::LbaNet::ActorSignalInfo&, const ::Ice::Context*) = 0;
+
+    virtual void UpdatedLife(const ::LbaNet::ActorLifeInfo&, const ::Ice::Context*) = 0;
 };
 
 class ActorsParticipant : virtual public ::IceDelegate::Ice::Object
@@ -666,6 +650,8 @@ public:
     virtual void ActivatedActor(const ::LbaNet::ActorActivationInfo&, const ::Ice::Context*);
 
     virtual void SignaledActor(const ::LbaNet::ActorSignalInfo&, const ::Ice::Context*);
+
+    virtual void UpdatedLife(const ::LbaNet::ActorLifeInfo&, const ::Ice::Context*);
 };
 
 class ActorsParticipant : virtual public ::IceDelegate::LbaNet::ActorsParticipant,
@@ -698,6 +684,8 @@ public:
     virtual void ActivatedActor(const ::LbaNet::ActorActivationInfo&, const ::Ice::Context*);
 
     virtual void SignaledActor(const ::LbaNet::ActorSignalInfo&, const ::Ice::Context*);
+
+    virtual void UpdatedLife(const ::LbaNet::ActorLifeInfo&, const ::Ice::Context*);
 };
 
 class ActorsParticipant : virtual public ::IceDelegate::LbaNet::ActorsParticipant,
@@ -740,6 +728,9 @@ public:
 
     virtual void SignaledActor(const ::LbaNet::ActorSignalInfo&, const ::Ice::Current& = ::Ice::Current()) = 0;
     ::Ice::DispatchStatus ___SignaledActor(::IceInternal::Incoming&, const ::Ice::Current&);
+
+    virtual void UpdatedLife(const ::LbaNet::ActorLifeInfo&, const ::Ice::Current& = ::Ice::Current()) = 0;
+    ::Ice::DispatchStatus ___UpdatedLife(::IceInternal::Incoming&, const ::Ice::Current&);
 
     virtual ::Ice::DispatchStatus __dispatch(::IceInternal::Incoming&, const ::Ice::Current&);
 

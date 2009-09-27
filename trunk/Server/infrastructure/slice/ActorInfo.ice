@@ -6,17 +6,6 @@
 
 module LbaNet
 {
-	
-	struct CurrentAndFutureInfo
-	{
-		ActorInfo CurrentState;
-		ActorInfo FutureState;		
-	};
-
-	
-	
-
-	
 	interface ActorsObserver
 	{
 	    void UpdatedInfo(ActorInfo asi);
@@ -24,6 +13,8 @@ module LbaNet
 	    
 	    void ActivatedActor(ActorActivationInfo ai);  
 	    void SignaledActor(ActorSignalInfo ai);	
+	    
+	    void UpdatedLife(ActorLifeInfo ali);
 	};
 	
 	

@@ -50,7 +50,26 @@ module LbaNet
 		float			Z;
 		float			Rotation;	
 	};
+
+	struct ActorLifeInfo
+	{
+		// id of the activated object
+		long			ActorId;
+		string			Name;
+		
+		// activator coordinates
+		float			CurrentLife;
+		float			MaxLife;
+		float			CurrentMana;
+		float			MaxMana;	
+	};	
 	
+	
+	struct PlayerFullInfo
+	{
+		ActorInfo ai;
+		ActorLifeInfo li;
+	};
 	
 	sequence<long> TargetSeq;
 	
@@ -91,14 +110,22 @@ module LbaNet
 	};
 	
 	sequence<ActorUpdateInfo> UpdateSeq;
-	sequence<ActorInfo> PlayerSeq;	
+	
+
+	sequence<PlayerFullInfo> PlayerSeq;	
 	
 	interface MapObserver
 	{    
 	    void ActivateActor(ActorActivationInfo ai);  
 	    void SignalActor(ActorSignalInfo ai);
 	    UpdateSeq GetUpdatedInfo();
-	    PlayerSeq GetPlayersInfo();	    
+	    PlayerSeq GetPlayersInfo();
+	    
+	    
+	    void GotHurtByActor(long ActorId, long HurtingActorId);    
+	    void GotHurtByFalling(long ActorId, float FallingDistance);	   
+	    
+	    void RaisedFromDead(long ActorId);	    
 	};	
 };
 

@@ -46,7 +46,7 @@ MapManagerServant::~MapManagerServant()
 
 //! a player join a map
 LbaNet::MapObserverPrx MapManagerServant::JoinMap(const std::string& mapName,
-										Ice::Long PlayerId, const Ice::Current&)
+										Ice::Long PlayerId, const ActorLifeInfo &ali, const Ice::Current&)
 {
 	// clean old threads
 	CleanThreads();
@@ -66,17 +66,21 @@ LbaNet::MapObserverPrx MapManagerServant::JoinMap(const std::string& mapName,
 		}
 	}
 
-	MH->Join(PlayerId);
+	MH->Join(PlayerId, ali);
 	return MH->GetMapProxy();
 }
 
 //! a player leave a map
-void MapManagerServant::LeaveMap(const std::string& mapName, Ice::Long PlayerId, const Ice::Current&)
+ActorLifeInfo MapManagerServant::LeaveMap(const std::string& mapName, Ice::Long PlayerId, const Ice::Current&)
 {
 	Lock sync(*this);
 	std::map<std::string, MapHandler *>::iterator it = _running_maps.find(mapName);
 	if(it != _running_maps.end())
-		it->second->Leave(PlayerId);
+		return it->second->Leave(PlayerId);
+	else
+	{
+		return ActorLifeInfo();
+	}
 }
 
 

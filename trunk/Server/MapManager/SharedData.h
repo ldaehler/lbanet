@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <MapObserver.h>
 #include <ActorInfo.h>
 
+using namespace LbaNet;
 
 /***********************************************************************
  * Module:  SharedData.h
@@ -51,7 +52,7 @@ public:
 	{}
 
 	//! a player join a map
-	void Join(Ice::Long PlayerId);
+	void Join(Ice::Long PlayerId, const ActorLifeInfo & ali);
 
 	//! a player leave a map
     void Leave(Ice::Long PlayerId);
@@ -66,7 +67,7 @@ public:
     void SignalActor(const LbaNet::ActorSignalInfo& ai);
 
 	// get joined/left players
-	void GetJoined(std::vector<std::pair<Ice::Long, bool> > & joinedmap);
+	void GetJoined(std::vector<std::pair<ActorLifeInfo, bool> > & joinedmap);
 
 	// get player info
 	void GetUpdatedinfo(std::vector<LbaNet::ActorInfo> & pinfos);
@@ -84,6 +85,24 @@ public:
 	// tell threqd to quit
 	void Quit();
 
+	//! called when an actor has been hurt
+    void GotHurtByActor(Ice::Long ActorId, Ice::Long HurtingId);
+
+	//! called when an actor has been hurt
+    void GotHurtByFalling(Ice::Long ActorId, Ice::Float FallingDistance);
+
+	// get actor info
+	void GetHurtedPlayer(std::vector<std::pair<Ice::Long, Ice::Long> > & pinfos);
+
+	// get actor info
+	void GetHurtedFallPlayer(std::vector<std::pair<Ice::Long, Ice::Float> > & pinfos);
+
+	// actor dead and reborn
+	void RaisedFromDead(Ice::Long ActorId);
+
+	// actor dead and reborn
+	void GetRaisedFromDead(std::vector<Ice::Long> & pinfos);
+
 protected:
 	SharedData(const SharedData &);
 	const SharedData & operator=(const SharedData &);
@@ -93,12 +112,17 @@ private:
 	IceUtil::Mutex								m_mutex_players_info;
 	IceUtil::Mutex								m_mutex_actor_info;
 	IceUtil::Mutex								m_mutex_actor_signal;
+	IceUtil::Mutex								m_mutex_actor_hurt;
+	IceUtil::Mutex								m_mutex_actor_raised;
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_thread;
 
-	std::vector<std::pair<Ice::Long, bool> >	m_joined_players;
+	std::vector<std::pair<ActorLifeInfo, bool> >	m_joined_players;
 	std::vector<LbaNet::ActorInfo>				m_players_info;
 	std::vector<LbaNet::ActorActivationInfo>	m_actors_info;
 	std::vector<LbaNet::ActorSignalInfo>		m_signals_info;
+	std::vector<std::pair<Ice::Long, Ice::Long> >	m_hurt_players;
+	std::vector<std::pair<Ice::Long, Ice::Float> >	m_hurt_fall_players;
+	std::vector<Ice::Long>						m_raised_info;
 
 	bool										m_running;
 };

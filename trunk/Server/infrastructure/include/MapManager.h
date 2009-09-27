@@ -89,33 +89,33 @@ class MapManager : virtual public ::IceProxy::Ice::Object
 {
 public:
 
-    ::LbaNet::MapObserverPrx JoinMap(const ::std::string& mapName, ::Ice::Long PlayerId)
+    ::LbaNet::MapObserverPrx JoinMap(const ::std::string& mapName, ::Ice::Long PlayerId, const ::LbaNet::ActorLifeInfo& lifeinfo)
     {
-        return JoinMap(mapName, PlayerId, 0);
+        return JoinMap(mapName, PlayerId, lifeinfo, 0);
     }
-    ::LbaNet::MapObserverPrx JoinMap(const ::std::string& mapName, ::Ice::Long PlayerId, const ::Ice::Context& __ctx)
+    ::LbaNet::MapObserverPrx JoinMap(const ::std::string& mapName, ::Ice::Long PlayerId, const ::LbaNet::ActorLifeInfo& lifeinfo, const ::Ice::Context& __ctx)
     {
-        return JoinMap(mapName, PlayerId, &__ctx);
+        return JoinMap(mapName, PlayerId, lifeinfo, &__ctx);
     }
     
 private:
 
-    ::LbaNet::MapObserverPrx JoinMap(const ::std::string&, ::Ice::Long, const ::Ice::Context*);
+    ::LbaNet::MapObserverPrx JoinMap(const ::std::string&, ::Ice::Long, const ::LbaNet::ActorLifeInfo&, const ::Ice::Context*);
     
 public:
 
-    void LeaveMap(const ::std::string& mapName, ::Ice::Long PlayerId)
+    ::LbaNet::ActorLifeInfo LeaveMap(const ::std::string& mapName, ::Ice::Long PlayerId)
     {
-        LeaveMap(mapName, PlayerId, 0);
+        return LeaveMap(mapName, PlayerId, 0);
     }
-    void LeaveMap(const ::std::string& mapName, ::Ice::Long PlayerId, const ::Ice::Context& __ctx)
+    ::LbaNet::ActorLifeInfo LeaveMap(const ::std::string& mapName, ::Ice::Long PlayerId, const ::Ice::Context& __ctx)
     {
-        LeaveMap(mapName, PlayerId, &__ctx);
+        return LeaveMap(mapName, PlayerId, &__ctx);
     }
     
 private:
 
-    void LeaveMap(const ::std::string&, ::Ice::Long, const ::Ice::Context*);
+    ::LbaNet::ActorLifeInfo LeaveMap(const ::std::string&, ::Ice::Long, const ::Ice::Context*);
     
 public:
     
@@ -332,9 +332,9 @@ class MapManager : virtual public ::IceDelegate::Ice::Object
 {
 public:
 
-    virtual ::LbaNet::MapObserverPrx JoinMap(const ::std::string&, ::Ice::Long, const ::Ice::Context*) = 0;
+    virtual ::LbaNet::MapObserverPrx JoinMap(const ::std::string&, ::Ice::Long, const ::LbaNet::ActorLifeInfo&, const ::Ice::Context*) = 0;
 
-    virtual void LeaveMap(const ::std::string&, ::Ice::Long, const ::Ice::Context*) = 0;
+    virtual ::LbaNet::ActorLifeInfo LeaveMap(const ::std::string&, ::Ice::Long, const ::Ice::Context*) = 0;
 };
 
 }
@@ -352,9 +352,9 @@ class MapManager : virtual public ::IceDelegate::LbaNet::MapManager,
 {
 public:
 
-    virtual ::LbaNet::MapObserverPrx JoinMap(const ::std::string&, ::Ice::Long, const ::Ice::Context*);
+    virtual ::LbaNet::MapObserverPrx JoinMap(const ::std::string&, ::Ice::Long, const ::LbaNet::ActorLifeInfo&, const ::Ice::Context*);
 
-    virtual void LeaveMap(const ::std::string&, ::Ice::Long, const ::Ice::Context*);
+    virtual ::LbaNet::ActorLifeInfo LeaveMap(const ::std::string&, ::Ice::Long, const ::Ice::Context*);
 };
 
 }
@@ -372,9 +372,9 @@ class MapManager : virtual public ::IceDelegate::LbaNet::MapManager,
 {
 public:
 
-    virtual ::LbaNet::MapObserverPrx JoinMap(const ::std::string&, ::Ice::Long, const ::Ice::Context*);
+    virtual ::LbaNet::MapObserverPrx JoinMap(const ::std::string&, ::Ice::Long, const ::LbaNet::ActorLifeInfo&, const ::Ice::Context*);
 
-    virtual void LeaveMap(const ::std::string&, ::Ice::Long, const ::Ice::Context*);
+    virtual ::LbaNet::ActorLifeInfo LeaveMap(const ::std::string&, ::Ice::Long, const ::Ice::Context*);
 };
 
 }
@@ -398,10 +398,10 @@ public:
     virtual const ::std::string& ice_id(const ::Ice::Current& = ::Ice::Current()) const;
     static const ::std::string& ice_staticId();
 
-    virtual ::LbaNet::MapObserverPrx JoinMap(const ::std::string&, ::Ice::Long, const ::Ice::Current& = ::Ice::Current()) = 0;
+    virtual ::LbaNet::MapObserverPrx JoinMap(const ::std::string&, ::Ice::Long, const ::LbaNet::ActorLifeInfo&, const ::Ice::Current& = ::Ice::Current()) = 0;
     ::Ice::DispatchStatus ___JoinMap(::IceInternal::Incoming&, const ::Ice::Current&);
 
-    virtual void LeaveMap(const ::std::string&, ::Ice::Long, const ::Ice::Current& = ::Ice::Current()) = 0;
+    virtual ::LbaNet::ActorLifeInfo LeaveMap(const ::std::string&, ::Ice::Long, const ::Ice::Current& = ::Ice::Current()) = 0;
     ::Ice::DispatchStatus ___LeaveMap(::IceInternal::Incoming&, const ::Ice::Current&);
 
     virtual ::Ice::DispatchStatus __dispatch(::IceInternal::Incoming&, const ::Ice::Current&);

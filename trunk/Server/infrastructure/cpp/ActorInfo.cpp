@@ -37,6 +37,8 @@ static const ::std::string __LbaNet__ActorsObserver__ActivatedActor_name = "Acti
 
 static const ::std::string __LbaNet__ActorsObserver__SignaledActor_name = "SignaledActor";
 
+static const ::std::string __LbaNet__ActorsObserver__UpdatedLife_name = "UpdatedLife";
+
 static const ::std::string __LbaNet__ActorsParticipant__Update_name = "Update";
 
 ::Ice::Object* IceInternal::upCast(::LbaNet::ActorsObserver* p) { return p; }
@@ -75,64 +77,6 @@ LbaNet::__read(::IceInternal::BasicStream* __is, ::LbaNet::ActorsParticipantPrx&
         v = new ::IceProxy::LbaNet::ActorsParticipant;
         v->__copyFrom(proxy);
     }
-}
-
-bool
-LbaNet::CurrentAndFutureInfo::operator==(const CurrentAndFutureInfo& __rhs) const
-{
-    if(this == &__rhs)
-    {
-        return true;
-    }
-    if(CurrentState != __rhs.CurrentState)
-    {
-        return false;
-    }
-    if(FutureState != __rhs.FutureState)
-    {
-        return false;
-    }
-    return true;
-}
-
-bool
-LbaNet::CurrentAndFutureInfo::operator<(const CurrentAndFutureInfo& __rhs) const
-{
-    if(this == &__rhs)
-    {
-        return false;
-    }
-    if(CurrentState < __rhs.CurrentState)
-    {
-        return true;
-    }
-    else if(__rhs.CurrentState < CurrentState)
-    {
-        return false;
-    }
-    if(FutureState < __rhs.FutureState)
-    {
-        return true;
-    }
-    else if(__rhs.FutureState < FutureState)
-    {
-        return false;
-    }
-    return false;
-}
-
-void
-LbaNet::CurrentAndFutureInfo::__write(::IceInternal::BasicStream* __os) const
-{
-    CurrentState.__write(__os);
-    FutureState.__write(__os);
-}
-
-void
-LbaNet::CurrentAndFutureInfo::__read(::IceInternal::BasicStream* __is)
-{
-    CurrentState.__read(__is);
-    FutureState.__read(__is);
 }
 
 void
@@ -234,6 +178,34 @@ IceProxy::LbaNet::ActorsObserver::SignaledActor(const ::LbaNet::ActorSignalInfo&
             __delBase = __getDelegate(false);
             ::IceDelegate::LbaNet::ActorsObserver* __del = dynamic_cast< ::IceDelegate::LbaNet::ActorsObserver*>(__delBase.get());
             __del->SignaledActor(ai, __ctx);
+            return;
+        }
+        catch(const ::IceInternal::LocalExceptionWrapper& __ex)
+        {
+            __handleExceptionWrapper(__delBase, __ex, 0);
+        }
+        catch(const ::Ice::LocalException& __ex)
+        {
+            __handleException(__delBase, __ex, 0, __cnt);
+        }
+    }
+}
+
+void
+IceProxy::LbaNet::ActorsObserver::UpdatedLife(const ::LbaNet::ActorLifeInfo& ali, const ::Ice::Context* __ctx)
+{
+    int __cnt = 0;
+    while(true)
+    {
+        ::IceInternal::Handle< ::IceDelegate::Ice::Object> __delBase;
+        try
+        {
+#if defined(__BCPLUSPLUS__) && (__BCPLUSPLUS__ >= 0x0600) // C++Builder 2009 compiler bug
+            IceUtil::DummyBCC dummy;
+#endif
+            __delBase = __getDelegate(false);
+            ::IceDelegate::LbaNet::ActorsObserver* __del = dynamic_cast< ::IceDelegate::LbaNet::ActorsObserver*>(__delBase.get());
+            __del->UpdatedLife(ali, __ctx);
             return;
         }
         catch(const ::IceInternal::LocalExceptionWrapper& __ex)
@@ -448,6 +420,45 @@ IceDelegateM::LbaNet::ActorsObserver::SignaledActor(const ::LbaNet::ActorSignalI
     {
         ::IceInternal::BasicStream* __os = __og.os();
         ai.__write(__os);
+    }
+    catch(const ::Ice::LocalException& __ex)
+    {
+        __og.abort(__ex);
+    }
+    bool __ok = __og.invoke();
+    if(!__og.is()->b.empty())
+    {
+        try
+        {
+            if(!__ok)
+            {
+                try
+                {
+                    __og.throwUserException();
+                }
+                catch(const ::Ice::UserException& __ex)
+                {
+                    ::Ice::UnknownUserException __uue(__FILE__, __LINE__, __ex.ice_name());
+                    throw __uue;
+                }
+            }
+            __og.is()->skipEmptyEncaps();
+        }
+        catch(const ::Ice::LocalException& __ex)
+        {
+            throw ::IceInternal::LocalExceptionWrapper(__ex, false);
+        }
+    }
+}
+
+void
+IceDelegateM::LbaNet::ActorsObserver::UpdatedLife(const ::LbaNet::ActorLifeInfo& ali, const ::Ice::Context* __context)
+{
+    ::IceInternal::Outgoing __og(__handler.get(), __LbaNet__ActorsObserver__UpdatedLife_name, ::Ice::Normal, __context);
+    try
+    {
+        ::IceInternal::BasicStream* __os = __og.os();
+        ali.__write(__os);
     }
     catch(const ::Ice::LocalException& __ex)
     {
@@ -775,6 +786,70 @@ IceDelegateD::LbaNet::ActorsObserver::SignaledActor(const ::LbaNet::ActorSignalI
 }
 
 void
+IceDelegateD::LbaNet::ActorsObserver::UpdatedLife(const ::LbaNet::ActorLifeInfo& ali, const ::Ice::Context* __context)
+{
+    class _DirectI : public ::IceInternal::Direct
+    {
+    public:
+
+        _DirectI(const ::LbaNet::ActorLifeInfo& ali, const ::Ice::Current& __current) : 
+            ::IceInternal::Direct(__current),
+            _m_ali(ali)
+        {
+        }
+        
+        virtual ::Ice::DispatchStatus
+        run(::Ice::Object* object)
+        {
+            ::LbaNet::ActorsObserver* servant = dynamic_cast< ::LbaNet::ActorsObserver*>(object);
+            if(!servant)
+            {
+                throw ::Ice::OperationNotExistException(__FILE__, __LINE__, _current.id, _current.facet, _current.operation);
+            }
+            servant->UpdatedLife(_m_ali, _current);
+            return ::Ice::DispatchOK;
+        }
+        
+    private:
+        
+        const ::LbaNet::ActorLifeInfo& _m_ali;
+    };
+    
+    ::Ice::Current __current;
+    __initCurrent(__current, __LbaNet__ActorsObserver__UpdatedLife_name, ::Ice::Normal, __context);
+    try
+    {
+        _DirectI __direct(ali, __current);
+        try
+        {
+            __direct.servant()->__collocDispatch(__direct);
+        }
+        catch(...)
+        {
+            __direct.destroy();
+            throw;
+        }
+        __direct.destroy();
+    }
+    catch(const ::Ice::SystemException&)
+    {
+        throw;
+    }
+    catch(const ::IceInternal::LocalExceptionWrapper&)
+    {
+        throw;
+    }
+    catch(const ::std::exception& __ex)
+    {
+        ::IceInternal::LocalExceptionWrapper::throwWrapper(__ex);
+    }
+    catch(...)
+    {
+        throw ::IceInternal::LocalExceptionWrapper(::Ice::UnknownException(__FILE__, __LINE__, "unknown c++ exception"), false);
+    }
+}
+
+void
 IceDelegateD::LbaNet::ActorsParticipant::Update(const ::LbaNet::ActorInfo& asi, const ::Ice::Context* __context)
 {
     class _DirectI : public ::IceInternal::Direct
@@ -927,12 +1002,26 @@ LbaNet::ActorsObserver::___SignaledActor(::IceInternal::Incoming& __inS, const :
     return ::Ice::DispatchOK;
 }
 
+::Ice::DispatchStatus
+LbaNet::ActorsObserver::___UpdatedLife(::IceInternal::Incoming& __inS, const ::Ice::Current& __current)
+{
+    __checkMode(::Ice::Normal, __current.mode);
+    ::IceInternal::BasicStream* __is = __inS.is();
+    __is->startReadEncaps();
+    ::LbaNet::ActorLifeInfo ali;
+    ali.__read(__is);
+    __is->endReadEncaps();
+    UpdatedLife(ali, __current);
+    return ::Ice::DispatchOK;
+}
+
 static ::std::string __LbaNet__ActorsObserver_all[] =
 {
     "ActivatedActor",
     "Quitted",
     "SignaledActor",
     "UpdatedInfo",
+    "UpdatedLife",
     "ice_id",
     "ice_ids",
     "ice_isA",
@@ -942,7 +1031,7 @@ static ::std::string __LbaNet__ActorsObserver_all[] =
 ::Ice::DispatchStatus
 LbaNet::ActorsObserver::__dispatch(::IceInternal::Incoming& in, const ::Ice::Current& current)
 {
-    ::std::pair< ::std::string*, ::std::string*> r = ::std::equal_range(__LbaNet__ActorsObserver_all, __LbaNet__ActorsObserver_all + 8, current.operation);
+    ::std::pair< ::std::string*, ::std::string*> r = ::std::equal_range(__LbaNet__ActorsObserver_all, __LbaNet__ActorsObserver_all + 9, current.operation);
     if(r.first == r.second)
     {
         throw ::Ice::OperationNotExistException(__FILE__, __LINE__, current.id, current.facet, current.operation);
@@ -968,17 +1057,21 @@ LbaNet::ActorsObserver::__dispatch(::IceInternal::Incoming& in, const ::Ice::Cur
         }
         case 4:
         {
-            return ___ice_id(in, current);
+            return ___UpdatedLife(in, current);
         }
         case 5:
         {
-            return ___ice_ids(in, current);
+            return ___ice_id(in, current);
         }
         case 6:
         {
-            return ___ice_isA(in, current);
+            return ___ice_ids(in, current);
         }
         case 7:
+        {
+            return ___ice_isA(in, current);
+        }
+        case 8:
         {
             return ___ice_ping(in, current);
         }

@@ -60,3 +60,30 @@ LbaNet::PlayerSeq ActorReceiverServant::GetPlayersInfo(const Ice::Current&)
 {
 	return _mthread->GetPlayersInfo();
 }
+
+
+/***********************************************************
+	called when an actor has been hurt
+***********************************************************/
+void ActorReceiverServant::GotHurtByActor(Ice::Long ActorId, Ice::Long HurtingId, const Ice::Current&)
+{
+	_SD->GotHurtByActor(ActorId, HurtingId);
+}
+
+
+/***********************************************************
+	called when an actor has been hurt
+***********************************************************/
+void ActorReceiverServant::GotHurtByFalling(Ice::Long ActorId, Ice::Float FallingDistance, const Ice::Current&)
+{
+	_SD->GotHurtByFalling(ActorId, FallingDistance);
+}
+
+
+/***********************************************************
+called when an actor has been dead and reborn
+***********************************************************/
+void ActorReceiverServant::RaisedFromDead(Ice::Long ActorId, const Ice::Current&)
+{
+	_SD->RaisedFromDead(ActorId);
+}

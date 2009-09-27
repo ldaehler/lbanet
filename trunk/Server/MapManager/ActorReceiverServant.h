@@ -53,9 +53,17 @@ public:
 	//! get updated info
 	virtual LbaNet::UpdateSeq GetUpdatedInfo(const Ice::Current&);
 
-
 	//! get player info
 	virtual LbaNet::PlayerSeq GetPlayersInfo(const Ice::Current&);
+
+	//! called when an actor has been hurt
+    virtual void GotHurtByActor(Ice::Long ActorId, Ice::Long HurtingId, const Ice::Current&);
+
+	//! called when an actor has been hurt
+    virtual void GotHurtByFalling(Ice::Long ActorId, Ice::Float FallingDistance, const Ice::Current&);
+
+	//! called when an actor has been dead and reborn
+    virtual void RaisedFromDead(Ice::Long ActorId, const Ice::Current&);
 
 private:
 	SharedData * _SD;

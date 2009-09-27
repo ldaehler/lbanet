@@ -66,12 +66,16 @@ public:
 	//! get player info
 	LbaNet::PlayerSeq GetPlayersInfo();
 
+	//! get player life
+	LbaNet::ActorLifeInfo GetPlayerLife(Ice::Long PlayerId);
+
+
 protected:
 	// a player join a map
-	void Join(Ice::Long PlayerId);
+	void Join(const ActorLifeInfo &PlayerId);
 
 	// a player leave a map
-	bool Leave(Ice::Long PlayerId);
+	bool Leave(const ActorLifeInfo &PlayerId);
 
 	// callback function called when a message is received from IceStorm
 	void UpdatedInfo(const LbaNet::ActorInfo& asi);
@@ -82,11 +86,20 @@ protected:
 	// callback function called when an actor id signaled
 	void SignalActor(const LbaNet::ActorSignalInfo& ai);
 
+	// called when a player is hurted
+	void Hurt(Ice::Long PlayerId, Ice::Long hurtingid);
+
+	// called when a player is hurted
+	void HurtFall(Ice::Long PlayerId, Ice::Float fallingdistance);
+
+	// called when a player id dead and raised
+	void Raised(Ice::Long PlayerId);
+
 private:
 	ActorsObserverPrx							_publisher;
 
 
-	std::map<Ice::Long, LbaNet::ActorInfo>		_players;
+	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >		_players;
 	std::map<long, Actor *>						_actors;
 
 	ServerSignaler *							_signaler;

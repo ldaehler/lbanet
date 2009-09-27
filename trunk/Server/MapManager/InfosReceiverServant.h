@@ -55,6 +55,8 @@ public:
 	// callback function called when a message is received from IceStorm
 	virtual void SignaledActor(const LbaNet::ActorSignalInfo &ai, const Ice::Current&){}
 
+	// update actor life
+	virtual void UpdatedLife(const LbaNet::ActorLifeInfo&, const Ice::Current&){}
 
 private:
 	SharedData * _SD;

@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "MapInfoXmlReader.h"
 #include "ServerSignaler.h"
 #include "MapManagerServant.h"
+#include "HurtArea.h"
 
 /***********************************************************
 	Constructor
@@ -82,9 +83,9 @@ MapHandlerThread::~MapHandlerThread()
 ***********************************************************/
 void MapHandlerThread::UpdatedInfo(const LbaNet::ActorInfo& asi)
 {
-	std::map<Ice::Long, LbaNet::ActorInfo>::iterator it = _players.find(asi.ActorId);
+	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >::iterator it = _players.find(asi.ActorId);
 	if(it != _players.end())
-		it->second = asi;
+		it->second.first = asi;
 }
 
 
@@ -92,25 +93,25 @@ void MapHandlerThread::UpdatedInfo(const LbaNet::ActorInfo& asi)
 /***********************************************************
 	a player join a map
 ***********************************************************/
-void MapHandlerThread::Join(Ice::Long PlayerId)
+void MapHandlerThread::Join(const ActorLifeInfo &PlayerId)
 {
-	_players[PlayerId] = LbaNet::ActorInfo();
+	_players[PlayerId.ActorId] = std::make_pair(LbaNet::ActorInfo(), PlayerId);
 	_stopping = false;
 }
 
 /***********************************************************
  a player leave a map
 ***********************************************************/
-bool MapHandlerThread::Leave(Ice::Long PlayerId)
+bool MapHandlerThread::Leave(const ActorLifeInfo &PlayerId)
 {
-	std::map<Ice::Long, Ice::Long>::iterator it =_todeactivate.find(PlayerId);
-	std::map<Ice::Long, LbaNet::ActorInfo>::iterator itp = _players.find(PlayerId);
+	std::map<Ice::Long, Ice::Long>::iterator it =_todeactivate.find(PlayerId.ActorId);
+	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >::iterator itp = _players.find(PlayerId.ActorId);
 
 	if(it != _todeactivate.end())
 	{
 		if(itp != _players.end())
 		{
-			_actors[(long)it->second]->ProcessDesactivation(itp->second.X, itp->second.Y, itp->second.Z, itp->second.Rotation);
+			_actors[(long)it->second]->ProcessDesactivation(itp->second.first.X, itp->second.first.Y, itp->second.first.Z, itp->second.first.Rotation);
 
 			if(_publisher)
 			{
@@ -118,10 +119,10 @@ bool MapHandlerThread::Leave(Ice::Long PlayerId)
 				ai.Activate = false;
 				ai.ActivatedId = it->second;
 				ai.ActorId = it->first;
-				ai.X = itp->second.X;
-				ai.Y = itp->second.Y;
-				ai.Z = itp->second.Z;
-				ai.Rotation = itp->second.Rotation;
+				ai.X = itp->second.first.X;
+				ai.Y = itp->second.first.Y;
+				ai.Z = itp->second.first.Z;
+				ai.Rotation = itp->second.first.Rotation;
 				_publisher->ActivatedActor(ai);
 			}
 		}
@@ -153,7 +154,7 @@ void MapHandlerThread::ActivateActor(const LbaNet::ActorActivationInfo& ai)
 		_publisher->ActivatedActor(ai);
 
 	std::map<long, Actor *>::iterator it =	_actors.find((long)ai.ActivatedId);
-	std::map<Ice::Long, LbaNet::ActorInfo>::iterator itp = _players.find(ai.ActorId);
+	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >::iterator itp = _players.find(ai.ActorId);
 	if(it != _actors.end() && itp != _players.end())
 	{
 		if(ai.Activate)
@@ -223,23 +224,60 @@ void MapHandlerThread::run()
 
 
 		// get updates
-		std::vector<std::pair<Ice::Long, bool> >  joinedmap;
+		std::vector<std::pair<ActorLifeInfo, bool> >  joinedmap;
 		std::vector<LbaNet::ActorInfo>  pinfos;
 		std::vector<LbaNet::ActorActivationInfo>  ainfos;
 		std::vector<LbaNet::ActorSignalInfo>  sinfos;
+		std::vector<std::pair<Ice::Long, Ice::Long> > hurtinfos;
+		std::vector<std::pair<Ice::Long, Ice::Float> > hurtfallinfos;
+		std::vector<Ice::Long> raisedinfos;
 		_SD->GetJoined(joinedmap);
 		_SD->GetUpdatedinfo(pinfos);
 		_SD->GetActorinfo(ainfos);
 		_SD->GetSignalinfo(sinfos);		
-
+		_SD->GetHurtedPlayer(hurtinfos);
+		_SD->GetHurtedFallPlayer(hurtfallinfos);		
+		_SD->GetRaisedFromDead(raisedinfos);	
 
 		Lock sync(*this);
 		// update state
 		{
+
+			// player raised
+			{
+				std::vector<Ice::Long>::const_iterator it = raisedinfos.begin();
+				std::vector<Ice::Long>::const_iterator end = raisedinfos.end();
+				for(; it != end; ++it)
+				{
+					Raised(*it);
+				}
+			}
+
+			// player hurt
+			{
+				std::vector<std::pair<Ice::Long, Ice::Long> >::const_iterator it = hurtinfos.begin();
+				std::vector<std::pair<Ice::Long, Ice::Long> >::const_iterator end = hurtinfos.end();
+				for(; it != end; ++it)
+				{
+					Hurt(it->first, it->second);
+				}
+			}
+
+			// player fall hurt
+			{
+				std::vector<std::pair<Ice::Long, Ice::Float> >::const_iterator it = hurtfallinfos.begin();
+				std::vector<std::pair<Ice::Long, Ice::Float> >::const_iterator end = hurtfallinfos.end();
+				for(; it != end; ++it)
+				{
+					HurtFall(it->first, it->second);
+				}
+			}
+
+
 			// player join/leave
 			{
-				std::vector<std::pair<Ice::Long, bool> >::const_iterator it = joinedmap.begin();
-				std::vector<std::pair<Ice::Long, bool> >::const_iterator end = joinedmap.end();
+				std::vector<std::pair<ActorLifeInfo, bool> >::const_iterator it = joinedmap.begin();
+				std::vector<std::pair<ActorLifeInfo, bool> >::const_iterator end = joinedmap.end();
 				for(; it != end; ++it)
 				{
 					if(it->second)
@@ -340,10 +378,87 @@ LbaNet::PlayerSeq MapHandlerThread::GetPlayersInfo()
 	LbaNet::PlayerSeq res;
 	Lock sync(*this);
 
-	std::map<Ice::Long, LbaNet::ActorInfo>::iterator it =_players.begin();
-	std::map<Ice::Long, LbaNet::ActorInfo>::iterator end =_players.end();
+	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >::iterator it =_players.begin();
+	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >::iterator end =_players.end();
 	for(; it != end; ++it)
-		res.push_back(it->second);
+	{
+		PlayerFullInfo pi;
+		pi.ai = it->second.first;
+		pi.li = it->second.second;
+		res.push_back(pi);
+	}
 
 	return res;
+}
+
+
+/***********************************************************
+get player life
+***********************************************************/
+LbaNet::ActorLifeInfo MapHandlerThread::GetPlayerLife(Ice::Long PlayerId)
+{
+	Lock sync(*this);
+	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >::iterator itp = _players.find(PlayerId);
+	if(itp != _players.end())
+	{
+		return itp->second.second;
+	}
+
+	return LbaNet::ActorLifeInfo();
+}
+
+
+/***********************************************************
+called when a player is hurted
+***********************************************************/
+void MapHandlerThread::Hurt(Ice::Long PlayerId, Ice::Long hurtingid)
+{
+	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >::iterator itp = _players.find(PlayerId);
+	std::map<long, Actor *>::iterator it =	_actors.find((long)hurtingid);
+	if(itp != _players.end() && it != _actors.end())
+	{
+		if(it->second->GetType() == 11)
+		{
+			HurtArea * tmp = static_cast<HurtArea *>(it->second);
+			itp->second.second.CurrentLife -= tmp->GetLifeTaken();
+
+			if(_publisher)
+				_publisher->UpdatedLife(itp->second.second);
+		}
+	}
+}
+
+/***********************************************************
+called when a player is hurted
+***********************************************************/
+void MapHandlerThread::HurtFall(Ice::Long PlayerId, Ice::Float fallingdistance)
+{
+	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >::iterator itp = _players.find(PlayerId);
+	if(itp != _players.end())
+	{
+		if(fallingdistance > 0)
+		{
+			float hurtedlife = fallingdistance * 2;
+			itp->second.second.CurrentLife -= hurtedlife;
+
+			if(_publisher)
+				_publisher->UpdatedLife(itp->second.second);
+		}
+	}
+}
+
+
+/***********************************************************
+called when a player id dead and raised
+***********************************************************/
+void MapHandlerThread::Raised(Ice::Long PlayerId)
+{
+	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >::iterator itp = _players.find(PlayerId);
+	if(itp != _players.end())
+	{
+		itp->second.second.CurrentLife = itp->second.second.MaxLife;
+
+		if(_publisher)
+			_publisher->UpdatedLife(itp->second.second);
+	}
 }
