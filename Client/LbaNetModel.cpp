@@ -50,9 +50,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 const short	LbaNetModel::m_body_color_map[] = {-1, 2, 19, 32, 36, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 243};
 
 
-#ifndef _LBANET_SET_EDITOR_
-#define _LBANET_SET_EDITOR_
-#endif
+//#ifndef _LBANET_SET_EDITOR_
+//#define _LBANET_SET_EDITOR_
+//#endif
 
 
 /***********************************************************
