@@ -30,9 +30,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GameEvents.h"
 #include "DataLoader.h"
 
-#ifndef _LBANET_SET_EDITOR_
-#define _LBANET_SET_EDITOR_
-#endif
+//#ifndef _LBANET_SET_EDITOR_
+//#define _LBANET_SET_EDITOR_
+//#endif
 
 /***********************************************************
 constructor
