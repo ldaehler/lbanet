@@ -1466,6 +1466,22 @@
                         <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
                         <Property Name="UnifiedAreaRect" Value="{{0.297645,0},{0.438823,0},{0.427534,0},{0.603393,0}}" />
                     </Window>
+                    
+                    <Window Type="TaharezLook/StaticText" Name="EditorWindow/tabcontrol/Actors/hurtareawin/lbllifetaken" >
+                        <Property Name="Text" Value="Life taken:" />
+                        <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+                        <Property Name="UnifiedAreaRect" Value="{{0.0349554,0},{0.65,0},{0.259049,0},{0.8,0}}" />
+                    </Window>   
+                    <Window Type="TaharezLook/Spinner" Name="EditorWindow/tabcontrol/Actors/hurtareawin/lifetaken" >
+                        <Property Name="StepSize" Value="1" />
+                        <Property Name="CurrentValue" Value="0" />
+                        <Property Name="MaximumValue" Value="10000" />
+                        <Property Name="MinimumValue" Value="0" />
+                        <Property Name="TextInputMode" Value="FloatingPoint" />
+                        <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+                        <Property Name="UnifiedAreaRect" Value="{{0.297645,0},{0.65,0},{0.427534,0},{0.8,0}}" />
+                    </Window>                    
+                    
                 </Window>                
                 
                 <Window Type="TaharezLook/StaticText" Name="EditorWindow/tabcontrol/Actors/sound" >
