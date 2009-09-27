@@ -40,7 +40,6 @@ LiftActor::LiftActor(const std::vector<PlayerScriptPart> & scripts)
 : _scripts(scripts), _curr_script_position(0), _started_timer(false),
 	_playedsound(-1), _playingsound(0)
 {
-
 }
 
 /***********************************************************

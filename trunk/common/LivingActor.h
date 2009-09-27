@@ -79,13 +79,35 @@ public:
 	//! get body color
 	short GetBodyColor();
 
+	
+	//! life mana accessors
+	float GetCurrentLife()
+	{return _CurrentLife;}
+	float GetMaxLife()
+	{return _MaxLife;}
+
+	float GetCurrentMana()
+	{return _CurrentMana;}
+	float GetMaxMana()
+	{return _MaxMana;}
+
+	void setCurrentLife(float x)
+	{_CurrentLife = (x<0?0:x);}
+	void setMaxLife(float x)
+	{_MaxLife = x;}
+
+	void setCurrentMana(float x)
+	{_CurrentMana = (x<0?0:x);}
+	void setMaxMana(float x)
+	{_MaxMana = x;}
+
 protected:
 	std::string		_Name;
 	bool			_DisplayName;
-	int				_MaxLife;
-	int				_MaxMana;
-	int				_CurrentLife;
-	int				_CurrentMana;
+	float			_MaxLife;
+	float			_MaxMana;
+	float			_CurrentLife;
+	float			_CurrentMana;
 
 
 	// get the place where to draw the text

@@ -60,6 +60,8 @@ process activation
 ***********************************************************/
 void LadderActor::ProcessActivation(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation)
 {
+	SendSignal(_outputsignal, _targets);
+
 #ifndef _LBANET_SERVER_SIDE_
 	float distX = _posX-PlayerPosX;
 	float distY = _posY-PlayerPosY;

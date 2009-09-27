@@ -413,4 +413,68 @@ public:
 };
 
 
+
+/*
+************************************************************************************************************************
+*                                                  class PlayerHurtEvent
+*
+*	used when the user is changing screen resolution
+************************************************************************************************************************
+*/
+class PlayerHurtEvent : public GameEvent
+{
+public:
+	//! constructor
+	PlayerHurtEvent(long fromactorid)
+		: _fromactorid(fromactorid)
+	{
+		_type = 17;
+	}
+
+	long _fromactorid;
+};
+
+/*
+************************************************************************************************************************
+*                                                  class DoFullCheckEvent
+*
+*	used to ask engine to do a full position check on the map
+************************************************************************************************************************
+*/
+class DoFullCheckEvent : public GameEvent
+{
+public:
+	//! constructor
+	DoFullCheckEvent()
+	{
+		_type = 18;	
+	}
+	
+};
+
+
+
+/*
+************************************************************************************************************************
+*                                                  class PlayerLifeChangedEvent
+*
+*	used to update player life
+************************************************************************************************************************
+*/
+class PlayerLifeChangedEvent : public GameEvent
+{
+public:
+	//! constructor
+	PlayerLifeChangedEvent(float CurLife, float MaxLife, float CurMana, float MaxMana)
+		: _CurLife(CurLife), _MaxLife(MaxLife), _CurMana(CurMana), _MaxMana(MaxMana)
+	{
+		_type = 19;	
+	}
+	
+	float _CurLife;
+	float _MaxLife;
+	float _CurMana;
+	float _MaxMana;
+};
+
 #endif

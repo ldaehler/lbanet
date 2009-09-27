@@ -33,15 +33,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <GL/gl.h>      // Header File For The OpenGL32 Library
 #endif
 
-//#ifndef _LBANET_SET_EDITOR_
-//#define _LBANET_SET_EDITOR_
-//#endif
+#ifndef _LBANET_SET_EDITOR_
+#define _LBANET_SET_EDITOR_
+#endif
 
 
 /***********************************************************
 	Constructor
 ***********************************************************/
 LivingActor::LivingActor(float animationSpeed)
+: _MaxLife(10), _MaxMana(10), _CurrentLife(10), _CurrentMana(10)
 {
 #ifndef _LBANET_SERVER_SIDE_
 	_Renderer = new CharacterRenderer(animationSpeed);
@@ -79,7 +80,8 @@ void LivingActor::Render(int RoomCut)
 
 		glPushMatrix();
 		glTranslated(X-xOffset,Y/2,Z+zOffset);
-		glRotatef( 40, 0.0, 1.0, 0.0 );
+		glRotatef( 45, 0.0, 1.0, 0.0 );
+		glRotatef( -30, 1.0, 0.0, 0.0 );
 		glScalef(0.04f, 0.04f, 0.04f);
 
 
@@ -109,7 +111,8 @@ void LivingActor::Render(int RoomCut)
 
 		glPushMatrix();
 		glTranslated(X-xOffset,Y/2,Z+zOffset);
-		glRotatef( 40, 0.0, 1.0, 0.0 );
+		glRotatef( 45, 0.0, 1.0, 0.0 );
+		glRotatef( -30, 1.0, 0.0, 0.0 );
 		glScalef(0.04f, 0.04f, 0.04f);
 
 
@@ -121,12 +124,52 @@ void LivingActor::Render(int RoomCut)
 		TextWritter::getInstance()->glPrintText(dispname, 0);
 		#endif
 
-
-
 		glPopMatrix();
 		}
 		glEnable(GL_DEPTH_TEST);
+
+
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_TEXTURE_2D);
+		glPushMatrix();
+		glTranslated(_posX, (_posY - 0.5)/2.0, _posZ);
+		glRotatef( 45, 0.0, 1.0, 0.0 );
+		glRotatef( -30, 1.0, 0.0, 0.0 );
+		glScalef(0.04f, 0.04f, 0.04f);
+		glBegin(GL_QUADS);
+
+			glColor3f(0.1f, 0.1f, 0.1f);
+
+			glVertex2f(-20,0);					
+			glVertex2f(20,0);					
+			glVertex2f(20,3);					
+			glVertex2f(-20,3);	
+
+			glColor3f(0.1f, 0.1f, 0.9f);
+			glVertex2f(-20,0);					
+			glVertex2f(-20+(40*_CurrentMana/_MaxMana),0);					
+			glVertex2f(-20+(40*_CurrentMana/_MaxMana),3);					
+			glVertex2f(-20,3);	
+
+
+			glColor3f(0.1f, 0.1f, 0.1f);
+			glVertex2f(-20,5);					
+			glVertex2f(20,5);					
+			glVertex2f(20,8);					
+			glVertex2f(-20,8);	
+
+			glColor3f(0.9f, 0.1f, 0.1f);
+			glVertex2f(-20,5);					
+			glVertex2f(-20+(40*_CurrentLife/_MaxLife),5);					
+			glVertex2f(-20+(40*_CurrentLife/_MaxLife),8);					
+			glVertex2f(-20,8);	
+		glEnd();
+		glPopMatrix();
+		glEnable(GL_TEXTURE_2D);
+		glEnable(GL_DEPTH_TEST);
 	}
+
+
 #endif
 }
 

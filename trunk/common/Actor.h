@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #if !defined(__LbaNetModel_1_Actor_h)
 #define __LbaNetModel_1_Actor_h
 
+class MainPlayerHandler;
 class D3ObjectRenderer;
 #include <string>
 #include <vector>
@@ -180,7 +181,7 @@ public:
 
 	//! check zone activation
 	virtual int ActivateZone(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation,
-								bool DirectActivation=true)
+								MainPlayerHandler  * _mph, bool DirectActivation=true)
 	{return false;}
 
 	//! called to reload element when resizing screen
