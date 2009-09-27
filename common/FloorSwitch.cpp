@@ -73,7 +73,7 @@ void FloorSwitch::ProcessActivation(float PlayerPosX, float PlayerPosY, float Pl
 	{
 	PlayerScriptPart inform;
 	inform.Type = 3;
-	inform.ValueA = GetId();
+	inform.ValueA = (float)GetId();
 	inform.ValueB = 3;	// event id
 	script.push_back(inform);
 	}

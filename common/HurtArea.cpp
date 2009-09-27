@@ -23,18 +23,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#include "ZoneActor.h"
+#include "HurtArea.h"
 
 #ifndef _LBANET_SERVER_SIDE_
+#include "ThreadSafeWorkpile.h"
+#include "GameEvents.h"
 #include <windows.h>    // Header File For Windows
 #include <GL/gl.h>      // Header File For The OpenGL32 Library
+#include "MainPlayerHandler.h"
 #endif
 
 /***********************************************************
 	Constructor
 ***********************************************************/
-ZoneActor::ZoneActor(float zoneSizeX, float zoneSizeY, float zoneSizeZ)
-: _zoneSizeX(zoneSizeX), _zoneSizeY(zoneSizeY), _zoneSizeZ(zoneSizeZ), _activated(false)
+HurtArea::HurtArea(float zoneSizeX, float zoneSizeY, float zoneSizeZ, int LifeTaken)
+: _zoneSizeX(zoneSizeX), _zoneSizeY(zoneSizeY), _zoneSizeZ(zoneSizeZ), 
+	_LifeTaken(LifeTaken), _activated(false), _timer(false)
 {
 
 }
@@ -42,45 +46,42 @@ ZoneActor::ZoneActor(float zoneSizeX, float zoneSizeY, float zoneSizeZ)
 /***********************************************************
 	Destructor
 ***********************************************************/
-ZoneActor::~ZoneActor()
+HurtArea::~HurtArea()
 {
 
 }
 
-
 /***********************************************************
 check zone activation
 ***********************************************************/
-int ZoneActor::ActivateZone(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation,
+int HurtArea::ActivateZone(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation,
 								MainPlayerHandler  * _mph, bool DirectActivation)
 {
-	float posX = GetZoneCenterX();
-	float posY = GetZoneCenterY();
-	float posZ = GetZoneCenterZ();
+	#ifndef _LBANET_SERVER_SIDE_
+	if(_mph->IsJumping())
+		return 0;
+
+	float posX = _posX;
+	float posY = _posY;
+	float posZ = _posZ;
 
 
-	if( (PlayerPosX >= (posX-_zoneSizeX) && PlayerPosX < (posX+_zoneSizeX)) &&
-		(PlayerPosY >= (posY)				&& PlayerPosY < (posY+_zoneSizeY)) &&
-		(PlayerPosZ >= (posZ-_zoneSizeZ) && PlayerPosZ < (posZ+_zoneSizeZ)))
+	if( (PlayerPosX >= (posX-_zoneSizeX-_mph->GetSizeX()) && PlayerPosX < (posX+_zoneSizeX+_mph->GetSizeX())) &&
+		(PlayerPosY >= (posY)				&& PlayerPosY <= (posY+_zoneSizeY)) &&
+		(PlayerPosZ >= (posZ-_zoneSizeZ-_mph->GetSizeZ()) && PlayerPosZ < (posZ+_zoneSizeZ+_mph->GetSizeZ())))
 	{
 		if(!_activated)
 		{
-			if(DirectActivation)
-				ProcessActivation(PlayerPosX, PlayerPosY, PlayerPosZ, PlayerRotation);
+			ThreadSafeWorkpile::getInstance()->AddEvent(new PlayerHurtEvent(_ID)); 
 			_activated = true;
 			return 1;
 		}
-
-		return 0;
 	}
-
-	if(_activated)
+	else
 	{
-		if(DirectActivation)
-			ProcessDesactivation(PlayerPosX, PlayerPosY, PlayerPosZ, PlayerRotation);
 		_activated = false;
-		return -1;
 	}
+	#endif
 
 
 	return 0;
@@ -90,7 +91,7 @@ int ZoneActor::ActivateZone(float PlayerPosX, float PlayerPosY, float PlayerPosZ
 /***********************************************************
 render editor part
 ***********************************************************/
-void ZoneActor::RenderEditor()
+void HurtArea::RenderEditor()
 {
 #ifndef _LBANET_SERVER_SIDE_
 	glEnable(GL_BLEND);
@@ -102,8 +103,8 @@ void ZoneActor::RenderEditor()
 
 	glPushMatrix();
 
-	glTranslated(GetZoneCenterX(), GetZoneCenterY()/2. + 0.5, GetZoneCenterZ());
-	glColor4f(0.4f,0.4f,1.0f, 1.f);
+	glTranslated(_posX, _posY/2. + 0.5, _posZ);
+	glColor4f(0.9f,0.2f,1.0f, 1.f);
 
 	glBegin(GL_LINES);
 
@@ -147,3 +148,39 @@ void ZoneActor::RenderEditor()
 #endif
 }
 
+/***********************************************************
+called on signal
+***********************************************************/
+bool HurtArea::OnSignal(long SignalNumber)
+{
+	if(SignalNumber == 3)
+	{
+		_timer = true;
+		_cumutime = 0;
+		return true;
+	}
+
+	return false;
+}
+
+
+/***********************************************************
+do all check to be done when idle
+***********************************************************/
+int HurtArea::Process(double tnow, float tdiff)
+{
+#ifndef _LBANET_SERVER_SIDE_
+	if(_timer)
+	{
+		_cumutime += tdiff;
+		if(_cumutime > 400)
+		{
+			_timer = false;
+			_activated = false;
+			ThreadSafeWorkpile::getInstance()->AddEvent(new DoFullCheckEvent()); 
+		}
+	}
+#endif
+
+	return Actor::Process(tnow, tdiff);
+}

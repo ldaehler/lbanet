@@ -36,6 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "AreaSwitch.h"
 #include "GameEvents.h"
 #include "LiftActor.h"
+#include "HurtArea.h"
 
 #include <fstream>
 
@@ -466,6 +467,18 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 						script->SetDoubleAttribute("Speed", scriptsV[cci].Speed);
 						script->SetDoubleAttribute("Sound", scriptsV[cci].Sound);
 					}
+				}
+			}
+			break;
+
+			case 11:	//hurt area class
+			{
+				{
+					HurtArea * tmpa = static_cast<HurtArea *>(it->second);
+					act->SetDoubleAttribute("zonesizeX", tmpa->GetZoneX());
+					act->SetDoubleAttribute("zonesizeY", tmpa->GetZoneY());
+					act->SetDoubleAttribute("zonesizeZ", tmpa->GetZoneZ());
+					act->SetDoubleAttribute("lifetaken", tmpa->GetLifeTaken());
 				}
 			}
 			break;

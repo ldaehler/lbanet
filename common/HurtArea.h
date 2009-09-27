@@ -23,25 +23,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#if !defined(__LbaNetModel_1_ZoneActor_h)
-#define __LbaNetModel_1_ZoneActor_h
+#if !defined(__LbaNetModel_1_HurtArea_h)
+#define __LbaNetModel_1_HurtArea_h
 
 #include "Actor.h"
 
+
 /***********************************************************************
- * Module:  ZoneActor.h
+ * Module:  HurtArea.h
  * Author:  vivien
  * Modified: lundi 27 juillet 2009 14:53:50
  * Purpose: Declaration of the class Actor
  *********************************************************************/
-class ZoneActor : public Actor
+class HurtArea : public Actor
 {
 public:
 	//! constructor
-	ZoneActor(float zoneSizeX, float zoneSizeY, float zoneSizeZ);
+	HurtArea(float zoneSizeX, float zoneSizeY, float zoneSizeZ, int LifeTaken);
 
 	//! destructor
-	virtual ~ZoneActor();
+	virtual ~HurtArea();
 
 	//! check zone activation
 	virtual int ActivateZone(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation,
@@ -65,21 +66,29 @@ public:
 	void SetZoneZ(float zz)
 	{_zoneSizeZ = zz;}
 
-	//! check if the actor need desactivation
-	virtual bool NeedDesactivation(){return true;}
+	int GetLifeTaken()
+	{return _LifeTaken;}
 
-protected:
-	// used to get the zone center - depend of the actor type
-	virtual float GetZoneCenterX(){return _posX;}
-	virtual float GetZoneCenterY(){return _posY;}
-	virtual float GetZoneCenterZ(){return _posZ;}
+	void SetLifeTaken(int l)
+	{_LifeTaken = l;}
+
+	//! called on signal
+	virtual bool OnSignal(long SignalNumber);
+
+	//! do all check to be done when idle
+	virtual int Process(double tnow, float tdiff);
 
 private:
 	float	_zoneSizeX;
 	float	_zoneSizeY;
 	float	_zoneSizeZ;
 
+	int		_LifeTaken;
+
 	bool	_activated;
+	bool	_timer;
+	double	_cumutime;
+
 };
 
 #endif

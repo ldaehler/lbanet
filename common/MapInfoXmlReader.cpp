@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "LiftActor.h"
 #include "GameEvents.h"
 #include "SignalerBase.h"
+#include "HurtArea.h"
 
 #ifndef _LBANET_SERVER_SIDE_
 #include "3DObjectRenderer.h"
@@ -602,6 +603,17 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 				}
 				break;
 
+				case 11:	//hurt area class
+				{
+					float zoneSizeX=0, zoneSizeY=0, zoneSizeZ=0;
+					int lifetaken=5;
+					pElem->QueryValueAttribute("zonesizeX", &zoneSizeX);
+					pElem->QueryValueAttribute("zonesizeY", &zoneSizeY);
+					pElem->QueryValueAttribute("zonesizeZ", &zoneSizeZ);
+					pElem->QueryValueAttribute("lifetaken", &lifetaken);
+					act = new HurtArea(zoneSizeX, zoneSizeY, zoneSizeZ, lifetaken);
+				}
+				break;
 			}
 
 			// add common attributes
