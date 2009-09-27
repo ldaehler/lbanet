@@ -75,6 +75,9 @@ public:
 	void SetMainName(const std::string &mainActorName)
 	{_mainActorName = mainActorName;}
 
+	// if actor already ther - update infroamtion
+	// else add actor to the list
+	void UpdateLifeActor(const LbaNet::ActorLifeInfo & ai);
 
 private:
 	std::map<std::string, ExternalPlayer *>	_actors;

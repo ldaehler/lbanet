@@ -66,6 +66,18 @@ public:
 	// change player status
 	void ChangeStatus(const std::string& status);
 
+	// return current player life state
+	LbaNet::ActorLifeInfo GetPlayerLife();
+
+	// send player hurt event
+	void AddPlayerHurt(long hurtingid);
+
+	// send player hurt fall event
+	void AddPlayerHurtFall(float fallingdistance);
+
+	// player has been raised
+	void PlayerRaised();
+
 private:
 
     const Ice::ObjectAdapterPtr							_adapter;	// ice adapter
@@ -118,6 +130,7 @@ protected:
 
 	// when the engine update information
 	void AddSignal(const LbaNet::ActorSignalInfo & info);
+
 
 private:
 	std::string				_current_world;	// current playing world

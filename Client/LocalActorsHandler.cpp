@@ -174,13 +174,14 @@ void LocalActorsHandler::Reload()
 /***********************************************************
 check zone activation
 ***********************************************************/
-bool LocalActorsHandler::ActivateZone(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation)
+bool LocalActorsHandler::ActivateZone(float PlayerPosX, float PlayerPosY, float PlayerPosZ, 
+										float PlayerRotation, MainPlayerHandler  * _mph)
 {
 	std::map<long, Actor *>::iterator it =  _actors.begin();
 	std::map<long, Actor *>::iterator end =  _actors.end();
 	for(; it != end; ++it)
 	{
-		if(it->second->ActivateZone(PlayerPosX, PlayerPosY, PlayerPosZ, PlayerRotation) == 1)
+		if(it->second->ActivateZone(PlayerPosX, PlayerPosY, PlayerPosZ, PlayerRotation, _mph) == 1)
 			return true;
 	}
 

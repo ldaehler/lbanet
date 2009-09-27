@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 namespace LbaNet
 {
 	struct ActorInfo;
+	struct ActorLifeInfo;
 }
 class Player;
 
@@ -114,6 +115,9 @@ public:
 
 	// update with external info
 	void Update(const LbaNet::ActorInfo & ainfo);
+
+	// update with external info
+	void UpdateLife(const LbaNet::ActorLifeInfo & ainfo);
 
 	// draw the object
     void draw(int RoomCut);

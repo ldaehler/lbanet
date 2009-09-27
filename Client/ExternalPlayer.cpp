@@ -89,6 +89,22 @@ void ExternalPlayer::Update(const LbaNet::ActorInfo & ainfo)
 
 
 
+
+/***********************************************************
+ update with external info
+***********************************************************/
+void ExternalPlayer::UpdateLife(const LbaNet::ActorLifeInfo & ainfo)
+{
+	if(_renderer)
+	{	
+		_renderer->setCurrentLife(ainfo.CurrentLife);
+		_renderer->setMaxLife(ainfo.MaxLife);
+		_renderer->setCurrentMana(ainfo.CurrentMana);
+		_renderer->setMaxMana(ainfo.MaxMana);
+	}
+}
+
+
 /***********************************************************
 do all check to be done when idle
 ***********************************************************/

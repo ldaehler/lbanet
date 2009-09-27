@@ -191,7 +191,7 @@ void ExternalActorsHandler::Reload()
 check zone activation
 ***********************************************************/
 bool ExternalActorsHandler::ActivateZone(float PlayerPosX, float PlayerPosY, float PlayerPosZ,
-										 float PlayerRotation)
+										 float PlayerRotation, MainPlayerHandler  * _mph)
 {
 	bool serveron = ThreadSafeWorkpile::getInstance()->IsServeron();
 
@@ -200,7 +200,8 @@ bool ExternalActorsHandler::ActivateZone(float PlayerPosX, float PlayerPosY, flo
 	for(; it != end; ++it)
 	{
 		int res = 0;
-		if((res = it->second->ActivateZone(PlayerPosX, PlayerPosY, PlayerPosZ, PlayerRotation, !serveron)) != 0)
+		if((res = it->second->ActivateZone(PlayerPosX, PlayerPosY, PlayerPosZ, PlayerRotation, 
+											_mph, !serveron)) != 0)
 		{
 			if(serveron)
 			{

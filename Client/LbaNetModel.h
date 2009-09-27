@@ -144,6 +144,29 @@ public:
 	// display map extis
 	void DisplayExits(bool display);
 
+	// player is hurt by an actor
+	void PlayerHurt(long actorid);
+
+	// ask to do a full position check
+	void DoFullCheckEvent()
+	{m_need_full_check = true;}
+
+
+	// return true if we need full check
+	bool NeedFullCheck()
+	{
+		if(m_need_full_check)
+		{
+			m_need_full_check = false;
+			return true;
+		}
+
+		return false;
+	}
+
+	//player life changed
+	void PlayerLifeChanged(float CurLife, float MaxLife, float CurMana, float MaxMana);
+
 private:
 	MapRenderer*			_mapRenderer;
 	PhysicHandler*			_physicHandler;
@@ -188,6 +211,8 @@ private:
 	int						m_room_y_cut;
 
 	int						m_debug_map;
+
+	bool					m_need_full_check;
 };
 
 #endif

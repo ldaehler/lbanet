@@ -481,6 +481,27 @@ void LbaNetEngine::HandleGameEvents()
 					m_lbaNetModel.DisplayExits(evcs->_display);
 				}
 			break;
+
+			case 17: // playerhurt
+				{
+					PlayerHurtEvent * evcs = static_cast<PlayerHurtEvent *> (*it);
+					m_lbaNetModel.PlayerHurt(evcs->_fromactorid);
+				}
+			break;
+
+			case 18: // do full check
+				{
+					m_lbaNetModel.DoFullCheckEvent();
+				}
+			break;
+
+			case 19: // player life changed
+				{
+					PlayerLifeChangedEvent * evcs = static_cast<PlayerLifeChangedEvent *> (*it);
+					m_lbaNetModel.PlayerLifeChanged(evcs->_CurLife, evcs->_MaxLife, 
+														evcs->_CurMana, evcs->_MaxMana);
+				}
+			break;
 		}
 
 		delete *it;

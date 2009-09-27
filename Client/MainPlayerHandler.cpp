@@ -82,7 +82,7 @@ MainPlayerHandler::MainPlayerHandler(float speedNormal, float speedSport,
 										float speedFight,float speedDiscrete,
 										float speedHorse, float speedDino,
 										float animationSpeed,
-										float speedJump, float heightJump,
+										float speedJump, float heightJump, float speedHurt,
 										PhysicHandler*	RoomP, Camera * cam)
 : _isMovingForward(false), _isMovingRotation(false),
 	_up_key_pressed(false),_down_key_pressed(false),
@@ -95,9 +95,9 @@ MainPlayerHandler::MainPlayerHandler(float speedNormal, float speedSport,
 	_speedNormal(speedNormal), _speedSport(speedSport),
 	_speedFight(speedFight), _speedDiscrete(speedDiscrete),
 	_speedHorse(speedHorse), _speedDino(speedDino),
-	_speedJump(speedJump), _heightJump(heightJump),
+	_speedJump(speedJump), _heightJump(heightJump), _speedHurt(speedHurt),
 	_RoomP(RoomP), _currentstance(0), _camptr(cam),
-	_isAttached(false), _isDiscrete(false)
+	_isAttached(false), _isDiscrete(false), _needCheck(false)
 {
 	_player = new Player(animationSpeed, true);
 	_player->DisplayName(true);
@@ -337,7 +337,7 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 		{
 			_player->SetY(_fallarrivalY);
 			_nbYFall= 0;
-			_state = Ac_hurt;
+			_state = Ac_hurt_fall;
 
 			if(_camptr)
 				_camptr->SetTarget(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ());
@@ -345,14 +345,20 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 			if(_RoomP && _RoomP->StepOnWater(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ()))
 				return 1;	// the actor should die in water
 
-			// playing sound only if not in water
-			bool waitforanim = ChangeAnimToHurt(_keepYfall > 6);
-
 			if(_state != Ac_Flying && _player->GetPosY() == -1) // the actor should die by falling out of the map
 				return 2;
 
+			_needCheck = true;
+
+			if(_keepYfall > 6)
+				ThreadSafeWorkpile::getInstance()->AddPlayerHurtFall(_keepYfall);
+
+			// playing sound only if not in water
+			bool waitforanim = ChangeAnimToHurt(_keepYfall > 6);
 			if(waitforanim)
+			{
 				return 4;
+			}
 			else
 			{
 				Stopstate();
@@ -471,8 +477,13 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 				}
 			}
 
+			if(_state == Ac_hurt)
+			{
+				UpdateVelocity(1, true, _speedHurt);
+			}
+
 			if(_right_key_pressed && _state != Ac_Drowning && _state != Ac_Dying &&
-				_state != Ac_FallingDown && _state != Ac_hurt && _state != Ac_Jumping)
+				_state != Ac_FallingDown && _state != Ac_hurt_fall && _state != Ac_Jumping && _state != Ac_hurt)
 			{
 				_velocityR = -0.15f;
 				_player->SetRotation(_player->GetRotation() - tdiff*0.15f);
@@ -481,7 +492,7 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 			}
 
 			if(_left_key_pressed && _state != Ac_Drowning && _state != Ac_Dying &&
-				_state != Ac_FallingDown && _state != Ac_hurt && _state != Ac_Jumping)
+				_state != Ac_FallingDown && _state != Ac_hurt_fall && _state != Ac_Jumping && _state != Ac_hurt)
 			{
 				_velocityR = 0.15f;
 				_player->SetRotation(_player->GetRotation() + tdiff*0.15f);
@@ -489,7 +500,7 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 				res = 0;
 			}
 
-			if(_up_key_pressed || _state == Ac_Jumping)
+			if(_up_key_pressed || _state == Ac_Jumping ||  _state == Ac_hurt)
 			{
 				if(MoveActor(true, tdiff))
 					res = 0;
@@ -541,6 +552,8 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 	if(_state == Ac_Jumping && resA == 1)
 		StopJump();
 
+	if(_state == Ac_hurt && resA == 1)
+		StopHurt();
 
 	// normalize the velocity again
 	_corrected_velocityX/=tdiff;
@@ -630,7 +643,7 @@ void MainPlayerHandler::PlayerStartMove(int moveDirection)
 	if(_state == Ac_Flying && moveDirection == 2)
 		return;
 
-	if(_state == Ac_Drowning || _state == Ac_Dying || _state == Ac_FallingDown || _state == Ac_hurt || _state == Ac_Jumping || _state == Ac_scripted)
+	if(_state == Ac_Drowning || _state == Ac_Dying || _state == Ac_FallingDown || _state == Ac_hurt_fall || _state == Ac_Jumping || _state == Ac_scripted ||  _state == Ac_hurt)
 		return;
 
 	switch(moveDirection)
@@ -793,7 +806,7 @@ void MainPlayerHandler::PlayerChangeStance(int StanceNumber, bool forced)
 {
 	if(!forced)
 	{
-		if(_state == Ac_Drowning || _state == Ac_Dying || _state == Ac_FallingDown || _state == Ac_hurt || _state == Ac_Jumping  || _state == Ac_scripted)
+		if(_state == Ac_Drowning || _state == Ac_Dying || _state == Ac_FallingDown || _state == Ac_hurt_fall || _state == Ac_Jumping  || _state == Ac_scripted ||  _state == Ac_hurt)
 			return;
 
 		if(StanceNumber == _currentstance)
@@ -995,6 +1008,9 @@ void MainPlayerHandler::Stopstate()
 {
 	if(_remembering)
 	{
+		if(_state == Ac_Dying || _state == Ac_Drowning)
+			ThreadSafeWorkpile::getInstance()->AddRaisedEvent();
+
 		_state = _rememberstate;
 		_player->changeAnimEntity(_remembermodel, _rememberbody);
 		_player->setActorAnimation(GetActoAnim());
@@ -1013,7 +1029,7 @@ bool MainPlayerHandler::MoveActor(bool Upward, float timediff)
 	bool res = false;
 
 
-	if(_state == Ac_Drowning || _state == Ac_Dying || _state == Ac_FallingDown || _state == Ac_hurt)
+	if(_state == Ac_Drowning || _state == Ac_Dying || _state == Ac_FallingDown || _state == Ac_hurt_fall)
 		return res;
 
 	if(_RoomP)
@@ -1176,8 +1192,12 @@ void MainPlayerHandler::StopJump()
 		UpdateVelocity(_currMoveType);
 		_player->setActorAnimation(GetActoAnim());
 		CheckY();
+
+		_needCheck = true;
 	}
 }
+
+
 
 
 
@@ -1186,8 +1206,6 @@ recalculate actor velocity
 ***********************************************************/
 void MainPlayerHandler::UpdateVelocity(int MoveType, bool ManualSpeed, float speed)
 {
-	bool res = false;
-
 	float halfM = GetMovingSpeed() * MoveType * ((MoveType == 1) ? 1.0f : 0.5f) * -1;
 	if(ManualSpeed)
 		halfM = speed;
@@ -1376,7 +1394,7 @@ bool MainPlayerHandler::IsMoving()
 	if(_paused)
 		return false;
 
-	return (_isMovingForward || (_state == Ac_Jumping) || (_state == Ac_FallingDown));
+	return (_isMovingForward || (_state == Ac_Jumping) || (_state == Ac_FallingDown) || (_state == Ac_hurt));
 }
 
 
@@ -1475,7 +1493,7 @@ return true if the player is in activation mode
 ***********************************************************/
 bool MainPlayerHandler::ActivationMode(bool ForcedNormalAction)
 {
-	if(_state == Ac_Drowning || _state == Ac_Dying || _state == Ac_FallingDown || _state == Ac_hurt || _state == Ac_Jumping  || _state == Ac_scripted)
+	if(_state == Ac_Drowning || _state == Ac_Dying || _state == Ac_FallingDown || _state == Ac_hurt_fall || _state == Ac_Jumping  || _state == Ac_scripted ||  _state == Ac_hurt)
 		return false;
 
 	if(_currentstance==1 || _currentstance==2 || _currentstance==3 || _currentstance==4)
@@ -1501,4 +1519,84 @@ void MainPlayerHandler::DoPlayerScriptedEvent(const std::vector<PlayerScriptPart
 	_state = Ac_scripted;
 	_curr_script = script;
 	_curr_script_position = 0;
+}
+
+
+/***********************************************************
+player is hurt by an actor
+***********************************************************/
+void MainPlayerHandler::PlayerHurt(long actorid)
+{
+	Stopstate();
+
+	ThreadSafeWorkpile::getInstance()->AddPlayerHurt(actorid);
+
+	std::string soundp = DataLoader::getInstance()->GetSoundPath(31);
+	if(soundp != "")
+		MusicHandler::getInstance()->PlaySample(soundp, 0);
+
+	_hurtingactorId = actorid;
+	_remembermodel = _player->GetModel();
+	_player->changeAnimEntity(0, _currentbody);
+	_player->setActorAnimation(12);
+	_state = Ac_hurt;
+}
+
+
+/***********************************************************
+called when the actor finished hurt
+***********************************************************/
+void MainPlayerHandler::StopHurt()
+{
+	if(_state == Ac_hurt)
+	{
+		 _state = Ac_Normal;
+		_player->changeAnimEntity(_remembermodel, _currentbody);
+		_player->setActorAnimation(0);
+		UpdateVelocity(_currMoveType);
+		_player->setActorAnimation(GetActoAnim());
+		CheckY();
+
+		// inform actor that the hurting animation is finished
+		std::vector<long> vectar;
+		vectar.push_back(_hurtingactorId);
+		long targetsignal = 3;
+		ThreadSafeWorkpile::getInstance()->AddEvent(new GameSignalvent(targetsignal, vectar));
+		_needCheck = true;
+	}
+}
+
+
+/***********************************************************
+return true if the map need to be checked for player position
+***********************************************************/
+bool MainPlayerHandler::NeedCheck()
+{
+	if(_needCheck)
+	{
+		_needCheck = false;
+		return true;
+	}
+
+	return false;
+}
+
+
+/***********************************************************
+player life changed
+***********************************************************/
+bool MainPlayerHandler::PlayerLifeChanged(float CurLife, float MaxLife, float CurMana, float MaxMana)
+{
+	_player->setCurrentLife(CurLife);
+	_player->setMaxLife(MaxLife);
+	_player->setCurrentMana(CurMana);
+	_player->setMaxMana(MaxMana);
+
+	if(CurLife <= 0)
+	{
+		Startdying();
+		return true;
+	}
+
+	return false;
 }

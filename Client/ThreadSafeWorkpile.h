@@ -180,6 +180,30 @@ public:
 	// return true if the sate has been updated
 	bool ActorStatesUpdated(std::vector<ActorStateInfo> & newstate);
 
+	// update actor life
+	void UpdateActorLife(const LbaNet::ActorLifeInfo& ali);
+
+	// get the last update info
+	void GetExtActorLifeUpdate(std::vector<LbaNet::ActorLifeInfo> & vec);
+
+	// add player hurted by another actor
+	void AddPlayerHurt(long hurtingactorid);
+
+	// add player hurted by falling down
+	void AddPlayerHurtFall(float fallingdistance);
+
+	// add player hurted by another actor
+	void GetPlayerHurts(std::vector<long> & vec);
+
+	// add player hurted by falling down
+	void GetPlayerHurtFalls(std::vector<float> & vec);
+
+	// add a raised event
+	void AddRaisedEvent();
+
+	// return true if there was a raised event
+	bool IsRaised();
+
 protected:
 
 	//! construtor
@@ -204,6 +228,9 @@ private:
 	IceUtil::Mutex								m_mutex_external_activation;
 	IceUtil::Mutex								m_mutex_server_on;
 	IceUtil::Mutex								m_mutex_actor_state;
+	IceUtil::Mutex								m_mutex_ext_actor_life_info;
+	IceUtil::Mutex								m_mutex_player_hurt;
+	IceUtil::Mutex								m_mutex_player_raised;
 
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_irc;
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_sending_loop;
@@ -223,6 +250,9 @@ private:
 	std::vector<LbaNet::ActorActivationInfo>	m_ext_activations;
 	std::vector<LbaNet::ActorSignalInfo>		m_signal_events;
 
+	std::vector<long>							m_player_hurts;
+	std::vector<float>							m_player_hurt_falls;
+
 	bool										m_is_updated;
 	LbaNet::ActorInfo							m_last_info;
 	bool										m_map_changed;
@@ -231,7 +261,7 @@ private:
 
 	std::vector<LbaNet::ActorInfo>				m_ext_info;
 	std::vector<std::string>					m_quitted_actors;
-
+	std::vector<LbaNet::ActorLifeInfo>			m_ext_life_info;
 
 	bool										m_server_on;
 
@@ -239,6 +269,8 @@ private:
 
 	bool										m_new_actor_state;
 	std::vector<ActorStateInfo>					m_actors_states;
+
+	bool										m_player_raised;
 
 
 	static ThreadSafeWorkpile *					_singletonInstance;

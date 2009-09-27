@@ -148,7 +148,7 @@ public:
 	MainPlayerHandler(float speedNormal, float speedSport,
 						float speedFight,float speedDiscrete,
 						float speedHorse, float speedDino, float animationSpeed,
-						float speedJump, float heightJump,
+						float speedJump, float heightJump, float speedHurt,
 						PhysicHandler*	RoomP, Camera * cam);
 
 	//! destructor
@@ -218,6 +218,9 @@ public:
 	float  GetPosY();
 	float  GetPosZ();
 	float  GetRotation();
+	float  GetSizeX(){return _sizeX;}
+	float  GetSizeY(){return _sizeY;}
+	float  GetSizeZ(){return _sizeZ;}
 
 	//update position of the floor
 	void UpdateFloorY();
@@ -251,6 +254,22 @@ public:
 	Player * GetPlayer()
 	{return _player;}
 
+
+	// player is hurt by an actor
+	void PlayerHurt(long actorid);
+
+
+	// return true if the map need to be checked for player position
+	bool NeedCheck();
+
+	// return true if actor is jumping
+	bool IsJumping()
+	{ return _state == Ac_Jumping;}
+
+	//player life changed
+	// return true if actor die
+	bool PlayerLifeChanged(float CurLife, float MaxLife, float CurMana, float MaxMana);
+
 protected:
 	bool MoveActor(bool Upward, float timediff);
 
@@ -266,6 +285,8 @@ protected:
 	// called when the actor finished jump
 	void StopJump();
 
+	// called when the actor finished hurt
+	void StopHurt();
 
 	// recalculate actor velocity
 	// moveType: 0 - no move, 1 - move upward, -1 - move backward
@@ -288,7 +309,7 @@ protected:
 
 
 protected:
-	enum ActorState { Ac_Normal=0, Ac_Drowning, Ac_Dying, Ac_Flying, Ac_Jumping, Ac_FallingDown, Ac_protopack, Ac_hurt, Ac_scripted };
+	enum ActorState { Ac_Normal=0, Ac_Drowning, Ac_Dying, Ac_Flying, Ac_Jumping, Ac_FallingDown, Ac_protopack, Ac_hurt_fall, Ac_scripted, Ac_hurt };
 
 	Player*			_player;
 	PhysicHandler*	_RoomP;
@@ -352,6 +373,7 @@ protected:
 	float			_speedDino;
 	float			_speedJump;
 	float			_heightJump;
+	float			_speedHurt;
 
 	bool			_jump_sound_started;
 	bool			_drow_sound_started;
@@ -364,6 +386,9 @@ protected:
 
 	// flag to tell if the main actor is attached to another actor or not
 	bool			_isAttached;
+
+	long			_hurtingactorId;
+	bool			_needCheck;
 };
 
 #endif

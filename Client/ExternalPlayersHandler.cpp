@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ActorInfo.h"
 #include "ThreadSafeWorkpile.h"
+#include "GameEvents.h"
 
 /***********************************************************
 constructor
@@ -73,10 +74,15 @@ int ExternalPlayersHandler::Process(double tnow, float tdiff)
 	ThreadSafeWorkpile * wp = ThreadSafeWorkpile::getInstance();
 	std::vector<LbaNet::ActorInfo> vecai;
 	std::vector<std::string> vecq;
+	std::vector<LbaNet::ActorLifeInfo> veclai;
 	wp->GetExtActorUpdate(vecai);
 	wp->GetQuittedActors(vecq);
+	wp->GetExtActorLifeUpdate(veclai);
+
 	for(size_t i=0; i<vecai.size(); ++i)
 		UpdateActor(vecai[i]);
+	for(size_t i=0; i<veclai.size(); ++i)
+		UpdateLifeActor(veclai[i]);
 	for(size_t i=0; i<vecq.size(); ++i)
 		RemoveActor(vecq[i]);
 
@@ -113,6 +119,29 @@ void ExternalPlayersHandler::UpdateActor(const LbaNet::ActorInfo & ai)
 	{
 		ExternalPlayer * act = new ExternalPlayer(ai, _animationSpeed);
 		_actors.insert(std::pair<std::string, ExternalPlayer *>(ai.Name,act));
+	}
+}
+
+
+
+/***********************************************************
+if actor already ther - update infroamtion
+else add actor to the list
+**********************************************************/
+void ExternalPlayersHandler::UpdateLifeActor(const LbaNet::ActorLifeInfo & ai)
+{
+	if(ai.Name == _mainActorName)
+	{
+		ThreadSafeWorkpile::getInstance()->AddEvent(new PlayerLifeChangedEvent(ai.CurrentLife, 
+															ai.MaxLife, ai.CurrentMana, ai.MaxMana));
+	}
+	else
+	{
+		std::map<std::string, ExternalPlayer *>::iterator it = _actors.find(ai.Name);
+		if(it != _actors.end())
+		{
+			it->second->UpdateLife(ai);
+		}
 	}
 }
 
