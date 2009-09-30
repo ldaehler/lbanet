@@ -37,6 +37,6 @@ Version 0.55 changes:
 
 
 __________________________
-Version 0.55 changes:
+Version 0.56 changes:
 - fixed bugs 0000274 of the bugtracker
 - improved gui by adding a small part for character life and mana view
