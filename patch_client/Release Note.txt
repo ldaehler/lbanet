@@ -28,9 +28,15 @@ Version 0.52 changes:
 __________________________
 Version 0.55 changes:
 - added screenshot feature. Use the F11 key to take a screenshot of the game screen. The created image will be stored under the lbanet game directory with the data time as name.
-- added life and mana management. Life and mana will be displayed on screen. Please not that the current display is not the final version. This will be improved in future releases.
+- added life and mana management. Life and mana will be displayed on screen. Please note that the current display is not the final version. This will be improved in future releases.
 - the life and mana is now synchronized server side. So you will be able to see other player life and mana in real time.
-- added hurting zone like pics in the tempel of bu. If you step on those zones you will loose life
+- added hurting zone like pics in the temple of bu. If you step on those zones you will loose life
 - you now loose life by falling down
 - fixed bugs 0000273 0000267 0000187 0000259 0000261 0000266 of the bugtracker
 - added an house made by Polaris into the old burg
+
+
+__________________________
+Version 0.56 changes:
+- fixed bugs 0000274 of the bugtracker
+- improved gui by adding a small part for character life and mana view
