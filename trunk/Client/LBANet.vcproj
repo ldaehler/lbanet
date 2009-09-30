@@ -577,11 +577,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\GameEvents.h"
+				RelativePath=".\GameEvents.h"
 				>
 			</File>
 			<File
-				RelativePath=".\GameEvents.h"
+				RelativePath="..\common\GameEvents.h"
 				>
 			</File>
 			<File

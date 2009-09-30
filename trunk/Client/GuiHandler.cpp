@@ -107,6 +107,9 @@ void GuiHandler::Initialize(int screen_size_X, int screen_size_Y, bool ServerOn,
 		// load in the scheme file, which auto-loads the TaharezLook imageset
 		CEGUI::SchemeManager::getSingleton().loadScheme( "TaharezLook.scheme" );
 
+		if(! CEGUI::FontManager::getSingleton().isFontPresent( "abbey_m1-9" ) )
+		  CEGUI::FontManager::getSingleton().createFont( "abbey_m1-9.font" );
+
 		ReloadFontSize();
 
 		CEGUI::System::getSingleton().setDefaultMouseCursor( "TaharezLook", "MouseArrow" );
@@ -122,6 +125,10 @@ void GuiHandler::Initialize(int screen_size_X, int screen_size_Y, bool ServerOn,
 		CEGUI::ImagesetManager::getSingleton().createImageset( "soundbutton.imageset" );
 		CEGUI::ImagesetManager::getSingleton().createImageset( "changeworldbutton.imageset" );
 		CEGUI::ImagesetManager::getSingleton().createImageset( "quitbutton.imageset" );
+		CEGUI::ImagesetManager::getSingleton().createImageset( "MenuChar.imageset" );
+		CEGUI::ImagesetManager::getSingleton().createImageset( "tunic.imageset" );
+		CEGUI::ImagesetManager::getSingleton().createImageset( "quest.imageset" );
+		CEGUI::ImagesetManager::getSingleton().createImageset( "weapon.imageset" );
 	}
 	catch(CEGUI::Exception &ex)
 	{
@@ -342,4 +349,14 @@ set actors
 void GuiHandler::SetActors(std::map<long, Actor *> * Lactors, std::map<long, Actor *> * Eactors)
 {
 	if(_game_gui)_game_gui->SetActors(Lactors, Eactors);
+}
+
+
+/***********************************************************
+set player name
+***********************************************************/
+void GuiHandler::SetPlayerName(const std::string & name)
+{
+	if(_game_gui)
+		_game_gui->SetPlayerName(name);
 }

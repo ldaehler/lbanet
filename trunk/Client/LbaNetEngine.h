@@ -128,7 +128,9 @@ protected:
 	// called to play the assigned music when menu
 	void PlayMenuMusic();
 
+	void SaveCharToFile();
 
+	void LoadHaloTexture();
 
 private:
 	ServerConnectionHandler*			m_serverConnectionHandler;	// server handler
@@ -157,6 +159,15 @@ private:
 
 	std::string							m_clientV;
 	std::string							m_lastmusic;
+
+	unsigned int						m_char_texture;
+	unsigned int						m_halo_texture;
+	bool								m_halo_loaded;
+
+	float								_MaxLife;
+	float								_MaxMana;
+	float								_CurrentLife;
+	float								_CurrentMana;
 };
 
 #endif

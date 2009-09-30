@@ -257,6 +257,50 @@ void LbaNetModel::Draw()
 }
 
 
+
+
+/***********************************************************
+draw the current state on the screen
+***********************************************************/
+void LbaNetModel::DrawOnlyChar()
+{
+	// set opengl default view
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_ALPHA_TEST);
+    glAlphaFunc(GL_GREATER,0.09f);
+    glDisable(GL_ALPHA_TEST);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+
+	gluPerspective(_camera->GetFOV(),_windowWidth/(double)_windowHeight,0.01,2000);
+	glTranslated(0,0,-_camera->GetDistance());
+	glRotated(_camera->GetZenit(),1,0,0);
+
+
+    glRotated(-_camera->GetAzimut()-45,0,1,0);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_TEXTURE_2D);
+    glAlphaFunc(GL_GREATER,0);
+    glEnable(GL_ALPHA_TEST);
+    glColor3f(1,1,1);
+    glPushMatrix();
+    glTranslated(-_camera->GetTargetX(),-_camera->GetTargetY()/2.0,-_camera->GetTargetZ());
+
+
+	// draw the main player
+	_mainPlayerHandler->RenderForPicture();
+
+	// reset opengl
+    glPopMatrix();
+    glDisable(GL_ALPHA_TEST);
+    glDisable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+}
+
 /***********************************************************
 change the world
 ***********************************************************/

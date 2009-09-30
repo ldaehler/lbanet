@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <GL/gl.h>      // Header File For The OpenGL32 Library
 #include <GL/glu.h>     // Header File For The GLu32 Library
 #include <math.h>
+#include <IL/ilut.h>
 
 #ifndef M_PI
 #define M_PI    3.14159265358979323846f
@@ -49,6 +50,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define M_SOUND_DROW_1 227
 #define M_SOUND_DROW_2 228
 #define M_SOUND_DROW_3 229
+
+
 
 
 /***********************************************************
@@ -137,6 +140,7 @@ set actor position
 void MainPlayerHandler::SetPosition(float NewX, float NewY, float NewZ)
 {
 	_player->SetPosition(NewX, NewY, NewZ);
+
 }
 
 /***********************************************************
@@ -186,7 +190,6 @@ void MainPlayerHandler::Render()
 	glPopMatrix();
 
     glEnable(GL_TEXTURE_2D);
-
 
 	// draw the player
 	_player->Render(-1);
@@ -351,7 +354,7 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 			_needCheck = true;
 
 			if(_keepYfall > 6)
-				ThreadSafeWorkpile::getInstance()->AddPlayerHurtFall(_keepYfall);
+				ThreadSafeWorkpile::getInstance()->AddPlayerHurtFall(_keepYfall-6);
 
 			// playing sound only if not in water
 			bool waitforanim = ChangeAnimToHurt(_keepYfall > 6);
@@ -985,6 +988,7 @@ void MainPlayerHandler::Startdying()
 	if(_state != Ac_Dying)
 	{
 		StopJump();
+		Stopstate();
 		ResetMove();
 
 		if(!_remembering)
@@ -1536,7 +1540,10 @@ void MainPlayerHandler::PlayerHurt(long actorid)
 		MusicHandler::getInstance()->PlaySample(soundp, 0);
 
 	_hurtingactorId = actorid;
+	_remembering = true;
+	_rememberstate = _state;
 	_remembermodel = _player->GetModel();
+	_rememberbody = _player->GetBody();
 	_player->changeAnimEntity(0, _currentbody);
 	_player->setActorAnimation(12);
 	_state = Ac_hurt;
@@ -1599,4 +1606,27 @@ bool MainPlayerHandler::PlayerLifeChanged(float CurLife, float MaxLife, float Cu
 	}
 
 	return false;
+}
+
+
+/***********************************************************
+render the main player at a fixed position for picture
+***********************************************************/
+void MainPlayerHandler::RenderForPicture()
+{
+	_remembermodel = _player->GetModel();
+	_rememberbody = _player->GetBody();
+
+	_player->changeAnimEntity(0, _currentbody);
+	_player->setActorAnimation(1);
+	_player->setActorAnimation(0);
+
+	float rot = _player->GetRotation();
+	_player->SetRotation(60);
+
+	// draw the player
+	_player->Render(-1);
+
+	_player->SetRotation(rot);
+	_player->changeAnimEntity(_remembermodel, _currentbody);
 }
