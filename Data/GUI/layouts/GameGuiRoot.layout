@@ -11,6 +11,13 @@
             <Property Name="UnifiedAreaRect" Value="{{1.0,-631},{0,-1},{1.0,0},{0,70}}" />
         </Window>
 
+        <Window Type="TaharezLook/StaticImage" Name="MenuCharInterfaceBG" >
+            <Property Name="Image" Value="set:MenuChar image:imageMenuChar" />
+            <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+            <Property Name="UnifiedAreaRect" Value="{{0,0},{0,-1},{0,200},{0,70}}" />
+        </Window>
+   
+
 	<Window Type="TaharezLook/ImageButton" Name="btncomicon">
 		<Property Name="UnifiedPosition" Value="{{1.0,-595},{0,0}}" />
 		<Property Name="UnifiedSize" Value="{{0,110},{0,65}}" />
@@ -95,6 +102,45 @@
                 <Property Name="UnifiedAreaRect" Value="{{0.5,-30},{0.85,0},{0.5,30},{0.97,0}}" />
             </Window>
         </Window>
+
+
+
+	<Window Type="TaharezLook/ImageButton" Name="btntunic">
+		<Property Name="UnifiedPosition" Value="{{0.0,60},{0,42}}" />
+		<Property Name="UnifiedSize" Value="{{0,26},{0,26}}" />
+		<Property Name="NormalImage"     Value="set:tunicicon image:normal" />
+		<Property Name="HoverImage"      Value="set:tunicicon image:hover"  />
+		<Property Name="PushedImage"     Value="set:tunicicon image:clicked" />
+		<Property Name="DisabledImage"   Value="set:tunicicon image:disabled" />
+	</Window> 
+
+	<Window Type="TaharezLook/ImageButton" Name="btnquest">
+		<Property Name="UnifiedPosition" Value="{{0.0,83},{0,44}}" />
+		<Property Name="UnifiedSize" Value="{{0,26},{0,26}}" />
+		<Property Name="NormalImage"     Value="set:questicon image:normal" />
+		<Property Name="HoverImage"      Value="set:questicon image:hover"  />
+		<Property Name="PushedImage"     Value="set:questicon image:clicked" />
+		<Property Name="DisabledImage"   Value="set:questicon image:disabled" />
+	</Window> 
+
+	<Window Type="TaharezLook/ImageButton" Name="btnweapon">
+		<Property Name="UnifiedPosition" Value="{{0.0,110},{0,42}}" />
+		<Property Name="UnifiedSize" Value="{{0,26},{0,26}}" />
+		<Property Name="NormalImage"     Value="set:weaponicon image:normal" />
+		<Property Name="HoverImage"      Value="set:weaponicon image:hover"  />
+		<Property Name="PushedImage"     Value="set:weaponicon image:clicked" />
+		<Property Name="DisabledImage"   Value="set:weaponicon image:disabled" />
+	</Window> 	
+
+	<Window Type="TaharezLook/StaticText" Name="PlayerName" >
+	    <Property Name="Text" Value="Rincevent" />
+            <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />	    
+	    <Property Name="UnifiedAreaRect" Value="{{0.0,64},{0,25},{0.0,150},{0.0,44}}" />
+	    <Property Name="BackgroundEnabled" Value="False" />
+	    <Property Name="FrameEnabled" Value="False" />
+	    <Property Name="TextColours" Value="FF32DCD8" />
+	    <Property Name="Font" Value="abbey_m1-9" />
+	</Window>
 
     </Window>
 </GUILayout>
