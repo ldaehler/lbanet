@@ -33,9 +33,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <GL/gl.h>      // Header File For The OpenGL32 Library
 #endif
 
-#ifndef _LBANET_SET_EDITOR_
-#define _LBANET_SET_EDITOR_
-#endif
+//#ifndef _LBANET_SET_EDITOR_
+//#define _LBANET_SET_EDITOR_
+//#endif
 
 
 /***********************************************************
@@ -129,41 +129,79 @@ void LivingActor::Render(int RoomCut)
 		glEnable(GL_DEPTH_TEST);
 
 
+		float sizebar=20;
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_TEXTURE_2D);
 		glPushMatrix();
-		glTranslated(_posX, (_posY - 0.5)/2.0, _posZ);
+		glTranslated(_posX, (_posY - 1)/2.0, _posZ);
 		glRotatef( 45, 0.0, 1.0, 0.0 );
 		glRotatef( -30, 1.0, 0.0, 0.0 );
 		glScalef(0.04f, 0.04f, 0.04f);
 		glBegin(GL_QUADS);
 
-			glColor3f(0.1f, 0.1f, 0.1f);
+			glColor4f(0.0f, 0.0f, 0.0f, 0.3f);
 
-			glVertex2f(-20,0);					
-			glVertex2f(20,0);					
-			glVertex2f(20,3);					
-			glVertex2f(-20,3);	
+			glVertex2f(-sizebar,0);					
+			glVertex2f(sizebar,0);					
+			glVertex2f(sizebar,4);					
+			glVertex2f(-sizebar,4);	
 
-			glColor3f(0.1f, 0.1f, 0.9f);
-			glVertex2f(-20,0);					
-			glVertex2f(-20+(40*_CurrentMana/_MaxMana),0);					
-			glVertex2f(-20+(40*_CurrentMana/_MaxMana),3);					
-			glVertex2f(-20,3);	
+			glColor3f(11/255.f, 11/255.f, 71/255.f);
+			glVertex2f(-sizebar,0);					
+			glVertex2f(-sizebar+(sizebar*2*_CurrentMana/_MaxMana),0);	
+			glColor3f(13/255.f, 12/255.f, 150/255.f);
+			glVertex2f(-sizebar+(sizebar*2*_CurrentMana/_MaxMana),4);					
+			glVertex2f(-sizebar,4);	
 
 
-			glColor3f(0.1f, 0.1f, 0.1f);
-			glVertex2f(-20,5);					
-			glVertex2f(20,5);					
-			glVertex2f(20,8);					
-			glVertex2f(-20,8);	
+			glColor4f(0.0f, 0.0f, 0.0f, 0.3f);
+			glVertex2f(-sizebar,6);					
+			glVertex2f(sizebar,6);					
+			glVertex2f(sizebar,10);					
+			glVertex2f(-sizebar,10);	
 
-			glColor3f(0.9f, 0.1f, 0.1f);
-			glVertex2f(-20,5);					
-			glVertex2f(-20+(40*_CurrentLife/_MaxLife),5);					
-			glVertex2f(-20+(40*_CurrentLife/_MaxLife),8);					
-			glVertex2f(-20,8);	
+			glColor3f(115/255.f, 0.f, 2/255.f);
+			glVertex2f(-sizebar,6);					
+			glVertex2f(-sizebar+(sizebar*2*_CurrentLife/_MaxLife),6);	
+			glColor3f(254/255.f, 0.f, 3/255.f);
+			glVertex2f(-sizebar+(sizebar*2*_CurrentLife/_MaxLife),10);					
+			glVertex2f(-sizebar,10);	
 		glEnd();
+
+		float lastwidth;
+		glGetFloatv(GL_LINE_WIDTH, &lastwidth);
+		glLineWidth(1.0);
+
+
+		glBegin(GL_LINES);
+			glColor4f(0.f, 104/255.f, 107/255.f, 0.7f);
+			glVertex2f(-sizebar,0);			
+			glVertex2f(sizebar,0);
+			glVertex2f(sizebar,0);
+			glVertex2f(sizebar,4);
+			glColor4f(115/255.f, 252/255.f, 252/255.f, 0.7f);
+			glVertex2f(sizebar,4);
+			glVertex2f(-sizebar,4);	
+			glVertex2f(-sizebar,4);	
+			glVertex2f(-sizebar,0);
+		glEnd();
+
+
+		glBegin(GL_LINES);
+			glColor4f(0.f, 104/255.f, 107/255.f, 0.7f);
+			glVertex2f(-sizebar,6);					
+			glVertex2f(sizebar,6);		
+			glVertex2f(sizebar,6);		
+			glVertex2f(sizebar,10);
+			glColor4f(115/255.f, 252/255.f, 252/255.f, 0.7f);
+			glVertex2f(sizebar,10);	
+			glVertex2f(-sizebar,10);	
+			glVertex2f(-sizebar,10);	
+			glVertex2f(-sizebar,6);		
+		glEnd();
+
+		glLineWidth(lastwidth);
+
 		glPopMatrix();
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_DEPTH_TEST);
