@@ -119,6 +119,9 @@ public:
 	void SetActors(std::map<long, Actor *> * Lactors, std::map<long, Actor *> * Eactors)
 	{if(_editb) _editb->SetActors(Lactors, Eactors);}
 
+	//! set player name
+	void SetPlayerName(const std::string & name);
+
 private:
 	ChatBox			_cb;
 	CommunityBox	_comb;

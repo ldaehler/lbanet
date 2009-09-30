@@ -101,6 +101,9 @@ public:
 	//! set actors
 	void SetActors(std::map<long, Actor *> * Lactors, std::map<long, Actor *> * Eactors);
 
+	//! set player name
+	void SetPlayerName(const std::string & name);
+
 protected:
 	//! inject time to the GUI
 	void inject_time_pulse();

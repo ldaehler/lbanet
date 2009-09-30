@@ -270,6 +270,9 @@ public:
 	// return true if actor die
 	bool PlayerLifeChanged(float CurLife, float MaxLife, float CurMana, float MaxMana);
 
+	// render the main player at a fixed position for picture
+	void RenderForPicture();
+
 protected:
 	bool MoveActor(bool Upward, float timediff);
 

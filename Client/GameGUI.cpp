@@ -66,7 +66,7 @@ void GameGUI::Initialize()
 		_telb.Initialize(_root);
 		if(_editb)_editb->Initialize(_root);
 		CEGUI::WindowManager::getSingleton().getWindow("HeadInterfaceBG")->disable();
-
+		CEGUI::WindowManager::getSingleton().getWindow("MenuCharInterfaceBG")->disable();
 
 		static_cast<CEGUI::PushButton *> (CEGUI::WindowManager::getSingleton().getWindow("btnchaticon"))->subscribeEvent (
 			CEGUI::PushButton::EventClicked,
@@ -339,4 +339,22 @@ bool GameGUI::HandleCloseTextClicked (const CEGUI::EventArgs& e)
 	}
 
 	return true;
+}
+
+
+
+/***********************************************************
+set player name
+***********************************************************/
+void GameGUI::SetPlayerName(const std::string & name)
+{
+	try
+	{
+		CEGUI::WindowManager::getSingleton().getWindow("PlayerName")->setText(name);
+	}
+	catch(CEGUI::Exception &ex)
+	{
+		LogHandler::getInstance()->LogToFile(std::string("Exception SetPlayerName: ") + ex.getMessage().c_str());
+		_root = NULL;
+	}
 }

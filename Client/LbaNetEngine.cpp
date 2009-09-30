@@ -55,7 +55,7 @@ LbaNetEngine::LbaNetEngine(ServerConnectionHandler * serverH, const std::string 
 : m_serverConnectionHandler(serverH), m_screen(NULL),
 	m_currframetime(unsigned long(100)), m_eventHandler(this),
 	m_currentstate(EGaming), m_oldstate(ELogin), m_lbaNetModel(&m_guiHandler),
-	m_clientV(clientV)
+	m_clientV(clientV), m_halo_loaded(false)
 {
 	//init the values from file
 	ConfigurationManager::GetInstance()->GetInt("Options.Video.ScreenResolutionX", m_screen_size_X);
@@ -154,6 +154,8 @@ void LbaNetEngine::Initialize(void)
 	LogHandler::getInstance()->LogToFile("Displaying login window...");
 	PlayMenuMusic();
 	SwitchGuiToLogin();
+
+	LoadHaloTexture();
 }
 
 
@@ -230,6 +232,73 @@ void LbaNetEngine::Redraw()
 		}
 
 		m_guiHandler.Redraw();
+
+
+		glMatrixMode(GL_PROJECTION);
+		glPushMatrix();
+		glLoadIdentity();
+		glOrtho(0, m_screen_size_X, m_screen_size_Y, 0, -1, 1);
+		glMatrixMode(GL_MODELVIEW);
+
+		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_COLOR_MATERIAL);
+		glEnable(GL_BLEND);
+
+		glEnable(GL_TEXTURE_2D);
+
+		glBindTexture(GL_TEXTURE_2D, m_halo_texture);
+		glColor3f(246/255.0f,181/255.0f,24/255.0f);
+		glBegin(GL_QUADS);
+			glTexCoord2f(1, 1);
+			glVertex2f(60,0);	
+			glTexCoord2f(0, 1);
+			glVertex2f(0,0);
+			glTexCoord2f(0, 0);
+			glVertex2f(0,84);	
+			glTexCoord2f(1, 0);
+			glVertex2f(60,84);	
+		glEnd();
+
+		glBindTexture(GL_TEXTURE_2D, m_char_texture);
+		glColor3f(1,1,1);
+		glBegin(GL_QUADS);
+			glTexCoord2f(1, 1);
+			glVertex2f(55,0);	
+			glTexCoord2f(0, 1);
+			glVertex2f(5,0);	
+			glTexCoord2f(0, 0);
+			glVertex2f(5,69);
+			glTexCoord2f(1, 0);
+
+			glVertex2f(55,69);	
+		glEnd();
+
+		int offsetx = 67;
+		int sizex = 79;
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_TEXTURE_2D);
+		glBegin(GL_QUADS);
+
+			glColor3f(115/255.f, 0.f, 2/255.f);
+			glVertex2f(offsetx,11);					
+			glVertex2f(offsetx+(sizex*_CurrentLife/_MaxLife),11);	
+			glColor3f(254/255.f, 0.f, 3/255.f);
+			glVertex2f(offsetx+(sizex*_CurrentLife/_MaxLife),7);					
+			glVertex2f(offsetx,7);	
+
+			glColor3f(11/255.f, 11/255.f, 71/255.f);
+			glVertex2f(offsetx,20);					
+			glVertex2f(offsetx+(sizex*_CurrentMana/_MaxMana),20);	
+			glColor3f(13/255.f, 12/255.f, 150/255.f);
+			glVertex2f(offsetx+(sizex*_CurrentMana/_MaxMana),16);					
+			glVertex2f(offsetx,16);	
+
+		glEnd();
+
+
+		glMatrixMode(GL_PROJECTION);
+		glPopMatrix();
+		glMatrixMode(GL_MODELVIEW); 
 	}
 	else
 	{
@@ -314,6 +383,7 @@ void LbaNetEngine::ChangeScreenAndLinkedRessources()
 	m_guiHandler.restoreTextures();
 	m_lbaNetModel.SetScreenSize(m_screen_size_X, m_screen_size_Y);
 	TextWritter::getInstance()->ReloadTexture();
+	LoadHaloTexture();
 }
 
 /***********************************************************
@@ -358,8 +428,10 @@ void LbaNetEngine::HandleGameEvents()
 			case 1: // login event
 				if(m_currentstate == ELogin)
 				{
+					SaveCharToFile();
 					LoginEvent * ev = static_cast<LoginEvent *> (*it);
 					TryLogin(ev->_Name, ev->_Password, ev->_Local);
+					m_guiHandler.SetPlayerName(ev->_Name);
 				}
 			break;
 
@@ -500,6 +572,11 @@ void LbaNetEngine::HandleGameEvents()
 					PlayerLifeChangedEvent * evcs = static_cast<PlayerLifeChangedEvent *> (*it);
 					m_lbaNetModel.PlayerLifeChanged(evcs->_CurLife, evcs->_MaxLife, 
 														evcs->_CurMana, evcs->_MaxMana);
+
+					_MaxLife = evcs->_MaxLife;
+					_MaxMana = evcs->_MaxMana;
+					_CurrentLife = evcs->_CurLife;
+					_CurrentMana = evcs->_CurMana;
 				}
 			break;
 		}
@@ -827,4 +904,79 @@ void LbaNetEngine::TakeScreenshot()
 		} 
 	}
 	ilDeleteImages(1, &imn);
+}
+
+
+/***********************************************************
+take screen function
+***********************************************************/
+void LbaNetEngine::SaveCharToFile()
+{
+    glClearColor(0,0,0,0);
+    glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+	m_lbaNetModel.DrawOnlyChar();
+
+
+	ILuint imn, imn2;
+	ilGenImages(1, &imn);
+	ilGenImages(1, &imn2);
+	ilBindImage(imn);
+	ilutGLScreen(); 
+	int width = ilGetInteger(IL_IMAGE_WIDTH);
+	int height = ilGetInteger(IL_IMAGE_HEIGHT);
+
+	int sizeX=(int)(64 * (width/1024.0));
+	int sizeY=(int)(92 * (height/768.0));
+	int offsetX=(int)(28 * (width/1024.0));
+	int offsetY=(int)(138 * (height/768.0));
+	ilBindImage(imn2);
+	ilTexImage( sizeX, sizeY, 1, 4, IL_RGBA, IL_UNSIGNED_BYTE, NULL);
+	ilBlit(imn, 0, 0, 0, (width/2)-offsetX, (height/2)-offsetY, 0, sizeX, sizeY, 1);
+
+	ILubyte*  ptr = ilGetData();
+	long size = sizeX*sizeY;
+	for(int i=0; i<size; ++i)
+	{
+		int tmp = *ptr; ++ptr;
+		tmp += *ptr; ++ptr;
+		tmp += *ptr; ++ptr;
+		if(tmp == 0)
+			*ptr = 0;
+		++ptr;
+	}
+
+	m_char_texture = ilutGLBindTexImage();
+
+	// save in case we need to reload the screen
+	//ilSaveImage("char.png");
+
+	ilDeleteImages(1, &imn);
+	ilDeleteImages(1, &imn2);
+}
+
+
+
+/*
+---------------------------------------------------------------------------------------
+- LoadHaloTexture()
+---------------------------------------------------------------------------------------
+*/
+void LbaNetEngine::LoadHaloTexture()
+{
+	if(m_halo_loaded)
+	{
+		glDeleteTextures(1, &m_halo_texture);
+	}
+
+	{
+		// load halo image
+		ILuint ImgId = 0;
+		ilGenImages(1, &ImgId);
+		ilBindImage(ImgId);
+		ilLoadImage("Data/halo.png");
+		m_halo_texture = ilutGLBindTexImage();
+		ilDeleteImages(1, &ImgId);
+	}
+
+	m_halo_loaded = true;
 }

@@ -67,6 +67,9 @@ public:
 	//! draw the current state on the screen
 	void Draw();
 
+	//! draw the current state on the screen
+	void DrawOnlyChar();
+
 	//! do all check to be done when idle
 	int Process();
 
