@@ -1,8 +1,8 @@
 <?php
 require_once('class.phpmailer.php');
 
-mysql_connect("localhost", "root", "") or die(mysql_error());
-mysql_select_db("Lbanet") or die(mysql_error());
+mysql_connect("localhost", "vdelage", "lapichonmelba") or die(mysql_error());
+mysql_select_db("lbanet") or die(mysql_error());
 
 
 ##User isn't registering, check verify code and change activation code to null, status to activated on success
