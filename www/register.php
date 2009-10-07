@@ -2,8 +2,8 @@
 
 require_once('class.phpmailer.php');
 
-mysql_connect("localhost", "root", "") or die(mysql_error());
-mysql_select_db("Lbanet") or die(mysql_error());
+mysql_connect("localhost", "vdelage", "lapichonmelba") or die(mysql_error());
+mysql_select_db("lbanet") or die(mysql_error());
 
 
 	if(isset($_POST['submit']))
@@ -91,7 +91,7 @@ mysql_select_db("Lbanet") or die(mysql_error());
 			$mail->AddReplyTo ("noreply@lbanet.com", "Lbanet");
 			$mail->SetFrom("noreply@lbanet.com", "Lbanet");
 			$mail->Subject = "Lbanet Registration";
-			$mail->Body = "Welcome to Lbanet!<br /><br />You, or someone using your email address, has registered to Lbanet. You can complete registration by clicking the following link:<br /> http://127.0.0.1/verifyemail.php?$activationKey <br /><br />If this is an error, ignore this email and you will be removed from our database after 24h.<br /><br />Regards,<br /> Lbanet Team";
+			$mail->Body = "Welcome to Lbanet!<br /><br />You, or someone using your email address, has registered to Lbanet. You can complete registration by clicking the following link:<br /> http://sd-1287.dedibox.fr/~vdelage/verifyemail.php?$activationKey <br /><br />If this is an error, ignore this email and you will be removed from our database after 24h.<br /><br />Regards,<br /> Lbanet Team";
 			$mail->AddAddress ("$email", "$username");
 			$mail->IsHTML (true);
 			if(!$mail->Send())
