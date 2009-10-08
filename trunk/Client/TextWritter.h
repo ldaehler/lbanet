@@ -59,6 +59,9 @@ public:
 	//set text color
 	void SetTextColor(int R, int G, int B);
 
+	//remove the font from memory
+	void KillFont();
+
 protected:
 
 	//load a texture in memory
@@ -67,8 +70,6 @@ protected:
 	// build the font in memory
 	void BuildFont(unsigned int textureHandler);
 
-	//remove the font from memory
-	void KillFont();
 
 private:
 	unsigned int				_textTextureIdx;	// Storage index of the Font Texture

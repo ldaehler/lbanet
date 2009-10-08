@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ---------------------------------------------------------------------------------------
 */
 SpriteRenderer::SpriteRenderer()
-	: _currIndex(-1)
+	: _currIndex(0), _texture_loaded(false)
 {
 }
 
@@ -59,6 +59,9 @@ SpriteRenderer::~SpriteRenderer()
 */
 void SpriteRenderer::CleanUp()
 {
+	if(!_texture_loaded)
+		return;
+
 	for(size_t i=0; i<_textures.size(); ++i)
 		glDeleteTextures(1, &_textures[i]);
 
@@ -66,7 +69,8 @@ void SpriteRenderer::CleanUp()
 	_widths.clear();
 	_heights.clear();
 
-	_currIndex = -1;
+	_currIndex = 0;
+	_texture_loaded = false;
 }
 
 /*
@@ -86,6 +90,7 @@ void SpriteRenderer::SetSprites(std::vector<SpriteInfo *> sprites)
 
 		_currIndex = 0;
 	}
+	_texture_loaded = true;
 }
 
 
@@ -106,7 +111,6 @@ void SpriteRenderer::Load(const std::string & filename)
 	_textures.push_back(ilutGLBindTexImage());
 
 	ilDeleteImages(1, &ImgId);
-
 }
 
 /*
@@ -126,7 +130,7 @@ int SpriteRenderer::Process(double tnow, float tdiff)
 */
 void SpriteRenderer::Render()
 {
-	if(_sprites.size() <= 0 || _currIndex < 0)
+	if(_sprites.size() <= 0 || !_texture_loaded)
 		return;
 
 	if(!Visible)

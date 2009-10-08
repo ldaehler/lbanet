@@ -79,6 +79,9 @@ public:
 	//! called to reload element when resizing screen
 	void Reload();
 
+	//! cleanup
+	void CleanUp();
+
 	// called when a signal has been generated
 	void SignalEvent(long signal, const std::vector<long> &targets);
 

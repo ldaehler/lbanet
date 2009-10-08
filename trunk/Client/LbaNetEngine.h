@@ -162,7 +162,9 @@ private:
 
 	unsigned int						m_char_texture;
 	unsigned int						m_halo_texture;
+
 	bool								m_halo_loaded;
+	bool								m_char_loaded;
 
 	float								_MaxLife;
 	float								_MaxMana;

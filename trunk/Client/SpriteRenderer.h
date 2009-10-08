@@ -82,12 +82,13 @@ public:
 	//! if counter is at end, the first preloaded image will be shown again
 	void Next();
 
+	//! cleanup the textures
+	void CleanUp();
+
 protected:
 	//! load function
 	virtual void Load(const std::string & filename);
 
-	//! cleanup the textures
-	void CleanUp();
 
 protected:
 	std::vector<SpriteInfo *>	_sprites;
@@ -96,6 +97,7 @@ protected:
 	std::vector<int>			_heights;
 	size_t						_currIndex;
 
+	bool						_texture_loaded;
 };
 
 #endif

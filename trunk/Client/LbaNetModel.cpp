@@ -163,6 +163,17 @@ void LbaNetModel::Initialize()
     glShadeModel(GL_SMOOTH);
 }
 
+
+/***********************************************************
+clean up the textures before resizing
+***********************************************************/
+void LbaNetModel::CleanupTexture()
+{
+	_mapRenderer->CleanUp();
+	_localActorsHandler->CleanUp();
+	_externalActorsHandler->CleanUp();
+}
+
 /***********************************************************
 set screen size
 ***********************************************************/
@@ -264,6 +275,14 @@ draw the current state on the screen
 ***********************************************************/
 void LbaNetModel::DrawOnlyChar()
 {
+	m_remember_zoom = _camera->GetDistance();
+	m_remember_zenit = _camera->GetZenit();
+	m_remember_perspective = _camera->IsPerspective();
+	_camera->SetDistance(15);
+	_camera->SetZenit(30);
+	_camera->SetPerspective(true);
+
+
 	// set opengl default view
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_ALPHA_TEST);
@@ -299,6 +318,10 @@ void LbaNetModel::DrawOnlyChar()
     glEnable(GL_DEPTH_TEST);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+
+	_camera->SetDistance(m_remember_zoom);
+	_camera->SetZenit(m_remember_zenit);
+	_camera->SetPerspective(m_remember_perspective);
 }
 
 /***********************************************************
