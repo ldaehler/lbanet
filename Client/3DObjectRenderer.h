@@ -60,6 +60,8 @@ public:
 
 	//! called to reload element when resizing screen
 	virtual void Reload(){}
+	//! cleanup
+	virtual void CleanUp(){}
 
 protected:
    bool Visible;

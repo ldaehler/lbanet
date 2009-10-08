@@ -55,7 +55,7 @@ LbaNetEngine::LbaNetEngine(ServerConnectionHandler * serverH, const std::string 
 : m_serverConnectionHandler(serverH), m_screen(NULL),
 	m_currframetime(unsigned long(100)), m_eventHandler(this),
 	m_currentstate(EGaming), m_oldstate(ELogin), m_lbaNetModel(&m_guiHandler),
-	m_clientV(clientV), m_halo_loaded(false)
+	m_clientV(clientV), m_halo_loaded(false), m_char_loaded(false)
 {
 	//init the values from file
 	ConfigurationManager::GetInstance()->GetInt("Options.Video.ScreenResolutionX", m_screen_size_X);
@@ -240,10 +240,8 @@ void LbaNetEngine::Redraw()
 		glOrtho(0, m_screen_size_X, m_screen_size_Y, 0, -1, 1);
 		glMatrixMode(GL_MODELVIEW);
 
-		glEnable(GL_DEPTH_TEST);
-		glDisable(GL_COLOR_MATERIAL);
+		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
-
 		glEnable(GL_TEXTURE_2D);
 
 		glBindTexture(GL_TEXTURE_2D, m_halo_texture);
@@ -259,6 +257,7 @@ void LbaNetEngine::Redraw()
 			glVertex2f(60,84);	
 		glEnd();
 
+
 		glBindTexture(GL_TEXTURE_2D, m_char_texture);
 		glColor3f(1,1,1);
 		glBegin(GL_QUADS);
@@ -269,7 +268,6 @@ void LbaNetEngine::Redraw()
 			glTexCoord2f(0, 0);
 			glVertex2f(5,69);
 			glTexCoord2f(1, 0);
-
 			glVertex2f(55,69);	
 		glEnd();
 
@@ -378,11 +376,27 @@ create a new screen surface
 void LbaNetEngine::ChangeScreenAndLinkedRessources()
 {
 	m_guiHandler.grabTextures();
+	TextWritter::getInstance()->KillFont();
+	m_lbaNetModel.CleanupTexture();
+
+	if(m_halo_loaded)
+	{
+		glDeleteTextures(1, &m_halo_texture);
+		m_halo_loaded = false;
+	}
+
+	if(m_char_loaded)
+	{
+		glDeleteTextures(1, &m_char_texture);
+		m_char_loaded = false;
+	}
+
 	ResetScreen();
 	m_guiHandler.Resize(m_screen_size_X, m_screen_size_Y);
 	m_guiHandler.restoreTextures();
 	m_lbaNetModel.SetScreenSize(m_screen_size_X, m_screen_size_Y);
 	TextWritter::getInstance()->ReloadTexture();
+	SaveCharToFile();
 	LoadHaloTexture();
 }
 
@@ -912,6 +926,12 @@ take screen function
 ***********************************************************/
 void LbaNetEngine::SaveCharToFile()
 {
+	if(m_char_loaded)
+	{
+		glDeleteTextures(1, &m_char_texture);
+		m_char_loaded = false;
+	}
+
     glClearColor(0,0,0,0);
     glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	m_lbaNetModel.DrawOnlyChar();
@@ -952,6 +972,8 @@ void LbaNetEngine::SaveCharToFile()
 
 	ilDeleteImages(1, &imn);
 	ilDeleteImages(1, &imn2);
+
+	m_char_loaded = true;
 }
 
 
@@ -966,6 +988,7 @@ void LbaNetEngine::LoadHaloTexture()
 	if(m_halo_loaded)
 	{
 		glDeleteTextures(1, &m_halo_texture);
+		m_halo_loaded = false;
 	}
 
 	{

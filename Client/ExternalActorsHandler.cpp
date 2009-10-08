@@ -188,6 +188,17 @@ void ExternalActorsHandler::Reload()
 
 
 /***********************************************************
+called to reload element when resizing screen
+***********************************************************/
+void ExternalActorsHandler::CleanUp()
+{
+	std::map<long, Actor *>::iterator it =  _actors.begin();
+	std::map<long, Actor *>::iterator end =  _actors.end();
+	for(; it != end; ++it)
+		it->second->CleanUp();
+}
+
+/***********************************************************
 check zone activation
 ***********************************************************/
 bool ExternalActorsHandler::ActivateZone(float PlayerPosX, float PlayerPosY, float PlayerPosZ,

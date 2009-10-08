@@ -148,11 +148,11 @@ remove the font from memory
 ***********************************************************/
 void TextWritter::KillFont()
 {
-	//if(_initialized)
-	//{
-	//	glDeleteLists(_textDisplayList,256);
-	//	glDeleteTextures(1, &_textTextureIdx);
-	//}
+	if(_initialized)
+	{
+		glDeleteLists(_textDisplayList,256);
+		glDeleteTextures(1, &_textTextureIdx);
+	}
 	_initialized = false;
 }
 

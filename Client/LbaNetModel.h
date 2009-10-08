@@ -170,6 +170,9 @@ public:
 	//player life changed
 	void PlayerLifeChanged(float CurLife, float MaxLife, float CurMana, float MaxMana);
 
+	//! clean up the textures before resizing
+	void CleanupTexture();
+
 private:
 	MapRenderer*			_mapRenderer;
 	PhysicHandler*			_physicHandler;

@@ -1616,6 +1616,7 @@ void MainPlayerHandler::RenderForPicture()
 {
 	_remembermodel = _player->GetModel();
 	_rememberbody = _player->GetBody();
+	int anim = _player->GetAnimation();
 
 	_player->changeAnimEntity(0, _currentbody);
 	_player->setActorAnimation(1);
@@ -1627,6 +1628,8 @@ void MainPlayerHandler::RenderForPicture()
 	// draw the player
 	_player->Render(-1);
 
+
 	_player->SetRotation(rot);
 	_player->changeAnimEntity(_remembermodel, _currentbody);
+	_player->setActorAnimation(anim);
 }
