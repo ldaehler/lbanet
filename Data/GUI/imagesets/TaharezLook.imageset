@@ -50,7 +50,7 @@
 	<Image Name="EditBoxLeft" XPos="41" YPos="108" Width="6" Height="25" />
 	<Image Name="EditBoxMiddle" XPos="47" YPos="108" Width="4" Height="25" />
 	<Image Name="EditBoxRight" XPos="51" YPos="108" Width="6" Height="25" />
-	<Image Name="EditBoxCarat" XPos="60" YPos="108" Width="4" Height="25" />
+	<Image Name="EditBoxCarat" XPos="62" YPos="112" Width="1" Height="20" />
 	<Image Name="SpinnerUpNormal" XPos="68" YPos="110" Width="10" Height="6" />
 	<Image Name="SpinnerDownNormal" XPos="68" YPos="118" Width="10" Height="6" />
 	<Image Name="SpinnerUpHover" XPos="82" YPos="110" Width="10" Height="6" />
@@ -176,7 +176,7 @@
 	<Image Name="MouseEsWeCursor" XPos="182" YPos="150" Width="18" Height="8" XOffset="-8" YOffset="-3" />
 	<Image Name="MouseNeSwCursor" XPos="201" YPos="147" Width="14" Height="14" XOffset="-7" YOffset="-7" />
 	<Image Name="MouseNwSeCursor" XPos="230" YPos="126" Width="14" Height="14" XOffset="-7" YOffset="-7" />
-	<Image Name="MouseTextBar" XPos="173" YPos="127" Width="7" Height="18" XOffset="-2" YOffset="-9" />
+	<Image Name="MouseTextBar" XPos="172" YPos="127" Width="7" Height="18" XOffset="-2" YOffset="-9" />
 	<Image Name="TabHorizontalFiller" XPos="197" YPos="201" Width="7" Height="1" />
 	<Image Name="TabContentPaneUpperLeft" XPos="41" YPos="78" Width="7" Height="7" />
 	<Image Name="TabContentPaneUpper" XPos="52" YPos="78" Width="6" Height="7" />

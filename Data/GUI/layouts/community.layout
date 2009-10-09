@@ -8,10 +8,10 @@
 	    <Property Name="TitlebarEnabled" Value="True" />
 	    <Property Name="UnifiedAreaRect" Value="{{1,-250},{0.1,0},{1,-20},{0.1,300}}" />    
 	    <Window Type="TaharezLook/TabControl" Name="CommunityFrameTC" >
-		<Property Name="TabHeight" Value="{0,31.1724}" />
+		<Property Name="TabHeight" Value="{0,-1}" />
 		<Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
 		<Property Name="TabPanePosition" Value="Top" />
-            	<Property Name="UnifiedAreaRect" Value="{{0,10},{0,30},{1,-10},{1,-10}}" />
+            	<Property Name="UnifiedAreaRect" Value="{{0,10},{0,0},{1,-10},{1,-10}}" />
 		<Window Type="DefaultWindow" Name="CommunityFrame/Tabonline" >
 		    <Property Name="Text" Value="Online" />
 		    <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />

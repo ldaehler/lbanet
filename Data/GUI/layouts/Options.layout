@@ -11,10 +11,10 @@
             <Property Name="TitlebarEnabled" Value="True" />
             <Property Name="UnifiedAreaRect" Value="{{0,30},{0,30},{1,-30},{1,-30}}" />
             <Window Type="TaharezLook/TabControl" Name="OptionsTab" >
-                <Property Name="TabHeight" Value="{0,26.1008}" />
+                <Property Name="TabHeight" Value="{0,-1}" />
                 <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
                 <Property Name="TabPanePosition" Value="Top" />
-                <Property Name="UnifiedAreaRect" Value="{{0,10},{0,30},{1,-10},{1,-45}}" />
+                <Property Name="UnifiedAreaRect" Value="{{0,10},{0,0},{1,-10},{1,-45}}" />
                 <Window Type="DefaultWindow" Name="OptionsTab/General" >
                     <Property Name="Text" Value="General" />
                     <Property Name="Visible" Value="False" />

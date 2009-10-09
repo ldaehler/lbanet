@@ -4,6 +4,7 @@
     <Window Type="DefaultWindow" Name="GameGUI/root" >
         <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
         <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+        <Property Name="MousePassThroughEnabled" Value="True" />
         
         <Window Type="TaharezLook/StaticImage" Name="HeadInterfaceBG" >
             <Property Name="Image" Value="set:HeadInterface image:imageHI" />
