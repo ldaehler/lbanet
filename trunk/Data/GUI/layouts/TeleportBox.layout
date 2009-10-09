@@ -9,7 +9,7 @@
 	    <Property Name="UnifiedAreaRect" Value="{{0,10},{0.2,0},{0.1,200},{0.1,350}}" /> 
 	    <Window Type="TaharezLook/Listbox" Name="TeleportList" >
 		<Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
-		<Property Name="UnifiedAreaRect" Value="{{0,10},{0,30},{1,-10},{1,-45}}" />
+		<Property Name="UnifiedAreaRect" Value="{{0,10},{0,0},{1,-10},{1,-45}}" />
 	    </Window>
        
          <Window Type="TaharezLook/Button" Name="TeleporGoButton">

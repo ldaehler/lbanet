@@ -16,8 +16,8 @@
         <PropertyDefinition name="HoverImage" initialValue="" redrawOnWrite="true" />
         <PropertyDefinition name="PushedImage" initialValue="" redrawOnWrite="true" />
         <PropertyDefinition name="DisabledImage" initialValue="" redrawOnWrite="true" />
-        <PropertyDefinition name="VertImageFormatting" initialValue="Static" redrawOnWrite="true" />
-        <PropertyDefinition name="HorzImageFormatting" initialValue="Static" redrawOnWrite="true" />
+        <PropertyDefinition name="VertImageFormatting" initialValue="Stretched" redrawOnWrite="true" />
+        <PropertyDefinition name="HorzImageFormatting" initialValue="Stretched" redrawOnWrite="true" />
         <ImagerySection name="label">
             <TextComponent>
                 <Area>
@@ -26,8 +26,8 @@
                     <Dim type="Width"><UnifiedDim scale="1" type="Width" /></Dim>
                     <Dim type="Height"><UnifiedDim scale="1" type="Height" /></Dim>
                 </Area>
-                <VertFormatProperty name="VertLabelFormatting"  initialValue="Static" />
-                <HorzFormatProperty name="HorzLabelFormatting"  initialValue="Static" />
+                <VertFormatProperty name="VertLabelFormatting" />
+                <HorzFormatProperty name="HorzLabelFormatting" />
             </TextComponent>
         </ImagerySection>
         <ImagerySection name="normal">
@@ -38,9 +38,9 @@
                     <Dim type="Width"><UnifiedDim scale="1" type="Width" /></Dim>
                     <Dim type="Height"><UnifiedDim scale="1" type="Height" /></Dim>
                 </Area>
-                <Image type="LeftEdge" imageset="TaharezLook" image="ButtonLeftNormal"  initialValue="Static" />
-                <Image type="RightEdge" imageset="TaharezLook" image="ButtonRightNormal"  initialValue="Static" />
-                <Image type="Background" imageset="TaharezLook" image="ButtonMiddleNormal" initialValue="Static" />
+                <Image type="LeftEdge" imageset="TaharezLook" image="ButtonLeftNormal" />
+                <Image type="RightEdge" imageset="TaharezLook" image="ButtonRightNormal" />
+                <Image type="Background" imageset="TaharezLook" image="ButtonMiddleNormal" />
             </FrameComponent>
             <ImageryComponent>
                 <Area>
@@ -428,8 +428,6 @@
                 <Image type="LeftEdge" imageset="TaharezLook" image="EditBoxLeft" />
                 <Image type="RightEdge" imageset="TaharezLook" image="EditBoxRight" />
                 <Image type="Background" imageset="TaharezLook" image="EditBoxMiddle" />
-                <VertFormat type="Stretched" />
-                <HorzFormat type="Stretched" />
             </FrameComponent>
         </ImagerySection>
         <ImagerySection name="selection">
@@ -498,6 +496,7 @@
     -->
     <WidgetLook name="TaharezLook/Titlebar">
         <PropertyDefinition name="CaptionColour" initialValue="FFFFFFFF" redrawOnWrite="true" />
+        <Property name="NonClient" value="True" />
         <ImagerySection name="main">
             <ImageryComponent>
                 <Area>
@@ -507,7 +506,7 @@
                     <Dim type="Height" ><UnifiedDim scale="1.0" type="Height" /></Dim>
                 </Area>
                 <Image imageset="TaharezLook" image="NewTitlebarLeft" />
-                <VertFormat type="Static" />
+                <VertFormat type="Stretched" />
             </ImageryComponent>
             <ImageryComponent>
                 <Area>
@@ -527,7 +526,7 @@
                     <Dim type="Height" ><UnifiedDim scale="1.0" type="Height" /></Dim>
                 </Area>
                 <Image imageset="TaharezLook" image="NewTitlebarRight" />
-                <VertFormat type="Static" />
+                <VertFormat type="Stretched" />
                 <HorzFormat type="RightAligned" />
             </ImageryComponent>
             <ImageryComponent>
@@ -544,7 +543,7 @@
                     <Dim type="Height" ><UnifiedDim scale="1.0" type="Height" /></Dim>
                 </Area>
                 <Image imageset="TaharezLook" image="SysAreaMiddle" />
-                <VertFormat type="Static" />
+                <VertFormat type="Stretched" />
                 <HorzFormat type="RightAligned" />
             </ImageryComponent>
             <ImageryComponent>
@@ -555,7 +554,7 @@
                     <Dim type="Height" ><UnifiedDim scale="1.0" type="Height" /></Dim>
                 </Area>
                 <Image imageset="TaharezLook" image="SysAreaRight" />
-                <VertFormat type="Static" />
+                <VertFormat type="Stretched" />
                 <HorzFormat type="RightAligned" />
             </ImageryComponent>
             <ImageryComponent>
@@ -580,7 +579,7 @@
                     <Dim type="Height" ><UnifiedDim scale="1.0" type="Height" /></Dim>
                 </Area>
                 <Image imageset="TaharezLook" image="NewTitlebarMiddle" />
-                <VertFormat type="Static" />
+                <VertFormat type="Stretched" />
                 <HorzFormat type="Stretched" />
             </ImageryComponent>
         </ImagerySection>
@@ -699,7 +698,7 @@
             </Area>
             <Property name="AlwaysOnTop" value="False" />
         </Child>
-        <Child type="TaharezLook/SystemButton" nameSuffix="__auto_closebutton__">
+        <Child type="TaharezLook/ImageButton" nameSuffix="__auto_closebutton__">
             <Area>
                 <Dim type="LeftEdge" >
                     <UnifiedDim scale="1" type="LeftEdge">
@@ -730,6 +729,7 @@
             <Property name="NormalImage" value="set:TaharezLook image:NewCloseButtonNormal" />
             <Property name="HoverImage" value="set:TaharezLook image:NewCloseButtonHover" />
             <Property name="PushedImage" value="set:TaharezLook image:NewCloseButtonPressed" />
+            <Property name="NonClient" value="True" />
         </Child>
         <ImagerySection name="withtitle_frame">
             <FrameComponent>
@@ -3254,6 +3254,7 @@
                 <Dim type="Height" ><AbsoluteDim value="12" /></Dim>
             </Area>
             <VertAlignment type="BottomAligned" />
+            <Property name="NonClient" value="True" />
         </Child>
         <Child  type="TaharezLook/VerticalScrollbar" nameSuffix="__auto_vscrollbar__">
             <Area>
@@ -3263,6 +3264,7 @@
                 <Dim type="Height" ><UnifiedDim scale="1" offset="-12" type="Height" /></Dim>
             </Area>
             <HorzAlignment type="RightAligned" />
+            <Property name="NonClient" value="True" />
         </Child>
         <StateImagery name="Enabled" />
         <StateImagery name="Disabled" />
@@ -3396,7 +3398,7 @@
                 <Image type="RightEdge" imageset="TaharezLook" image="TabButtonRightSelected" />
                 <Image type="BottomLeftCorner" imageset="TaharezLook" image="TabButtonLowerLeftNormal" />
                 <Image type="BottomEdge" imageset="TaharezLook" image="TabButtonLowerNormal" />
-                <Image type="BottomRightCorner" imageset="TaharezLook" image="TabButtonLowerRightSelected" />
+                <Image type="BottomRightCorner" imageset="TaharezLook" image="TabButtonLowerRightNormal" />
             </FrameComponent>
         </ImagerySection>
         <StateImagery name="TopNormal">
@@ -4577,6 +4579,7 @@
                 <Dim type="Height" ><AbsoluteDim value="12" /></Dim>
             </Area>
             <VertAlignment type="BottomAligned" />
+            <Property name="NonClient" value="True" />
         </Child>
         <Child  type="TaharezLook/VerticalScrollbar" nameSuffix="__auto_vscrollbar__">
             <Area>
@@ -4586,6 +4589,7 @@
                 <Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
             </Area>
             <HorzAlignment type="RightAligned" />
+            <Property name="NonClient" value="True" />
         </Child>
         <ImagerySection name="main">
             <FrameComponent>
