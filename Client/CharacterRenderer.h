@@ -50,6 +50,9 @@ public:
 	//! render object
 	virtual void Render();
 
+	//! render player directly with no check
+	void BlankRender();
+
 	//! do all check to be done when idle
 	virtual int Process(double tnow, float tdiff);
 

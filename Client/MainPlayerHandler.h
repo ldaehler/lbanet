@@ -54,11 +54,17 @@ public:
 	int				_Animation;
 	short			_color;
 
+	int				_nameR;
+	int				_nameG;
+	int				_nameB;
+
+
 	// set reckon value
 	void Set( const double &posX, const double &posY, const double &posZ,
 				const double &rotation, const double &velocityX, const double &velocityY,
 				const double &velocityZ, const double &velocityR,
-				int Model, int Body, int Animation, short color)
+				int Model, int Body, int Animation, short color,
+				int	nameR, int	nameG, int	nameB)
 	{
 		_posX = posX;
 		_posY = posY;
@@ -74,6 +80,10 @@ public:
 		_Body = Body;
 		_Animation = Animation;
 		_color = color;
+
+		_nameR = nameR;
+		_nameG = nameG;
+		_nameB = nameB;
 	}
 
 	// update reackon on each tick
@@ -95,7 +105,8 @@ public:
 	bool IsOntrack( const double &posX, const double &posY, const double &posZ,
 					const double &rotation, double velocityX, double velocityY,
 					double velocityZ, double velocityR,
-					int Model, int Body, int Animation, short color) const
+					int Model, int Body, int Animation, short color,
+					int	nameR, int	nameG, int	nameB) const
 	{
 		if(_Model != Model)
 			return false;
@@ -127,6 +138,16 @@ public:
 			return false;
 
 		if(fabs(velocityR - _velocityR) > 0.1)
+			return false;
+
+
+		if(_nameR != nameR)
+			return false;
+
+		if(_nameG != nameG)
+			return false;
+
+		if(_nameB != nameB)
 			return false;
 
 		return true;
@@ -272,6 +293,9 @@ public:
 
 	// render the main player at a fixed position for picture
 	void RenderForPicture();
+
+	// set player name color
+	void SetNameColor(int R, int G, int B);
 
 protected:
 	bool MoveActor(bool Upward, float timediff);

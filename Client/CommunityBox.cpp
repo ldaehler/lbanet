@@ -36,7 +36,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class MyComListItem : public CEGUI::ListboxTextItem
 {
 public:
-    MyComListItem (const CEGUI::String& text) : CEGUI::ListboxTextItem(text)
+    MyComListItem (const CEGUI::String& text) 
+		: CEGUI::ListboxTextItem(text)
     {
         setSelectionBrushImage("TaharezLook", "MultiListSelectionBrush");
     }
@@ -159,31 +160,33 @@ void CommunityBox::Show()
 add people online
 ***********************************************************/
 void CommunityBox::AddOnline(const std::string & listname, const std::string &_online,
-							 const std::string &_status)
+							 const std::string &_status, const std::string &color)
 {
 	if(listname == "online")
 	{
 		CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
 			CEGUI::WindowManager::getSingleton().getWindow("Community/onlinelist"));
 
-		std::string dis = _online;
+		std::string dis = "[colour='" + color + "']" + _online;
 		if(_status != "")
 			dis += " (" + _status + ")";
 
-		std::map<std::string, std::string>::iterator itmap = _onlines.find(_online);
+		std::map<std::string, size_t>::iterator itmap = _onlines.find(_online);
 		if(itmap != _onlines.end())
 		{
-			std::string old = _online;
-			if(itmap->second != "")
-				old += " (" + itmap->second + ")";
-
-			CEGUI::ListboxItem *it = lb->findItemWithText(old, NULL);
-			if(it != NULL)
-				lb->removeItem(it);
+			CEGUI::ListboxItem *it = lb->getListboxItemFromIndex(itmap->second);
+			if(it)
+			{
+				it->setText(dis);
+				lb->invalidate();
+			}
 		}
-
-		_onlines[_online] = _status;
-		lb->addItem(new MyComListItem(dis));
+		else
+		{
+			CEGUI::ListboxItem *it = new MyComListItem(dis);
+			lb->addItem(it);
+			_onlines[_online] = lb->getItemIndex(it);
+		}
 	}
 
 	if(listname == "IRC")
@@ -209,15 +212,11 @@ void CommunityBox::RemoveOnline(const std::string & listname, const std::string 
 
 
 
-		std::map<std::string, std::string>::iterator itmap = _onlines.find(_offline);
+		std::map<std::string, size_t>::iterator itmap = _onlines.find(_offline);
 		if(itmap != _onlines.end())
 		{
-			std::string old = _offline;
-			if(itmap->second != "")
-				old += " (" + itmap->second + ")";
-
-			CEGUI::ListboxItem *it = lb->findItemWithText(old, NULL);
-			if(it != NULL)
+			CEGUI::ListboxItem *it = lb->getListboxItemFromIndex(itmap->second);
+			if(it)
 				lb->removeItem(it);
 
 			_onlines.erase(itmap);
@@ -255,7 +254,7 @@ void CommunityBox::Process()
 		else
 		{
 			if(it->Joined)
-				AddOnline(it->ListName, it->Nickname, it->Status);
+				AddOnline(it->ListName, it->Nickname, it->Status, it->Color);
 			else
 				RemoveOnline(it->ListName, it->Nickname);
 		}

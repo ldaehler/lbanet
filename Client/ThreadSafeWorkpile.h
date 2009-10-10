@@ -59,6 +59,7 @@ public:
 		std::string Nickname;
 		bool Clear;
 		std::string Status;
+		std::string Color;
 	};
 
 
@@ -93,6 +94,13 @@ public:
 
 	//! get all events
 	void GetJoinEventData(std::vector<JoinEvent> & data);
+
+
+	//! called when someone joined or left list
+	void ChatColorChanged(const std::string & nickname, const std::string & color);
+
+	//! return the color changed since last time
+	void GetColorChanges(std::vector<std::pair<std::string, std::string> > & vec);
 
 
 	//! inform irc thread to quit
@@ -204,13 +212,19 @@ public:
 	// return true if there was a raised event
 	bool IsRaised();
 
+	// changed the display color for char name
+	void ChangeNameColor(std::string color);
+
+	// return true if the color has changed
+	bool NameColorChanged(std::string &color);
+
 protected:
 
 	//! construtor
 	ThreadSafeWorkpile()
 		: m_game_quitted(false), m_irc_quitted(false), m_sending_quitted(false),
 			m_send_cycle_time(20), m_is_updated(false), m_map_changed(false), m_server_on(false),
-			m_player_id(-1), m_new_actor_state(false)
+			m_player_id(-1), m_new_actor_state(false), m_name_color_changed(false)
 	{}
 
 	ThreadSafeWorkpile(const ThreadSafeWorkpile &);
@@ -231,6 +245,8 @@ private:
 	IceUtil::Mutex								m_mutex_ext_actor_life_info;
 	IceUtil::Mutex								m_mutex_player_hurt;
 	IceUtil::Mutex								m_mutex_player_raised;
+	IceUtil::Mutex								m_mutex_name_color;
+	IceUtil::Mutex								m_mutex_color_changed;
 
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_irc;
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_sending_loop;
@@ -271,6 +287,11 @@ private:
 	std::vector<ActorStateInfo>					m_actors_states;
 
 	bool										m_player_raised;
+
+	std::string									m_name_color;
+	bool										m_name_color_changed;
+
+	std::vector<std::pair<std::string, std::string> >	m_colors_changed;
 
 
 	static ThreadSafeWorkpile *					_singletonInstance;

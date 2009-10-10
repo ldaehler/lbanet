@@ -30,10 +30,12 @@ class GameGUI;
 class IrcThread;
 class LoginGUI;
 class Actor;
+class LbaNetEngine;
 
 namespace CEGUI
 {
 	class OpenGLRenderer;
+	class EventArgs;
 }
 
 
@@ -61,7 +63,7 @@ public:
 
 	//! initialize function
 	void Initialize(int screen_size_X, int screen_size_Y, bool ServerOn,
-						const std::string &clientversion);
+						const std::string &clientversion, LbaNetEngine * engine);
 
 	// process function
 	void process(void);
@@ -104,6 +106,9 @@ public:
 	//! set player name
 	void SetPlayerName(const std::string & name);
 
+	//! handle overlay
+	bool overlayHandler(const CEGUI::EventArgs& args);
+
 protected:
 	//! inject time to the GUI
 	void inject_time_pulse();
@@ -115,6 +120,7 @@ private:
 	LoginGUI *				_login_gui;
 	int						_currentGUI;
 	double					m_last_time_pulse;
+	LbaNetEngine *			_engine;
 };
 
 #endif

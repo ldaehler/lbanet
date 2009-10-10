@@ -272,6 +272,26 @@ void IceConnectionManager::ChangeStatus(const std::string& status)
 
 
 /***********************************************************
+change player color name
+***********************************************************/
+void IceConnectionManager::ChangeColor(const std::string& color)
+{
+	try
+	{
+		_session->ChangeNameColor(color);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception by ChangeColor: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception by ChangeColor "));
+    }
+}
+
+
+/***********************************************************
 return current player life state
 ***********************************************************/
 LbaNet::ActorLifeInfo IceConnectionManager::GetPlayerLife()
@@ -396,6 +416,15 @@ void SendingLoopThread::run()
 
 			for(size_t i=0; i<vechurtfall.size(); ++i)
 				_connectionMananger.AddPlayerHurtFall(vechurtfall[i]);
+		}
+
+
+		//-----------------------------------
+		// process color change 
+		{
+			std::string newcolor;
+			if(ThreadSafeWorkpile::getInstance()->NameColorChanged(newcolor))
+				_connectionMananger.ChangeColor(newcolor);
 		}
 
 		//-----------------------------------

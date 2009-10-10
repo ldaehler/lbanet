@@ -72,7 +72,8 @@ class CommunityBox
 protected:
 
 	//! add people online
-	void AddOnline(const std::string & listname, const std::string &_online, const std::string &_status);
+	void AddOnline(const std::string & listname, const std::string &_online, 
+						const std::string &_status, const std::string &color);
 
 	//! remove people online
 	void RemoveOnline(const std::string & listname, const std::string &_offline);
@@ -84,7 +85,7 @@ private:
 	CEGUI::Window*			_myBox;
 	GameGUI *				_gamgui;
 
-	std::map<std::string, std::string> _onlines;
+	std::map<std::string, size_t> _onlines;
 };
 
 #endif

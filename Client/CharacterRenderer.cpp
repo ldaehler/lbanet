@@ -101,6 +101,29 @@ void CharacterRenderer::Render()
 
 
 /***********************************************************
+render player directly with no check
+***********************************************************/
+void CharacterRenderer::BlankRender()
+{
+	if(!_modelRenderer)
+		return;
+
+    glEnable(GL_BLEND);
+	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDisable(GL_TEXTURE_2D);
+
+	glPushMatrix();
+	{
+		glScalef(40, 40, 40);
+		glDisable(GL_DEPTH_TEST);
+		_modelRenderer->RenderizeModel(255);
+	}
+	glPopMatrix();
+}
+
+
+
+/***********************************************************
 	void Actor::changeAnimEntity(int entityNum)
 ***********************************************************/
 void CharacterRenderer::changeAnimEntity(int entityNum, int bodyNum, bool forced)

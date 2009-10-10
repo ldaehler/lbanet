@@ -47,6 +47,8 @@ public:
 	//print a text to the screen
 	void glPrintText(const std::string & str, int fontset, bool setcolor=true);
 
+	//print a text to the screen with specific color
+	void glPrintText(const std::string & str, int fontset, int R, int G, int B);
 
 	//print a text to the screen
 	void glPrintTextOnScreen(const std::string & str, int fontset,

@@ -66,6 +66,9 @@ public:
 	// change player status
 	void ChangeStatus(const std::string& status);
 
+	// change player color name
+	void ChangeColor(const std::string& color);
+
 	// return current player life state
 	LbaNet::ActorLifeInfo GetPlayerLife();
 

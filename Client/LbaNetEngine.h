@@ -89,6 +89,9 @@ public:
 	//take screen function
 	void TakeScreenshot();
 
+	// draw overlay stuff
+	void DrawOverlay();
+
 protected:
 	//! process function
 	bool Process(void);

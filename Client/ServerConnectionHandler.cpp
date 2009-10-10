@@ -173,7 +173,9 @@ int ServerConnectionHandler::Connect(const std::string &user, const std::string 
 			ev.Clear = false;
 			ev.Nickname = it->first;
 			ev.Status = it->second.Status;
+			ev.Color = it->second.NameColor;
 			ThreadSafeWorkpile::getInstance()->HappenedJoinEvent(ev);
+			ThreadSafeWorkpile::getInstance()->ChatColorChanged(ev.Nickname, ev.Color);
 		}
 
 

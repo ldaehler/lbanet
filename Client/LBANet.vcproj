@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/D _CRT_SECURE_NO_WARNINGS /D MP3_MUSIC"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\SDL\include;&quot;c:\Ice-3.3.1-VC90\include&quot;;..\Server\infrastructure\include;&quot;C:\Program Files\GnuWin32\include&quot;;..\DevIL\include;..\tinyxml\include;..\fmod\include;..\Boost\include;..\FreeType\include;..\CEGUI\include;..\libircclient\include;..\libconfig\include;..\common;."
+				AdditionalIncludeDirectories="..\dependencies\SDL\include;&quot;c:\Ice-3.3.1-VC90\include&quot;;..\Server\infrastructure\include;..\dependencies\DevIL\include;..\dependencies\tinyxml\include;..\dependencies\fmod\include;..\dependencies\Boost\include;..\dependencies\CEGUI\cegui\include;..\dependencies\libircclient\include;..\dependencies\libconfig\include;..\common;."
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;TIXML_USE_STL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -62,9 +62,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDLd.lib SDLmaind.lib SDL_ttfd.lib opengl32.lib glu32.lib iced.lib iceutild.lib glacier2d.lib libpng.lib zlib.lib DevIL.lib ILU.lib ILUT.lib tinyxmld_STL.lib fmodex_vc.lib libfreetype.lib CEGUIBase_d.lib OpenGLGUIRenderer_d.lib libircclient-static.lib wsock32.lib libconfig++d.lib vfw32.lib"
+				AdditionalDependencies="SDLd.lib SDLmaind.lib SDL_ttfd.lib opengl32.lib glu32.lib iced.lib iceutild.lib glacier2d.lib libpng.lib zlib.lib DevIL.lib ILU.lib ILUT.lib tinyxmld_STL.lib fmodex_vc.lib libfreetype.lib CEGUIBase_d.lib CEGUIOpenGLRenderer_d.lib libircclient-static.lib wsock32.lib libconfig++d.lib vfw32.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\SDL\lib;&quot;c:\Ice-3.3.1-VC90\lib&quot;;&quot;C:\Program Files\GnuWin32\lib&quot;;..\DevIL\lib;..\tinyxml\lib;..\fmod\lib;..\Boost\lib;..\FreeType\lib;..\CEGUI\lib;..\libircclient\lib;..\libconfig\lib"
+				AdditionalLibraryDirectories="..\dependencies\SDL\lib;&quot;c:\Ice-3.3.1-VC90\lib&quot;;..\dependencies\DevIL\lib;..\dependencies\tinyxml\lib;..\dependencies\fmod\lib;..\dependencies\Boost\lib;..\dependencies\CEGUI\lib;..\dependencies\libircclient\lib;..\dependencies\libconfig\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -119,7 +119,7 @@
 				AdditionalOptions="/D _CRT_SECURE_NO_WARNINGS /D MP3_MUSIC"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\SDL\include;&quot;c:\Ice-3.3.1-VC90\include&quot;;..\Server\infrastructure\include;&quot;C:\Program Files\GnuWin32\include&quot;;..\DevIL\include;..\tinyxml\include;..\fmod\include;..\Boost\include;..\FreeType\include;..\CEGUI\include;..\libircclient\include;..\libconfig\include;..\common;."
+				AdditionalIncludeDirectories="..\dependencies\SDL\include;&quot;c:\Ice-3.3.1-VC90\include&quot;;..\Server\infrastructure\include;..\dependencies\DevIL\include;..\dependencies\tinyxml\include;..\dependencies\fmod\include;..\dependencies\Boost\include;..\dependencies\CEGUI\cegui\include;..\dependencies\libircclient\include;..\dependencies\libconfig\include;..\common;."
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;TIXML_USE_STL"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -138,9 +138,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDLmain.lib opengl32.lib glu32.lib ice.lib iceutil.lib glacier2.lib libpng.lib zlib.lib DevIL.lib ILU.lib ILUT.lib tinyxml_STL.lib fmodex_vc.lib libfreetype.lib CEGUIBase.lib OpenGLGUIRenderer.lib libircclient-static.lib wsock32.lib libconfig++.lib vfw32.lib"
+				AdditionalDependencies="SDL.lib SDLmain.lib opengl32.lib glu32.lib ice.lib iceutil.lib glacier2.lib libpng.lib zlib.lib DevIL.lib ILU.lib ILUT.lib tinyxml_STL.lib fmodex_vc.lib libfreetype.lib CEGUIBase.lib CEGUIOpenGLRenderer.lib libircclient-static.lib wsock32.lib libconfig++.lib vfw32.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\SDL\lib;&quot;c:\Ice-3.3.1-VC90\lib&quot;;&quot;C:\Program Files\GnuWin32\lib&quot;;..\DevIL\lib;..\tinyxml\lib;..\fmod\lib;..\Boost\lib;..\FreeType\lib;..\CEGUI\lib;..\libircclient\lib;..\libconfig\lib"
+				AdditionalLibraryDirectories="..\dependencies\SDL\lib;&quot;c:\Ice-3.3.1-VC90\lib&quot;;..\dependencies\DevIL\lib;..\dependencies\tinyxml\lib;..\dependencies\fmod\lib;..\dependencies\Boost\lib;..\dependencies\CEGUI\lib;..\dependencies\libircclient\lib;..\dependencies\libconfig\lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -574,10 +574,6 @@
 			</File>
 			<File
 				RelativePath="..\common\FloorSwitch.h"
-				>
-			</File>
-			<File
-				RelativePath=".\GameEvents.h"
 				>
 			</File>
 			<File

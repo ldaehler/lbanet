@@ -40,6 +40,7 @@ ExternalPlayer::ExternalPlayer(const LbaNet::ActorInfo & ainfo, float animationS
 	Update(ainfo);
 	_renderer->SetPosition(ainfo.X,  ainfo.Y, ainfo.Z);
 	_renderer->SetRotation(ainfo.Rotation);
+
 }
 
 /***********************************************************
@@ -84,6 +85,8 @@ void ExternalPlayer::Update(const LbaNet::ActorInfo & ainfo)
 		_dr.Set(SynchronizedTimeHandler::getInstance()->GetCurrentTimeDouble()/*ainfo.Time*/,
 					ainfo.X,  ainfo.Y, ainfo.Z, ainfo.Rotation,
 					ainfo.vX, ainfo.vY, ainfo.vZ, ainfo.vRotation);
+
+		_renderer->SetNameColor(ainfo.NameR, ainfo.NameG, ainfo.NameB);
 	}
 }
 

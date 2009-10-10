@@ -584,13 +584,15 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 						_player->GetRotation(), _corrected_velocityX,
 						_corrected_velocityY, _corrected_velocityZ, _velocityR,
 						_player->GetModel(), _player->GetBody(), _player->GetAnimation(),
-						_player->GetBodyColor() ))
+						_player->GetBodyColor(), _player->GetNameR(), 
+						_player->GetNameG(), _player->GetNameB()))
 	{
 		_dr.Set(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ(),
 						_player->GetRotation(), _corrected_velocityX,
 						_corrected_velocityY, _corrected_velocityZ, _velocityR,
 						_player->GetModel(), _player->GetBody(), _player->GetAnimation(),
-						_player->GetBodyColor());
+						_player->GetBodyColor(), _player->GetNameR(), 
+						_player->GetNameG(), _player->GetNameB());
 
 
 		LbaNet::ActorInfo nai;
@@ -609,6 +611,9 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 		nai.vY = _corrected_velocityY;
 		nai.vZ = _corrected_velocityZ;
 		nai.vRotation = _velocityR;
+		nai.NameR = _player->GetNameR();
+		nai.NameG = _player->GetNameG();
+		nai.NameB = _player->GetNameB();
 		ThreadSafeWorkpile::getInstance()->UpdateInfo(nai);
 	}
 
@@ -1632,4 +1637,13 @@ void MainPlayerHandler::RenderForPicture()
 	_player->SetRotation(rot);
 	_player->changeAnimEntity(_remembermodel, _currentbody);
 	_player->setActorAnimation(anim);
+}
+
+
+/***********************************************************
+set player name color
+***********************************************************/
+void MainPlayerHandler::SetNameColor(int R, int G, int B)
+{
+	_player->SetNameColor(R, G, B);
 }

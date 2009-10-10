@@ -207,6 +207,7 @@ void LbaNetModel::Draw()
     glAlphaFunc(GL_GREATER,0.09f);
     glDisable(GL_ALPHA_TEST);
     glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
     glLoadIdentity();
 
 	if(_camera->IsPerspective())
@@ -265,19 +266,77 @@ void LbaNetModel::Draw()
     glEnable(GL_DEPTH_TEST);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
 }
 
 
+/***********************************************************
+draw the current state on the screen
+***********************************************************/
+void LbaNetModel::DrawForLogin()
+{
+	// set opengl default view
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_ALPHA_TEST);
+    glAlphaFunc(GL_GREATER,0.09f);
+    glDisable(GL_ALPHA_TEST);
+    glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+    glLoadIdentity();
 
+	if(_camera->IsPerspective())
+	{
+		gluPerspective(_camera->GetFOV(),_windowWidth/(double)_windowHeight,0.01,2000);
+		glTranslated(0,0,-_camera->GetDistance());
+		glRotated(_camera->GetZenit(),1,0,0);
+	}
+	else
+	{
+		glOrtho(-0.12*_camera->GetDistance(), 0.12*_camera->GetDistance(), -0.12*_camera->GetDistance(), 0.12*_camera->GetDistance(), -2000, 2000);
+		glTranslated(0,0,-1000);
+		glRotated(30,1,0,0);
+	}
+
+
+    glRotated(-_camera->GetAzimut()-45,0,1,0);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_TEXTURE_2D);
+    glAlphaFunc(GL_GREATER,0);
+    glEnable(GL_ALPHA_TEST);
+    glColor3f(1,1,1);
+    glPushMatrix();
+    glTranslated(-_camera->GetTargetX(),-_camera->GetTargetY()/2.0,-_camera->GetTargetZ());
+
+
+
+	// draw the main player
+	_mainPlayerHandler->Render();
+
+
+	// reset opengl
+    glPopMatrix();
+    glDisable(GL_ALPHA_TEST);
+    glDisable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+}
 
 /***********************************************************
 draw the current state on the screen
 ***********************************************************/
 void LbaNetModel::DrawOnlyChar()
 {
-	m_remember_zoom = _camera->GetDistance();
-	m_remember_zenit = _camera->GetZenit();
-	m_remember_perspective = _camera->IsPerspective();
+	double remember_zoom = _camera->GetDistance();
+	double remember_zenit = _camera->GetZenit();
+	bool remember_perspective = _camera->IsPerspective();
 	_camera->SetDistance(15);
 	_camera->SetZenit(30);
 	_camera->SetPerspective(true);
@@ -319,9 +378,9 @@ void LbaNetModel::DrawOnlyChar()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-	_camera->SetDistance(m_remember_zoom);
-	_camera->SetZenit(m_remember_zenit);
-	_camera->SetPerspective(m_remember_perspective);
+	_camera->SetDistance(remember_zoom);
+	_camera->SetZenit(remember_zenit);
+	_camera->SetPerspective(remember_perspective);
 }
 
 /***********************************************************
@@ -910,6 +969,15 @@ void LbaNetModel::PlayerLifeChanged(float CurLife, float MaxLife, float CurMana,
 {
 	if(_mainPlayerHandler->PlayerLifeChanged(CurLife, MaxLife, CurMana, MaxMana))
 		m_current_main_state = 2;
+}
+
+
+/***********************************************************
+set player name color
+***********************************************************/
+void LbaNetModel::SetPlayerNameColor(int R, int G, int B)
+{
+	_mainPlayerHandler->SetNameColor(R, G, B);
 }
 
 

@@ -45,16 +45,113 @@ public:
 };
 
 
+class LeftWrappedListItem : public CEGUI::ListboxTextItem
+{
+private:
+	CEGUI::FormattedRenderedString * d_formattedRenderedString;
+
+public:
+	//! constructor
+    LeftWrappedListItem (const CEGUI::String& text) 
+		: CEGUI::ListboxTextItem(text)
+    {
+        d_formattedRenderedString =
+            new CEGUI::RenderedStringWordWrapper
+                <CEGUI::LeftAlignedRenderedString>(d_renderedString);
+    }
+
+	//! destructor
+    ~LeftWrappedListItem ()
+    {
+        delete d_formattedRenderedString;
+    }
+
+	/*************************************************************************
+		Required implementations of pure virtuals from the base class.
+	*************************************************************************/
+    CEGUI::Size getPixelSize(void) const
+	{
+		using namespace CEGUI;
+
+		if (!d_renderedStringValid)
+			parseTextString();
+
+		CEGUI::Size parentsi = getOwnerWindow()->getInnerRectClipper().getSize();
+		parentsi.d_width -= 20; // TODO - change constant by the real value of the scrollbar
+		
+        d_formattedRenderedString->format(parentsi);
+		return CEGUI::Size(parentsi.d_width, d_formattedRenderedString->getVerticalExtent());
+	}
+
+
+    void draw(CEGUI::GeometryBuffer& buffer, const CEGUI::Rect& targetRect, float alpha, 
+					const CEGUI::Rect* clipper) const
+	{
+		using namespace CEGUI;
+
+		if (!d_renderedStringValid)
+			parseTextString();
+
+        d_formattedRenderedString->format(targetRect.getSize());
+
+		const ColourRect final_colours(
+			getModulateAlphaColourRect(ColourRect(0xFFFFFFFF), alpha));
+
+        d_formattedRenderedString->draw(buffer,
+                                        targetRect.getPosition(),									
+										&final_colours, clipper);
+	}
+};
+
+
 /***********************************************************
 constructor
 ***********************************************************/
 ChatBox::ChatBox(GameGUI * gamgui)
 : _control_key_on(false), _shift_key_on(false),
-	_gamgui(gamgui), _IRC(NULL), _currSelectedch(0), _itltext(_lasttexts.end())
+	_gamgui(gamgui), _IRC(NULL), _currSelectedch(0), 
+	_itltext(_lasttexts.end()), mHistorySize(50)
 {
 	_channels.push_back("World");
 	_channels.push_back("Map");
 	_channels.push_back("IRC");
+
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":)", "[colour='FFFFFFFF'][image='set:sm_smilie image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(";)", "[colour='FFFFFFFF'][image='set:sm_evilwink image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":-/", "[colour='FFFFFFFF'][image='set:sm_hmz image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":p", "[colour='FFFFFFFF'][image='set:sm_tongue image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":P", "[colour='FFFFFFFF'][image='set:sm_tongue image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":(", "[colour='FFFFFFFF'][image='set:sm_frown image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":D", "[colour='FFFFFFFF'][image='set:sm_biggrin image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>("|D", "[colour='FFFFFFFF'][image='set:sm_proud image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":o", "[colour='FFFFFFFF'][image='set:sm_embarrassment image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":x", "[colour='FFFFFFFF'][image='set:sm_kiss image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":mad:", "[colour='FFFFFFFF'][image='set:sm_mad image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":eek:", "[colour='FFFFFFFF'][image='set:sm_eek image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":cool:", "[colour='FFFFFFFF'][image='set:sm_cool image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":rolleyes:", "[colour='FFFFFFFF'][image='set:sm_rolleyes image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":lol:", "[colour='FFFFFFFF'][image='set:sm_lol image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":'(", "[colour='FFFFFFFF'][image='set:sm_sad image:full_image']"));	
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":sad:", "[colour='FFFFFFFF'][image='set:sm_sad image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":evilwink:", "[colour='FFFFFFFF'][image='set:sm_evilwink image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":stupid:", "[colour='FFFFFFFF'][image='set:sm_stupid image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":bloated:", "[colour='FFFFFFFF'][image='set:sm_bloated image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":hmpf:", "[colour='FFFFFFFF'][image='set:sm_hmpf image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":zombie:", "[colour='FFFFFFFF'][image='set:sm_zombie image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":tup:", "[colour='FFFFFFFF'][image='set:sm_tup image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":tdown:", "[colour='FFFFFFFF'][image='set:sm_tdown image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":zoe:", "[colour='FFFFFFFF'][image='set:sm_zoe image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":dino:", "[colour='FFFFFFFF'][image='set:sm_dinofly image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":funfrock:", "[colour='FFFFFFFF'][image='set:sm_funfrock image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":bunny:", "[colour='FFFFFFFF'][image='set:sm_rabibunny image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>("[red]", "[colour='FFFF0000']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>("[green]", "[colour='FF00FF00']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>("[blue]", "[colour='FF0000FF']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>("[violet]", "[colour='FFFF00FF']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>("[cyan]", "[colour='FF00FFFF']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>("[yellow]", "[colour='FFFFFF00']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>("[black]", "[colour='FF000000']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>("[white]", "[colour='FFFFFFFF']"));
 }
 
 
@@ -184,7 +281,6 @@ void ChatBox::Initialize(CEGUI::Window* Root)
 			frw->show();
 		else
 			frw->hide();
-
 	}
 	catch(CEGUI::Exception &ex)
 	{
@@ -196,8 +292,21 @@ void ChatBox::Initialize(CEGUI::Window* Root)
 /***********************************************************
 add new text to the chatbox
 ***********************************************************/
-void ChatBox::AddText(std::string channel, const std::string & Sender, const std::string & Text)
+void ChatBox::AddText(std::string channel, const std::string & Sender, std::string Text)
 {
+	for(size_t i=0; i< _replace_string_map.size(); ++i)
+		ReplaceStringPart(Text, _replace_string_map[i].first, _replace_string_map[i].second);
+
+	ProtectString(Text);
+
+	std::string namecol = "[colour='";
+	std::map<std::string, std::string>::iterator itcolor = _name_colors.find(Sender);
+	if(itcolor != _name_colors.end())
+		namecol += itcolor->second;
+	else
+		namecol += "FFFFFFFF";
+	namecol += "']";
+
 	if(channel == (_currentWorld + "_" + _currentMap))
 		channel = "Map";
 
@@ -206,36 +315,42 @@ void ChatBox::AddText(std::string channel, const std::string & Sender, const std
 		CEGUI::String tmp((const unsigned char *)Text.c_str());
 		CEGUI::String tmp2((const unsigned char *)Sender.c_str());
 
-		CEGUI::MultiLineEditbox* txt = static_cast<CEGUI::MultiLineEditbox *>(CEGUI::WindowManager::getSingleton().getWindow("Chat/Tab_"+channel+"/editMulti"));
-		txt->hide();
+		CEGUI::Listbox * txt = static_cast<CEGUI::Listbox *>(CEGUI::WindowManager::getSingleton().getWindow("Chat/Tab_"+channel+"/editMulti"));
+		AddChatText(namecol + tmp2 + ": [colour='FFFFFFFF']"+ tmp, txt);
+		
+		//txt->hide();
 		//float pos = txt->getVertScrollbar()->getScrollPosition();
-		txt->appendText(tmp2 + ": "+ tmp);
+		//txt->appendText(tmp2 + ": "+ tmp);
+		//txt->addItem(new CEGUI::ListboxTextItem(tmp2 + ": "+ tmp));
 
-		if(txt->getText().size() > 3000)
-			txt->setText(txt->getText().substr(500));
-		txt->show();
 
-		{
-			float maxpos = (txt->getVertScrollbar()->getDocumentSize() - txt->getVertScrollbar()->getPageSize());
-			//if(pos >= maxpos*9/10)
-				txt->getVertScrollbar()->setScrollPosition(maxpos);
-		}
+		//if(txt->getText().size() > 3000)
+		//	txt->setText(txt->getText().substr(500));
+		//txt->show();
+
+		//{
+		//	float maxpos = (txt->getVertScrollbar()->getDocumentSize() - txt->getVertScrollbar()->getPageSize());
+		//	//if(pos >= maxpos*9/10)
+		//		txt->getVertScrollbar()->setScrollPosition(maxpos);
+		//}
 
 		if(CEGUI::WindowManager::getSingleton().isWindowPresent("Chat/Tab_All/editMulti"))
 		{
-			CEGUI::MultiLineEditbox* txt2 = static_cast<CEGUI::MultiLineEditbox *>(CEGUI::WindowManager::getSingleton().getWindow("Chat/Tab_All/editMulti"));
+			CEGUI::Listbox * txt2 = static_cast<CEGUI::Listbox *>(CEGUI::WindowManager::getSingleton().getWindow("Chat/Tab_All/editMulti"));
 			CEGUI::String tmp3((const unsigned char *)channel.c_str());
+			AddChatText(namecol + tmp2 + "@" + tmp3+ ": [colour='FFFFFFFF']"+ tmp, txt2);
 
 			//float pos2 = txt2->getVertScrollbar()->getScrollPosition();
-			txt2->hide();
-			txt2->appendText(tmp2 + "@" + tmp3+ ": "+ tmp);
-			if(txt2->getText().size() > 3000)
-				txt2->setText(txt2->getText().substr(500));
-			txt2->show();
+			//txt2->hide();
+			//txt2->addItem(new CEGUI::ListboxTextItem(tmp2 + "@" + tmp3+ ": "+ tmp));
+			//txt2->appendText(tmp2 + "@" + tmp3+ ": "+ tmp);
+			//if(txt2->getText().size() > 3000)
+			//	txt2->setText(txt2->getText().substr(500));
+			//txt2->show();
 
-			float maxpos = (txt2->getVertScrollbar()->getDocumentSize() - txt2->getVertScrollbar()->getPageSize());
+			//float maxpos = (txt2->getVertScrollbar()->getDocumentSize() - txt2->getVertScrollbar()->getPageSize());
 			//if(pos2 >= maxpos*9/10)
-				txt2->getVertScrollbar()->setScrollPosition(maxpos);
+				//txt2->getVertScrollbar()->setScrollPosition(maxpos);
 		}
 	}
 
@@ -251,15 +366,22 @@ void ChatBox::AddTab(const std::string & tabName)
 	CEGUI::FrameWindow* fWnd = static_cast<CEGUI::FrameWindow *>(CEGUI::WindowManager::getSingleton().createWindow( "DefaultGUISheet", "Chat/Tab_"+tabName ));
 	fWnd->setProperty("Text", (const unsigned char *)tabName.c_str());
 
-	CEGUI::MultiLineEditbox* txt = static_cast<CEGUI::MultiLineEditbox *>(CEGUI::WindowManager::getSingleton().createWindow( "TaharezLook/MultiLineEditbox", "Chat/Tab_"+tabName+"/editMulti" ));
-	txt->setProperty("MaxTextLength", "1073741823");
+
+	CEGUI::Listbox* txt = static_cast<CEGUI::Listbox *>(CEGUI::WindowManager::getSingleton().createWindow( "TaharezLook/Listbox", "Chat/Tab_"+tabName+"/editMulti" ));
 	txt->setProperty("UnifiedMaxSize", "{{1,0},{1,0}}");
-	txt->setProperty("UnifiedAreaRect", "{{0,1},{0,1},{1,-1},{1,-1}}");
-	txt->setReadOnly(true);
+	txt->setProperty("UnifiedAreaRect", "{{0,0},{0,1},{1,0},{1,0}}");
+	txt->setProperty("ForceVertScrollbar", "True");
 	fWnd->addChildWindow(txt);
+
+	//CEGUI::MultiLineEditbox* txt = static_cast<CEGUI::MultiLineEditbox *>(CEGUI::WindowManager::getSingleton().createWindow( "TaharezLook/MultiLineEditbox", "Chat/Tab_"+tabName+"/editMulti" ));
+	//txt->setProperty("MaxTextLength", "1073741823");
+	//txt->setProperty("UnifiedMaxSize", "{{1,0},{1,0}}");
+	//txt->setProperty("UnifiedAreaRect", "{{0,0},{0,0},{1,0},{1,0}}");
+	//txt->setReadOnly(true);
+	//fWnd->addChildWindow(txt);
 	tc->addTab (fWnd);
 
-   txt->subscribeEvent(CEGUI::Editbox::EventKeyDown, CEGUI::Event::Subscriber (&ChatBox::HandleEnterKey, this));
+   //txt->subscribeEvent(CEGUI::Editbox::EventKeyDown, CEGUI::Event::Subscriber (&ChatBox::HandleEnterKey, this));
 }
 
 /***********************************************************
@@ -712,6 +834,12 @@ used to process text to add
 ***********************************************************/
 void ChatBox::Process()
 {
+	std::vector<std::pair<std::string, std::string> > colors;
+	ThreadSafeWorkpile::getInstance()->GetColorChanges(colors);
+	for(size_t i=0; i<colors.size(); ++i)
+		_name_colors[colors[i].first] = colors[i].second;
+
+
 	std::vector<ThreadSafeWorkpile::ChatTextData> data;
 	ThreadSafeWorkpile::getInstance()->GetChatData(data);
 
@@ -739,3 +867,76 @@ void ChatBox::Focus(bool focus)
 }
 
 
+
+
+/***********************************************************
+method to correctly add chat text
+***********************************************************/
+void ChatBox::AddChatText(const CEGUI::String& pText, CEGUI::Listbox * listbox)
+{
+	using namespace CEGUI;
+
+	// If there's text then add it
+	if(pText.size())
+	{
+		// Add the Editbox text to the history Listbox
+		LeftWrappedListItem* chatItem;
+		if(listbox->getItemCount() == mHistorySize)
+		{
+			/* We have reached the capacity of the Listbox so re-use the first Listbox item.
+			   This code is a little crafty.  By default the ListboxTextItem is created with
+			   the auto-delete flag set to true, which results in its automatic deletion when
+			   removed from the Listbox.  So we change that flag to false, extract the item
+			   from the Listbox, change its text, put the auto-delete flag back to true, and
+			   finally put the item back into the Listbox. */
+			chatItem = static_cast<LeftWrappedListItem*>(listbox->getListboxItemFromIndex(0));
+			chatItem->setAutoDeleted(false);
+			listbox->removeItem(chatItem);
+			chatItem->setAutoDeleted(true);
+			chatItem->setText(pText);
+		}
+		else
+		{
+			// Create a new listbox item
+			chatItem = new LeftWrappedListItem(pText);
+		}
+		listbox->addItem(chatItem);
+		listbox->ensureItemIsVisible(listbox->getItemCount());
+	}
+}
+
+
+
+
+/***********************************************************
+replace a part of a string by another one
+***********************************************************/
+void ChatBox::ReplaceStringPart(std::string &text, const std::string &toreplace, 
+									const std::string &replacement)
+{
+	size_t pos=text.find(toreplace);
+	while(pos != std::string::npos)
+	{
+		text.replace(pos, toreplace.size(), replacement); 
+		pos=text.find(toreplace);
+	}
+}
+
+
+/***********************************************************
+protect part of the string containing character [
+***********************************************************/
+void ChatBox::ProtectString(std::string &text)
+{
+	size_t pos=text.find("[");
+	while(pos != std::string::npos)
+	{
+		if((text.size() > pos+2) && ((text[pos+1] == 'c' && text[pos+2] == 'o') || (text[pos+1] == 'i' && text[pos+2] == 'm')))
+			pos=text.find("[", pos+1);	
+		else
+		{
+			text.insert(pos, "\\"	);
+			pos=text.find("[", pos+2);	
+		}
+	}
+}
