@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <IceUtil/Mutex.h>
 
-#include <mysql++.h>
+//#include <mysql++.h>
 
 
 /***********************************************************************
@@ -59,7 +59,7 @@ protected:
 
 private:
 	// mysql connection handler
-	mysqlpp::Connection	_mysqlH;
+	//mysqlpp::Connection	_mysqlH;
 	bool				_connected;
 };
 
