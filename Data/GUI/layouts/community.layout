@@ -19,7 +19,7 @@
 
 		    <Window Type="TaharezLook/Listbox" Name="Community/onlinelist" >
 			<Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
-			<Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+			<Property Name="UnifiedAreaRect" Value="{{0,0},{0,1},{1,0},{1,0}}" />
 		    </Window>                       
 		</Window>
 		
@@ -30,7 +30,7 @@
 
 		    <Window Type="TaharezLook/Listbox" Name="Community/IRClist" >
 			<Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
-			<Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+			<Property Name="UnifiedAreaRect" Value="{{0,0},{0,1},{1,0},{1,0}}" />
 		    </Window>                       
 		</Window>		
 		
@@ -42,7 +42,7 @@
 
 		    <Window Type="TaharezLook/Listbox" Name="Community/friendlist" >
 			<Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
-			<Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+			<Property Name="UnifiedAreaRect" Value="{{0,0},{0,1},{1,0},{1,0}}" />
 		    </Window>                                     
 		</Window>
 		<Window Type="DefaultWindow" Name="CommunityFrame/TabParty" >
@@ -53,7 +53,7 @@
 
 		    <Window Type="TaharezLook/Listbox" Name="Community/partylist" >
 			<Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
-			<Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+			<Property Name="UnifiedAreaRect" Value="{{0,0},{0,1},{1,0},{1,0}}" />
 		    </Window>                      
 		</Window>
 	    </Window>

@@ -24,7 +24,7 @@
                       <Window Type="TaharezLook/StaticText" Name="OptionsTab/General/contour" >
                         <Property Name="Text" Value="" />
                         <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
-                        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,1},{1,0},{1,0}}" />
                         <Property Name="MousePassThroughEnabled" Value="True" />                        
                     </Window>   
   
@@ -83,6 +83,63 @@
   		    <Property Name="UnifiedAreaRect" Value="{{0.1,110},{0.1,120},{0.1,180},{0.1,150}}" />  
 		</Window>		
   
+  
+    
+     		 <Window Type="TaharezLook/StaticText" Name="OptionsTab/General/lbltextcolor_name" >      
+    		    <Property Name="Text" Value="Name color:" />         
+    		    <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+    		    <Property Name="UnifiedAreaRect" Value="{{0.1,0},{0.1,200},{0.1,150},{0.1,230}}" />
+  		</Window>      
+    
+   		 <Window Type="TaharezLook/StaticText" Name="OptionsTab/General/lbltextR_name" >      
+  		    <Property Name="Text" Value="R:" />         
+  		    <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+    		    <Property Name="UnifiedAreaRect" Value="{{0.1,60},{0.1,240},{0.1,100},{0.1,270}}" />
+  		</Window>       
+  
+  		<Window Type="TaharezLook/Spinner" Name="OptionsTab/General/lbltextRv_name" > 
+  		    <Property Name="StepSize" Value="1" />
+  		    <Property Name="CurrentValue" Value="0" />
+  		    <Property Name="MaximumValue" Value="255" />
+  		    <Property Name="MinimumValue" Value="0" />		
+  		    <Property Name="MaxTextLength" Value="20" />
+  		    <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+    		    <Property Name="UnifiedAreaRect" Value="{{0.1,110},{0.1,240},{0.1,180},{0.1,270}}" /> 
+  		</Window>
+        
+   		 <Window Type="TaharezLook/StaticText" Name="OptionsTab/General/lbltextG_name" >      
+  		    <Property Name="Text" Value="G:" />         
+  		    <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+    		    <Property Name="UnifiedAreaRect" Value="{{0.1,60},{0.1,280},{0.1,100},{0.1,310}}" />
+  		</Window>       
+  
+  		<Window Type="TaharezLook/Spinner" Name="OptionsTab/General/lbltextGv_name" > 
+  		    <Property Name="StepSize" Value="1" />
+  		    <Property Name="CurrentValue" Value="0" />
+  		    <Property Name="MaximumValue" Value="255" />
+  		    <Property Name="MinimumValue" Value="0" />  
+  		    <Property Name="MaxTextLength" Value="20" />
+  		    <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+    		    <Property Name="UnifiedAreaRect" Value="{{0.1,110},{0.1,280},{0.1,180},{0.1,310}}" />
+  		</Window>
+    
+   		 <Window Type="TaharezLook/StaticText" Name="OptionsTab/General/lbltextB_name" >      
+  		    <Property Name="Text" Value="B:" />         
+  		    <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+    		    <Property Name="UnifiedAreaRect" Value="{{0.1,60},{0.1,320},{0.1,100},{0.1,350}}" />
+  		</Window>       
+  
+  		<Window Type="TaharezLook/Spinner" Name="OptionsTab/General/lbltextBv_name" > 
+  		    <Property Name="StepSize" Value="1" />
+  		    <Property Name="CurrentValue" Value="0" />
+  		    <Property Name="MaximumValue" Value="255" />
+  		    <Property Name="MinimumValue" Value="0" /> 
+  		    <Property Name="MaxTextLength" Value="20" />
+  		    <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+    		    <Property Name="UnifiedAreaRect" Value="{{0.1,110},{0.1,320},{0.1,180},{0.1,350}}" />  
+		</Window>	
+  
+  
  		 <Window Type="TaharezLook/StaticText" Name="OptionsTab/General/lbltxtLang" >      
 		    <Property Name="Text" Value="Language:" />         
 		    <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
@@ -99,12 +156,12 @@
                 <Window Type="DefaultWindow" Name="OptionsTab/Video" >
                     <Property Name="Text" Value="Video" />
                     <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
-                    <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />            
                     
                       <Window Type="TaharezLook/StaticText" Name="OptionsTab/Video/contour" >
                         <Property Name="Text" Value="" />
                         <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
-                        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,1},{1,0},{1,0}}" />
                         <Property Name="MousePassThroughEnabled" Value="True" />                        
                     </Window>                    
                     
@@ -150,12 +207,12 @@
                     <Property Name="Text" Value="Sound" />
                     <Property Name="Visible" Value="False" />
                     <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
-                    <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />               
                        
                       <Window Type="TaharezLook/StaticText" Name="OptionsTab/Sound/contour" >
                         <Property Name="Text" Value="" />
                         <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
-                        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,1},{1,0},{1,0}}" />
                         <Property Name="MousePassThroughEnabled" Value="True" />                        
                     </Window>                   
                     
@@ -201,7 +258,7 @@
                       <Window Type="TaharezLook/StaticText" Name="OptionsTab/Gui/contour" >
                         <Property Name="Text" Value="" />
                         <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
-                        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,1},{1,0},{1,0}}" />
                         <Property Name="MousePassThroughEnabled" Value="True" />                        
                     </Window>  
                     
