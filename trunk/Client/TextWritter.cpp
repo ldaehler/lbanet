@@ -177,6 +177,24 @@ void TextWritter::glPrintText(const std::string & str, int fontset, bool setcolo
 }
 
 
+/***********************************************************
+print a text to the screen
+***********************************************************/
+void TextWritter::glPrintText(const std::string & str, int fontset, int R, int G, int B)
+{
+	if(fontset>1)
+		fontset=1;
+
+    glEnable(GL_BLEND);
+	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_TEXTURE_2D);
+	glColor4ub((unsigned char)R, (unsigned char)G, (unsigned char)B, (unsigned char)255);
+	glBindTexture(GL_TEXTURE_2D, _textTextureIdx);		// Select Our Font Texture
+	glListBase(_textDisplayList/*-32+(128*fontset)*/);		// Choose The Font Set (0 or 1)
+	glCallLists(str.length(),GL_UNSIGNED_BYTE,str.c_str());// Write The Text To The Screen
+
+}
+
 
 /***********************************************************
 print a text to the screen

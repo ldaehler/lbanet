@@ -39,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <GL/glu.h>     // Header File For The GLu32 Library
 
 
-
+#define _MAP_TEXT_SIZE_ 2048
 
 /***********************************************************
 calculate a face
@@ -136,12 +136,12 @@ void LBA_MAP_GL::face(double X,double Y,double Z,double texture_x,double texture
 	}
 	else
 	{
-		face.vt[0]=(texture_x+uv[a][0])/2048.;
-		face.vt[1]=(texture_y+uv[a][1])/2048.;
-		face.vt[2]=(texture_x+uv[b][0])/2048.;
-		face.vt[3]=(texture_y+uv[b][1])/2048.;
-		face.vt[4]=(texture_x+uv[c][0])/2048.;
-		face.vt[5]=(texture_y+uv[c][1])/2048.;
+		face.vt[0]=(texture_x+uv[a][0])/(double)_MAP_TEXT_SIZE_;
+		face.vt[1]=(texture_y+uv[a][1])/(double)_MAP_TEXT_SIZE_;
+		face.vt[2]=(texture_x+uv[b][0])/(double)_MAP_TEXT_SIZE_;
+		face.vt[3]=(texture_y+uv[b][1])/(double)_MAP_TEXT_SIZE_;
+		face.vt[4]=(texture_x+uv[c][0])/(double)_MAP_TEXT_SIZE_;
+		face.vt[5]=(texture_y+uv[c][1])/(double)_MAP_TEXT_SIZE_;
 	}
 
 	face.vn[0]=n[0]/l;
@@ -236,7 +236,7 @@ void LBA_MAP_GL::LoadMap(const std::string &filename)
 
 	// load the map texture
 	{
-		unsigned char *texture_map=new unsigned char[2048*2048*4];
+		unsigned char *texture_map=new unsigned char[_MAP_TEXT_SIZE_*_MAP_TEXT_SIZE_*4];
 		for(size_t i=0; i<brick_indexes.size(); ++i)
 		{
 			{
@@ -255,10 +255,10 @@ void LBA_MAP_GL::LoadMap(const std::string &filename)
 						{
 							int offset_x=(i%42);offset_x*=48;
 							int offset_y=(i/42);offset_y*=38;
-							texture_map[((offset_y+j)*2048+offset_x+k)*4+0]=*imgptr++;
-							texture_map[((offset_y+j)*2048+offset_x+k)*4+1]=*imgptr++;
-							texture_map[((offset_y+j)*2048+offset_x+k)*4+2]=*imgptr++;
-							texture_map[((offset_y+j)*2048+offset_x+k)*4+3]=*imgptr++;
+							texture_map[((offset_y+j)*_MAP_TEXT_SIZE_+offset_x+k)*4+0]=*imgptr++;
+							texture_map[((offset_y+j)*_MAP_TEXT_SIZE_+offset_x+k)*4+1]=*imgptr++;
+							texture_map[((offset_y+j)*_MAP_TEXT_SIZE_+offset_x+k)*4+2]=*imgptr++;
+							texture_map[((offset_y+j)*_MAP_TEXT_SIZE_+offset_x+k)*4+3]=*imgptr++;
 						}
 					}
 				}
@@ -282,7 +282,7 @@ void LBA_MAP_GL::LoadMap(const std::string &filename)
 		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, /*GL_CLAMP*/ GL_REPEAT);
 		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR/*GL_NEAREST*/);
 		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR/*GL_NEAREST*/);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2048, 2048, 0, GL_RGBA, GL_UNSIGNED_BYTE,texture_map);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _MAP_TEXT_SIZE_, _MAP_TEXT_SIZE_, 0, GL_RGBA, GL_UNSIGNED_BYTE,texture_map);
 
 
 		delete texture_map;
@@ -355,20 +355,20 @@ void LBA_MAP_GL::RecompileRoom(int Cut)
 
 			if(shp == 0 || shp == 1 || shp > 13)
 			{
-				glNormal3d(0,0,1);glTexCoord2d((texture_x+0.) /2048.,(texture_y+25.)/2048.);  glVertex3d( X+0.,Y/2.+0. , Z+1.);
-				glNormal3d(0,0,1);glTexCoord2d((texture_x+23.)/2048.,(texture_y+36.)/2048.);  glVertex3d( X+1.,Y/2.+0. , Z+1.);
-				glNormal3d(0,0,1);glTexCoord2d((texture_x+23.)/2048.,(texture_y+23.)/2048.);  glVertex3d( X+1.,Y/2.+0.5, Z+1.);
-				glNormal3d(0,0,1);glTexCoord2d((texture_x+0. )/2048.,(texture_y+13.)/2048.);  glVertex3d( X+0.,Y/2.+0.5, Z+1.);
+				glNormal3d(0,0,1);glTexCoord2d((texture_x+0.) /(double)_MAP_TEXT_SIZE_,(texture_y+25.)/(double)_MAP_TEXT_SIZE_);  glVertex3d( X+0.,Y/2.+0. , Z+1.);
+				glNormal3d(0,0,1);glTexCoord2d((texture_x+23.)/(double)_MAP_TEXT_SIZE_,(texture_y+36.)/(double)_MAP_TEXT_SIZE_);  glVertex3d( X+1.,Y/2.+0. , Z+1.);
+				glNormal3d(0,0,1);glTexCoord2d((texture_x+23.)/(double)_MAP_TEXT_SIZE_,(texture_y+23.)/(double)_MAP_TEXT_SIZE_);  glVertex3d( X+1.,Y/2.+0.5, Z+1.);
+				glNormal3d(0,0,1);glTexCoord2d((texture_x+0. )/(double)_MAP_TEXT_SIZE_,(texture_y+13.)/(double)_MAP_TEXT_SIZE_);  glVertex3d( X+0.,Y/2.+0.5, Z+1.);
 
-				glNormal3d(1,0,0);glTexCoord2d((texture_x+24.)/2048.,(texture_y+36.)/2048.);  glVertex3d( X+1.,Y/2.+0. , Z+1.);
-				glNormal3d(1,0,0);glTexCoord2d((texture_x+47.)/2048.,(texture_y+25.)/2048.);  glVertex3d( X+1.,Y/2.+0. , Z+0.);
-				glNormal3d(1,0,0);glTexCoord2d((texture_x+47.)/2048.,(texture_y+12.)/2048.);  glVertex3d( X+1.,Y/2.+0.5, Z+0.);
-				glNormal3d(1,0,0);glTexCoord2d((texture_x+24.)/2048.,(texture_y+24.)/2048.);  glVertex3d( X+1.,Y/2.+0.5, Z+1.);
+				glNormal3d(1,0,0);glTexCoord2d((texture_x+24.)/(double)_MAP_TEXT_SIZE_,(texture_y+36.)/(double)_MAP_TEXT_SIZE_);  glVertex3d( X+1.,Y/2.+0. , Z+1.);
+				glNormal3d(1,0,0);glTexCoord2d((texture_x+47.)/(double)_MAP_TEXT_SIZE_,(texture_y+25.)/(double)_MAP_TEXT_SIZE_);  glVertex3d( X+1.,Y/2.+0. , Z+0.);
+				glNormal3d(1,0,0);glTexCoord2d((texture_x+47.)/(double)_MAP_TEXT_SIZE_,(texture_y+12.)/(double)_MAP_TEXT_SIZE_);  glVertex3d( X+1.,Y/2.+0.5, Z+0.);
+				glNormal3d(1,0,0);glTexCoord2d((texture_x+24.)/(double)_MAP_TEXT_SIZE_,(texture_y+24.)/(double)_MAP_TEXT_SIZE_);  glVertex3d( X+1.,Y/2.+0.5, Z+1.);
 
-				glNormal3d(0,1,0);glTexCoord2d((texture_x+2.) /2048.,(texture_y+11.)/2048.);  glVertex3d( X+0.,Y/2.+0.5, Z+1.);
-				glNormal3d(0,1,0);glTexCoord2d((texture_x+24.)/2048.,(texture_y+22.)/2048.);  glVertex3d( X+1.,Y/2.+0.5, Z+1.);
-				glNormal3d(0,1,0);glTexCoord2d((texture_x+45.)/2048.,(texture_y+11.)/2048.);  glVertex3d( X+1.,Y/2.+0.5, Z+0.);
-				glNormal3d(0,1,0);glTexCoord2d((texture_x+24.)/2048.,(texture_y+0. )/2048.);  glVertex3d( X+0.,Y/2.+0.5, Z+0.);
+				glNormal3d(0,1,0);glTexCoord2d((texture_x+2.) /(double)_MAP_TEXT_SIZE_,(texture_y+11.)/(double)_MAP_TEXT_SIZE_);  glVertex3d( X+0.,Y/2.+0.5, Z+1.);
+				glNormal3d(0,1,0);glTexCoord2d((texture_x+24.)/(double)_MAP_TEXT_SIZE_,(texture_y+22.)/(double)_MAP_TEXT_SIZE_);  glVertex3d( X+1.,Y/2.+0.5, Z+1.);
+				glNormal3d(0,1,0);glTexCoord2d((texture_x+45.)/(double)_MAP_TEXT_SIZE_,(texture_y+11.)/(double)_MAP_TEXT_SIZE_);  glVertex3d( X+1.,Y/2.+0.5, Z+0.);
+				glNormal3d(0,1,0);glTexCoord2d((texture_x+24.)/(double)_MAP_TEXT_SIZE_,(texture_y+0. )/(double)_MAP_TEXT_SIZE_);  glVertex3d( X+0.,Y/2.+0.5, Z+0.);
 			}
 		}
 	}

@@ -38,6 +38,7 @@ void ChatReceiverServant::Message(const std::string& Sender, const std::string& 
 			ev.Joined = true;
 			ev.Clear = false;
 			ev.Nickname = Text.substr(8);
+			ev.Color = "FFFFFFFF";
 			ThreadSafeWorkpile::getInstance()->HappenedJoinEvent(ev);
 			return;
 		}
@@ -59,12 +60,17 @@ void ChatReceiverServant::Message(const std::string& Sender, const std::string& 
 			ev.ListName = "online";
 			ev.Joined = true;
 			ev.Clear = false;
-			ev.Nickname = Text.substr(8);
-			ev.Status = ev.Nickname.substr(ev.Nickname.find(" ")+1);
-			ev.Nickname = ev.Nickname.substr(0, ev.Nickname.find(" "));
+			std::string tmptxt = Text.substr(8);
+			ev.Nickname = tmptxt.substr(0, tmptxt.find(" "));
+			tmptxt = tmptxt.substr(tmptxt.find(" ")+1);
+			ev.Status = tmptxt.substr(0, tmptxt.find(" "));
+			tmptxt = tmptxt.substr(tmptxt.find(" ")+1);
+			ev.Color = tmptxt;
 			ThreadSafeWorkpile::getInstance()->HappenedJoinEvent(ev);
+			ThreadSafeWorkpile::getInstance()->ChatColorChanged(ev.Nickname, ev.Color);
 			return;
 		}
+
 	}
 
 	ThreadSafeWorkpile::ChatTextData cdata;

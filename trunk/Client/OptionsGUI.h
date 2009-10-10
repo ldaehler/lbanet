@@ -78,12 +78,17 @@ protected:
 	//! quit windows
 	void Quit();
 
+	//! send name color
+	void SendNameColor();
 
 private:
 	// general part
 	int				_textR;
 	int				_textG;
 	int				_textB;
+	int				_nameR;
+	int				_nameG;
+	int				_nameB;
 	std::string		_lang;
 
 

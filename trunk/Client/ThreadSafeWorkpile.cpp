@@ -517,3 +517,52 @@ bool ThreadSafeWorkpile::IsRaised()
 	return res;
 }
 
+
+
+
+/***********************************************************
+changed the display color for char name
+***********************************************************/
+void ThreadSafeWorkpile::ChangeNameColor(std::string color)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_name_color);
+	m_name_color_changed = true;
+	m_name_color = color;
+}
+
+/***********************************************************
+return true if the color has changed
+***********************************************************/
+bool ThreadSafeWorkpile::NameColorChanged(std::string &color)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_name_color);
+	if(m_name_color_changed)
+	{
+		m_name_color_changed = false;
+		color = m_name_color;
+		return true;
+	}
+
+	return false;
+}
+
+
+
+/***********************************************************
+called when someone joined or left list
+***********************************************************/
+void ThreadSafeWorkpile::ChatColorChanged(const std::string & nickname, const std::string & color)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_color_changed);
+	m_colors_changed.push_back(std::make_pair<std::string, std::string>(nickname, color));
+}
+
+/***********************************************************
+return the color changed since last time
+***********************************************************/
+void ThreadSafeWorkpile::GetColorChanges(std::vector<std::pair<std::string, std::string> > & vec)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_color_changed);
+	vec.clear();
+	m_colors_changed.swap(vec);
+}

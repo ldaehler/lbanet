@@ -145,7 +145,8 @@ void LbaNetEngine::Initialize(void)
 	SDL_EnableKeyRepeat (SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 
 	LogHandler::getInstance()->LogToFile("Initializing gui...");
-	m_guiHandler.Initialize(m_screen_size_X, m_screen_size_Y, m_serverConnectionHandler->ServerOn(), m_clientV);
+	m_guiHandler.Initialize(m_screen_size_X, m_screen_size_Y, m_serverConnectionHandler->ServerOn(), 
+								m_clientV, this);
 	m_lbaNetModel.Initialize();
 	m_lbaNetModel.SetScreenSize(m_screen_size_X, m_screen_size_Y);
 
@@ -210,35 +211,22 @@ bool LbaNetEngine::Process(void)
 }
 
 
+
 /***********************************************************
-redraw the scene on screen
+draw overlay stuff
 ***********************************************************/
-void LbaNetEngine::Redraw()
+void LbaNetEngine::DrawOverlay()
 {
-    glClearColor(0,0,0,0);
-    glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+    glClear(GL_DEPTH_BUFFER_BIT);
 
 	if(m_currentstate == EGaming)
 	{
-		m_lbaNetModel.Draw();
-
-
-		if(m_DisplayFPS)
-		{
-			std::stringstream strs;
-			strs<<"FPS: "<<1000.0/m_currframetime.Value();
-			TextWritter::getInstance()->glPrintTextOnScreen(strs.str(), 0,
-										m_screen_size_X, m_screen_size_Y, 10, 10);
-		}
-
-		m_guiHandler.Redraw();
-
-
 		glMatrixMode(GL_PROJECTION);
 		glPushMatrix();
 		glLoadIdentity();
 		glOrtho(0, m_screen_size_X, m_screen_size_Y, 0, -1, 1);
 		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
 
 		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
@@ -298,19 +286,133 @@ void LbaNetEngine::Redraw()
 		glPopMatrix();
 		glMatrixMode(GL_MODELVIEW); 
 	}
-	else
+
+	if(m_currentstate == ELogin)
+		m_lbaNetModel.DrawForLogin();
+
+	glEnable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_2D);
+}
+
+
+/***********************************************************
+redraw the scene on screen
+***********************************************************/
+void LbaNetEngine::Redraw()
+{
+    glClearColor(0,0,0,0);
+    glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+
+
+
+
+	m_lbaNetModel.Draw();
+
+	if(m_currentstate == EGaming && m_DisplayFPS)
 	{
-		if(m_currentstate == ELogin)
-		{
-			m_guiHandler.Redraw();
-			m_lbaNetModel.Draw();
-		}
-		else
-		{
-			m_lbaNetModel.Draw();
-			m_guiHandler.Redraw();
-		}
+		std::stringstream strs;
+		strs<<"FPS: "<<1000.0/m_currframetime.Value();
+		TextWritter::getInstance()->glPrintTextOnScreen(strs.str(), 0,
+									m_screen_size_X, m_screen_size_Y, 10, 10);
 	}
+
+	m_guiHandler.Redraw();
+	DrawOverlay();
+
+	//if(m_currentstate == EGaming)
+	//{
+	//	m_lbaNetModel.Draw();
+
+
+	//	if(m_DisplayFPS)
+	//	{
+	//		std::stringstream strs;
+	//		strs<<"FPS: "<<1000.0/m_currframetime.Value();
+	//		TextWritter::getInstance()->glPrintTextOnScreen(strs.str(), 0,
+	//									m_screen_size_X, m_screen_size_Y, 10, 10);
+	//	}
+
+	//	m_guiHandler.Redraw();
+
+
+	//	glMatrixMode(GL_PROJECTION);
+	//	glPushMatrix();
+	//	glLoadIdentity();
+	//	glOrtho(0, m_screen_size_X, m_screen_size_Y, 0, -1, 1);
+	//	glMatrixMode(GL_MODELVIEW);
+
+	//	glDisable(GL_DEPTH_TEST);
+	//	glEnable(GL_BLEND);
+	//	glEnable(GL_TEXTURE_2D);
+
+	//	glBindTexture(GL_TEXTURE_2D, m_halo_texture);
+	//	glColor3f(246/255.0f,181/255.0f,24/255.0f);
+	//	glBegin(GL_QUADS);
+	//		glTexCoord2f(1, 1);
+	//		glVertex2f(60,0);	
+	//		glTexCoord2f(0, 1);
+	//		glVertex2f(0,0);
+	//		glTexCoord2f(0, 0);
+	//		glVertex2f(0,84);	
+	//		glTexCoord2f(1, 0);
+	//		glVertex2f(60,84);	
+	//	glEnd();
+
+
+	//	glBindTexture(GL_TEXTURE_2D, m_char_texture);
+	//	glColor3f(1,1,1);
+	//	glBegin(GL_QUADS);
+	//		glTexCoord2f(1, 1);
+	//		glVertex2f(55,0);	
+	//		glTexCoord2f(0, 1);
+	//		glVertex2f(5,0);	
+	//		glTexCoord2f(0, 0);
+	//		glVertex2f(5,69);
+	//		glTexCoord2f(1, 0);
+	//		glVertex2f(55,69);	
+	//	glEnd();
+
+	//	int offsetx = 67;
+	//	int sizex = 79;
+	//	glDisable(GL_DEPTH_TEST);
+	//	glDisable(GL_TEXTURE_2D);
+	//	glBegin(GL_QUADS);
+
+	//		glColor3f(115/255.f, 0.f, 2/255.f);
+	//		glVertex2f(offsetx,11);					
+	//		glVertex2f(offsetx+(sizex*_CurrentLife/_MaxLife),11);	
+	//		glColor3f(254/255.f, 0.f, 3/255.f);
+	//		glVertex2f(offsetx+(sizex*_CurrentLife/_MaxLife),7);					
+	//		glVertex2f(offsetx,7);	
+
+	//		glColor3f(11/255.f, 11/255.f, 71/255.f);
+	//		glVertex2f(offsetx,20);					
+	//		glVertex2f(offsetx+(sizex*_CurrentMana/_MaxMana),20);	
+	//		glColor3f(13/255.f, 12/255.f, 150/255.f);
+	//		glVertex2f(offsetx+(sizex*_CurrentMana/_MaxMana),16);					
+	//		glVertex2f(offsetx,16);	
+
+	//	glEnd();
+
+
+	//	glMatrixMode(GL_PROJECTION);
+	//	glPopMatrix();
+	//	glMatrixMode(GL_MODELVIEW); 
+	//}
+	//else
+	//{
+	//	if(m_currentstate == ELogin)
+	//	{
+	//		m_guiHandler.Redraw();
+	//		m_lbaNetModel.Draw();
+	//	}
+	//	else
+	//	{
+	//		m_lbaNetModel.Draw();
+	//		m_guiHandler.Redraw();
+	//	}
+	//}
 
 
 
@@ -392,8 +494,10 @@ void LbaNetEngine::ChangeScreenAndLinkedRessources()
 	}
 
 	ResetScreen();
-	m_guiHandler.Resize(m_screen_size_X, m_screen_size_Y);
+
 	m_guiHandler.restoreTextures();
+	m_guiHandler.Resize(m_screen_size_X, m_screen_size_Y);
+
 	m_lbaNetModel.SetScreenSize(m_screen_size_X, m_screen_size_Y);
 	TextWritter::getInstance()->ReloadTexture();
 	SaveCharToFile();
@@ -591,6 +695,14 @@ void LbaNetEngine::HandleGameEvents()
 					_MaxMana = evcs->_MaxMana;
 					_CurrentLife = evcs->_CurLife;
 					_CurrentMana = evcs->_CurMana;
+				}
+			break;
+
+			case 20: // player name color changed
+				{
+					PlayerNameColorChangedEvent * evcs = 
+						static_cast<PlayerNameColorChangedEvent *> (*it);
+					m_lbaNetModel.SetPlayerNameColor(evcs->_R, evcs->_G, evcs->_B);
 				}
 			break;
 		}

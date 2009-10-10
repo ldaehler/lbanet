@@ -70,6 +70,9 @@ public:
 	//! draw the current state on the screen
 	void DrawOnlyChar();
 
+	//! draw the current state on the screen
+	void DrawForLogin();
+
 	//! do all check to be done when idle
 	int Process();
 
@@ -172,6 +175,9 @@ public:
 
 	//! clean up the textures before resizing
 	void CleanupTexture();
+
+	// set player name color
+	void SetPlayerNameColor(int R, int G, int B);
 
 private:
 	MapRenderer*			_mapRenderer;

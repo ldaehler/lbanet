@@ -35,13 +35,15 @@ namespace CEGUI
 	class Window;
 	class EventArgs;
 	class Listbox;
+	class String;
+	class Listbox;
 }
 
 #include <iostream>
 #include <string>
 #include <list>
-
-
+#include <vector>
+#include <map>
 
 //*************************************************************************************************
 //*                               class ChatBox
@@ -118,7 +120,16 @@ protected:
 	void SendText(const std::string & channel, const std::string & Text);
 
 	//! add new text to the chatbox
-	void AddText(std::string channel, const std::string & Sender, const std::string & Text);
+	void AddText(std::string channel, const std::string & Sender, std::string Text);
+
+	//! method to correctly add chat text
+	void AddChatText(const CEGUI::String& pText, CEGUI::Listbox * listbox);
+
+	//! replace a part of a string by another one
+	void ReplaceStringPart(std::string &text, const std::string &toreplace, const std::string &replacement);
+
+	//! protect part of the string containing character [
+	void ProtectString(std::string &text);
 
 private:
 	CEGUI::Window*			_myChat;
@@ -139,6 +150,12 @@ private:
 	int						_currSelectedch;
 
 	GameGUI *				_gamgui;
+
+	size_t					mHistorySize;
+
+	std::vector<std::pair<std::string, std::string> >	_replace_string_map;
+
+	std::map<std::string, std::string>	_name_colors;
 };
 
 #endif

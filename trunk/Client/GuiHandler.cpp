@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "OptionsGUI.h"
 #include "DataLoader.h"
 #include "ConfigurationManager.h"
+#include "LbaNetEngine.h"
 
 #ifdef _WIN32
 	#include "SDL.h"
@@ -41,7 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 #include <CEGUI.h>
-#include <RendererModules/OpenGLGUIRenderer/openglrenderer.h>
+#include <RendererModules/OpenGL/CEGUIOpenGLRenderer.h>
 #include <CEGUIDefaultResourceProvider.h>
 
 
@@ -52,7 +53,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	Constructor
 ***********************************************************/
 GuiHandler::GuiHandler()
-: _currentGUI(-1), _gui_renderer(NULL), _game_gui(NULL), _login_gui(NULL)
+: _currentGUI(-1), _gui_renderer(NULL), _game_gui(NULL), 
+	_login_gui(NULL)
 {
 
 }
@@ -63,13 +65,13 @@ GuiHandler::GuiHandler()
 ***********************************************************/
 GuiHandler::~GuiHandler()
 {
-	if(_gui_renderer)
-		delete _gui_renderer;
-
 	std::vector<GUI *>::iterator it = _guis.begin();
 	std::vector<GUI *>::iterator end = _guis.end();
 	for(; it != end; ++it)
 		delete *it;
+
+    CEGUI::System::destroy();
+    CEGUI::OpenGLRenderer::destroy(*_gui_renderer);
 }
 
 
@@ -77,12 +79,18 @@ GuiHandler::~GuiHandler()
 initialize function
 ***********************************************************/
 void GuiHandler::Initialize(int screen_size_X, int screen_size_Y, bool ServerOn,
-							const std::string &clientversion)
+							const std::string &clientversion,
+							LbaNetEngine * engine)
 {
+	_engine = engine;
+
 	try
 	{
-		_gui_renderer = new CEGUI::OpenGLRenderer (0, screen_size_X, screen_size_Y);
-		new CEGUI::System (_gui_renderer);
+		_gui_renderer =  &CEGUI::OpenGLRenderer::create();
+		//new CEGUI::OpenGLRenderer (0, screen_size_X, screen_size_Y);
+
+		CEGUI::System::create( *_gui_renderer );
+		//new CEGUI::System (_gui_renderer);
 
 		// initialise the required dirs for the DefaultResourceProvider
 		CEGUI::DefaultResourceProvider* rp = static_cast<CEGUI::DefaultResourceProvider*>
@@ -104,11 +112,12 @@ void GuiHandler::Initialize(int screen_size_X, int screen_size_Y, bool ServerOn,
 		CEGUI::ScriptModule::setDefaultResourceGroup("lua_scripts");
 
 
-		// load in the scheme file, which auto-loads the TaharezLook imageset
-		CEGUI::SchemeManager::getSingleton().loadScheme( "TaharezLook.scheme" );
 
-		if(! CEGUI::FontManager::getSingleton().isFontPresent( "abbey_m1-9" ) )
-		  CEGUI::FontManager::getSingleton().createFont( "abbey_m1-9.font" );
+		// load in the scheme file, which auto-loads the TaharezLook imageset
+		CEGUI::SchemeManager::getSingleton().create( "TaharezLook.scheme" );
+
+		//! load font file
+		CEGUI::FontManager::getSingleton().create( "abbey_m1-9.font" );
 
 		ReloadFontSize();
 
@@ -116,19 +125,163 @@ void GuiHandler::Initialize(int screen_size_X, int screen_size_Y, bool ServerOn,
 		CEGUI::System::getSingleton().setDefaultTooltip( "TaharezLook/Tooltip" );
 
 		// Load the Imageset that has the pictures for our button.
-		CEGUI::ImagesetManager::getSingleton().createImageset( "LogoBig.imageset" );
-		CEGUI::ImagesetManager::getSingleton().createImageset( "lbaNetB.imageset" );
-		CEGUI::ImagesetManager::getSingleton().createImageset( "chatbutton.imageset" );
-		CEGUI::ImagesetManager::getSingleton().createImageset( "TeleportButton.imageset" );
-		CEGUI::ImagesetManager::getSingleton().createImageset( "HeadInterface.imageset" );
-		CEGUI::ImagesetManager::getSingleton().createImageset( "optionsbutton.imageset" );
-		CEGUI::ImagesetManager::getSingleton().createImageset( "soundbutton.imageset" );
-		CEGUI::ImagesetManager::getSingleton().createImageset( "changeworldbutton.imageset" );
-		CEGUI::ImagesetManager::getSingleton().createImageset( "quitbutton.imageset" );
-		CEGUI::ImagesetManager::getSingleton().createImageset( "MenuChar.imageset" );
-		CEGUI::ImagesetManager::getSingleton().createImageset( "tunic.imageset" );
-		CEGUI::ImagesetManager::getSingleton().createImageset( "quest.imageset" );
-		CEGUI::ImagesetManager::getSingleton().createImageset( "weapon.imageset" );
+		CEGUI::ImagesetManager::getSingleton().create( "LogoBig.imageset" );
+		CEGUI::ImagesetManager::getSingleton().create( "lbaNetB.imageset" );
+		CEGUI::ImagesetManager::getSingleton().create( "chatbutton.imageset" );
+		CEGUI::ImagesetManager::getSingleton().create( "TeleportButton.imageset" );
+		CEGUI::ImagesetManager::getSingleton().create( "HeadInterface.imageset" );
+		CEGUI::ImagesetManager::getSingleton().create( "optionsbutton.imageset" );
+		CEGUI::ImagesetManager::getSingleton().create( "soundbutton.imageset" );
+		CEGUI::ImagesetManager::getSingleton().create( "changeworldbutton.imageset" );
+		CEGUI::ImagesetManager::getSingleton().create( "quitbutton.imageset" );
+		CEGUI::ImagesetManager::getSingleton().create( "MenuChar.imageset" );
+		CEGUI::ImagesetManager::getSingleton().create( "tunic.imageset" );
+		CEGUI::ImagesetManager::getSingleton().create( "quest.imageset" );
+		CEGUI::ImagesetManager::getSingleton().create( "weapon.imageset" );
+
+		// loading the smileys
+		{
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_biggrin", "smileys/biggrin.png");
+			ims.setAutoScalingEnabled(false);
+			}
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_bloated", "smileys/bloated.png");
+			ims.setAutoScalingEnabled(false);
+			}
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_confused", "smileys/confused.png");
+			ims.setAutoScalingEnabled(false);
+			}
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_cool", "smileys/cool.png");
+			ims.setAutoScalingEnabled(false);
+			}
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_dinofly", "smileys/dinofly.png");
+			ims.setAutoScalingEnabled(false);
+			}
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_eek", "smileys/eek.png");
+			ims.setAutoScalingEnabled(false);
+			}
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_embarrassment", "smileys/embarrassment.png");
+			ims.setAutoScalingEnabled(false);
+			}
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_evil", "smileys/evil.png");
+			ims.setAutoScalingEnabled(false);
+			}
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_evilwink", "smileys/evilwink.png");
+			ims.setAutoScalingEnabled(false);
+			}
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_frown", "smileys/frown.png");
+			ims.setAutoScalingEnabled(false);
+			}
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_funfrock", "smileys/funfrock.png");
+			ims.setAutoScalingEnabled(false);
+			}
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_hmpf", "smileys/hmpf.png");
+			ims.setAutoScalingEnabled(false);
+			}
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_hmz", "smileys/hmz.png");
+			ims.setAutoScalingEnabled(false);
+			}
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_kiss", "smileys/kiss.png");
+			ims.setAutoScalingEnabled(false);
+			}
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_lol", "smileys/lol.png");
+			ims.setAutoScalingEnabled(false);
+			}
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_mad", "smileys/mad.png");
+			ims.setAutoScalingEnabled(false);
+			}
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_proud", "smileys/proud.png");
+			ims.setAutoScalingEnabled(false);
+			}
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_rabibunny", "smileys/rabibunny.png");
+			ims.setAutoScalingEnabled(false);
+			}
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_rolleyes", "smileys/rolleyes.png");
+			ims.setAutoScalingEnabled(false);
+			}
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_sad", "smileys/sad.png");
+			ims.setAutoScalingEnabled(false);
+			}
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_sigh", "smileys/sigh.png");
+			ims.setAutoScalingEnabled(false);
+			}
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_smilie", "smileys/smilie.png");
+			ims.setAutoScalingEnabled(false);
+			}
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_stupid", "smileys/stupid.png");
+			ims.setAutoScalingEnabled(false);
+			}
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_tdown", "smileys/tdown.png");
+			ims.setAutoScalingEnabled(false);
+			}
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_tup", "smileys/tup.png");
+			ims.setAutoScalingEnabled(false);
+			}
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_wink", "smileys/wink.png");
+			ims.setAutoScalingEnabled(false);
+			}
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_zoe", "smileys/zoe.png");
+			ims.setAutoScalingEnabled(false);
+			}
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_zombie", "smileys/zombie.png");
+			ims.setAutoScalingEnabled(false);
+			}
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_tongue", "smileys/tongue.png");
+			ims.setAutoScalingEnabled(false);
+			}
+			
+		}
 	}
 	catch(CEGUI::Exception &ex)
 	{
@@ -163,6 +316,15 @@ void GuiHandler::Initialize(int screen_size_X, int screen_size_Y, bool ServerOn,
 
 
 	SwitchGUI(0);
+
+
+    // clearing this queue actually makes sure it's created(!)
+    _gui_renderer->getDefaultRenderingRoot().clearGeometry(CEGUI::RQ_OVERLAY);
+
+    // subscribe handler to render overlay items
+    //_gui_renderer->getDefaultRenderingRoot().
+    //    subscribeEvent(CEGUI::RenderingSurface::EventRenderQueueStarted,
+    //        CEGUI::Event::Subscriber(&GuiHandler::overlayHandler, this));
 }
 
 
@@ -235,7 +397,10 @@ called when the windows is resized
 ***********************************************************/
 void GuiHandler::Resize(int screen_size_X, int screen_size_Y)
 {
-	_gui_renderer->setDisplaySize(CEGUI::Size((float)screen_size_X, (float)screen_size_Y));
+    CEGUI::System::getSingleton().
+        notifyDisplaySizeChanged(CEGUI::Size((float)screen_size_X,(float)screen_size_Y));
+
+	//_gui_renderer->setDisplaySize(CEGUI::Size((float)screen_size_X, (float)screen_size_Y));
 }
 
 /***********************************************************
@@ -253,12 +418,12 @@ void GuiHandler::restoreTextures()
 {
 	_gui_renderer->restoreTextures();
 
-	CEGUI::Window * root = _guis[_currentGUI]->GetRoot();
-	if(root)
-	{
-		root->hide();
-		root->show();
-	}
+	//CEGUI::Window * root = _guis[_currentGUI]->GetRoot();
+	//if(root)
+	//{
+	//	root->hide();
+	//	root->show();
+	//}
 }
 
 
@@ -304,8 +469,8 @@ void GuiHandler::ReloadFontSize()
 	std::stringstream strs;
 	strs<<"DejaVuSans-"<<fontsize;
 
-	if(!CEGUI::FontManager::getSingleton().isFontPresent( strs.str() ) )
-	  CEGUI::FontManager::getSingleton().createFont( strs.str() + ".font" );
+	//if(!CEGUI::FontManager::getSingleton().isFontPresent( strs.str() ) )
+	  CEGUI::FontManager::getSingleton().create( strs.str() + ".font" );
 
 	CEGUI::System::getSingleton().setDefaultFont( strs.str() );
 }
@@ -359,4 +524,18 @@ void GuiHandler::SetPlayerName(const std::string & name)
 {
 	if(_game_gui)
 		_game_gui->SetPlayerName(name);
+}
+
+
+/***********************************************************
+handle overlay
+***********************************************************/
+bool GuiHandler::overlayHandler(const CEGUI::EventArgs& args)
+{
+    if (static_cast<const CEGUI::RenderQueueEventArgs&>(args).queueID != CEGUI::RQ_OVERLAY)
+        return false;
+
+	//_engine->DrawOverlay();
+
+	return true;
 }
