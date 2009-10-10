@@ -40,3 +40,11 @@ __________________________
 Version 0.56 changes:
 - fixed bugs 0000274 of the bugtracker
 - improved gui by adding a small part for character life and mana view
+
+
+__________________________
+Version 0.57 changes:
+- updated to new CEGUI version 0.7.0
+- added smileys to chatbox
+- added color to chatbox
+- modified marker in chat (bug #0000264)
