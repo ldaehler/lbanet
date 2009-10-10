@@ -12,7 +12,10 @@ module LbaNet
 		string			MapName;		
 		string			Name;
 		bool			DisplayName;
-
+		int			NameR;
+		int			NameG;		
+		int			NameB;
+		
 		// actor coordinates
 		float			X;
 		float			Y;
@@ -29,7 +32,7 @@ module LbaNet
 		float			vX;
 		float			vY;
 		float			vZ;
-		float			vRotation;		
+		float			vRotation;	
 	};
 
 	struct ActorActivationInfo

@@ -52,7 +52,12 @@ public:
     virtual LbaNet::ConnectedL GetConnected(const Ice::Current&);
 
 	//! change status of one player
-    virtual void ChangeStatus(const std::string& Nickname, const std::string& NewStatus, const Ice::Current&);
+    virtual void ChangeStatus(const std::string& Nickname, const std::string& NewStatus, 
+							const Ice::Current&);
+
+	//! change player name display color
+    virtual void ChangeNameColor(const std::string& Nickname, const std::string& Color, 
+									const Ice::Current&);
 
 private:
 	const Ice::CommunicatorPtr& _communicator;

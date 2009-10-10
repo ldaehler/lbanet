@@ -102,10 +102,16 @@ public:
 
 	//! player is dead and reborn
     virtual void PlayerRaisedFromDead(const Ice::Current&);
+	    
+	// change name display color
+	virtual void ChangeNameColor(const std::string& Color, const Ice::Current&);
 
 private:
 	std::string							_userId;
 	Ice::Long							_userNum;
+
+	std::string							_currStatus;
+	std::string							_currColor;
 
 	std::map<std::string, ChatRoomParticipantPrx>	_chat_rooms;
 
@@ -118,6 +124,8 @@ private:
 	const MapManagerPrx					_map_manager;
 
 	std::string							_version;
+
+
 
 	LbaNet::ActorLifeInfo				_lifeinfo;
 };

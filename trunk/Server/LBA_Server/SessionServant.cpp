@@ -34,7 +34,7 @@ SessionServant::SessionServant(const std::string& userId, const RoomManagerPrx& 
 									const ConnectedTrackerPrx& ctracker, const MapManagerPrx& map_manager,
 									std::string	version)
 : _manager(manager), _curr_actor_room(""), _userId(userId), _ctracker(ctracker), _map_manager(map_manager),
-	_userNum(-1), _version(version)
+	_userNum(-1), _version(version), _currColor("FFFFFFFF")
 {
 	_userNum = _ctracker->Connect(_userId);
 
@@ -121,8 +121,21 @@ ActorsParticipantPrx SessionServant::ChangeRoom(		const std::string& newroom,
 	// delete old room pointer
 	if(_curr_actor_room != "")
 	{
+		LbaNet::ActorLifeInfo tmp = _map_manager->LeaveMap(_curr_actor_room, _userNum);
 		current.adapter->remove(_actors_room->ice_getIdentity());
-		_lifeinfo = _map_manager->LeaveMap(_curr_actor_room, _userNum);
+
+		_lifeinfo.CurrentLife = tmp.CurrentLife;
+		if(_lifeinfo.CurrentLife < 0)
+			_lifeinfo.CurrentLife = 0;
+		if(_lifeinfo.CurrentLife > _lifeinfo.MaxLife)
+			_lifeinfo.CurrentLife = _lifeinfo.MaxLife;
+
+		_lifeinfo.CurrentMana= tmp.CurrentMana;
+		if(_lifeinfo.CurrentMana < 0)
+			_lifeinfo.CurrentMana = 0;
+		if(_lifeinfo.CurrentMana > _lifeinfo.MaxMana)
+			_lifeinfo.CurrentMana = _lifeinfo.MaxMana;
+
 		_actors_manager = NULL;
 	}
 
@@ -336,12 +349,37 @@ void SessionServant::ChangeStatus(const std::string& Status, const Ice::Current&
 {
 	try
 	{
+		_currStatus = Status;
 		_ctracker->ChangeStatus(_userId, Status);
 
 		std::map<std::string, ChatRoomParticipantPrx>::iterator worldit = _chat_rooms.find("World");
 		if(worldit != _chat_rooms.end())
 		{
-			worldit->second->Say("info", "#status " + _userId + " " + Status);
+			worldit->second->Say("info", "#status " + _userId + " " + Status + " " + _currColor);
+		}
+	}
+	catch(...)
+	{
+		// Ignore. The ice mediated invocation can throw an
+		// exception on shutdown.
+	}
+}
+
+    
+/***********************************************************
+change name display color
+***********************************************************/
+void SessionServant::ChangeNameColor(const std::string& Color, const Ice::Current&)
+{
+	try
+	{
+		_currColor = Color;
+		_ctracker->ChangeNameColor(_userId, Color);
+
+		std::map<std::string, ChatRoomParticipantPrx>::iterator worldit = _chat_rooms.find("World");
+		if(worldit != _chat_rooms.end())
+		{
+			worldit->second->Say("info", "#status " + _userId + " " + _currStatus + " " + Color);
 		}
 	}
 	catch(...)

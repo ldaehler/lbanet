@@ -7,6 +7,7 @@ module LbaNet
 	{
 		long Id;
 		string Status;
+		string NameColor;
 	};
 
 
@@ -19,6 +20,7 @@ module LbaNet
 		long Connect(string Nickname);
 		void Disconnect(long PlayerId);
 		void ChangeStatus(string Nickname, string NewStatus);
+		void ChangeNameColor(string Nickname, string Color);		
 
 		ConnectedL GetConnected();   
 	};
