@@ -101,6 +101,23 @@ public:
 	void setMaxMana(float x)
 	{_MaxMana = x;}
 
+
+	void SetNameColor(int R, int G, int B)
+	{
+		_nameR = R;
+		_nameG = G;
+		_nameB = B;
+	}
+
+	int GetNameR()
+	{return _nameR;}
+
+	int GetNameG()
+	{return _nameG;}
+
+	int GetNameB()
+	{return _nameB;}
+
 protected:
 	std::string		_Name;
 	bool			_DisplayName;
@@ -109,6 +126,9 @@ protected:
 	float			_CurrentLife;
 	float			_CurrentMana;
 
+	int				_nameR;
+	int				_nameG;
+	int				_nameB;
 
 	// get the place where to draw the text
 	float GetTextHeight();

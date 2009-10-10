@@ -63,3 +63,14 @@ int Player::Process(double tnow, float tdiff)
 	return LivingActor::Process(tnow, tdiff);
 }
 
+
+
+/***********************************************************
+render player directly with no check
+***********************************************************/
+void Player::BlankRender()
+{
+	if(_Renderer)
+		static_cast<CharacterRenderer *>(_Renderer)->BlankRender();
+}
+
