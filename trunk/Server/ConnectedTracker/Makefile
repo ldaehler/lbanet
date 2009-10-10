@@ -1,10 +1,10 @@
 TARGET=connectedtraker
-OBJ=ConnectedTrackerServant.o PermissionsVerifierServant.o SharedData.o main.o
+OBJ=ConnectedTrackerServant.o PermissionsVerifierServant.o SharedData.o DatabaseHandler.o main.o
 
 CC=g++
-INCDIR=-I. -I../infrastructure/include -I/usr/include
-LIBDIR=-L/usr/lib -L../infrastructure/lib
-LIBS=-lIce -lIceStorm -lIceUtil -lGlacier2 -lgenerated
+INCDIR=-I. -I../infrastructure/include -I/usr/include -I/usr/include/mysql -I/usr/local/include/mysql++
+LIBDIR=-L/usr/lib -L../infrastructure/lib -L/usr/local/lib
+LIBS=-lIce -lIceStorm -lIceUtil -lGlacier2 -lgenerated -lmysqlpp -lmysqlclient
 
 
 all: clean depend $(TARGET) install
