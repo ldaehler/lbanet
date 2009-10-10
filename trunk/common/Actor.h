@@ -187,6 +187,9 @@ public:
 	//! called to reload element when resizing screen
 	virtual void Reload();
 
+	//! cleanup
+	virtual void CleanUp();
+
 	//! called on signal
 	virtual bool OnSignal(long SignalNumber){return false;}
 

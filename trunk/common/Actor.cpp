@@ -188,6 +188,17 @@ void Actor::Reload()
 #endif
 }
 
+/***********************************************************
+cleanup
+***********************************************************/
+void Actor::CleanUp()
+{
+#ifndef _LBANET_SERVER_SIDE_
+	if(_Renderer)
+		_Renderer->CleanUp();
+#endif
+}
+
 
 /***********************************************************
 set output signal

@@ -477,4 +477,29 @@ public:
 	float _MaxMana;
 };
 
+
+
+/*
+************************************************************************************************************************
+*                                                  class PlayerNameColorChangedEvent
+*
+*	used to update player life
+************************************************************************************************************************
+*/
+class PlayerNameColorChangedEvent : public GameEvent
+{
+public:
+	//! constructor
+	PlayerNameColorChangedEvent(int R, int G, int B)
+		: _R(R), _G(G), _B(B)
+	{
+		_type = 20;	
+	}
+	
+	int _R;
+	int _G;
+	int _B;
+};
+
+
 #endif

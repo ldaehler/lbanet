@@ -92,7 +92,7 @@ void LivingActor::Render(int RoomCut)
 		strs<<dispname<<" X:"<<_posX<<" Y:"<<_posY<<" Z:"<<_posZ;
 		TextWritter::getInstance()->glPrintText(strs.str(), 0);
 		#else
-		TextWritter::getInstance()->glPrintText(dispname, 0);
+		TextWritter::getInstance()->glPrintText(dispname, 0, _nameR, _nameG, _nameB);
 		#endif
 
 
@@ -121,7 +121,7 @@ void LivingActor::Render(int RoomCut)
 		strs<<dispname<<" X:"<<_posX<<" Y:"<<_posY<<" Z:"<<_posZ;
 		TextWritter::getInstance()->glPrintText(strs.str(), 0);
 		#else
-		TextWritter::getInstance()->glPrintText(dispname, 0);
+		TextWritter::getInstance()->glPrintText(dispname, 0, _nameR, _nameG, _nameB);
 		#endif
 
 		glPopMatrix();
