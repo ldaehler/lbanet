@@ -23,42 +23,50 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#include "PermissionsVerifierServant.h"
+#include "DatabaseHandler.h"
 
 
 /***********************************************************
 constructor
 ***********************************************************/
-PermissionsVerifierServant::PermissionsVerifierServant(SharedData * shd, 
-									const std::string db, const std::string server,
+DatabaseHandler::DatabaseHandler(const std::string db, const std::string server,
 									const std::string user, const std::string password)
-:_shd(shd), _dbh(db, server, user, password)
+				: _mysqlH(false), _connected(false)
 {
-
+	//if (_mysqlH.connect(db.c_str(), server.c_str(), user.c_str(), password.c_str())) 
+	//{
+	//	_connected = true;
+	//}
+	//else
+	//{
+	//	std::cerr << "DB connection failed: " << _mysqlH.error() << std::endl;
+	//	_connected = false;
+	//}
 }
 
 /***********************************************************
-check user permission
+check login
+return -1 if login incorrect - else return the user id
 ***********************************************************/
-bool PermissionsVerifierServant::checkPermissions(const std::string& userId, const std::string& passwd,
-												  std::string& reason, const Ice::Current&) const
+long DatabaseHandler::CheckLogin(const std::string & PlayerName, const std::string & Password) const
 {
-	if(userId == "")
-	{
-		reason = "Please provide username.";
-		return false;
-	}
+	//if(!_connected)
+	//	return -1;
 
-	long id = _dbh.CheckLogin(userId, passwd);
-	if(id < 0)
-	{
-		reason = "Unknown id/password.";
-		return false;
-	}
+	Lock sync(*this);
 
-	bool res = _shd->TryLogin(userId, id);
-	if(!res)
-		reason = "Username already logged in.";
+	static long id = 1;
+	++id;
+	return id;
 
-	return res;
+	//mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
+	//query << "SELECT id FROM users WHERE status = '1' AND username = '"<<PlayerName;
+	//query << "' AND password = '"<<Password<<"'";
+	//if (mysqlpp::StoreQueryResult res = query.store()) 
+	//{
+	//	if(res.size() > 0)
+	//		return res[0][0];
+	//}
+
+	//return -1;
 }

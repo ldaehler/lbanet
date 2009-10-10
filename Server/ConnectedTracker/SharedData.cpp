@@ -30,7 +30,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 constructor
 ***********************************************************/
 SharedData::SharedData()
-: m_current_id(1)
 {
 
 }
@@ -41,16 +40,16 @@ get player id
 Ice::Long SharedData::GetId(const std::string & PlayerName)
 {
 	Lock sync(*this);
-	LbaNet::ConnectedL::iterator it = m_connected_users.find(PlayerName);
-	if(it != m_connected_users.end())
+	std::map<std::string, long>::iterator it = m_id_map.find(PlayerName);
+	if(it == m_id_map.end())
 		return -1;
 
 	LbaNet::PlayerInfo pi;
-	pi.Id = m_current_id;
+	pi.Id = it->second;
+	pi.NameColor = "FFFFFFFF";
 	m_connected_users[PlayerName] = pi;
-	++m_current_id;
 
-	std::cout<<IceUtil::Time::now().toDateTime()<<": "<<PlayerName<<" connected"<<std::endl;
+	std::cout<<IceUtil::Time::now().toDateTime()<<": "<<PlayerName<<" connected with id "<<pi.Id<<std::endl;
 
 	return pi.Id;
 }
@@ -59,13 +58,14 @@ Ice::Long SharedData::GetId(const std::string & PlayerName)
 check if user already logged in
 if not log him in
 ***********************************************************/
-bool SharedData::TryLogin(const std::string & PlayerName)
+bool SharedData::TryLogin(const std::string & PlayerName, long id)
 {
 	Lock sync(*this);
 	LbaNet::ConnectedL::iterator it = m_connected_users.find(PlayerName);
 	if(it != m_connected_users.end())
 		return false;
 
+	m_id_map[PlayerName] = id;
 
 	return true;
 }
@@ -112,4 +112,16 @@ void SharedData::ChangeStatus(const std::string& Nickname, const std::string& Ne
 	LbaNet::ConnectedL::iterator it = m_connected_users.find(Nickname);
 	if(it != m_connected_users.end())
 		it->second.Status = NewStatus;
+}
+
+
+/***********************************************************
+change player name display color
+***********************************************************/
+void SharedData::ChangeNameColor(const std::string& Nickname, const std::string& Color)
+{
+	Lock sync(*this);
+	LbaNet::ConnectedL::iterator it = m_connected_users.find(Nickname);
+	if(it != m_connected_users.end())
+		it->second.NameColor = Color;
 }

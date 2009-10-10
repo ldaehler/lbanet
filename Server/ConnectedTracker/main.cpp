@@ -41,7 +41,11 @@ public:
 		Ice::PropertiesPtr prop = communicator()->getProperties();
 		_adapter = communicator()->createObjectAdapter(prop->getProperty("IdentityAdapter"));
 		_adapter->add(new ConnectedTrackerServant(communicator(), &shd), communicator()->stringToIdentity(prop->getProperty("ConnectedServantName")));
-		_adapter->add(new PermissionsVerifierServant(&shd), communicator()->stringToIdentity(prop->getProperty("VerifierServantName")));
+		_adapter->add(new PermissionsVerifierServant(&shd, prop->getProperty("dbname"), 
+														prop->getProperty("dbserver"), 
+														prop->getProperty("dbuser"), 
+														prop->getProperty("dbpassword")), 
+														communicator()->stringToIdentity(prop->getProperty("VerifierServantName")));
 		_adapter->activate();
 
 		communicator()->waitForShutdown();

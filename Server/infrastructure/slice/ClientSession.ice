@@ -28,6 +28,8 @@ module LbaNet
 	    
 	    void ChangeStatus(string Status);
 	    
+	    void ChangeNameColor(string Color);
+	    
 	    long GetTime();
 	    
 	    string GetVersion();

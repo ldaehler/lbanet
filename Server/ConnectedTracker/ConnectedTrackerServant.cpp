@@ -67,5 +67,15 @@ change status of one player
 void ConnectedTrackerServant::ChangeStatus(const std::string& Nickname, 
 												   const std::string& NewStatus, const Ice::Current&)
 {
-	return _shd->ChangeStatus(Nickname, NewStatus);
+	_shd->ChangeStatus(Nickname, NewStatus);
+}
+
+
+/***********************************************************
+change player name display color
+***********************************************************/
+void ConnectedTrackerServant::ChangeNameColor(const std::string& Nickname, const std::string& Color, 
+												const Ice::Current&)
+{
+	_shd->ChangeNameColor(Nickname, Color);
 }
