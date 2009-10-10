@@ -19,7 +19,6 @@ while($row = mysql_fetch_array($result))
 	if ($queryString == $row["activationkey"])
 	{
 		$login =  $row["username"];
-		$pass =  $row["password"];
 		$to =  $row["email"];
 
 		echo "Congratulations! $login is now the proud new owner of an Lbanet account. <br />";
@@ -46,7 +45,7 @@ while($row = mysql_fetch_array($result))
 		$mail->AddReplyTo ("noreply@lbanet.com", "Lbanet");
 		$mail->SetFrom("noreply@lbanet.com", "Lbanet");
 		$mail->Subject = "Lbanet account confirmation";
-		$mail->Body = "Welcome to Lbanet!<br /><br />You have successfully registered to Lbanet. Your account information:<br />Login: \"$login\"<br /> Password: \"$pass\"<br /><br />Regards,<br /> Lbanet Team";
+		$mail->Body = "Welcome to Lbanet!<br /><br />You have successfully registered to Lbanet. Your account is now activated and you can use it to play.<br /><br />Regards,<br /> Lbanet Team";
 		$mail->AddAddress ("$to", "$login");
 		$mail->IsHTML (true);
 		if(!$mail->Send())

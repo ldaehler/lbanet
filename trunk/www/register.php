@@ -9,8 +9,8 @@ mysql_select_db("lbanet") or die(mysql_error());
 	if(isset($_POST['submit']))
 	{
 		$username = trim(mysql_real_escape_string($_POST['username']));
-		$password = trim(mysql_real_escape_string($_POST['password']));
-		$password2 = trim(mysql_real_escape_string($_POST['password2']));
+		$password = $_POST['password'];
+		$password2 = $_POST['password2'];
 		$email = trim(mysql_real_escape_string($_POST['email']));
 
 
@@ -68,8 +68,9 @@ mysql_select_db("lbanet") or die(mysql_error());
 
 		if(!isset($error))
 		{
+			$md5pass = md5($password);
 			$activationKey =  mt_rand() . mt_rand() . mt_rand() . mt_rand() . mt_rand();
-			$sql="INSERT INTO users (username, password, email, activationkey, status, creationdate) VALUES ('$username', '$password', '$email', '$activationKey', '0', NOW())";
+			$sql="INSERT INTO users (username, password, email, activationkey, status, creationdate) VALUES ('$username', '$md5pass', '$email', '$activationKey', '0', NOW())";
 
 			if (!mysql_query($sql))
 			{
@@ -91,7 +92,7 @@ mysql_select_db("lbanet") or die(mysql_error());
 			$mail->AddReplyTo ("noreply@lbanet.com", "Lbanet");
 			$mail->SetFrom("noreply@lbanet.com", "Lbanet");
 			$mail->Subject = "Lbanet Registration";
-			$mail->Body = "Welcome to Lbanet!<br /><br />You, or someone using your email address, has registered to Lbanet. You can complete registration by clicking the following link:<br /> http://sd-1287.dedibox.fr/~vdelage/verifyemail.php?$activationKey <br /><br />If this is an error, ignore this email and you will be removed from our database after 24h.<br /><br />Regards,<br /> Lbanet Team";
+			$mail->Body = "Welcome to Lbanet!<br /><br />You, or someone using your email address, has registered to Lbanet.<br />Your account information:<br />Login: \"$username\"<br /> Password: \"$password2\" <br /><br />You can complete registration by clicking the following link:<br /> http://127.0.0.1/verifyemail.php?$activationKey <br /><br />If this is an error, ignore this email and you will be removed from our database after 24h.<br /><br />Regards,<br /> Lbanet Team";
 			$mail->AddAddress ("$email", "$username");
 			$mail->IsHTML (true);
 			if(!$mail->Send())
