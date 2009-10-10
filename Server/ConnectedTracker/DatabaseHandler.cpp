@@ -31,7 +31,7 @@ constructor
 ***********************************************************/
 DatabaseHandler::DatabaseHandler(const std::string db, const std::string server,
 									const std::string user, const std::string password)
-				: _connected(false), //_mysqlH(false)
+				: _connected(false)//, _mysqlH(false)
 {
 	//if (_mysqlH.connect(db.c_str(), server.c_str(), user.c_str(), password.c_str()))
 	//{
