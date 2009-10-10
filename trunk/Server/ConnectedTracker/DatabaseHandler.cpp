@@ -31,9 +31,9 @@ constructor
 ***********************************************************/
 DatabaseHandler::DatabaseHandler(const std::string db, const std::string server,
 									const std::string user, const std::string password)
-				: _mysqlH(false), _connected(false)
+				: _connected(false), //_mysqlH(false)
 {
-	//if (_mysqlH.connect(db.c_str(), server.c_str(), user.c_str(), password.c_str())) 
+	//if (_mysqlH.connect(db.c_str(), server.c_str(), user.c_str(), password.c_str()))
 	//{
 	//	_connected = true;
 	//}
@@ -62,7 +62,7 @@ long DatabaseHandler::CheckLogin(const std::string & PlayerName, const std::stri
 	//mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
 	//query << "SELECT id FROM users WHERE status = '1' AND username = '"<<PlayerName;
 	//query << "' AND password = '"<<Password<<"'";
-	//if (mysqlpp::StoreQueryResult res = query.store()) 
+	//if (mysqlpp::StoreQueryResult res = query.store())
 	//{
 	//	if(res.size() > 0)
 	//		return res[0][0];
