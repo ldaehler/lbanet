@@ -117,12 +117,18 @@ ChatBox::ChatBox(GameGUI * gamgui)
 	_channels.push_back("IRC");
 
 	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":)", "[colour='FFFFFFFF'][image='set:sm_smilie image:full_image']"));
-	_replace_string_map.push_back(std::make_pair<std::string, std::string>(";)", "[colour='FFFFFFFF'][image='set:sm_evilwink image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":-)", "[colour='FFFFFFFF'][image='set:sm_smilie image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(";)", "[colour='FFFFFFFF'][image='set:sm_wink image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(";-)", "[colour='FFFFFFFF'][image='set:sm_wink image:full_image']"));	
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":/", "[colour='FFFFFFFF'][image='set:sm_hmz image:full_image']"));
 	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":-/", "[colour='FFFFFFFF'][image='set:sm_hmz image:full_image']"));
 	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":p", "[colour='FFFFFFFF'][image='set:sm_tongue image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":-p", "[colour='FFFFFFFF'][image='set:sm_tongue image:full_image']"));
 	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":P", "[colour='FFFFFFFF'][image='set:sm_tongue image:full_image']"));
 	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":(", "[colour='FFFFFFFF'][image='set:sm_frown image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":-(", "[colour='FFFFFFFF'][image='set:sm_frown image:full_image']"));	
 	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":D", "[colour='FFFFFFFF'][image='set:sm_biggrin image:full_image']"));
+	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":-D", "[colour='FFFFFFFF'][image='set:sm_biggrin image:full_image']"));	
 	_replace_string_map.push_back(std::make_pair<std::string, std::string>("|D", "[colour='FFFFFFFF'][image='set:sm_proud image:full_image']"));
 	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":o", "[colour='FFFFFFFF'][image='set:sm_embarrassment image:full_image']"));
 	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":x", "[colour='FFFFFFFF'][image='set:sm_kiss image:full_image']"));

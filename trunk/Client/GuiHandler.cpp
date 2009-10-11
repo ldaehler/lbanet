@@ -319,7 +319,7 @@ void GuiHandler::Initialize(int screen_size_X, int screen_size_Y, bool ServerOn,
 
 
     // clearing this queue actually makes sure it's created(!)
-    _gui_renderer->getDefaultRenderingRoot().clearGeometry(CEGUI::RQ_OVERLAY);
+    //_gui_renderer->getDefaultRenderingRoot().clearGeometry(CEGUI::RQ_OVERLAY);
 
     // subscribe handler to render overlay items
     //_gui_renderer->getDefaultRenderingRoot().

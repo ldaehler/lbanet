@@ -199,7 +199,10 @@ process function
 bool LbaNetEngine::Process(void)
 {
 	//let the gui process
+	//if(m_currentstate != EGaming)
+	//{
 	m_guiHandler.process();
+	//}
 
 	//check for game events
 	HandleGameEvents();
@@ -317,8 +320,11 @@ void LbaNetEngine::Redraw()
 									m_screen_size_X, m_screen_size_Y, 10, 10);
 	}
 
-	m_guiHandler.Redraw();
-	DrawOverlay();
+	//if(m_currentstate != EGaming)
+	//{
+		m_guiHandler.Redraw();
+		DrawOverlay();
+	//}
 
 	//if(m_currentstate == EGaming)
 	//{
@@ -653,7 +659,7 @@ void LbaNetEngine::HandleGameEvents()
 					if(m_currentstate == EGaming)
 					{
 						TeleportAnyEvent * evcbe = static_cast<TeleportAnyEvent *> (*it);
-						m_lbaNetModel.ChangeMap(evcbe->_NewMap, evcbe->_X, evcbe->_Y, evcbe->_Z);
+						m_lbaNetModel.ChangeMap(evcbe->_NewMap, evcbe->_X, evcbe->_Y, evcbe->_Z, 0);
 					}
 				}
 			break;
@@ -694,7 +700,11 @@ void LbaNetEngine::HandleGameEvents()
 					_MaxLife = evcs->_MaxLife;
 					_MaxMana = evcs->_MaxMana;
 					_CurrentLife = evcs->_CurLife;
+					if(_CurrentLife < 0)
+						_CurrentLife = 0;
 					_CurrentMana = evcs->_CurMana;
+					if(_CurrentMana < 0)
+						_CurrentMana = 0;
 				}
 			break;
 

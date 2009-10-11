@@ -84,7 +84,7 @@ public:
 					float Xoffset=0, float Yoffset=0, float Zoffset=0);
 
 	// change the map
-	void ChangeMap(const std::string & NewMap, float X, float Y, float Z);
+	void ChangeMap(const std::string & NewMap, float X, float Y, float Z, float R);
 
 	// clean up all loaded world data in memory
 	void CleanupWorld();
@@ -209,6 +209,7 @@ private:
 	float					m_main_actor_starting_X;
 	float					m_main_actor_starting_Y;
 	float					m_main_actor_starting_Z;
+	float					m_main_actor_starting_Rotation;
 	int						m_current_main_state;
 	int						m_current_main_body;
 	int						m_current_main_body_color;

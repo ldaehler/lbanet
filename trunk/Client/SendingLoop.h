@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <ActorInfo.h>
 #include <ChatInfo.h>
 #include <ClientSession.h>
+#include "ThreadSafeWorkpile.h"
 
 class GameGUI;
 
@@ -81,6 +82,13 @@ public:
 	// player has been raised
 	void PlayerRaised();
 
+	// player has changed world
+	LbaNet::PlayerPosition ChangeWorld(const std::string& WorldName);
+
+	// player update his current position in the world
+	void UpdatePositionInWorld(const LbaNet::PlayerPosition& Position);
+
+
 private:
 
     const Ice::ObjectAdapterPtr							_adapter;	// ice adapter
@@ -117,7 +125,7 @@ public:
 
 protected:
 	// when the user change room
-	bool ChangeMap(const std::string & NewWorldName, const std::string & NewMapName);
+	bool ChangeMap(const ThreadSafeWorkpile::MapChangedInformation & NewMap);
 
 	// when the engine update information
 	void UpdateActorInfo(const LbaNet::ActorInfo & MainInfo);
