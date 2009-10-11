@@ -47,7 +47,8 @@ class MapHandler
 public:
 	//! constructor
     MapHandler(const Ice::CommunicatorPtr& communicator, const Ice::ObjectAdapterPtr & adapter,
-					const std::string mapName, MapManagerServant *	stopper);
+					const std::string mapName, MapManagerServant *	stopper,
+										const std::map<long, Actor *> & actors);
 
 	//! destructor
     ~MapHandler();

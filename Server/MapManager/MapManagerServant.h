@@ -64,6 +64,8 @@ private:
 	Ice::ObjectAdapterPtr				_adapter;
 
 	std::vector<std::string>			_tostop;
+
+	std::map<std::string, std::map<long, Actor *> > _actors_maps;
 };
 
 #endif

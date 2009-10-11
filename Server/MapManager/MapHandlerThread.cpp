@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "MapHandlerThread.h"
 #include "InfosReceiverServant.h"
 #include "ActorReceiverServant.h"
-#include "MapInfoXmlReader.h"
+
 #include "ServerSignaler.h"
 #include "MapManagerServant.h"
 #include "HurtArea.h"
@@ -35,30 +35,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	Constructor
 ***********************************************************/
 MapHandlerThread::MapHandlerThread(SharedData	* SD, ActorsObserverPrx	publisher,
-										const std::string &mapName, MapManagerServant *	stopper)
-: _SD(SD), _publisher(publisher), _stopping(false), _mapName(mapName), _stopper(stopper)
+										const std::string &mapName, MapManagerServant *	stopper,
+										const std::map<long, Actor *> & actors)
+: _SD(SD), _publisher(publisher), _stopping(false), _mapName(mapName), 
+	_stopper(stopper), _actors(actors)
 {
 	_signaler = new ServerSignaler(this);
-
-
-	std::string worldname = mapName.substr(0, mapName.find("_"));
-	std::string mapS = mapName.substr(mapName.find("_")+1);
-	mapS = mapS.substr(0, mapS.find_last_of("_"));
-	WorldInfo wi;
-	MapInfoXmlReader::LoadWorld("Data/" + worldname + ".xml", wi);
-	std::string localfile = wi.Maps[mapS].Files["LocalActors"];
-	std::string externalfile = wi.Maps[mapS].Files["ExternalActors"];
-
-	std::map<long, SpriteInfo> tmp;
-	std::map<long, ModelInfo> tmp2;
-	MapInfoXmlReader::LoadActors("Data/" + localfile, tmp, tmp, tmp2, _actors, _signaler);
-
-	std::map<long, Actor *> map;
-	MapInfoXmlReader::LoadActors("Data/" + externalfile, tmp, tmp, tmp2, map, _signaler);
-	std::map<long, Actor *>::iterator it = map.begin();
-	std::map<long, Actor *>::iterator end = map.end();
-	for(;it != end; ++it)
-		_actors[it->first] = it->second;
+	std::map<long, Actor *>::iterator it =	_actors.begin();
+	std::map<long, Actor *>::iterator end =	_actors.end();
+	for(; it != end; ++it)
+		it->second->SetSignaler(_signaler);
 }
 
 

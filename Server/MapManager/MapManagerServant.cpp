@@ -24,14 +24,48 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include "MapManagerServant.h"
-
+#include "MapInfoXmlReader.h"
 
 //! constructor
 MapManagerServant::MapManagerServant(const Ice::CommunicatorPtr& communicator,
 									 const Ice::ObjectAdapterPtr & adapter)
 : _communicator(communicator), _adapter(adapter)
 {
+	std::vector<std::string> worlds;
+	worlds.push_back("GiantCitadelWorld");
+	worlds.push_back("GiantPrincipalWorld");
+	worlds.push_back("Lba1Expanded");
+	worlds.push_back("Lba1OriginalWorld");
 
+	for(size_t i=0; i<worlds.size(); ++i)
+	{
+		std::string worldname = worlds[i];
+
+		WorldInfo wi;
+		MapInfoXmlReader::LoadWorld("Data/" + worldname + ".xml", wi);
+		std::map<std::string, MapInfo>::iterator itmap = wi.Maps.begin();
+		for(;itmap != wi.Maps.end(); ++itmap)
+		{
+			std::string mapS = itmap->first;
+			std::string localfile = itmap->second.Files["LocalActors"];
+			std::string externalfile = itmap->second.Files["ExternalActors"];
+
+			std::map<long, Actor *>	tmpactors;
+
+			std::map<long, SpriteInfo> tmp;
+			std::map<long, ModelInfo> tmp2;
+			MapInfoXmlReader::LoadActors("Data/" + localfile, tmp, tmp, tmp2, tmpactors, NULL);
+
+			std::map<long, Actor *> map;
+			MapInfoXmlReader::LoadActors("Data/" + externalfile, tmp, tmp, tmp2, map, NULL);
+			std::map<long, Actor *>::iterator it = map.begin();
+			std::map<long, Actor *>::iterator end = map.end();
+			for(;it != end; ++it)
+				tmpactors[it->first] = it->second;
+
+			_actors_maps[worldname + "_" + mapS + "_Actors"] = tmpactors;
+		}
+	}
 }
 
 //! destructor
@@ -61,7 +95,7 @@ LbaNet::MapObserverPrx MapManagerServant::JoinMap(const std::string& mapName,
 		}
 		else
 		{
-			MH = new MapHandler(_communicator, _adapter, mapName, this);
+			MH = new MapHandler(_communicator, _adapter, mapName, this, _actors_maps[mapName]);
 			_running_maps[mapName] = MH;
 		}
 	}

@@ -34,13 +34,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /***********************************************************
 	Constructor
 ***********************************************************/
-MapHandler::MapHandler(const Ice::CommunicatorPtr& communicator, const Ice::ObjectAdapterPtr & adapter,
-								const std::string mapName, MapManagerServant *	stopper)
+MapHandler::MapHandler(const Ice::CommunicatorPtr& communicator, 
+					   const Ice::ObjectAdapterPtr & adapter,
+						const std::string mapName, 
+						MapManagerServant *	stopper,
+						const std::map<long, Actor *> & actors)
 : _communicator(communicator), _adapter(adapter), _mapName(mapName), _publisher(NULL), _mapthread(NULL)
 {
 	IcestormSubscribe();
 
-	_mapthread = new MapHandlerThread(&_SD, _publisher, mapName, stopper);
+	_mapthread = new MapHandlerThread(&_SD, _publisher, mapName, stopper, actors);
 	_threadC = _mapthread->start();
 
 	Ice::ObjectPrx proxy = _adapter->addWithUUID(new ActorReceiverServant(&_SD, _mapthread));
@@ -92,7 +95,7 @@ LbaNet::MapObserverPrx MapHandler::GetMapProxy()
 void MapHandler::Join(Ice::Long PlayerId, const ActorLifeInfo & ali)
 {
 	_SD.Join(PlayerId, ali);
-	std::cout<<IceUtil::Time::now().toDateTime()<<": player id "<<PlayerId<<" joined map "<<_mapName<<_mapName<<std::endl;
+	std::cout<<IceUtil::Time::now().toDateTime()<<": player id "<<PlayerId<<" joined map "<<_mapName<<std::endl;
 }
 
 /***********************************************************
@@ -103,7 +106,7 @@ ActorLifeInfo MapHandler::Leave(Ice::Long PlayerId)
 	ActorLifeInfo res = _mapthread->GetPlayerLife(PlayerId);
 
 	_SD.Leave(PlayerId);
-	std::cout<<IceUtil::Time::now().toDateTime()<<": player id "<<PlayerId<<" left map "<<_mapName<<_mapName<<std::endl;
+	std::cout<<IceUtil::Time::now().toDateTime()<<": player id "<<PlayerId<<" left map "<<_mapName<<std::endl;
 
 	return res;
 }
