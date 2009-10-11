@@ -32,9 +32,9 @@ constructor
 ***********************************************************/
 SessionServant::SessionServant(const std::string& userId, const RoomManagerPrx& manager,
 									const ConnectedTrackerPrx& ctracker, const MapManagerPrx& map_manager,
-									std::string	version)
+									std::string	version, DatabaseHandler & dbh)
 : _manager(manager), _curr_actor_room(""), _userId(userId), _ctracker(ctracker), _map_manager(map_manager),
-	_userNum(-1), _version(version), _currColor("FFFFFFFF")
+	_userNum(-1), _version(version), _currColor("FFFFFFFF"), _dbh(dbh)
 {
 	_userNum = _ctracker->Connect(_userId);
 
@@ -163,6 +163,7 @@ void SessionServant::destroy(const Ice::Current& current)
     Lock sync(*this);
 	try
 	{
+		_dbh.QuitWorld(_currWorldName, _userNum);
 		_ctracker->Disconnect(_userNum);
 	}
 	catch(...)
@@ -239,6 +240,7 @@ get the list of people connected
 ***********************************************************/
 LbaNet::ConnectedL SessionServant::GetConnected(Ice::Long & ownid, const Ice::Current&)
 {
+    Lock sync(*this);
 	ownid = _userNum;
 	return _ctracker->GetConnected();
 }
@@ -347,6 +349,7 @@ change player status
 ***********************************************************/
 void SessionServant::ChangeStatus(const std::string& Status, const Ice::Current&)
 {
+    Lock sync(*this);
 	try
 	{
 		_currStatus = Status;
@@ -371,6 +374,7 @@ change name display color
 ***********************************************************/
 void SessionServant::ChangeNameColor(const std::string& Color, const Ice::Current&)
 {
+    Lock sync(*this);
 	try
 	{
 		_currColor = Color;
@@ -395,6 +399,7 @@ get server version
 ***********************************************************/
 std::string SessionServant::GetVersion(const Ice::Current&)
 {
+    Lock sync(*this);
 	return _version;
 }
 
@@ -403,7 +408,8 @@ std::string SessionServant::GetVersion(const Ice::Current&)
 return the current life state
 ***********************************************************/
 LbaNet::ActorLifeInfo SessionServant::GetLifeInfo(const Ice::Current&)
-{
+{    
+	Lock sync(*this);
 	return _lifeinfo;
 }
 
@@ -412,6 +418,7 @@ called when actor have been hurt
 ***********************************************************/
 void SessionServant::GotHurtByActor(Ice::Long hurtingactorid, const Ice::Current&)
 {
+	Lock sync(*this);
 	try
 	{
 		if(_actors_manager)
@@ -432,6 +439,7 @@ called when actor have been hurt
 ***********************************************************/
 void SessionServant::GotHurtByFalling(Ice::Float fallingdistance, const Ice::Current&)
 {
+	Lock sync(*this);
 	try
 	{
 		if(_actors_manager)
@@ -453,6 +461,7 @@ player is dead and reborn
 ***********************************************************/
 void SessionServant::PlayerRaisedFromDead(const Ice::Current&)
 {
+	Lock sync(*this);
 	try
 	{
 		if(_actors_manager)
@@ -466,4 +475,27 @@ void SessionServant::PlayerRaisedFromDead(const Ice::Current&)
     {
 		std::cout<<"SessionServant - Unknown exception during GotHurtByFalling"<<std::endl;
     }
+}
+
+
+/***********************************************************
+player has changed world
+***********************************************************/
+LbaNet::PlayerPosition SessionServant::ChangeWorld(const std::string& WorldName, 
+														   const Ice::Current&)
+{
+    Lock sync(*this);
+	_dbh.QuitWorld(_currWorldName, _userNum);
+	_currWorldName = WorldName;
+	return _dbh.ChangeWorld(WorldName, _userNum);
+}
+
+/***********************************************************
+player update his current position in the world
+***********************************************************/
+void SessionServant::UpdatePositionInWorld(const LbaNet::PlayerPosition& Position, 
+												   const Ice::Current&)
+{
+    Lock sync(*this);
+	_dbh.UpdatePositionInWorld(Position, _currWorldName, _userNum);
 }

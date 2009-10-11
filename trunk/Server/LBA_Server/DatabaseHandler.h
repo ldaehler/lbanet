@@ -34,6 +34,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <mysql++.h>
 
+#include <ClientSession.h>
+
 
 /***********************************************************************
  * Module:  DatabaseHandler.h
@@ -48,14 +50,15 @@ public:
 	DatabaseHandler(const std::string db, const std::string server,
 						const std::string user, const std::string password);
 
-	//! check login
-	//! return -1 if login incorrect - else return the user id
-	long CheckLogin(const std::string & PlayerName, const std::string & Password) const;
+	// player has changed world
+	LbaNet::PlayerPosition ChangeWorld(const std::string& NewWorldName, long PlayerId);
 
+	// player update his current position in the world
+	void UpdatePositionInWorld(const LbaNet::PlayerPosition& Position, 
+								const std::string& WorldName,long PlayerId);
 
-	//! set the user as disconnected in the database
-	void DisconnectUser(long Id);
-
+	// quit current world
+	void QuitWorld(const std::string& LastWorldName,long PlayerId);
 
 protected:
 	DatabaseHandler(const DatabaseHandler &);

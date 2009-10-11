@@ -35,15 +35,14 @@ class PermissionsVerifierServant : public Glacier2::PermissionsVerifier
 {
 public:
 	//! constructor
-	PermissionsVerifierServant(SharedData * shd, const std::string db, const std::string server,
-									const std::string user, const std::string password);
+	PermissionsVerifierServant(SharedData * shd, DatabaseHandler &dbh);
 
 	virtual bool checkPermissions(const std::string& userId, const std::string& passwd, std::string& reason,
 									const Ice::Current&) const;
 
 private:
 	SharedData * _shd;
-	DatabaseHandler _dbh;
+	DatabaseHandler &_dbh;
 };
 
 #endif

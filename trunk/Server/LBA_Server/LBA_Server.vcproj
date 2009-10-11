@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;c:\Ice-3.3.1-VC90\include&quot;;..\infrastructure\include"
+				AdditionalIncludeDirectories="&quot;c:\Ice-3.3.1-VC90\include&quot;;..\infrastructure\include;&quot;..\MySQL++\include&quot;;&quot;C:\Program Files\MySQL\MySQL Server 5.0\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,9 +61,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="iced.lib iceutild.lib icestormd.lib glacier2d.lib iceboxd.lib"
+				AdditionalDependencies="iced.lib iceutild.lib icestormd.lib glacier2d.lib iceboxd.lib mysqlpp_d.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="c:\Ice-3.3.1-VC90\lib"
+				AdditionalLibraryDirectories="&quot;c:\Ice-3.3.1-VC90\lib&quot;;&quot;..\MySQL++\lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -117,7 +117,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;c:\Ice-3.3.1-VC90\include&quot;;..\infrastructure\include"
+				AdditionalIncludeDirectories="&quot;c:\Ice-3.3.1-VC90\include&quot;;..\infrastructure\include;&quot;..\MySQL++\include&quot;;&quot;C:\Program Files\MySQL\MySQL Server 5.0\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -136,10 +136,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ice.lib iceutil.lib icestorm.lib glacier2.lib icebox.lib"
+				AdditionalDependencies="ice.lib iceutil.lib icestorm.lib glacier2.lib icebox.lib mysqlpp.lib"
 				OutputFile="$(OutDir)\lbaserver.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="c:\Ice-3.3.1-VC90\lib"
+				AdditionalLibraryDirectories="&quot;c:\Ice-3.3.1-VC90\lib&quot;;&quot;..\MySQL++\lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -207,6 +207,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DatabaseHandler.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\main.cpp"
 				>
 			</File>
@@ -242,6 +246,10 @@
 			</File>
 			<File
 				RelativePath=".\ClientSessionManagerServant.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DatabaseHandler.h"
 				>
 			</File>
 			<File

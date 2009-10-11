@@ -29,10 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /***********************************************************
 constructor
 ***********************************************************/
-PermissionsVerifierServant::PermissionsVerifierServant(SharedData * shd, 
-									const std::string db, const std::string server,
-									const std::string user, const std::string password)
-:_shd(shd), _dbh(db, server, user, password)
+PermissionsVerifierServant::PermissionsVerifierServant(SharedData * shd, DatabaseHandler &dbh)
+:_shd(shd), _dbh(dbh)
 {
 
 }

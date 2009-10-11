@@ -29,7 +29,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <IceUtil/UUID.h>
 
 
-ClientSessionManagerServant::ClientSessionManagerServant(const Ice::CommunicatorPtr& communicator)
+ClientSessionManagerServant::ClientSessionManagerServant(const Ice::CommunicatorPtr& communicator,
+															DatabaseHandler & dbh)
+															: _dbh(dbh)
 {
 	try
 	{
@@ -90,5 +92,5 @@ Glacier2::SessionPrx ClientSessionManagerServant::create(	const std::string & us
     id.category = "_" + userId;
     id.name = IceUtil::generateUUID();
     return Glacier2::SessionPrx::uncheckedCast(current.adapter->add
-							(new SessionServant(userId, _manager, _ctracker, _map_manager, _version), id));
+							(new SessionServant(userId, _manager, _ctracker, _map_manager, _version, _dbh), id));
 }
