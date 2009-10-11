@@ -47,7 +47,8 @@ class MapHandlerThread : public IceUtil::Mutex, public IceUtil::Thread
 public:
 	//! constructor
     MapHandlerThread(SharedData	* SD, ActorsObserverPrx	publisher,
-						const std::string &mapName, MapManagerServant *	stopper);
+						const std::string &mapName, MapManagerServant *	stopper,
+						const std::map<long, Actor *> & actors);
 
 	//! destructor
     ~MapHandlerThread();
