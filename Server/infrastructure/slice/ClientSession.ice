@@ -9,6 +9,19 @@
 
 module LbaNet
 {
+	struct PlayerPosition
+	{
+		// actor name
+		string			MapName;		
+
+		// actor coordinates
+		float			X;
+		float			Y;
+		float			Z;
+		float			Rotation;
+	};
+
+
 	interface ClientSession extends Glacier2::Session
 	{
 	    ChatRoomParticipant* JoinChat(string room, ChatRoomObserver* view);
@@ -16,6 +29,8 @@ module LbaNet
 	    
 	    ActorsParticipant* ChangeRoom(string newroom, string actorname,  ActorsObserver* view);
 	    
+	    PlayerPosition ChangeWorld(string WorldName);
+	    void UpdatePositionInWorld(PlayerPosition Position);
 
 	    ConnectedL GetConnected(out long ownid);       
 	    

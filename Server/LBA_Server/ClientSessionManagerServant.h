@@ -31,12 +31,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <RoomManager.h>
 #include <ConnectedTracker.h>
 #include <MapManager.h>
+#include "DatabaseHandler.h"
 
 class ClientSessionManagerServant : public Glacier2::SessionManager
 {
 public:
 
-    ClientSessionManagerServant(const Ice::CommunicatorPtr& communicator);
+    ClientSessionManagerServant(const Ice::CommunicatorPtr& communicator,
+									DatabaseHandler & dbh);
     ~ClientSessionManagerServant();
 
     virtual Glacier2::SessionPrx create(const std::string & userId,const Glacier2::SessionControlPrx &,
@@ -48,6 +50,7 @@ private:
 	LbaNet::MapManagerPrx			_map_manager;
 
 	std::string						_version;
+	DatabaseHandler &				_dbh;
 };
 
 #endif

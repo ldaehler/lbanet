@@ -26,6 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Ice/Application.h>
 
 #include "ClientSessionManagerServant.h"
+#include "DatabaseHandler.h"
+
 
 class LbaServer : public Ice::Application
 {
@@ -34,8 +36,12 @@ public:
     virtual int run(int argc, char* argv[])
     {
 		Ice::PropertiesPtr prop = communicator()->getProperties();
+
+		DatabaseHandler dbh(prop->getProperty("dbname"), prop->getProperty("dbserver"), 
+							prop->getProperty("dbuser"), prop->getProperty("dbpassword"));
+
 		_adapter = communicator()->createObjectAdapter(prop->getProperty("IdentityAdapter"));
-		_adapter->add(new ClientSessionManagerServant(communicator()), communicator()->stringToIdentity(prop->getProperty("SessionMServantName")));
+		_adapter->add(new ClientSessionManagerServant(communicator(), dbh), communicator()->stringToIdentity(prop->getProperty("SessionMServantName")));
 		_adapter->activate();
 
 		communicator()->waitForShutdown();

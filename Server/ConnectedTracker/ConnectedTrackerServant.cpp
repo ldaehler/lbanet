@@ -30,8 +30,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /***********************************************************
 constructor
 ***********************************************************/
-ConnectedTrackerServant::ConnectedTrackerServant(const Ice::CommunicatorPtr& communicator, SharedData * shd)
-: _communicator(communicator), _shd(shd)
+ConnectedTrackerServant::ConnectedTrackerServant(const Ice::CommunicatorPtr& communicator, 
+													SharedData * shd, 
+													DatabaseHandler &dbh)
+: _communicator(communicator), _shd(shd), _dbh(dbh)
 {
 
 }
@@ -50,6 +52,7 @@ remove a disconnected person
 void ConnectedTrackerServant::Disconnect(Ice::Long Id, const Ice::Current&)
 {
 	_shd->Disconnect(Id);
+	_dbh.DisconnectUser(Id);
 }
 
 /***********************************************************

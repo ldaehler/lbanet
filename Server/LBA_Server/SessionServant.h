@@ -36,6 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ChatParticipantServant.h"
 #include "ActorsParticipantServant.h"
+#include "DatabaseHandler.h"
 
 using namespace LbaNet;
 
@@ -46,7 +47,7 @@ public:
 	//! constructor
 	SessionServant(const std::string& userId, const RoomManagerPrx& manager,
 					const ConnectedTrackerPrx& ctracker, const MapManagerPrx& map_manager,
-					std::string	version);
+					std::string	version, DatabaseHandler & dbh);
 
 	//! the client join a chat room
     virtual ChatRoomParticipantPrx JoinChat(const std::string& room, const ChatRoomObserverPrx& observer,
@@ -106,6 +107,12 @@ public:
 	// change name display color
 	virtual void ChangeNameColor(const std::string& Color, const Ice::Current&);
 
+	// player has changed world
+	virtual LbaNet::PlayerPosition ChangeWorld(const std::string& WorldName, const Ice::Current&);
+
+	// player update his current position in the world
+	virtual void UpdatePositionInWorld(const LbaNet::PlayerPosition& Position, const Ice::Current&);
+
 private:
 	std::string							_userId;
 	Ice::Long							_userNum;
@@ -125,9 +132,10 @@ private:
 
 	std::string							_version;
 
-
-
 	LbaNet::ActorLifeInfo				_lifeinfo;
+
+	DatabaseHandler &					_dbh;
+	std::string							_currWorldName;
 };
 
 #endif
