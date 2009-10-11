@@ -23,7 +23,7 @@ Display engine:
 - ms3d model loader					http://www.morrowland.com
 
 GUI:							
-- CEGUI							http://www.cegui.org.uk
+- CEGUI	(v0.7.0)					http://www.cegui.org.uk
 
 
 Sound:
