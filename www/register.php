@@ -70,7 +70,7 @@ mysql_select_db("lbanet") or die(mysql_error());
 		{
 			$md5pass = md5($password);
 			$activationKey =  mt_rand() . mt_rand() . mt_rand() . mt_rand() . mt_rand();
-			$sql="INSERT INTO users (username, password, email, activationkey, status, creationdate) VALUES ('$username', '$md5pass', '$email', '$activationKey', '0', NOW())";
+			$sql="INSERT INTO users (username, password, email, activationkey, status, creationdate) VALUES ('$username', '$md5pass', '$email', '$activationKey', '0', UTC_TIMESTAMP())";
 
 			if (!mysql_query($sql))
 			{
