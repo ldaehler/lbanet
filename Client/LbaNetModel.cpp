@@ -390,20 +390,35 @@ void LbaNetModel::ChangeWorld(const std::string & NewWorld)
 {
 	if(NewWorld != _current_world)
 	{
+		// inform the server we changed world
+		ThreadSafeWorkpile::getInstance()->InformChangeWorld(NewWorld.substr(0, NewWorld.find(".xml")));
+
 		CleanupWorld();
 
 		if(DataLoader::getInstance()->LoadWorld("./Data/" + NewWorld))
 		{
 			_current_world = NewWorld;
-			std::string spawning;
-			std::string mapname =  DataLoader::getInstance()->GetFirstMapName(spawning);
 
 			//set the teleport list
 			std::list<std::string> _tplists;
 			_guiH->SetTeleportList(DataLoader::getInstance()->GetWorldInfo().Teleports);
 
+			// wait for the server to return with player position
+			ThreadSafeWorkpile::PlayerWorldPos ppos = ThreadSafeWorkpile::getInstance()->WaitForPlayerPosition();
 
-			ChangeMap(mapname, spawning);
+
+			if(ppos.MapName == "")
+			{
+				// load the first map
+				std::string spawning;
+				std::string mapname =  DataLoader::getInstance()->GetFirstMapName(spawning);
+				_mainPlayerHandler->SetRotation(0);
+				ChangeMap(mapname, spawning);
+			}
+			else
+			{
+				ChangeMap(ppos.MapName,	ppos.X, ppos.Y, ppos.Z, ppos.Rotation);
+			}
 		}
 
 
@@ -421,9 +436,8 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, const std::string & Spaw
 		MapInfo * MI = DataLoader::getInstance()->GetMapInfo();
 		ChangeMap(NewMap,	MI->Spawnings[Spawning].PosX+Xoffset,
 							MI->Spawnings[Spawning].PosY+Yoffset,
-							MI->Spawnings[Spawning].PosZ+Zoffset);
-
-		_mainPlayerHandler->SetRotation(_mainPlayerHandler->GetRotation() + MI->Spawnings[Spawning].Rotation);
+							MI->Spawnings[Spawning].PosZ+Zoffset,
+							_mainPlayerHandler->GetRotation() + MI->Spawnings[Spawning].Rotation);
 	}
 }
 
@@ -431,12 +445,22 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, const std::string & Spaw
 /***********************************************************
 change the map
 ***********************************************************/
-void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float Z)
+void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float Z, float R)
 {
 	if(NewMap != _current_map)
 	{
 		CleanupMap();
-		ThreadSafeWorkpile::getInstance()->ChangeMap(_current_world.substr(0, _current_world.find(".xml")), NewMap);
+
+		// inform server we change map
+		ThreadSafeWorkpile::MapChangedInformation mci;
+		mci.NewWorldName = _current_world.substr(0, _current_world.find(".xml"));
+		mci.NewMapName = NewMap;
+		mci.X = X;
+		mci.Y = Y;
+		mci.Z = Z;
+		mci.Rotation = R;
+		ThreadSafeWorkpile::getInstance()->ChangeMap(mci);
+		
 		Pause();
 		if(DataLoader::getInstance()->LoadMap(NewMap))
 		{
@@ -472,9 +496,9 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float 
 	m_main_actor_starting_X = X;
 	m_main_actor_starting_Y = Y;
 	m_main_actor_starting_Z = Z;
+	m_main_actor_starting_Rotation = R;
 	_mainPlayerHandler->SetAttached(false);
 	ReplaceMain();
-	
 }
 
 
@@ -543,8 +567,14 @@ int LbaNetModel::Process()
 		// check if we need to cut the map roof
 		if(!_actor_in_exterior)
 		{
-			m_room_y_cut = _mainPlayerHandler->IsUnderRoof();
-			_mapRenderer->CutRoom(m_room_y_cut);
+			int rcut = _mainPlayerHandler->IsUnderRoof();
+			if(m_room_y_cut != rcut)
+			{
+				m_room_y_cut = rcut;
+				Pause();
+				_mapRenderer->CutRoom(m_room_y_cut);
+				Resume(false);
+			}
 		}
 	}
 
@@ -757,6 +787,8 @@ void LbaNetModel::ReplaceMain()
 	_mainPlayerHandler->SetPosition(	m_main_actor_starting_X,
 										m_main_actor_starting_Y,
 										m_main_actor_starting_Z);
+
+	_mainPlayerHandler->SetRotation(m_main_actor_starting_Rotation);
 
 	_camera->SetTarget(	m_main_actor_starting_X,
 						m_main_actor_starting_Y,

@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "LogHandler.h"
 #include "SendingLoop.h"
 #include "ThreadSafeWorkpile.h"
-
+#include "md5.h"
 
 /***********************************************************
 	Constructor
@@ -76,8 +76,8 @@ ServerConnectionHandler::~ServerConnectionHandler()
 /***********************************************************
 connect to the server
 ***********************************************************/
-int ServerConnectionHandler::Connect(const std::string &user, const std::string &password, bool &ircon,
-										std::string & reason)
+int ServerConnectionHandler::Connect(const std::string &user, const std::string &password, 
+									 bool &ircon, std::string & reason)
 {
 	Disconnect();
 
@@ -109,9 +109,11 @@ int ServerConnectionHandler::Connect(const std::string &user, const std::string 
 		return 0;
 	}
 
+	std::string md5pass = MD5(password).hexdigest();
+
 	try
 	{
-		_session = LbaNet::ClientSessionPrx::uncheckedCast(_router->createSession(user, password));
+		_session = LbaNet::ClientSessionPrx::uncheckedCast(_router->createSession(user, md5pass));
 	}
 	catch(const Glacier2::PermissionDeniedException& ex)
 	{

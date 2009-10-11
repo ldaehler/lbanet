@@ -231,18 +231,17 @@ void ThreadSafeWorkpile::UpdateInfo(const LbaNet::ActorInfo & ai)
 {
 	IceUtil::Mutex::Lock lock(m_mutex_position_info);
 	m_last_info = ai;
-	m_last_info.MapName = m_new_map_name;
+	m_last_info.MapName = m_map_changed_info.NewMapName;
 	m_is_updated = true;
 }
 
 /***********************************************************
 add request to work pile
 ***********************************************************/
-void ThreadSafeWorkpile::ChangeMap(const std::string & NewWorldName, const std::string & NewMapName)
+void ThreadSafeWorkpile::ChangeMap(const MapChangedInformation & mi)
 {
 	IceUtil::Mutex::Lock lock(m_mutex_position_info);
-	m_new_map_name = NewMapName;
-	m_NewWorldName = NewWorldName;
+	m_map_changed_info = mi;
 	m_map_changed = true;
 }
 
@@ -265,16 +264,14 @@ bool ThreadSafeWorkpile::HasUpdatedInfo(LbaNet::ActorInfo & ai)
 /***********************************************************
 process and empty work pile
 ***********************************************************/
-bool ThreadSafeWorkpile::HasMapChanged(std::string & NewWorldName, std::string & NewMapName)
+bool ThreadSafeWorkpile::HasMapChanged(MapChangedInformation & mi)
 {
 	IceUtil::Mutex::Lock lock(m_mutex_position_info);
 	bool res = m_map_changed;
 	m_map_changed = false;
 	if(res)
-	{
-		NewMapName = m_new_map_name;
-		NewWorldName = m_NewWorldName;
-	}
+		mi = m_map_changed_info;
+
 	return res;
 }
 
@@ -565,4 +562,60 @@ void ThreadSafeWorkpile::GetColorChanges(std::vector<std::pair<std::string, std:
 	IceUtil::Mutex::Lock lock(m_mutex_color_changed);
 	vec.clear();
 	m_colors_changed.swap(vec);
+}
+
+
+
+
+/***********************************************************
+inform server of change world
+***********************************************************/
+void ThreadSafeWorkpile::InformChangeWorld(const std::string & NewWorld)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_world_changed);
+	m_world_changed = true;
+	m_new_world_name = NewWorld;
+}
+
+/***********************************************************
+check if world changed
+***********************************************************/
+bool ThreadSafeWorkpile::WorldChanged(std::string & NewWorld)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_world_changed);
+	if(m_world_changed)
+	{
+		m_world_changed = false;
+		NewWorld = m_new_world_name;
+		return true;
+	}
+}
+
+/***********************************************************
+set the position of the player on the new world
+***********************************************************/
+void ThreadSafeWorkpile::SetNewWorldPlayerPos(const PlayerWorldPos & position)
+{
+	IceUtil::Monitor<IceUtil::Mutex>::Lock lock(m_monitor_player_pos_updated);
+
+	m_player_pos_info_updated = true;
+	m_player_pos_info = position;
+
+	m_monitor_player_pos_updated.notifyAll();
+}
+
+/***********************************************************
+wait for server to return with player position
+***********************************************************/
+const ThreadSafeWorkpile::PlayerWorldPos & ThreadSafeWorkpile::WaitForPlayerPosition()
+{
+	IceUtil::Monitor<IceUtil::Mutex>::Lock lock(m_monitor_player_pos_updated);
+
+	if(!m_player_pos_info_updated)
+		m_monitor_player_pos_updated.wait();
+
+	if(!m_player_pos_info_updated)
+		m_player_pos_info.MapName = "";
+
+	return m_player_pos_info;
 }

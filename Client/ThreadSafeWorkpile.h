@@ -62,6 +62,25 @@ public:
 		std::string Color;
 	};
 
+	struct PlayerWorldPos
+	{
+		std::string MapName;
+		float X;
+		float Y;
+		float Z;
+		float Rotation;
+	};
+
+	struct MapChangedInformation
+	{
+		std::string NewWorldName;
+		std::string NewMapName;
+		float X;
+		float Y;
+		float Z;
+		float Rotation;
+	};
+
 
 	//! destructor
 	~ThreadSafeWorkpile();
@@ -128,13 +147,13 @@ public:
 	void UpdateInfo(const LbaNet::ActorInfo & ai);
 
 	//! add request to work pile
-	void ChangeMap(const std::string & NewWorldName, const std::string & NewMapName);
+	void ChangeMap(const MapChangedInformation & mi);
 
 	//! process and empty work pile
 	bool HasUpdatedInfo(LbaNet::ActorInfo & ai);
 
 	//! process and empty work pile
-	bool HasMapChanged(std::string & NewWorldName, std::string & NewMapName);
+	bool HasMapChanged(MapChangedInformation & mi);
 
 
 	// update actor info
@@ -218,13 +237,27 @@ public:
 	// return true if the color has changed
 	bool NameColorChanged(std::string &color);
 
+
+	// inform server of change world
+	void InformChangeWorld(const std::string & NewWorld);
+
+	// check if world changed
+	bool WorldChanged(std::string & NewWorld);
+
+	// set the position of the player on the new world
+	void SetNewWorldPlayerPos(const PlayerWorldPos & position);
+
+	// wait for server to return with player position
+	const PlayerWorldPos & WaitForPlayerPosition();
+
 protected:
 
 	//! construtor
 	ThreadSafeWorkpile()
 		: m_game_quitted(false), m_irc_quitted(false), m_sending_quitted(false),
 			m_send_cycle_time(20), m_is_updated(false), m_map_changed(false), m_server_on(false),
-			m_player_id(-1), m_new_actor_state(false), m_name_color_changed(false)
+			m_player_id(-1), m_new_actor_state(false), m_name_color_changed(false),
+			m_world_changed(false), m_player_pos_info_updated(false)
 	{}
 
 	ThreadSafeWorkpile(const ThreadSafeWorkpile &);
@@ -247,10 +280,11 @@ private:
 	IceUtil::Mutex								m_mutex_player_raised;
 	IceUtil::Mutex								m_mutex_name_color;
 	IceUtil::Mutex								m_mutex_color_changed;
+	IceUtil::Mutex								m_mutex_world_changed;
 
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_irc;
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_sending_loop;
-
+	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_player_pos_updated;
 
 	bool										m_game_quitted;
 	bool										m_irc_quitted;
@@ -272,8 +306,7 @@ private:
 	bool										m_is_updated;
 	LbaNet::ActorInfo							m_last_info;
 	bool										m_map_changed;
-	std::string									m_new_map_name;
-	std::string									m_NewWorldName;
+	MapChangedInformation						m_map_changed_info;								
 
 	std::vector<LbaNet::ActorInfo>				m_ext_info;
 	std::vector<std::string>					m_quitted_actors;
@@ -292,6 +325,13 @@ private:
 	bool										m_name_color_changed;
 
 	std::vector<std::pair<std::string, std::string> >	m_colors_changed;
+
+	bool										m_world_changed;
+	std::string									m_new_world_name;
+
+
+	bool										m_player_pos_info_updated;
+	PlayerWorldPos								m_player_pos_info;
 
 
 	static ThreadSafeWorkpile *					_singletonInstance;

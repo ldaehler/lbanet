@@ -372,6 +372,47 @@ void IceConnectionManager::PlayerRaised()
 }
 
 
+/***********************************************************
+player has changed world
+***********************************************************/
+LbaNet::PlayerPosition IceConnectionManager::ChangeWorld(const std::string& WorldName)
+{
+	try
+	{
+		return _session->ChangeWorld(WorldName);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception ChangeWorld: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception ChangeWorld "));
+    }
+
+	return LbaNet::PlayerPosition();
+}
+
+/***********************************************************
+player update his current position in the world
+***********************************************************/
+void IceConnectionManager::UpdatePositionInWorld(const LbaNet::PlayerPosition& Position)
+{
+	try
+	{
+		_session->UpdatePositionInWorld(Position);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception UpdatePositionInWorld: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception UpdatePositionInWorld "));
+    }
+}
+
+
 
 /***********************************************************
 constructor
@@ -427,13 +468,33 @@ void SendingLoopThread::run()
 				_connectionMananger.ChangeColor(newcolor);
 		}
 
+
+		//-----------------------------------
+		// process change world
+		std::string NewWorld;
+		if(ThreadSafeWorkpile::getInstance()->WorldChanged(NewWorld))
+		{		
+			LbaNet::PlayerPosition ppos = _connectionMananger.ChangeWorld(NewWorld);
+
+			ThreadSafeWorkpile::PlayerWorldPos position;
+			position.MapName = ppos.MapName;
+			position.X = ppos.X;
+			position.Y = ppos.Y;
+			position.Z = ppos.Z;
+			position.Rotation = ppos.Rotation;
+			ThreadSafeWorkpile::getInstance()->SetNewWorldPlayerPos(position);
+		}
+
 		//-----------------------------------
 		// process info
-		std::string NewWorldName, NewMapName;
-		if(ThreadSafeWorkpile::getInstance()->HasMapChanged(NewWorldName, NewMapName))
+		ThreadSafeWorkpile::MapChangedInformation mci;
+		if(ThreadSafeWorkpile::getInstance()->HasMapChanged(mci))
 		{
-			ChangeMap(NewWorldName, NewMapName);
+			ChangeMap(mci);
 		}
+
+
+
 
 
 		if(ThreadSafeWorkpile::getInstance()->HasUpdatedInfo(_last_ai))
@@ -493,28 +554,39 @@ void SendingLoopThread::run()
 /***********************************************************
 ChangeMap
 ***********************************************************/
-bool SendingLoopThread::ChangeMap(const std::string & NewWorldName, const std::string & NewMapName)
+bool SendingLoopThread::ChangeMap(const ThreadSafeWorkpile::MapChangedInformation & NewMap)
 {
 	// change the actor connection
-	bool succeed = _connectionMananger.ChangeActorsRoom(NewWorldName + "_" + NewMapName+"_Actors", _main_name);
+	bool succeed = _connectionMananger.ChangeActorsRoom(NewMap.NewWorldName + "_" + 
+												NewMap.NewMapName+"_Actors", _main_name);
 
 
 	// disconnect the old map chat channel
 	_connectionMananger.LeaveChat(_current_world + "_" + _current_map);
 
 	// connect to the new map channel
-	_connectionMananger.JoinChat(NewWorldName + "_" + NewMapName);
+	_connectionMananger.JoinChat(NewMap.NewWorldName + "_" + NewMap.NewMapName);
 
 
 	// update the current map name
 	if(succeed)
 	{
-		_current_world = NewWorldName;
-		_current_map = NewMapName;
+		_current_world = NewMap.NewWorldName;
+		_current_map = NewMap.NewMapName;
 
 		LbaNet::ActorLifeInfo ai = _connectionMananger.GetPlayerLife();
 		ThreadSafeWorkpile::getInstance()->AddEvent(new PlayerLifeChangedEvent(ai.CurrentLife, 
 													ai.MaxLife, ai.CurrentMana, ai.MaxMana));
+
+
+		// player update server with his current position in the world
+		LbaNet::PlayerPosition ppos;
+		ppos.MapName = NewMap.NewMapName;
+		ppos.X = NewMap.X;
+		ppos.Y = NewMap.Y;
+		ppos.Z = NewMap.Z;
+		ppos.Rotation = NewMap.Rotation;
+		_connectionMananger.UpdatePositionInWorld(ppos);
 	}
 	else
 	{
