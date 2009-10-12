@@ -56,7 +56,8 @@ MapHandlerThread::~MapHandlerThread()
 	std::map<long, Actor *>::iterator it = _actors.begin();
 	std::map<long, Actor *>::iterator end = _actors.end();
 	for(;it != end; ++it)
-		delete it->second;
+		it->second->SetSignaler(NULL);
+		//delete it->second;
 
 	delete _signaler;
 }
