@@ -21,6 +21,7 @@
 	<file name="bricks" path="Data/lba_brick_info.txt" />
 	<file name="sprites" path="Data/Sprites/sprites.xml" />
 	<file name="videos" path="Data/Sprites/videos.xml" />
+	<file name="inventory" path="Data/Inventory/lba1_inventory.xml" />	
     </files>   
     
     
