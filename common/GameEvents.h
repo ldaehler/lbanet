@@ -502,4 +502,45 @@ public:
 };
 
 
+/*
+************************************************************************************************************************
+*                                                  class ChangeStanceEvent
+*
+*	used to update player life
+************************************************************************************************************************
+*/
+class ChangeStanceEvent : public GameEvent
+{
+public:
+	//! constructor
+	ChangeStanceEvent(int stance)
+		: _stance(stance)
+	{
+		_type = 21;	
+	}
+	
+	int _stance;
+};
+
+
+/*
+************************************************************************************************************************
+*                                                  class InventoryObjectUsedEvent
+*
+*	used to update player life
+************************************************************************************************************************
+*/
+class InventoryObjectUsedEvent : public GameEvent
+{
+public:
+	//! constructor
+	InventoryObjectUsedEvent(long ObjectId)
+		: _ObjectId(ObjectId)
+	{
+		_type = 22;	
+	}
+	
+	int _ObjectId;
+};
+
 #endif

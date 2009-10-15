@@ -886,3 +886,47 @@ bool MapInfoXmlReader::LoadModels(const std::string &Filename, std::map<long, Mo
 
 	return true;
 }
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+- load inventory info
+--------------------------------------------------------------------------------------------------
+*/
+bool MapInfoXmlReader::LoadInventory(const std::string &Filename, std::map<long, ItemInfo> &mapinv)
+{
+	mapinv.clear();
+
+
+	TiXmlDocument doc(Filename);
+	if (!doc.LoadFile())
+		return false;
+
+	TiXmlHandle hDoc(&doc);
+	TiXmlElement* pElem;
+
+	// block: actors attributes
+	{
+		pElem=hDoc.FirstChildElement().Element();
+
+		// should always have a valid root but handle gracefully if it does
+		if (!pElem)
+			return false;
+
+
+		// for each actors
+		pElem=pElem->FirstChildElement();
+		for( ; pElem; pElem=pElem->NextSiblingElement())
+		{
+			ItemInfo spi;
+			pElem->QueryValueAttribute("id", &spi.id);
+			spi.filename = pElem->Attribute("filename");
+			pElem->QueryValueAttribute("type", &spi.type);
+			pElem->QueryValueAttribute("valueA", &spi.valueA);
+			mapinv[spi.id] = spi;
+		}
+	}
+
+	return true;
+}
