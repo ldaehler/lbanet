@@ -163,6 +163,7 @@ void SessionServant::destroy(const Ice::Current& current)
     Lock sync(*this);
 	try
 	{
+		_dbh.UpdateInventory(_playerInventory, _currWorldName, _userNum);
 		_dbh.QuitWorld(_currWorldName, _userNum);
 		_ctracker->Disconnect(_userNum);
 	}
@@ -481,13 +482,39 @@ void SessionServant::PlayerRaisedFromDead(const Ice::Current&)
 /***********************************************************
 player has changed world
 ***********************************************************/
-LbaNet::PlayerPosition SessionServant::ChangeWorld(const std::string& WorldName, 
+LbaNet::SavedWorldInfo SessionServant::ChangeWorld(const std::string& WorldName, 
 														   const Ice::Current&)
 {
     Lock sync(*this);
+	// save old world info
+	_dbh.UpdateInventory(_playerInventory, _currWorldName, _userNum);
 	_dbh.QuitWorld(_currWorldName, _userNum);
 	_currWorldName = WorldName;
-	return _dbh.ChangeWorld(WorldName, _userNum);
+
+	// retrieve info from db
+	LbaNet::SavedWorldInfo swinfo = _dbh.ChangeWorld(WorldName, _userNum);
+
+	// only for test - remove that part
+	if(swinfo.inventory.InventoryStructure.size() == 0)
+	{
+		LbaNet::InventoryItem itm;
+		itm.Number = 1;
+		itm.PlaceInInventory = 1;
+		swinfo.inventory.InventoryStructure[1] = itm;
+		itm.PlaceInInventory = 2;
+		swinfo.inventory.InventoryStructure[2] = itm;
+		itm.PlaceInInventory = 3;
+		swinfo.inventory.InventoryStructure[3] = itm;
+		itm.PlaceInInventory = 4;
+		swinfo.inventory.InventoryStructure[4] = itm;
+		itm.PlaceInInventory = 5;
+		swinfo.inventory.InventoryStructure[5] = itm;
+	}
+
+
+
+	_playerInventory = swinfo.inventory;
+	return swinfo;
 }
 
 /***********************************************************
@@ -498,4 +525,61 @@ void SessionServant::UpdatePositionInWorld(const LbaNet::PlayerPosition& Positio
 {
     Lock sync(*this);
 	_dbh.UpdatePositionInWorld(Position, _currWorldName, _userNum);
+}
+
+
+
+/***********************************************************
+player update his current inventory gui info
+***********************************************************/
+void SessionServant::UpdateInventory(const InventoryInfo &Inventory, const Ice::Current&)
+{
+    Lock sync(*this);
+    _playerInventory.UsedShorcuts = Inventory.UsedShorcuts;
+
+	LbaNet::InventoryMap::const_iterator itm =  Inventory.InventoryStructure.begin();
+	LbaNet::InventoryMap::const_iterator endm =  Inventory.InventoryStructure.end();
+	for(;itm !=  endm; ++itm)
+	{
+		LbaNet::InventoryMap::iterator itlocal = _playerInventory.InventoryStructure.find(itm->first);
+		if(itlocal != _playerInventory.InventoryStructure.end())
+			itlocal->second.PlaceInInventory = itm->second.PlaceInInventory;
+	}
+}
+
+
+/***********************************************************
+player use an item from inventory 
+***********************************************************/
+void SessionServant::UseItem(Ice::Long ItemId, const Ice::Current&)
+{
+	LbaNet::InventoryMap::iterator itlocal = _playerInventory.InventoryStructure.find(ItemId);
+	if(itlocal != _playerInventory.InventoryStructure.end())
+	{
+		// decrease item count
+		itlocal->second.Number -= 1;
+		if(itlocal->second.Number <= 0)
+			_playerInventory.InventoryStructure.erase(itlocal);
+	}
+}
+ 
+
+/***********************************************************
+get container content  
+***********************************************************/   
+ContainerInfo SessionServant::GetContainerContent(Ice::Long ContainerId, const Ice::Current&)
+{
+	ContainerInfo res;
+
+	return res;
+}
+
+
+/***********************************************************
+update player inventory from container content
+***********************************************************/
+void SessionServant::UpdateInventoryFromContainer(Ice::Long ContainerId, const ItemList &Taken, const ItemList &Put, 
+												  const Ice::Current&)
+{
+
 }

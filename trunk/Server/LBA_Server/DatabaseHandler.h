@@ -51,7 +51,7 @@ public:
 						const std::string user, const std::string password);
 
 	// player has changed world
-	LbaNet::PlayerPosition ChangeWorld(const std::string& NewWorldName, long PlayerId);
+	LbaNet::SavedWorldInfo ChangeWorld(const std::string& NewWorldName, long PlayerId);
 
 	// player update his current position in the world
 	void UpdatePositionInWorld(const LbaNet::PlayerPosition& Position, 
@@ -59,6 +59,9 @@ public:
 
 	// quit current world
 	void QuitWorld(const std::string& LastWorldName,long PlayerId);
+
+	// update player inventory structure
+	void UpdateInventory(const LbaNet::InventoryInfo &Inventory, const std::string& WorldName,long PlayerId);
 
 protected:
 	DatabaseHandler(const DatabaseHandler &);

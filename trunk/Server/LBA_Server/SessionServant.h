@@ -108,10 +108,23 @@ public:
 	virtual void ChangeNameColor(const std::string& Color, const Ice::Current&);
 
 	// player has changed world
-	virtual LbaNet::PlayerPosition ChangeWorld(const std::string& WorldName, const Ice::Current&);
+	virtual LbaNet::SavedWorldInfo ChangeWorld(const std::string& WorldName, const Ice::Current&);
 
 	// player update his current position in the world
 	virtual void UpdatePositionInWorld(const LbaNet::PlayerPosition& Position, const Ice::Current&);
+
+	// player update his current inventory gui info
+	virtual void UpdateInventory(const InventoryInfo &Inventory, const Ice::Current&);
+
+	// player use an item from inventory 
+	virtual void UseItem(Ice::Long ItemId, const Ice::Current&);
+	    
+	// get container content  
+	virtual ContainerInfo GetContainerContent(Ice::Long ContainerId, const Ice::Current&);
+
+	//update player inventory from container content
+	virtual void UpdateInventoryFromContainer(Ice::Long ContainerId, const ItemList &Taken, const ItemList &Put, const Ice::Current&);
+
 
 private:
 	std::string							_userId;
@@ -136,6 +149,9 @@ private:
 
 	DatabaseHandler &					_dbh;
 	std::string							_currWorldName;
+
+
+	InventoryInfo						_playerInventory;
 };
 
 #endif

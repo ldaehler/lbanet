@@ -20,6 +20,40 @@ module LbaNet
 		float			Z;
 		float			Rotation;
 	};
+	
+	
+	sequence<int> ShortcutSeq;
+	
+	struct InventoryItem
+	{
+		int Number;
+		int PlaceInInventory;
+	};
+	
+	dictionary<long, InventoryItem> InventoryMap;
+	
+	struct InventoryInfo
+	{
+		int InventorySize;
+		InventoryMap InventoryStructure;
+		ShortcutSeq UsedShorcuts;
+	};
+	
+	
+	struct SavedWorldInfo
+	{
+		PlayerPosition ppos;
+		InventoryInfo inventory;
+	};
+	
+	
+	
+	dictionary<long, int> ItemList;	
+	struct ContainerInfo
+	{
+		long LockedById;
+		ItemList Content;
+	};	
 
 
 	interface ClientSession extends Glacier2::Session
@@ -29,8 +63,9 @@ module LbaNet
 	    
 	    ActorsParticipant* ChangeRoom(string newroom, string actorname,  ActorsObserver* view);
 	    
-	    PlayerPosition ChangeWorld(string WorldName);
+	    SavedWorldInfo ChangeWorld(string WorldName);
 	    void UpdatePositionInWorld(PlayerPosition Position);
+	    void UpdateInventory(InventoryInfo Inventory);
 
 	    ConnectedL GetConnected(out long ownid);       
 	    
@@ -56,6 +91,13 @@ module LbaNet
 	    void GotHurtByFalling(float FallingDistance);
 	    
 	    void PlayerRaisedFromDead();
+	    
+	    
+	    void UseItem(long ItemId);
+	    
+	    
+	    ContainerInfo GetContainerContent(long ContainerId);
+	    void UpdateInventoryFromContainer(long ContainerId, ItemList Taken, ItemList Put);
 	};
 
 };

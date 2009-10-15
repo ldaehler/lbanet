@@ -25,6 +25,47 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "DatabaseHandler.h"
 
+static void Trim(std::string& str)
+{
+	std::string::size_type pos = str.find_last_not_of(' ');
+	if(pos != std::string::npos)
+	{
+		str.erase(pos + 1);
+		pos = str.find_first_not_of(' ');
+
+		if(pos != std::string::npos)
+			str.erase(0, pos);
+	}
+	else
+		str.clear();
+
+}
+
+static void Tokenize(const std::string& str,
+										std::vector<std::string>& tokens,
+										const std::string& delimiters)
+{
+	// Skip delimiters at beginning.
+	std::string::size_type lastPos = str.find_first_not_of(delimiters, 0);
+	// Find first "non-delimiter".
+	std::string::size_type pos     = str.find_first_of(delimiters, lastPos);
+
+
+
+	while (std::string::npos != pos || std::string::npos != lastPos)
+	{
+		// Found a token, add it to the vector.
+		std::string tmp = str.substr(lastPos, pos - lastPos);
+		Trim(tmp);
+		tokens.push_back(tmp);
+
+		// Skip delimiters.  Note the "not_of"
+		lastPos = str.find_first_not_of(delimiters, pos);
+
+		// Find next "non-delimiter"
+		pos = str.find_first_of(delimiters, lastPos);
+	}
+}
 
 /***********************************************************
 constructor
@@ -48,17 +89,17 @@ DatabaseHandler::DatabaseHandler(const std::string db, const std::string server,
 /***********************************************************
 player has changed world
 ***********************************************************/
-LbaNet::PlayerPosition DatabaseHandler::ChangeWorld(const std::string& NewWorldName, long PlayerId)
+LbaNet::SavedWorldInfo DatabaseHandler::ChangeWorld(const std::string& NewWorldName, long PlayerId)
 {
-	LbaNet::PlayerPosition resPos;
-	resPos.MapName = "";
+	LbaNet::SavedWorldInfo resP;
+	resP.ppos.MapName = "";
 
 	if(!_connected)
-		return resPos;
+		return resP;
 
 	Lock sync(*this);
 	mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
-	query << "SELECT id, lastmap, lastposx, lastposy, lastposz, lastrotation FROM usertoworldmap";
+	query << "SELECT id, lastmap, lastposx, lastposy, lastposz, lastrotation, InventorySize, Shortcuts FROM usertoworldmap";
 	query << " WHERE userid = '"<<PlayerId<<"'";
 	query << " AND worldname = '"<<NewWorldName<<"'";
 	if (mysqlpp::StoreQueryResult res = query.store())
@@ -71,11 +112,36 @@ LbaNet::PlayerPosition DatabaseHandler::ChangeWorld(const std::string& NewWorldN
 			if(!query.exec())
 				std::cout<<"LBA_Server - Update usertoworldmap.lastvisited failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
 			
-			resPos.MapName = res[0][1];
-			resPos.X = res[0][2];
-			resPos.Y = res[0][3];
-			resPos.Z = res[0][4];
-			resPos.Rotation = res[0][5];
+			// player pos part
+			resP.ppos.MapName = res[0][1];
+			resP.ppos.X = res[0][2];
+			resP.ppos.Y = res[0][3];
+			resP.ppos.Z = res[0][4];
+			resP.ppos.Rotation = res[0][5];
+
+			// player inventory part
+			resP.inventory.InventorySize = res[0][6];
+
+			std::vector<std::string> tokens;
+			std::string shortcutstr = res[0][7];
+			Tokenize(shortcutstr, tokens, "#");
+			for(size_t i=0; i<tokens.size(); ++i)
+				resP.inventory.UsedShorcuts.push_back(atoi(tokens[i].c_str()));
+
+			query.clear();
+			query << "SELECT * FROM userinventory";
+			query << " WHERE worldid = '"<<res[0][0]<<"'";
+			if (mysqlpp::StoreQueryResult res2 = query.store())
+			{
+				for(size_t i=0; i<res2.size(); ++i)
+				{
+					LbaNet::InventoryItem itm;
+					itm.Number = res2[i][2];
+					itm.PlaceInInventory = res2[i][3];
+					resP.inventory.InventoryStructure[res2[i][1]] = itm;
+				}
+			}
+
 		}
 		else
 		{
@@ -85,12 +151,16 @@ LbaNet::PlayerPosition DatabaseHandler::ChangeWorld(const std::string& NewWorldN
 			if(!query.exec())
 				std::cout<<"LBA_Server - INSERT usertoworldmap failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
 
+		
+			resP.inventory.InventorySize = 30;
+			for(int i=0; i<10; ++i)
+				resP.inventory.UsedShorcuts.push_back(-1);
 		}
 	}
 
 
 
-	return resPos;
+	return resP;
 }
 
 
@@ -137,5 +207,66 @@ void DatabaseHandler::QuitWorld(const std::string& LastWorldName,long PlayerId)
 		query << " AND worldname = '"<<LastWorldName<<"'";		
 		if(!query.exec())
 			std::cout<<"LBA_Server - Update usertoworldmap.timeplayedmin failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;		
+	}
+}
+
+
+
+/***********************************************************
+update player inventory structure
+***********************************************************/
+void DatabaseHandler::UpdateInventory(const LbaNet::InventoryInfo &Inventory, const std::string& WorldName,
+									  long PlayerId)
+{
+	if(!_connected)
+		return;
+
+	std::string shortcutstring;
+	LbaNet::ShortcutSeq::const_iterator it = Inventory.UsedShorcuts.begin();
+	LbaNet::ShortcutSeq::const_iterator end = Inventory.UsedShorcuts.end();
+	if(it != end)
+	{
+		shortcutstring+=*it;
+		++it;
+	}
+	for(;it != end; ++it)
+		shortcutstring+="#"+*it;
+
+
+	Lock sync(*this);
+	mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
+	query << "SELECT id FROM usertoworldmap";
+	query << " WHERE userid = '"<<PlayerId<<"'";
+	query << " AND worldname = '"<<WorldName<<"'";
+	if (mysqlpp::StoreQueryResult res = query.store())
+	{
+		if(res.size() > 0)
+		{
+			query.clear();
+			query << "UPDATE usertoworldmap SET InventorySize = '"<<Inventory.InventorySize<<"',";
+			query << "Shortcuts = '"<<shortcutstring<<"' ";
+			query << " WHERE id = '"<<res[0][0]<<"'";
+			if(!query.exec())
+				std::cout<<"LBA_Server - Update usertoworldmap_inv failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
+
+
+			query.clear();
+			query << "DELETE * FROM userinventory";
+			query << " WHERE worldid = '"<<res[0][0]<<"'";
+			if(!query.exec())
+				std::cout<<"LBA_Server - Update DELETE * failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
+
+			LbaNet::InventoryMap::const_iterator iti = Inventory.InventoryStructure.begin();
+			LbaNet::InventoryMap::const_iterator endi = Inventory.InventoryStructure.end();
+			for(;iti != endi; ++iti)
+			{
+				query.clear();
+				query << "INSERT userinventory (worldid, objectid, number, InventoryPlace) VALUES('";
+				query << res[0][0] << "', '" << iti->first << "', '" << iti->second.Number << "', '" << iti->second.PlaceInInventory << "')";
+				if(!query.exec())
+					std::cout<<"LBA_Server - Update INSERT usertoworldmap failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
+
+			}
+		}
 	}
 }
