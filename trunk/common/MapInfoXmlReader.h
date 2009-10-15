@@ -71,6 +71,8 @@ public:
 	// load all models info
 	static bool LoadModels(const std::string &Filename, std::map<long, ModelInfo> &vec);
 
+	// load inventory info
+	static bool LoadInventory(const std::string &Filename, std::map<long, ItemInfo> &mapinv);
 
 protected:
 	// load a map information into memory

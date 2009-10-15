@@ -222,4 +222,12 @@ struct ModelInfo
 };
 
 
+struct ItemInfo
+{
+	long id;
+	std::string filename;
+	int type;
+	int valueA;
+};
+
 #endif
