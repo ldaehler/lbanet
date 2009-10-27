@@ -63,8 +63,6 @@ TeleportBox::~TeleportBox()
 	{
 		CEGUI::FrameWindow * frw = static_cast<CEGUI::FrameWindow *> (
 			CEGUI::WindowManager::getSingleton().getWindow("TeleportFrame"));
-		frw->subscribeEvent (CEGUI::FrameWindow::EventCloseClicked,
-			CEGUI::Event::Subscriber (&TeleportBox::HandleClose, this));
 
 		CEGUI::UVector2 vec = frw->getPosition();
 		ConfigurationManager::GetInstance()->SetFloat("Gui.Teleportbox.PosX", vec.d_x.d_scale);

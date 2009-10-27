@@ -169,27 +169,40 @@ void LbaNetEngine::run(void)
 	SDL_Event even;
 	m_lasttime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDouble();
 
-    // Loop until an SDL_QUIT event is found
-    while( !quit )
+	try
 	{
-		double currtime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDouble();
-		m_currframetime.Update( currtime - m_lasttime ) ;
-		m_lasttime = currtime;
+		// Loop until an SDL_QUIT event is found
+		while( !quit )
+		{
+			double currtime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDouble();
+			m_currframetime.Update( currtime - m_lasttime ) ;
+			m_lasttime = currtime;
 
 
-		while( SDL_PollEvent( &even ) )
-			quit = m_eventHandler.Handle(even);
+			while( SDL_PollEvent( &even ) )
+				quit = m_eventHandler.Handle(even);
 
 
-		// proceed function doing everything that need to be done for each new tick
-		Process();
+			// proceed function doing everything that need to be done for each new tick
+			Process();
 
-		// redraw the scene
-		Redraw();
+			// redraw the scene
+			Redraw();
 
-		// wait function used to keep framerate constant
-		SDL_Delay(TimeLeft());
-    }
+			// wait function used to keep framerate constant
+			SDL_Delay(TimeLeft());
+		}
+	}
+	catch(std::exception & ex)
+	{
+		LogHandler::getInstance()->LogToFile(std::string("Unhandled exception catched:") + ex.what());
+	}
+	catch(...)
+	{
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception catched"));
+	}
+
+	LogHandler::getInstance()->LogToFile("Quitting the game.");
 }
 
 
@@ -500,9 +513,9 @@ void LbaNetEngine::ChangeScreenAndLinkedRessources()
 	}
 
 	ResetScreen();
-
 	m_guiHandler.restoreTextures();
 	m_guiHandler.Resize(m_screen_size_X, m_screen_size_Y);
+
 
 	m_lbaNetModel.SetScreenSize(m_screen_size_X, m_screen_size_Y);
 	TextWritter::getInstance()->ReloadTexture();
@@ -715,6 +728,22 @@ void LbaNetEngine::HandleGameEvents()
 					m_lbaNetModel.SetPlayerNameColor(evcs->_R, evcs->_G, evcs->_B);
 				}
 			break;
+
+			case 21: // change stance event
+				{
+					ChangeStanceEvent * evcs = 
+						static_cast<ChangeStanceEvent *> (*it);
+					PlayerChangeStance(evcs->_stance);
+				}
+			break;
+
+			case 22: // inventory used event
+				{
+					InventoryObjectUsedEvent * evcs = 
+						static_cast<InventoryObjectUsedEvent *> (*it);
+					m_lbaNetModel.InventoryUsed(evcs->_ObjectId, _CurrentLife==_MaxLife, _CurrentMana==_MaxMana);
+				}
+			break;
 		}
 
 		delete *it;
@@ -872,6 +901,10 @@ void LbaNetEngine::DisplayGUI(int guinumber)
 {
 	switch(guinumber)
 	{
+		case -1: // got disconnected from server
+			SwitchGuiToLogin();
+			m_guiHandler.InformNotLoggedIn(-2, "");
+		break;
 		case 0:
 			SwitchGuiToLogin();
 		break;

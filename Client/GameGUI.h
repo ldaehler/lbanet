@@ -33,6 +33,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "CommunityBox.h"
 #include "TeleportBox.h"
 #include "EditorBox.h"
+#include "InventoryBox.h"
+#include "ShortcutBox.h"
+#include "ContainerBox.h"
 
 namespace CEGUI
 {
@@ -85,6 +88,11 @@ public:
 	//! handle send button event
 	bool HandleCloseTextClicked (const CEGUI::EventArgs& e);
 
+	//! handle send button event
+	bool HandleInventoryClicked (const CEGUI::EventArgs& e);
+
+	//! handle send button event
+	bool HandleShortcutClicked (const CEGUI::EventArgs& e);
 
 	// process what is needed in the game GUI
 	virtual void Process();
@@ -122,10 +130,17 @@ public:
 	//! set player name
 	void SetPlayerName(const std::string & name);
 
+	//! refreshthe gui
+	void Refresh();
+
 private:
 	ChatBox			_cb;
 	CommunityBox	_comb;
 	TeleportBox		_telb;
+	InventoryBox	_invb;
+	ShortcutBox		_shortb;
+	ContainerBox	_containerb;
+
 	EditorBox *		_editb;
 };
 

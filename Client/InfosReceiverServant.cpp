@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "InfosReceiverServant.h"
 #include "ThreadSafeWorkpile.h"
 #include "GameEvents.h"
+#include "InventoryHandler.h"
 
 // callback function called when a message is received from IceStorm
 void InfosReceiverServant::UpdatedInfo(const LbaNet::ActorInfo& asi, const Ice::Current&)
@@ -66,6 +67,23 @@ void InfosReceiverServant::SignaledActor(const LbaNet::ActorSignalInfo &ai, cons
 void InfosReceiverServant::UpdatedLife(const LbaNet::ActorLifeInfo& ali, const Ice::Current&)
 {
 	ThreadSafeWorkpile::getInstance()->UpdateActorLife(ali);
+}
+
+
+// apply inventory changes
+void InfosReceiverServant::ApplyInventoryChanges(const LbaNet::UpdatedItemSeq &InventoryChanges, 
+												 const Ice::Current&)
+{
+	LbaNet::UpdatedItemSeq::const_iterator it = InventoryChanges.begin();
+	LbaNet::UpdatedItemSeq::const_iterator end = InventoryChanges.end();
+	for(;it != end; ++it)
+		InventoryHandler::getInstance()->UpdateInventoryItem(it->ItemId, it->NewCount);
+}
+
+// update container
+void InfosReceiverServant::UpdateContainerInfo(const LbaNet::ContainerInfo &container, const Ice::Current&)
+{
+
 }
 
 

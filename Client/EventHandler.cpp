@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "LbaNetEngine.h"
 #include "EventHandler.h"
 #include "ThreadSafeWorkpile.h"
+#include "LogHandler.h"
 
 #ifdef _WIN32
 	#include "SDL.h"
@@ -234,7 +235,10 @@ bool EventHandler::Handle(SDL_Event flevent)
 	CEGUI::uint kc;
 
 	if(ThreadSafeWorkpile::getInstance()->GameQuitted())
+	{
+		LogHandler::getInstance()->LogToFile("Game quitted.");
 		return true;
+	}
 
 	switch( flevent.type )
 	{
@@ -340,17 +344,17 @@ bool EventHandler::Handle(SDL_Event flevent)
 					_lbaNetEngine->PlayerChangeStance(4);
 					break;
 
-				case SDLK_F5:
-					_lbaNetEngine->PlayerChangeStance(5);
-					break;
+				//case SDLK_F5:
+				//	_lbaNetEngine->PlayerChangeStance(5);
+				//	break;
 
-				case SDLK_F6:
-					_lbaNetEngine->PlayerChangeStance(6);
-					break;
+				//case SDLK_F6:
+				//	_lbaNetEngine->PlayerChangeStance(6);
+				//	break;
 
-				case SDLK_F7:
-					_lbaNetEngine->PlayerChangeStance(7);
-					break;
+				//case SDLK_F7:
+				//	_lbaNetEngine->PlayerChangeStance(7);
+				//	break;
 
 
 				case SDLK_PAGEUP:
@@ -380,6 +384,38 @@ bool EventHandler::Handle(SDL_Event flevent)
 					//_lbaNetEngine->GoNextRoom();
 					break;
 
+
+
+				 case SDLK_0:
+					ThreadSafeWorkpile::getInstance()->UseShortcut(0);
+					break;
+				 case SDLK_1:
+					ThreadSafeWorkpile::getInstance()->UseShortcut(1);
+					break;
+				 case SDLK_2:
+					ThreadSafeWorkpile::getInstance()->UseShortcut(2);
+					break;
+				 case SDLK_3:
+					ThreadSafeWorkpile::getInstance()->UseShortcut(3);
+					break;
+				 case SDLK_4:
+					ThreadSafeWorkpile::getInstance()->UseShortcut(4);
+					break;
+				 case SDLK_5:
+					ThreadSafeWorkpile::getInstance()->UseShortcut(5);
+					break;
+				 case SDLK_6:
+					ThreadSafeWorkpile::getInstance()->UseShortcut(6);
+					break;
+				 case SDLK_7:
+					ThreadSafeWorkpile::getInstance()->UseShortcut(7);
+					break;
+				 case SDLK_8:
+					ThreadSafeWorkpile::getInstance()->UseShortcut(8);
+					break;
+				 case SDLK_9:
+					ThreadSafeWorkpile::getInstance()->UseShortcut(9);
+					break;
 			}
 		break;
 
@@ -420,7 +456,10 @@ bool EventHandler::Handle(SDL_Event flevent)
 
 		// SDL_QUIT event (window close)
 		case SDL_QUIT:
+		{
+			LogHandler::getInstance()->LogToFile("Windows closed.");
 			return true;
+		}
 	}
 
 	return false;

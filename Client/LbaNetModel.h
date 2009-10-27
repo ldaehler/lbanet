@@ -39,6 +39,8 @@ class ExternalPlayersHandler;
 struct PlayerScriptPart;
 class Actor;
 
+
+
 #include <string>
 #include <vector>
 #include <map>
@@ -178,6 +180,11 @@ public:
 
 	// set player name color
 	void SetPlayerNameColor(int R, int G, int B);
+
+
+	// called when and object from the inventory is used
+	void InventoryUsed(long ObjectId, bool LifeFull, bool ManaFull);
+
 
 private:
 	MapRenderer*			_mapRenderer;

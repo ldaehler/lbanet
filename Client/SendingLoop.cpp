@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ThreadSafeWorkpile.h"
 #include "LogHandler.h"
 #include "GameEvents.h"
+#include "InventoryHandler.h"
 
 #include <cctype>
 #include <Ice/Application.h>
@@ -375,7 +376,7 @@ void IceConnectionManager::PlayerRaised()
 /***********************************************************
 player has changed world
 ***********************************************************/
-LbaNet::PlayerPosition IceConnectionManager::ChangeWorld(const std::string& WorldName)
+LbaNet::SavedWorldInfo IceConnectionManager::ChangeWorld(const std::string& WorldName)
 {
 	try
 	{
@@ -390,7 +391,7 @@ LbaNet::PlayerPosition IceConnectionManager::ChangeWorld(const std::string& Worl
 		LogHandler::getInstance()->LogToFile(std::string("Unknown exception ChangeWorld "));
     }
 
-	return LbaNet::PlayerPosition();
+	return LbaNet::SavedWorldInfo();
 }
 
 /***********************************************************
@@ -413,6 +414,45 @@ void IceConnectionManager::UpdatePositionInWorld(const LbaNet::PlayerPosition& P
 }
 
 
+/***********************************************************
+update inventory
+***********************************************************/
+void IceConnectionManager::UpdateInventory(const LbaNet::InventoryInfo &Inventory)
+{
+	try
+	{
+		_session->UpdateInventory(Inventory);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception UpdateInventory: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception UpdateInventory "));
+    }
+}
+
+
+/***********************************************************
+called to tell the server and obejct has been used
+***********************************************************/
+void IceConnectionManager::InventoryUsed(long ItemId)
+{
+	try
+	{
+		_session->UseItem(ItemId);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception UseItem: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception UseItem "));
+    }
+}
+
 
 /***********************************************************
 constructor
@@ -421,7 +461,7 @@ SendingLoopThread::SendingLoopThread(	const Ice::ObjectAdapterPtr& adapter, cons
 										const std::string& category,
 										const std::string & MainName)
 	: _main_name(MainName), _refresh_counter(0), _afk_counter(0),
-			_connectionMananger(adapter, session, category), _afked(false)
+			_connectionMananger(adapter, session, category), _afked(false), _previousworld(false)
 {
 
 }
@@ -470,19 +510,69 @@ void SendingLoopThread::run()
 
 
 		//-----------------------------------
+		// process inventory used
+		{
+			std::vector<long> objs;
+			ThreadSafeWorkpile::getInstance()->GetListOfObjectUsed(objs);
+			for(size_t i=0; i< objs.size(); ++i)
+				_connectionMananger.InventoryUsed(objs[i]);
+		}
+
+
+		//-----------------------------------
 		// process change world
 		std::string NewWorld;
 		if(ThreadSafeWorkpile::getInstance()->WorldChanged(NewWorld))
-		{		
-			LbaNet::PlayerPosition ppos = _connectionMananger.ChangeWorld(NewWorld);
+		{
+			// update server inventory
+			if(_previousworld)
+			{
+				int inventorysize;
+				std::map<long, std::pair<int, int> > invmap = InventoryHandler::getInstance()->GetCurrentInventory(inventorysize);
+				std::map<long, std::pair<int, int> > ::iterator itm =  invmap.begin();
+				std::map<long, std::pair<int, int> > ::iterator endm =  invmap.end();
+				LbaNet::InventoryInfo inv;
+				for(; itm != endm; ++itm)
+				{
+					LbaNet::InventoryItem iitm;
+					iitm.Number = itm->second.first;
+					iitm.PlaceInInventory = itm->second.second;
+					inv.InventoryStructure[itm->first] = iitm;
+				}
+
+				std::vector<long> shortc = InventoryHandler::getInstance()->GetShortcut();
+				for(size_t i=0; i< shortc.size(); ++i)
+					inv.UsedShorcuts.push_back(shortc[i]);
+
+				_connectionMananger.UpdateInventory(inv);
+			}
+
+
+			LbaNet::SavedWorldInfo ppos = _connectionMananger.ChangeWorld(NewWorld);
 
 			ThreadSafeWorkpile::PlayerWorldPos position;
-			position.MapName = ppos.MapName;
-			position.X = ppos.X;
-			position.Y = ppos.Y;
-			position.Z = ppos.Z;
-			position.Rotation = ppos.Rotation;
+			position.MapName = ppos.ppos.MapName;
+			position.X = ppos.ppos.X;
+			position.Y = ppos.ppos.Y;
+			position.Z = ppos.ppos.Z;
+			position.Rotation = ppos.ppos.Rotation;
 			ThreadSafeWorkpile::getInstance()->SetNewWorldPlayerPos(position);
+
+
+			LbaNet::InventoryMap::iterator itm =  ppos.inventory.InventoryStructure.begin();
+			LbaNet::InventoryMap::iterator endm =  ppos.inventory.InventoryStructure.end();
+			std::map<long, std::pair<int, int> > inv;
+			for(; itm != endm; ++itm)
+				inv[itm->first] = std::make_pair<int, int>(itm->second.Number, itm->second.PlaceInInventory);
+			InventoryHandler::getInstance()->SetCurrentInventory(inv, ppos.inventory.InventorySize);
+
+
+			std::vector<long> shorcuts;
+			for(size_t i=0; i< ppos.inventory.UsedShorcuts.size(); ++i)
+				shorcuts.push_back(ppos.inventory.UsedShorcuts[i]);
+			InventoryHandler::getInstance()->SetShortcut(shorcuts);
+
+			_previousworld = true;
 		}
 
 		//-----------------------------------
@@ -546,7 +636,31 @@ void SendingLoopThread::run()
 				AddSignal(vecsig[i]);
 			}
 		}
+	}
 
+
+
+	// update server inventory before quitting
+	if(_previousworld)
+	{
+		int inventorysize;
+		std::map<long, std::pair<int, int> > invmap = InventoryHandler::getInstance()->GetCurrentInventory(inventorysize);
+		std::map<long, std::pair<int, int> > ::iterator itm =  invmap.begin();
+		std::map<long, std::pair<int, int> > ::iterator endm =  invmap.end();
+		LbaNet::InventoryInfo inv;
+		for(; itm != endm; ++itm)
+		{
+			LbaNet::InventoryItem iitm;
+			iitm.Number = itm->second.first;
+			iitm.PlaceInInventory = itm->second.second;
+			inv.InventoryStructure[itm->first] = iitm;
+		}
+
+		std::vector<long> shortc = InventoryHandler::getInstance()->GetShortcut();
+		for(size_t i=0; i< shortc.size(); ++i)
+			inv.UsedShorcuts.push_back(shortc[i]);
+
+		_connectionMananger.UpdateInventory(inv);
 	}
 }
 
@@ -613,11 +727,13 @@ void SendingLoopThread::UpdateActorInfo(const LbaNet::ActorInfo & MainInfo)
     {
 		LogHandler::getInstance()->LogToFile(std::string("Disconnected from room : ") + ex.what());
 		_current_map = "";
+		ThreadSafeWorkpile::getInstance()->AddEvent(new DisplayGUIEvent(-1));
     }
 	catch(...)
 	{
 		LogHandler::getInstance()->LogToFile(std::string("Disconnected from room : ") + _current_map);
 		_current_map = "";
+		ThreadSafeWorkpile::getInstance()->AddEvent(new DisplayGUIEvent(-1));
 	}
 }
 

@@ -280,6 +280,12 @@ void LoginGUI::InformNotLoggedIn(int problem, const std::string & reason)
 			txs->appendText(reason);
 		}
 
+		if(problem == -2)	// got disconnected
+		{
+			txs->setText("");
+			txs->appendText("You got disconnected from the server.");
+		}
+
 		CEGUI::WindowManager::getSingleton().getWindow("DisplayLoginErrorFrame")->show();
 	}
 	catch(CEGUI::Exception &ex)

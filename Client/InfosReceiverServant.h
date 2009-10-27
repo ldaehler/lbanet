@@ -54,6 +54,13 @@ public:
 
 	// update actor life
 	virtual void UpdatedLife(const LbaNet::ActorLifeInfo& ali, const Ice::Current&);
+
+	// apply inventory changes
+	virtual  void ApplyInventoryChanges(const LbaNet::UpdatedItemSeq &InventoryChanges, const Ice::Current&);
+
+	// update container
+	virtual void UpdateContainerInfo(const LbaNet::ContainerInfo &container, const Ice::Current&);
+
 };
 
 #endif

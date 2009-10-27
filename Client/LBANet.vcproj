@@ -247,6 +247,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ContainerBox.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DataLoader.cpp"
 				>
 			</File>
@@ -311,7 +315,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ImageSetHandler.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\InfosReceiverServant.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\InventoryBox.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\InventoryHandler.cpp"
 				>
 			</File>
 			<File
@@ -336,6 +352,10 @@
 			</File>
 			<File
 				RelativePath=".\LbaNetModel.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Server\infrastructure\cpp\LbaTypes.cpp"
 				>
 			</File>
 			<File
@@ -420,6 +440,10 @@
 			</File>
 			<File
 				RelativePath=".\ServerConnectionHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ShortcutBox.cpp"
 				>
 			</File>
 			<File
@@ -537,6 +561,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ContainerBox.h"
+				>
+			</File>
+			<File
 				RelativePath=".\DataFileHandler.h"
 				>
 			</File>
@@ -609,7 +637,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ImageSetHandler.h"
+				>
+			</File>
+			<File
 				RelativePath=".\InfosReceiverServant.h"
+				>
+			</File>
+			<File
+				RelativePath=".\InventoryBox.h"
+				>
+			</File>
+			<File
+				RelativePath=".\InventoryHandler.h"
 				>
 			</File>
 			<File
@@ -718,6 +758,10 @@
 			</File>
 			<File
 				RelativePath=".\ServerConnectionHandler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ShortcutBox.h"
 				>
 			</File>
 			<File
