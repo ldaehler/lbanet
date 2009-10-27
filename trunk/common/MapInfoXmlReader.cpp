@@ -920,10 +920,15 @@ bool MapInfoXmlReader::LoadInventory(const std::string &Filename, std::map<long,
 		for( ; pElem; pElem=pElem->NextSiblingElement())
 		{
 			ItemInfo spi;
+			spi.Ephemere = false;
 			pElem->QueryValueAttribute("id", &spi.id);
 			spi.filename = pElem->Attribute("filename");
 			pElem->QueryValueAttribute("type", &spi.type);
 			pElem->QueryValueAttribute("valueA", &spi.valueA);
+			pElem->QueryValueAttribute("Max", &spi.Max);
+			spi.Description = pElem->Attribute("Description");
+			pElem->QueryValueAttribute("Effect", &spi.Effect);
+			pElem->QueryValueAttribute("Ephemere", &spi.Ephemere);
 			mapinv[spi.id] = spi;
 		}
 	}
