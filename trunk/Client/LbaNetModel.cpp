@@ -41,6 +41,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "SynchronizedTimeHandler.h"
 #include "ExternalActorsHandler.h"
 #include "LogHandler.h"
+#include "InventoryHandler.h"
+
 
 #include <windows.h>    // Header File For Windows
 #include <GL/gl.h>      // Header File For The OpenGL32 Library
@@ -50,9 +52,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 const short	LbaNetModel::m_body_color_map[] = {-1, 2, 19, 32, 36, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 243};
 
 
-//#ifndef _LBANET_SET_EDITOR_
-//#define _LBANET_SET_EDITOR_
-//#endif
+#ifndef _LBANET_SET_EDITOR_
+#define _LBANET_SET_EDITOR_
+#endif
 
 
 /***********************************************************
@@ -72,6 +74,8 @@ LbaNetModel::LbaNetModel(GuiHandler*	guiH)
 	_physicHandler = new PhysicHandler(_localActorsHandler, _externalActorsHandler);
 	_localActorsHandler->SetPhysic(_physicHandler);
 	_externalActorsHandler->SetPhysic(_physicHandler);
+	_inventoryHandler = InventoryHandler::getInstance();
+
 
 	LogHandler::getInstance()->LogToFile("Reading configuration from file...");
 	ConfigurationManager *	cm = ConfigurationManager::GetInstance();
@@ -398,6 +402,7 @@ void LbaNetModel::ChangeWorld(const std::string & NewWorld)
 		if(DataLoader::getInstance()->LoadWorld("./Data/" + NewWorld))
 		{
 			_current_world = NewWorld;
+			_inventoryHandler->SetInventoryDb(DataLoader::getInstance()->GetInventory());
 
 			//set the teleport list
 			std::list<std::string> _tplists;
@@ -1010,6 +1015,18 @@ set player name color
 void LbaNetModel::SetPlayerNameColor(int R, int G, int B)
 {
 	_mainPlayerHandler->SetNameColor(R, G, B);
+}
+
+
+
+/***********************************************************
+called when and object from the inventory is used
+***********************************************************/
+void LbaNetModel::InventoryUsed(long ObjectId, bool LifeFull, bool ManaFull)
+{
+	ActionFromInventory act = _inventoryHandler->ItemUsed(ObjectId, LifeFull, ManaFull);
+	if(act.ChangeStance)
+		PlayerChangeStance(act.NewStance);
 }
 
 

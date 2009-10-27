@@ -140,12 +140,15 @@ bool DataLoader::LoadWorld(std::string WorldName)
 		_videofile = _currentWorld.Files["videos"];
 		_soundfile = "Data/Samples/sounds.xml";
 		_modelsfile = "Data/Models/models.xml";
+		_inventoryfile = _currentWorld.Files["inventory"];
 
 		_brickInfo = new BrickInfoHandler(brfile);
 
 		MapInfoXmlReader::LoadSprites(_spritefile, _sprites);
 		MapInfoXmlReader::LoadSprites(_videofile, _videos);
 		MapInfoXmlReader::LoadModels(_modelsfile, _models);
+		MapInfoXmlReader::LoadInventory(_inventoryfile, _inventory);
+
 
 		_currentMap = _currentWorld.FirstMap;
 		return true;

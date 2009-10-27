@@ -83,11 +83,17 @@ public:
 	void PlayerRaised();
 
 	// player has changed world
-	LbaNet::PlayerPosition ChangeWorld(const std::string& WorldName);
+	LbaNet::SavedWorldInfo ChangeWorld(const std::string& WorldName);
 
 	// player update his current position in the world
 	void UpdatePositionInWorld(const LbaNet::PlayerPosition& Position);
 
+	// update inventory
+	void UpdateInventory(const LbaNet::InventoryInfo &Inventory);
+
+
+	// called to tell the server and obejct has been used
+	void InventoryUsed(long ItemId);
 
 private:
 
@@ -151,6 +157,7 @@ private:
 	long					_refresh_counter;
 	long					_afk_counter;
 	bool					_afked;
+	bool					_previousworld;
 
 	IceConnectionManager	_connectionMananger;	// ice connection manager
 };

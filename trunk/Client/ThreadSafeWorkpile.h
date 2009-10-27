@@ -250,6 +250,19 @@ public:
 	// wait for server to return with player position
 	const PlayerWorldPos & WaitForPlayerPosition();
 
+
+	// called when a shortcut is used
+	void UseShortcut(int scnum);
+
+	// called when a shortcut is used
+	void GetUsedShorcut(std::vector<int> &scvec);
+
+	// called when an object is used
+	void InventoryObjectUsed(long itemid);
+
+	// get list of used objects
+	void GetListOfObjectUsed(std::vector<long> &objs);
+
 protected:
 
 	//! construtor
@@ -281,6 +294,8 @@ private:
 	IceUtil::Mutex								m_mutex_name_color;
 	IceUtil::Mutex								m_mutex_color_changed;
 	IceUtil::Mutex								m_mutex_world_changed;
+	IceUtil::Mutex								m_mutex_shortcut_used;
+	IceUtil::Mutex								m_mutex_inventory_used;
 
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_irc;
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_sending_loop;
@@ -334,6 +349,10 @@ private:
 	PlayerWorldPos								m_player_pos_info;
 
 
+	std::vector<int>							m_shortcuts_used;
+	std::vector<long>							m_inv_item_used;
+
+	
 	static ThreadSafeWorkpile *					_singletonInstance;
 };
 

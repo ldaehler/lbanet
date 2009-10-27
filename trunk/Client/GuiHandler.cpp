@@ -87,6 +87,8 @@ void GuiHandler::Initialize(int screen_size_X, int screen_size_Y, bool ServerOn,
 	try
 	{
 		_gui_renderer =  &CEGUI::OpenGLRenderer::create();
+		_gui_renderer->enableExtraStateSettings(true);
+
 		//new CEGUI::OpenGLRenderer (0, screen_size_X, screen_size_Y);
 
 		CEGUI::System::create( *_gui_renderer );
@@ -118,6 +120,7 @@ void GuiHandler::Initialize(int screen_size_X, int screen_size_Y, bool ServerOn,
 
 		//! load font file
 		CEGUI::FontManager::getSingleton().create( "abbey_m1-9.font" );
+
 
 		ReloadFontSize();
 
@@ -400,7 +403,7 @@ void GuiHandler::Resize(int screen_size_X, int screen_size_Y)
     CEGUI::System::getSingleton().
         notifyDisplaySizeChanged(CEGUI::Size((float)screen_size_X,(float)screen_size_Y));
 
-	//_gui_renderer->setDisplaySize(CEGUI::Size((float)screen_size_X, (float)screen_size_Y));
+	_game_gui->Refresh();
 }
 
 /***********************************************************
@@ -417,13 +420,6 @@ called when the windows is resized
 void GuiHandler::restoreTextures()
 {
 	_gui_renderer->restoreTextures();
-
-	//CEGUI::Window * root = _guis[_currentGUI]->GetRoot();
-	//if(root)
-	//{
-	//	root->hide();
-	//	root->show();
-	//}
 }
 
 

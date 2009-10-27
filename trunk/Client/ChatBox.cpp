@@ -170,8 +170,6 @@ ChatBox::~ChatBox()
 	{
 		CEGUI::FrameWindow * frw = static_cast<CEGUI::FrameWindow *> (
 			CEGUI::WindowManager::getSingleton().getWindow("ChatFrame"));
-		frw->subscribeEvent (CEGUI::FrameWindow::EventCloseClicked,
-			CEGUI::Event::Subscriber (&ChatBox::HandleCloseChatbox, this));
 
 		CEGUI::UVector2 vec = frw->getPosition();
 		ConfigurationManager::GetInstance()->SetFloat("Gui.Chatbox.PosX", vec.d_x.d_scale);

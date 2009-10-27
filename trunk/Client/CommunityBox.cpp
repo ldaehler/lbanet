@@ -62,8 +62,6 @@ CommunityBox::~CommunityBox()
 	{
 		CEGUI::FrameWindow * frw = static_cast<CEGUI::FrameWindow *> (
 			CEGUI::WindowManager::getSingleton().getWindow("CommunityFrame"));
-		frw->subscribeEvent (CEGUI::FrameWindow::EventCloseClicked,
-			CEGUI::Event::Subscriber (&CommunityBox::HandleClose, this));
 
 		CEGUI::UVector2 vec = frw->getPosition();
 		ConfigurationManager::GetInstance()->SetFloat("Gui.Communitybox.PosX", vec.d_x.d_scale);

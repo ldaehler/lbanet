@@ -30,15 +30,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GameEvents.h"
 #include "DataLoader.h"
 
-//#ifndef _LBANET_SET_EDITOR_
-//#define _LBANET_SET_EDITOR_
-//#endif
+#ifndef _LBANET_SET_EDITOR_
+#define _LBANET_SET_EDITOR_
+#endif
 
 /***********************************************************
 constructor
 ***********************************************************/
 GameGUI::GameGUI()
-: _cb(this), _comb(this), _telb(this), _editb(NULL)
+: _cb(this), _comb(this), _telb(this), _invb(this, 20, 50), 
+	_shortb(this, 50), _containerb(this, 20, 50), _editb(NULL)
 {
 	#ifdef _LBANET_SET_EDITOR_
 	_editb = new EditorBox(this);
@@ -64,6 +65,11 @@ void GameGUI::Initialize()
 		_cb.Initialize(_root);
 		_comb.Initialize(_root);
 		_telb.Initialize(_root);
+		_invb.Initialize(_root);
+		_shortb.Initialize(_root);
+		_containerb.Initialize(_root);
+
+
 		if(_editb)_editb->Initialize(_root);
 		CEGUI::WindowManager::getSingleton().getWindow("HeadInterfaceBG")->disable();
 		CEGUI::WindowManager::getSingleton().getWindow("MenuCharInterfaceBG")->disable();
@@ -100,6 +106,16 @@ void GameGUI::Initialize()
 			CEGUI::PushButton::EventClicked,
 			CEGUI::Event::Subscriber (&GameGUI::HandleCloseTextClicked, this));
 
+		static_cast<CEGUI::PushButton *> (CEGUI::WindowManager::getSingleton().getWindow("btntunic"))->subscribeEvent (
+			CEGUI::PushButton::EventClicked,
+			CEGUI::Event::Subscriber (&GameGUI::HandleInventoryClicked, this));
+
+		static_cast<CEGUI::PushButton *> (CEGUI::WindowManager::getSingleton().getWindow("btnweapon"))->subscribeEvent (
+			CEGUI::PushButton::EventClicked,
+			CEGUI::Event::Subscriber (&GameGUI::HandleShortcutClicked, this));
+
+
+		
 		CEGUI::FrameWindow * frw = static_cast<CEGUI::FrameWindow *> (
 			CEGUI::WindowManager::getSingleton().getWindow("DisplayGameTextFrame"));
 		frw->subscribeEvent (CEGUI::FrameWindow::EventCloseClicked,
@@ -191,12 +207,32 @@ bool GameGUI::HandleOptionIconClicked (const CEGUI::EventArgs& e)
 
 
 /***********************************************************
+handle send button event
+***********************************************************/
+bool GameGUI::HandleInventoryClicked (const CEGUI::EventArgs& e)
+{
+	_invb.Show();
+	return true;
+}
+
+/***********************************************************
+handle send button event
+***********************************************************/
+bool GameGUI::HandleShortcutClicked (const CEGUI::EventArgs& e)
+{
+	_shortb.Show();
+	return true;
+}
+
+/***********************************************************
 process what is needed in the game GUI
 ***********************************************************/
 void GameGUI::Process()
 {
 	_cb.Process();
 	_comb.Process();
+	_shortb.Process();
+	_invb.Process();
 }
 
 
@@ -358,3 +394,22 @@ void GameGUI::SetPlayerName(const std::string & name)
 		_root = NULL;
 	}
 }
+
+
+
+/***********************************************************
+refreshthe gui
+***********************************************************/
+void GameGUI::Refresh()
+{
+	_cb.Show();_cb.Show();
+	_comb.Show();_comb.Show();
+	_telb.Show();_telb.Show();
+	_invb.Show();_invb.Show();
+	_shortb.Show();_shortb.Show();
+
+	CEGUI::Window * win = CEGUI::WindowManager::getSingleton().getWindow("PlayerName");
+	win->hide();
+	win->show();
+}
+

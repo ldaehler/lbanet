@@ -575,6 +575,12 @@ void ThreadSafeWorkpile::InformChangeWorld(const std::string & NewWorld)
 	IceUtil::Mutex::Lock lock(m_mutex_world_changed);
 	m_world_changed = true;
 	m_new_world_name = NewWorld;
+	if(!IsServeron())
+	{
+		PlayerWorldPos pos;
+		SetNewWorldPlayerPos(pos);
+	}
+
 }
 
 /***********************************************************
@@ -589,6 +595,8 @@ bool ThreadSafeWorkpile::WorldChanged(std::string & NewWorld)
 		NewWorld = m_new_world_name;
 		return true;
 	}
+
+	return false;
 }
 
 /***********************************************************
@@ -617,5 +625,48 @@ const ThreadSafeWorkpile::PlayerWorldPos & ThreadSafeWorkpile::WaitForPlayerPosi
 	if(!m_player_pos_info_updated)
 		m_player_pos_info.MapName = "";
 
+	m_player_pos_info_updated = false;
 	return m_player_pos_info;
+}
+
+
+
+/***********************************************************
+called when a shortcut is used
+***********************************************************/
+void ThreadSafeWorkpile::UseShortcut(int scnum)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_shortcut_used);
+	m_shortcuts_used.push_back(scnum);
+}
+
+/***********************************************************
+called when a shortcut is used
+***********************************************************/
+void ThreadSafeWorkpile::GetUsedShorcut(std::vector<int> &scvec)
+{
+	scvec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_shortcut_used);
+	scvec.swap(m_shortcuts_used);
+}
+
+
+
+/***********************************************************
+called when an object is used
+***********************************************************/
+void ThreadSafeWorkpile::InventoryObjectUsed(long itemid)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_inventory_used);
+	m_inv_item_used.push_back(itemid);
+}
+
+/***********************************************************
+get list of used objects
+***********************************************************/
+void ThreadSafeWorkpile::GetListOfObjectUsed(std::vector<long> &objs)
+{
+	objs.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_inventory_used);
+	objs.swap(m_inv_item_used);
 }

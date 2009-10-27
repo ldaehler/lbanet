@@ -156,6 +156,11 @@ public:
 	// get a sound path
 	std::string GetSoundPath(long id);
 
+	//! video accessor
+	const std::map<long, ItemInfo> & GetInventory()
+	{return _inventory;}
+
+
 protected:
 	//! constructor
    DataLoader();
@@ -175,6 +180,7 @@ private:
 	std::map<long, SpriteInfo> _sprites;
 	std::map<long, SpriteInfo> _videos;
 	std::map<long, ModelInfo> _models;
+	std::map<long, ItemInfo>	_inventory;
 
 	std::string				_textfile;
 	std::string				_currentworldfile;
@@ -182,6 +188,7 @@ private:
 	std::string				_videofile;
 	std::string				_soundfile;
 	std::string				_modelsfile;
+	std::string				_inventoryfile;
 
 	std::string				_lang;
 
