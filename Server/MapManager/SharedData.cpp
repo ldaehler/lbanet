@@ -60,7 +60,7 @@ void SharedData::UpdatedInfo(const LbaNet::ActorInfo& asi)
 /***********************************************************
 callback function called when an actor id activated
 ***********************************************************/
-void SharedData::ActivateActor(const LbaNet::ActorActivationInfo& ai)
+void SharedData::ActivateActor(const ActorActivationInfoWithCallback& ai)
 {
 	IceUtil::Mutex::Lock lock(m_mutex_actor_info);
 	m_actors_info.push_back(ai);
@@ -98,7 +98,7 @@ void SharedData::GetUpdatedinfo(std::vector<LbaNet::ActorInfo> & pinfos)
 /***********************************************************
 get actor info
 ***********************************************************/
-void SharedData::GetActorinfo(std::vector<LbaNet::ActorActivationInfo> & pinfos)
+void SharedData::GetActorinfo(std::vector<ActorActivationInfoWithCallback> & pinfos)
 {
 	pinfos.clear();
 	IceUtil::Mutex::Lock lock(m_mutex_actor_info);
@@ -200,4 +200,64 @@ void SharedData::GetRaisedFromDead(std::vector<Ice::Long> & pinfos)
 	pinfos.clear();
 	IceUtil::Mutex::Lock lock(m_mutex_actor_raised);
 	m_raised_info.swap(pinfos);
+}
+
+
+/***********************************************************
+called when an item is used by a player
+***********************************************************/
+void SharedData::UpdateLifeMana(const LifeManaInfo & itinfo)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_item_used);
+	m_items_used.push_back(itinfo);
+}
+
+/***********************************************************
+get all items used
+***********************************************************/
+void SharedData::GetAllUpdateLifeMana(std::vector<LifeManaInfo> & vec)
+{
+	vec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_item_used);
+	m_items_used.swap(vec);
+}
+
+
+
+/***********************************************************
+called when an item is used by a player
+***********************************************************/
+void SharedData::UpdateContainerQuery(const ContainerQueryInfo & itinfo)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_container_queries);
+	m_container_queries.push_back(itinfo);
+}
+
+/***********************************************************
+get all items used
+***********************************************************/
+void SharedData::GetAllContainerQuerys(std::vector<ContainerQueryInfo> & vec)
+{
+	vec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_container_queries);
+	m_container_queries.swap(vec);
+}
+
+/***********************************************************
+called when an item is used by a player
+***********************************************************/
+void SharedData::UpdateContainerUpdate(const ContainerUpdateInfo & itinfo)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_container_updates);
+	m_container_updates.push_back(itinfo);
+}
+
+/***********************************************************
+get all items used
+***********************************************************/
+void SharedData::GetAllContainerUpdates(std::vector<ContainerUpdateInfo> & vec)
+{
+	vec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_container_updates);
+	m_container_updates.swap(vec);
 }

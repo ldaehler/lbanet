@@ -91,6 +91,10 @@ Glacier2::SessionPrx ClientSessionManagerServant::create(	const std::string & us
 	Ice::Identity id;
     id.category = "_" + userId;
     id.name = IceUtil::generateUUID();
-    return Glacier2::SessionPrx::uncheckedCast(current.adapter->add
-							(new SessionServant(userId, _manager, _ctracker, _map_manager, _version, _dbh), id));
+
+	SessionServant * sservant = new SessionServant(userId, _manager, _ctracker, _map_manager, _version, _dbh);
+	Ice::ObjectPrx prx = current.adapter->add(sservant, id);
+	sservant->setSelfPointer(LbaNet::ClientSessionPrx::uncheckedCast(prx));
+
+    return Glacier2::SessionPrx::uncheckedCast(prx);
 }

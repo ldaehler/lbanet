@@ -2,7 +2,8 @@
 #define LBANET_ACTOR_HANDLER
 
 
-#include <MapObserver.ice>
+#include <LbaTypes.ice>
+
 
 module LbaNet
 {
@@ -15,6 +16,10 @@ module LbaNet
 	    void SignaledActor(ActorSignalInfo ai);	
 	    
 	    void UpdatedLife(ActorLifeInfo ali);
+	    
+	    void ApplyInventoryChanges(UpdatedItemSeq InventoryChanges);
+	    
+	    void UpdateContainerInfo(ContainerInfo container);
 	};
 	
 	

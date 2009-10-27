@@ -202,6 +202,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\infrastructure\cpp\ChatInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\infrastructure\cpp\ClientSession.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\ContainerActor.cpp"
 				>
 			</File>
@@ -227,6 +235,10 @@
 			</File>
 			<File
 				RelativePath="..\..\common\LadderActor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\infrastructure\cpp\LbaTypes.cpp"
 				>
 			</File>
 			<File

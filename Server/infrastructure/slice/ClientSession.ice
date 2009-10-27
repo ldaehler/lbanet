@@ -4,58 +4,10 @@
 #include <Glacier2/Session.ice>
 #include <ActorInfo.ice>
 #include <ChatInfo.ice>
-#include <MapObserver.ice>
-#include <ConnectedTracker.ice>
+#include <LbaTypes.ice>
 
 module LbaNet
 {
-	struct PlayerPosition
-	{
-		// actor name
-		string			MapName;		
-
-		// actor coordinates
-		float			X;
-		float			Y;
-		float			Z;
-		float			Rotation;
-	};
-	
-	
-	sequence<int> ShortcutSeq;
-	
-	struct InventoryItem
-	{
-		int Number;
-		int PlaceInInventory;
-	};
-	
-	dictionary<long, InventoryItem> InventoryMap;
-	
-	struct InventoryInfo
-	{
-		int InventorySize;
-		InventoryMap InventoryStructure;
-		ShortcutSeq UsedShorcuts;
-	};
-	
-	
-	struct SavedWorldInfo
-	{
-		PlayerPosition ppos;
-		InventoryInfo inventory;
-	};
-	
-	
-	
-	dictionary<long, int> ItemList;	
-	struct ContainerInfo
-	{
-		long LockedById;
-		ItemList Content;
-	};	
-
-
 	interface ClientSession extends Glacier2::Session
 	{
 	    ChatRoomParticipant* JoinChat(string room, ChatRoomObserver* view);
@@ -96,8 +48,16 @@ module LbaNet
 	    void UseItem(long ItemId);
 	    
 	    
-	    ContainerInfo GetContainerContent(long ContainerId);
+	    void AskForContainerContent(long ContainerId);
 	    void UpdateInventoryFromContainer(long ContainerId, ItemList Taken, ItemList Put);
+	    
+	    
+	    bool HasItem(long ItemId, int QUantity);
+	   
+	   // callback functions
+	    void ApplyInventoryChanges(UpdatedItemSeq InventoryChanges);
+	    
+	    void UpdateContainerInfo(ContainerInfo container);	    
 	};
 
 };

@@ -192,6 +192,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\infrastructure\cpp\LbaTypes.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\main.cpp"
 				>
 			</File>

@@ -37,6 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ChatParticipantServant.h"
 #include "ActorsParticipantServant.h"
 #include "DatabaseHandler.h"
+#include "WorldInfo.h"
 
 using namespace LbaNet;
 
@@ -120,11 +121,27 @@ public:
 	virtual void UseItem(Ice::Long ItemId, const Ice::Current&);
 	    
 	// get container content  
-	virtual ContainerInfo GetContainerContent(Ice::Long ContainerId, const Ice::Current&);
+	virtual void AskForContainerContent(Ice::Long ContainerId, const Ice::Current&);
 
 	//update player inventory from container content
 	virtual void UpdateInventoryFromContainer(Ice::Long ContainerId, const ItemList &Taken, const ItemList &Put, const Ice::Current&);
 
+   	//check if we have item in inventory
+    bool HasItem(Ice::Long ItemId, int QUantity, const Ice::Current&);
+   
+   // callback functions to apply inventory changes
+    void ApplyInventoryChanges(const UpdatedItemSeq &InventoryChanges, const Ice::Current&);
+
+    // callback functions to update container info
+    void UpdateContainerInfo(const ContainerInfo &container, const Ice::Current&);	
+
+	// set self pointer
+	void setSelfPointer(const LbaNet::ClientSessionPrx &ptr){_selfptr = ptr;}
+
+protected:
+	void ApplyInternalInventoryChanges(const UpdatedItemSeq &InventoryChanges);
+
+	void cleanEphemereItems();
 
 private:
 	std::string							_userId;
@@ -143,6 +160,8 @@ private:
 	const ConnectedTrackerPrx			_ctracker;
 	const MapManagerPrx					_map_manager;
 
+    ActorsObserverPrx					_client_observer;
+
 	std::string							_version;
 
 	LbaNet::ActorLifeInfo				_lifeinfo;
@@ -152,6 +171,10 @@ private:
 
 
 	InventoryInfo						_playerInventory;
+	std::map<long, ItemInfo>			_inventory_db;
+	std::map<std::string, std::string>	_session_world_inventory_files;
+
+	LbaNet::ClientSessionPrx			_selfptr;
 };
 
 #endif

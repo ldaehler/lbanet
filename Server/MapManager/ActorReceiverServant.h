@@ -45,7 +45,8 @@ public:
 	{}
 
 	// callback function called when an actor id activated
-    virtual void ActivateActor(const LbaNet::ActorActivationInfo& ai, const Ice::Current&);
+    virtual void ActivateActor(const LbaNet::ActorActivationInfo& ai, const LbaNet::ClientSessionPrx &clientPtr,
+									const Ice::Current&);
 
 	// callback function called when an actor id signaled
     virtual void SignalActor(const LbaNet::ActorSignalInfo& ai, const Ice::Current&);
@@ -64,6 +65,19 @@ public:
 
 	//! called when an actor has been dead and reborn
     virtual void RaisedFromDead(Ice::Long ActorId, const Ice::Current&);
+
+	//! item used
+	virtual void UpdateLifeMana(Ice::Long ActorId, int LifeDelta, int ManaDelta, 
+									const Ice::Current&);
+
+	//! AskForContainer
+    void AskForContainer(Ice::Long ActorId, Ice::Long ContainerId, const LbaNet::ClientSessionPrx &callback, 
+								const Ice::Current&);
+    
+	//! UpdateContainer
+    void UpdateContainer(Ice::Long ContainerId, Ice::Long ActorId, const LbaNet::ItemList &Taken, 
+							const LbaNet::ItemList &Put, const LbaNet::ClientSessionPrx &callback,
+							const Ice::Current&);
 
 private:
 	SharedData * _SD;

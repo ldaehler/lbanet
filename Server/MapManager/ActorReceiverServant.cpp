@@ -30,9 +30,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /***********************************************************
 	callback function called when an actor id activated
 ***********************************************************/
-void ActorReceiverServant::ActivateActor(const LbaNet::ActorActivationInfo& ai, const Ice::Current&)
+void ActorReceiverServant::ActivateActor(const LbaNet::ActorActivationInfo& ai, 
+										 const LbaNet::ClientSessionPrx &clientPtr,
+										 const Ice::Current&)
 {
-	_SD->ActivateActor(ai);
+	ActorActivationInfoWithCallback aic;
+	aic.ainfo = ai;
+	aic.clientPtr = clientPtr;
+	_SD->ActivateActor(aic);
 }
 
 /***********************************************************
@@ -86,4 +91,50 @@ called when an actor has been dead and reborn
 void ActorReceiverServant::RaisedFromDead(Ice::Long ActorId, const Ice::Current&)
 {
 	_SD->RaisedFromDead(ActorId);
+}
+
+
+/***********************************************************
+item used
+***********************************************************/
+void ActorReceiverServant::UpdateLifeMana(Ice::Long ActorId, int LifeDelta, int ManaDelta, 
+												const Ice::Current&)
+{
+	LifeManaInfo itinfo;
+	itinfo.ActorId = ActorId;
+	itinfo.LifeDelta = LifeDelta;
+	itinfo.ManaDelta = ManaDelta;
+	_SD->UpdateLifeMana(itinfo);
+}
+
+
+
+/***********************************************************
+AskForContainer
+***********************************************************/
+void ActorReceiverServant::AskForContainer(Ice::Long ActorId, Ice::Long ContainerId, 
+										   const LbaNet::ClientSessionPrx &callback, 
+											const Ice::Current&)
+{
+	ContainerQueryInfo qinfo;
+	qinfo.ActorId = ActorId;
+	qinfo.ContainerId = ContainerId;
+	qinfo.clientPtr = callback;
+	_SD->UpdateContainerQuery(qinfo);
+}
+
+/***********************************************************
+UpdateContainer
+***********************************************************/
+void ActorReceiverServant::UpdateContainer(Ice::Long ContainerId, Ice::Long ActorId, const LbaNet::ItemList &Taken, 
+											const LbaNet::ItemList &Put, const LbaNet::ClientSessionPrx &callback,
+											const Ice::Current&)
+{
+	ContainerUpdateInfo qinfo;
+	qinfo.ActorId = ActorId;
+	qinfo.ContainerId = ContainerId;
+	qinfo.Taken = Taken;
+	qinfo.Put = Put;
+	qinfo.clientPtr = callback;
+	_SD->UpdateContainerUpdate(qinfo);
 }
