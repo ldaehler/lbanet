@@ -115,6 +115,7 @@ public:
 	//! set the actor state
 	virtual void Setstate(const ActorStateInfo & currState);
 
+
 protected:
 	//! process zone activation
 	virtual void ProcessActivation(float PlayerPosX, float PlayerPosY, float PlayerPosZ,

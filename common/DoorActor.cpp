@@ -145,11 +145,8 @@ int DoorActor::Process(double tnow, float tdiff)
 void DoorActor::ProcessActivation(float PlayerPosX, float PlayerPosY, float PlayerPosZ,
 									  float PlayerRotation)
 {
-	if(!_locked)
-	{
-		Open();
-		SendSignal(1, _targets);
-	}
+	Open();
+	SendSignal(1, _targets);
 }
 
 /***********************************************************
@@ -158,11 +155,8 @@ void DoorActor::ProcessActivation(float PlayerPosX, float PlayerPosY, float Play
 void DoorActor::ProcessDesactivation(float PlayerPosX, float PlayerPosY, float PlayerPosZ,
 										 float PlayerRotation)
 {
-	if(!_locked)
-	{
-		Close();
-		SendSignal(2, _targets);
-	}
+	Close();
+	SendSignal(2, _targets);
 }
 
 

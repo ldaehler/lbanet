@@ -228,6 +228,10 @@ struct ItemInfo
 	std::string filename;
 	int type;
 	int valueA;
+	int Max;
+	std::string Description;
+	int Effect;
+	bool Ephemere;
 };
 
 #endif
