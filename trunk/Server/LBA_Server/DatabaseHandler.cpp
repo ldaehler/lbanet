@@ -218,19 +218,19 @@ update player inventory structure
 void DatabaseHandler::UpdateInventory(const LbaNet::InventoryInfo &Inventory, const std::string& WorldName,
 									  long PlayerId)
 {
-	if(!_connected)
+	if(!_connected || WorldName == "")
 		return;
 
-	std::string shortcutstring;
+	std::stringstream shortcutstring;
 	LbaNet::ShortcutSeq::const_iterator it = Inventory.UsedShorcuts.begin();
 	LbaNet::ShortcutSeq::const_iterator end = Inventory.UsedShorcuts.end();
 	if(it != end)
 	{
-		shortcutstring+=*it;
+		shortcutstring<<*it;
 		++it;
 	}
 	for(;it != end; ++it)
-		shortcutstring+="#"+*it;
+		shortcutstring<<"#"<<*it;
 
 
 	Lock sync(*this);
@@ -244,24 +244,24 @@ void DatabaseHandler::UpdateInventory(const LbaNet::InventoryInfo &Inventory, co
 		{
 			query.clear();
 			query << "UPDATE usertoworldmap SET InventorySize = '"<<Inventory.InventorySize<<"',";
-			query << "Shortcuts = '"<<shortcutstring<<"' ";
+			query << "Shortcuts = '"<<shortcutstring.str()<<"' ";
 			query << " WHERE id = '"<<res[0][0]<<"'";
 			if(!query.exec())
 				std::cout<<"LBA_Server - Update usertoworldmap_inv failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
 
 
 			query.clear();
-			query << "DELETE * FROM userinventory";
+			query << "DELETE FROM userinventory";
 			query << " WHERE worldid = '"<<res[0][0]<<"'";
 			if(!query.exec())
-				std::cout<<"LBA_Server - Update DELETE * failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
+				std::cout<<"LBA_Server - Update DELETE failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
 
 			LbaNet::InventoryMap::const_iterator iti = Inventory.InventoryStructure.begin();
 			LbaNet::InventoryMap::const_iterator endi = Inventory.InventoryStructure.end();
 			for(;iti != endi; ++iti)
 			{
 				query.clear();
-				query << "INSERT userinventory (worldid, objectid, number, InventoryPlace) VALUES('";
+				query << "INSERT INTO userinventory (worldid, objectid, number, InventoryPlace) VALUES('";
 				query << res[0][0] << "', '" << iti->first << "', '" << iti->second.Number << "', '" << iti->second.PlaceInInventory << "')";
 				if(!query.exec())
 					std::cout<<"LBA_Server - Update INSERT usertoworldmap failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;

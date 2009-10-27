@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="LBA_Server"
 	ProjectGUID="{713A566D-9D6D-4DEE-9F41-5B03CB522AFB}"
 	RootNamespace="LBA_Server"
@@ -40,9 +40,10 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/D _LBANET_SERVER_SIDE_"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;c:\Ice-3.3.1-VC90\include&quot;;..\infrastructure\include;&quot;..\MySQL++\include&quot;;..\mysql\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				AdditionalIncludeDirectories="&quot;c:\Ice-3.3.1-VC90\include&quot;;..\infrastructure\include;&quot;..\MySQL++\include&quot;;..\mysql\include;..\..\common;..\..\dependencies\tinyxml\include"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;TIXML_USE_STL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -61,9 +62,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="iced.lib iceutild.lib icestormd.lib glacier2d.lib iceboxd.lib mysqlpp_d.lib"
+				AdditionalDependencies="iced.lib iceutild.lib icestormd.lib glacier2d.lib iceboxd.lib mysqlpp_d.lib tinyxmld_STL.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;c:\Ice-3.3.1-VC90\lib&quot;;&quot;..\MySQL++\lib&quot;"
+				AdditionalLibraryDirectories="&quot;c:\Ice-3.3.1-VC90\lib&quot;;&quot;..\MySQL++\lib&quot;;..\..\dependencies\tinyxml\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -115,10 +116,11 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/D _LBANET_SERVER_SIDE_"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;c:\Ice-3.3.1-VC90\include&quot;;..\infrastructure\include;&quot;..\MySQL++\include&quot;;..\mysql\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				AdditionalIncludeDirectories="&quot;c:\Ice-3.3.1-VC90\include&quot;;..\infrastructure\include;&quot;..\MySQL++\include&quot;;..\mysql\include;..\..\common;..\..\dependencies\tinyxml\include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;TIXML_USE_STL"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -136,10 +138,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ice.lib iceutil.lib icestorm.lib glacier2.lib icebox.lib mysqlpp.lib"
+				AdditionalDependencies="ice.lib iceutil.lib icestorm.lib glacier2.lib icebox.lib mysqlpp.lib tinyxmld_STL.lib"
 				OutputFile="$(OutDir)\lbaserver.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;c:\Ice-3.3.1-VC90\lib&quot;;&quot;..\MySQL++\lib&quot;"
+				AdditionalLibraryDirectories="&quot;c:\Ice-3.3.1-VC90\lib&quot;;&quot;..\MySQL++\lib&quot;;..\..\dependencies\tinyxml\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -179,11 +181,23 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\common\ActivableActor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\Actor.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\infrastructure\cpp\ActorInfo.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\ActorsParticipantServant.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\AreaSwitch.cpp"
 				>
 			</File>
 			<File
@@ -207,11 +221,51 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\ContainerActor.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DatabaseHandler.cpp"
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\DoorActor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\ExitActor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\FloorSwitch.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\HurtArea.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\LadderActor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\infrastructure\cpp\LbaTypes.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\LiftActor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\LivingActor.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\main.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\MapInfoXmlReader.cpp"
 				>
 			</File>
 			<File
@@ -228,6 +282,26 @@
 			</File>
 			<File
 				RelativePath=".\SessionServant.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\SwitchActor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\TextActor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\UpExitActor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\ZoneActivableActor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\ZoneActor.cpp"
 				>
 			</File>
 		</Filter>

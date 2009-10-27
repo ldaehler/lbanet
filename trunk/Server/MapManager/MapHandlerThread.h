@@ -36,6 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <IceUtil/Thread.h>
 
 #include "SharedData.h"
+#include <time.h>
 
 using namespace LbaNet;
 class ServerSignaler;
@@ -71,6 +72,7 @@ public:
 	LbaNet::ActorLifeInfo GetPlayerLife(Ice::Long PlayerId);
 
 
+
 protected:
 	// a player join a map
 	void Join(const ActorLifeInfo &PlayerId);
@@ -82,7 +84,7 @@ protected:
 	void UpdatedInfo(const LbaNet::ActorInfo& asi);
 
 	// callback function called when an actor id activated
-	void ActivateActor(const LbaNet::ActorActivationInfo& ai);
+	void ActivateActor(const ActorActivationInfoWithCallback& ai);
 
 	// callback function called when an actor id signaled
 	void SignalActor(const LbaNet::ActorSignalInfo& ai);
@@ -96,6 +98,12 @@ protected:
 	// called when a player id dead and raised
 	void Raised(Ice::Long PlayerId);
 
+	//! object used
+	void UpdateLifeMana(const LifeManaInfo &itinfo);
+
+	void UpdateContainerQuery(const ContainerQueryInfo &itinfo);
+	void UpdateContainerUpdate(const ContainerUpdateInfo &itinfo);
+
 private:
 	ActorsObserverPrx							_publisher;
 
@@ -103,9 +111,12 @@ private:
 	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >		_players;
 	std::map<long, Actor *>						_actors;
 
+	std::map<Ice::Long, std::vector<Ice::Long> > _unlocked;
+
 	ServerSignaler *							_signaler;
 
 	std::map<Ice::Long, Ice::Long>				_todeactivate;
+	std::map<Ice::Long, std::pair<Ice::Long, time_t> >	_lockedContainers;
 
 	SharedData	*								_SD;
 

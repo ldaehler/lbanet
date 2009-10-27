@@ -26,6 +26,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "SessionServant.h"
 #include <IceUtil/UUID.h>
 #include <Ice/Ice.h>
+#include "MapInfoXmlReader.h"
+
+
 
 /***********************************************************
 constructor
@@ -34,7 +37,7 @@ SessionServant::SessionServant(const std::string& userId, const RoomManagerPrx& 
 									const ConnectedTrackerPrx& ctracker, const MapManagerPrx& map_manager,
 									std::string	version, DatabaseHandler & dbh)
 : _manager(manager), _curr_actor_room(""), _userId(userId), _ctracker(ctracker), _map_manager(map_manager),
-	_userNum(-1), _version(version), _currColor("FFFFFFFF"), _dbh(dbh)
+	_userNum(-1), _version(version), _currColor("FFFFFFFF"), _dbh(dbh), _selfptr(NULL), _client_observer(NULL)
 {
 	_userNum = _ctracker->Connect(_userId);
 
@@ -44,6 +47,11 @@ SessionServant::SessionServant(const std::string& userId, const RoomManagerPrx& 
 	_lifeinfo.MaxMana = 40;
 	_lifeinfo.ActorId = _userNum;
 	_lifeinfo.Name = _userId;
+
+	_session_world_inventory_files["Lba1OriginalWorld"] = "Data/Inventory/lba1_inventory.xml";
+	_session_world_inventory_files["Lba1Expanded"] = "Data/Inventory/lba1E_inventory.xml";
+	_session_world_inventory_files["GiantCitadelWorld"] = "Data/Inventory/lba1_inventory.xml";
+	_session_world_inventory_files["GiantPrincipalWorld"] = "Data/Inventory/lba1_inventory.xml";
 }
 
 
@@ -112,6 +120,10 @@ ActorsParticipantPrx SessionServant::ChangeRoom(		const std::string& newroom,
 														const Ice::Current& current)
 {
     Lock sync(*this);
+	_client_observer = observer;
+
+
+	cleanEphemereItems();
 
 	// if we are already in the new rooom do nothing
 	if(_curr_actor_room == newroom)
@@ -265,7 +277,7 @@ void SessionServant::ActivateActor(const LbaNet::ActorActivationInfo& ai, const 
 	try
 	{
 		if(_actors_manager)
-			_actors_manager->ActivateActor(ai);
+			_actors_manager->ActivateActor(ai, _selfptr);
 	}
     catch(const IceUtil::Exception& ex)
     {
@@ -486,6 +498,9 @@ LbaNet::SavedWorldInfo SessionServant::ChangeWorld(const std::string& WorldName,
 														   const Ice::Current&)
 {
     Lock sync(*this);
+
+	cleanEphemereItems();
+
 	// save old world info
 	_dbh.UpdateInventory(_playerInventory, _currWorldName, _userNum);
 	_dbh.QuitWorld(_currWorldName, _userNum);
@@ -494,21 +509,31 @@ LbaNet::SavedWorldInfo SessionServant::ChangeWorld(const std::string& WorldName,
 	// retrieve info from db
 	LbaNet::SavedWorldInfo swinfo = _dbh.ChangeWorld(WorldName, _userNum);
 
+	// reload inventory
+	_inventory_db.clear();
+	MapInfoXmlReader::LoadInventory(_session_world_inventory_files[WorldName], _inventory_db);
+
 	// only for test - remove that part
 	if(swinfo.inventory.InventoryStructure.size() == 0)
 	{
 		LbaNet::InventoryItem itm;
-		itm.Number = 1;
-		itm.PlaceInInventory = 1;
+		itm.Number = 5;
+		itm.PlaceInInventory = 0;
 		swinfo.inventory.InventoryStructure[1] = itm;
-		itm.PlaceInInventory = 2;
+		itm.PlaceInInventory = 1;
 		swinfo.inventory.InventoryStructure[2] = itm;
-		itm.PlaceInInventory = 3;
+		itm.Number = 1;
+		itm.PlaceInInventory = 2;
 		swinfo.inventory.InventoryStructure[3] = itm;
-		itm.PlaceInInventory = 4;
+		itm.PlaceInInventory = 3;
 		swinfo.inventory.InventoryStructure[4] = itm;
-		itm.PlaceInInventory = 5;
+		itm.PlaceInInventory = 4;
 		swinfo.inventory.InventoryStructure[5] = itm;
+		itm.PlaceInInventory = 5;
+		swinfo.inventory.InventoryStructure[6] = itm;
+
+		swinfo.inventory.UsedShorcuts[0] = 5;
+		swinfo.inventory.UsedShorcuts[1] = 6;
 	}
 
 
@@ -551,35 +576,270 @@ void SessionServant::UpdateInventory(const InventoryInfo &Inventory, const Ice::
 /***********************************************************
 player use an item from inventory 
 ***********************************************************/
-void SessionServant::UseItem(Ice::Long ItemId, const Ice::Current&)
+void SessionServant::UseItem(Ice::Long ItemId, const Ice::Current& cur)
 {
+    Lock sync(*this);
 	LbaNet::InventoryMap::iterator itlocal = _playerInventory.InventoryStructure.find(ItemId);
 	if(itlocal != _playerInventory.InventoryStructure.end())
 	{
-		// decrease item count
-		itlocal->second.Number -= 1;
-		if(itlocal->second.Number <= 0)
-			_playerInventory.InventoryStructure.erase(itlocal);
+		ItemInfo & itmtmp = _inventory_db[ItemId];
+
+		// only use consumable items type
+		if(itmtmp.type != 1)
+			return;
+
+		bool used = false;
+		bool updatedlifemana = false;
+		int deltalife = 0;
+		int deltamana = 0;
+
+		if(itmtmp.valueA == 1) // if life potion
+		{
+			used = true;
+			updatedlifemana = true;
+			deltalife = itmtmp.Effect * _lifeinfo.MaxLife / 100.0;
+		}
+
+		if(itmtmp.valueA == 2) // if mana potion
+		{
+			used = true;
+			updatedlifemana = true;
+			deltamana = itmtmp.Effect * _lifeinfo.MaxMana / 100.0;
+		}
+
+		if(itmtmp.valueA == 3) // if clover
+		{
+			used = true;
+			updatedlifemana = true;
+			deltalife = itmtmp.Effect * _lifeinfo.MaxLife / 100.0;
+			deltamana = itmtmp.Effect * _lifeinfo.MaxMana / 100.0;
+		}
+
+		if(used)
+		{
+			LbaNet::UpdatedItemSeq InventoryChanges;
+			LbaNet::UpdatedItem itm;
+			itm.ItemId = ItemId;
+			itm.NewCount = -1;
+			InventoryChanges.push_back(itm);
+			ApplyInternalInventoryChanges(InventoryChanges);
+		}
+
+		try
+		{
+			if(updatedlifemana && _actors_manager)
+				_actors_manager->UpdateLifeMana(_userNum, deltalife, deltamana);
+		}
+		catch(const IceUtil::Exception& ex)
+		{
+			std::cout<<"SessionServant - Exception during UseItem: "<< ex.what()<<std::endl;
+		}
+		catch(...)
+		{
+			std::cout<<"SessionServant - Unknown exception during UseItem"<<std::endl;
+		}
+
 	}
+
 }
  
 
 /***********************************************************
+check if we have item in inventory
+***********************************************************/
+bool SessionServant::HasItem(Ice::Long ItemId, int QUantity, const Ice::Current&)
+{
+    Lock sync(*this);
+	LbaNet::InventoryMap::iterator itlocal = _playerInventory.InventoryStructure.find(ItemId);
+	if(itlocal != _playerInventory.InventoryStructure.end())
+	{
+		if(itlocal->second.Number >= QUantity)
+			return true;
+	}
+
+	return false;
+}
+
+
+/***********************************************************
+callback functions to apply inventory changes
+***********************************************************/
+void SessionServant::ApplyInternalInventoryChanges(const UpdatedItemSeq &InventoryChanges)
+{
+	UpdatedItemSeq clientseq;
+
+	UpdatedItemSeq::const_iterator it = InventoryChanges.begin();
+	UpdatedItemSeq::const_iterator end = InventoryChanges.end();
+	for(; it != end; ++it)
+	{
+		LbaNet::InventoryMap::iterator itlocal = _playerInventory.InventoryStructure.find(it->ItemId);
+		if(itlocal != _playerInventory.InventoryStructure.end())
+		{
+			itlocal->second.Number += it->NewCount;
+
+			LbaNet::UpdatedItem itm;
+			itm.ItemId = it->ItemId;
+			itm.NewCount = itlocal->second.Number;
+			clientseq.push_back(itm);
+
+			if(itlocal->second.Number <= 0)
+				_playerInventory.InventoryStructure.erase(itlocal);
+		}
+		else
+		{
+			if(it->NewCount > 0)
+			{
+				LbaNet::InventoryItem itinv;
+				itinv.Number = it->NewCount;
+				itinv.PlaceInInventory = -1;
+				_playerInventory.InventoryStructure[it->ItemId] = itinv;
+
+				LbaNet::UpdatedItem itm;
+				itm.ItemId = it->ItemId;
+				itm.NewCount = it->NewCount;
+				clientseq.push_back(itm);
+			}
+		}
+	}
+
+	try
+	{
+		if(clientseq.size() > 0 && _client_observer)
+			return _client_observer->ApplyInventoryChanges(clientseq);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		std::cout<<"SessionServant - Exception during ApplyInventoryChanges: "<< ex.what()<<std::endl;
+    }
+    catch(...)
+    {
+		std::cout<<"SessionServant - Unknown exception during ApplyInventoryChanges"<<std::endl;
+    }
+}
+
+
+
+/***********************************************************
+cleanEphemereItems
+***********************************************************/
+void SessionServant::cleanEphemereItems()
+{
+	UpdatedItemSeq clientseq;
+
+	LbaNet::InventoryMap::iterator it = _playerInventory.InventoryStructure.begin();
+	while(it != _playerInventory.InventoryStructure.end())
+	{
+		if(_inventory_db[it->first].Ephemere)
+		{
+			LbaNet::UpdatedItem itm;
+			itm.ItemId = it->first;
+			itm.NewCount = 0;
+			clientseq.push_back(itm);
+
+			it = _playerInventory.InventoryStructure.erase(it);
+		}
+		else
+			++it;
+	}
+
+
+	try
+	{
+		if(clientseq.size() > 0 && _client_observer)
+			_client_observer->ApplyInventoryChanges(clientseq);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		std::cout<<"SessionServant - Exception during cleanEphemereItems: "<< ex.what()<<std::endl;
+    }
+    catch(...)
+    {
+		std::cout<<"SessionServant - Unknown exception during cleanEphemereItems"<<std::endl;
+    }
+}
+
+
+
+/***********************************************************
+callback functions to apply inventory changes
+***********************************************************/
+void SessionServant::ApplyInventoryChanges(const UpdatedItemSeq &InventoryChanges, const Ice::Current&)
+{
+    Lock sync(*this);
+	ApplyInternalInventoryChanges(InventoryChanges);
+}
+
+
+/***********************************************************
 get container content  
 ***********************************************************/   
-ContainerInfo SessionServant::GetContainerContent(Ice::Long ContainerId, const Ice::Current&)
+void SessionServant::AskForContainerContent(Ice::Long ContainerId, const Ice::Current&)
 {
-	ContainerInfo res;
+    Lock sync(*this);
 
-	return res;
+	try
+	{
+		if(_actors_manager)
+			_actors_manager->AskForContainer(_userNum, ContainerId, _selfptr);
+	}
+	catch(const IceUtil::Exception& ex)
+	{
+		std::cout<<"SessionServant - Exception during AskForContainerContent: "<< ex.what()<<std::endl;
+	}
+	catch(...)
+	{
+		std::cout<<"SessionServant - Unknown exception during AskForContainerContent"<<std::endl;
+	}
 }
+
+
+
+/***********************************************************
+callback functions to update container info
+***********************************************************/
+void SessionServant::UpdateContainerInfo(const ContainerInfo &container, const Ice::Current&)
+{
+    Lock sync(*this);
+
+	try
+	{
+		if(_client_observer)
+			_client_observer->UpdateContainerInfo(container);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		std::cout<<"SessionServant - Exception during UpdateContainerInfo: "<< ex.what()<<std::endl;
+    }
+    catch(...)
+    {
+		std::cout<<"SessionServant - Unknown exception during UpdateContainerInfo"<<std::endl;
+    }
+}	
 
 
 /***********************************************************
 update player inventory from container content
 ***********************************************************/
-void SessionServant::UpdateInventoryFromContainer(Ice::Long ContainerId, const ItemList &Taken, const ItemList &Put, 
+void SessionServant::UpdateInventoryFromContainer(Ice::Long ContainerId, const ItemList &Taken, 
+												  const ItemList &Put, 
 												  const Ice::Current&)
 {
+    Lock sync(*this);
 
+	try
+	{
+		if(_actors_manager)
+			_actors_manager->UpdateContainer(ContainerId, _userNum, Taken, Put, _selfptr);
+	}
+	catch(const IceUtil::Exception& ex)
+	{
+		std::cout<<"SessionServant - Exception during UpdateInventoryFromContainer: "<< ex.what()<<std::endl;
+	}
+	catch(...)
+	{
+		std::cout<<"SessionServant - Unknown exception during UpdateInventoryFromContainer"<<std::endl;
+	}
 }
+
+
+

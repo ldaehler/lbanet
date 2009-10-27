@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ServerSignaler.h"
 #include "MapManagerServant.h"
 #include "HurtArea.h"
+#include "DoorActor.h"
 
 /***********************************************************
 	Constructor
@@ -91,6 +92,12 @@ void MapHandlerThread::Join(const ActorLifeInfo &PlayerId)
 ***********************************************************/
 bool MapHandlerThread::Leave(const ActorLifeInfo &PlayerId)
 {
+	// remove unlocked doors
+	std::map<Ice::Long, std::vector<Ice::Long> >::iterator itdel = _unlocked.find(PlayerId.ActorId);
+	if(itdel != _unlocked.end())
+		_unlocked.erase(itdel);
+
+	//desactivate actors
 	std::map<Ice::Long, Ice::Long>::iterator it =_todeactivate.find(PlayerId.ActorId);
 	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >::iterator itp = _players.find(PlayerId.ActorId);
 
@@ -135,29 +142,58 @@ bool MapHandlerThread::Leave(const ActorLifeInfo &PlayerId)
 /***********************************************************
 	callback function called when an actor id activated
 ***********************************************************/
-void MapHandlerThread::ActivateActor(const LbaNet::ActorActivationInfo& ai)
+void MapHandlerThread::ActivateActor(const ActorActivationInfoWithCallback& ai)
 {
-	if(_publisher)
-		_publisher->ActivatedActor(ai);
-
-	std::map<long, Actor *>::iterator it =	_actors.find((long)ai.ActivatedId);
-	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >::iterator itp = _players.find(ai.ActorId);
+	std::map<long, Actor *>::iterator it =	_actors.find((long)ai.ainfo.ActivatedId);
+	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >::iterator itp = _players.find(ai.ainfo.ActorId);
 	if(it != _actors.end() && itp != _players.end())
 	{
-		if(ai.Activate)
+		if(ai.ainfo.Activate)
 		{
-			it->second->ProcessActivation(ai.X, ai.Y, ai.Z, ai.Rotation);
+			if(it->second->GetType() == 4) //if it is a door
+			{
+				DoorActor * dact = static_cast<DoorActor *>(it->second);
+				if(dact->GetLocked())
+				{
+					std::vector<Ice::Long> &vecunlocked =_unlocked[ai.ainfo.ActorId];
+					// check if player already unlocked the door
+					if(std::find(vecunlocked.begin(), vecunlocked.end(), ai.ainfo.ActivatedId) == vecunlocked.end())
+					{
+						// if we do not have the key - can not activate the door
+						if(!ai.clientPtr || !ai.clientPtr->HasItem(dact->GetKeyId(), 1))
+							return;
+
+						// add player unlocked door to memory
+						vecunlocked.push_back(ai.ainfo.ActivatedId);
+
+						if(dact->GetDesKey())
+						{
+							LbaNet::UpdatedItemSeq InventoryChanges;
+							LbaNet::UpdatedItem itm;
+							itm.ItemId = dact->GetKeyId();
+							itm.NewCount = -1;
+							InventoryChanges.push_back(itm);
+							ai.clientPtr->ApplyInventoryChanges(InventoryChanges);
+						}
+					}
+				}
+			}
+
+			it->second->ProcessActivation(ai.ainfo.X, ai.ainfo.Y, ai.ainfo.Z, ai.ainfo.Rotation);
 
 			if(it->second->NeedDesactivation())
-				_todeactivate[ai.ActorId] = ai.ActivatedId;
+				_todeactivate[ai.ainfo.ActorId] = ai.ainfo.ActivatedId;
 		}
 		else
 		{
-			it->second->ProcessDesactivation(ai.X, ai.Y, ai.Z, ai.Rotation);
-			std::map<Ice::Long, Ice::Long>::iterator itpd =_todeactivate.find(ai.ActorId);
+			it->second->ProcessDesactivation(ai.ainfo.X, ai.ainfo.Y, ai.ainfo.Z, ai.ainfo.Rotation);
+			std::map<Ice::Long, Ice::Long>::iterator itpd =_todeactivate.find(ai.ainfo.ActorId);
 			if(itpd != _todeactivate.end())
 				_todeactivate.erase(itpd);
 		}
+
+		if(_publisher)
+			_publisher->ActivatedActor(ai.ainfo);
 	}
 
 }
@@ -213,11 +249,15 @@ void MapHandlerThread::run()
 		// get updates
 		std::vector<std::pair<ActorLifeInfo, bool> >  joinedmap;
 		std::vector<LbaNet::ActorInfo>  pinfos;
-		std::vector<LbaNet::ActorActivationInfo>  ainfos;
+		std::vector<ActorActivationInfoWithCallback>  ainfos;
 		std::vector<LbaNet::ActorSignalInfo>  sinfos;
 		std::vector<std::pair<Ice::Long, Ice::Long> > hurtinfos;
 		std::vector<std::pair<Ice::Long, Ice::Float> > hurtfallinfos;
 		std::vector<Ice::Long> raisedinfos;
+		std::vector<LifeManaInfo> lfminfos;
+		std::vector<ContainerQueryInfo> conqinfos;
+		std::vector<ContainerUpdateInfo> conuinfos;
+
 		_SD->GetJoined(joinedmap);
 		_SD->GetUpdatedinfo(pinfos);
 		_SD->GetActorinfo(ainfos);
@@ -225,6 +265,9 @@ void MapHandlerThread::run()
 		_SD->GetHurtedPlayer(hurtinfos);
 		_SD->GetHurtedFallPlayer(hurtfallinfos);		
 		_SD->GetRaisedFromDead(raisedinfos);	
+		_SD->GetAllUpdateLifeMana(lfminfos);	
+		_SD->GetAllContainerQuerys(conqinfos);	
+		_SD->GetAllContainerUpdates(conuinfos);
 
 		Lock sync(*this);
 		// update state
@@ -276,8 +319,8 @@ void MapHandlerThread::run()
 
 			// actor info
 			{
-				std::vector<LbaNet::ActorActivationInfo>::const_iterator it = ainfos.begin();
-				std::vector<LbaNet::ActorActivationInfo>::const_iterator end = ainfos.end();
+				std::vector<ActorActivationInfoWithCallback>::const_iterator it = ainfos.begin();
+				std::vector<ActorActivationInfoWithCallback>::const_iterator end = ainfos.end();
 				for(; it != end; ++it)
 					ActivateActor(*it);
 			}
@@ -297,6 +340,32 @@ void MapHandlerThread::run()
 				std::vector<LbaNet::ActorInfo>::const_iterator end = pinfos.end();
 				for(; it != end; ++it)
 					UpdatedInfo(*it);
+			}
+
+
+			//life mana info
+			{
+				std::vector<LifeManaInfo>::const_iterator it = lfminfos.begin();
+				std::vector<LifeManaInfo>::const_iterator end = lfminfos.end();
+				for(; it != end; ++it)
+					UpdateLifeMana(*it);
+			}
+
+
+			//container query info
+			{
+				std::vector<ContainerQueryInfo>::const_iterator it = conqinfos.begin();
+				std::vector<ContainerQueryInfo>::const_iterator end = conqinfos.end();
+				for(; it != end; ++it)
+					UpdateContainerQuery(*it);
+			}
+
+			//container update info
+			{
+				std::vector<ContainerUpdateInfo>::const_iterator it = conuinfos.begin();
+				std::vector<ContainerUpdateInfo>::const_iterator end = conuinfos.end();
+				for(; it != end; ++it)
+					UpdateContainerUpdate(*it);
 			}
 		}
 
@@ -447,5 +516,92 @@ void MapHandlerThread::Raised(Ice::Long PlayerId)
 
 		if(_publisher)
 			_publisher->UpdatedLife(itp->second.second);
+	}
+}
+
+
+/***********************************************************
+object used
+***********************************************************/
+void MapHandlerThread::UpdateLifeMana(const LifeManaInfo &itinfo)
+{
+	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >::iterator itp = _players.find(itinfo.ActorId);
+	if(itp != _players.end())
+	{
+		itp->second.second.CurrentLife = std::min(itp->second.second.CurrentLife+itinfo.LifeDelta, itp->second.second.MaxLife);
+		itp->second.second.CurrentMana = std::min(itp->second.second.CurrentMana+itinfo.ManaDelta, itp->second.second.MaxMana);
+
+		if(_publisher)
+			_publisher->UpdatedLife(itp->second.second);
+	}
+
+}
+
+
+
+/***********************************************************
+object used
+***********************************************************/
+void MapHandlerThread::UpdateContainerQuery(const ContainerQueryInfo &itinfo)
+{
+	LbaNet::ContainerInfo cinfo;
+	cinfo.ContainerId = itinfo.ContainerId;
+    cinfo.LockedById = -1;
+    //LbaNet::ItemList itinfo.Content;
+
+	std::map<long, Actor *>::iterator it =	_actors.find((long)itinfo.ContainerId);
+	if(it != _actors.end() && it->second->GetType() == 5) // if we have a container
+	{
+		std::map<Ice::Long, std::pair<Ice::Long, time_t> >::iterator itloc = 
+														_lockedContainers.find(itinfo.ContainerId);
+
+		// if locked by a player since more than 5min then unlock
+		if((itloc != _lockedContainers.end()) && ((time(NULL) - itloc->second.second) < 300))
+		{
+			cinfo.LockedById = itloc->second.first;
+		}
+		else
+		{
+			_lockedContainers[itinfo.ContainerId] = std::make_pair<Ice::Long, time_t>(itinfo.ActorId, time(NULL));
+			cinfo.LockedById = itinfo.ActorId;
+			cinfo.Content[1] = 1;
+			cinfo.Content[2] = 1;
+		}
+
+	}
+
+
+	if(itinfo.clientPtr)
+		itinfo.clientPtr->UpdateContainerInfo(cinfo);
+}
+
+
+/***********************************************************
+object used
+***********************************************************/
+void MapHandlerThread::UpdateContainerUpdate(const ContainerUpdateInfo &itinfo)
+{
+	std::map<long, Actor *>::iterator it =	_actors.find((long)itinfo.ContainerId);
+	if(it != _actors.end() && it->second->GetType() == 5) // if we have a container
+	{
+		std::map<Ice::Long, std::pair<Ice::Long, time_t> >::iterator itloc = 
+														_lockedContainers.find(itinfo.ContainerId);
+
+		// if locked by a player since more than 5min then unlock
+		if((itloc != _lockedContainers.end()) && (itloc->second.first == itinfo.ActorId))
+		{
+			LbaNet::UpdatedItemSeq InventoryChanges;
+			//LbaNet::UpdatedItem itm;
+			//itm.ItemId = 0;
+			//itm.NewCount = -1;
+			//InventoryChanges.push_back(itm);
+
+
+			if(itinfo.clientPtr)
+				itinfo.clientPtr->ApplyInventoryChanges(InventoryChanges);
+
+			// remove lock
+			_lockedContainers.erase(itloc);
+		}
 	}
 }

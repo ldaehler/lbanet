@@ -1,19 +1,10 @@
 #ifndef ROOM_MANAGER_ICE
 #define ROOM_MANAGER_ICE
 
+#include <LbaTypes.ice>
+
 module LbaNet
 {
-	struct PlayerInfo
-	{
-		long Id;
-		string Status;
-		string NameColor;
-	};
-
-
-	dictionary<string, PlayerInfo> ConnectedL;
-
-
 	interface ConnectedTracker
 	{	
 		// return the id of the player

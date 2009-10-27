@@ -37,6 +37,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace LbaNet;
 
+struct LifeManaInfo
+{
+	Ice::Long ActorId;
+	int LifeDelta;
+	int ManaDelta;
+};
+
+struct ActorActivationInfoWithCallback
+{
+	LbaNet::ActorActivationInfo ainfo;
+	LbaNet::ClientSessionPrx clientPtr;
+};
+
+struct ContainerQueryInfo
+{
+	Ice::Long ActorId;
+	Ice::Long ContainerId; 
+	LbaNet::ClientSessionPrx clientPtr;
+};
+
+
+struct ContainerUpdateInfo
+{
+	Ice::Long ContainerId;
+	Ice::Long ActorId;
+	LbaNet::ItemList Taken; 
+	LbaNet::ItemList Put;
+	LbaNet::ClientSessionPrx clientPtr;
+};
+
+
 /***********************************************************************
  * Module:  SharedData.h
  * Author:  vivien
@@ -61,7 +92,7 @@ public:
 	void UpdatedInfo(const LbaNet::ActorInfo& asi);
 
 	// callback function called when an actor id activated
-    void ActivateActor(const LbaNet::ActorActivationInfo& ai);
+    void ActivateActor(const ActorActivationInfoWithCallback& ai);
 
 	// callback function called when an actor id signaled
     void SignalActor(const LbaNet::ActorSignalInfo& ai);
@@ -73,7 +104,7 @@ public:
 	void GetUpdatedinfo(std::vector<LbaNet::ActorInfo> & pinfos);
 
 	// get actor info
-	void GetActorinfo(std::vector<LbaNet::ActorActivationInfo> & pinfos);
+	void GetActorinfo(std::vector<ActorActivationInfoWithCallback> & pinfos);
 
 	// get actor info
 	void GetSignalinfo(std::vector<LbaNet::ActorSignalInfo> & pinfos);
@@ -103,6 +134,27 @@ public:
 	// actor dead and reborn
 	void GetRaisedFromDead(std::vector<Ice::Long> & pinfos);
 
+	// called when an item is used by a player
+	void UpdateLifeMana(const LifeManaInfo & itinfo);
+
+	// get all items used
+	void GetAllUpdateLifeMana(std::vector<LifeManaInfo> & vec);
+
+
+	// called when an item is used by a player
+	void UpdateContainerQuery(const ContainerQueryInfo & itinfo);
+
+	// get all items used
+	void GetAllContainerQuerys(std::vector<ContainerQueryInfo> & vec);
+
+	// called when an item is used by a player
+	void UpdateContainerUpdate(const ContainerUpdateInfo & itinfo);
+
+	// get all items used
+	void GetAllContainerUpdates(std::vector<ContainerUpdateInfo> & vec);
+
+
+
 protected:
 	SharedData(const SharedData &);
 	const SharedData & operator=(const SharedData &);
@@ -115,14 +167,23 @@ private:
 	IceUtil::Mutex								m_mutex_actor_hurt;
 	IceUtil::Mutex								m_mutex_actor_raised;
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_thread;
+	IceUtil::Mutex								m_mutex_item_used;
+	IceUtil::Mutex								m_mutex_container_queries;
+	IceUtil::Mutex								m_mutex_container_updates;
+
 
 	std::vector<std::pair<ActorLifeInfo, bool> >	m_joined_players;
 	std::vector<LbaNet::ActorInfo>				m_players_info;
-	std::vector<LbaNet::ActorActivationInfo>	m_actors_info;
+	std::vector<ActorActivationInfoWithCallback>	m_actors_info;
 	std::vector<LbaNet::ActorSignalInfo>		m_signals_info;
 	std::vector<std::pair<Ice::Long, Ice::Long> >	m_hurt_players;
 	std::vector<std::pair<Ice::Long, Ice::Float> >	m_hurt_fall_players;
 	std::vector<Ice::Long>						m_raised_info;
+
+	std::vector<LifeManaInfo>					m_items_used;
+
+	std::vector<ContainerQueryInfo>				m_container_queries;
+	std::vector<ContainerUpdateInfo>			m_container_updates;
 
 	bool										m_running;
 };
