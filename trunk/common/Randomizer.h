@@ -23,50 +23,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#if !defined(__LbaNetModel_1_ContainerActor_h)
-#define __LbaNetModel_1_ContainerActor_h
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/uniform_01.hpp>
 
-#include "ZoneActivableActor.h"
-#include <map>
-#include <vector>
 
-#include "WorldInfo.h"
+
+#if !defined(__LbaNetModel_1_Randomizer_h)
+#define __LbaNetModel_1_Randomizer_h
 
 
 /***********************************************************************
- * Module:  ActivableActor.h
+ * Module:  Randomizer.h
  * Author:  vivien
  * Modified: lundi 27 juillet 2009 14:53:50
- * Purpose: Declaration of the class Actor
+ * Purpose: Declaration of the class Randomizer
  *********************************************************************/
-class ContainerActor : public ZoneActivableActor
+class Randomizer
 {
 public:
-	//! constructor
-	ContainerActor(float ZoneSizeX, float ZoneSizeY, float ZoneSizeZ);
 
-	//! destructor
-	virtual ~ContainerActor();
+	// singleton pattern
+   static Randomizer * getInstance();
+
+	//! give a number between 0 and 1
+	double Rand();
 
 
-	//! process zone activation
-	virtual void ProcessActivation(float PlayerPosX, float PlayerPosY, float PlayerPosZ,
-		float PlayerRotation);
-
-	//! set container loot list
-	void SetLootList(const std::vector<ItemGroup> &  newList);
-
-	//! get current container content
-	const std::map<long, int> & GetCurrentContent();
-
-	//! update container content
-	void UpdateContent(long itemid, int deltanumber);
+protected:
+	//! construtor
+	Randomizer();
+	Randomizer(const Randomizer &);
+	const Randomizer & operator=(const Randomizer &);
 
 
 private:
-	std::vector<ItemGroup>		_lootList;
-	std::map<long, int>			_currentContent;
-	std::map<long, int>			_linktolootlist;
+	boost::mt19937									_engine;
+	boost::uniform_01<boost::mt19937>				_generator;
+
+	static Randomizer *								_singletonInstance;
 };
 
 #endif

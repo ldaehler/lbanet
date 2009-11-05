@@ -536,8 +536,34 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 					pElem->QueryValueAttribute("zonesizeX", &zoneSizeX);
 					pElem->QueryValueAttribute("zonesizeY", &zoneSizeY);
 					pElem->QueryValueAttribute("zonesizeZ", &zoneSizeZ);
+					ContainerActor *tmpC = new ContainerActor(zoneSizeX, zoneSizeY, zoneSizeZ);
 
-					act = new ContainerActor(zoneSizeX, zoneSizeY, zoneSizeZ);
+					// get the contained items
+					std::vector<ItemGroup> items;
+					TiXmlElement* pElemC=pElem->FirstChildElement();
+					for( pElemC; pElemC; pElemC=pElemC->NextSiblingElement())
+					{
+						// for each group of items
+						ItemGroup newGroup;
+						newGroup.lastSpawningTime = 0;
+						newGroup.RespawningTime = 300000; // default = 5min
+						pElemC->QueryValueAttribute("respawnTimeInMs", &newGroup.RespawningTime);
+
+						TiXmlElement* itemGroup=pElemC->FirstChildElement();
+						for( itemGroup; itemGroup; itemGroup=itemGroup->NextSiblingElement())
+						{
+							ItemGroupElement elem;
+							itemGroup->QueryValueAttribute("id", &elem.id);
+							itemGroup->QueryValueAttribute("number", &elem.number);
+							itemGroup->QueryValueAttribute("probability", &elem.probability);
+							newGroup.groupelements.push_back(elem);
+						}
+						if(newGroup.size() > 0)
+							items.push_back(newGroup);
+					}
+					tmpC->SetLootList(items);
+
+					act = tmpC;
 				}
 				break;
 
