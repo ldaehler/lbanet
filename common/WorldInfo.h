@@ -234,4 +234,21 @@ struct ItemInfo
 	bool Ephemere;
 };
 
+
+struct ItemGroupElement
+{
+	long id;
+	int number;
+	float probability;
+};
+
+struct ItemGroup
+{
+	std::vector<ItemGroupElement> groupelements;
+	double	lastSpawningTime;
+	double	RespawningTime;
+	long	currpicked;
+};
+
+
 #endif
