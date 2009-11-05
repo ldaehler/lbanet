@@ -2,10 +2,10 @@
 <items>
     <item id="1" filename="health" type="1" valueA="1" Max="10" Description="Health potion: recover part of your life when using it." Effect="30"/>
     <item id="2" filename="magic" type="1" valueA="2" Max="10" Description="Mana potion: recover part of your magic when using it." Effect="30"/>
-    <item id="3" filename="clover" type="1" valueA="3" Max="10" Description="Clover: recover your full life and magic when using it." Effect="100"/>
+    <item id="3" filename="clover" type="1" valueA="3" Max="3" Description="Clover: recover your full life and magic when using it." Effect="100"/>
     <item id="4" filename="key" type="2" valueA="0" Max="10" Description="Small key: open some of the locked doors." Ephemere="1"/>
-    <item id="5" filename="Horse" type="3" valueA="5" Max="10" Description="Horse: you can ride it on outside maps."/>
-    <item id="6" filename="Dino" type="3" valueA="6" Max="10" Description="Dino fly: you can fly it on outside maps."/>
-    <item id="7" filename="protopack" type="3" valueA="7" Max="10" Description="Protopack: can be used to fly over water."/>
+    <item id="5" filename="Horse" type="3" valueA="5" Max="1" Description="Horse: you can ride it on outside maps."/>
+    <item id="6" filename="Dino" type="3" valueA="6" Max="1" Description="Dino fly: you can fly it on outside maps."/>
+    <item id="7" filename="protopack" type="3" valueA="7" Max="1" Description="Protopack: can be used to fly over water."/>
     <item id="8" filename="kash" type="6" valueA="0" Max="10" Description="Kash(es): money used on Twinsun"/>
 </items>
