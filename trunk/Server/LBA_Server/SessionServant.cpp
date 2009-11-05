@@ -828,8 +828,57 @@ void SessionServant::UpdateInventoryFromContainer(Ice::Long ContainerId, const I
 
 	try
 	{
+		// check if we really have the item we try to add to the container
+		ItemList CheckedPut;
+		std::map< ::Ice::Long, ::Ice::Int>::iterator it = Put.begin();
+		std::map< ::Ice::Long, ::Ice::Int>::iterator end = Put.end();
+
+		for(; it != end; ++it)
+		{
+			LbaNet::InventoryMap::iterator itlocal = _playerInventory.InventoryStructure.find(it->first);
+			if(itlocal != _playerInventory.InventoryStructure.end())
+			{
+				if(itlocal->second.Number >= it->second)
+					CheckedPut[it->first] = it->second;
+			}
+		}
+
+		//check if we did not reached the size limit
+		ItemList CheckTaken;
+		std::map< ::Ice::Long, ::Ice::Int>::iterator ittak = Taken.begin();
+		std::map< ::Ice::Long, ::Ice::Int>::iterator endtak = Taken.end();
+
+		for(; ittak != endtak; ++ittak)
+		{
+			LbaNet::InventoryMap::iterator itlocal = _playerInventory.InventoryStructure.find(ittak->first);
+			if(itlocal != _playerInventory.InventoryStructure.end())
+			{
+				// check if item we add does not cross the max number for this item type
+				int currnumb = itlocal->second.Number;
+				int maxitem = _inventory_db[ittak->first].Max;
+				int totake = std::min(maxitem-currnumb, ittak->second);
+
+				if(totake > 0)
+					CheckTaken[ittak->first] = totake;
+			}
+			else
+			{
+				// check if we still have place in the inventory
+				if(_playerInventory.InventoryStructure.size() < _playerInventory.InventorySize)
+				{
+					int maxitem = _inventory_db[ittak->first].Max;
+					int totake = std::min(maxitem, ittak->second);
+
+					if(totake > 0)
+						CheckTaken[ittak->first] = totake;
+				}	
+			}
+		}
+
+
+		// send to map handler to make change to container
 		if(_actors_manager)
-			_actors_manager->UpdateContainer(ContainerId, _userNum, Taken, Put, _selfptr);
+			_actors_manager->UpdateContainer(ContainerId, _userNum, Taken, CheckedPut, _selfptr);
 	}
 	catch(const IceUtil::Exception& ex)
 	{
