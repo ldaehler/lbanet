@@ -127,16 +127,23 @@ public:
 	virtual void UpdateInventoryFromContainer(Ice::Long ContainerId, const ItemList &Taken, const ItemList &Put, const Ice::Current&);
 
    	//check if we have item in inventory
-    bool HasItem(Ice::Long ItemId, int QUantity, const Ice::Current&);
+    virtual bool HasItem(Ice::Long ItemId, int QUantity, const Ice::Current&);
    
    // callback functions to apply inventory changes
-    void ApplyInventoryChanges(const UpdatedItemSeq &InventoryChanges, const Ice::Current&);
+    virtual void ApplyInventoryChanges(const UpdatedItemSeq &InventoryChanges, const Ice::Current&);
 
     // callback functions to update container info
-    void UpdateContainerInfo(const ContainerInfo &container, const Ice::Current&);	
+    virtual  void UpdateContainerInfo(const ContainerInfo &container, const Ice::Current&);	
 
 	// set self pointer
-	void setSelfPointer(const LbaNet::ClientSessionPrx &ptr){_selfptr = ptr;}
+	 virtual void setSelfPointer(const LbaNet::ClientSessionPrx &ptr){_selfptr = ptr;}
+
+	//! set player wisper interface
+    virtual void SetWhisperInterface(const LbaNet::ChatRoomObserverPrx& winterface, const Ice::Current&);
+
+	//! a player wisper to another
+    virtual bool Whisper(const std::string& To, const std::string& Message, const ::Ice::Current&);
+
 
 protected:
 	void ApplyInternalInventoryChanges(const UpdatedItemSeq &InventoryChanges);
