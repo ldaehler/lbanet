@@ -892,3 +892,47 @@ void SessionServant::UpdateInventoryFromContainer(Ice::Long ContainerId, const I
 
 
 
+
+/***********************************************************
+set player wisper interface
+***********************************************************/
+void SessionServant::SetWhisperInterface(const LbaNet::ChatRoomObserverPrx& winterface, const Ice::Current&)
+{
+	try
+	{
+		if(_ctracker)
+			_ctracker->SetWhisperInterface(_userId, winterface);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		std::cout<<"SessionServant - Exception during SetWhisperInterface: "<< ex.what()<<std::endl;
+    }
+    catch(...)
+    {
+		std::cout<<"SessionServant - Unknown exception during SetWhisperInterface"<<std::endl;
+    }
+}
+
+/***********************************************************
+a player wisper to another
+***********************************************************/
+bool SessionServant::Whisper(const std::string& To, const std::string& Message, const ::Ice::Current&)
+{
+	try
+	{
+		if(_ctracker)
+			return _ctracker->Whisper(_userId, To, Message);
+		else
+			return false;
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		std::cout<<"SessionServant - Exception during Whisper: "<< ex.what()<<std::endl;
+    }
+    catch(...)
+    {
+		std::cout<<"SessionServant - Unknown exception during Whisper"<<std::endl;
+    }
+}
+
+
