@@ -95,6 +95,12 @@ bool SharedData::Disconnect(Ice::Long playerid)
 		{
 			std::cout<<IceUtil::Time::now().toDateTime()<<": "<<it->first<<" disconnected"<<std::endl;
 			m_connected_users.erase(it);
+
+			IceUtil::Mutex::Lock lock(m_mutex_wisper);
+			std::map<std::string, LbaNet::ChatRoomObserverPrx>::iterator itw = 	m_wisper_map.find(it->first);
+			if(itw != m_wisper_map.end())
+				m_wisper_map.erase(itw);
+
 			return true;
 		}
 	}
@@ -124,4 +130,39 @@ void SharedData::ChangeNameColor(const std::string& Nickname, const std::string&
 	LbaNet::ConnectedL::iterator it = m_connected_users.find(Nickname);
 	if(it != m_connected_users.end())
 		it->second.NameColor = Color;
+}
+
+
+
+/***********************************************************
+set player wisper interface
+***********************************************************/
+void SharedData::SetWhisperInterface(const std::string& Nickname, const LbaNet::ChatRoomObserverPrx& winterface)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_wisper);
+	m_wisper_map[Nickname] = winterface;
+}
+
+/***********************************************************
+a player wisper to another
+***********************************************************/
+bool SharedData::Whisper(const std::string& From, const std::string& To, const std::string& Message)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_wisper);
+	std::map<std::string, LbaNet::ChatRoomObserverPrx>::iterator it = 	m_wisper_map.find(To);
+	if(it != m_wisper_map.end())
+	{
+		try
+		{
+			it->second->Message(From, Message);
+		}
+		catch(...)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	return false
 }

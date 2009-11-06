@@ -82,3 +82,24 @@ void ConnectedTrackerServant::ChangeNameColor(const std::string& Nickname, const
 {
 	_shd->ChangeNameColor(Nickname, Color);
 }
+
+
+
+/***********************************************************
+set player wisper interface
+***********************************************************/
+void ConnectedTrackerServant::SetWhisperInterface(const std::string& Nickname, 
+												  const LbaNet::ChatRoomObserverPrx& winterface, 
+													const Ice::Current&)
+{
+	_shd->SetWhisperInterface(Nickname, winterface);
+}
+
+/***********************************************************
+a player wisper to another
+***********************************************************/
+bool ConnectedTrackerServant::Whisper(const std::string& From, const std::string& To, const std::string& Message, 
+							const ::Ice::Current&)
+{
+	return _shd->Whisper(From, To, Message);
+}

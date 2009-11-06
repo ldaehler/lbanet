@@ -60,6 +60,14 @@ public:
     virtual void ChangeNameColor(const std::string& Nickname, const std::string& Color, 
 									const Ice::Current&);
 
+	//! set player wisper interface
+    virtual void SetWhisperInterface(const std::string& Nickname, const LbaNet::ChatRoomObserverPrx& winterface, 
+									const Ice::Current&);
+
+	//! a player wisper to another
+    virtual bool Whisper(const std::string& From, const std::string& To, const std::string& Message, 
+								const ::Ice::Current&);
+
 private:
 	const Ice::CommunicatorPtr& _communicator;
 

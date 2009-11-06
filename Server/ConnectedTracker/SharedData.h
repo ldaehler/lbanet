@@ -67,6 +67,14 @@ public:
 	//! change player name display color
 	void ChangeNameColor(const std::string& Nickname, const std::string& Color);
 
+
+	//! set player wisper interface
+    void SetWhisperInterface(const std::string& Nickname, const LbaNet::ChatRoomObserverPrx& winterface);
+
+	//! a player wisper to another
+    bool Whisper(const std::string& From, const std::string& To, const std::string& Message);
+
+
 protected:
 	SharedData(const SharedData &);
 	const SharedData & operator=(const SharedData &);
@@ -74,6 +82,9 @@ protected:
 private:
 	LbaNet::ConnectedL 			m_connected_users;
 	std::map<std::string, long>	m_id_map;
+
+	IceUtil::Mutex											m_mutex_wisper;
+	std::map<std::string, LbaNet::ChatRoomObserverPrx>		m_wisper_map;
 };
 
 #endif
