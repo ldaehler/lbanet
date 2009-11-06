@@ -17,7 +17,7 @@ module LbaNet
 		ConnectedL GetConnected();
 		
 		void SetWhisperInterface(string Nickname, ChatRoomObserver * winterface);
-		void Whisper(string From, string To, string Message);
+		bool Whisper(string From, string To, string Message);
 	};
 
 };
