@@ -61,7 +61,7 @@ module LbaNet
 	    
 	    
 	    void SetWhisperInterface(ChatRoomObserver * winterface);
-	    void Whisper(string To, string Message);	    
+	    bool Whisper(string To, string Message);	    
 	};
 
 };
