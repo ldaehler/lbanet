@@ -92,7 +92,7 @@ mysql_select_db("lbanet") or die(mysql_error());
 			$mail->AddReplyTo ("noreply@lbanet.com", "Lbanet");
 			$mail->SetFrom("noreply@lbanet.com", "Lbanet");
 			$mail->Subject = "Lbanet Registration";
-			$mail->Body = "Welcome to Lbanet!<br /><br />You, or someone using your email address, has registered to Lbanet.<br />Your account information:<br />Login: \"$username\"<br /> Password: \"$password2\" <br /><br />You can complete registration by clicking the following link:<br /> http://127.0.0.1/verifyemail.php?$activationKey <br /><br />If this is an error, ignore this email and you will be removed from our database after 24h.<br /><br />Regards,<br /> Lbanet Team";
+			$mail->Body = "Welcome to Lbanet!<br /><br />You, or someone using your email address, has registered to Lbanet.<br />Your account information:<br />Login: \"$username\"<br /> Password: \"$password2\" <br /><br />You can complete registration by clicking the following link:<br /> http://sd-1287.dedibox.fr/~vdelage/verifyemail.php?$activationKey <br /><br />If this is an error, ignore this email and you will be removed from our database after 24h.<br /><br />Regards,<br /> Lbanet Team";
 			$mail->AddAddress ("$email", "$username");
 			$mail->IsHTML (true);
 			if(!$mail->Send())
