@@ -1,7 +1,7 @@
 <?php
 require_once('class.phpmailer.php');
 
-mysql_connect("localhost", "vdelage", "lapichonmelba") or die(mysql_error());
+mysql_connect("localhost", "lbanetuser", "lapichonmelba") or die(mysql_error());
 mysql_select_db("lbanet") or die(mysql_error());
 
 
