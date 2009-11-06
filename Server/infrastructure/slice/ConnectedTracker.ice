@@ -2,6 +2,7 @@
 #define ROOM_MANAGER_ICE
 
 #include <LbaTypes.ice>
+#include <ChatInfo.ice>
 
 module LbaNet
 {
@@ -13,7 +14,10 @@ module LbaNet
 		void ChangeStatus(string Nickname, string NewStatus);
 		void ChangeNameColor(string Nickname, string Color);		
 
-		ConnectedL GetConnected();   
+		ConnectedL GetConnected();
+		
+		void SetWhisperInterface(string Nickname, ChatRoomObserver * winterface);
+		void Whisper(string From, string To, string Message);
 	};
 
 };
