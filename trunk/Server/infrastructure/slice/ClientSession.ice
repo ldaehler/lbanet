@@ -57,7 +57,11 @@ module LbaNet
 	   // callback functions
 	    void ApplyInventoryChanges(UpdatedItemSeq InventoryChanges);
 	    
-	    void UpdateContainerInfo(ContainerInfo container);	    
+	    void UpdateContainerInfo(ContainerInfo container);
+	    
+	    
+	    void SetWhisperInterface(ChatRoomObserver * winterface);
+	    void Whisper(string To, string Message);	    
 	};
 
 };
