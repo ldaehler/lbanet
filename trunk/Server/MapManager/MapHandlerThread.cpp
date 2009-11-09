@@ -27,6 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "InfosReceiverServant.h"
 #include "ActorReceiverServant.h"
 
+#include "ContainerActor.h"
+
 #include "ServerSignaler.h"
 #include "MapManagerServant.h"
 #include "HurtArea.h"
@@ -122,6 +124,17 @@ bool MapHandlerThread::Leave(const ActorLifeInfo &PlayerId)
 		}
 
 		_todeactivate.erase(it);
+	}
+
+
+	//close container
+	std::map<Ice::Long, std::pair<Ice::Long, time_t> >::iterator itlocked = _lockedContainers.begin();
+	while(itlocked != _lockedContainers.end())
+	{
+		if(itlocked->second.first == PlayerId.ActorId)
+			itlocked = _lockedContainers.erase(itlocked);
+		else
+			++itlocked;
 	}
 
 
@@ -618,7 +631,7 @@ void MapHandlerThread::UpdateContainerUpdate(const ContainerUpdateInfo &itinfo)
 						InventoryChanges.push_back(itm);
 
 						//update container content
-						cont->UpdateContent(itput->first, -itput->second);
+						cont->UpdateContent(ittak->first, -ittak->second);
 					}
 				}	
 			}
