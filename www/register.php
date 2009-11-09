@@ -117,11 +117,10 @@
 
 	<div style="width: 430px; float: left; height: 55px">
 		<img alt="security code" src="securimage_show.php?sid=<?php echo md5(uniqid(time())); ?>" id="siimage" align="left" style="padding-right: 5px; border: 0" />
-		<a style="border-style: none" href="#" title="Refresh Image" onclick="document.getElementById('siimage').src = 'securimage_show.php?sid=' + Math.random(); return false"><img src="/images/refresh.gif" alt="Reload Image" border="0" onclick="this.blur()" align="bottom" /></a>
+		<a style="border-style: none" href="#" title="Refresh Image" onclick="document.getElementById('siimage').src = 'securimage_show.php?sid=' + Math.random(); return false"><img src="images/refresh.gif" alt="Reload Image" border="0" onclick="this.blur()" align="bottom" /></a>
 	</div>
-	<br/><br/><br/>
-
-	<div style="width: 120px; clear: all; height: 25px">Verify Code:</div>
+	<br style="clear:both"/>
+	<div style="width: 120px; float:left; height: 25px">Verify Code:</div>
 	<input type="text" name="code" /><?php if(isset($error['codeinput'])){ echo $error['codeinput'];}?><br/>
 	<br/>
 	<input type="submit" name="submit" value="Register" />
