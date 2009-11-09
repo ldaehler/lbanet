@@ -139,7 +139,7 @@ mysql_select_db("lbanet") or die(mysql_error());
      </div>
 <br />
  <div class="contentbox">
- <span style="color: #3483EC; font-size: 18px">Account creation:</span>
+ <span style="color: #A7FAFA; font-size: 18px">Account creation:</span><br />
  <?PHP 
  include 'register.php'  ;
  ?>
