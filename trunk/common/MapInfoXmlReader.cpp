@@ -558,7 +558,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 							itemGroup->QueryValueAttribute("probability", &elem.probability);
 							newGroup.groupelements.push_back(elem);
 						}
-						if(newGroup.size() > 0)
+						if(newGroup.groupelements.size() > 0)
 							items.push_back(newGroup);
 					}
 					tmpC->SetLootList(items);
