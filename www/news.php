@@ -123,7 +123,7 @@ mysql_select_db("lbanet") or die(mysql_error());
    <a class="navi" href="index.php" >Support</a>
    <a class="navi" href="index.php" >Credits</a>
     <div style="float: right; margin-right: 20px; font-size: 9px;">
-    LBANet  v0.5.7 
+    LBANet  v0.7 
     </div>
    </div>
  </div> 
