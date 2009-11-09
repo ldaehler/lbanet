@@ -27,6 +27,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <IceUtil/Time.h>
 #include "Randomizer.h"
 
+#ifndef _LBANET_SERVER_SIDE_
+#include "ThreadSafeWorkpile.h"
+#endif
+
 /***********************************************************
 	Constructor
 ***********************************************************/
@@ -50,9 +54,11 @@ ContainerActor::~ContainerActor()
 process zone activation
 ***********************************************************/
 void ContainerActor::ProcessActivation(float PlayerPosX, float PlayerPosY, float PlayerPosZ,
-	float PlayerRotation)
+										float PlayerRotation)
 {
-
+#ifndef _LBANET_SERVER_SIDE_
+	ThreadSafeWorkpile::getInstance()->OpenCloseContainer(_ID, false);
+#endif
 }
 
 
@@ -85,10 +91,18 @@ void ContainerActor::SetLootList(const std::vector<ItemGroup> &  newList)
 		gr.groupelements.push_back(it2);
 
 		ItemGroupElement it3;
-		it3.id = 3;
+		it3.id = 8;
 		it3.number = 2;
-		it3.probability = 0.4f;
+		it3.probability = 0.35f;
 		gr.groupelements.push_back(it3);
+
+		ItemGroupElement it4;
+		it4.id = 3;
+		it4.number = 1;
+		it4.probability = 0.05f;
+		gr.groupelements.push_back(it4);
+
+		_lootList.push_back(gr);
 	}
 }
 
@@ -118,7 +132,7 @@ const std::map<long, int> &  ContainerActor::GetCurrentContent()
 				double currappend = 0;
 				std::vector<ItemGroupElement>::iterator itelem = it->groupelements.begin();
 				std::vector<ItemGroupElement>::iterator endelem = it->groupelements.end();
-				for(; it != end; ++it)
+				for(; itelem != endelem; ++itelem)
 				{
 					itemdid = itelem->id;
 					number = itelem->number;
@@ -174,6 +188,7 @@ void ContainerActor::UpdateContent(long itemid, int deltanumber)
 				if(itlink != _linktolootlist.end())
 				{
 					_lootList[itlink->second].currpicked = -1;
+					_lootList[itlink->second].lastSpawningTime = IceUtil::Time::now().toMilliSecondsDouble();
 					_linktolootlist.erase(itlink);
 				}
 			}

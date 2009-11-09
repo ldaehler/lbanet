@@ -51,7 +51,7 @@ public:
 
 	//! process zone activation
 	virtual void ProcessActivation(float PlayerPosX, float PlayerPosY, float PlayerPosZ,
-		float PlayerRotation);
+										float PlayerRotation);
 
 	//! set container loot list
 	void SetLootList(const std::vector<ItemGroup> &  newList);
