@@ -100,6 +100,7 @@ mysql_select_db("lbanet") or die(mysql_error());
        height:168px; /* IE */
        background: transparent url(images/contentbg.png) no-repeat;      
        font-size: 14px; 
+       text-align: justify;
    }
    .contentboxf {
        margin-left: 10px;
