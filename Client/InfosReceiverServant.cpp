@@ -80,10 +80,11 @@ void InfosReceiverServant::ApplyInventoryChanges(const LbaNet::UpdatedItemSeq &I
 		InventoryHandler::getInstance()->UpdateInventoryItem(it->ItemId, it->NewCount);
 }
 
+
 // update container
 void InfosReceiverServant::UpdateContainerInfo(const LbaNet::ContainerInfo &container, const Ice::Current&)
 {
-
+	ThreadSafeWorkpile::getInstance()->UpdateContainer(container);
 }
 
 

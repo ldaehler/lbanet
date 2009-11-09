@@ -411,6 +411,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MessageBox.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\MS3D.cpp"
 				>
 			</File>
@@ -428,6 +432,10 @@
 			</File>
 			<File
 				RelativePath="..\common\Player.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\common\Randomizer.cpp"
 				>
 			</File>
 			<File
@@ -718,6 +726,10 @@
 			</File>
 			<File
 				RelativePath=".\MenuGUI.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MessageBox.h"
 				>
 			</File>
 			<File

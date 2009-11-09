@@ -296,8 +296,9 @@ bool ShortcutBox::handle_ItemDropped(const CEGUI::EventArgs& args)
     const DragDropEventArgs& dd_args =
         static_cast<const DragDropEventArgs&>(args);
 
-
-	SetShorcut(dd_args.window, dd_args.dragDropItem->getID());
+	// make sure we drop a valid item
+	if((dd_args.dragDropItem->getChildCount() > 1) && dd_args.dragDropItem->getChildAtIdx(1)->getID() == 1)
+		SetShorcut(dd_args.window, dd_args.dragDropItem->getID());
 	return true;
 }
 

@@ -62,7 +62,7 @@ get inventory image
 ***********************************************************/
 std::string ImageSetHandler::GetInventoryImage(long InventoryId)
 {
-	if(InventoryId >= _inventory_filenames.size())
+	if(InventoryId > _inventory_filenames.size())
 		return "";
 
 	std::string file = _inventory_filenames[InventoryId-1];
@@ -71,7 +71,7 @@ std::string ImageSetHandler::GetInventoryImage(long InventoryId)
 	if(!CEGUI::ImagesetManager::getSingleton().isDefined(res))
 	{
 		CEGUI::ImagesetManager::getSingleton().
-			createFromImageFile(res, "Inventory/" + file + ".png", "imagesets");
+			createFromImageFile(res, "Inventory/" + file + ".png");
 	}
 
 	return res;
@@ -106,7 +106,7 @@ std::string ImageSetHandler::GetStanceImage(int stance)
 	if(!CEGUI::ImagesetManager::getSingleton().isDefined(res))
 	{
 		CEGUI::ImagesetManager::getSingleton().
-			createFromImageFile(res, "Inventory/" + file + ".png", "imagesets");
+			createFromImageFile(res, "Inventory/" + file + ".png");
 	}
 
 	return res;

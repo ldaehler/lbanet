@@ -292,6 +292,28 @@ void IceConnectionManager::ChangeColor(const std::string& color)
 }
 
 
+
+/***********************************************************
+ask for a container info
+***********************************************************/
+void IceConnectionManager::AskForContainerInfo(long containerid)
+{
+	try
+	{
+		_session->AskForContainerContent(containerid);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception by AskForContainerInfo: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception by AskForContainerInfo "));
+    }
+}
+
+
+
 /***********************************************************
 return current player life state
 ***********************************************************/
@@ -454,6 +476,27 @@ void IceConnectionManager::InventoryUsed(long ItemId)
 }
 
 
+
+/***********************************************************
+called by server to give container update from inventory
+***********************************************************/
+void IceConnectionManager::UpdateInvFromContainer(const ThreadSafeWorkpile::UpdateInvContainer & cinfo)
+{
+	try
+	{
+		_session->UpdateInventoryFromContainer(cinfo.containerid, cinfo.Taken, cinfo.Put);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception UpdateInvFromContainer: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception UpdateInvFromContainer "));
+    }
+}
+
+
 /***********************************************************
 constructor
 ***********************************************************/
@@ -518,6 +561,22 @@ void SendingLoopThread::run()
 				_connectionMananger.InventoryUsed(objs[i]);
 		}
 
+
+		//-----------------------------------
+		// process container info
+		{
+			long contid;
+			if(ThreadSafeWorkpile::getInstance()->HasAskedForContainer(contid))
+				_connectionMananger.AskForContainerInfo(contid);
+		}
+
+		//-----------------------------------
+		// process container update
+		{
+			ThreadSafeWorkpile::UpdateInvContainer cinfo;
+			if(ThreadSafeWorkpile::getInstance()->IsUpdatedInvFromContainer(cinfo))
+				_connectionMananger.UpdateInvFromContainer(cinfo);
+		}
 
 		//-----------------------------------
 		// process change world

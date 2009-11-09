@@ -52,7 +52,7 @@ class InventoryBox
 {
  public:
 	//! constructor
-	 InventoryBox(GameGUI * gamgui, int inventorysize, int boxsize);
+	 InventoryBox(GameGUI * gamgui, int boxsize);
 
 	//! destructor
 	virtual ~InventoryBox();

@@ -80,6 +80,9 @@ public:
 	//! gui ask if inventory has updated
 	bool HasInventoryUpdated();
 
+	//! gui ask if inventory has updated
+	bool HasInventoryUpdatedForContainer();
+
 	//! get item info
 	std::string GetItemDescription(long ObjectId);
 
@@ -101,6 +104,15 @@ public:
 	//! update inventory item
 	void UpdateInventoryItem(long ObjectId, int NewCount);
 
+	//! get inventory size
+	int GetInventorySize();
+
+	//! get inventory
+	std::vector<std::pair<long, int> > GetInventoryVector();
+
+	//! get the max number an item can have given its ID
+	int GetItemMax(long id);
+
 protected:
 	//! constructor
 	InventoryHandler();
@@ -114,6 +126,8 @@ private:
 
 	bool									_inventoryUpdated;
 	bool									_shorcutUpdated;
+	bool									_inventoryUpdatedContainer;
+
 
 	IceUtil::Mutex							m_mutex_inv;
 	IceUtil::Mutex							m_mutex_shortcut;
@@ -122,7 +136,7 @@ private:
 
 
 	// singleton
-	static InventoryHandler *					_singletonInstance;
+	static InventoryHandler *				_singletonInstance;
 };
 
 #endif

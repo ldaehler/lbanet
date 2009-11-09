@@ -37,8 +37,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /***********************************************************
 constructor
 ***********************************************************/
-InventoryBox::InventoryBox(GameGUI * gamgui, int inventorysize, int boxsize)
-: _gamgui(gamgui), _inventorysize(inventorysize), _boxsize(boxsize)
+InventoryBox::InventoryBox(GameGUI * gamgui, int boxsize)
+: _gamgui(gamgui), _inventorysize(0), _boxsize(boxsize)
 {
 
 
@@ -251,6 +251,7 @@ bool InventoryBox::UpdateItem(long Id, const std::string & Description,
 			std::stringstream strs;
 			strs<<number;
 			tmp3->setText(strs.str().c_str());
+			tmp3->setID(1);
 
 			tmp->setProperty("Tooltip", Description);
 			tmp->addChildWindow(tmp2);
@@ -303,17 +304,21 @@ bool InventoryBox::handle_ItemDropped(const CEGUI::EventArgs& args)
     const DragDropEventArgs& dd_args =
         static_cast<const DragDropEventArgs&>(args);
 
-    if (dd_args.window->getChildCount() == 2)
-    {
-		// add dragdrop item as child of target if target has no item already
-		dd_args.window->addChildWindow(dd_args.dragDropItem);
+	// make sure we drop a valid item
+	if((dd_args.dragDropItem->getChildCount() > 1) && dd_args.dragDropItem->getChildAtIdx(1)->getID() == 1)
+	{
+		if (dd_args.window->getChildCount() == 2)
+		{
+			// add dragdrop item as child of target if target has no item already
+			dd_args.window->addChildWindow(dd_args.dragDropItem);
 
-		// Now we must reset the item position from it's 'dropped' location,
-		// since we're now a child of an entirely different window
-		dd_args.dragDropItem->setPosition(UVector2(UDim(0, 0),UDim(0, 0)));
+			// Now we must reset the item position from it's 'dropped' location,
+			// since we're now a child of an entirely different window
+			dd_args.dragDropItem->setPosition(UVector2(UDim(0, 0),UDim(0, 0)));
 
-		InventoryHandler::getInstance()->UpdateItemPosition(dd_args.dragDropItem->getID(), dd_args.window->getID());
-    }
+			InventoryHandler::getInstance()->UpdateItemPosition(dd_args.dragDropItem->getID(), dd_args.window->getID());
+		}
+	}
 
     return true;
 }
@@ -331,17 +336,21 @@ bool InventoryBox::handle_ItemDroppedOnItem(const CEGUI::EventArgs& args)
     const DragDropEventArgs& dd_args =
         static_cast<const DragDropEventArgs&>(args);
 
-	CEGUI::Window* parent1 = dd_args.window->getParent();
-	CEGUI::Window* parent2 = dd_args.dragDropItem->getParent();
+	// make sure we drop a valid item
+	if((dd_args.dragDropItem->getChildCount() > 1) && dd_args.dragDropItem->getChildAtIdx(1)->getID() == 1)
+	{
+		CEGUI::Window* parent1 = dd_args.window->getParent();
+		CEGUI::Window* parent2 = dd_args.dragDropItem->getParent();
 
-	parent1->addChildWindow(dd_args.dragDropItem);
-	dd_args.dragDropItem->setPosition(UVector2(UDim(0, 0),UDim(0, 0)));
+		parent1->addChildWindow(dd_args.dragDropItem);
+		dd_args.dragDropItem->setPosition(UVector2(UDim(0, 0),UDim(0, 0)));
 
-	parent2->addChildWindow(dd_args.window);
-	dd_args.window->setPosition(UVector2(UDim(0, 0),UDim(0, 0)));
+		parent2->addChildWindow(dd_args.window);
+		dd_args.window->setPosition(UVector2(UDim(0, 0),UDim(0, 0)));
 
-	InventoryHandler::getInstance()->UpdateItemPosition(dd_args.dragDropItem->getID(), parent1->getID());
-	InventoryHandler::getInstance()->UpdateItemPosition(dd_args.window->getID(), parent2->getID());
+		InventoryHandler::getInstance()->UpdateItemPosition(dd_args.dragDropItem->getID(), parent1->getID());
+		InventoryHandler::getInstance()->UpdateItemPosition(dd_args.window->getID(), parent2->getID());
+	}
 
     return true;
 }
@@ -418,6 +427,9 @@ resize inventory
 ***********************************************************/
 void InventoryBox::ResizeInventory(int newsize)
 {
+	if(_inventorysize == newsize)
+		return;
+
 	_inventorysize = newsize;
 	for(size_t i=0; i<_inv_boxes.size(); ++i)
 		_inv_boxes[i]->destroy();

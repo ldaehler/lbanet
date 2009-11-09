@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <IceUtil/Mutex.h>
 #include <IceUtil/Monitor.h>
 #include <ActorInfo.h>
+#include <LbaTypes.h>
 #include "Actor.h"
 
 class GameEvent;
@@ -79,6 +80,13 @@ public:
 		float Y;
 		float Z;
 		float Rotation;
+	};
+
+	struct UpdateInvContainer
+	{
+		long containerid;
+		LbaNet::ItemList Taken;
+		LbaNet::ItemList Put;
 	};
 
 
@@ -263,6 +271,34 @@ public:
 	// get list of used objects
 	void GetListOfObjectUsed(std::vector<long> &objs);
 
+
+	// ask for a container info
+	void AskForContainerInfo(long containerid);
+
+	// check if player is waiting for container info
+	bool HasAskedForContainer(long &containerid);
+
+	// ask for a container info
+	void OpenCloseContainer(long containerid, bool ForceClose);
+
+	// check if player is waiting for container info
+	bool HasOpenCloseContainer(long &containerid, bool &ForceClose);
+
+
+	// called by server to give container update
+	void UpdateContainer(const LbaNet::ContainerInfo & cinfo);
+
+	// ask if we got an update
+	bool IsUpdatedContainer(LbaNet::ContainerInfo & cinfo);
+
+
+	// called by server to give container update from inventory
+	void UpdateInvFromContainer(const UpdateInvContainer & cinfo);
+
+	// ask if we got an update
+	bool IsUpdatedInvFromContainer(UpdateInvContainer & cinfo);
+
+
 protected:
 
 	//! construtor
@@ -270,7 +306,8 @@ protected:
 		: m_game_quitted(false), m_irc_quitted(false), m_sending_quitted(false),
 			m_send_cycle_time(20), m_is_updated(false), m_map_changed(false), m_server_on(false),
 			m_player_id(-1), m_new_actor_state(false), m_name_color_changed(false),
-			m_world_changed(false), m_player_pos_info_updated(false)
+			m_world_changed(false), m_player_pos_info_updated(false), m_waiting_container_info(false),
+			m_updated_container(false), m_exchanged_container(false), m_closed_container(false)
 	{}
 
 	ThreadSafeWorkpile(const ThreadSafeWorkpile &);
@@ -296,6 +333,12 @@ private:
 	IceUtil::Mutex								m_mutex_world_changed;
 	IceUtil::Mutex								m_mutex_shortcut_used;
 	IceUtil::Mutex								m_mutex_inventory_used;
+	IceUtil::Mutex								m_mutex_container_info;
+	IceUtil::Mutex								m_mutex_container_updated;
+	IceUtil::Mutex								m_mutex_container_deal;
+	IceUtil::Mutex								m_mutex_container_exchange;
+	IceUtil::Mutex								m_mutex_container_close;
+
 
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_irc;
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_sending_loop;
@@ -351,6 +394,19 @@ private:
 
 	std::vector<int>							m_shortcuts_used;
 	std::vector<long>							m_inv_item_used;
+
+	bool										m_waiting_container_info;
+	long										m_container_id;
+
+	bool										m_updated_container;
+	LbaNet::ContainerInfo						m_container;
+
+	bool										m_exchanged_container;
+	UpdateInvContainer							m_container_exchange;
+
+	bool										m_closed_container;
+	long										m_closed_container_id;
+	bool										m_cont_ForceClose;
 
 	
 	static ThreadSafeWorkpile *					_singletonInstance;

@@ -29,17 +29,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ThreadSafeWorkpile.h"
 #include "GameEvents.h"
 #include "DataLoader.h"
+#include "MessageBox.h"
 
-#ifndef _LBANET_SET_EDITOR_
-#define _LBANET_SET_EDITOR_
-#endif
+
+//#ifndef _LBANET_SET_EDITOR_
+//#define _LBANET_SET_EDITOR_
+//#endif
 
 /***********************************************************
 constructor
 ***********************************************************/
 GameGUI::GameGUI()
-: _cb(this), _comb(this), _telb(this), _invb(this, 20, 50), 
-	_shortb(this, 50), _containerb(this, 20, 50), _editb(NULL)
+: _cb(this), _comb(this), _telb(this), _invb(this, 50), 
+	_shortb(this, 50), _containerb(this, 50), _editb(NULL)
 {
 	#ifdef _LBANET_SET_EDITOR_
 	_editb = new EditorBox(this);
@@ -68,6 +70,7 @@ void GameGUI::Initialize()
 		_invb.Initialize(_root);
 		_shortb.Initialize(_root);
 		_containerb.Initialize(_root);
+		CGMessageBox::getInstance()->Initialize(_root);
 
 
 		if(_editb)_editb->Initialize(_root);
@@ -233,6 +236,7 @@ void GameGUI::Process()
 	_comb.Process();
 	_shortb.Process();
 	_invb.Process();
+	_containerb.Process();
 }
 
 
