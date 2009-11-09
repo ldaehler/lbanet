@@ -106,7 +106,7 @@
 
 ?>
 
-<form name="reg" method="post" enctype="application/x-www-form-urlencoded">
+<form name="reg" method="post" enctype="application/x-www-form-urlencoded" action="index.php">
 	<div style="width: 120px; float: left; height: 25px">Username:</div><input type="text" name="username" /><?php if(isset($error['userexists'])){ echo $error['userexists'];} if(isset($error['usernameinput'])){ echo $error['usernameinput'];} ?><br /><br />
 	<div style="width: 120px; float: left; height: 25px">Email: </div><input type="text" name="email" /><?php if(isset($error['emailexists'])){ echo $error['emailexists'];} if(isset($error['emailinput'])){ echo $error['emailinput'];} ?><br /><br />
 	<div style="width: 120px; float: left; height: 25px">Password: </div><input type="password" name="password" /><?php if(isset($error['passmismatch'])){ echo $error['passmismatch'];} if(isset($error['passwordinput'])){ echo $error['passwordinput'];} ?><br/><br />
@@ -116,8 +116,8 @@
 	<div style="width: 120px; float: left; height: 55px">Security Code:</div>
 
 	<div style="width: 430px; float: left; height: 55px">
-		<img src="securimage_show.php?sid=<?php echo md5(uniqid(time())); ?>" id="siimage" align="left" style="padding-right: 5px; border: 0" />
-		<a tabindex="-1" style="border-style: none" href="#" title="Refresh Image" onclick="document.getElementById('siimage').src = 'securimage_show.php?sid=' + Math.random(); return false"><img src="/images/refresh.gif" alt="Reload Image" border="0" onclick="this.blur()" align="bottom" /></a>
+		<img alt="security code" src="securimage_show.php?sid=<?php echo md5(uniqid(time())); ?>" id="siimage" align="left" style="padding-right: 5px; border: 0" />
+		<a style="border-style: none" href="#" title="Refresh Image" onclick="document.getElementById('siimage').src = 'securimage_show.php?sid=' + Math.random(); return false"><img src="/images/refresh.gif" alt="Reload Image" border="0" onclick="this.blur()" align="bottom" /></a>
 	</div>
 	<br/><br/><br/>
 
@@ -126,5 +126,3 @@
 	<br/>
 	<input type="submit" name="submit" value="Register" />
 </form>
-
-
