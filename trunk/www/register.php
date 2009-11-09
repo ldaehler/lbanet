@@ -106,7 +106,7 @@
 
 ?>
 
-<form name="reg" method="post" enctype="application/x-www-form-urlencoded" action="index.php">
+<form name="reg" method="post" enctype="application/x-www-form-urlencoded" action="index.php" style="display: block; padding-left: 20px;">
 	<div style="width: 120px; float: left; height: 25px">Username:</div><input type="text" name="username" /><?php if(isset($error['userexists'])){ echo $error['userexists'];} if(isset($error['usernameinput'])){ echo $error['usernameinput'];} ?><br /><br />
 	<div style="width: 120px; float: left; height: 25px">Email: </div><input type="text" name="email" /><?php if(isset($error['emailexists'])){ echo $error['emailexists'];} if(isset($error['emailinput'])){ echo $error['emailinput'];} ?><br /><br />
 	<div style="width: 120px; float: left; height: 25px">Password: </div><input type="password" name="password" /><?php if(isset($error['passmismatch'])){ echo $error['passmismatch'];} if(isset($error['passwordinput'])){ echo $error['passwordinput'];} ?><br/><br />
