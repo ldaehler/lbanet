@@ -517,23 +517,18 @@ LbaNet::SavedWorldInfo SessionServant::ChangeWorld(const std::string& WorldName,
 	if(swinfo.inventory.InventoryStructure.size() == 0)
 	{
 		LbaNet::InventoryItem itm;
-		itm.Number = 5;
-		itm.PlaceInInventory = 0;
-		swinfo.inventory.InventoryStructure[1] = itm;
-		itm.PlaceInInventory = 1;
-		swinfo.inventory.InventoryStructure[2] = itm;
 		itm.Number = 1;
-		itm.PlaceInInventory = 2;
-		swinfo.inventory.InventoryStructure[3] = itm;
-		itm.PlaceInInventory = 3;
-		swinfo.inventory.InventoryStructure[4] = itm;
-		itm.PlaceInInventory = 4;
+		itm.PlaceInInventory = 0;
+		swinfo.inventory.InventoryStructure[7] = itm;
+		itm.PlaceInInventory = 1;
 		swinfo.inventory.InventoryStructure[5] = itm;
-		itm.PlaceInInventory = 5;
+		itm.PlaceInInventory = 2;
 		swinfo.inventory.InventoryStructure[6] = itm;
 
-		swinfo.inventory.UsedShorcuts[0] = 5;
-		swinfo.inventory.UsedShorcuts[1] = 6;
+
+		swinfo.inventory.UsedShorcuts[0] = 7;
+		swinfo.inventory.UsedShorcuts[1] = 5;
+		swinfo.inventory.UsedShorcuts[2] = 6;
 	}
 
 
@@ -597,22 +592,22 @@ void SessionServant::UseItem(Ice::Long ItemId, const Ice::Current& cur)
 		{
 			used = true;
 			updatedlifemana = true;
-			deltalife = itmtmp.Effect * _lifeinfo.MaxLife / 100.0;
+			deltalife = (int)(itmtmp.Effect * _lifeinfo.MaxLife / 100.0);
 		}
 
 		if(itmtmp.valueA == 2) // if mana potion
 		{
 			used = true;
 			updatedlifemana = true;
-			deltamana = itmtmp.Effect * _lifeinfo.MaxMana / 100.0;
+			deltamana = (int)(itmtmp.Effect * _lifeinfo.MaxMana / 100.0);
 		}
 
 		if(itmtmp.valueA == 3) // if clover
 		{
 			used = true;
 			updatedlifemana = true;
-			deltalife = itmtmp.Effect * _lifeinfo.MaxLife / 100.0;
-			deltamana = itmtmp.Effect * _lifeinfo.MaxMana / 100.0;
+			deltalife = (int)(itmtmp.Effect * _lifeinfo.MaxLife / 100.0);
+			deltamana = (int)(itmtmp.Effect * _lifeinfo.MaxMana / 100.0);
 		}
 
 		if(used)
@@ -830,8 +825,8 @@ void SessionServant::UpdateInventoryFromContainer(Ice::Long ContainerId, const I
 	{
 		// check if we really have the item we try to add to the container
 		ItemList CheckedPut;
-		std::map< ::Ice::Long, ::Ice::Int>::iterator it = Put.begin();
-		std::map< ::Ice::Long, ::Ice::Int>::iterator end = Put.end();
+		std::map< Ice::Long, Ice::Int>::const_iterator it = Put.begin();
+		std::map< Ice::Long, Ice::Int>::const_iterator end = Put.end();
 
 		for(; it != end; ++it)
 		{
@@ -845,8 +840,8 @@ void SessionServant::UpdateInventoryFromContainer(Ice::Long ContainerId, const I
 
 		//check if we did not reached the size limit
 		ItemList CheckTaken;
-		std::map< ::Ice::Long, ::Ice::Int>::iterator ittak = Taken.begin();
-		std::map< ::Ice::Long, ::Ice::Int>::iterator endtak = Taken.end();
+		std::map< Ice::Long, Ice::Int>::const_iterator ittak = Taken.begin();
+		std::map< Ice::Long, Ice::Int>::const_iterator endtak = Taken.end();
 
 		for(; ittak != endtak; ++ittak)
 		{
@@ -864,7 +859,7 @@ void SessionServant::UpdateInventoryFromContainer(Ice::Long ContainerId, const I
 			else
 			{
 				// check if we still have place in the inventory
-				if(_playerInventory.InventoryStructure.size() < _playerInventory.InventorySize)
+				if((int)_playerInventory.InventoryStructure.size() < _playerInventory.InventorySize)
 				{
 					int maxitem = _inventory_db[ittak->first].Max;
 					int totake = std::min(maxitem, ittak->second);
@@ -878,7 +873,7 @@ void SessionServant::UpdateInventoryFromContainer(Ice::Long ContainerId, const I
 
 		// send to map handler to make change to container
 		if(_actors_manager)
-			_actors_manager->UpdateContainer(ContainerId, _userNum, Taken, CheckedPut, _selfptr);
+			_actors_manager->UpdateContainer(ContainerId, _userNum, CheckTaken, CheckedPut, _selfptr);
 	}
 	catch(const IceUtil::Exception& ex)
 	{
