@@ -121,7 +121,7 @@
 	</div>
 	<br/><br/><br/>
 
-	<div style="width: 120px; float: left; height: 25px">Verify Code:</div>
+	<div style="width: 120px; clear: all; height: 25px">Verify Code:</div>
 	<input type="text" name="code" /><?php if(isset($error['codeinput'])){ echo $error['codeinput'];}?><br/>
 	<br/>
 	<input type="submit" name="submit" value="Register" />
