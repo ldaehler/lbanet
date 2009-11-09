@@ -145,7 +145,7 @@ mysql_select_db("lbanet") or die(mysql_error());
  </div>
  
 <div class="contentboxf" ></div>
- 
-</div><br />
+ <br /><br />
+</div>
 </body>
 </html>
