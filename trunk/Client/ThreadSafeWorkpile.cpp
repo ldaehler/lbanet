@@ -670,3 +670,101 @@ void ThreadSafeWorkpile::GetListOfObjectUsed(std::vector<long> &objs)
 	IceUtil::Mutex::Lock lock(m_mutex_inventory_used);
 	objs.swap(m_inv_item_used);
 }
+
+
+/***********************************************************
+ask for a container info
+***********************************************************/
+void ThreadSafeWorkpile::AskForContainerInfo(long containerid)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_container_info);
+	m_waiting_container_info = true;
+	m_container_id = containerid;
+}
+
+
+/***********************************************************
+check if player is waiting for container info
+***********************************************************/
+bool ThreadSafeWorkpile::HasAskedForContainer(long &containerid)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_container_info);
+	containerid = m_container_id;
+	bool res = m_waiting_container_info;
+	m_waiting_container_info = false;
+	return res;
+}
+
+
+
+
+
+/***********************************************************
+ask for a container info
+***********************************************************/
+void ThreadSafeWorkpile::OpenCloseContainer(long containerid, bool ForceClose)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_container_close);
+	m_closed_container = true;
+	m_closed_container_id = containerid;
+	m_cont_ForceClose = ForceClose;
+}
+
+/***********************************************************
+check if player is waiting for container info
+***********************************************************/
+bool ThreadSafeWorkpile::HasOpenCloseContainer(long &containerid, bool &ForceClose)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_container_close);
+	containerid = m_closed_container_id;
+	bool res = m_closed_container;
+	m_closed_container = false;
+	ForceClose = m_cont_ForceClose;
+	return res;
+}
+
+
+/***********************************************************
+called by server to give container update
+***********************************************************/
+void ThreadSafeWorkpile::UpdateContainer(const LbaNet::ContainerInfo & cinfo)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_container_deal);
+	m_updated_container = true;
+	m_container = cinfo;
+}
+
+/***********************************************************
+ask if we got an update
+***********************************************************/
+bool ThreadSafeWorkpile::IsUpdatedContainer(LbaNet::ContainerInfo & cinfo)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_container_deal);
+	cinfo = m_container;
+	bool res = m_updated_container;
+	m_updated_container = false;
+	return res;
+}
+
+
+/***********************************************************
+called by server to give container update from inventory
+***********************************************************/
+void ThreadSafeWorkpile::UpdateInvFromContainer(const UpdateInvContainer & cinfo)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_container_exchange);
+	m_exchanged_container = true;
+	m_container_exchange = cinfo;
+}
+
+/***********************************************************
+ask if we got an update
+***********************************************************/
+bool ThreadSafeWorkpile::IsUpdatedInvFromContainer(UpdateInvContainer & cinfo)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_container_exchange);
+	cinfo = m_container_exchange;
+	bool res = m_exchanged_container;
+	m_exchanged_container = false;
+	return res;
+}

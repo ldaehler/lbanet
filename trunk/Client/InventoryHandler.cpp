@@ -75,6 +75,20 @@ void InventoryHandler::SetInventoryDb(const std::map<long, ItemInfo> & db)
 }
 
 
+
+/***********************************************************
+get the max number an item can have given its ID
+***********************************************************/
+int InventoryHandler::GetItemMax(long id)
+{
+	std::map<long, ItemInfo>::iterator itdb = _db.find(id);	
+	if(itdb != _db.end())
+		return itdb->second.Max;
+	else
+		return 0;
+}
+
+
 /***********************************************************
 called when and object from the inventory is used
 ***********************************************************/
@@ -146,6 +160,7 @@ void InventoryHandler::SetCurrentInventory(const std::map<long, std::pair<int, i
 
 	_currInventory = db;
 	_inventoryUpdated = true;
+	_inventoryUpdatedContainer = true;
 	_inventorysize = inventorysize;
 }
 
@@ -182,6 +197,20 @@ bool InventoryHandler::HasInventoryUpdated()
 
 	bool res = _inventoryUpdated;
 	_inventoryUpdated = false;
+	return res;
+}
+
+
+
+/***********************************************************
+gui ask if inventory has updated
+***********************************************************/
+bool InventoryHandler::HasInventoryUpdatedForContainer()
+{
+	IceUtil::Mutex::Lock lock(m_mutex_inv);
+
+	bool res = _inventoryUpdatedContainer;
+	_inventoryUpdatedContainer = false;
 	return res;
 }
 
@@ -262,7 +291,7 @@ void InventoryHandler::UpdateInventoryItem(long ObjectId, int NewCount)
 	m_updated_items.push_back(std::make_pair<long, int>(ObjectId, NewCount));
 
 	std::map<long, std::pair<int, int> >::iterator it = _currInventory.find(ObjectId);
-	if(it == _currInventory.end())
+	if(it != _currInventory.end())
 	{
 		//update item count
 		it->second.first = NewCount;
@@ -274,4 +303,36 @@ void InventoryHandler::UpdateInventoryItem(long ObjectId, int NewCount)
 	{
 		_currInventory[ObjectId] = std::make_pair<int, int>(NewCount, -1);
 	}
+}
+
+
+/***********************************************************
+get inventory size
+***********************************************************/
+int InventoryHandler::GetInventorySize()
+{
+	IceUtil::Mutex::Lock lock(m_mutex_inv);
+	return _inventorysize;
+}
+
+
+
+/***********************************************************
+get inventory
+***********************************************************/
+std::vector<std::pair<long, int> > InventoryHandler::GetInventoryVector()
+{
+	IceUtil::Mutex::Lock lock(m_mutex_inv);
+
+	std::vector<std::pair<long, int> > res;
+	for(int i=0; i<_inventorysize; ++i)
+		res.push_back(std::make_pair<long, int>(-1, 0));
+
+
+	std::map<long, std::pair<int, int> >::const_iterator it =	_currInventory.begin();
+	std::map<long, std::pair<int, int> >::const_iterator end = _currInventory.end();
+	for(; it != end; ++it)
+		res[it->second.second] = std::make_pair<long, int>(it->first, it->second.first);
+
+	return res;
 }

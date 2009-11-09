@@ -95,6 +95,12 @@ public:
 	// called to tell the server and obejct has been used
 	void InventoryUsed(long ItemId);
 
+	// ask for a container info
+	void AskForContainerInfo(long containerid);
+
+	// called by server to give container update from inventory
+	void UpdateInvFromContainer(const ThreadSafeWorkpile::UpdateInvContainer & cinfo);
+
 private:
 
     const Ice::ObjectAdapterPtr							_adapter;	// ice adapter

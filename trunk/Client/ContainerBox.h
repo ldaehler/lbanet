@@ -39,7 +39,8 @@ namespace CEGUI
 #include <list>
 #include <map>
 #include <vector>
-
+#include <LbaTypes.h>
+#include "ThreadSafeWorkpile.h"
 
 //*************************************************************************************************
 //*                               class ContainerBox
@@ -52,7 +53,7 @@ class ContainerBox
 {
  public:
 	//! constructor
-	 ContainerBox(GameGUI * gamgui, int containersize, int boxsize);
+	 ContainerBox(GameGUI * gamgui, int boxsize);
 
 	//! destructor
 	virtual ~ContainerBox();
@@ -63,34 +64,110 @@ class ContainerBox
 	//! display the chatbox on screen
 	void Show();
 
-	//! handle windows closing event
-	bool HandleClose (const CEGUI::EventArgs& e);
-
-	//! handle windows resize event
-	bool HandleResize (const CEGUI::EventArgs& e);
 
 	//! drag and drop
-	bool handle_ItemDropped(const CEGUI::EventArgs& args);
+	bool handle_ItemDroppedInContainer(const CEGUI::EventArgs& args);
+	bool handle_ItemDroppedInInventory(const CEGUI::EventArgs& args);
+	bool handle_ItemDroppedInContainerItem(const CEGUI::EventArgs& args);
+	bool handle_ItemDroppedInInventoryItem(const CEGUI::EventArgs& args);
+
 
 	//! handle windows resize event
-	bool HandleObjectClicked (const CEGUI::EventArgs& e);
+	bool HandleContainerItemClicked (const CEGUI::EventArgs& e);
+	bool HandleInventoryItemClicked (const CEGUI::EventArgs& e);
 
+		
+	//! handle windows closing event
+	bool HandleOk (const CEGUI::EventArgs& e);
+		
+	//! handle windows closing event
+	bool HandleTakeAll (const CEGUI::EventArgs& e);
+
+	//! handle windows closing event
+	bool HandleCancel (const CEGUI::EventArgs& e);
 
 	//! process what is needed in the game GUI
 	void Process();
 
 protected:
-	//! resize container
-	void ResizeBox();
+
+	//! close box and send update to server
+	void CloseAndUpdate();
+	
+	//! cancel changes
+	void Cancel();
+
+	//! take all item from container
+	void TakeAll();
+
+	//! add item inside the container
+	void AddContainerItem(long Id, int number, CEGUI::Window* parent);
+
+	//! clean container items
+	void CleanContainer();
+
+	//! resize inventory
+	void ResizeInventory(int newsize);
+
+	//! update inventory
+	void UpdateInventory(std::vector<std::pair<long, int> > inv);
+
+	//! clean inventory
+	void CleanInventory();
+
+	//! refresh inventory
+	void RefreshInventory();
+
+	//! add item inside the container
+	std::pair<CEGUI::Window*, CEGUI::Window*> AddInventoryItem(long Id, int number, CEGUI::Window* parent, 
+																bool tocontainer);
+
+	
+	//! add an item from container to inventory
+	//! return the number taken
+	int AddItemFromContainerToInventory(long Id, int number);
+
+	//! switch item from container to inventory
+	void switchfromcontainertoinventory(long Id, bool full);
+
+
+	//! update taken and put vectors with last change from user
+	void UpdateTakenPut(long itid, int deltaupd);
+
+	
+	//! add an item from inventory to container
+	//! return the number taken
+	int AddItemFromInventoryToContainer(long Id, int number);
+	
+	//! switch item from inventory to container
+	void switchfrominventorytocontainer(long Id, bool full);
+
+	//! find first empty space in inventory
+	CEGUI::Window* FindFirstContainerEmptySpace();
 
 private:
-	CEGUI::Window*			_myBox;
-	GameGUI *				_gamgui;
-
-	int							_inventorysize;
+	CEGUI::Window*				_myBox;
+	GameGUI *					_gamgui;
 	int							_boxsize;
-	std::vector<CEGUI::Window*>	_inv_boxes;
-	std::map<long, std::pair<CEGUI::Window*, CEGUI::Window*> >	_objects;
+
+	// last server info
+	LbaNet::ContainerInfo											_currContainerCopy;
+	LbaNet::ContainerInfo											_currContainer;
+	ThreadSafeWorkpile::UpdateInvContainer							_serverupdate;
+
+
+	// container part
+	std::vector<CEGUI::Window*>										_cont_boxes;
+	std::map<long, std::pair<CEGUI::Window*, CEGUI::Window*> >		_cont_objects;
+
+
+	// inventory part
+	int																_inventory_size;
+	std::vector<CEGUI::Window*>										_inv_boxes;
+	std::vector<std::pair<long, int> >								_inventory_data;
+	std::vector<std::pair<CEGUI::Window*, CEGUI::Window*> >			_inventory_windows;
+
+	double															_last_opened_time;
 };
 
 #endif
