@@ -164,5 +164,5 @@ bool SharedData::Whisper(const std::string& From, const std::string& To, const s
 		return true;
 	}
 
-	return false
+	return false;
 }

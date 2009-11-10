@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Ice/Config.h>
 
 #include <ConnectedTracker.h>
+#include <ChatInfo.h>
 
 /***********************************************************************
  * Module:  SharedData.h
