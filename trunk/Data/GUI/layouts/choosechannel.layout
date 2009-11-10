@@ -13,7 +13,7 @@
                 <Property Name="Text" Value="" />
                 <Property Name="MaxTextLength" Value="1073741823" />
                 <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
-                <Property Name="UnifiedAreaRect" Value="{{0,10},{0,45},{1,-10},{0,75}}" />
+                <Property Name="UnifiedAreaRect" Value="{{0,10},{0,25},{1,-10},{0,55}}" />
             </Window>   
             
          <Window Type="TaharezLook/Button" Name="Chat/chooseChannel/bOk">
