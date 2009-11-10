@@ -270,3 +270,82 @@ void DatabaseHandler::UpdateInventory(const LbaNet::InventoryInfo &Inventory, co
 		}
 	}
 }
+
+/***********************************************************
+add friend function
+***********************************************************/
+void DatabaseHandler::AddFriend(long myId, const std::string&  name)
+{
+	if(!_connected)
+		return;
+
+	Lock sync(*this);
+	mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
+
+	query << "SELECT id FROM users";
+	query << " WHERE username = '"<<name<<"'";
+	if (mysqlpp::StoreQueryResult res = query.store())
+	{
+		if(res.size() > 0)
+		{
+			query.clear();
+			query << "INSERT INTO friends (userid, friendid) VALUES('";
+			query << myId << "', '" << res[0][0] << "')";
+			if(!query.exec())
+				std::cout<<"LBA_Server - Update INSERT friends failed for user id "<<myId<<" : "<<query.error()<<std::endl;
+		}
+	}
+}
+
+/***********************************************************
+remove friend function
+***********************************************************/
+void DatabaseHandler::RemoveFriend(long myId, const std::string&  name)
+{
+	if(!_connected)
+		return;
+
+	Lock sync(*this);
+	mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
+
+	query << "SELECT id FROM users";
+	query << " WHERE username = '"<<name<<"'";
+	if (mysqlpp::StoreQueryResult res = query.store())
+	{
+		if(res.size() > 0)
+		{
+			query.clear();
+			query << "DELETE FROM friends";
+			query << " WHERE userid = '"<<myId<<"' AND friendid = '"<<res[0][0]<<"'";
+			if(!query.exec())
+				std::cout<<"LBA_Server - Update DELETE friends failed for user id "<<myId<<" : "<<query.error()<<std::endl;
+		}
+	}
+}
+
+/***********************************************************
+get friends function
+***********************************************************/
+LbaNet::FriendsSeq DatabaseHandler::GetFriends(long myId)
+{
+	LbaNet::FriendsSeq resF;
+
+	if(!_connected)
+		return resF;
+
+	Lock sync(*this);
+	mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
+
+	query << "SELECT users.username FROM users, friends";
+	query << " WHERE friendid.userid = '"<<myId<<"'"<<"' AND users.id = friends.friendid";
+	if (mysqlpp::StoreQueryResult res = query.store())
+	{
+		if(res.size() > 0)
+		{
+			for(size_t i=0; i<res.size(); ++i)
+				resF.push_back(res[i][0]);
+		}
+	}
+
+	return resF;
+}

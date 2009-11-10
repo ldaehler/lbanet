@@ -931,3 +931,29 @@ bool SessionServant::Whisper(const std::string& To, const std::string& Message, 
 }
 
 
+
+/***********************************************************
+add friend function
+***********************************************************/
+void SessionServant::AddFriend(const std::string&  name, const ::Ice::Current&)
+{
+	_dbh.AddFriend(name);
+}
+
+/***********************************************************
+remove friend function
+***********************************************************/
+void SessionServant::RemoveFriend(const std::string&  name, const ::Ice::Current&)
+{
+	_dbh.RemoveFriend(name);
+}
+
+/***********************************************************
+get friends function
+***********************************************************/
+LbaNet::FriendsSeq SessionServant::GetFriends(const ::Ice::Current&)
+{
+	return _dbh.GetFriends();
+}
+
+

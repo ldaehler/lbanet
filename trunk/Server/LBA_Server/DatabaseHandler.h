@@ -63,6 +63,17 @@ public:
 	// update player inventory structure
 	void UpdateInventory(const LbaNet::InventoryInfo &Inventory, const std::string& WorldName,long PlayerId);
 
+
+    // add friend function
+    void AddFriend(long myId, const std::string&  name);
+
+    // remove friend function
+	void RemoveFriend(long myId, const std::string&  name);
+
+    // get friends function
+    LbaNet::FriendsSeq GetFriends(long myId);
+
+
 protected:
 	DatabaseHandler(const DatabaseHandler &);
 	const DatabaseHandler & operator=(const DatabaseHandler &);

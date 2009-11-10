@@ -145,6 +145,15 @@ public:
     virtual bool Whisper(const std::string& To, const std::string& Message, const ::Ice::Current&);
 
 
+    // add friend function
+    virtual void AddFriend(const std::string&  name, const ::Ice::Current&);
+
+    // remove friend function
+	virtual void RemoveFriend(const std::string&  name, const ::Ice::Current&);
+
+    // get friends function
+    virtual LbaNet::FriendsSeq GetFriends(const ::Ice::Current&);
+
 protected:
 	void ApplyInternalInventoryChanges(const UpdatedItemSeq &InventoryChanges);
 
