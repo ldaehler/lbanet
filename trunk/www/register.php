@@ -105,12 +105,12 @@
 
 	$query = mysql_query("SELECT COUNT(`id`) FROM `users`");
 	$data = mysql_fetch_row($query);
-	echo "Registered users: " . $data[0];
+	echo "Registered users: " . $data[0] . "<br/>";
 
 
 	$query2 = mysql_query("SELECT COUNT(`id`) FROM `users` WHERE `connected`='1'");
 	$data2 = mysql_fetch_row($query2);
-	echo "Connected users: " . $data2[0];
+	echo "Connected users: " . $data2[0] . "<br/>";
 
 ?>
 
