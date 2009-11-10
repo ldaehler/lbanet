@@ -106,8 +106,7 @@
 	$query = mysql_query("SELECT COUNT(`id`) FROM `users`");
 	$data = mysql_fetch_row($query);
 	echo "Registered users: " . $data[0];
-
-	$query2 = mysql_query("SELECT COUNT(`id`) FROM `users` WHERE `connected` = `1`");
+	$query2 = mysql_query("SELECT COUNT(`id`) FROM `users` WHERE connected=`1`");
 	$data2 = mysql_fetch_row($query2);
 	echo "Connected users: " . $data2[0];
 
