@@ -8,6 +8,8 @@
 
 module LbaNet
 {
+	sequence<string> FriendsSeq;	
+
 	interface ClientSession extends Glacier2::Session
 	{
 	    ChatRoomParticipant* JoinChat(string room, ChatRoomObserver* view);
@@ -61,7 +63,13 @@ module LbaNet
 	    
 	    
 	    void SetWhisperInterface(ChatRoomObserver * winterface);
-	    bool Whisper(string To, string Message);	    
+	    bool Whisper(string To, string Message);
+	    
+	    
+	    // friends functions
+	    void AddFriend(string name);
+	    void RemoveFriend(string name);
+	    FriendsSeq GetFriends();
 	};
 
 };
