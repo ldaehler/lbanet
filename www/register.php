@@ -105,7 +105,7 @@
 
 	$query = mysql_query("SELECT COUNT(`id`) FROM `users`");
 	$data = mysql_fetch_assoc($query);
-	echo "Registered users: ";
+	echo "Registered users: " . $data[1];
 
 ?>
 
