@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DataLoader.h"
 #include "MessageBox.h"
 
-
+//
 //#ifndef _LBANET_SET_EDITOR_
 //#define _LBANET_SET_EDITOR_
 //#endif
@@ -411,6 +411,10 @@ void GameGUI::Refresh()
 	_telb.Show();_telb.Show();
 	_invb.Show();_invb.Show();
 	_shortb.Show();_shortb.Show();
+
+	_containerb.Refresh();
+	_invb.Refresh();
+	_shortb.Refresh();
 
 	CEGUI::Window * win = CEGUI::WindowManager::getSingleton().getWindow("PlayerName");
 	win->hide();

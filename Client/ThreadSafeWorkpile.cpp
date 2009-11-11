@@ -768,3 +768,83 @@ bool ThreadSafeWorkpile::IsUpdatedInvFromContainer(UpdateInvContainer & cinfo)
 	m_exchanged_container = false;
 	return res;
 }
+
+
+/***********************************************************
+add a whisper channel
+***********************************************************/
+void ThreadSafeWorkpile::AddWhisperChannel(const std::string & name)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_whisper_chanel);
+	m_asked_whispers.push_back(name);
+}
+
+
+/***********************************************************
+get all queries for whisper channel
+***********************************************************/
+void ThreadSafeWorkpile::GetWhisperChannelQueries(std::vector<std::string> &scvec)
+{
+	scvec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_whisper_chanel);
+	m_asked_whispers.swap(scvec);
+}
+
+
+
+/***********************************************************
+add a whisper channel
+***********************************************************/
+void ThreadSafeWorkpile::AddFriend(const std::string & name)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_added_friend);
+	m_added_friends.push_back(name);
+}
+
+/***********************************************************
+get all queries for whisper channel
+***********************************************************/
+void ThreadSafeWorkpile::GetAddedFriend(std::vector<std::string> &scvec)
+{
+	scvec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_added_friend);
+	m_added_friends.swap(scvec);
+}
+
+/***********************************************************
+add a whisper channel
+***********************************************************/
+void ThreadSafeWorkpile::RemoveFriend(const std::string & name)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_removed_friend);
+	m_removed_friends.push_back(name);
+}
+
+/***********************************************************
+get all queries for whisper channel
+***********************************************************/
+void ThreadSafeWorkpile::GetRemovedFriend(std::vector<std::string> &scvec)
+{
+	scvec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_removed_friend);
+	m_removed_friends.swap(scvec);
+}
+
+
+/***********************************************************
+set friend list
+***********************************************************/
+void ThreadSafeWorkpile::SetFriends(const std::vector<std::string> & friends)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_friend);
+	m_friend_list = friends;
+}
+
+/***********************************************************
+get friend list
+***********************************************************/
+void ThreadSafeWorkpile::GetFriends(std::vector<std::string> & friends)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_friend);
+	friends.swap(m_friend_list);
+}

@@ -671,6 +671,12 @@ return the number taken
 ***********************************************************/
 int ContainerBox::AddItemFromInventoryToContainer(long Id, int number)
 {
+	// check if the type is allowed to be dropped
+	int type = InventoryHandler::getInstance()->GetItemType(Id);
+	if(type != 1 && type != 6)
+		return 0;
+
+
 	// check if we already have an item of this type
 	LbaNet::ItemList::iterator itc = _currContainer.Content.find(Id);
 	if(itc == _currContainer.Content.end())
@@ -868,4 +874,39 @@ CEGUI::Window*  ContainerBox::FindFirstContainerEmptySpace()
 	}
 
 	return NULL;
+}
+
+
+
+/***********************************************************
+refresh inventory images
+***********************************************************/
+void  ContainerBox::Refresh()
+{
+	if(_myBox->isVisible())
+	{
+		_myBox->hide();
+		_myBox->show();
+		_myBox->activate();
+	}
+
+	std::map<long, std::pair<CEGUI::Window*, CEGUI::Window*> >::iterator it = _cont_objects.begin();
+	std::map<long, std::pair<CEGUI::Window*, CEGUI::Window*> >::iterator end = _cont_objects.end();
+	for(; it != end; ++it)
+	{
+		std::string imagesetname = ImageSetHandler::GetInstance()->GetInventoryImage(it->first);
+		it->second.first->getChildAtIdx(0)->setProperty("Image", "set:" + imagesetname + " image:full_image");
+	}
+
+	std::vector<std::pair<long, int> >::iterator itinvd = _inventory_data.begin();
+	std::vector<std::pair<long, int> >::iterator endinvd = _inventory_data.end();
+	std::vector<std::pair<CEGUI::Window*, CEGUI::Window*> >::iterator itinv = _inventory_windows.begin();
+	for(; itinvd != endinvd; ++itinvd, ++itinv)
+	{
+		if(itinvd->first >= 0)
+		{
+			std::string imagesetname = ImageSetHandler::GetInstance()->GetInventoryImage(itinvd->first);
+			itinv->first->getChildAtIdx(0)->setProperty("Image", "set:" + imagesetname + " image:full_image");
+		}
+	}
 }

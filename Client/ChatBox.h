@@ -90,8 +90,12 @@ class ChatBox
 	bool HandleCCCancel (const CEGUI::EventArgs& e);
 
 
-	//! handle event when the channel window is closed
-	bool HandleCloseChannels (const CEGUI::EventArgs& e);
+	//! handle enter key
+	bool HandleCPOk (const CEGUI::EventArgs& e);
+
+	//! handle event when list is selected
+	bool HandleCPCancel (const CEGUI::EventArgs& e);
+
 
 	//! handle event when the channel window is closed
 	bool HandleCloseChatbox (const CEGUI::EventArgs& e);
@@ -120,7 +124,7 @@ protected:
 	void SendText(const std::string & channel, const std::string & Text);
 
 	//! add new text to the chatbox
-	void AddText(std::string channel, const std::string & Sender, std::string Text);
+	void AddText(std::string channel, std::string Sender, std::string Text);
 
 	//! method to correctly add chat text
 	void AddChatText(const CEGUI::String& pText, CEGUI::Listbox * listbox);
@@ -131,14 +135,19 @@ protected:
 	//! protect part of the string containing character [
 	void ProtectString(std::string &text);
 
+	//! add a whisper channel
+	void AddWhisperChanel(const std::string & name);
+
 private:
 	CEGUI::Window*			_myChat;
 	CEGUI::Listbox*			_lb;
 	CEGUI::Window*			_myChannels;
+	CEGUI::Window*			_myChooseName;
 
 	std::string				_currentWorld;
 	std::string				_currentMap;
 	std::list<std::string>	_channels;
+	std::list<std::string>	_whisper_channels;
 	std::list<std::string>	_lasttexts;
 	std::list<std::string>::iterator	_itltext;
 

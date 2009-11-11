@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GameGUI.h"
 #include "LogHandler.h"
 #include "ConfigurationManager.h"
+#include "GameEvents.h"
 
 // Sample sub-class for ListboxTextItem that auto-sets the selection brush
 // image.  This saves doing it manually every time in the code.
@@ -112,10 +113,55 @@ void CommunityBox::Initialize(CEGUI::Window* Root)
 		frw->setWidth(CEGUI::UDim(SizeX, OSizeX));
 		frw->setHeight(CEGUI::UDim(SizeY, OSizeY));
 
+		static_cast<CEGUI::PushButton *> (
+			CEGUI::WindowManager::getSingleton().getWindow("CommunityFrame/friendAdd"))->subscribeEvent (
+			CEGUI::PushButton::EventClicked,
+			CEGUI::Event::Subscriber (&CommunityBox::HandleAddFriend, this));
+
+		static_cast<CEGUI::PushButton *> (
+			CEGUI::WindowManager::getSingleton().getWindow("CommunityFrame/friendRemove"))->subscribeEvent (
+			CEGUI::PushButton::EventClicked,
+			CEGUI::Event::Subscriber (&CommunityBox::HandleRemoveFriend, this));
+
+
+		_myChooseName = CEGUI::WindowManager::getSingleton().loadWindowLayout( "AddFriendName.layout" );
+		_myChooseName->setProperty("AlwaysOnTop", "True");
+		Root->addChildWindow(_myChooseName);
+		_myChooseName->hide();
+
+		{
+			CEGUI::FrameWindow * fw = static_cast<CEGUI::FrameWindow *>(_myChooseName);
+			fw->subscribeEvent (	CEGUI::FrameWindow::EventCloseClicked,
+									CEGUI::Event::Subscriber (&CommunityBox::HandleCPCancel, this) );
+
+			static_cast<CEGUI::PushButton *> (
+				CEGUI::WindowManager::getSingleton().getWindow("Chat/AddFriendName/bOk"))->subscribeEvent (
+				CEGUI::PushButton::EventClicked,
+				CEGUI::Event::Subscriber (&CommunityBox::HandleCPOk, this));
+
+			static_cast<CEGUI::PushButton *> (
+				CEGUI::WindowManager::getSingleton().getWindow("Chat/AddFriendName/bCancel"))->subscribeEvent (
+				CEGUI::PushButton::EventClicked,
+				CEGUI::Event::Subscriber (&CommunityBox::HandleCPCancel, this));
+		}
+
+
+		static_cast<CEGUI::Listbox *> (
+			CEGUI::WindowManager::getSingleton().getWindow("Community/friendlist"))->subscribeEvent (
+			CEGUI::Listbox::EventMouseDoubleClick,
+			CEGUI::Event::Subscriber (&CommunityBox::HandleListdblClick, this));
+
+
+		static_cast<CEGUI::Listbox *> (
+			CEGUI::WindowManager::getSingleton().getWindow("Community/onlinelist"))->subscribeEvent (
+			CEGUI::Listbox::EventMouseDoubleClick,
+			CEGUI::Event::Subscriber (&CommunityBox::HandleConnecteddblClick, this));
+		
 		if(Visible)
 			frw->show();
 		else
 			frw->hide();
+
 	}
 	catch(CEGUI::Exception &ex)
 	{
@@ -169,22 +215,22 @@ void CommunityBox::AddOnline(const std::string & listname, const std::string &_o
 		if(_status != "")
 			dis += " (" + _status + ")";
 
-		std::map<std::string, size_t>::iterator itmap = _onlines.find(_online);
+		std::map<std::string, CEGUI::ListboxItem *>::iterator itmap = _onlines.find(_online);
 		if(itmap != _onlines.end())
 		{
-			CEGUI::ListboxItem *it = lb->getListboxItemFromIndex(itmap->second);
-			if(it)
-			{
-				it->setText(dis);
-				lb->invalidate();
-			}
+			itmap->second->setText(dis);
+			lb->invalidate();
 		}
 		else
 		{
 			CEGUI::ListboxItem *it = new MyComListItem(dis);
 			lb->addItem(it);
-			_onlines[_online] = lb->getItemIndex(it);
+			_onlines[_online] = it;
 		}
+
+
+		if(IsFriend(_online))
+			UpdateFriend(_online);
 	}
 
 	if(listname == "IRC")
@@ -209,16 +255,15 @@ void CommunityBox::RemoveOnline(const std::string & listname, const std::string 
 			CEGUI::WindowManager::getSingleton().getWindow("Community/onlinelist"));
 
 
-
-		std::map<std::string, size_t>::iterator itmap = _onlines.find(_offline);
+		std::map<std::string, CEGUI::ListboxItem *>::iterator itmap = _onlines.find(_offline);
 		if(itmap != _onlines.end())
 		{
-			CEGUI::ListboxItem *it = lb->getListboxItemFromIndex(itmap->second);
-			if(it)
-				lb->removeItem(it);
-
+			lb->removeItem(itmap->second);
 			_onlines.erase(itmap);
 		}
+
+		if(IsFriend(_offline))
+			UpdateFriend(_offline);
 	}
 
 	if(listname == "IRC")
@@ -257,6 +302,12 @@ void CommunityBox::Process()
 				RemoveOnline(it->ListName, it->Nickname);
 		}
 	}
+
+
+	std::vector<std::string> friends;
+	ThreadSafeWorkpile::getInstance()->GetFriends(friends);
+	for(size_t i=0; i<friends.size(); ++i)
+		UpdateFriend(friends[i]);
 }
 
 
@@ -278,4 +329,204 @@ void CommunityBox::ClearList(const std::string & listname)
 			CEGUI::WindowManager::getSingleton().getWindow("Community/IRClist"));
 		lb->resetList();
 	}
+}
+
+
+
+/***********************************************************
+handle event when add friend clicked
+***********************************************************/
+bool CommunityBox::HandleAddFriend(const CEGUI::EventArgs& e)
+{
+	_myChooseName->show();
+	CEGUI::Editbox * bed = static_cast<CEGUI::Editbox *>
+		(CEGUI::WindowManager::getSingleton().getWindow("Chat/choosePlayerName/edit"));
+	bed->activate();
+
+	return true;
+}
+
+
+/***********************************************************
+handle event when remove friend clicked
+***********************************************************/
+bool CommunityBox::HandleRemoveFriend(const CEGUI::EventArgs& e)
+{
+	CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
+		CEGUI::WindowManager::getSingleton().getWindow("Community/friendlist"));
+
+	const CEGUI::ListboxTextItem * it = static_cast<const CEGUI::ListboxTextItem *>(lb->getFirstSelectedItem());
+	if(it)
+	{
+		std::string name = it->getText().c_str();
+		name = name.substr(name.find("]")+1);
+		RemoveFriend(name);
+	}
+
+	return true;
+}
+
+
+
+/***********************************************************
+add people friend
+***********************************************************/
+void CommunityBox::UpdateFriend(const std::string & name)
+{
+	RemoveFriend(name);
+
+	CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
+		CEGUI::WindowManager::getSingleton().getWindow("Community/friendlist"));
+
+
+	bool connected = false;
+	std::string color = "FF777777";
+	std::map<std::string, CEGUI::ListboxItem *>::iterator iton = _onlines.find(name);
+	if(iton != _onlines.end())
+	{
+		connected = true;
+		color = "FF33FF33";
+	}
+
+	std::string dis = "[colour='" + color + "']" + name;
+	CEGUI::ListboxItem *item = new MyComListItem(dis);
+	_friends[name] = item;
+
+	if(connected)
+	{
+		if(lb->getItemCount() > 0)
+			lb->insertItem(item, lb->getListboxItemFromIndex(0));
+		else
+			lb->addItem(item);
+	}
+	else
+	{
+		lb->addItem(item);
+	}
+}
+
+/***********************************************************
+remove people friend
+***********************************************************/
+void CommunityBox::RemoveFriend(const std::string & name)
+{
+	std::map<std::string, CEGUI::ListboxItem *>::iterator it = _friends.find(name);
+	if(it == _friends.end()) // does not exist
+		return;
+
+
+	CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
+		CEGUI::WindowManager::getSingleton().getWindow("Community/friendlist"));
+
+	lb->removeItem(it->second);
+	_friends.erase(it);
+
+	 ThreadSafeWorkpile::getInstance()->RemoveFriend(name);
+}
+
+/***********************************************************
+return true if is friend
+***********************************************************/
+bool CommunityBox::IsFriend(const std::string & name)
+{
+	std::map<std::string, CEGUI::ListboxItem *>::iterator it = _friends.find(name);
+	if(it == _friends.end()) // does not exist
+		return false;
+
+
+	return true;
+}
+
+
+
+
+
+/***********************************************************
+handle event when list is selected
+***********************************************************/
+bool CommunityBox::HandleCPOk (const CEGUI::EventArgs& e)
+{
+	CEGUI::Editbox * bed = static_cast<CEGUI::Editbox *>
+	(CEGUI::WindowManager::getSingleton().getWindow("Chat/AddFriendName/edit"));
+
+	std::string strc = bed->getProperty("Text").c_str();
+
+	if(strc != "")
+	{
+		UpdateFriend(strc);
+		ThreadSafeWorkpile::getInstance()->AddFriend(strc);
+
+		bed->setProperty("Text", "");
+		_myChooseName->hide();
+	}
+	else
+	{
+		bed->activate();
+	}
+
+	return true;
+}
+
+/***********************************************************
+handle event when list is selected
+***********************************************************/
+bool CommunityBox::HandleCPCancel (const CEGUI::EventArgs& e)
+{
+	CEGUI::Editbox * bed = static_cast<CEGUI::Editbox *>
+	(CEGUI::WindowManager::getSingleton().getWindow("Chat/AddFriendName/edit"));
+
+	bed->setProperty("Text", "");
+	_myChooseName->hide();
+	return true;
+}
+
+
+
+/***********************************************************
+handle event when list is double clicked
+***********************************************************/
+bool CommunityBox::HandleListdblClick (const CEGUI::EventArgs& e)
+{
+	CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
+		CEGUI::WindowManager::getSingleton().getWindow("Community/friendlist"));
+
+	const CEGUI::ListboxTextItem * it = static_cast<const CEGUI::ListboxTextItem *>(lb->getFirstSelectedItem());
+	if(it)
+	{
+		std::string name = it->getText().c_str();
+		name = name.substr(name.find("]")+1);
+	
+		std::map<std::string, CEGUI::ListboxItem *>::iterator iton = _onlines.find(name);
+		if(iton != _onlines.end())
+		{
+			ThreadSafeWorkpile::getInstance()->AddWhisperChannel(name);
+			ThreadSafeWorkpile::getInstance()->AddEvent(new FocusChatEvent());
+		}
+	}
+
+	return true;
+}
+
+
+
+/***********************************************************
+handle event when list is double clicked
+***********************************************************/
+bool CommunityBox::HandleConnecteddblClick (const CEGUI::EventArgs& e)
+{
+	CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
+		CEGUI::WindowManager::getSingleton().getWindow("Community/onlinelist"));
+
+	const CEGUI::ListboxTextItem * it = static_cast<const CEGUI::ListboxTextItem *>(lb->getFirstSelectedItem());
+	if(it)
+	{
+		std::string name = it->getText().c_str();
+		name = name.substr(name.find("]")+1);
+		name = name.substr(0, name.find_last_of("(")-1);
+
+		ThreadSafeWorkpile::getInstance()->AddWhisperChannel(name);
+		ThreadSafeWorkpile::getInstance()->AddEvent(new FocusChatEvent());
+	}
+
+	return true;
 }

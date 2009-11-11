@@ -89,6 +89,21 @@ int InventoryHandler::GetItemMax(long id)
 }
 
 
+
+/***********************************************************
+get the type of item
+***********************************************************/
+int InventoryHandler::GetItemType(long id)
+{
+	std::map<long, ItemInfo>::iterator itdb = _db.find(id);	
+	if(itdb != _db.end())
+		return itdb->second.type;
+	else
+		return 0;
+}
+
+
+
 /***********************************************************
 called when and object from the inventory is used
 ***********************************************************/

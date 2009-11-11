@@ -78,6 +78,20 @@ void InfosReceiverServant::ApplyInventoryChanges(const LbaNet::UpdatedItemSeq &I
 	LbaNet::UpdatedItemSeq::const_iterator end = InventoryChanges.end();
 	for(;it != end; ++it)
 		InventoryHandler::getInstance()->UpdateInventoryItem(it->ItemId, it->NewCount);
+
+	if(InventoryChanges.size() == 1)
+	{
+		if(InventoryChanges[0].NewCount < 0)
+		{
+			ThreadSafeWorkpile::ChatTextData cdata;
+			cdata.Channel = "All";
+			cdata.Sender = "info";
+			cdata.Text = "Used object.." ;
+			ThreadSafeWorkpile::getInstance()->AddChatData(cdata);
+		}
+	}
+
+
 }
 
 

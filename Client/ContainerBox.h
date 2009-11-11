@@ -89,6 +89,9 @@ class ContainerBox
 	//! process what is needed in the game GUI
 	void Process();
 
+	//! refresh inventory images
+	void Refresh();
+
 protected:
 
 	//! close box and send update to server

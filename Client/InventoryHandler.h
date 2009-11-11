@@ -113,6 +113,9 @@ public:
 	//! get the max number an item can have given its ID
 	int GetItemMax(long id);
 
+	//! get the type of item
+	int GetItemType(long id);
+
 protected:
 	//! constructor
 	InventoryHandler();

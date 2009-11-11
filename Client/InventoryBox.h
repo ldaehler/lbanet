@@ -89,6 +89,9 @@ class InventoryBox
 	//! process what is needed in the game GUI
 	void Process();
 
+	//! refresh inventory images
+	void Refresh();
+
 protected:
 	//! resize inventory
 	void ResizeBox();
