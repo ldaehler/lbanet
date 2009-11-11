@@ -1,3 +1,7 @@
 <actors>
-<actor id="0" type="5" posX="61.499" posY="0" posZ="61.499" rotation="0"  zonesizeX="1.49902" zonesizeY="3.99609" zonesizeZ="1.49902" />
+    <actor id="0" type="5" posX="61.499" posY="0" posZ="61.499" rotation="0"  zonesizeX="1.49902" zonesizeY="3.99609" zonesizeZ="1.49902">
+    	<itemgroup respawnTimeInMs="10000">
+    		<item id="7" number="1" probability="1" />
+	</itemgroup>   
+    </actor> 
 </actors>
