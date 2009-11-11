@@ -181,6 +181,11 @@ int ServerConnectionHandler::Connect(const std::string &user, const std::string 
 		}
 
 
+		LbaNet::FriendsSeq friends = _session->GetFriends();
+		if(friends.size() > 0)
+			ThreadSafeWorkpile::getInstance()->SetFriends(friends);
+
+
 		//synchronize time with server
 		//SynchronizedTimeHandler::getInstance()->Initialize(session);
 	}

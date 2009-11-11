@@ -744,6 +744,10 @@ void LbaNetEngine::HandleGameEvents()
 					m_lbaNetModel.InventoryUsed(evcs->_ObjectId, _CurrentLife==_MaxLife, _CurrentMana==_MaxMana);
 				}
 			break;
+
+			case 23: // focus chatbox event
+				FocusChatbox(true);
+			break;
 		}
 
 		delete *it;

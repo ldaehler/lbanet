@@ -234,7 +234,7 @@ void ChatBox::Initialize(CEGUI::Window* Root)
 
 		_lb->setProperty("Text", "Channels");
 		_lb->setProperty("UnifiedMaxSize", "{{1,0},{1,0}}");
-		_lb->setProperty("UnifiedAreaRect", "{{0,10},{1,-140},{0,95},{1,-40}}");
+		_lb->setProperty("UnifiedAreaRect", "{{0,10},{1,-160},{0,120},{1,-40}}");
 		_lb->setProperty("AlwaysOnTop", "True");
 
 		_myChat->addChildWindow(_lb);
@@ -245,20 +245,44 @@ void ChatBox::Initialize(CEGUI::Window* Root)
 		Root->addChildWindow(_myChannels);
 		_myChannels->hide();
 
-		CEGUI::FrameWindow * fw = static_cast<CEGUI::FrameWindow *>(_myChannels);
-		fw->subscribeEvent (	CEGUI::FrameWindow::EventCloseClicked,
-								CEGUI::Event::Subscriber (&ChatBox::HandleCloseChannels, this) );
+		_myChooseName = CEGUI::WindowManager::getSingleton().loadWindowLayout( "choosePlayerName.layout" );
+		_myChooseName->setProperty("AlwaysOnTop", "True");
+		Root->addChildWindow(_myChooseName);
+		_myChooseName->hide();
 
-		static_cast<CEGUI::PushButton *> (
-			CEGUI::WindowManager::getSingleton().getWindow("Chat/chooseChannel/bOk"))->subscribeEvent (
-			CEGUI::PushButton::EventClicked,
-			CEGUI::Event::Subscriber (&ChatBox::HandleCCOk, this));
 
-		static_cast<CEGUI::PushButton *> (
-			CEGUI::WindowManager::getSingleton().getWindow("Chat/chooseChannel/bCancel"))->subscribeEvent (
-			CEGUI::PushButton::EventClicked,
-			CEGUI::Event::Subscriber (&ChatBox::HandleCCCancel, this));
+		{
+			CEGUI::FrameWindow * fw = static_cast<CEGUI::FrameWindow *>(_myChannels);
+			fw->subscribeEvent (	CEGUI::FrameWindow::EventCloseClicked,
+									CEGUI::Event::Subscriber (&ChatBox::HandleCCCancel, this) );
 
+			static_cast<CEGUI::PushButton *> (
+				CEGUI::WindowManager::getSingleton().getWindow("Chat/chooseChannel/bOk"))->subscribeEvent (
+				CEGUI::PushButton::EventClicked,
+				CEGUI::Event::Subscriber (&ChatBox::HandleCCOk, this));
+
+			static_cast<CEGUI::PushButton *> (
+				CEGUI::WindowManager::getSingleton().getWindow("Chat/chooseChannel/bCancel"))->subscribeEvent (
+				CEGUI::PushButton::EventClicked,
+				CEGUI::Event::Subscriber (&ChatBox::HandleCCCancel, this));
+		}
+
+
+		{
+			CEGUI::FrameWindow * fw = static_cast<CEGUI::FrameWindow *>(_myChooseName);
+			fw->subscribeEvent (	CEGUI::FrameWindow::EventCloseClicked,
+									CEGUI::Event::Subscriber (&ChatBox::HandleCPCancel, this) );
+
+			static_cast<CEGUI::PushButton *> (
+				CEGUI::WindowManager::getSingleton().getWindow("Chat/choosePlayerName/bOk"))->subscribeEvent (
+				CEGUI::PushButton::EventClicked,
+				CEGUI::Event::Subscriber (&ChatBox::HandleCPOk, this));
+
+			static_cast<CEGUI::PushButton *> (
+				CEGUI::WindowManager::getSingleton().getWindow("Chat/choosePlayerName/bCancel"))->subscribeEvent (
+				CEGUI::PushButton::EventClicked,
+				CEGUI::Event::Subscriber (&ChatBox::HandleCPCancel, this));
+		}
 
 
 		CEGUI::FrameWindow * frw = static_cast<CEGUI::FrameWindow *> (
@@ -296,7 +320,7 @@ void ChatBox::Initialize(CEGUI::Window* Root)
 /***********************************************************
 add new text to the chatbox
 ***********************************************************/
-void ChatBox::AddText(std::string channel, const std::string & Sender, std::string Text)
+void ChatBox::AddText(std::string channel, std::string Sender, std::string Text)
 {
 	for(size_t i=0; i< _replace_string_map.size(); ++i)
 		ReplaceStringPart(Text, _replace_string_map[i].first, _replace_string_map[i].second);
@@ -314,7 +338,29 @@ void ChatBox::AddText(std::string channel, const std::string & Sender, std::stri
 	if(channel == (_currentWorld + "_" + _currentMap))
 		channel = "Map";
 
-	if(CEGUI::WindowManager::getSingleton().isWindowPresent("Chat/Tab_"+channel+"/editMulti"))
+	if(channel == "Whisper")
+	{
+		if(CEGUI::WindowManager::getSingleton().isWindowPresent("Chat/Tab_All/editMulti"))
+		{
+			CEGUI::String tmp((const unsigned char *)Text.c_str());
+			CEGUI::String tmp2((const unsigned char *)Sender.c_str());
+
+			CEGUI::Listbox * txt2 = static_cast<CEGUI::Listbox *>(CEGUI::WindowManager::getSingleton().getWindow("Chat/Tab_All/editMulti"));
+			AddChatText(namecol + tmp2 + " whispers: [colour='FFFFFFFF']"+ tmp, txt2);
+		}
+	}
+	else if(channel == "All")
+	{
+		if(CEGUI::WindowManager::getSingleton().isWindowPresent("Chat/Tab_All/editMulti"))
+		{
+			CEGUI::String tmp((const unsigned char *)Text.c_str());
+			CEGUI::String tmp2((const unsigned char *)Sender.c_str());
+
+			CEGUI::Listbox * txt2 = static_cast<CEGUI::Listbox *>(CEGUI::WindowManager::getSingleton().getWindow("Chat/Tab_All/editMulti"));
+			AddChatText(namecol + tmp2 + ": [colour='FFFFFFFF']"+ tmp, txt2);
+		}
+	}
+	else if(CEGUI::WindowManager::getSingleton().isWindowPresent("Chat/Tab_"+channel+"/editMulti"))
 	{
 		CEGUI::String tmp((const unsigned char *)Text.c_str());
 		CEGUI::String tmp2((const unsigned char *)Sender.c_str());
@@ -322,39 +368,12 @@ void ChatBox::AddText(std::string channel, const std::string & Sender, std::stri
 		CEGUI::Listbox * txt = static_cast<CEGUI::Listbox *>(CEGUI::WindowManager::getSingleton().getWindow("Chat/Tab_"+channel+"/editMulti"));
 		AddChatText(namecol + tmp2 + ": [colour='FFFFFFFF']"+ tmp, txt);
 		
-		//txt->hide();
-		//float pos = txt->getVertScrollbar()->getScrollPosition();
-		//txt->appendText(tmp2 + ": "+ tmp);
-		//txt->addItem(new CEGUI::ListboxTextItem(tmp2 + ": "+ tmp));
-
-
-		//if(txt->getText().size() > 3000)
-		//	txt->setText(txt->getText().substr(500));
-		//txt->show();
-
-		//{
-		//	float maxpos = (txt->getVertScrollbar()->getDocumentSize() - txt->getVertScrollbar()->getPageSize());
-		//	//if(pos >= maxpos*9/10)
-		//		txt->getVertScrollbar()->setScrollPosition(maxpos);
-		//}
 
 		if(CEGUI::WindowManager::getSingleton().isWindowPresent("Chat/Tab_All/editMulti"))
 		{
 			CEGUI::Listbox * txt2 = static_cast<CEGUI::Listbox *>(CEGUI::WindowManager::getSingleton().getWindow("Chat/Tab_All/editMulti"));
 			CEGUI::String tmp3((const unsigned char *)channel.c_str());
 			AddChatText(namecol + tmp2 + "@" + tmp3+ ": [colour='FFFFFFFF']"+ tmp, txt2);
-
-			//float pos2 = txt2->getVertScrollbar()->getScrollPosition();
-			//txt2->hide();
-			//txt2->addItem(new CEGUI::ListboxTextItem(tmp2 + "@" + tmp3+ ": "+ tmp));
-			//txt2->appendText(tmp2 + "@" + tmp3+ ": "+ tmp);
-			//if(txt2->getText().size() > 3000)
-			//	txt2->setText(txt2->getText().substr(500));
-			//txt2->show();
-
-			//float maxpos = (txt2->getVertScrollbar()->getDocumentSize() - txt2->getVertScrollbar()->getPageSize());
-			//if(pos2 >= maxpos*9/10)
-				//txt2->getVertScrollbar()->setScrollPosition(maxpos);
 		}
 	}
 
@@ -426,6 +445,18 @@ bool ChatBox::HandleBChannel(const CEGUI::EventArgs& e)
 		for(; it != end; ++it)
 			_lb->addItem(new MyListItem((const unsigned char *)it->c_str()));
 
+
+		std::list<std::string>::const_iterator itw = _whisper_channels.begin();
+		std::list<std::string>::const_iterator endw = _whisper_channels.end();
+		for(; itw != endw; ++itw)
+		{
+			std::string wchtmp = "w:" + *itw;
+			_lb->addItem(new MyListItem((const unsigned char *)wchtmp.c_str()));
+		}
+
+
+
+		_lb->addItem(new MyListItem("Whisper.."));
 		_lb->addItem(new MyListItem("New.."));
 
 		_lb->show();
@@ -461,16 +492,27 @@ void ChatBox::SendText(const std::string & channel, const std::string & Text)
 			ThreadSafeWorkpile::getInstance()->AddChatText(Text);
 		else
 		{
-			std::string tosend("/");
-			if(channel == "Map")
-				tosend += _currentWorld + "_" + _currentMap;
+			if(channel.size() > 2 && channel[0] == 'w' && channel[1] == ':') // in case of whisper
+			{
+				std::string tosend("/w ");
+				tosend += channel.substr(2);
+				tosend += " ";
+				tosend += Text;
+				ThreadSafeWorkpile::getInstance()->AddChatText(tosend);
+			}
 			else
-				tosend +=channel;
+			{
+				std::string tosend("/");
+				if(channel == "Map")
+					tosend += _currentWorld + "_" + _currentMap;
+				else
+					tosend +=channel;
 
-			tosend += " ";
-			tosend += Text;
+				tosend += " ";
+				tosend += Text;
 
-			ThreadSafeWorkpile::getInstance()->AddChatText(tosend);
+				ThreadSafeWorkpile::getInstance()->AddChatText(tosend);
+			}
 		}
 	}
 }
@@ -698,6 +740,14 @@ bool ChatBox::HandleLbSelected (const CEGUI::EventArgs& e)
 		bed->activate();
 		_myChat->setEnabled(false);
 	}
+	else if(txt == "Whisper..")
+	{
+		_myChooseName->show();
+		CEGUI::Editbox * bed = static_cast<CEGUI::Editbox *>
+			(CEGUI::WindowManager::getSingleton().getWindow("Chat/choosePlayerName/edit"));
+		bed->activate();
+		_myChat->setEnabled(false);
+	}
 	else
 	{
 		CEGUI::PushButton * bch = static_cast<CEGUI::PushButton *>
@@ -776,6 +826,48 @@ bool ChatBox::HandleCCCancel (const CEGUI::EventArgs& e)
 }
 
 
+
+
+/***********************************************************
+handle event when list is selected
+***********************************************************/
+bool ChatBox::HandleCPOk (const CEGUI::EventArgs& e)
+{
+	CEGUI::Editbox * bed = static_cast<CEGUI::Editbox *>
+	(CEGUI::WindowManager::getSingleton().getWindow("Chat/choosePlayerName/edit"));
+
+	std::string strc = bed->getProperty("Text").c_str();
+
+	if(strc != "")
+	{
+		AddWhisperChanel(strc);
+		bed->setProperty("Text", "");
+		_myChooseName->hide();
+		_myChat->setEnabled(true);
+	}
+	else
+	{
+		bed->activate();
+	}
+
+	return true;
+}
+
+/***********************************************************
+handle event when list is selected
+***********************************************************/
+bool ChatBox::HandleCPCancel (const CEGUI::EventArgs& e)
+{
+	CEGUI::Editbox * bed = static_cast<CEGUI::Editbox *>
+	(CEGUI::WindowManager::getSingleton().getWindow("Chat/choosePlayerName/edit"));
+
+	bed->setProperty("Text", "");
+	_myChooseName->hide();
+	_myChat->setEnabled(true);
+	return true;
+}
+
+
 /***********************************************************
 handle release key
 ***********************************************************/
@@ -794,15 +886,6 @@ bool ChatBox::HandleReleaseKey (const CEGUI::EventArgs& e)
 }
 
 
-/***********************************************************
-handle event when the channel window is closed
-***********************************************************/
-bool ChatBox::HandleCloseChannels (const CEGUI::EventArgs& e)
-{
-	_myChannels->hide();
-	_myChat->setEnabled(true);
-	return true;
-}
 
 
 
@@ -852,6 +935,12 @@ void ChatBox::Process()
 
 	for(; it != end; ++it)
 		AddText(it->Channel, it->Sender, it->Text);
+
+	// add whisper channels
+	std::vector<std::string> scvechan;
+	ThreadSafeWorkpile::getInstance()->GetWhisperChannelQueries(scvechan);
+	for(size_t i=0; i<scvechan.size(); ++i)
+		AddWhisperChanel(scvechan[i]);
 }
 
 
@@ -943,4 +1032,27 @@ void ChatBox::ProtectString(std::string &text)
 			pos=text.find("[", pos+2);	
 		}
 	}
+}
+
+
+
+/***********************************************************
+add a whisper channel
+***********************************************************/
+void ChatBox::AddWhisperChanel(const std::string & name)
+{
+	std::string wchtmp = "w:" + name;
+
+	if(std::find(_whisper_channels.begin(), _whisper_channels.end(), name) == _whisper_channels.end())
+	{
+		_whisper_channels.push_back(name);
+
+		if(_whisper_channels.size() > 3)
+			_whisper_channels.pop_front();
+	}
+
+	CEGUI::PushButton * bch = static_cast<CEGUI::PushButton *>
+		(CEGUI::WindowManager::getSingleton().getWindow("Chat/bChannel"));
+
+	bch->setProperty("Text", (const unsigned char *)wchtmp.c_str());
 }

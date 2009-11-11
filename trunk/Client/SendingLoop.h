@@ -101,6 +101,16 @@ public:
 	// called by server to give container update from inventory
 	void UpdateInvFromContainer(const ThreadSafeWorkpile::UpdateInvContainer & cinfo);
 
+	//! a player wisper to another
+    bool Whisper(const std::string& To, const std::string& Message);
+
+	//! add friend
+    void AddFriend(const std::string& Name);
+
+	//! remove friend
+    void RemoveFriend(const std::string& Name);
+
+
 private:
 
     const Ice::ObjectAdapterPtr							_adapter;	// ice adapter

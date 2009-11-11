@@ -358,3 +358,25 @@ void ShortcutBox::SetShorcut(CEGUI::Window* box, long itemid)
 	}
 }
 
+
+/***********************************************************
+refresh inventory images
+***********************************************************/
+void  ShortcutBox::Refresh()
+{
+	std::vector<CEGUI::Window*>::iterator itinvd = _inv_boxes.begin();
+	std::vector<CEGUI::Window*>::iterator endinvd = _inv_boxes.end();
+	for(; itinvd != endinvd; ++itinvd)
+	{
+		if ((*itinvd)->getChildCount() == 4)
+		{
+			std::map<unsigned int, long>::iterator itm = _map_box_itemid.find((*itinvd)->getID());
+			if(itm != _map_box_itemid.end())
+			{
+				std::string imagesetname = ImageSetHandler::GetInstance()->GetInventoryImage(itm->second);
+				(*itinvd)->getChildAtIdx(3)->setProperty("Image", "set:" + imagesetname + " image:full_image");
+			}
+		}
+	}
+}
+

@@ -49,6 +49,15 @@ IceConnectionManager::IceConnectionManager(	const Ice::ObjectAdapterPtr& adapter
 		id.category = _category;
 		_actors_observer = LbaNet::ActorsObserverPrx::uncheckedCast(
 												_adapter->add(new InfosReceiverServant(), id)->ice_oneway());
+	
+		// add the whisper interface
+		Ice::Identity id2;
+		id2.name = "ChatObserver.Whisper";
+		id2.category = _category;
+		LbaNet::ChatRoomObserverPrx observer = LbaNet::ChatRoomObserverPrx::uncheckedCast(
+		_adapter->add(new ChatReceiverServant("Whisper"), id2)->ice_oneway());
+		_chat_observers.insert(std::make_pair("Whisper", observer));
+		_session->SetWhisperInterface(observer);
 	}
     catch(const IceUtil::Exception& ex)
     {
@@ -497,6 +506,68 @@ void IceConnectionManager::UpdateInvFromContainer(const ThreadSafeWorkpile::Upda
 }
 
 
+
+/***********************************************************
+a player wisper to another
+***********************************************************/
+bool IceConnectionManager::Whisper(const std::string& To, const std::string& Message)
+{
+	try
+	{
+		return _session->Whisper(To, Message);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception Whisper: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception Whisper "));
+    }
+
+	return false;
+}
+
+
+/***********************************************************
+add friend
+***********************************************************/
+void IceConnectionManager::AddFriend(const std::string& Name)
+{
+	try
+	{
+		_session->AddFriend(Name);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception AddFriend: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception AddFriend "));
+    }
+}
+
+/***********************************************************
+remove friend
+***********************************************************/
+void IceConnectionManager::RemoveFriend(const std::string& Name)
+{
+	try
+	{
+		_session->RemoveFriend(Name);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception RemoveFriend: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception RemoveFriend "));
+    }
+}
+
+
 /***********************************************************
 constructor
 ***********************************************************/
@@ -643,6 +714,19 @@ void SendingLoopThread::run()
 		}
 
 
+		//-----------------------------------
+		// process added friends
+		std::vector<std::string> afriends;
+		ThreadSafeWorkpile::getInstance()->GetAddedFriend(afriends);
+		for(size_t i=0; i<afriends.size(); ++i)
+			_connectionMananger.AddFriend(afriends[i]);
+
+		//-----------------------------------
+		// process removed friends
+		std::vector<std::string> rfriends;
+		ThreadSafeWorkpile::getInstance()->GetRemovedFriend(rfriends);
+		for(size_t i=0; i<rfriends.size() > 0; ++i)
+			_connectionMananger.RemoveFriend(rfriends[i]);
 
 
 
@@ -916,7 +1000,7 @@ void SendingLoopThread::ProcessText(const std::string & Text)
 				if(tok.size() != 2)
 				{
 					ThreadSafeWorkpile::ChatTextData cdata;
-					cdata.Channel = "World";
+					cdata.Channel = "All";
 					cdata.Sender = "info";
 					cdata.Text = "You need to specify a room to join.";
 					ThreadSafeWorkpile::getInstance()->AddChatData(cdata);
@@ -927,7 +1011,7 @@ void SendingLoopThread::ProcessText(const std::string & Text)
 				if(_connectionMananger.FindChatRoom(roomName))
 				{
 					ThreadSafeWorkpile::ChatTextData cdata;
-					cdata.Channel = "World";
+					cdata.Channel = "All";
 					cdata.Sender = "info";
 					cdata.Text = "You already joined channel "+roomName;
 					ThreadSafeWorkpile::getInstance()->AddChatData(cdata);
@@ -944,7 +1028,7 @@ void SendingLoopThread::ProcessText(const std::string & Text)
 				if(tok.size() != 2)
 				{
 					ThreadSafeWorkpile::ChatTextData cdata;
-					cdata.Channel = "World";
+					cdata.Channel = "All";
 					cdata.Sender = "info";
 					cdata.Text = "You need to specify a room to leave.";
 					ThreadSafeWorkpile::getInstance()->AddChatData(cdata);
@@ -954,6 +1038,44 @@ void SendingLoopThread::ProcessText(const std::string & Text)
 				std::string roomName = tok[1];
 				_connectionMananger.LeaveChat(roomName);
 				//_cb->AddText("Left channel "+roomName);
+				return;
+			}
+
+			if(tok[0] == "/w")
+			{
+				if(tok.size() < 3)
+				{
+					ThreadSafeWorkpile::ChatTextData cdata;
+					cdata.Channel = "All";
+					cdata.Sender = "info";
+					cdata.Text = "Incorrect command.";
+					ThreadSafeWorkpile::getInstance()->AddChatData(cdata);
+					return;
+				}
+
+				std::string playername = tok[1];
+				std::string message;
+				for(size_t i=2; i<tok.size(); ++i)
+					message += tok[i] + " ";
+
+				if(!_connectionMananger.Whisper(playername, message))
+				{
+					ThreadSafeWorkpile::ChatTextData cdata;
+					cdata.Channel = "All";
+					cdata.Sender = "info";
+					cdata.Text = "The player " + playername + " is not available.";
+					ThreadSafeWorkpile::getInstance()->AddChatData(cdata);
+				}
+				else
+				{
+					ThreadSafeWorkpile::ChatTextData cdata;
+					cdata.Channel = "All";
+					cdata.Sender = "to " + playername;
+					cdata.Text = message;
+					ThreadSafeWorkpile::getInstance()->AddChatData(cdata);
+
+					ThreadSafeWorkpile::getInstance()->AddWhisperChannel(playername);
+				}
 				return;
 			}
 
@@ -978,7 +1100,7 @@ void SendingLoopThread::ProcessText(const std::string & Text)
 			else
 			{
 					ThreadSafeWorkpile::ChatTextData cdata;
-					cdata.Channel = "World";
+					cdata.Channel = "All";
 					cdata.Sender = "info";
 					cdata.Text = "Invalid command: " + tok[0];
 					ThreadSafeWorkpile::getInstance()->AddChatData(cdata);

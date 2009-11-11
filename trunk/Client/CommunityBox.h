@@ -33,6 +33,7 @@ namespace CEGUI
 	class Window;
 	class EventArgs;
 	class Listbox;
+	class ListboxItem;
 }
 
 #include <string>
@@ -69,6 +70,25 @@ class CommunityBox
 	//! used to process text to add
 	void Process();
 
+	//! handle event when add friend clicked
+	bool HandleAddFriend(const CEGUI::EventArgs& e);
+
+	//! handle event when remove friend clicked
+	bool HandleRemoveFriend(const CEGUI::EventArgs& e);
+
+	//! handle enter key
+	bool HandleCPOk (const CEGUI::EventArgs& e);
+
+	//! handle event when list is selected
+	bool HandleCPCancel (const CEGUI::EventArgs& e);
+
+	//! handle event when list is double clicked
+	bool HandleListdblClick (const CEGUI::EventArgs& e);
+
+	//! handle event when list is double clicked
+	bool HandleConnecteddblClick (const CEGUI::EventArgs& e);
+
+
 protected:
 
 	//! add people online
@@ -81,11 +101,24 @@ protected:
 	//! clear the list
 	void ClearList(const std::string & listname);
 
+
+	//! return true if is friend
+	bool IsFriend(const std::string & name);
+
+	//! add people friend
+	void UpdateFriend(const std::string & name);
+
+	//! remove people friend
+	void RemoveFriend(const std::string & name);
+
 private:
 	CEGUI::Window*			_myBox;
 	GameGUI *				_gamgui;
+	CEGUI::Window*			_myChooseName;
 
-	std::map<std::string, size_t> _onlines;
+	std::map<std::string, CEGUI::ListboxItem *> _onlines;
+
+	std::map<std::string, CEGUI::ListboxItem *> _friends;
 };
 
 #endif

@@ -457,3 +457,19 @@ void InventoryBox::ResizeInventory(int newsize)
 	ResizeBox();
 }
 
+
+
+/***********************************************************
+refresh inventory images
+***********************************************************/
+void InventoryBox::Refresh()
+{
+	std::map<long, std::pair<CEGUI::Window*, CEGUI::Window*> >::iterator it = _objects.begin();
+	std::map<long, std::pair<CEGUI::Window*, CEGUI::Window*> >::iterator end = _objects.end();
+	for(; it != end; ++it)
+	{
+		std::string imagesetname = ImageSetHandler::GetInstance()->GetInventoryImage(it->first);
+		it->second.first->getChildAtIdx(0)->setProperty("Image", "set:" + imagesetname + " image:full_image");
+	}
+}
+

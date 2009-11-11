@@ -299,6 +299,32 @@ public:
 	bool IsUpdatedInvFromContainer(UpdateInvContainer & cinfo);
 
 
+
+	// add a whisper channel
+	void AddWhisperChannel(const std::string & name);
+
+	// cget all queries for whisper channel
+	void GetWhisperChannelQueries(std::vector<std::string> &scvec);
+
+
+	// add a whisper channel
+	void AddFriend(const std::string & name);
+
+	// cget all queries for whisper channel
+	void GetAddedFriend(std::vector<std::string> &scvec);
+
+	// add a whisper channel
+	void RemoveFriend(const std::string & name);
+
+	// cget all queries for whisper channel
+	void GetRemovedFriend(std::vector<std::string> &scvec);
+
+	//! set friend list
+	void SetFriends(const std::vector<std::string> & friends);
+
+	//! get friend list
+	void GetFriends(std::vector<std::string> & friends);
+
 protected:
 
 	//! construtor
@@ -338,7 +364,10 @@ private:
 	IceUtil::Mutex								m_mutex_container_deal;
 	IceUtil::Mutex								m_mutex_container_exchange;
 	IceUtil::Mutex								m_mutex_container_close;
-
+	IceUtil::Mutex								m_mutex_whisper_chanel;
+	IceUtil::Mutex								m_mutex_added_friend;
+	IceUtil::Mutex								m_mutex_removed_friend;
+	IceUtil::Mutex								m_mutex_friend;
 
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_irc;
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_sending_loop;
@@ -408,7 +437,14 @@ private:
 	long										m_closed_container_id;
 	bool										m_cont_ForceClose;
 
-	
+
+	std::vector<std::string>					m_asked_whispers;
+
+	std::vector<std::string>					m_added_friends;
+	std::vector<std::string>					m_removed_friends;
+	std::vector<std::string>					m_friend_list;
+
+
 	static ThreadSafeWorkpile *					_singletonInstance;
 };
 
