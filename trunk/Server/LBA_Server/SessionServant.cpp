@@ -514,7 +514,7 @@ LbaNet::SavedWorldInfo SessionServant::ChangeWorld(const std::string& WorldName,
 	MapInfoXmlReader::LoadInventory(_session_world_inventory_files[WorldName], _inventory_db);
 
 	// only for test - remove that part
-	if(swinfo.inventory.InventoryStructure.size() == 0)
+	if((WorldName != "Lba1Expanded") && (swinfo.inventory.InventoryStructure.size() == 0))
 	{
 		LbaNet::InventoryItem itm;
 		itm.Number = 1;
@@ -833,8 +833,9 @@ void SessionServant::UpdateInventoryFromContainer(Ice::Long ContainerId, const I
 			LbaNet::InventoryMap::iterator itlocal = _playerInventory.InventoryStructure.find(it->first);
 			if(itlocal != _playerInventory.InventoryStructure.end())
 			{
-				if(itlocal->second.Number >= it->second)
-					CheckedPut[it->first] = it->second;
+				if(_inventory_db[it->first].type == 1 || _inventory_db[it->first].type == 6)
+					if(itlocal->second.Number >= it->second)
+						CheckedPut[it->first] = it->second;
 			}
 		}
 
@@ -937,7 +938,7 @@ add friend function
 ***********************************************************/
 void SessionServant::AddFriend(const std::string&  name, const ::Ice::Current&)
 {
-	_dbh.AddFriend(name);
+	_dbh.AddFriend(_userNum, name);
 }
 
 /***********************************************************
@@ -945,7 +946,7 @@ remove friend function
 ***********************************************************/
 void SessionServant::RemoveFriend(const std::string&  name, const ::Ice::Current&)
 {
-	_dbh.RemoveFriend(name);
+	_dbh.RemoveFriend(_userNum, name);
 }
 
 /***********************************************************
@@ -953,7 +954,7 @@ get friends function
 ***********************************************************/
 LbaNet::FriendsSeq SessionServant::GetFriends(const ::Ice::Current&)
 {
-	return _dbh.GetFriends();
+	return _dbh.GetFriends(_userNum);
 }
 
 

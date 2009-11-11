@@ -337,14 +337,19 @@ LbaNet::FriendsSeq DatabaseHandler::GetFriends(long myId)
 	mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
 
 	query << "SELECT users.username FROM users, friends";
-	query << " WHERE friendid.userid = '"<<myId<<"'"<<"' AND users.id = friends.friendid";
+	query << " WHERE users.id = friends.friendid";
+	query << " AND friends.userid = '"<<myId<<"'";
 	if (mysqlpp::StoreQueryResult res = query.store())
 	{
 		if(res.size() > 0)
 		{
 			for(size_t i=0; i<res.size(); ++i)
-				resF.push_back(res[i][0]);
+				resF.push_back(res[i][0].c_str());
 		}
+	}
+	else
+	{
+		std::cout<<query.error()<<std::endl;
 	}
 
 	return resF;
