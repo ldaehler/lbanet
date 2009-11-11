@@ -40,10 +40,23 @@
 		    <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
 		    <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
 
-		    <Window Type="TaharezLook/Listbox" Name="Community/friendlist" >
-			<Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
-			<Property Name="UnifiedAreaRect" Value="{{0,0},{0,1},{1,0},{1,0}}" />
-		    </Window>                                     
+			<Window Type="TaharezLook/Listbox" Name="Community/friendlist" >
+				<Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+				<Property Name="UnifiedAreaRect" Value="{{0,0},{0,1},{1,0},{1.0,-30}}" />
+			</Window>    
+
+       
+			<Window Type="TaharezLook/Button" Name="CommunityFrame/friendAdd" >   
+			    <Property Name="Text" Value="Add" />
+			    <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+			    <Property Name="UnifiedAreaRect" Value="{{0.5,-85},{1.0,-26},{0.5,-5},{1.0,-4}}" />
+			</Window>
+			<Window Type="TaharezLook/Button" Name="CommunityFrame/friendRemove" >          
+			    <Property Name="Text" Value="Remove" />
+			    <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+			    <Property Name="UnifiedAreaRect" Value="{{0.5,5},{1.0,-26},{0.5,85},{1.0,-4}}" />
+			</Window>
+    		    
 		</Window>
 		<Window Type="DefaultWindow" Name="CommunityFrame/TabParty" >
 		    <Property Name="Text" Value="Party" />
