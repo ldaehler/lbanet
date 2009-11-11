@@ -201,6 +201,9 @@ open the door
 ***********************************************************/
 bool DoorActor::Open()
 {
+	if(_opencounter < 0)
+		_opencounter=0;
+
 	++_opencounter;
 	if(_state == CLOSED || _state == CLOSING)
 	{
@@ -226,7 +229,9 @@ open the door
 ***********************************************************/
 bool DoorActor::Close()
 {
-	--_opencounter;
+	if(_opencounter > 0)
+		--_opencounter;
+
 	if(_opencounter == 0)
 		if(_state == OPENED || _state == OPENING)
 		{
