@@ -17,9 +17,9 @@
     </teleports>
     <files>
         <file name="bricks" path="Data/lba_brick_info.txt" />
+        <file name="inventory" path="Data/Inventory/lba1E_inventory.xml" />
         <file name="sprites" path="Data/Sprites/sprites.xml" />
         <file name="videos" path="Data/Sprites/videos.xml" />
-	<file name="inventory" path="Data/Inventory/lba1E_inventory.xml" />	        
     </files>
     <maps>
         <!--Map of Citadel Island, Prison-->
@@ -2882,17 +2882,18 @@
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
                 <sparea name="spawning1" posX="21.000000" posY="1.000000" posZ="48.000000" RotationAtArrival="0" />
-                <sparea name="spawning2" posX="7.000000" posY="8.000000" posZ="26.000000" RotationAtArrival="0" />
+                <sparea name="spawning2" posX="9.000000" posY="8.000000" posZ="27.000000" RotationAtArrival="0" />
                 <sparea name="spawning3" posX="19.000000" posY="7.000000" posZ="12.000000" RotationAtArrival="0" />
                 <sparea name="spawning4" posX="21.000000" posY="1.000000" posZ="48.000000" RotationAtArrival="0" />
                 <sparea name="spawning5" posX="21.000000" posY="1.000000" posZ="48.000000" RotationAtArrival="0" />
                 <sparea name="spawning6" posX="7.000000" posY="8.000000" posZ="28.000000" RotationAtArrival="0" />
+                <sparea name="spawning7" posX="13.000000" posY="3.000000" posZ="40.000000" RotationAtArrival="0" />
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
                 <exit name="exit1" TopRightX="60.998047" TopRightY="7.996094" TopRightZ="63.998047" BottomLeftX="59.000000" BottomLeftY="4.000000" BottomLeftZ="63.000000" newMap="Map91_1" spawning="spawning2" />
                 <exit name="exit11" TopRightX="6.998047" TopRightY="14.996094" TopRightZ="30.998047" BottomLeftX="6.000000" BottomLeftY="9.000000" BottomLeftZ="28.000000" newMap="Map101_1" spawning="spawning1" />
-                <exit name="exit12" TopRightX="11.998047" TopRightY="9.996094" TopRightZ="43.998047" BottomLeftX="11.000000" BottomLeftY="4.000000" BottomLeftZ="38.000000" newMap="Map74_1" spawning="spawning2" />
+                <exit name="exit12" TopRightX="12.998047" TopRightY="10.000000" TopRightZ="44.000000" BottomLeftX="12.000000" BottomLeftY="4.000000" BottomLeftZ="40.000000" newMap="polaris_map2" spawning="spawning1" />
                 <exit name="exit13" TopRightX="18.998047" TopRightY="12.996094" TopRightZ="15.998047" BottomLeftX="18.000000" BottomLeftY="8.000000" BottomLeftZ="12.000000" newMap="Map76_1" spawning="spawning1" />
                 <exit name="exit18" TopRightX="62.998047" TopRightY="6.996094" TopRightZ="63.998047" BottomLeftX="61.000000" BottomLeftY="4.000000" BottomLeftZ="62.000000" newMap="Map97_1" spawning="spawning2" />
             </exits>
@@ -3688,6 +3689,27 @@
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
                 <exit name="exit1" TopRightX="64.000000" TopRightY="9.000000" TopRightZ="59.000000" BottomLeftX="63.000000" BottomLeftY="1.000000" BottomLeftZ="56.000000" newMap="Map13_1" spawning="spawning13" />
+            </exits>
+        </Map>
+        <!--Map of tippet sewer map-->
+        <Map name="polaris_map2" type="interior" music="Music/LBA1-Track6.mp3" repeatmusic="0">
+            <description>tippet sewer map</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="ExternalActors/polaris2.xml" />
+                <file name="LocalActors" path="LocalActors/polaris2.xml" />
+                <file name="Maps" path="Maps/polaris2.txt" />
+                <file name="Texts" path="Texts/Lba1/text4.xml" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+                <sparea name="spawning1" posX="59.000000" posY="0.000000" posZ="45.000000" RotationAtArrival="0" />
+            </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="exit1" TopRightX="61.000000" TopRightY="6.000000" TopRightZ="49.000000" BottomLeftX="60.000000" BottomLeftY="0.000000" BottomLeftZ="45.000000" newMap="Map74_1" spawning="spawning7" />
             </exits>
         </Map>
     </maps>
