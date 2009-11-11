@@ -547,6 +547,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 						ItemGroup newGroup;
 						newGroup.lastSpawningTime = 0;
 						newGroup.RespawningTime = 300000; // default = 5min
+						newGroup.currpicked = -1;
 						pElemC->QueryValueAttribute("respawnTimeInMs", &newGroup.RespawningTime);
 
 						TiXmlElement* itemGroup=pElemC->FirstChildElement();

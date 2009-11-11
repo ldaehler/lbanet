@@ -543,4 +543,22 @@ public:
 	int _ObjectId;
 };
 
+
+/*
+************************************************************************************************************************
+*                                                  class FocusChatEvent
+*
+*	used to update player life
+************************************************************************************************************************
+*/
+class FocusChatEvent : public GameEvent
+{
+public:
+	//! constructor
+	FocusChatEvent()
+	{
+		_type = 23;	
+	}
+};
+
 #endif
