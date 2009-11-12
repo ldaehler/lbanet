@@ -57,7 +57,7 @@ module LbaNet
 	    bool HasItem(long ItemId, int QUantity);
 	   
 	   // callback functions
-	    void ApplyInventoryChanges(UpdatedItemSeq InventoryChanges);
+	    void ApplyInventoryChanges(UpdatedItemSeq InventoryChanges, bool informplayer);
 	    
 	    void UpdateContainerInfo(ContainerInfo container);
 	    

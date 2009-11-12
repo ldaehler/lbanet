@@ -617,7 +617,7 @@ void SessionServant::UseItem(Ice::Long ItemId, const Ice::Current& cur)
 			itm.ItemId = ItemId;
 			itm.NewCount = -1;
 			InventoryChanges.push_back(itm);
-			ApplyInternalInventoryChanges(InventoryChanges);
+			ApplyInternalInventoryChanges(InventoryChanges, true);
 		}
 
 		try
@@ -659,7 +659,7 @@ bool SessionServant::HasItem(Ice::Long ItemId, int QUantity, const Ice::Current&
 /***********************************************************
 callback functions to apply inventory changes
 ***********************************************************/
-void SessionServant::ApplyInternalInventoryChanges(const UpdatedItemSeq &InventoryChanges)
+void SessionServant::ApplyInternalInventoryChanges(const UpdatedItemSeq &InventoryChanges, bool InformPlayer)
 {
 	UpdatedItemSeq clientseq;
 
@@ -700,7 +700,11 @@ void SessionServant::ApplyInternalInventoryChanges(const UpdatedItemSeq &Invento
 	try
 	{
 		if(clientseq.size() > 0 && _client_observer)
-			return _client_observer->ApplyInventoryChanges(clientseq);
+			_client_observer->ApplyInventoryChanges(clientseq);
+
+		if(InformPlayer)
+			_client_observer->InformInventoryChanges(InventoryChanges);
+			
 	}
     catch(const IceUtil::Exception& ex)
     {
@@ -758,10 +762,10 @@ void SessionServant::cleanEphemereItems()
 /***********************************************************
 callback functions to apply inventory changes
 ***********************************************************/
-void SessionServant::ApplyInventoryChanges(const UpdatedItemSeq &InventoryChanges, const Ice::Current&)
+void SessionServant::ApplyInventoryChanges(const UpdatedItemSeq &InventoryChanges, bool InformPlayer, const Ice::Current&)
 {
     Lock sync(*this);
-	ApplyInternalInventoryChanges(InventoryChanges);
+	ApplyInternalInventoryChanges(InventoryChanges, InformPlayer);
 }
 
 

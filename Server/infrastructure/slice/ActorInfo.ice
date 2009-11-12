@@ -20,6 +20,8 @@ module LbaNet
 	    void ApplyInventoryChanges(UpdatedItemSeq InventoryChanges);
 	    
 	    void UpdateContainerInfo(ContainerInfo container);
+	    
+	    void InformInventoryChanges(UpdatedItemSeq InventoryChanges);	    
 	};
 	
 	
