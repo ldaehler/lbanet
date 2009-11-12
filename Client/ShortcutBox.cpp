@@ -86,11 +86,12 @@ void ShortcutBox::Initialize(CEGUI::Window* Root)
 			_inv_boxes.push_back(tmpwindow);
 
 			CEGUI::Window*	tmp3 = CEGUI::WindowManager::getSingleton().createWindow("TaharezLook/StaticText");
-			tmp3->setArea(CEGUI::UDim(0,5), CEGUI::UDim(0,4), CEGUI::UDim(1, -1), CEGUI::UDim(0, 14));
+			tmp3->setArea(CEGUI::UDim(0,2), CEGUI::UDim(0,4), CEGUI::UDim(1, -1), CEGUI::UDim(0, 14));
 			tmp3->setProperty("FrameEnabled", "False");
 			tmp3->setProperty("BackgroundEnabled", "False");
 			tmp3->setProperty("MousePassThroughEnabled", "True");
 			tmp3->setAlwaysOnTop(true);
+			tmp3->setProperty("Font" , "contourfont");
 			tmpwindow->addChildWindow(tmp3);
 
 
@@ -346,7 +347,7 @@ void ShortcutBox::SetShorcut(CEGUI::Window* box, long itemid)
 	if(itemid >= 0)
 	{
 		CEGUI::Window*	tmp = CEGUI::WindowManager::getSingleton().createWindow("TaharezLook/StaticImage");
-		tmp->setArea(CEGUI::UDim(0,5), CEGUI::UDim(0,17), CEGUI::UDim(0, _boxsize-10), CEGUI::UDim(0, _boxsize-20));
+		tmp->setArea(CEGUI::UDim(0,5), CEGUI::UDim(0,12), CEGUI::UDim(0, _boxsize-10), CEGUI::UDim(0, _boxsize-20));
 		
 		std::string imagesetname = ImageSetHandler::GetInstance()->GetInventoryImage(itemid);
 		tmp->setProperty("Image", "set:"+imagesetname+" image:full_image");
