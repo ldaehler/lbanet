@@ -103,15 +103,6 @@
 	}
 
 
-	$query = mysql_query("SELECT COUNT(`id`) FROM `users`");
-	$data = mysql_fetch_row($query);
-	echo "Registered users: " . $data[0] . "<br/>";
-
-
-	$query2 = mysql_query("SELECT COUNT(`id`) FROM `users` WHERE `connected`='1'");
-	$data2 = mysql_fetch_row($query2);
-	echo "Connected users: " . $data2[0] . "<br/><br/><br/>";
-
 ?>
 
 <form name="reg" method="post" enctype="application/x-www-form-urlencoded" action="index.php" style="display: block; padding-left: 20px;">
