@@ -186,7 +186,7 @@ void MapHandlerThread::ActivateActor(const ActorActivationInfoWithCallback& ai)
 							itm.ItemId = dact->GetKeyId();
 							itm.NewCount = -1;
 							InventoryChanges.push_back(itm);
-							ai.clientPtr->ApplyInventoryChanges(InventoryChanges);
+							ai.clientPtr->ApplyInventoryChanges(InventoryChanges, true);
 						}
 					}
 				}
@@ -656,7 +656,7 @@ void MapHandlerThread::UpdateContainerUpdate(const ContainerUpdateInfo &itinfo)
 
 			//final update player inventory
 			if(itinfo.clientPtr)
-				itinfo.clientPtr->ApplyInventoryChanges(InventoryChanges);
+				itinfo.clientPtr->ApplyInventoryChanges(InventoryChanges, false);
 
 			// remove lock
 			_lockedContainers.erase(itloc);
