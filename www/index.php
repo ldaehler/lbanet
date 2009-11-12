@@ -11,7 +11,7 @@ mysql_select_db("lbanet") or die(mysql_error());
 <head>
  <title>LBANet - Account registration</title>
  <style type="text/css">
- html,body { 
+ html,body {
        background: black url(images/background.png) repeat-x;
        color: white;
        height: 100%;
@@ -31,7 +31,7 @@ mysql_select_db("lbanet") or die(mysql_error());
    }
    a:hover{
         text-decoration: underline;
-        text-shadow:1px 1px 20px #C5DCF7;   
+        text-shadow:1px 1px 20px #C5DCF7;
    }
    .usercp{
         position: absolute;
@@ -44,14 +44,14 @@ mysql_select_db("lbanet") or die(mysql_error());
         opacity:0.9;
    }
    .logo {
-       display: block;  
+       display: block;
        margin: 0 auto;
-       border: 0px;          
+       border: 0px;
    }
-   .content{ 
-       margin: -282px auto; 
-       width: 870px; 
-       background: transparent url(images/background-content.png) repeat-x; 
+   .content{
+       margin: -282px auto;
+       width: 870px;
+       background: transparent url(images/background-content.png) repeat-x;
   	   min-height:100%;
        height:auto !important; /* moderne Browser */
        height:100%; /* IE */
@@ -59,8 +59,8 @@ mysql_select_db("lbanet") or die(mysql_error());
    }
    .header {
        z-index: 1;
-       display: block;  
-       margin: 0 auto;      
+       display: block;
+       margin: 0 auto;
    }
    .navi {
        width: 880px;
@@ -70,27 +70,38 @@ mysql_select_db("lbanet") or die(mysql_error());
        line-height: 75px;
        vertical-align: middle;
        font-size: 14px;
-       padding-left: 20px;       
+       padding-left: 20px;
    }
    .navilinks {
-       z-index: 3; 
-         
+       z-index: 3;
+
    }
+   .sidebar {
+       margin-left: -10px;
+       padding: 15px 15px 10px 15px;
+       width:150px;
+       height:168px; 
+       background: transparent url(images/sidebar.png) no-repeat;
+       font-size: 12px;
+       float: right;
+       line-height: 150%;
+       opacity: 0.8;
+   }   
    .news {
        margin-left: 10px;
-       padding: 10px 30px 10px 20px;
-       width:649px;
+       padding: 10px 40px 10px 20px;
+       width:639px;
        min-height: 168px;
        height:auto !important; /* moderne Browser */
        height:168px; /* IE */
-       background: transparent url(images/newsbg.png) no-repeat;      
-       font-size: 14px; 
+       background: transparent url(images/newsbg.png) no-repeat;
+       font-size: 14px;
    }
    .newsf {
        margin-left: 10px;
        width:699px;
-       height:9px; 
-       background: transparent url(images/newsf.png) no-repeat;       
+       height:9px;
+       background: transparent url(images/newsf.png) no-repeat;
    }
    .contentbox {
        margin-left: 10px;
@@ -99,15 +110,16 @@ mysql_select_db("lbanet") or die(mysql_error());
        min-height: 168px;
        height:auto !important; /* moderne Browser */
        height:168px; /* IE */
-       background: transparent url(images/contentbg.png) no-repeat;      
-       font-size: 14px; 
+       background: transparent url(images/contentbg.png) no-repeat;
+       font-size: 14px;
+       text-align: justify;
    }
    .contentboxf {
        margin-left: 10px;
        width:851px;
-       height:20px; 
-       background: transparent url(images/contentf.png) no-repeat;       
-   }   
+       height:20px;
+       background: transparent url(images/contentf.png) no-repeat;
+   }
  </style>
  
 </head>
@@ -129,6 +141,16 @@ mysql_select_db("lbanet") or die(mysql_error());
     </div>
    </div>
  </div> 
+ 
+ <div class="sidebar"><br /><br />	
+ <?PHP $query2 = mysql_query("SELECT COUNT(`id`) FROM `users` WHERE `connected`='1'");
+	$data2 = mysql_fetch_row($query2);
+	echo "Connected users: " . $data2[0] . "<br />"; ?>
+ <br />	
+ <?PHP $query = mysql_query("SELECT COUNT(`id`) FROM `users`");
+	$data = mysql_fetch_row($query);
+	echo "Registered users: " . $data[0] . "<br />"; ?>
+ </div>
  
  <div class="news"><img src="images/inv.png" style="float:right; margin-right: 10px;" alt="inventory" />
 14/11/2009:<span style="color: #3483EC"> New Release v0.7 + new website!</span> <br />

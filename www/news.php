@@ -75,6 +75,17 @@ mysql_select_db("lbanet") or die(mysql_error());
        z-index: 3;
 
    }
+   .sidebar {
+       margin-left: -10px;
+       padding: 15px 15px 10px 15px;
+       width:150px;
+       height:168px; 
+       background: transparent url(images/sidebar.png) no-repeat;
+       font-size: 12px;
+       float: right;
+       line-height: 150%;
+       opacity: 0.8;
+   }   
    .news {
        margin-left: 10px;
        padding: 10px 40px 10px 20px;
@@ -130,6 +141,16 @@ mysql_select_db("lbanet") or die(mysql_error());
    </div>
  </div>
 
+ <div class="sidebar"><br /><br />	
+ <?PHP $query2 = mysql_query("SELECT COUNT(`id`) FROM `users` WHERE `connected`='1'");
+	$data2 = mysql_fetch_row($query2);
+	echo "Connected users: " . $data2[0] . "<br />"; ?>
+ <br />	
+ <?PHP $query = mysql_query("SELECT COUNT(`id`) FROM `users`");
+	$data = mysql_fetch_row($query);
+	echo "Registered users: " . $data[0] . "<br />"; ?>
+ </div>
+ 
  <div class="news">
 14/11/2009:<span style="color: #3483EC"> New Release v0.7 + new website!</span> <br />
 <span style="color: #A7FAFA">Hi guys. I would like to welcome you to our new website!<br /> So this is our first big release since a while implementing the inventory system together with a few more features.
@@ -138,7 +159,7 @@ mysql_select_db("lbanet") or die(mysql_error());
  </div>
      <div class="newsf">
      </div>
-<br />
+<br style="clear: both" />
  <div class="contentbox">
  <span style="color: #A7FAFA; font-size: 18px">Account creation:</span><br /><br />
  <?PHP
