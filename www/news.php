@@ -144,10 +144,10 @@ mysql_select_db("lbanet") or die(mysql_error());
  <div class="sidebar"><br /><br />
  <?PHP $query2 = mysql_query("SELECT COUNT(`id`) FROM `users` WHERE `connected`='1'");
 	$data2 = mysql_fetch_row($query2);
-	echo "<br />Connected users: " . $data2[0] . "<br />";
+	echo "Connected users: " . $data2[0] . "<br />";
   $query = mysql_query("SELECT COUNT(`id`) FROM `users`");
 	$data = mysql_fetch_row($query);
-	echo "<br />Registered users: " . $data[0] . "<br />"; ?>
+	echo "Registered users:  " . $data[0] . "<br />"; ?>
  </div>
 
  <div class="news">
