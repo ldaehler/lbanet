@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ThreadSafeWorkpile.h"
 #include "GameEvents.h"
 #include "InventoryHandler.h"
+#include "ImageSetHandler.h"
 
 // callback function called when a message is received from IceStorm
 void InfosReceiverServant::UpdatedInfo(const LbaNet::ActorInfo& asi, const Ice::Current&)
@@ -100,5 +101,35 @@ void InfosReceiverServant::UpdateContainerInfo(const LbaNet::ContainerInfo &cont
 {
 	ThreadSafeWorkpile::getInstance()->UpdateContainer(container);
 }
+
+
+
+// apply inventory changes
+ void InfosReceiverServant::InformInventoryChanges(const LbaNet::UpdatedItemSeq &InventoryChanges, const Ice::Current&)
+ {
+	for(size_t i=0; i<InventoryChanges.size(); ++i)
+	{
+		if(InventoryChanges[i].NewCount < 0)
+		{
+			std::stringstream strs;
+			strs<<"You used "<<-InventoryChanges[i].NewCount<<" [colour='FFFFFFFF'][image='set:"<<ImageSetHandler::GetInstance()->GetInventoryMiniImage(InventoryChanges[i].ItemId)<<"   image:full_image']"; 
+			ThreadSafeWorkpile::ChatTextData cdata;
+			cdata.Channel = "All";
+			cdata.Sender = "info";
+			cdata.Text = strs.str();
+			ThreadSafeWorkpile::getInstance()->AddChatData(cdata);
+		}
+		else
+		{
+			std::stringstream strs;
+			strs<<"You received "<<-InventoryChanges[i].NewCount<<" [colour='FFFFFFFF'][image='set:"<<ImageSetHandler::GetInstance()->GetInventoryMiniImage(InventoryChanges[i].ItemId)<<"   image:full_image']"; 
+			ThreadSafeWorkpile::ChatTextData cdata;
+			cdata.Channel = "All";
+			cdata.Sender = "info";
+			cdata.Text = strs.str();
+			ThreadSafeWorkpile::getInstance()->AddChatData(cdata);
+		}
+	}
+ }
 
 

@@ -142,6 +142,9 @@ void GuiHandler::Initialize(int screen_size_X, int screen_size_Y, bool ServerOn,
 		CEGUI::ImagesetManager::getSingleton().create( "quest.imageset" );
 		CEGUI::ImagesetManager::getSingleton().create( "weapon.imageset" );
 
+		CEGUI::ImagesetManager::getSingleton().create( "contourfont.imageset" );
+		CEGUI::FontManager::getSingleton().create( "ContourFont.font" );
+
 		// loading the smileys
 		{
 			{

@@ -72,10 +72,35 @@ std::string ImageSetHandler::GetInventoryImage(long InventoryId)
 	{
 		CEGUI::ImagesetManager::getSingleton().
 			createFromImageFile(res, "Inventory/" + file + ".png");
+
+		GetInventoryMiniImage(InventoryId);
 	}
 
 	return res;
 }
+
+
+/***********************************************************
+get inventory image
+***********************************************************/
+std::string ImageSetHandler::GetInventoryMiniImage(long InventoryId)
+{
+	if(InventoryId > _inventory_filenames.size())
+		return "";
+
+	std::string file = _inventory_filenames[InventoryId-1];
+	std::string res = "mini_" + file;
+
+	if(!CEGUI::ImagesetManager::getSingleton().isDefined(res))
+	{
+		CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().
+			createFromImageFile(res, "minis/" + file + ".png");
+		ims.setAutoScalingEnabled(false);
+	}
+
+	return res;
+}
+
 
 
 

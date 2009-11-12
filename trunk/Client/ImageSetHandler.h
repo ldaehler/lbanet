@@ -49,6 +49,9 @@ public:
 	// get inventory image
 	std::string GetInventoryImage(long InventoryId);
 
+	// get inventory image
+	std::string GetInventoryMiniImage(long InventoryId);
+
 	// get image of stance
 	std::string GetStanceImage(int stance);
 

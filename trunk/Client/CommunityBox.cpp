@@ -361,6 +361,7 @@ bool CommunityBox::HandleRemoveFriend(const CEGUI::EventArgs& e)
 		std::string name = it->getText().c_str();
 		name = name.substr(name.find("]")+1);
 		RemoveFriend(name);
+		ThreadSafeWorkpile::getInstance()->RemoveFriend(name);
 	}
 
 	return true;
@@ -420,8 +421,6 @@ void CommunityBox::RemoveFriend(const std::string & name)
 
 	lb->removeItem(it->second);
 	_friends.erase(it);
-
-	 ThreadSafeWorkpile::getInstance()->RemoveFriend(name);
 }
 
 /***********************************************************

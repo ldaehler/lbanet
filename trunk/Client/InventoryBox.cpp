@@ -235,7 +235,7 @@ bool InventoryBox::UpdateItem(long Id, const std::string & Description,
 			tmp->setID(Id);
 
 			CEGUI::Window*	tmp2 = CEGUI::WindowManager::getSingleton().createWindow("TaharezLook/StaticImage");
-			tmp2->setArea(CEGUI::UDim(0,5), CEGUI::UDim(0,17), CEGUI::UDim(0, _boxsize-10), CEGUI::UDim(0, _boxsize-20));
+			tmp2->setArea(CEGUI::UDim(0,5), CEGUI::UDim(0,12), CEGUI::UDim(0, _boxsize-10), CEGUI::UDim(0, _boxsize-20));
 
 			std::string imagesetname = ImageSetHandler::GetInstance()->GetInventoryImage(Id);
 			tmp2->setProperty("Image", "set:" + imagesetname + " image:full_image");
@@ -244,10 +244,12 @@ bool InventoryBox::UpdateItem(long Id, const std::string & Description,
 
 
 			CEGUI::Window*	tmp3 = CEGUI::WindowManager::getSingleton().createWindow("TaharezLook/StaticText");
-			tmp3->setArea(CEGUI::UDim(0,5), CEGUI::UDim(0,4), CEGUI::UDim(1, -1), CEGUI::UDim(0, 14));
+			tmp3->setArea(CEGUI::UDim(0,2), CEGUI::UDim(0,4), CEGUI::UDim(1, -1), CEGUI::UDim(0, 14));
 			tmp3->setProperty("FrameEnabled", "False");
 			tmp3->setProperty("BackgroundEnabled", "False");
 			tmp3->setProperty("MousePassThroughEnabled", "True");
+			tmp3->setProperty("Font" , "contourfont");
+			tmp3->setAlwaysOnTop(true);
 			std::stringstream strs;
 			strs<<number;
 			tmp3->setText(strs.str().c_str());
