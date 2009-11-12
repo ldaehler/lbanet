@@ -147,7 +147,7 @@ mysql_select_db("lbanet") or die(mysql_error());
 	echo "Connected users: " . $data2[0] . "<br />";
   $query = mysql_query("SELECT COUNT(`id`) FROM `users`");
 	$data = mysql_fetch_row($query);
-	echo "Registered users:  " . $data[0] . "<br />"; ?>
+	echo "Registered users: " . $data[0] . "<br />"; ?>
  </div>
 
  <div class="news">
