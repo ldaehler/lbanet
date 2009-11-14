@@ -933,6 +933,8 @@ bool SessionServant::Whisper(const std::string& To, const std::string& Message, 
     {
 		std::cout<<"SessionServant - Unknown exception during Whisper"<<std::endl;
     }
+
+	return false;
 }
 
 
