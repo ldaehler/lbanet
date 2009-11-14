@@ -38,11 +38,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 constructor
 ***********************************************************/
 ShortcutBox::ShortcutBox(GameGUI * gamgui, int boxsize)
-: _gamgui(gamgui), _boxsize(boxsize)
+: _gamgui(gamgui), _boxsize(boxsize), _moving(false), _ccmoving(0)
 {
-
-
-
+	mMousePosInWindow = new CEGUI::Vector2();
 }
 
 
@@ -51,6 +49,8 @@ destructor
 ***********************************************************/
 ShortcutBox::~ShortcutBox()
 {
+	delete mMousePosInWindow;
+
 	try
 	{
 		ConfigurationManager::GetInstance()->SetBool("Gui.Shortcutbox.Visible", _myBox->isVisible());
@@ -109,6 +109,11 @@ void ShortcutBox::Initialize(CEGUI::Window* Root)
 				tmpwindow->subscribeEvent (CEGUI::Window::EventMouseClick,
 					CEGUI::Event::Subscriber (&ShortcutBox::HandleObjectClicked, this));
 
+				tmpwindow->subscribeEvent (CEGUI::Window::EventMouseButtonDown,
+					CEGUI::Event::Subscriber (&ShortcutBox::HandleObjectPressed, this));
+				tmpwindow->subscribeEvent (CEGUI::Window::EventMouseButtonUp,
+					CEGUI::Event::Subscriber (&ShortcutBox::HandleObjectReleased, this));
+
 				tmpwindow->subscribeEvent(
 							CEGUI::Window::EventDragDropItemDropped,
 							CEGUI::Event::Subscriber(&ShortcutBox::handle_ItemDropped, this));
@@ -164,6 +169,11 @@ void ShortcutBox::Initialize(CEGUI::Window* Root)
 
 		bool Visible;
 		ConfigurationManager::GetInstance()->GetBool("Gui.Shortcutbox.Visible", Visible);
+
+
+		//Root->subscribeEvent(CEGUI::Window::EventMouseMove, 
+		//						CEGUI::Event::Subscriber(&ShortcutBox::onWindowMove, this));
+
 		if(Visible)
 			_myBox->show();
 		else
@@ -379,5 +389,50 @@ void  ShortcutBox::Refresh()
 			}
 		}
 	}
+}
+
+/***********************************************************
+on window move
+***********************************************************/
+bool ShortcutBox::onWindowMove(const CEGUI::EventArgs& pEventArgs)
+{
+	if(!_moving)
+		return false;
+
+
+	using namespace CEGUI;
+	const MouseEventArgs &mouseEventArgs = static_cast<const MouseEventArgs&>(pEventArgs);
+	Vector2 localMousePos = CoordConverter::screenToWindow(*_myBox, mouseEventArgs.position);
+   
+	Vector2 offset(localMousePos - *mMousePosInWindow);
+
+    UVector2 uOffset(cegui_absdim(PixelAligned(offset.d_x)),
+                     cegui_absdim(PixelAligned(offset.d_y)));
+
+	_myBox->setPosition(_myBox->getPosition() + uOffset );
+	return true;
+}
+
+
+
+/***********************************************************
+handle windows resize event
+***********************************************************/
+bool ShortcutBox::HandleObjectPressed (const CEGUI::EventArgs& e)
+{
+	using namespace CEGUI;
+	const MouseEventArgs mouseEventArgs = static_cast<const MouseEventArgs&>(e);
+	*mMousePosInWindow = CEGUI::CoordConverter::screenToWindow(*_myBox, mouseEventArgs.position);
+	_moving = true;
+	return true;
+}
+
+/***********************************************************
+handle windows resize event
+***********************************************************/
+bool ShortcutBox::HandleObjectReleased (const CEGUI::EventArgs& e)
+{
+	_moving = false;
+	return true;
 }
 

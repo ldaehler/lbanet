@@ -33,6 +33,7 @@ namespace CEGUI
 	class Window;
 	class EventArgs;
 	class Listbox;
+	class Vector2;
 }
 
 #include <string>
@@ -82,6 +83,15 @@ class ShortcutBox
 	//! drag and drop
 	bool handle_ItemDropped(const CEGUI::EventArgs& args);
 
+	//! on window move
+	bool onWindowMove(const CEGUI::EventArgs& pEventArgs);
+
+	//! handle windows resize event
+	bool HandleObjectPressed (const CEGUI::EventArgs& e);
+
+	//! handle windows resize event
+	bool HandleObjectReleased (const CEGUI::EventArgs& e);
+
 
 	//process what is needed in the game GUI
 	void Process();
@@ -101,6 +111,11 @@ private:
 	std::vector<CEGUI::Window*>		_inv_boxes;
 
 	std::map<unsigned int, long>	_map_box_itemid;
+
+	CEGUI::Vector2*					mMousePosInWindow;
+	bool							_moving;
+	int								_ccmoving;
+
 };
 
 #endif
