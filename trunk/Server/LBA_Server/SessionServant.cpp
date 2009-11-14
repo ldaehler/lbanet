@@ -358,7 +358,7 @@ LbaNet::PlayerSeq SessionServant::GetPlayersInfo(const Ice::Current&)
 
 
 /***********************************************************
-change player status 
+change player status
 ***********************************************************/
 void SessionServant::ChangeStatus(const std::string& Status, const Ice::Current&)
 {
@@ -381,7 +381,7 @@ void SessionServant::ChangeStatus(const std::string& Status, const Ice::Current&
 	}
 }
 
-    
+
 /***********************************************************
 change name display color
 ***********************************************************/
@@ -421,7 +421,7 @@ std::string SessionServant::GetVersion(const Ice::Current&)
 return the current life state
 ***********************************************************/
 LbaNet::ActorLifeInfo SessionServant::GetLifeInfo(const Ice::Current&)
-{    
+{
 	Lock sync(*this);
 	return _lifeinfo;
 }
@@ -494,7 +494,7 @@ void SessionServant::PlayerRaisedFromDead(const Ice::Current&)
 /***********************************************************
 player has changed world
 ***********************************************************/
-LbaNet::SavedWorldInfo SessionServant::ChangeWorld(const std::string& WorldName, 
+LbaNet::SavedWorldInfo SessionServant::ChangeWorld(const std::string& WorldName,
 														   const Ice::Current&)
 {
     Lock sync(*this);
@@ -540,7 +540,7 @@ LbaNet::SavedWorldInfo SessionServant::ChangeWorld(const std::string& WorldName,
 /***********************************************************
 player update his current position in the world
 ***********************************************************/
-void SessionServant::UpdatePositionInWorld(const LbaNet::PlayerPosition& Position, 
+void SessionServant::UpdatePositionInWorld(const LbaNet::PlayerPosition& Position,
 												   const Ice::Current&)
 {
     Lock sync(*this);
@@ -569,7 +569,7 @@ void SessionServant::UpdateInventory(const InventoryInfo &Inventory, const Ice::
 
 
 /***********************************************************
-player use an item from inventory 
+player use an item from inventory
 ***********************************************************/
 void SessionServant::UseItem(Ice::Long ItemId, const Ice::Current& cur)
 {
@@ -637,7 +637,7 @@ void SessionServant::UseItem(Ice::Long ItemId, const Ice::Current& cur)
 	}
 
 }
- 
+
 
 /***********************************************************
 check if we have item in inventory
@@ -704,7 +704,7 @@ void SessionServant::ApplyInternalInventoryChanges(const UpdatedItemSeq &Invento
 
 		if(InformPlayer)
 			_client_observer->InformInventoryChanges(InventoryChanges);
-			
+
 	}
     catch(const IceUtil::Exception& ex)
     {
@@ -735,7 +735,9 @@ void SessionServant::cleanEphemereItems()
 			itm.NewCount = 0;
 			clientseq.push_back(itm);
 
-			it = _playerInventory.InventoryStructure.erase(it);
+			_playerInventory.InventoryStructure.erase(it);
+			// erase does not return iterator for a map in linux
+			it = _playerInventory.InventoryStructure.begin();
 		}
 		else
 			++it;
@@ -770,8 +772,8 @@ void SessionServant::ApplyInventoryChanges(const UpdatedItemSeq &InventoryChange
 
 
 /***********************************************************
-get container content  
-***********************************************************/   
+get container content
+***********************************************************/
 void SessionServant::AskForContainerContent(Ice::Long ContainerId, const Ice::Current&)
 {
     Lock sync(*this);
@@ -813,14 +815,14 @@ void SessionServant::UpdateContainerInfo(const ContainerInfo &container, const I
     {
 		std::cout<<"SessionServant - Unknown exception during UpdateContainerInfo"<<std::endl;
     }
-}	
+}
 
 
 /***********************************************************
 update player inventory from container content
 ***********************************************************/
-void SessionServant::UpdateInventoryFromContainer(Ice::Long ContainerId, const ItemList &Taken, 
-												  const ItemList &Put, 
+void SessionServant::UpdateInventoryFromContainer(Ice::Long ContainerId, const ItemList &Taken,
+												  const ItemList &Put,
 												  const Ice::Current&)
 {
     Lock sync(*this);
@@ -871,7 +873,7 @@ void SessionServant::UpdateInventoryFromContainer(Ice::Long ContainerId, const I
 
 					if(totake > 0)
 						CheckTaken[ittak->first] = totake;
-				}	
+				}
 			}
 		}
 
