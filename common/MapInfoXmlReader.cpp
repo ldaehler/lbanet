@@ -955,7 +955,9 @@ bool MapInfoXmlReader::LoadInventory(const std::string &Filename, std::map<long,
 			pElem->QueryValueAttribute("Max", &spi.Max);
 			spi.Description = pElem->Attribute("Description");
 			pElem->QueryValueAttribute("Effect", &spi.Effect);
-			pElem->QueryValueAttribute("Ephemere", &spi.Ephemere);
+			int tmpv = 0;
+			pElem->QueryValueAttribute("Ephemere", &tmpv);
+			spi.Ephemere = (tmpv == 1);
 			mapinv[spi.id] = spi;
 		}
 	}
