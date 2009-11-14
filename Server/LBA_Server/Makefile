@@ -1,5 +1,5 @@
 TARGET=lbaserver
-OBJ=ActorsParticipantServant.o ChatParticipantServant.o ClientSessionManagerServant.o main.o SessionServant.o ../../common/ActivableActor.o ../../common/Actor.o ../../common/MapInfoXmlReader.o ../../common/AreaSwitch.o ../../common/ContainerActor.o ../../common/DoorActor.o ../../common/ExitActor.o ../../common/FloorSwitch.o ../../common/LadderActor.o ../../common/LiftActor.o ../../common/LivingActor.o ../../common/SwitchActor.o ../../common/TextActor.o ../../common/UpExitActor.o ../../common/ZoneActivableActor.o ../../common/ZoneActor.o ../../common/HurtArea.o ../../common/Randomizer.o
+OBJ=ActorsParticipantServant.o ChatParticipantServant.o ClientSessionManagerServant.o main.o SessionServant.o DatabaseHandler.o ../../common/ActivableActor.o ../../common/Actor.o ../../common/MapInfoXmlReader.o ../../common/AreaSwitch.o ../../common/ContainerActor.o ../../common/DoorActor.o ../../common/ExitActor.o ../../common/FloorSwitch.o ../../common/LadderActor.o ../../common/LiftActor.o ../../common/LivingActor.o ../../common/SwitchActor.o ../../common/TextActor.o ../../common/UpExitActor.o ../../common/ZoneActivableActor.o ../../common/ZoneActor.o ../../common/HurtArea.o ../../common/Randomizer.o
 
 CC=g++
 INCDIR=-I. -I../infrastructure/include -I/usr/include -I../../common -I../../tinyxml/include -I/usr/include/mysql++ -I/usr/include/mysql
