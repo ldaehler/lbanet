@@ -9,11 +9,11 @@ module LbaNet
 	
 		// actor name
 		long			ActorId;
-		string			MapName;		
+		string			MapName;
 		string			Name;
 		bool			DisplayName;
 		int			NameR;
-		int			NameG;		
+		int			NameG;
 		int			NameB;
 		
 		// actor coordinates
@@ -32,7 +32,7 @@ module LbaNet
 		float			vX;
 		float			vY;
 		float			vZ;
-		float			vRotation;	
+		float			vRotation;
 	};
 
 	struct ActorActivationInfo
@@ -141,12 +141,12 @@ module LbaNet
 		long ItemId;
 		int NewCount;
 	};
-	sequence<UpdatedItem> UpdatedItemSeq;	
+	sequence<UpdatedItem> UpdatedItemSeq;
 	
 	struct PlayerPosition
 	{
 		// actor name
-		string			MapName;		
+		string			MapName;
 
 		// actor coordinates
 		float			X;
@@ -193,5 +193,3 @@ module LbaNet
 
 #endif
 
-
-	
