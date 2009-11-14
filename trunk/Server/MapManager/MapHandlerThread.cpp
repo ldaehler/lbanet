@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 MapHandlerThread::MapHandlerThread(SharedData	* SD, ActorsObserverPrx	publisher,
 										const std::string &mapName, MapManagerServant *	stopper,
 										const std::map<long, Actor *> & actors)
-: _SD(SD), _publisher(publisher), _stopping(false), _mapName(mapName), 
+: _SD(SD), _publisher(publisher), _stopping(false), _mapName(mapName),
 	_stopper(stopper), _actors(actors)
 {
 	_signaler = new ServerSignaler(this);
@@ -132,7 +132,10 @@ bool MapHandlerThread::Leave(const ActorLifeInfo &PlayerId)
 	while(itlocked != _lockedContainers.end())
 	{
 		if(itlocked->second.first == PlayerId.ActorId)
-			itlocked = _lockedContainers.erase(itlocked);
+		{
+			_lockedContainers.erase(itlocked);
+			itlocked = _lockedContainers.begin();
+		}
 		else
 			++itlocked;
 	}
@@ -274,12 +277,12 @@ void MapHandlerThread::run()
 		_SD->GetJoined(joinedmap);
 		_SD->GetUpdatedinfo(pinfos);
 		_SD->GetActorinfo(ainfos);
-		_SD->GetSignalinfo(sinfos);		
+		_SD->GetSignalinfo(sinfos);
 		_SD->GetHurtedPlayer(hurtinfos);
-		_SD->GetHurtedFallPlayer(hurtfallinfos);		
-		_SD->GetRaisedFromDead(raisedinfos);	
-		_SD->GetAllUpdateLifeMana(lfminfos);	
-		_SD->GetAllContainerQuerys(conqinfos);	
+		_SD->GetHurtedFallPlayer(hurtfallinfos);
+		_SD->GetRaisedFromDead(raisedinfos);
+		_SD->GetAllUpdateLifeMana(lfminfos);
+		_SD->GetAllContainerQuerys(conqinfos);
 		_SD->GetAllContainerUpdates(conuinfos);
 
 		Lock sync(*this);
@@ -564,7 +567,7 @@ void MapHandlerThread::UpdateContainerQuery(const ContainerQueryInfo &itinfo)
 	std::map<long, Actor *>::iterator it =	_actors.find((long)itinfo.ContainerId);
 	if(it != _actors.end() && it->second->GetType() == 5) // if we have a container
 	{
-		std::map<Ice::Long, std::pair<Ice::Long, time_t> >::iterator itloc = 
+		std::map<Ice::Long, std::pair<Ice::Long, time_t> >::iterator itloc =
 														_lockedContainers.find(itinfo.ContainerId);
 
 		// if locked by a player since more than 5min then unlock - else inform the player it is already locked
@@ -600,7 +603,7 @@ void MapHandlerThread::UpdateContainerUpdate(const ContainerUpdateInfo &itinfo)
 	std::map<long, Actor *>::iterator it =	_actors.find((long)itinfo.ContainerId);
 	if(it != _actors.end() && it->second->GetType() == 5) // if we have a container
 	{
-		std::map<Ice::Long, std::pair<Ice::Long, time_t> >::iterator itloc = 
+		std::map<Ice::Long, std::pair<Ice::Long, time_t> >::iterator itloc =
 														_lockedContainers.find(itinfo.ContainerId);
 
 		// if the container is really locked by the player
@@ -633,7 +636,7 @@ void MapHandlerThread::UpdateContainerUpdate(const ContainerUpdateInfo &itinfo)
 						//update container content
 						cont->UpdateContent(ittak->first, -ittak->second);
 					}
-				}	
+				}
 			}
 
 
