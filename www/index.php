@@ -80,7 +80,7 @@ mysql_select_db("lbanet") or die(mysql_error());
        margin-left: -10px;
        padding: 15px 15px 10px 15px;
        width:150px;
-       height:175px;
+       height:168px;
        background: transparent url(images/sidebar.png) no-repeat;
        font-size: 12px;
        float: right;
