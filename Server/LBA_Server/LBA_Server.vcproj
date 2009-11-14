@@ -138,7 +138,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ice.lib iceutil.lib icestorm.lib glacier2.lib icebox.lib mysqlpp.lib tinyxmld_STL.lib"
+				AdditionalDependencies="ice.lib iceutil.lib icestorm.lib glacier2.lib icebox.lib mysqlpp.lib tinyxml_STL.lib"
 				OutputFile="$(OutDir)\lbaserver.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;c:\Ice-3.3.1-VC90\lib&quot;;&quot;..\MySQL++\lib&quot;;..\..\dependencies\tinyxml\lib"
