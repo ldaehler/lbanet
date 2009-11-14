@@ -80,13 +80,13 @@ mysql_select_db("lbanet") or die(mysql_error());
        margin-left: -10px;
        padding: 15px 15px 10px 15px;
        width:150px;
-       height:168px; 
+       height:175px;
        background: transparent url(images/sidebar.png) no-repeat;
        font-size: 12px;
        float: right;
        line-height: 150%;
        opacity: 0.8;
-   }   
+   }
    .news {
        margin-left: 10px;
        padding: 10px 40px 10px 20px;
@@ -121,7 +121,7 @@ mysql_select_db("lbanet") or die(mysql_error());
        background: transparent url(images/contentf.png) no-repeat;
    }
  </style>
- 
+
 </head>
 <body>
 <div class="usercp"></div>
@@ -137,20 +137,20 @@ mysql_select_db("lbanet") or die(mysql_error());
    <a class="navi" href="index.php" >Credits</a> -->
    <a class="navi" href="http://forum.magicball.net/forumdisplay.php?f=59" >Forum</a>
     <div style="float: right; margin-right: 20px; font-size: 9px;">
-    LBANet  v0.7 
+    LBANet  v0.7
     </div>
    </div>
- </div> 
- 
- <div class="sidebar"><br /><br />	
+ </div>
+
+ <div class="sidebar"><br /><br />
  <?PHP $query2 = mysql_query("SELECT COUNT(`id`) FROM `users` WHERE `connected`='1'");
 	$data2 = mysql_fetch_row($query2);
-	echo "Connected users: " . $data2[0] . "<br />"; 
+	echo "Connected users: " . $data2[0] . "<br />";
   $query = mysql_query("SELECT COUNT(`id`) FROM `users`");
 	$data = mysql_fetch_row($query);
 	echo "Registered users: " . $data[0] . "<br />"; ?>
  </div>
- 
+
  <div class="news"><img src="images/inv.png" style="float:right; margin-right: 10px;" alt="inventory" />
 14/11/2009:<span style="color: #3483EC"> New Release v0.7 + new website!</span> <br />
 
@@ -162,11 +162,11 @@ mysql_select_db("lbanet") or die(mysql_error());
 <br />
  <div class="contentbox">
  <span style="color: #A7FAFA; font-size: 18px">Account creation:</span><br /><br />
- <?PHP 
+ <?PHP
  include 'register.php'  ;
  ?>
  </div>
- 
+
 <div class="contentboxf" ></div>
 <br /> <br />
 </div>
