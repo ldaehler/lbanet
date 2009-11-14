@@ -113,7 +113,7 @@ LbaNet::SavedWorldInfo DatabaseHandler::ChangeWorld(const std::string& NewWorldN
 				std::cout<<"LBA_Server - Update usertoworldmap.lastvisited failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
 			
 			// player pos part
-			resP.ppos.MapName = res[0][1];
+			resP.ppos.MapName = res[0][1].c_str();
 			resP.ppos.X = res[0][2];
 			resP.ppos.Y = res[0][3];
 			resP.ppos.Z = res[0][4];
