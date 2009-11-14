@@ -48,3 +48,26 @@ Version 0.57 changes:
 - added smileys to chatbox
 - added color to chatbox
 - modified marker in chat (bug #0000264)
+
+
+__________________________
+Version 0.7 changes:
+- Persistent storage system on server side. Players will now need to create a game account where all their data will be saved for each world they will visit (player position in world, inventory, etc.)
+
+- New game website:  you can find our new game website at this address:  sd-1287.dedibox.fr/~lbanetweb. The site is still under construction and our great designer and webmaster leoboe is still working on it. However, you can already register a game account there to be able to play the game.
+
+- Inventory system:  the player will get an independent inventory for each world. A new GUI is then available in game were the player can visualize his current inventory content.
+
+- Container system: the player can open different containers in the world. Then he will be able to take objects from the containers or add objects from his own inventory into the containers.
+
+- Shortcut bar: a new in game shortcut bar has appeared. You can drag and drop items from your inventory into it.
+
+- New whisper functionality: players can now whisper to each other. To do so you can either tape '/w playername message' in your chatbox or choose whisper in the channel menu.
+
+- Friend functionality: you can now add people to your friend list in the community window.  You will then be able to easily see which of your friends are online. You can also directly whisper to them by double clicking on their name in the community window.
+
+- Faster map loading: some optimizations have been made server-side to decrease the loading time of maps.
+
+- Added a map created by Polaris in tippet island
+
+- Few bugs fixes.
