@@ -3,6 +3,6 @@
 <GUILayout >
 	<Window Type="TaharezLook/StaticImage" Name="stance_bar" >
 	    <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
-	    <Property Name="UnifiedAreaRect" Value="{{0.5,-50},{1,-55},{0.5,50},{1,-5}}" />           
+	    <Property Name="UnifiedAreaRect" Value="{{0.5,-150},{1,-55},{0.5,150},{1,-5}}" />           
 	</Window> 	
 </GUILayout>
