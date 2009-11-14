@@ -123,7 +123,7 @@ LbaNet::SavedWorldInfo DatabaseHandler::ChangeWorld(const std::string& NewWorldN
 			resP.inventory.InventorySize = res[0][6];
 
 			std::vector<std::string> tokens;
-			std::string shortcutstr = res[0][7];
+			std::string shortcutstr = res[0][7].c_str();
 			Tokenize(shortcutstr, tokens, "#");
 			for(size_t i=0; i<tokens.size(); ++i)
 				resP.inventory.UsedShorcuts.push_back(atoi(tokens[i].c_str()));
