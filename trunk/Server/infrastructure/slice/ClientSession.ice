@@ -70,6 +70,12 @@ module LbaNet
 	    void AddFriend(string name);
 	    void RemoveFriend(string name);
 	    FriendsSeq GetFriends();
+	    
+	    // store letter to the server and return the letter id
+	    void AddLetter(string title, string message);
+	    
+	    // return letter info
+	    LetterInfo GetLetterInfo(long LetterId);
 	};
 
 };

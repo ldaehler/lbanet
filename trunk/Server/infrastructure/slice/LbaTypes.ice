@@ -188,6 +188,17 @@ module LbaNet
 	interface FooLba
 	{
 	    void Update();
+	};
+	
+	
+	
+	struct LetterInfo
+	{
+		long Id;
+		string Date;
+		string Writter;
+		string Title;
+		string Message;
 	};	
 };
 
