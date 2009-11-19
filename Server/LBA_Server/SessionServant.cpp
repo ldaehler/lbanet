@@ -966,3 +966,30 @@ LbaNet::FriendsSeq SessionServant::GetFriends(const ::Ice::Current&)
 }
 
 
+
+/***********************************************************
+store letter to the server and return the letter id
+***********************************************************/
+void SessionServant::AddLetter(const std::string& title, const std::string& message, const ::Ice::Current&)
+{
+	long letterid = _dbh.AddLetter(_userNum, title, message);
+	if(letterid >= 0)
+	{
+		UpdatedItemSeq InventoryChanges;
+		LbaNet::UpdatedItem itm;
+		itm.ItemId = letterid + 10000000; // user created inventory obejct start at 10 000 000
+		itm.NewCount = 1;
+
+		Lock sync(*this);
+		ApplyInternalInventoryChanges(InventoryChanges, false);
+	}
+}
+
+/***********************************************************
+return letter info
+***********************************************************/
+LbaNet::LetterInfo SessionServant::GetLetterInfo(Ice::Long LetterId, const ::Ice::Current&)
+{
+	return _dbh.GetLetterInfo(LetterId - 10000000);
+}
+

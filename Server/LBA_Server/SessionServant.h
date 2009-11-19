@@ -154,6 +154,14 @@ public:
     // get friends function
     virtual LbaNet::FriendsSeq GetFriends(const ::Ice::Current&);
 
+    
+    // store letter to the server and return the letter id
+    virtual void AddLetter(const std::string& title, const std::string& message, const ::Ice::Current&);
+    
+    // return letter info
+    virtual LbaNet::LetterInfo GetLetterInfo(Ice::Long LetterId, const ::Ice::Current&);
+
+
 protected:
 	void ApplyInternalInventoryChanges(const UpdatedItemSeq &InventoryChanges, bool InformPlayer);
 

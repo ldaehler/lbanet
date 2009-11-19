@@ -74,14 +74,28 @@ public:
     LbaNet::FriendsSeq GetFriends(long myId);
 
 
+    // store letter to the server and return the letter id
+    long AddLetter(long myId, const std::string& title, const std::string& message);
+    
+    // return letter info
+    LbaNet::LetterInfo GetLetterInfo(Ice::Long LetterId);
+
+
 protected:
 	DatabaseHandler(const DatabaseHandler &);
 	const DatabaseHandler & operator=(const DatabaseHandler &);
 
+	// connect to database
+	void Connect();
+
 private:
 	// mysql connection handler
 	mysqlpp::Connection	_mysqlH;
-	bool				_connected;
+
+	std::string			_db;
+	std::string			_server;
+	std::string			_user;
+	std::string			_password;
 };
 
 #endif

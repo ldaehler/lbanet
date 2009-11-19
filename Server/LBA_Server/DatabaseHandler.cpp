@@ -72,16 +72,22 @@ constructor
 ***********************************************************/
 DatabaseHandler::DatabaseHandler(const std::string db, const std::string server,
 									const std::string user, const std::string password)
-				: _connected(false), _mysqlH(false)
+				: _mysqlH(false), _db(db), _server(server), _user(_user), _password(password)
 {
-	if (_mysqlH.connect(db.c_str(), server.c_str(), user.c_str(), password.c_str()))
-	{
-		_connected = true;
-	}
-	else
+
+	Connect();
+}
+
+
+
+/***********************************************************
+connect to database
+***********************************************************/
+void DatabaseHandler::Connect()
+{
+	if (!_mysqlH.connect(_db.c_str(), _server.c_str(), _user.c_str(), _password.c_str()))
 	{
 		std::cerr << "DB connection failed: " << _mysqlH.error() << std::endl;
-		_connected = false;
 	}
 }
 
@@ -94,10 +100,14 @@ LbaNet::SavedWorldInfo DatabaseHandler::ChangeWorld(const std::string& NewWorldN
 	LbaNet::SavedWorldInfo resP;
 	resP.ppos.MapName = "";
 
-	if(!_connected)
-		return resP;
-
 	Lock sync(*this);
+	if(!_mysqlH.connected())
+	{
+		Connect();
+		if(!_mysqlH.connected())
+			return resP;
+	}
+
 	mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
 	query << "SELECT id, lastmap, lastposx, lastposy, lastposz, lastrotation, InventorySize, Shortcuts FROM usertoworldmap";
 	query << " WHERE userid = '"<<PlayerId<<"'";
@@ -170,10 +180,14 @@ player update his current position in the world
 void DatabaseHandler::UpdatePositionInWorld(const LbaNet::PlayerPosition& Position, 
 											const std::string& WorldName, long PlayerId)
 {
-	if(!_connected)
-		return;
-
 	Lock sync(*this);
+	if(!_mysqlH.connected())
+	{
+		Connect();
+		if(!_mysqlH.connected())
+			return;
+	}
+
 	mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
 	query << "UPDATE usertoworldmap SET lastmap = '"<<Position.MapName<<"',";
 	query << "lastposx = '"<<Position.X<<"',";
@@ -194,8 +208,13 @@ quit current world
 ***********************************************************/
 void DatabaseHandler::QuitWorld(const std::string& LastWorldName,long PlayerId)
 {
-	if(!_connected)
-		return;
+	Lock sync(*this);
+	if(!_mysqlH.connected())
+	{
+		Connect();
+		if(!_mysqlH.connected())
+			return;
+	}
 
 	// quit previous world
 	if(LastWorldName != "")
@@ -218,8 +237,16 @@ update player inventory structure
 void DatabaseHandler::UpdateInventory(const LbaNet::InventoryInfo &Inventory, const std::string& WorldName,
 									  long PlayerId)
 {
-	if(!_connected || WorldName == "")
+	if(WorldName == "")
 		return;
+
+	Lock sync(*this);
+	if(!_mysqlH.connected())
+	{
+		Connect();
+		if(!_mysqlH.connected())
+			return;
+	}
 
 	std::stringstream shortcutstring;
 	LbaNet::ShortcutSeq::const_iterator it = Inventory.UsedShorcuts.begin();
@@ -233,7 +260,6 @@ void DatabaseHandler::UpdateInventory(const LbaNet::InventoryInfo &Inventory, co
 		shortcutstring<<"#"<<*it;
 
 
-	Lock sync(*this);
 	mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
 	query << "SELECT id FROM usertoworldmap";
 	query << " WHERE userid = '"<<PlayerId<<"'";
@@ -276,10 +302,14 @@ add friend function
 ***********************************************************/
 void DatabaseHandler::AddFriend(long myId, const std::string&  name)
 {
-	if(!_connected)
-		return;
-
 	Lock sync(*this);
+	if(!_mysqlH.connected())
+	{
+		Connect();
+		if(!_mysqlH.connected())
+			return;
+	}
+
 	mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
 
 	query << "SELECT id FROM users";
@@ -302,10 +332,14 @@ remove friend function
 ***********************************************************/
 void DatabaseHandler::RemoveFriend(long myId, const std::string&  name)
 {
-	if(!_connected)
-		return;
-
 	Lock sync(*this);
+	if(!_mysqlH.connected())
+	{
+		Connect();
+		if(!_mysqlH.connected())
+			return;
+	}
+
 	mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
 
 	query << "SELECT id FROM users";
@@ -330,10 +364,15 @@ LbaNet::FriendsSeq DatabaseHandler::GetFriends(long myId)
 {
 	LbaNet::FriendsSeq resF;
 
-	if(!_connected)
-		return resF;
 
 	Lock sync(*this);
+	if(!_mysqlH.connected())
+	{
+		Connect();
+		if(!_mysqlH.connected())
+			return resF;
+	}
+
 	mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
 
 	query << "SELECT users.username FROM users, friends";
@@ -345,6 +384,79 @@ LbaNet::FriendsSeq DatabaseHandler::GetFriends(long myId)
 		{
 			for(size_t i=0; i<res.size(); ++i)
 				resF.push_back(res[i][0].c_str());
+		}
+	}
+	else
+	{
+		std::cout<<query.error()<<std::endl;
+	}
+
+	return resF;
+}
+
+
+
+/***********************************************************
+store letter to the server and return the letter id
+***********************************************************/
+long DatabaseHandler::AddLetter(long myId, const std::string& title, const std::string& message)
+{
+	long resF = -1;
+
+	Lock sync(*this);
+	if(!_mysqlH.connected())
+	{
+		Connect();
+		if(!_mysqlH.connected())
+			return resF;
+	}
+
+
+	mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
+	query << "INSERT INTO letters (userid, creationdate, title, message) VALUES('";
+	query << myId << "', UTC_TIMESTAMP(), '"<< title <<"', '" << message << "')";
+	if(!query.exec())
+		std::cout<<"LBA_Server - Update INSERT letters failed for user id "<<myId<<" : "<<query.error()<<std::endl;
+	else
+	{
+		resF = (long) query.insert_id();
+	}
+
+	return resF;
+}
+
+
+/***********************************************************
+return letter info
+***********************************************************/
+LbaNet::LetterInfo DatabaseHandler::GetLetterInfo(Ice::Long LetterId)
+{
+	LbaNet::LetterInfo resF;
+	resF.Id = -1;
+
+
+	Lock sync(*this);
+	if(!_mysqlH.connected())
+	{
+		Connect();
+		if(!_mysqlH.connected())
+			return resF;
+	}
+
+	mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
+
+	query << "SELECT users.username, letters.creationdate, letters.title, letters.message FROM users, letters";
+	query << " WHERE users.id = letters.userid";
+	query << " AND letters.id = '"<<LetterId<<"'";
+	if (mysqlpp::StoreQueryResult res = query.store())
+	{
+		if(res.size() > 0)
+		{
+			resF.Id = LetterId;
+			resF.Writter = res[0][0].c_str();
+			res[0][1].to_string(resF.Date);
+			resF.Title= res[0][2].c_str();
+			resF.Message= res[0][3].c_str();
 		}
 	}
 	else
