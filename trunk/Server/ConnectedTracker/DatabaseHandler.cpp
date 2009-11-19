@@ -31,16 +31,20 @@ constructor
 ***********************************************************/
 DatabaseHandler::DatabaseHandler(const std::string db, const std::string server,
 									const std::string user, const std::string password)
-				: _connected(false), _mysqlH(false)
+				:  _mysqlH(false), _db(db), _server(server), _user(_user), _password(password)
 {
-	if (_mysqlH.connect(db.c_str(), server.c_str(), user.c_str(), password.c_str()))
-	{
-		_connected = true;
-	}
-	else
+	Connect();
+}
+
+
+/***********************************************************
+connect to database
+***********************************************************/
+void DatabaseHandler::Connect()
+{
+	if (!_mysqlH.connect(_db.c_str(), _server.c_str(), _user.c_str(), _password.c_str()))
 	{
 		std::cerr << "DB connection failed: " << _mysqlH.error() << std::endl;
-		_connected = false;
 	}
 }
 
@@ -50,14 +54,13 @@ return -1 if login incorrect - else return the user id
 ***********************************************************/
 long DatabaseHandler::CheckLogin(const std::string & PlayerName, const std::string & Password) const
 {
-	if(!_connected)
-		return -1;
-
 	Lock sync(*this);
-
-	//static long id = 1;
-	//++id;
-	//return id;
+	if(!_mysqlH.connected())
+	{
+		Connect();
+		if(!_mysqlH.connected())
+			return -1;
+	}
 
 	mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
 	query << "SELECT id FROM users WHERE status = '1' AND username = '"<<PlayerName;
@@ -85,11 +88,13 @@ set the user as disconnected in the database
 ***********************************************************/
 void DatabaseHandler::DisconnectUser(long Id)
 {
-	if(!_connected)
-		return;
-
 	Lock sync(*this);
-
+	if(!_mysqlH.connected())
+	{
+		Connect();
+		if(!_mysqlH.connected())
+			return;
+	}
 
 	mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
 	query << "UPDATE users SET playedtimemin = playedtimemin + TIMESTAMPDIFF(MINUTE, lastconnected, UTC_TIMESTAMP()), connected = '0' WHERE id = '"<<Id<<"'";
