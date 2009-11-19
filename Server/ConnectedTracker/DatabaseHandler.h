@@ -61,10 +61,17 @@ protected:
 	DatabaseHandler(const DatabaseHandler &);
 	const DatabaseHandler & operator=(const DatabaseHandler &);
 
+	// connect to database
+	void Connect();
+
 private:
 	// mysql connection handler
 	mysqlpp::Connection	_mysqlH;
-	bool				_connected;
+
+	std::string			_db;
+	std::string			_server;
+	std::string			_user;
+	std::string			_password;
 };
 
 #endif
