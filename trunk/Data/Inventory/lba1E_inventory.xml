@@ -8,4 +8,5 @@
     <item id="6" filename="Dino" type="3" valueA="6" Max="1" Description="Dino fly: you can fly it on outside maps."/>
     <item id="7" filename="protopack" type="3" valueA="7" Max="1" Description="Protopack: can be used to fly over water."/>
     <item id="8" filename="kash" type="6" valueA="0" Max="9999" Description="Kash(es): money used on Twinsun"/>
+    <item id="9" filename="Feather" type="7" valueA="0" Max="1" Description="Feather, you can use it to write letters."/>
 </items>
