@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LBANet", "LBANet.vcproj", "{B46236F6-9F3B-4B3A-BD27-13E94D8833F2}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "LbanetSetup", "..\LbanetSetup\LbanetSetup.vdproj", "{62FF0D17-4B38-4098-8CCF-2731BA82B1A1}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -15,8 +13,6 @@ Global
 		{B46236F6-9F3B-4B3A-BD27-13E94D8833F2}.Debug|Win32.Build.0 = Debug|Win32
 		{B46236F6-9F3B-4B3A-BD27-13E94D8833F2}.Release|Win32.ActiveCfg = Release|Win32
 		{B46236F6-9F3B-4B3A-BD27-13E94D8833F2}.Release|Win32.Build.0 = Release|Win32
-		{62FF0D17-4B38-4098-8CCF-2731BA82B1A1}.Debug|Win32.ActiveCfg = Debug
-		{62FF0D17-4B38-4098-8CCF-2731BA82B1A1}.Release|Win32.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

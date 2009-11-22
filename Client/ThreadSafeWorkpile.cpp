@@ -848,3 +848,64 @@ void ThreadSafeWorkpile::GetFriends(std::vector<std::string> & friends)
 	IceUtil::Mutex::Lock lock(m_mutex_friend);
 	friends.swap(m_friend_list);
 }
+
+
+/***********************************************************
+add written letter to the server
+***********************************************************/
+void ThreadSafeWorkpile::AddWrittenLetter(const WrittenLetter & letter)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_letters);
+	m_letters.push_back(letter);
+}
+
+/***********************************************************
+get written letter to the server
+***********************************************************/
+void ThreadSafeWorkpile::GetWrittenLetters(std::vector<WrittenLetter> & letters)
+{
+	letters.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_letters);
+	letters.swap(m_letters);
+}
+
+
+/***********************************************************
+add query for letter info
+***********************************************************/
+void ThreadSafeWorkpile::AddLetterInfoQuery(long itemid)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_letter_queries);
+	m_letter_queries.push_back(itemid);
+}
+
+/***********************************************************
+get written letter to the server
+***********************************************************/
+void ThreadSafeWorkpile::GetLetterInfoQuerys(std::vector<long> & letterqueries)
+{
+	letterqueries.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_letter_queries);
+	m_letter_queries.swap(letterqueries);
+}
+
+
+
+/***********************************************************
+destroy an inventory item
+***********************************************************/
+void ThreadSafeWorkpile::DestroyItem(long ItemId)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_destroy_items);
+	m_destroyed_items.push_back(ItemId);
+}
+
+/***********************************************************
+get destroyed items
+***********************************************************/
+void ThreadSafeWorkpile::GetDestroyedItems(std::vector<long> & destroyedItems)
+{
+	destroyedItems.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_destroy_items);
+	destroyedItems.swap(m_destroyed_items);
+}

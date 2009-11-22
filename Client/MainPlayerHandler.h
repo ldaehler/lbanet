@@ -416,6 +416,8 @@ protected:
 
 	long			_hurtingactorId;
 	bool			_needCheck;
+
+	double			_lastdeathtime;
 };
 
 #endif

@@ -38,9 +38,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 constructor
 ***********************************************************/
 ShortcutBox::ShortcutBox(GameGUI * gamgui, int boxsize)
-: _gamgui(gamgui), _boxsize(boxsize), _moving(false), _ccmoving(0)
+: _gamgui(gamgui), _boxsize(boxsize), _moving(false), _moving_stances(false), _currentvisibility(0)
 {
 	mMousePosInWindow = new CEGUI::Vector2();
+	mMousePosInWindow_stances = new CEGUI::Vector2();
 }
 
 
@@ -50,10 +51,23 @@ destructor
 ShortcutBox::~ShortcutBox()
 {
 	delete mMousePosInWindow;
+	delete mMousePosInWindow_stances;
 
 	try
 	{
-		ConfigurationManager::GetInstance()->SetBool("Gui.Shortcutbox.Visible", _myBox->isVisible());
+		ConfigurationManager::GetInstance()->SetInt("Gui.Shortcutbox.Visible", _currentvisibility);
+
+		CEGUI::UVector2 vec = _myBox->getPosition();
+		ConfigurationManager::GetInstance()->SetFloat("Gui.Shortcutbox.PosX", vec.d_x.d_scale);
+		ConfigurationManager::GetInstance()->SetFloat("Gui.Shortcutbox.PosY", vec.d_y.d_scale);
+		ConfigurationManager::GetInstance()->SetFloat("Gui.Shortcutbox.OffsetPosX", vec.d_x.d_offset);
+		ConfigurationManager::GetInstance()->SetFloat("Gui.Shortcutbox.OffsetPosY", vec.d_y.d_offset);
+
+		vec = _myStances->getPosition();
+		ConfigurationManager::GetInstance()->SetFloat("Gui.Stancesbox.PosX", vec.d_x.d_scale);
+		ConfigurationManager::GetInstance()->SetFloat("Gui.Stancesbox.PosY", vec.d_y.d_scale);
+		ConfigurationManager::GetInstance()->SetFloat("Gui.Stancesbox.OffsetPosX", vec.d_x.d_offset);
+		ConfigurationManager::GetInstance()->SetFloat("Gui.Stancesbox.OffsetPosY", vec.d_y.d_offset);
 	}
 	catch(CEGUI::Exception &ex)
 	{
@@ -72,6 +86,9 @@ void ShortcutBox::Initialize(CEGUI::Window* Root)
 		_myBox = CEGUI::WindowManager::getSingleton().loadWindowLayout( "shortcut_bar.layout" );
 		Root->addChildWindow(_myBox);
 
+		_myStances = CEGUI::WindowManager::getSingleton().loadWindowLayout( "stance_bar.layout" );
+		Root->addChildWindow(_myStances);
+
 
 
 
@@ -82,7 +99,7 @@ void ShortcutBox::Initialize(CEGUI::Window* Root)
 								CEGUI::UDim(0, _boxsize), CEGUI::UDim(0, _boxsize));
 			tmpwindow->setID(i);	
 
-			_myBox->addChildWindow(tmpwindow);
+
 			_inv_boxes.push_back(tmpwindow);
 
 			CEGUI::Window*	tmp3 = CEGUI::WindowManager::getSingleton().createWindow("TaharezLook/StaticText");
@@ -100,9 +117,18 @@ void ShortcutBox::Initialize(CEGUI::Window* Root)
 				tmpwindow->subscribeEvent (CEGUI::Window::EventMouseClick,
 					CEGUI::Event::Subscriber (&ShortcutBox::HandleChangeStance, this));
 
+				tmpwindow->subscribeEvent (CEGUI::Window::EventMouseButtonDown,
+					CEGUI::Event::Subscriber (&ShortcutBox::HandleObjectPressedStances, this));
+				tmpwindow->subscribeEvent (CEGUI::Window::EventMouseButtonUp,
+					CEGUI::Event::Subscriber (&ShortcutBox::HandleObjectReleasedStances, this));
+
+				tmpwindow->subscribeEvent(CEGUI::Window::EventMouseMove, 
+										CEGUI::Event::Subscriber(&ShortcutBox::onWindowMove, this));
+
 				std::stringstream strs;
 				strs<<"F"<<i+1;
 				tmp3->setText(strs.str().c_str());
+				_myStances->addChildWindow(tmpwindow);
 			}
 			else
 			{
@@ -118,9 +144,13 @@ void ShortcutBox::Initialize(CEGUI::Window* Root)
 							CEGUI::Window::EventDragDropItemDropped,
 							CEGUI::Event::Subscriber(&ShortcutBox::handle_ItemDropped, this));
 
+				tmpwindow->subscribeEvent(CEGUI::Window::EventMouseMove, 
+										CEGUI::Event::Subscriber(&ShortcutBox::onWindowMove, this));
+
 				std::stringstream strs;
 				strs<<((i==13)?0:(i-3));
 				tmp3->setText(strs.str().c_str());
+				_myBox->addChildWindow(tmpwindow);
 			}
 		}
 
@@ -167,18 +197,30 @@ void ShortcutBox::Initialize(CEGUI::Window* Root)
 		}
 
 
-		bool Visible;
-		ConfigurationManager::GetInstance()->GetBool("Gui.Shortcutbox.Visible", Visible);
+		float PosX, PosY, OPosX, OPosY;
+		ConfigurationManager::GetInstance()->GetFloat("Gui.Shortcutbox.PosX", PosX);
+		ConfigurationManager::GetInstance()->GetFloat("Gui.Shortcutbox.PosY", PosY);
+		ConfigurationManager::GetInstance()->GetFloat("Gui.Shortcutbox.OffsetPosX", OPosX);
+		ConfigurationManager::GetInstance()->GetFloat("Gui.Shortcutbox.OffsetPosY", OPosY);
+		_myBox->setPosition(CEGUI::UVector2(CEGUI::UDim(PosX, OPosX), CEGUI::UDim(PosY, OPosY)));
+
+		ConfigurationManager::GetInstance()->GetFloat("Gui.Stancesbox.PosX", PosX);
+		ConfigurationManager::GetInstance()->GetFloat("Gui.Stancesbox.PosY", PosY);
+		ConfigurationManager::GetInstance()->GetFloat("Gui.Stancesbox.OffsetPosX", OPosX);
+		ConfigurationManager::GetInstance()->GetFloat("Gui.Stancesbox.OffsetPosY", OPosY);
+		_myStances->setPosition(CEGUI::UVector2(CEGUI::UDim(PosX, OPosX), CEGUI::UDim(PosY, OPosY)));
 
 
-		//Root->subscribeEvent(CEGUI::Window::EventMouseMove, 
-		//						CEGUI::Event::Subscriber(&ShortcutBox::onWindowMove, this));
+		ConfigurationManager::GetInstance()->GetInt("Gui.Shortcutbox.Visible", _currentvisibility);
+		RefreshVivsibleStuff();
 
-		if(Visible)
-			_myBox->show();
-		else
-			_myBox->hide();
-		
+		Root->subscribeEvent(CEGUI::Window::EventMouseMove, 
+								CEGUI::Event::Subscriber(&ShortcutBox::onWindowMove, this));
+
+		_myBox->subscribeEvent(CEGUI::Window::EventMouseMove, 
+								CEGUI::Event::Subscriber(&ShortcutBox::onWindowMove, this));
+
+
 	}
 	catch(CEGUI::Exception &ex)
 	{
@@ -190,27 +232,15 @@ void ShortcutBox::Initialize(CEGUI::Window* Root)
 
 
 /***********************************************************
-handle event when the channel window is closed
-***********************************************************/
-bool ShortcutBox::HandleClose (const CEGUI::EventArgs& e)
-{
-	_myBox->hide();
-	return true;
-}
-
-
-/***********************************************************
 display the chatbox on screen
 ***********************************************************/
 void ShortcutBox::Show()
 {
-	if(_myBox->isVisible())
-		_myBox->hide();
-	else
-	{
-		_myBox->show();
-		_myBox->activate();
-	}
+	++_currentvisibility;
+	if(_currentvisibility > 3)
+		_currentvisibility = 0;
+
+	RefreshVivsibleStuff();
 }
 
 
@@ -229,18 +259,19 @@ called by resize of the screen to fix the boxes correctly
 ***********************************************************/
 void ShortcutBox::Resize()
 {
-	float sizewin = _myBox->getInnerRectClipper().getSize().d_width;
-	float offsety = sizewin - ((_boxsize+2)*14) - 10;
-	offsety /= 2;
-
-	for(int i=0; i<14; ++i)
+	for(int i=0; i<4; ++i)
 	{
 		int offset = i*(_boxsize+2);
-		if(i > 3)
-			offset += 10;
 
 		CEGUI::Window *tmpwindow = _inv_boxes[i];
-		tmpwindow->setPosition(CEGUI::UVector2(CEGUI::UDim(0,offsety+offset), CEGUI::UDim(0,0)));
+		tmpwindow->setPosition(CEGUI::UVector2(CEGUI::UDim(0,offset), CEGUI::UDim(0,0)));
+	}
+
+	for(int i=4; i<14; ++i)
+	{
+		int offset = (i-4)*(_boxsize+2);
+		CEGUI::Window *tmpwindow = _inv_boxes[i];
+		tmpwindow->setPosition(CEGUI::UVector2(CEGUI::UDim(0,offset), CEGUI::UDim(0,0)));
 	}
 }
 
@@ -363,7 +394,14 @@ void ShortcutBox::SetShorcut(CEGUI::Window* box, long itemid)
 		tmp->setProperty("Image", "set:"+imagesetname+" image:full_image");
 		box->addChildWindow(tmp);
 		tmp->setProperty("MousePassThroughEnabled", "True");
-		box->setProperty("Tooltip", InventoryHandler::getInstance()->GetItemDescription(itemid));
+
+		CEGUI::String tmpstr((const unsigned char *)InventoryHandler::getInstance()->GetItemDescription(itemid).c_str());
+		box->setProperty("Tooltip", tmpstr);
+
+
+		box->subscribeEvent(
+			CEGUI::Window::EventMouseEnters,
+					CEGUI::Event::Subscriber(&ShortcutBox::HandleInventoryEnter, this));
 
 		InventoryHandler::getInstance()->SetShortcut(box->getID()-4, itemid );
 	}
@@ -396,20 +434,36 @@ on window move
 ***********************************************************/
 bool ShortcutBox::onWindowMove(const CEGUI::EventArgs& pEventArgs)
 {
-	if(!_moving)
-		return false;
+
+	if(_moving)
+	{
+		using namespace CEGUI;
+		const MouseEventArgs &mouseEventArgs = static_cast<const MouseEventArgs&>(pEventArgs);
+		Vector2 localMousePos = CoordConverter::screenToWindow(*_myBox, mouseEventArgs.position);
+	   
+		Vector2 offset(localMousePos - *mMousePosInWindow);
+
+		UVector2 uOffset(cegui_absdim(PixelAligned(offset.d_x)),
+						 cegui_absdim(PixelAligned(offset.d_y)));
+
+		_myBox->setPosition(_myBox->getPosition() + uOffset );
+	}
 
 
-	using namespace CEGUI;
-	const MouseEventArgs &mouseEventArgs = static_cast<const MouseEventArgs&>(pEventArgs);
-	Vector2 localMousePos = CoordConverter::screenToWindow(*_myBox, mouseEventArgs.position);
-   
-	Vector2 offset(localMousePos - *mMousePosInWindow);
+	if(_moving_stances)
+	{
+		using namespace CEGUI;
+		const MouseEventArgs &mouseEventArgs = static_cast<const MouseEventArgs&>(pEventArgs);
+		Vector2 localMousePos = CoordConverter::screenToWindow(*_myStances, mouseEventArgs.position);
+	   
+		Vector2 offset(localMousePos - *mMousePosInWindow_stances);
 
-    UVector2 uOffset(cegui_absdim(PixelAligned(offset.d_x)),
-                     cegui_absdim(PixelAligned(offset.d_y)));
+		UVector2 uOffset(cegui_absdim(PixelAligned(offset.d_x)),
+						 cegui_absdim(PixelAligned(offset.d_y)));
 
-	_myBox->setPosition(_myBox->getPosition() + uOffset );
+		_myStances->setPosition(_myStances->getPosition() + uOffset );
+	}
+
 	return true;
 }
 
@@ -433,6 +487,79 @@ handle windows resize event
 bool ShortcutBox::HandleObjectReleased (const CEGUI::EventArgs& e)
 {
 	_moving = false;
+	return true;
+}
+
+
+/***********************************************************
+handle windows resize event
+***********************************************************/
+bool ShortcutBox::HandleObjectPressedStances (const CEGUI::EventArgs& e)
+{
+	using namespace CEGUI;
+	const MouseEventArgs mouseEventArgs = static_cast<const MouseEventArgs&>(e);
+	*mMousePosInWindow_stances = CEGUI::CoordConverter::screenToWindow(*_myStances, mouseEventArgs.position);
+	_moving_stances = true;
+	return true;
+}
+
+/***********************************************************
+handle windows resize event
+***********************************************************/
+bool ShortcutBox::HandleObjectReleasedStances (const CEGUI::EventArgs& e)
+{
+	_moving_stances = false;
+	return true;
+}
+
+
+/***********************************************************
+refresh visible part depending of the visibility number
+***********************************************************/
+void ShortcutBox::RefreshVivsibleStuff()
+{
+	switch(_currentvisibility)
+	{
+		case 0:
+			_myBox->show();
+			_myStances->show();
+		break;
+		case 1:
+			_myBox->show();
+			_myStances->hide();
+		break;
+		case 2:
+			_myBox->hide();
+			_myStances->show();
+		break;
+		case 3:
+			_myBox->hide();
+			_myStances->hide();
+		break;
+	}
+}
+
+
+/***********************************************************
+handle windows enter event
+***********************************************************/
+bool ShortcutBox::HandleInventoryEnter (const CEGUI::EventArgs& e)
+{
+	const CEGUI::MouseEventArgs& dd_args = static_cast<const CEGUI::MouseEventArgs&>(e);
+
+	unsigned int id = dd_args.window->getID();
+	std::map<unsigned int, long>::iterator itm = _map_box_itemid.find(id);
+	if(itm != _map_box_itemid.end())
+	{
+		CEGUI::Window* tmp = dd_args.window;
+		std::string ttip = tmp->getProperty("Tooltip").c_str();
+		if(ttip == "")
+		{
+			CEGUI::String tmpstr((const unsigned char *)InventoryHandler::getInstance()->GetItemDescription(itm->second).c_str());
+			tmp->setProperty("Tooltip", tmpstr);
+		}
+	}
+
 	return true;
 }
 

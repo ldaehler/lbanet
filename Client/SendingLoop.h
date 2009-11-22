@@ -110,6 +110,14 @@ public:
 	//! remove friend
     void RemoveFriend(const std::string& Name);
 
+	//! send letter to the server
+	void SendLetter(const ThreadSafeWorkpile::WrittenLetter &wl);
+
+	//! ask for letter info
+	void AskLetterInfo(long letterId);
+
+	//! destroy item
+	void DestroyItem(long Id);
 
 private:
 

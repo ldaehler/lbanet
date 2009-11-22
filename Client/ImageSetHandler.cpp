@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <CEGUI.h>
 #include "ImageSetHandler.h"
+#include "InventoryHandler.h"
 
 ImageSetHandler* ImageSetHandler::_singleton_instance = 0;
 
@@ -61,11 +62,19 @@ ImageSetHandler *	ImageSetHandler::GetInstance()
 get inventory image
 ***********************************************************/
 std::string ImageSetHandler::GetInventoryImage(long InventoryId)
-{
-	if(InventoryId > _inventory_filenames.size())
-		return "";
+{	
+	std::string file;
 
-	std::string file = _inventory_filenames[InventoryId-1];
+	if(InventoryHandler::InventoryItemIsUserCreated(InventoryId))
+		file = "letter";
+	else 
+	{
+		if(InventoryId > _inventory_filenames.size())
+			return "";
+		else
+			file = _inventory_filenames[InventoryId-1];
+	}
+
 	std::string res = "inv_" + file;
 
 	if(!CEGUI::ImagesetManager::getSingleton().isDefined(res))

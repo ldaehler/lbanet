@@ -24,8 +24,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "InventoryHandler.h"
 #include "ImageSetHandler.h"
 #include "ThreadSafeWorkpile.h"
+#include "LetterEditorBox.h"
+#include "LetterViewerBox.h"
 
 InventoryHandler* InventoryHandler::_singletonInstance = NULL;
+
+
+
 
 
 /***********************************************************
@@ -44,7 +49,7 @@ InventoryHandler * InventoryHandler::getInstance()
 	Constructor
 ***********************************************************/
 InventoryHandler::InventoryHandler()
-: _inventoryUpdated(false), _shorcutUpdated(false)
+: _inventoryUpdated(false), _shorcutUpdated(false), m_leditor(NULL), m_lviewer(NULL)
 {
 
 }
@@ -81,6 +86,8 @@ get the max number an item can have given its ID
 ***********************************************************/
 int InventoryHandler::GetItemMax(long id)
 {
+	IceUtil::Mutex::Lock lock(m_mutex_inv);
+
 	std::map<long, ItemInfo>::iterator itdb = _db.find(id);	
 	if(itdb != _db.end())
 		return itdb->second.Max;
@@ -95,6 +102,8 @@ get the type of item
 ***********************************************************/
 int InventoryHandler::GetItemType(long id)
 {
+	IceUtil::Mutex::Lock lock(m_mutex_inv);
+
 	std::map<long, ItemInfo>::iterator itdb = _db.find(id);	
 	if(itdb != _db.end())
 		return itdb->second.type;
@@ -159,6 +168,15 @@ ActionFromInventory InventoryHandler::ItemUsed(long ObjectId, bool LifeFull, boo
 			break;
 		case 6: // other item - dont do anything
 			break;
+		case 7: // special usage item
+			if(m_leditor)
+				m_leditor->Show();
+			break;
+		case 8: // letters item, open them
+			if(m_lviewer)
+				m_lviewer->Show(itdb->first, itdb->second.Date, itdb->second.From, 
+									itdb->second.Subject, itdb->second.Description);
+			break;
 	}
 
 	return res;
@@ -174,6 +192,7 @@ void InventoryHandler::SetCurrentInventory(const std::map<long, std::pair<int, i
 	IceUtil::Mutex::Lock lock(m_mutex_inv);
 
 	_currInventory = db;
+
 	_inventoryUpdated = true;
 	_inventoryUpdatedContainer = true;
 	_inventorysize = inventorysize;
@@ -236,9 +255,25 @@ get item info
 ***********************************************************/
 std::string InventoryHandler::GetItemDescription(long ObjectId)
 {
+	IceUtil::Mutex::Lock lock(m_mutex_inv);
+
+	//if user created item
+	if(InventoryItemIsUserCreated(ObjectId))
+	{
+		// if we do not have the item yet - ask the server
+		std::map<long, ItemInfo>::iterator itdb = _db.find(ObjectId);
+		if(itdb == _db.end())
+			ThreadSafeWorkpile::getInstance()->AddLetterInfoQuery(ObjectId);
+	}
+
 	std::map<long, ItemInfo>::iterator itdb = _db.find(ObjectId);	
 	if(itdb != _db.end())
-		return itdb->second.Description;
+	{
+		if(itdb->second.type == 8)
+			return ("From: " + itdb->second.From + " Subject: " + itdb->second.Subject);
+		else
+			return itdb->second.Description;
+	}
 	else
 		return "";
 }
@@ -305,6 +340,16 @@ void InventoryHandler::UpdateInventoryItem(long ObjectId, int NewCount)
 	IceUtil::Mutex::Lock lock(m_mutex_inv);
 	m_updated_items.push_back(std::make_pair<long, int>(ObjectId, NewCount));
 
+	//if user created item
+	if(InventoryItemIsUserCreated(ObjectId))
+	{
+		// if we do not have the item yet - ask the server
+		std::map<long, ItemInfo>::iterator itdb = _db.find(ObjectId);
+		if(itdb == _db.end())
+			ThreadSafeWorkpile::getInstance()->AddLetterInfoQuery(ObjectId);
+	}
+
+
 	std::map<long, std::pair<int, int> >::iterator it = _currInventory.find(ObjectId);
 	if(it != _currInventory.end())
 	{
@@ -350,4 +395,45 @@ std::vector<std::pair<long, int> > InventoryHandler::GetInventoryVector()
 		res[it->second.second] = std::make_pair<long, int>(it->first, it->second.first);
 
 	return res;
+}
+
+
+
+/***********************************************************
+set letter editor
+***********************************************************/
+void InventoryHandler::SetLetterEditor(LetterEditorBox * leditor)
+{
+	m_leditor = leditor;
+}
+
+
+/***********************************************************
+set letter editor
+***********************************************************/
+void InventoryHandler::SetLetterViewer(LetterViewerBox * lviewer)
+{
+	m_lviewer = lviewer;
+}
+
+/***********************************************************
+update db with info
+***********************************************************/
+void InventoryHandler::UpdateUserCreatedItemInfo(long Id, const std::string & from, const std::string & date,
+													const std::string & subject, const std::string & message)
+{
+	if(Id < 0)
+		return;
+
+	ItemInfo itinf;
+	itinf.id = Id;
+	itinf.type = 8;
+	itinf.Max = 1;
+	itinf.Description = message;
+	itinf.From = from;
+	itinf.Date = date;
+	itinf.Subject = subject;
+
+	IceUtil::Mutex::Lock lock(m_mutex_inv);
+	_db[Id] = itinf;
 }

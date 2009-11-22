@@ -22,39 +22,47 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _LBANET_OPTIONS_GUI_H_
-#define _LBANET_OPTIONS_GUI_H_
 
+#ifndef _LBA_NET_LETTER_EDITOR_BOX_
+#define _LBA_NET_LETTER_EDITOR_BOX_
 
-#include "GUI.h"
-#include <string>
+class GameGUI;
 
 namespace CEGUI
 {
 	class Window;
 	class EventArgs;
+	class Listbox;
+	class Vector2;
 }
 
+#include <string>
+#include <list>
+#include <map>
+#include <vector>
+
+
 //*************************************************************************************************
-//*                               class OptionsGUI
+//*                               class LetterEditorBox
 //*************************************************************************************************
 /**
-* @brief Class taking care of the user interface in game
+* @brief Class handling a LetterEditorBox
 *
 */
-class OptionsGUI : public GUI
+class LetterEditorBox
 {
-public:
+ public:
+	//! constructor
+	 LetterEditorBox(GameGUI * gamgui);
 
-	// constructor
-	OptionsGUI();
+	//! destructor
+	virtual ~LetterEditorBox();
 
-	// destructor
-	~OptionsGUI();
+	//! initalize the box
+	void Initialize(CEGUI::Window* Root);
 
-	// initialize the GUI
-	void Initialize();
-
+	//! display the chatbox on screen
+	void Show();
 
 	//! handle connect button event
 	bool HandleOK(const CEGUI::EventArgs& e);
@@ -62,54 +70,11 @@ public:
 	//! handle cancel button event
 	bool HandleCancel (const CEGUI::EventArgs& e);
 
-	//! handle cancel button event
-	bool HandleApply (const CEGUI::EventArgs& e);
-
-	//! called to infrom the gui that it is displayed
-	void Displayed();
-
-	//! send name color
-	void SendNameColor();
-
-protected:
-	//! apply new changes
-	void Apply();
-
-	//! cancel changes
-	void Cancel();
-
-	//! quit windows
-	void Quit();
-
 
 private:
-	// general part
-	int				_textR;
-	int				_textG;
-	int				_textB;
-	int				_nameR;
-	int				_nameG;
-	int				_nameB;
-	std::string		_lang;
-
-
-	// video part
-	int				_currScreenX;
-	int				_currScreenY;
-	bool			_currFullscreen;
-	bool			_currDisplayFPS;
-	bool			_currPerspective;
-	bool			_currDisplayExit;
-
-	// sound part
-	int				_currGenVolume;
-	int				_currMusicVolume;
-
-
-	// gui part
-	int				_fontSize;
+	CEGUI::Window*					_myBox;
+	GameGUI *						_gamgui;
 
 };
-
 
 #endif

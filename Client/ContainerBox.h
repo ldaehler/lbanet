@@ -92,6 +92,9 @@ class ContainerBox
 	//! refresh inventory images
 	void Refresh();
 
+	//! handle windows enter event
+	bool HandleInventoryEnter (const CEGUI::EventArgs& e);
+
 protected:
 
 	//! close box and send update to server

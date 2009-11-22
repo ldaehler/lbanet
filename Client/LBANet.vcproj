@@ -359,6 +359,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LetterEditorBox.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LetterViewerBox.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\common\LiftActor.cpp"
 				>
 			</File>
@@ -682,6 +690,14 @@
 			</File>
 			<File
 				RelativePath=".\LbaNetModel.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LetterEditorBox.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LetterViewerBox.h"
 				>
 			</File>
 			<File

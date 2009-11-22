@@ -42,6 +42,8 @@ struct ActionFromInventory
 	int NewWeapon;
 };
 
+class LetterEditorBox;
+class LetterViewerBox;
 
 
 /***********************************************************************
@@ -55,7 +57,13 @@ class InventoryHandler
 public:
 
 	// singleton pattern
-   static InventoryHandler * getInstance();
+	static InventoryHandler * getInstance();
+
+	// check if the item is created by user
+	static bool InventoryItemIsUserCreated(long id)
+	{
+		return (id >= 10000000);
+	}
 
 
 	//! destructor
@@ -116,6 +124,16 @@ public:
 	//! get the type of item
 	int GetItemType(long id);
 
+	//! set letter editor
+	void SetLetterEditor(LetterEditorBox * leditor);
+
+	//! set letter editor
+	void SetLetterViewer(LetterViewerBox * lviewer);
+
+	//! update db with info
+	void UpdateUserCreatedItemInfo(long Id, const std::string & from, const std::string & date,
+									const std::string & subject, const std::string & message);
+
 protected:
 	//! constructor
 	InventoryHandler();
@@ -137,6 +155,8 @@ private:
 
 	std::vector<std::pair<long, int> >		m_updated_items;
 
+	LetterEditorBox *						m_leditor;
+	LetterViewerBox *						m_lviewer;
 
 	// singleton
 	static InventoryHandler *				_singletonInstance;

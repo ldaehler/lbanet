@@ -64,8 +64,6 @@ class ShortcutBox
 	//! display the chatbox on screen
 	void Show();
 
-	//! handle windows closing event
-	bool HandleClose (const CEGUI::EventArgs& e);
 
 	//! called by resize of the screen to fix the boxes correctly
 	void Resize();
@@ -93,17 +91,31 @@ class ShortcutBox
 	bool HandleObjectReleased (const CEGUI::EventArgs& e);
 
 
+	//! handle windows resize event
+	bool HandleObjectPressedStances (const CEGUI::EventArgs& e);
+
+	//! handle windows resize event
+	bool HandleObjectReleasedStances (const CEGUI::EventArgs& e);
+
+
 	//process what is needed in the game GUI
 	void Process();
 
 	//! refresh inventory images
 	void Refresh();
 
+	//! handle windows enter event
+	bool HandleInventoryEnter (const CEGUI::EventArgs& e);
+
 protected:
 	void SetShorcut(CEGUI::Window* box, long itemid);
 
+	// refresh visible part depending of the visibility number
+	void RefreshVivsibleStuff();
+
 private:
 	CEGUI::Window*					_myBox;
+	CEGUI::Window*					_myStances;
 	GameGUI *						_gamgui;
 
 	int								_boxsize;
@@ -114,7 +126,12 @@ private:
 
 	CEGUI::Vector2*					mMousePosInWindow;
 	bool							_moving;
-	int								_ccmoving;
+
+	CEGUI::Vector2*					mMousePosInWindow_stances;
+	bool							_moving_stances;
+
+	int								_currentvisibility;
+
 
 };
 

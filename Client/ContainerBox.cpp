@@ -465,14 +465,17 @@ std::pair<CEGUI::Window*, CEGUI::Window*> ContainerBox::AddInventoryItem(long Id
 		tmp3->setID(2);
 
 
-	tmp->setProperty("Tooltip", InventoryHandler::getInstance()->GetItemDescription(Id));
+	CEGUI::String tmpstr((const unsigned char *)InventoryHandler::getInstance()->GetItemDescription(Id).c_str());
+	tmp->setProperty("Tooltip", tmpstr);
 	tmp->addChildWindow(tmp2);
 	tmp->addChildWindow(tmp3);
 	parent->addChildWindow(tmp);
 
 
+    tmp->subscribeEvent(
+		CEGUI::Window::EventMouseEnters,
+				CEGUI::Event::Subscriber(&ContainerBox::HandleInventoryEnter, this));
 
-	
 
 	if(tocontainer)
 	{
@@ -676,7 +679,7 @@ int ContainerBox::AddItemFromInventoryToContainer(long Id, int number)
 {
 	// check if the type is allowed to be dropped
 	int type = InventoryHandler::getInstance()->GetItemType(Id);
-	if(type != 1 && type != 6)
+	if(type != 1 && type != 6 && type != 8)
 		return 0;
 
 
@@ -912,4 +915,25 @@ void  ContainerBox::Refresh()
 			itinv->first->getChildAtIdx(0)->setProperty("Image", "set:" + imagesetname + " image:full_image");
 		}
 	}
+}
+
+
+/***********************************************************
+handle windows enter event
+***********************************************************/
+bool ContainerBox::HandleInventoryEnter (const CEGUI::EventArgs& e)
+{
+	const CEGUI::MouseEventArgs& dd_args = static_cast<const CEGUI::MouseEventArgs&>(e);
+
+	unsigned int id = dd_args.window->getID();
+
+	CEGUI::Window* tmp = dd_args.window;
+	std::string ttip = tmp->getProperty("Tooltip").c_str();
+	if(ttip == "")
+	{
+		CEGUI::String tmpstr((const unsigned char *)InventoryHandler::getInstance()->GetItemDescription(id).c_str());
+		tmp->setProperty("Tooltip", tmpstr);
+	}
+
+	return true;
 }

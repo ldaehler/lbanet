@@ -346,7 +346,8 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 				_camptr->SetTarget(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ());
 
 			if(_RoomP && _RoomP->StepOnWater(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ()))
-				return 1;	// the actor should die in water
+				if((tnow - _lastdeathtime) > 3000) // leave 10sec time to recover
+					return 1;	// the actor should die in water
 
 			if(_state != Ac_Flying && _player->GetPosY() == -1) // the actor should die by falling out of the map
 				return 2;
@@ -405,7 +406,8 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 
 			if((cY < 0.000001) && (_state != Ac_Flying) && ((_state != Ac_protopack) || !_up_key_pressed) && (_state != Ac_Jumping))
 				if(_RoomP && _RoomP->StepOnWater(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ()))
-					return 1;	// the actor should die in water
+					if((tnow - _lastdeathtime) > 3000) // leave 10sec time to recover
+						return 1;	// the actor should die in water
 
 			if(_state != Ac_Flying && _player->GetPosY() == -1) // the actor should die by falling out of the map
 				return 2;
@@ -1018,7 +1020,10 @@ void MainPlayerHandler::Stopstate()
 	if(_remembering)
 	{
 		if(_state == Ac_Dying || _state == Ac_Drowning)
+		{
 			ThreadSafeWorkpile::getInstance()->AddRaisedEvent();
+			_lastdeathtime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDouble();
+		}
 
 		_state = _rememberstate;
 		_player->changeAnimEntity(_remembermodel, _rememberbody);
