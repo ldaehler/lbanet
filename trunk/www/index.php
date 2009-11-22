@@ -80,13 +80,13 @@ mysql_select_db("lbanet") or die(mysql_error());
        margin-left: -10px;
        padding: 15px 15px 10px 15px;
        width:150px;
-       height:168px;
+       height:168px; 
        background: transparent url(images/sidebar.png) no-repeat;
        font-size: 12px;
        float: right;
        line-height: 150%;
        opacity: 0.8;
-   }
+   }   
    .news {
        margin-left: 10px;
        padding: 10px 40px 10px 20px;
@@ -121,7 +121,7 @@ mysql_select_db("lbanet") or die(mysql_error());
        background: transparent url(images/contentf.png) no-repeat;
    }
  </style>
-
+ 
 </head>
 <body>
 <div class="usercp"></div>
@@ -135,24 +135,29 @@ mysql_select_db("lbanet") or die(mysql_error());
    <a class="navi" href="index.php" >Downloads</a>
    <a class="navi" href="index.php" >Support</a>
    <a class="navi" href="index.php" >Credits</a> -->
-   <a class="navi" href="http://forum.magicball.net/forumdisplay.php?f=59" target="_blank">Forum</a>
-   <a class="navi" href="http://forum.magicball.net/showpost.php?p=388603&postcount=2" target="_blank">Download</a>
+   <a class="navi" href="http://forum.magicball.net/forumdisplay.php?f=59" >Forum</a>
     <div style="float: right; margin-right: 20px; font-size: 9px;">
-    LBANet  v0.7
+    LBANet  v0.7 
     </div>
    </div>
- </div>
-
- <div class="sidebar"><br /><br />
+ </div> 
+ 
+ <div class="sidebar"><br /><br />	
  <?PHP $query2 = mysql_query("SELECT COUNT(`id`) FROM `users` WHERE `connected`='1'");
 	$data2 = mysql_fetch_row($query2);
-	echo "Connected users: " . $data2[0] . "<br />";
+	echo "Connected users: " . $data2[0] . "<br />"; 
   $query = mysql_query("SELECT COUNT(`id`) FROM `users`");
 	$data = mysql_fetch_row($query);
 	echo "Registered users: " . $data[0] . "<br />"; ?>
  </div>
-
- <div class="news"><img src="images/inv.png" style="float:right; margin-right: 10px;" alt="inventory" />
+ 
+ <div class="news">
+ 
+22/11/2009:<span style="color: #3483EC"> New Release v0.71 + new domain </span> <br />
+<span style="color: #A7FAFA">We got a new domain name for our website, you can now find us at <a href="https://freemailng0501.web.de/jump.htm?goto=www.lbanet.net" target="_blank">www.lbanet.net</a><br />Furthemore we got a new small release today featuring a new inventory<br />item and a new feature...<br /><a href="news.php">... More details</a>
+<br /><br />
+ 
+ <img src="images/inv.png" style="float:right; margin-right: 10px;" alt="inventory" />
 14/11/2009:<span style="color: #3483EC"> New Release v0.7 + new website!</span> <br />
 
 <span style="color: #A7FAFA">Hi guys. I would like to welcome you to our new website!<br /> So this is our first big release since a while implementing the inventory system together with a few more features.
@@ -163,11 +168,11 @@ mysql_select_db("lbanet") or die(mysql_error());
 <br />
  <div class="contentbox">
  <span style="color: #A7FAFA; font-size: 18px">Account creation:</span><br /><br />
- <?PHP
+ <?PHP 
  include 'register.php'  ;
  ?>
  </div>
-
+ 
 <div class="contentboxf" ></div>
 <br /> <br />
 </div>
