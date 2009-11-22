@@ -11,6 +11,12 @@
 	    <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />           
 	</Window>        
         
+	<Window Type="TaharezLook/StaticImage" Name="LBaNetLogoCenter" >
+	    <Property Name="Image"     Value="set:LogoCenter image:Logo" />
+	    <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+	    <Property Name="UnifiedAreaRect" Value="{{0.5,-300},{0.5,-300},{0.5,300},{0.5,300}}" />           
+	</Window>  
+	
        <Window Type="TaharezLook/FrameWindow" Name="LoginWindowPlayerFrame" >
         <Property Name="Text" Value="" />
         <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
