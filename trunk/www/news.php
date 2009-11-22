@@ -156,7 +156,7 @@ mysql_select_db("lbanet") or die(mysql_error());
  </div>
      <div class="newsf">
      </div> 
- 
+ <br /> <br />
  <div class="news">
 14/11/2009:<span style="color: #3483EC"> New Release v0.7 + new website!</span> <br />
 <span style="color: #A7FAFA">Hi guys. I would like to welcome you to our new website!<br /> So this is our first big release since a while implementing the inventory system together with a few more features.
