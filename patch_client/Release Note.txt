@@ -71,3 +71,13 @@ Version 0.7 changes:
 - Added a map created by Polaris in tippet island
 
 - Few bugs fixes.
+
+__________________________
+Version 0.71 changes:
+- Added a feather object that allows you to write letters. The writen letters will appear in the inventory. You can then hide them in containers if you wish. The feather has been hidden in one of the containers. So you will first need to find it out ;)
+
+- You can now move the shorcut bar on the screen. This way you can choose the way you want to position all element of the gui on your screen.
+
+- Updated game patcher. The patcher will now log its output into a file named "patching.log". In case of issue during patch please have a look at this file. The patcher will now also automatically start the game after it is done.
+
+- Few bugs fixes.
