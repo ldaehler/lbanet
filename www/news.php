@@ -79,13 +79,13 @@ mysql_select_db("lbanet") or die(mysql_error());
        margin-left: -10px;
        padding: 15px 15px 10px 15px;
        width:150px;
-       height:168px;
+       height:168px; 
        background: transparent url(images/sidebar.png) no-repeat;
        font-size: 12px;
        float: right;
        line-height: 150%;
        opacity: 0.8;
-   }
+   }   
    .news {
        margin-left: 10px;
        padding: 10px 40px 10px 20px;
@@ -141,20 +141,27 @@ mysql_select_db("lbanet") or die(mysql_error());
    </div>
  </div>
 
- <div class="sidebar"><br /><br />
+ <div class="sidebar"><br /><br />	
  <?PHP $query2 = mysql_query("SELECT COUNT(`id`) FROM `users` WHERE `connected`='1'");
 	$data2 = mysql_fetch_row($query2);
-	echo "Connected users: " . $data2[0] . "<br />";
+	echo "Connected users: " . $data2[0] . "<br />"; 
   $query = mysql_query("SELECT COUNT(`id`) FROM `users`");
 	$data = mysql_fetch_row($query);
 	echo "Registered users: " . $data[0] . "<br />"; ?>
  </div>
-
+ 
+ <div class="news">
+22/11/2009:<span style="color: #3483EC"> New Release v0.71 + new domain </span> <br />
+<span style="color: #A7FAFA">We got a new domain name for our website, you can now find us at <a href="https://freemailng0501.web.de/jump.htm?goto=www.lbanet.net" target="_blank">www.lbanet.net</a><br />Furthemore we got a new small release today featuring a new inventory<br />item and a new feature...<br /><p>Here is a complete list of the new features:</p><p>- Added a feather object that allows you to write letters. The writen<br />letters will appear in the inventory. You can then hide them in<br />containers if you wish. The feather has been hidden in one of the<br />containers. So you will first need to find it out ;)</p><p>- You can now move the shorcut bar on the screen. This way you can<br />choose the way you want to position all element of the gui on your<br />screen.</p><p>- Updated game patcher. The patcher will now log its output into a<br />file named &quot;patching.log&quot;. In case of issue during patch please have a<br />look at this file. The patcher will now also automatically start the<br />game after it is done.</p><p>- Few bugs fixes.</p><br /><br />
+ </div>
+     <div class="newsf">
+     </div> 
+ 
  <div class="news">
 14/11/2009:<span style="color: #3483EC"> New Release v0.7 + new website!</span> <br />
 <span style="color: #A7FAFA">Hi guys. I would like to welcome you to our new website!<br /> So this is our first big release since a while implementing the inventory system together with a few more features.
 </span><br />
-<br />  Here is a complete list of the new features:<br /><br />  -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Persistent storage system on server side. Players will now need to create a game account where all their data will be saved for each world they will visit (player position in world, inventory, etc.)<br /><br />  -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; New game website:&nbsp; you can find our new game website at this address:&nbsp; <a href="http://sd-1287.dedibox.fr/~lbanetweb" target="_blank">sd-1287.dedibox.fr/~lbanetweb</a>. The site is still under construction and our great designer and webmaster leoboe is still working on it. However, you can already register a game account there to be able to play the game.<br /><br />  -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Inventory system:&nbsp; the player will get an independent inventory for each world. A new GUI is then available in game were the player can visualize his current inventory content.<br /><br />  -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Container system: the player can open different containers in the world. Then he will be able to take objects from the containers or add objects from his own inventory into the containers.<br /><br />  -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Shortcut bar: a new in game shortcut bar has appeared. You can drag and drop items from your inventory into it.<br /><br />  -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; New whisper functionality: players can now whisper to each other. To do so you can either tape '/w playername message' in your chatbox or choose whisper in the channel menu.<br /><br />  -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Friend functionality: you can now add people to your friend list in the community window.&nbsp; You will then be able to easily see which of your friends are online. You can also directly whisper to them by double clicking on their name in the community window.<br /><br />  -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Faster map loading: some optimizations have been made server-side to decrease the loading time of maps.<br /><br />  -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Added a map created by Polaris in tippet island<br /><br />  -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Few bugs fixes.<br /><br />  &nbsp;<br /><br />  Finally you will notice that you cannot anymore ride the horse, dino-fly or use the protopack in the lbaexpanded world. Indeed, the corresponding items have been hidden all over the world. It is your task to find them out&nbsp;&nbsp; ;-)<br /><br />
+<br />  Here is a complete list of the new features:<br /><br />  -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Persistent storage system on server side. Players will now need to create a game account where all their data will be saved for each world they will visit (player position in world, inventory, etc.)<br /><br />  -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; New game website:&nbsp; you can find our new game website at this address:&nbsp; <a href="http://sd-1287.dedibox.fr/~lbanetweb" target="_blank">sd-1287.dedibox.fr/~lbanetweb</a>. The site is still under construction and our great designer and webmaster leoboe is still working on it. However, you can already register a game account there to be able to play the game.<br /><br />  -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Inventory system:&nbsp; the player will get an independent inventory for each world. A new GUI is then available in game were the player can visualize his current inventory content.<br /><br />  -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Container system: the player can open different containers in the world. Then he will be able to take objects from the containers or add objects from his own inventory into the containers.<br /><br />  -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Shortcut bar: a new in game shortcut bar has appeared. You can drag and drop items from your inventory into it.<br /><br />  -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; New whisper functionality: players can now whisper to each other. To do so you can either tape '/w playername message' in your chatbox or choose whisper in the channel menu.<br /><br />  -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Friend functionality: you can now add people to your friend list in the community window.&nbsp; You will then be able to easily see which of your friends are online. You can also directly whisper to them by right clicking on their name in the community window.<br /><br />  -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Faster map loading: some optimizations have been made server-side to decrease the loading time of maps.<br /><br />  -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Added a map created by Polaris in tippet island<br /><br />  -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Few bugs fixes.<br /><br />  &nbsp;<br /><br />  Finally you will notice that you cannot anymore ride the horse, dino-fly or use the protopack in the lbaexpanded world. Indeed, the corresponding items have been hidden all over the world. It is your task to find them out&nbsp;&nbsp; ;-)<br /><br />
  </div>
      <div class="newsf">
      </div>
