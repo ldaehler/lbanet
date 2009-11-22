@@ -129,6 +129,7 @@ void GuiHandler::Initialize(int screen_size_X, int screen_size_Y, bool ServerOn,
 
 		// Load the Imageset that has the pictures for our button.
 		CEGUI::ImagesetManager::getSingleton().create( "LogoBig.imageset" );
+		CEGUI::ImagesetManager::getSingleton().create( "LogoCenter.imageset" );
 		CEGUI::ImagesetManager::getSingleton().create( "lbaNetB.imageset" );
 		CEGUI::ImagesetManager::getSingleton().create( "chatbutton.imageset" );
 		CEGUI::ImagesetManager::getSingleton().create( "TeleportButton.imageset" );

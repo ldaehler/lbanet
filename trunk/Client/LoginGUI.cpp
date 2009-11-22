@@ -86,6 +86,7 @@ void LoginGUI::Initialize(const std::string &clientversion)
 			CEGUI::Event::Subscriber (&LoginGUI::Handlecminus, this));
 
 		CEGUI::WindowManager::getSingleton().getWindow("LBaNetLogo")->disable();
+		CEGUI::WindowManager::getSingleton().getWindow("LBaNetLogoCenter")->disable();
 
 		CEGUI::Editbox * pt = static_cast<CEGUI::Editbox *> (
 				CEGUI::WindowManager::getSingleton().getWindow("PasswordText"));

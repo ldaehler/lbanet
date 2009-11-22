@@ -79,7 +79,7 @@ void ChooseWorldGUI::Initialize(void)
 			CEGUI::Event::Subscriber (&ChooseWorldGUI::HandleWorldSelected, this));
 
 		CEGUI::WindowManager::getSingleton().getWindow("CWLBaNetLogo")->disable();
-
+		CEGUI::WindowManager::getSingleton().getWindow("CWLBaNetLogoCenter")->disable();
 
 		static_cast<CEGUI::FrameWindow *>(
 			CEGUI::WindowManager::getSingleton().getWindow("CWWIndowFrame"))->setDragMovingEnabled(false);
