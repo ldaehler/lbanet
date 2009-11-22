@@ -29,6 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "MapInfoXmlReader.h"
 
 
+#define _FIRST_USER_CREATED_ID_ 10000000
+
 
 /***********************************************************
 constructor
@@ -728,7 +730,8 @@ void SessionServant::cleanEphemereItems()
 	LbaNet::InventoryMap::iterator it = _playerInventory.InventoryStructure.begin();
 	while(it != _playerInventory.InventoryStructure.end())
 	{
-		if(_inventory_db[it->first].Ephemere)
+		// not for player created items
+		if(it->first < _FIRST_USER_CREATED_ID_ && _inventory_db[it->first].Ephemere)
 		{
 			LbaNet::UpdatedItem itm;
 			itm.ItemId = it->first;
@@ -839,7 +842,8 @@ void SessionServant::UpdateInventoryFromContainer(Ice::Long ContainerId, const I
 			LbaNet::InventoryMap::iterator itlocal = _playerInventory.InventoryStructure.find(it->first);
 			if(itlocal != _playerInventory.InventoryStructure.end())
 			{
-				if(_inventory_db[it->first].type == 1 || _inventory_db[it->first].type == 6)
+				if((it->first >= _FIRST_USER_CREATED_ID_) || _inventory_db[it->first].type == 1 || 
+						_inventory_db[it->first].type == 6)
 					if(itlocal->second.Number >= it->second)
 						CheckedPut[it->first] = it->second;
 			}
@@ -868,8 +872,15 @@ void SessionServant::UpdateInventoryFromContainer(Ice::Long ContainerId, const I
 				// check if we still have place in the inventory
 				if((int)_playerInventory.InventoryStructure.size() < _playerInventory.InventorySize)
 				{
-					int maxitem = _inventory_db[ittak->first].Max;
-					int totake = std::min(maxitem, ittak->second);
+					int totake = 0;
+
+					if( ittak->first >= _FIRST_USER_CREATED_ID_)
+						totake = 1;
+					else
+					{
+						int maxitem = _inventory_db[ittak->first].Max;
+						totake = std::min(maxitem, ittak->second);
+					}
 
 					if(totake > 0)
 						CheckTaken[ittak->first] = totake;
@@ -977,8 +988,9 @@ void SessionServant::AddLetter(const std::string& title, const std::string& mess
 	{
 		UpdatedItemSeq InventoryChanges;
 		LbaNet::UpdatedItem itm;
-		itm.ItemId = letterid + 10000000; // user created inventory obejct start at 10 000 000
+		itm.ItemId = letterid + _FIRST_USER_CREATED_ID_; // user created inventory obejct start at 10 000 000
 		itm.NewCount = 1;
+		InventoryChanges.push_back(itm);
 
 		Lock sync(*this);
 		ApplyInternalInventoryChanges(InventoryChanges, false);
@@ -990,6 +1002,29 @@ return letter info
 ***********************************************************/
 LbaNet::LetterInfo SessionServant::GetLetterInfo(Ice::Long LetterId, const ::Ice::Current&)
 {
-	return _dbh.GetLetterInfo(LetterId - 10000000);
+	LbaNet::LetterInfo li = _dbh.GetLetterInfo(LetterId - _FIRST_USER_CREATED_ID_);
+	if(li.Id >= 0)
+		li.Id += _FIRST_USER_CREATED_ID_;
+
+	return li;
+}
+
+  
+/***********************************************************
+destroy an inventory item
+***********************************************************/  
+void SessionServant::DestroyItem(Ice::Long  Id, const ::Ice::Current&)
+{
+	Lock sync(*this);
+	LbaNet::InventoryMap::iterator itlocal = _playerInventory.InventoryStructure.find(Id);
+	if(itlocal != _playerInventory.InventoryStructure.end())
+	{	
+		UpdatedItemSeq InventoryChanges;
+		LbaNet::UpdatedItem itm;
+		itm.ItemId = Id;
+		itm.NewCount = -itlocal->second.Number;
+		InventoryChanges.push_back(itm);
+		ApplyInternalInventoryChanges(InventoryChanges, false);
+	}
 }
 

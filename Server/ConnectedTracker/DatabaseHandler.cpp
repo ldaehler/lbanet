@@ -31,7 +31,7 @@ constructor
 ***********************************************************/
 DatabaseHandler::DatabaseHandler(const std::string db, const std::string server,
 									const std::string user, const std::string password)
-				:  _mysqlH(false), _db(db), _server(server), _user(_user), _password(password)
+				:  _mysqlH(false), _db(db), _server(server), _user(user), _password(password)
 {
 	Connect();
 }
@@ -42,17 +42,21 @@ connect to database
 ***********************************************************/
 void DatabaseHandler::Connect()
 {
-	if (!_mysqlH.connect(_db.c_str(), _server.c_str(), _user.c_str(), _password.c_str()))
+	try
 	{
-		std::cerr << "DB connection failed: " << _mysqlH.error() << std::endl;
+		if (!_mysqlH.connect(_db.c_str(), _server.c_str(), _user.c_str(), _password.c_str()))
+		{
+			std::cerr << "DB connection failed: " << _mysqlH.error() << std::endl;
+		}
 	}
+	catch(...){}
 }
 
 /***********************************************************
 check login
 return -1 if login incorrect - else return the user id
 ***********************************************************/
-long DatabaseHandler::CheckLogin(const std::string & PlayerName, const std::string & Password) const
+long DatabaseHandler::CheckLogin(const std::string & PlayerName, const std::string & Password)
 {
 	Lock sync(*this);
 	if(!_mysqlH.connected())

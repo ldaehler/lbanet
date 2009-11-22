@@ -72,7 +72,7 @@ constructor
 ***********************************************************/
 DatabaseHandler::DatabaseHandler(const std::string db, const std::string server,
 									const std::string user, const std::string password)
-				: _mysqlH(false), _db(db), _server(server), _user(_user), _password(password)
+				: _mysqlH(false), _db(db), _server(server), _user(user), _password(password)
 {
 
 	Connect();
@@ -85,10 +85,14 @@ connect to database
 ***********************************************************/
 void DatabaseHandler::Connect()
 {
-	if (!_mysqlH.connect(_db.c_str(), _server.c_str(), _user.c_str(), _password.c_str()))
+	try
 	{
-		std::cerr << "DB connection failed: " << _mysqlH.error() << std::endl;
+		if (!_mysqlH.connect(_db.c_str(), _server.c_str(), _user.c_str(), _password.c_str()))
+		{
+			std::cerr << "DB connection failed: " << _mysqlH.error() << std::endl;
+		}
 	}
+	catch(...){}
 }
 
 
@@ -219,7 +223,6 @@ void DatabaseHandler::QuitWorld(const std::string& LastWorldName,long PlayerId)
 	// quit previous world
 	if(LastWorldName != "")
 	{
-		Lock sync(*this);
 		mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
 		query << "UPDATE usertoworldmap SET timeplayedmin = timeplayedmin + TIMESTAMPDIFF(MINUTE, lastvisited, UTC_TIMESTAMP())";
 		query << " WHERE userid = '"<<PlayerId<<"'";

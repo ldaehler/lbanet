@@ -50,7 +50,7 @@ public:
 
 	//! check login
 	//! return -1 if login incorrect - else return the user id
-	long CheckLogin(const std::string & PlayerName, const std::string & Password) const;
+	long CheckLogin(const std::string & PlayerName, const std::string & Password);
 
 
 	//! set the user as disconnected in the database
