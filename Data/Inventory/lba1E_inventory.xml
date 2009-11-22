@@ -9,5 +9,5 @@
     <item id="7" filename="protopack" type="3" valueA="7" Max="1" Description="Protopack: can be used to fly over water."/>
     <item id="8" filename="kash" type="6" valueA="0" Max="9999" Description="Kash(es): money used on Twinsun"/>
     <item id="9" filename="Feather" type="7" valueA="0" Max="1" Description="Feather, you can use it to write letters."/>
-    <item id="10" filename="Letter" type="8" valueA="0" Max="1" From="Architect's father" Subject="My house key" Description="Note to myself: here is a extra key from my house in the case I loose mine again."/>   
+    <item id="10" filename="letter" type="8" valueA="0" Max="1" From="Architect's father" Subject="My house key" Description="Note to myself: here is a extra key from my house in the case I loose mine again."/>   
 </items>
