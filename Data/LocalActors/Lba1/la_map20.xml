@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="UTF8" ?>
 <actors>
-<actor id="0" type="5" posX="46.7354" posY="2" posZ="47.6572" rotation="0"  zonesizeX="0.735352" zonesizeY="4.12891" zonesizeZ="0.657227">
+    <actor id="0" type="5" posX="46.735401" posY="2.000000" posZ="47.657200" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" zonesizeX="1.000000" zonesizeY="5.000000" zonesizeZ="1.000000">
 	<itemgroup respawnTimeInMs="10000">
 		<item id="9" number="1" probability="1" />
 	</itemgroup>   
-</actor>
-<actor id="1" type="5" posX="55.6729" posY="2" posZ="47.8604" rotation="0"  zonesizeX="1.73535" zonesizeY="5.63281" zonesizeZ="0.704102" />
-<actor id="2" type="5" posX="58.7344" posY="2" posZ="47.7813" rotation="0"  zonesizeX="1.23438" zonesizeY="4.3125" zonesizeZ="0.78125" />
+    </actor>    
+    <actor id="1" type="5" posX="55.672901" posY="2.000000" posZ="47.860401" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" zonesizeX="1.735350" zonesizeY="5.632810" zonesizeZ="0.704102" />
+    <actor id="2" type="5" posX="58.734402" posY="2.000000" posZ="47.781300" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" zonesizeX="1.234380" zonesizeY="4.312500" zonesizeZ="0.781250" />
 </actors>
