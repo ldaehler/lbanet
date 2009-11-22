@@ -321,6 +321,7 @@ void CommunityBox::ClearList(const std::string & listname)
 		CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
 			CEGUI::WindowManager::getSingleton().getWindow("Community/onlinelist"));
 		lb->resetList();
+		_onlines.clear();
 	}
 
 	if(listname == "IRC")

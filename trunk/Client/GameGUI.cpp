@@ -31,17 +31,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DataLoader.h"
 #include "MessageBox.h"
 
-//
-//#ifndef _LBANET_SET_EDITOR_
-//#define _LBANET_SET_EDITOR_
-//#endif
+
+#ifndef _LBANET_SET_EDITOR_
+#define _LBANET_SET_EDITOR_
+#endif
 
 /***********************************************************
 constructor
 ***********************************************************/
 GameGUI::GameGUI()
 : _cb(this), _comb(this), _telb(this), _invb(this, 50), 
-	_shortb(this, 50), _containerb(this, 50), _editb(NULL)
+	_shortb(this, 50), _containerb(this, 50), _editb(NULL), _lettereditb(this), _letterviewb(this)
 {
 	#ifdef _LBANET_SET_EDITOR_
 	_editb = new EditorBox(this);
@@ -70,6 +70,8 @@ void GameGUI::Initialize()
 		_invb.Initialize(_root);
 		_shortb.Initialize(_root);
 		_containerb.Initialize(_root);
+		_lettereditb.Initialize(_root);
+		_letterviewb.Initialize(_root);
 		CGMessageBox::getInstance()->Initialize(_root);
 
 
@@ -421,3 +423,13 @@ void GameGUI::Refresh()
 	win->show();
 }
 
+
+
+
+/***********************************************************
+display inventory
+***********************************************************/
+void GameGUI::ShowInventory()
+{
+	_invb.Show();
+}

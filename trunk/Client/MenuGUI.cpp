@@ -60,6 +60,11 @@ void MenuGUI::Initialize()
 			CEGUI::Event::Subscriber (&MenuGUI::HandleResume, this));
 
 		static_cast<CEGUI::PushButton *> (
+			CEGUI::WindowManager::getSingleton().getWindow("MenubInventory"))->subscribeEvent (
+			CEGUI::PushButton::EventClicked,
+			CEGUI::Event::Subscriber (&MenuGUI::HandleInventory, this));
+
+		static_cast<CEGUI::PushButton *> (
 			CEGUI::WindowManager::getSingleton().getWindow("MenubOption"))->subscribeEvent (
 			CEGUI::PushButton::EventClicked,
 			CEGUI::Event::Subscriber (&MenuGUI::HandleOption, this));
@@ -83,11 +88,6 @@ void MenuGUI::Initialize()
 			CEGUI::WindowManager::getSingleton().getWindow("MenubCredits"))->subscribeEvent (
 			CEGUI::PushButton::EventClicked,
 			CEGUI::Event::Subscriber (&MenuGUI::HandleCredits, this));
-
-		static_cast<CEGUI::PushButton *> (
-			CEGUI::WindowManager::getSingleton().getWindow("MenubInventory"))->subscribeEvent (
-			CEGUI::PushButton::EventClicked,
-			CEGUI::Event::Subscriber (&MenuGUI::HandleInventory, this));
 	}
 	catch(CEGUI::Exception &ex)
 	{
@@ -104,6 +104,16 @@ handle connect button event
 bool MenuGUI::HandleResume(const CEGUI::EventArgs& e)
 {
 	ThreadSafeWorkpile::getInstance()->AddEvent(new GuiExitEvent());
+	return true;
+}
+
+
+/***********************************************************
+handle connect button event
+***********************************************************/
+bool MenuGUI::HandleInventory (const CEGUI::EventArgs& e)
+{
+	ThreadSafeWorkpile::getInstance()->AddEvent(new DisplayGUIEvent(5));
 	return true;
 }
 
@@ -157,10 +167,3 @@ bool MenuGUI::HandleCredits (const CEGUI::EventArgs& e)
 }
 
 
-/***********************************************************
-handle cancel button event
-***********************************************************/
-bool MenuGUI::HandleInventory (const CEGUI::EventArgs& e)
-{
-	return true;
-}

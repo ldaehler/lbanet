@@ -569,6 +569,69 @@ void IceConnectionManager::RemoveFriend(const std::string& Name)
 
 
 /***********************************************************
+send letter to the server
+***********************************************************/
+void IceConnectionManager::SendLetter(const ThreadSafeWorkpile::WrittenLetter &wl)
+{
+	try
+	{
+		_session->AddLetter(wl.subject, wl.message);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception SendLetter: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception SendLetter "));
+    }
+}
+
+
+/***********************************************************
+ask for letter info
+***********************************************************/
+void IceConnectionManager::AskLetterInfo(long letterId)
+{
+	try
+	{
+		LbaNet::LetterInfo linfo = _session->GetLetterInfo(letterId);
+		if(linfo.Id >= 0)
+			InventoryHandler::getInstance()->UpdateUserCreatedItemInfo(linfo.Id, linfo.Writter, 
+																linfo.Date, linfo.Title, linfo.Message);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception AskLetterInfo: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception AskLetterInfo "));
+    }
+}
+
+
+/***********************************************************
+destroy item
+***********************************************************/
+void IceConnectionManager::DestroyItem(long Id)
+{
+	try
+	{
+		_session->DestroyItem(Id);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception DestroyItem: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception DestroyItem "));
+    }
+}
+
+
+/***********************************************************
 constructor
 ***********************************************************/
 SendingLoopThread::SendingLoopThread(	const Ice::ObjectAdapterPtr& adapter, const LbaNet::ClientSessionPrx& session,
@@ -728,6 +791,31 @@ void SendingLoopThread::run()
 		for(size_t i=0; i<rfriends.size() > 0; ++i)
 			_connectionMananger.RemoveFriend(rfriends[i]);
 
+
+		//-----------------------------------
+		// process send letters
+		std::vector<ThreadSafeWorkpile::WrittenLetter> rletters;
+		ThreadSafeWorkpile::getInstance()->GetWrittenLetters(rletters);
+		for(size_t i=0; i<rletters.size() > 0; ++i)
+			_connectionMananger.SendLetter(rletters[i]);
+
+
+		//-----------------------------------
+		// process letter info queries
+		std::vector<long> rletterqueries;
+		ThreadSafeWorkpile::getInstance()->GetLetterInfoQuerys(rletterqueries);
+		for(size_t i=0; i<rletterqueries.size() > 0; ++i)
+			_connectionMananger.AskLetterInfo(rletterqueries[i]);
+
+
+		//-----------------------------------
+		// process destroyed items
+		std::vector<long> destroyeditems;
+		ThreadSafeWorkpile::getInstance()->GetDestroyedItems(destroyeditems);
+		for(size_t i=0; i<destroyeditems.size() > 0; ++i)
+			_connectionMananger.DestroyItem(destroyeditems[i]);
+
+		
 
 
 		if(ThreadSafeWorkpile::getInstance()->HasUpdatedInfo(_last_ai))

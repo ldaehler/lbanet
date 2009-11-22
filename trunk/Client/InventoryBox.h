@@ -92,6 +92,9 @@ class InventoryBox
 	//! refresh inventory images
 	void Refresh();
 
+	//! handle windows enter event
+	bool HandleInventoryEnter (const CEGUI::EventArgs& e);
+
 protected:
 	//! resize inventory
 	void ResizeBox();

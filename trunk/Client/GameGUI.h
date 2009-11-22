@@ -36,6 +36,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "InventoryBox.h"
 #include "ShortcutBox.h"
 #include "ContainerBox.h"
+#include "LetterEditorBox.h"
+#include "LetterViewerBox.h"
 
 namespace CEGUI
 {
@@ -133,6 +135,9 @@ public:
 	//! refreshthe gui
 	void Refresh();
 
+	// display inventory
+	void ShowInventory();
+
 private:
 	ChatBox			_cb;
 	CommunityBox	_comb;
@@ -140,6 +145,8 @@ private:
 	InventoryBox	_invb;
 	ShortcutBox		_shortb;
 	ContainerBox	_containerb;
+	LetterEditorBox _lettereditb;
+	LetterViewerBox _letterviewb;
 
 	EditorBox *		_editb;
 };

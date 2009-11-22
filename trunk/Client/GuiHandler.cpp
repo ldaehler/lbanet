@@ -316,9 +316,9 @@ void GuiHandler::Initialize(int screen_size_X, int screen_size_Y, bool ServerOn,
 	menuG->Initialize();
 	_guis.push_back(menuG);
 
-	OptionsGUI * optG = new OptionsGUI();
-	optG->Initialize();
-	_guis.push_back(optG);
+	_option_gui = new OptionsGUI();
+	_option_gui->Initialize();
+	_guis.push_back(_option_gui);
 
 
 	SwitchGUI(0);
@@ -538,3 +538,22 @@ bool GuiHandler::overlayHandler(const CEGUI::EventArgs& args)
 
 	return true;
 }
+
+
+/***********************************************************
+display inventory
+***********************************************************/
+void GuiHandler::ShowInventory()
+{
+	_game_gui->ShowInventory();
+}
+
+
+/***********************************************************
+display inventory
+***********************************************************/
+void GuiHandler::RefreshOption()
+{
+	_option_gui->SendNameColor();
+}
+

@@ -861,6 +861,8 @@ void LbaNetEngine::TryLogin(const std::string &Name, const std::string &Password
 
 		if(ircon)
 			m_guiHandler.SetIrcThread(m_serverConnectionHandler->GetIrcThread());
+
+		m_guiHandler.RefreshOption();
 	}
 
 	m_lbaNetModel.SetPlayerName(Name);
@@ -923,6 +925,10 @@ void LbaNetEngine::DisplayGUI(int guinumber)
 		break;
 		case 4:
 			SwitchGuiToOption();
+		break;
+		case 5: // inventory
+			SwitchGuiToGame();
+			m_guiHandler.ShowInventory();
 		break;
 	}
 }

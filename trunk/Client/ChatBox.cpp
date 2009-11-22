@@ -580,15 +580,19 @@ bool ChatBox::HandleEnterKey (const CEGUI::EventArgs& e)
 					++_itltext;
 			}
 
-			if(_itltext != _lasttexts.end())
+			try
 			{
-				CEGUI::WindowManager::getSingleton().getWindow("Chat/edit")->setText(
-													(const unsigned char *)_itltext->c_str());
+				if(_itltext != _lasttexts.end())
+				{
+					CEGUI::WindowManager::getSingleton().getWindow("Chat/edit")->setText(
+														(const unsigned char *)_itltext->c_str());
+				}
+				else
+				{
+					CEGUI::WindowManager::getSingleton().getWindow("Chat/edit")->setText("");
+				}
 			}
-			else
-			{
-				CEGUI::WindowManager::getSingleton().getWindow("Chat/edit")->setText("");
-			}
+			catch(...){}
 
 			//++_currSelectedch;
 			//if(_currSelectedch >= (int)_channels.size())

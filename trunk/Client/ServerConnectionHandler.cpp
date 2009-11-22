@@ -154,10 +154,13 @@ int ServerConnectionHandler::Connect(const std::string &user, const std::string 
 		return 0;
 	}
 
-	// clear join list
+
+	// clear online list
 	ThreadSafeWorkpile::JoinEvent evcl;
+	evcl.ListName = "online";
 	evcl.Clear = true;
 	ThreadSafeWorkpile::getInstance()->HappenedJoinEvent(evcl);
+
 
 	// fill it with already connected people
 	if(_session)

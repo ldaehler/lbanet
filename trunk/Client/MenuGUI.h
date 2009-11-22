@@ -56,6 +56,9 @@ public:
 	bool HandleResume(const CEGUI::EventArgs& e);
 
 	//! handle cancel button event
+	bool HandleInventory (const CEGUI::EventArgs& e);
+
+	//! handle cancel button event
 	bool HandleOption (const CEGUI::EventArgs& e);
 
 	//! handle connect button event
@@ -70,8 +73,6 @@ public:
 	//! handle cancel button event
 	bool HandleCredits (const CEGUI::EventArgs& e);
 
-	//! handle cancel button event
-	bool HandleInventory (const CEGUI::EventArgs& e);
 
 	//! called to infrom the gui that it is displayed
 	void Displayed(){}

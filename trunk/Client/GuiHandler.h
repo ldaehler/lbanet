@@ -31,6 +31,7 @@ class IrcThread;
 class LoginGUI;
 class Actor;
 class LbaNetEngine;
+class OptionsGUI;
 
 namespace CEGUI
 {
@@ -109,6 +110,12 @@ public:
 	//! handle overlay
 	bool overlayHandler(const CEGUI::EventArgs& args);
 
+	// display inventory
+	void ShowInventory();
+
+	// refresh options
+	void RefreshOption();
+
 protected:
 	//! inject time to the GUI
 	void inject_time_pulse();
@@ -118,6 +125,7 @@ private:
 	std::vector<GUI *>		_guis;
 	GameGUI *				_game_gui;
 	LoginGUI *				_login_gui;
+	OptionsGUI *			_option_gui;
 	int						_currentGUI;
 	double					m_last_time_pulse;
 	LbaNetEngine *			_engine;

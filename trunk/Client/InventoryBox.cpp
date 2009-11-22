@@ -255,11 +255,17 @@ bool InventoryBox::UpdateItem(long Id, const std::string & Description,
 			tmp3->setText(strs.str().c_str());
 			tmp3->setID(1);
 
-			tmp->setProperty("Tooltip", Description);
+
+			CEGUI::String tmpstr((const unsigned char *)Description.c_str());
+			tmp->setProperty("Tooltip", tmpstr);
 			tmp->addChildWindow(tmp2);
 			tmp->addChildWindow(tmp3);
 			parent->addChildWindow(tmp);
 
+
+            tmp->subscribeEvent(
+				CEGUI::Window::EventMouseEnters,
+						CEGUI::Event::Subscriber(&InventoryBox::HandleInventoryEnter, this));
 
             tmp->subscribeEvent(
 						CEGUI::Window::EventDragDropItemDropped,
@@ -475,3 +481,25 @@ void InventoryBox::Refresh()
 	}
 }
 
+
+
+/***********************************************************
+handle windows enter event
+***********************************************************/
+bool InventoryBox::HandleInventoryEnter (const CEGUI::EventArgs& e)
+{
+	const CEGUI::MouseEventArgs& dd_args = static_cast<const CEGUI::MouseEventArgs&>(e);
+
+	unsigned int id = dd_args.window->getID();
+
+	CEGUI::Window* tmp = dd_args.window;
+	std::string ttip = tmp->getProperty("Tooltip").c_str();
+	if(ttip == "")
+	{
+		CEGUI::String tmpstr((const unsigned char *)InventoryHandler::getInstance()->GetItemDescription(id).c_str());
+		tmp->setProperty("Tooltip", tmpstr);
+	}
+
+
+	return true;
+}

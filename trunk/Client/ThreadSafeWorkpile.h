@@ -89,6 +89,12 @@ public:
 		LbaNet::ItemList Put;
 	};
 
+	struct WrittenLetter
+	{
+		std::string subject;
+		std::string message;
+	};
+
 
 	//! destructor
 	~ThreadSafeWorkpile();
@@ -325,6 +331,25 @@ public:
 	//! get friend list
 	void GetFriends(std::vector<std::string> & friends);
 
+	//! add written letter to the server
+	void AddWrittenLetter(const WrittenLetter & letter);
+
+	//! get written letter to the server
+	void GetWrittenLetters(std::vector<WrittenLetter> & letters);
+
+	//! add query for letter info
+	void AddLetterInfoQuery(long itemid);
+
+	//! get written letter to the server
+	void GetLetterInfoQuerys(std::vector<long> & letterqueries);
+
+	//! destroy an inventory item
+	void DestroyItem(long ItemId);
+
+	//! get destroyed items
+	void GetDestroyedItems(std::vector<long> & destroyedItems);
+
+
 protected:
 
 	//! construtor
@@ -368,6 +393,10 @@ private:
 	IceUtil::Mutex								m_mutex_added_friend;
 	IceUtil::Mutex								m_mutex_removed_friend;
 	IceUtil::Mutex								m_mutex_friend;
+	IceUtil::Mutex								m_mutex_letters;
+	IceUtil::Mutex								m_mutex_letter_queries;
+	IceUtil::Mutex								m_mutex_destroy_items;
+
 
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_irc;
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_sending_loop;
@@ -444,6 +473,10 @@ private:
 	std::vector<std::string>					m_removed_friends;
 	std::vector<std::string>					m_friend_list;
 
+	std::vector<WrittenLetter>					m_letters;
+
+	std::vector<long>							m_letter_queries;
+	std::vector<long>							m_destroyed_items;
 
 	static ThreadSafeWorkpile *					_singletonInstance;
 };
