@@ -160,7 +160,9 @@ public:
     
     // return letter info
     virtual LbaNet::LetterInfo GetLetterInfo(Ice::Long LetterId, const ::Ice::Current&);
-
+	    
+	// destroy an inventory item
+	virtual void DestroyItem(Ice::Long  Id, const ::Ice::Current&);
 
 protected:
 	void ApplyInternalInventoryChanges(const UpdatedItemSeq &InventoryChanges, bool InformPlayer);

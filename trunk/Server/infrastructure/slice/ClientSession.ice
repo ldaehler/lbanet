@@ -76,6 +76,9 @@ module LbaNet
 	    
 	    // return letter info
 	    LetterInfo GetLetterInfo(long LetterId);
+	    
+	    // destroy an inventory item
+	    void DestroyItem(long Id);
 	};
 
 };
