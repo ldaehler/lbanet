@@ -151,13 +151,15 @@ mysql_select_db("lbanet") or die(mysql_error());
 	echo "Registered users: " . $data[0] . "<br />"; ?>
  </div>
  
- <div class="news">
+ <div class="news"> 
+ 
+ <img src="images/inv.png" style="float:right; margin-right: 10px;" alt="inventory" />
  
 22/11/2009:<span style="color: #3483EC"> New Release v0.71 + new domain </span> <br />
 <span style="color: #A7FAFA">We got a new domain name for our website, you can now find us at <a href="https://freemailng0501.web.de/jump.htm?goto=www.lbanet.net" target="_blank">www.lbanet.net</a><br />Furthemore we got a new small release today featuring a new inventory<br />item and a new feature...<br /><a href="news.php">... More details</a>
 <br /><br />
  
- <img src="images/inv.png" style="float:right; margin-right: 10px;" alt="inventory" />
+
 14/11/2009:<span style="color: #3483EC"> New Release v0.7 + new website!</span> <br />
 
 <span style="color: #A7FAFA">Hi guys. I would like to welcome you to our new website!<br /> So this is our first big release since a while implementing the inventory system together with a few more features.
