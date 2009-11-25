@@ -1,2 +1,10 @@
+<?xml version="1.0" encoding="UTF8" ?>
 <actors>
+    <actor id="2" type="12" posX="47.117188" posY="0.000000" posZ="9.265625" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="514.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="17,0" />
+    <actor id="3" type="12" posX="27.000000" posY="1.000000" posZ="20.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="453.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="12,0" />
+    <actor id="4" type="12" posX="53.312500" posY="1.000000" posZ="26.187500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="347.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="13,0" />
+    <actor id="5" type="12" posX="44.000000" posY="1.000000" posZ="29.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="13,0" />
+    <actor id="6" type="12" posX="16.000000" posY="6.000000" posZ="36.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="17,0" />
+    <actor id="7" type="12" posX="60.375000" posY="0.000000" posZ="56.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="433.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="23,0" />
+    <actor id="8" type="12" posX="0.000000" posY="-1.000000" posZ="0.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="9,0" />
 </actors>

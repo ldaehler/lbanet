@@ -1,2 +1,10 @@
+<?xml version="1.0" encoding="UTF8" ?>
 <actors>
+    <actor id="12" type="12" posX="44.000000" posY="0.000000" posZ="21.468750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="177.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="59,0" />
+    <actor id="13" type="12" posX="41.992188" posY="9.000000" posZ="11.523438" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="6,0" />
+    <actor id="14" type="12" posX="31.718750" posY="0.000000" posZ="40.250000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="565.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="11,0" />
+    <actor id="15" type="12" posX="53.000000" posY="4.000000" posZ="29.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="16,0" />
+    <actor id="16" type="12" posX="40.000000" posY="0.000000" posZ="54.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="39,0" />
+    <actor id="17" type="12" posX="0.000000" posY="-1.000000" posZ="0.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="9,0" />
+    <actor id="18" type="12" posX="39.000000" posY="0.000000" posZ="22.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="59,0" />
 </actors>

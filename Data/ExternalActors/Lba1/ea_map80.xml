@@ -1,2 +1,8 @@
+<?xml version="1.0" encoding="UTF8" ?>
 <actors>
+    <actor id="0" type="12" posX="40.328125" posY="8.000000" posZ="50.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="65,0" />
+    <actor id="1" type="12" posX="39.062500" posY="8.000000" posZ="52.734375" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="66,0" />
+    <actor id="2" type="12" posX="44.968750" posY="5.000000" posZ="58.593750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="225.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="61,0" />
+    <actor id="3" type="12" posX="59.570313" posY="5.000000" posZ="54.835938" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="40.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="62,0" />
+    <actor id="4" type="12" posX="0.000000" posY="4.062500" posZ="0.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="9,0" />
 </actors>
