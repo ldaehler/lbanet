@@ -54,7 +54,7 @@ public:
 									std::map<long, SpriteInfo> &vidinfos,
 									std::map<long, ModelInfo> &modelinfos,
 									std::map<long, Actor *> & vec,
-									SignalerBase * signaler);
+									SignalerBase * signaler, float AnimationSpeed);
 
 	// load all sprites info
 	static bool LoadSprites(const std::string &Filename, std::map<long, SpriteInfo> &vec);

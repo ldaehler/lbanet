@@ -401,6 +401,23 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 					act->SetDoubleAttribute("zonesizeX", tmpa->GetZoneX());
 					act->SetDoubleAttribute("zonesizeY", tmpa->GetZoneY());
 					act->SetDoubleAttribute("zonesizeZ", tmpa->GetZoneZ());
+
+					const std::vector<ItemGroup> & lootlist = tmpa->GetLootList();
+					for(size_t cci=0; cci<lootlist.size(); ++cci)
+					{
+						TiXmlElement * grit = new TiXmlElement( "itemgroup" );
+						grit->SetDoubleAttribute("respawnTimeInMs", lootlist[cci].RespawningTime);
+						act->LinkEndChild(grit);
+
+						for(size_t ccj=0; ccj<lootlist[cci].groupelements.size(); ++ccj)
+						{
+							TiXmlElement * grelem = new TiXmlElement( "item" );
+							grelem->SetDoubleAttribute("id", lootlist[cci].groupelements[ccj].id);
+							grelem->SetDoubleAttribute("number", lootlist[cci].groupelements[ccj].number);
+							grelem->SetDoubleAttribute("probability", lootlist[cci].groupelements[ccj].probability);
+							grit->LinkEndChild(grelem);
+						}
+					}
 				}
 			}
 			break;

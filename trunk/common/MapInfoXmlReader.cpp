@@ -40,6 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GameEvents.h"
 #include "SignalerBase.h"
 #include "HurtArea.h"
+#include "LivingActor.h"
 
 #ifndef _LBANET_SERVER_SIDE_
 #include "3DObjectRenderer.h"
@@ -323,7 +324,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 									std::map<long, SpriteInfo> &vidinfos,
 									std::map<long, ModelInfo> &modelinfos,
 									std::map<long, Actor *> & vec,
-									SignalerBase * signaler)
+									SignalerBase * signaler, float AnimationSpeed)
 {
 	vec.clear();
 
@@ -401,6 +402,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 			if(pElem->QueryValueAttribute("renderertype", &renderertype) == TIXML_SUCCESS)
 				if(renderertarget.size() > 0)
 				{
+					//renderer = new SpriteRenderer();
 					switch(renderertype)
 					{
 						case 0: // sprite renderer
@@ -641,6 +643,21 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 					act = new HurtArea(zoneSizeX, zoneSizeY, zoneSizeZ, lifetaken);
 				}
 				break;
+
+				case 12:	//NPC class
+				{
+					LivingActor *tmpL = new LivingActor(AnimationSpeed);
+					tmpL->DisplayName(false);
+
+					if(renderertarget.size() > 1)
+					{
+						tmpL->changeAnimEntity(renderertarget[0], renderertarget[1]);
+						tmpL->setActorAnimation(0);
+					}
+
+					act = tmpL;
+				}
+				break;
 			}
 
 			// add common attributes
@@ -651,7 +668,10 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 			act->SetPassable(passable);
 			act->SetDepthMask(depthmask);
 			act->SetMovable(movable);
-			act->SetRenderer(renderer);
+
+			if(type != 12)
+				act->SetRenderer(renderer);
+
 			act->SetType(type);
 			act->SetOutputSignal(outputsignal, stargets);
 			act->SetRendererType(renderertype, renderertarget);
@@ -958,6 +978,17 @@ bool MapInfoXmlReader::LoadInventory(const std::string &Filename, std::map<long,
 			int tmpv = 0;
 			pElem->QueryValueAttribute("Ephemere", &tmpv);
 			spi.Ephemere = (tmpv == 1);
+
+			const char * fromc = pElem->Attribute("From");
+			const char * datec = pElem->Attribute("Date");
+			const char * subjectc = pElem->Attribute("Subject");
+			if(fromc)
+				spi.From = fromc;
+			if(datec)
+				spi.Date = datec;
+			if(subjectc)
+				spi.Subject = subjectc;
+
 			mapinv[spi.id] = spi;
 		}
 	}
