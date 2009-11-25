@@ -232,6 +232,9 @@ struct ItemInfo
 	std::string Description;
 	int Effect;
 	bool Ephemere;
+	std::string From;
+	std::string Date;
+	std::string Subject;
 };
 
 

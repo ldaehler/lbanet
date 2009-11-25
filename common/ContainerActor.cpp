@@ -111,6 +111,7 @@ get current container content
 ***********************************************************/
 const std::map<long, int> &  ContainerActor::GetCurrentContent()
 {
+	CleanOldItems();
 	double currtime = IceUtil::Time::now().toMilliSecondsDouble();
 
 	// go trough the loot table and populate the current content if necessary
@@ -161,8 +162,10 @@ const std::map<long, int> &  ContainerActor::GetCurrentContent()
 /***********************************************************
 update container content
 ***********************************************************/
-void ContainerActor::UpdateContent(long itemid, int deltanumber)
+void ContainerActor::UpdateContent(long itemid, int deltanumber, bool resettime)
 {
+	double currtime = IceUtil::Time::now().toMilliSecondsDouble();
+
 	// if we add content
 	if(deltanumber > 0)
 	{
@@ -171,6 +174,8 @@ void ContainerActor::UpdateContent(long itemid, int deltanumber)
 			itlocal->second += deltanumber;
 		else
 			_currentContent[itemid] = deltanumber;
+
+		_currentContentTime[itemid] = currtime;
 	}
 	else // if we remove content
 	{
@@ -188,10 +193,35 @@ void ContainerActor::UpdateContent(long itemid, int deltanumber)
 				if(itlink != _linktolootlist.end())
 				{
 					_lootList[itlink->second].currpicked = -1;
-					_lootList[itlink->second].lastSpawningTime = IceUtil::Time::now().toMilliSecondsDouble();
+					if(resettime)
+						_lootList[itlink->second].lastSpawningTime = 0;
+					else
+						_lootList[itlink->second].lastSpawningTime = IceUtil::Time::now().toMilliSecondsDouble();
 					_linktolootlist.erase(itlink);
 				}
 			}
 		}
+	}
+}
+
+
+/***********************************************************
+clean old items
+***********************************************************/
+void ContainerActor::CleanOldItems()
+{
+	double currtime = IceUtil::Time::now().toMilliSecondsDouble();
+
+	std::map<long, double>::iterator it = _currentContentTime.begin();
+	while(it != _currentContentTime.end())
+	{
+		if((currtime - it->second) > 172800000) // if object older than 48h - destroy
+		{
+			UpdateContent(it->first, -_currentContent[it->first], true);
+			_currentContentTime.erase(it);
+			it = _currentContentTime.begin();
+		}
+		else
+			++it;
 	}
 }

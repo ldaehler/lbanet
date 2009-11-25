@@ -60,13 +60,23 @@ public:
 	const std::map<long, int> & GetCurrentContent();
 
 	//! update container content
-	void UpdateContent(long itemid, int deltanumber);
+	void UpdateContent(long itemid, int deltanumber, bool resettime = false);
+
+
+	//! get container loot list
+	const std::vector<ItemGroup> & GetLootList()
+	{ return _lootList;}
+
+protected:
+	//! clean old items
+	void CleanOldItems();
 
 
 private:
 	std::vector<ItemGroup>		_lootList;
 	std::map<long, int>			_currentContent;
 	std::map<long, int>			_linktolootlist;
+	std::map<long, double>		_currentContentTime;
 };
 
 #endif
