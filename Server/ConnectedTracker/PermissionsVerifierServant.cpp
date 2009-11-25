@@ -41,6 +41,9 @@ check user permission
 bool PermissionsVerifierServant::checkPermissions(const std::string& userId, const std::string& passwd,
 												  std::string& reason, const Ice::Current&) const
 {
+	std::cout<<"Got login request from user "<<userId<<std::endl;
+
+
 	if(userId == "")
 	{
 		reason = "Please provide username.";

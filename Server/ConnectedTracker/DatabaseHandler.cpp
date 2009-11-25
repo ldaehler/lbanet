@@ -63,7 +63,10 @@ long DatabaseHandler::CheckLogin(const std::string & PlayerName, const std::stri
 	{
 		Connect();
 		if(!_mysqlH.connected())
+		{
+			std::cerr<<"Connected tracker - CheckLoginfailed for user "<<PlayerName<<std::endl;
 			return -1;
+		}
 	}
 
 	mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
@@ -77,10 +80,14 @@ long DatabaseHandler::CheckLogin(const std::string & PlayerName, const std::stri
 			query.clear();
 			query << "UPDATE users SET lastconnected = UTC_TIMESTAMP(), connected = '1' WHERE id = '"<<res[0][0]<<"'";
 			if(!query.exec())
-				std::cout<<"Connected tracker - Update lastconnected failed for user id "<<res[0][0]<<" : "<<query.error()<<std::endl;
+				std::cerr<<"Connected tracker - Update lastconnected failed for user id "<<res[0][0]<<" : "<<query.error()<<std::endl;
 			return res[0][0];
 		}
 	}
+
+	std::cerr<<"Connected tracker - CheckLoginfailed for user "<<PlayerName<<" : "<<query.error()<<std::endl;
+	if(_mysqlH.connected())
+		_mysqlH.disconnect();
 
 	return -1;
 }
@@ -97,12 +104,18 @@ void DatabaseHandler::DisconnectUser(long Id)
 	{
 		Connect();
 		if(!_mysqlH.connected())
+		{
+			std::cerr<<"Connected tracker - Update DisconnectUser failed for user id "<<Id<<std::endl;
 			return;
+		}
 	}
 
 	mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
 	query << "UPDATE users SET playedtimemin = playedtimemin + TIMESTAMPDIFF(MINUTE, lastconnected, UTC_TIMESTAMP()), connected = '0' WHERE id = '"<<Id<<"'";
 	if(!query.exec())
-		std::cout<<"Connected tracker - Update timeplayed failed for user id "<<Id<<" : "<<query.error()<<std::endl;
-
+	{
+		std::cerr<<"Connected tracker - Update timeplayed failed for user id "<<Id<<" : "<<query.error()<<std::endl;
+		if(_mysqlH.connected())
+			_mysqlH.disconnect();
+	}
 }
