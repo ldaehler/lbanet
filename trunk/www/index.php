@@ -135,7 +135,8 @@ mysql_select_db("lbanet") or die(mysql_error());
    <a class="navi" href="index.php" >Downloads</a>
    <a class="navi" href="index.php" >Support</a>
    <a class="navi" href="index.php" >Credits</a> -->
-   <a class="navi" href="http://forum.magicball.net/forumdisplay.php?f=59" >Forum</a>
+   <a class="navi" href="http://forum.magicball.net/forumdisplay.php?f=59" target="_blank">Forum</a>
+   <a class="navi" href="http://forum.magicball.net/showpost.php?p=388603&postcount=2" target="_blank">Download</a>
     <div style="float: right; margin-right: 20px; font-size: 9px;">
     LBANet  v0.7 
     </div>
