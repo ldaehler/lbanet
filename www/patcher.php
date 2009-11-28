@@ -118,14 +118,11 @@
 <body>
 <img class="header" src="images/header1.png" alt="Header" />
 <div class="content">
-<a href="index.php" ><img class="logo" src="images/logo.png" alt="LBANet" /></a>
+<a href="www.lbanet.net" target="_blank"><img class="logo" src="images/logo.png" alt="LBANet" /></a>
    </div>
 
 
- <div class="news">
-
- <img src="images/inv.png" style="float:right; margin-right: 10px;" alt="inventory" />
-
+<div class="news">
 
 </div>
 
