@@ -122,9 +122,9 @@
    </div>
 
 
-<div class="news">
-
-</div>
+22/11/2009:<span style="color: #3483EC"> New Release v0.71 + new domain </span> <br />
+<span style="color: #A7FAFA">We got a new domain name for our website, you can now find us at <a href="http://www.lbanet.net" target="_blank">www.lbanet.net</a><br />Furthemore we got a new small release today featuring a new inventory<br />item and a new feature...<br /><a href="http://www.lbanet.net/news.php">... More details</a>
+<br /><br />
 
 </body>
 </html>
