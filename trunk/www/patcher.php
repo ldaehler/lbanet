@@ -118,7 +118,7 @@
 <body>
 <img class="header" src="images/header1.png" alt="Header" />
 <div class="content">
-<a href="www.lbanet.net" target="_blank"><img class="logo" src="images/logo.png" alt="LBANet" /></a>
+<a href="http://www.lbanet.net" target="_blank"><img class="logo" src="images/logo.png" alt="LBANet" /></a>
    </div>
 
 
