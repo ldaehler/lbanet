@@ -215,6 +215,9 @@ public:
 	Ice::Long GetPlayerId()
 	{return m_player_id;}
 
+	// update single actor state
+	void UpdateSingleActorState(const ActorStateInfo & newstate);
+
 	// update actors state
 	void UpdateActorState(const std::vector<ActorStateInfo> & newstate);
 

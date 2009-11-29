@@ -400,6 +400,17 @@ bool ThreadSafeWorkpile::IsServeron()
 
 
 /***********************************************************
+update single actor state
+***********************************************************/
+void ThreadSafeWorkpile::UpdateSingleActorState(const ActorStateInfo & newstate)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_actor_state);
+	m_new_actor_state = true;
+	m_actors_states.push_back(newstate);
+}
+
+
+/***********************************************************
 update actors state
 ***********************************************************/
 void ThreadSafeWorkpile::UpdateActorState(const std::vector<ActorStateInfo> & newstate)

@@ -49,7 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ms3d.h"
 #include "FloorSwitch.h"
 #include "AreaSwitch.h"
-#include "LiftActor.h"
+#include "ScriptableActor.h"
 #include "HurtArea.h"
 
 
@@ -2314,7 +2314,7 @@ bool EditorBox::Handleactorselected (const CEGUI::EventArgs& e)
 
 			case 10: //lift actor
 				{
-				LiftActor * tmpa = static_cast<LiftActor *>(_selActor);
+				ScriptableActor * tmpa = static_cast<ScriptableActor *>(_selActor);
 
 				CEGUI::MultiColumnList* listscript =
 				static_cast<CEGUI::MultiColumnList*> (
@@ -2609,7 +2609,7 @@ bool EditorBox::Handleactoradded(const CEGUI::EventArgs& e)
 			break;
 			case 1:	//text actor class
 			{
-				act = new TextActor(0, 0);
+				act = new TextActor(0, 0, 1);
 				act->SetId(newid);
 				act->SetType(idx);
 				(*_Lactors)[newid] = act;
@@ -2620,7 +2620,7 @@ bool EditorBox::Handleactoradded(const CEGUI::EventArgs& e)
 				float deltaX=0, deltaY=0, deltaZ=0;
 				int direction=0;
 				float activationdistance=0;
-				act = new LadderActor(activationdistance, deltaX, deltaY, deltaZ, direction);
+				act = new LadderActor(activationdistance, deltaX, deltaY, deltaZ, direction, 1);
 				act->SetId(newid);
 				act->SetType(idx);
 				(*_Lactors)[newid] = act;
@@ -2631,7 +2631,7 @@ bool EditorBox::Handleactoradded(const CEGUI::EventArgs& e)
 				float deltaX=0, deltaY=0, deltaZ=0;
 				int direction=0;
 				float activationdistance=0;
-				act = new ExitActor(activationdistance, deltaX, deltaY, deltaZ, direction);
+				act = new ExitActor(activationdistance, deltaX, deltaY, deltaZ, direction, 1);
 				act->SetId(newid);
 				act->SetType(idx);
 				(*_Lactors)[newid] = act;
@@ -2666,7 +2666,7 @@ bool EditorBox::Handleactoradded(const CEGUI::EventArgs& e)
 			{
 				float zoneSizeX=0, zoneSizeY=0, zoneSizeZ=0;
 
-				act = new ContainerActor(zoneSizeX, zoneSizeY, zoneSizeZ);
+				act = new ContainerActor(zoneSizeX, zoneSizeY, zoneSizeZ, 1);
 				act->SetId(newid);
 				act->SetType(idx);
 				(*_Lactors)[newid] = act;
@@ -2677,7 +2677,7 @@ bool EditorBox::Handleactoradded(const CEGUI::EventArgs& e)
 			{
 				int direction=0;
 				float activationdistance=0;
-				act = new UpExitActor(activationdistance, direction);
+				act = new UpExitActor(activationdistance, direction, 1);
 				act->SetId(newid);
 				act->SetType(idx);
 				(*_Lactors)[newid] = act;
@@ -2686,7 +2686,7 @@ bool EditorBox::Handleactoradded(const CEGUI::EventArgs& e)
 
 			case 7:	//switch actor class
 			{
-				act = new SwitchActor(0);
+				act = new SwitchActor(0, 1);
 				act->SetId(newid);
 				act->SetType(idx);
 				(*_Lactors)[newid] = act;
@@ -2708,7 +2708,7 @@ bool EditorBox::Handleactoradded(const CEGUI::EventArgs& e)
 			{
 				float zoneSizeX=0, zoneSizeY=0, zoneSizeZ=0;
 
-				act = new FloorSwitch(zoneSizeX, zoneSizeY, zoneSizeZ);
+				act = new FloorSwitch(zoneSizeX, zoneSizeY, zoneSizeZ, 1);
 				act->SetId(newid);
 				act->SetType(idx);
 				(*_Lactors)[newid] = act;
@@ -2718,7 +2718,7 @@ bool EditorBox::Handleactoradded(const CEGUI::EventArgs& e)
 			case 10:	//lift actor class
 			{
 				std::vector<PlayerScriptPart> scripts;
-				act = new LiftActor(scripts);
+				act = new ScriptableActor(scripts, true);
 				act->SetId(newid);
 				act->SetType(idx);
 				(*_Eactors)[newid] = act;
@@ -3650,7 +3650,7 @@ bool EditorBox::Handleliftscriptschanged (const CEGUI::EventArgs& e)
 	if(!_selActor)
 		return true;
 
-	LiftActor* la = static_cast<LiftActor*> (_selActor);
+	ScriptableActor* la = static_cast<ScriptableActor*> (_selActor);
 	std::vector<PlayerScriptPart> & scripts = la->GetScripts();
 
 	if(_liftrowid < scripts.size())
@@ -3698,7 +3698,7 @@ bool EditorBox::Handleliftscriptsadded (const CEGUI::EventArgs& e)
 	if(!_selActor)
 		return true;
 
-	LiftActor* la = static_cast<LiftActor*> (_selActor);
+	ScriptableActor* la = static_cast<ScriptableActor*> (_selActor);
 
 	CEGUI::MultiColumnList* listscript =
 	static_cast<CEGUI::MultiColumnList*> (
@@ -3766,7 +3766,7 @@ bool EditorBox::Handleliftscriptsremoved (const CEGUI::EventArgs& e)
 	if(!_selActor)
 		return true;
 
-	LiftActor* la = static_cast<LiftActor*> (_selActor);
+	ScriptableActor* la = static_cast<ScriptableActor*> (_selActor);
 	std::vector<PlayerScriptPart> & script = la->GetScripts();
 
 	CEGUI::MultiColumnList* listscript =

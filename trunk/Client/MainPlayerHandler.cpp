@@ -100,7 +100,7 @@ MainPlayerHandler::MainPlayerHandler(float speedNormal, float speedSport,
 	_speedHorse(speedHorse), _speedDino(speedDino),
 	_speedJump(speedJump), _heightJump(heightJump), _speedHurt(speedHurt),
 	_RoomP(RoomP), _currentstance(0), _camptr(cam),
-	_isAttached(false), _isDiscrete(false), _needCheck(false)
+	_isAttached(false), _isDiscrete(false), _needCheck(false), _currentsignal(-1)
 {
 	_player = new Player(animationSpeed, true);
 	_player->DisplayName(true);
@@ -223,13 +223,15 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 			{
 				double expectedR = ps.ValueA;
 				double currR = _player->GetRotation();
-				double diff = expectedR - currR;
-				if(expectedR == 0)
-				{
-					double diff2 = 360 - currR;
-					if(abs(diff2) < abs(diff))
-						diff = diff2;
-				}
+				double diff, diff2;
+				if(expectedR < currR)
+					expectedR += 360;
+
+				diff = expectedR - currR;
+				diff2 = diff-360;
+
+				if(fabs(diff2) < fabs(diff))
+					diff = diff2;
 
 				float step = (float)(tdiff*ps.Speed * ((diff > 0) ? 1 : -1));
 				if(fabs(step) > fabs(diff))
@@ -314,6 +316,51 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 				++_curr_script_position;
 			}
 			break;
+
+			case 4: // wait for signal event
+			{
+				long sig = (long)ps.ValueA;
+				if(sig == _currentsignal)
+					++_curr_script_position;
+			}
+			break;
+	
+			case 7: // hide
+			{
+				_player->Hide();
+				++_curr_script_position;
+			}
+			break;		
+	
+			case 8: // show
+			{
+				_player->Show();
+				++_curr_script_position;
+			}
+			break;	
+	
+			case 9: // change stance
+			{
+				PlayerChangeStance((int)ps.ValueA, true);
+				++_curr_script_position;
+			}
+			break;
+	
+			case 10: // attach player to another actor
+			{
+				++_curr_script_position;
+				_attachactor = (long)ps.ValueA;
+				return 5;
+			}
+			break;
+	
+			case 11: // dettach player from another actor
+			{
+				++_curr_script_position;
+				_attachactor = (long)ps.ValueA;
+				return 6;
+			}
+			break;
 		}
 
 		if(_curr_script_position >= (int)_curr_script.size())
@@ -323,6 +370,7 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 			_camptr->SetTarget(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ());
 
 		res = 0;
+		_currentsignal = -1;
 	}
 	else if(_state == Ac_FallingDown)
 	{
@@ -567,7 +615,7 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 
 
 	// if attached - correct velocity
-	if(_isAttached)
+	if(_isAttached || (_state == Ac_scripted))
 	{
 		_corrected_velocityX += _player->GetAddedvX();
 		_corrected_velocityY += _player->GetAddedvY();
@@ -1154,10 +1202,8 @@ void MainPlayerHandler::StartFallDown(float nbY, float fallarrivalY)
 /***********************************************************
 called when the space bar is pressed
 ***********************************************************/
-void MainPlayerHandler::DoAction()
+bool MainPlayerHandler::DoAction()
 {
-	//setActorAnimation(_currAnimation+1);
-
 	if(_player->GetModel() == 1 || _player->GetModel() == 47)
 		StartJump();
 
@@ -1170,7 +1216,11 @@ void MainPlayerHandler::DoAction()
 		std::string soundp = DataLoader::getInstance()->GetSoundPath(M_SOUND_DISCRETE);
 		if(soundp != "")
 			MusicHandler::getInstance()->PlaySample(soundp, 0);
+
+		return true;
 	}
+
+	return false;
 }
 
 
@@ -1529,6 +1579,7 @@ void MainPlayerHandler::DoPlayerScriptedEvent(const std::vector<PlayerScriptPart
 		_remembering = true;
 	}
 	_player->changeAnimEntity(0, _currentbody);
+	_player->setActorAnimation(0);
 
 	_state = Ac_scripted;
 	_curr_script = script;
@@ -1651,4 +1702,14 @@ set player name color
 void MainPlayerHandler::SetNameColor(int R, int G, int B)
 {
 	_player->SetNameColor(R, G, B);
+}
+
+
+
+/***********************************************************
+give signal to main player
+***********************************************************/
+void MainPlayerHandler::SetSignal(int newsignal)
+{
+	_currentsignal = newsignal;
 }

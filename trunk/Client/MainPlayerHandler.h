@@ -220,7 +220,7 @@ public:
 	bool ActivationMode(bool ForcedNormalAction);
 
 	// called when the space bar is pressed
-	void DoAction();
+	bool DoAction();
 
 	// pause resume player
 	void Pause() {_paused = true;}
@@ -296,6 +296,14 @@ public:
 
 	// set player name color
 	void SetNameColor(int R, int G, int B);
+
+	// give signal to main player
+	void SetSignal(int newsignal);
+
+	// actor used for attach/detach
+	long GetAttachActor()
+	{ return _attachactor;}
+
 
 protected:
 	bool MoveActor(bool Upward, float timediff);
@@ -418,6 +426,12 @@ protected:
 	bool			_needCheck;
 
 	double			_lastdeathtime;
+
+	// current signal set by external
+	int				_currentsignal;
+
+	// actor used for attach/detach
+	long			_attachactor;
 };
 
 #endif

@@ -132,4 +132,34 @@ void InfosReceiverServant::UpdateContainerInfo(const LbaNet::ContainerInfo &cont
 	}
  }
 
+    
+// Update Actor State
+void InfosReceiverServant::UpdateActorState(const LbaNet::ActorUpdateInfo &newinfo, const Ice::Current&)
+{
+	ActorStateInfo asi;
+	asi.ActorId = newinfo.ActorId;
+
+	// used for switch
+	asi.On = newinfo.On;
+
+	//used for door
+	asi.Open = newinfo.Open;
+	asi.Counter = newinfo.Counter;
+	asi.SignalOn = newinfo.SignalOn;
+
+	//used for lift
+	asi.CurrentScript = newinfo.CurrentScript;
+	LbaNet::TargetSeq::const_iterator itcs = newinfo.CurrentSignals.begin();
+	LbaNet::TargetSeq::const_iterator endcs = newinfo.CurrentSignals.end();
+	for(; itcs != endcs; ++itcs)
+		asi.CurrentSignals.push_back(*itcs);
+
+	asi.X = newinfo.X;
+	asi.Y = newinfo.Y;
+	asi.Z = newinfo.Z;
+	asi.Rotation = newinfo.Rotation;
+
+	ThreadSafeWorkpile::getInstance()->UpdateSingleActorState(asi);
+}
+
 

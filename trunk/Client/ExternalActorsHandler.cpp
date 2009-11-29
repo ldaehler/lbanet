@@ -146,7 +146,7 @@ void ExternalActorsHandler::Move(int X, int Y, int Z, float MoveX, float MoveZ)
 try to activate actors
 ***********************************************************/
 bool ExternalActorsHandler::Activate(float PlayerPosX, float PlayerPosY, float PlayerPosZ,
-									 float PlayerRotation)
+									 float PlayerRotation, int actionType)
 {
 	bool serveron = ThreadSafeWorkpile::getInstance()->IsServeron();
 
@@ -154,7 +154,7 @@ bool ExternalActorsHandler::Activate(float PlayerPosX, float PlayerPosY, float P
 	std::map<long, Actor *>::iterator end =  _actors.end();
 	for(; it != end; ++it)
 	{
-		if(it->second->Activate(PlayerPosX, PlayerPosY, PlayerPosZ, PlayerRotation, !serveron))
+		if(it->second->Activate(PlayerPosX, PlayerPosY, PlayerPosZ, PlayerRotation, actionType, !serveron))
 		{
 			if(serveron)
 			{
@@ -307,4 +307,25 @@ void ExternalActorsHandler::UpdateActorStates(const std::vector<ActorStateInfo> 
 		if(itmap != _actors.end())
 			itmap->second->Setstate(*it);
 	}
+}
+
+
+/***********************************************************
+attach player to actor
+***********************************************************/
+void ExternalActorsHandler::ForcedAttach(Actor * act, long actorId)
+{
+	std::map<long, Actor *>::iterator it = _actors.find(actorId);
+	if(it != _actors.end())
+		it->second->Attach(act);
+}
+
+/***********************************************************
+dettach player from actor
+***********************************************************/
+void ExternalActorsHandler::ForcedDettach(Actor * act, long actorId)
+{
+	std::map<long, Actor *>::iterator it = _actors.find(actorId);
+	if(it != _actors.end())
+		it->second->Dettach(act);
 }

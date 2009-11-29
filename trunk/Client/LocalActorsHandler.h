@@ -70,7 +70,7 @@ public:
 	{_pH = pH;}
 
 	//! try to activate actors
-	bool Activate(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation);
+	bool Activate(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation, int actionType);
 
 	//! check zone activation
 	bool ActivateZone(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation, 
@@ -99,6 +99,12 @@ public:
 
 	//! update actor state
 	void UpdateActorStates(const std::vector<ActorStateInfo> & newstate);
+
+	// attach player to actor
+	void ForcedAttach(Actor * act, long actorId);
+
+	// dettach player from actor
+	void ForcedDettach(Actor * act, long actorId);
 
 protected:
 	std::map<long, Actor *> _actors;

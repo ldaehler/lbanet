@@ -447,6 +447,8 @@ bool ShortcutBox::onWindowMove(const CEGUI::EventArgs& pEventArgs)
 						 cegui_absdim(PixelAligned(offset.d_y)));
 
 		_myBox->setPosition(_myBox->getPosition() + uOffset );
+
+		return true;
 	}
 
 
@@ -462,9 +464,11 @@ bool ShortcutBox::onWindowMove(const CEGUI::EventArgs& pEventArgs)
 						 cegui_absdim(PixelAligned(offset.d_y)));
 
 		_myStances->setPosition(_myStances->getPosition() + uOffset );
+
+		return true;
 	}
 
-	return true;
+	return false;
 }
 
 

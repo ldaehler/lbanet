@@ -179,7 +179,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\3DObjectRenderer.cpp"
+				RelativePath="..\common\3DObjectRenderer.cpp"
 				>
 			</File>
 			<File
@@ -367,10 +367,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\LiftActor.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\common\LivingActor.cpp"
 				>
 			</File>
@@ -431,6 +427,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\common\NPCActor.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\OptionsGUI.cpp"
 				>
 			</File>
@@ -448,6 +448,14 @@
 			</File>
 			<File
 				RelativePath=".\RunApp.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\common\ScriptableActor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\common\ScriptedZoneActor.cpp"
 				>
 			</File>
 			<File
@@ -513,7 +521,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\3DObjectRenderer.h"
+				RelativePath="..\common\3DObjectRenderer.h"
 				>
 			</File>
 			<File
@@ -701,10 +709,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\LiftActor.h"
-				>
-			</File>
-			<File
 				RelativePath="..\common\LivingActor.h"
 				>
 			</File>
@@ -757,6 +761,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\common\NPCActor.h"
+				>
+			</File>
+			<File
 				RelativePath=".\OptionsGUI.h"
 				>
 			</File>
@@ -778,6 +786,14 @@
 			</File>
 			<File
 				RelativePath=".\RunApp.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\ScriptableActor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\ScriptedZoneActor.h"
 				>
 			</File>
 			<File
