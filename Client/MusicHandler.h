@@ -107,7 +107,7 @@ public:
 
 protected:
 	//! clean finished sound
-	void cleanupsound();
+	void cleanupsound(bool forced = false);
 
 private:
 

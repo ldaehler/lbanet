@@ -145,13 +145,14 @@ void LocalActorsHandler::Move(int X, int Y, int Z, float MoveX, float MoveZ)
 /***********************************************************
 try to activate actors
 ***********************************************************/
-bool LocalActorsHandler::Activate(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation)
+bool LocalActorsHandler::Activate(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation, 
+								  int actionType)
 {
 	std::map<long, Actor *>::iterator it =  _actors.begin();
 	std::map<long, Actor *>::iterator end =  _actors.end();
 	for(; it != end; ++it)
 	{
-		if(it->second->Activate(PlayerPosX, PlayerPosY, PlayerPosZ, PlayerRotation))
+		if(it->second->Activate(PlayerPosX, PlayerPosY, PlayerPosZ, PlayerRotation, actionType))
 			return true;
 	}
 
@@ -272,4 +273,25 @@ void LocalActorsHandler::UpdateActorStates(const std::vector<ActorStateInfo> & n
 		if(itmap != _actors.end())
 			itmap->second->Setstate(*it);
 	}
+}
+
+
+/***********************************************************
+attach player to actor
+***********************************************************/
+void LocalActorsHandler::ForcedAttach(Actor * act, long actorId)
+{
+	std::map<long, Actor *>::iterator it = _actors.find(actorId);
+	if(it != _actors.end())
+		it->second->Attach(act);
+}
+
+/***********************************************************
+dettach player from actor
+***********************************************************/
+void LocalActorsHandler::ForcedDettach(Actor * act, long actorId)
+{
+	std::map<long, Actor *>::iterator it = _actors.find(actorId);
+	if(it != _actors.end())
+		it->second->Dettach(act);
 }

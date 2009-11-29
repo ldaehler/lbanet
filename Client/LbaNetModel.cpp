@@ -52,9 +52,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 const short	LbaNetModel::m_body_color_map[] = {-1, 2, 19, 32, 36, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 243};
 
 
-//#ifndef _LBANET_SET_EDITOR_
-//#define _LBANET_SET_EDITOR_
-//#endif
+#ifndef _LBANET_SET_EDITOR_
+#define _LBANET_SET_EDITOR_
+#endif
 
 
 /***********************************************************
@@ -80,7 +80,7 @@ LbaNetModel::LbaNetModel(GuiHandler*	guiH)
 	LogHandler::getInstance()->LogToFile("Reading configuration from file...");
 	ConfigurationManager *	cm = ConfigurationManager::GetInstance();
 
-	float NormalSpeed, SportySpeed, FightSpeed, DiscreteSpeed, HorseSpeed, DinoSpeed, JumpSpeed, JumpHeight, AnimationSpeed;
+	float NormalSpeed, SportySpeed, FightSpeed, DiscreteSpeed, HorseSpeed, DinoSpeed, JumpSpeed, JumpHeight;
 	cm->GetFloat("Speed.NormalSpeed", NormalSpeed);
 	cm->GetFloat("Speed.SportySpeed", SportySpeed);
 	cm->GetFloat("Speed.FightSpeed", FightSpeed);
@@ -89,11 +89,11 @@ LbaNetModel::LbaNetModel(GuiHandler*	guiH)
 	cm->GetFloat("Speed.DinoSpeed", DinoSpeed);
 	cm->GetFloat("Speed.JumpSpeed", JumpSpeed);
 	cm->GetFloat("Speed.JumpHeight", JumpHeight);
-	cm->GetFloat("Speed.AnimationSpeed", AnimationSpeed);
+	cm->GetFloat("Speed.AnimationSpeed", m_AnimationSpeed);
 
 	LogHandler::getInstance()->LogToFile("Creating main player character...");
 	_mainPlayerHandler = new MainPlayerHandler(NormalSpeed, SportySpeed,
-								FightSpeed, DiscreteSpeed, HorseSpeed, DinoSpeed, AnimationSpeed,
+								FightSpeed, DiscreteSpeed, HorseSpeed, DinoSpeed, m_AnimationSpeed,
 								JumpSpeed, JumpHeight, NormalSpeed/3, _physicHandler, _camera);
 
 	m_main_actor_starting_X = 0;
@@ -124,7 +124,7 @@ LbaNetModel::LbaNetModel(GuiHandler*	guiH)
 	_camera->SetZenit(camzenit);
 	_camera->SetPerspective(perspec);
 
-	_externalPlayers = new ExternalPlayersHandler("", AnimationSpeed);
+	_externalPlayers = new ExternalPlayersHandler("", m_AnimationSpeed);
 }
 
 
@@ -487,11 +487,11 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float 
 
 			// load local actors
 			std::map<long, Actor *> vec;
-			DataLoader::getInstance()->GetLocalMapActors(vec);
+			DataLoader::getInstance()->GetLocalMapActors(vec, m_AnimationSpeed);
 			_localActorsHandler->SetActors(vec);
 
 			std::map<long, Actor *> vec2;
-			DataLoader::getInstance()->GetExternalMapActors(vec2);
+			DataLoader::getInstance()->GetExternalMapActors(vec2, m_AnimationSpeed);
 			_externalActorsHandler->SetActors(vec2);
 
 			_guiH->SetCurrentMap(_current_world.substr(0, _current_world.find(".xml")), _current_map);
@@ -566,7 +566,7 @@ int LbaNetModel::Process()
 	if(ThreadSafeWorkpile::getInstance()->ActorStatesUpdated(newstate))
 	{
 		_localActorsHandler->UpdateActorStates(newstate);
-		_externalActorsHandler->UpdateActorStates(newstate);;
+		_externalActorsHandler->UpdateActorStates(newstate);
 	}
 
 	if(_mainPlayerHandler->IsMoving())
@@ -663,14 +663,6 @@ int LbaNetModel::Process()
 			}
 		break;
 
-		case 4:	// the actor is being hurt
-			if(m_current_main_state == 0)
-			{
-				m_current_main_state = 3;
-			}
-		break;
-
-
 		case 3:	// if actor animation is terminated
 			if(m_current_main_state == 1) // if actor is currently drawning - terminate
 			{
@@ -691,6 +683,32 @@ int LbaNetModel::Process()
 				m_current_main_state = 0;
 				_mainPlayerHandler->Stopstate();
 			}
+		break;
+
+
+		case 4:	// the actor is being hurt
+			if(m_current_main_state == 0)
+			{
+				m_current_main_state = 3;
+			}
+		break;
+
+
+		case 5:	// attach player to actor
+			_localActorsHandler->ForcedAttach((Actor *)_mainPlayerHandler->GetPlayer(), 
+													_mainPlayerHandler->GetAttachActor());
+
+			_externalActorsHandler->ForcedAttach((Actor *)_mainPlayerHandler->GetPlayer(), 
+													_mainPlayerHandler->GetAttachActor());
+		break;
+
+
+		case 6:	// dettach player from actor
+			_localActorsHandler->ForcedDettach((Actor *)_mainPlayerHandler->GetPlayer(), 
+													_mainPlayerHandler->GetAttachActor());
+
+			_externalActorsHandler->ForcedDettach((Actor *)_mainPlayerHandler->GetPlayer(), 
+													_mainPlayerHandler->GetAttachActor());
 		break;
 	}
 
@@ -774,13 +792,22 @@ void LbaNetModel::PlayerDoAction(bool ForcedNormalAction)
 	if(_mainPlayerHandler->ActivationMode(ForcedNormalAction))
 	{
 		if(!_localActorsHandler->Activate(_mainPlayerHandler->GetPosX(), _mainPlayerHandler->GetPosY(),
-										_mainPlayerHandler->GetPosZ(), _mainPlayerHandler->GetRotation()))
+										_mainPlayerHandler->GetPosZ(), _mainPlayerHandler->GetRotation(), 1))
 
 		_externalActorsHandler->Activate(_mainPlayerHandler->GetPosX(), _mainPlayerHandler->GetPosY(),
-										_mainPlayerHandler->GetPosZ(), _mainPlayerHandler->GetRotation());
+										_mainPlayerHandler->GetPosZ(), _mainPlayerHandler->GetRotation(), 1);
 	}
 	else
-		_mainPlayerHandler->DoAction();
+	{
+		if(_mainPlayerHandler->DoAction())
+		{
+			if(!_localActorsHandler->Activate(_mainPlayerHandler->GetPosX(), _mainPlayerHandler->GetPosY(),
+											_mainPlayerHandler->GetPosZ(), _mainPlayerHandler->GetRotation(), 2))
+
+			_externalActorsHandler->Activate(_mainPlayerHandler->GetPosX(), _mainPlayerHandler->GetPosY(),
+											_mainPlayerHandler->GetPosZ(), _mainPlayerHandler->GetRotation(), 2);
+		}
+	}
 }
 
 
@@ -965,6 +992,9 @@ called when a signal has been generated
 ***********************************************************/
 void LbaNetModel::SignalEvent(long signal, const std::vector<long> &targets)
 {
+	if(targets.size() > 0 && targets[0] < 0)
+		_mainPlayerHandler->SetSignal(signal);
+
 	_localActorsHandler->SignalEvent(signal, targets);
 	_externalActorsHandler->SignalEvent(signal, targets);
 }

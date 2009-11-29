@@ -149,6 +149,7 @@ to be called in beginnning and end of program
 void MusicHandler::Unitialize()
 {
 	StopMusic();
+	cleanupsound(true);
 	_fsystem->close();
 }
 
@@ -267,7 +268,7 @@ void MusicHandler::StopSample(unsigned long sampleid)
 /***********************************************************
 clean finished sound
 ***********************************************************/
-void MusicHandler::cleanupsound()
+void MusicHandler::cleanupsound(bool forced)
 {
 	std::map<unsigned long, SoundInfo>::iterator it = _played_sounds.begin();
 	while(it != _played_sounds.end())
@@ -276,7 +277,7 @@ void MusicHandler::cleanupsound()
 		bool isplaying;
 		si.channel->isPlaying(&isplaying);
 
-		if(!isplaying)
+		if(!isplaying || forced)
 		{
 			si.channel->stop();
 			si.channel = NULL;

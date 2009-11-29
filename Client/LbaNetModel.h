@@ -233,6 +233,8 @@ private:
 	int						m_debug_map;
 
 	bool					m_need_full_check;
+
+	float					m_AnimationSpeed;
 };
 
 #endif
