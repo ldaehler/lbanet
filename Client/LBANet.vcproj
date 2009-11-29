@@ -263,7 +263,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Entities.cpp"
+				RelativePath="..\common\Entities.cpp"
 				>
 			</File>
 			<File
@@ -303,11 +303,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\HQRHandler.cpp"
+				RelativePath="..\common\HQRHandler.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\HQRlib.cpp"
+				RelativePath="..\common\HQRlib.cpp"
 				>
 			</File>
 			<File
@@ -475,7 +475,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\StreamReader.cpp"
+				RelativePath="..\common\StreamReader.cpp"
 				>
 			</File>
 			<File
@@ -609,6 +609,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\common\Entities.h"
+				>
+			</File>
+			<File
 				RelativePath=".\EventHandler.h"
 				>
 			</File>
@@ -649,11 +653,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\common\HQRHandler.h"
+				>
+			</File>
+			<File
 				RelativePath=".\HQRHandler.h"
 				>
 			</File>
 			<File
 				RelativePath=".\HQRlib.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\HQRlib.h"
 				>
 			</File>
 			<File
@@ -818,6 +830,10 @@
 			</File>
 			<File
 				RelativePath=".\StreamReader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\StreamReader.h"
 				>
 			</File>
 			<File
