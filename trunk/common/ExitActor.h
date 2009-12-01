@@ -39,7 +39,7 @@ class ExitActor : public ActivableActor
 {
 public:
 	//! constructor
-	ExitActor(float activationdistance, float deltaX, float deltaY, float deltaZ, int direction);
+	ExitActor(float activationdistance, float deltaX, float deltaY, float deltaZ, int direction, int activationtype);
 
 	//! destructor
 	virtual ~ExitActor();

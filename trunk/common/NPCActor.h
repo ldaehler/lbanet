@@ -23,10 +23,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#if !defined(__LbaNetModel_1_LiftActor_h)
-#define __LbaNetModel_1_LiftActor_h
+#if !defined(__LbaNetModel_1_NPCActor_h)
+#define __LbaNetModel_1_NPCActor_h
 
-#include "Actor.h"
+#include "ScriptableActor.h"
 #include "GameEvents.h"
 
 /***********************************************************************
@@ -35,49 +35,55 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * Modified: lundi 27 juillet 2009 14:53:50
  * Purpose: Declaration of the class Actor
  *********************************************************************/
-class LiftActor : public Actor
+class NPCActor : public ScriptableActor
 {
 public:
 	//! constructor
-	LiftActor(const std::vector<PlayerScriptPart> & scripts);
+	NPCActor(const std::vector<PlayerScriptPart> & scripts, bool IsLift, 
+		int NPCType, float activationdistance, std::string Name);
 
 	//! destructor
-	virtual ~LiftActor();
+	virtual ~NPCActor();
 
 	//! do all check to be done when idle
 	virtual int Process(double tnow, float tdiff);
 
-	//! called on signal
-	virtual bool OnSignal(long SignalNumber);
 
-	//! accessor
-	std::vector<PlayerScriptPart> & GetScripts()
-	{return _scripts;}
+	//! activate an actor
+	virtual bool Activate(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation,
+								int actionType, bool DirectActivation=true);
 
 
-	//! check if the actor should be attached
-	virtual bool CheckAttach(Actor * act);
+	//! check zone activation
+	virtual int ActivateZone(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation,
+								MainPlayerHandler  * _mph, bool DirectActivation=true);
 
-	//! check if the actor should be dettached
-	virtual bool CheckDettach(Actor * act);
+	//!accessors
+	float GetActivationDistance()
+	{return _activationdistance;}
+	void SetActivationDistance(float ad)
+	{_activationdistance = ad;}
+	void SetName(const std::string & name)
+	{ _Name = name; }
 
-	//! get current actor state
-	//! return false if the actor is stateless
-	virtual bool Getstate(ActorStateInfo & currState);
+	int GetNPCType()
+	{ return _NPCType;}
+	void SetNPCType()
+	{ _NPCType = _NPCType;}
+	std::string GetName()
+	{return _Name;}
 
-	//! set the actor state
-	virtual void Setstate(const ActorStateInfo & currState);
+
+	//! update actor to target a player
+	virtual void UpdateTargetedActor(long playerid,bool target);
 
 protected:
-	std::vector<PlayerScriptPart>	_scripts;
-	size_t							_curr_script_position;
+	int		_NPCType;
+	float	_activationdistance;
 
-	std::vector<long>				_receivedsignals;
-	bool							_started_timer;
-	double							_timer_start_time;
+	bool	_activated;
 
-	int								_playedsound;
-	unsigned long					_playingsound;
+	std::string _Name;
 };
 
 #endif

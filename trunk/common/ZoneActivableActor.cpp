@@ -33,8 +33,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /***********************************************************
 	Constructor
 ***********************************************************/
-ZoneActivableActor::ZoneActivableActor(float ZoneSizeX, float ZoneSizeY, float ZoneSizeZ)
-: _ZoneSizeX(ZoneSizeX), _ZoneSizeY(ZoneSizeY), _ZoneSizeZ(ZoneSizeZ)
+ZoneActivableActor::ZoneActivableActor(float ZoneSizeX, float ZoneSizeY, float ZoneSizeZ, int activationtype)
+: _ZoneSizeX(ZoneSizeX), _ZoneSizeY(ZoneSizeY), _ZoneSizeZ(ZoneSizeZ), _activationtype(activationtype)
 {
 
 }
@@ -53,7 +53,7 @@ ZoneActivableActor::~ZoneActivableActor()
 activate an actor
 ***********************************************************/
 bool ZoneActivableActor::Activate(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation,
-												bool DirectActivation)
+									int actionType, bool DirectActivation)
 {
 	float Xbl = _posX-_ZoneSizeX;
 	float Ybl = _posY;
@@ -62,6 +62,9 @@ bool ZoneActivableActor::Activate(float PlayerPosX, float PlayerPosY, float Play
 	float Xtr = _posX+_ZoneSizeX;
 	float Ytr = _posY+_ZoneSizeY;
 	float Ztr = _posZ+_ZoneSizeZ;
+
+	if(_activationtype != actionType)
+		return false;
 
 	if (	(PlayerPosX >= Xbl && PlayerPosX <= Xtr) &&
 			(PlayerPosY >= Ybl && PlayerPosY <= Ytr) &&

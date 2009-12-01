@@ -23,29 +23,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#if !defined(__LbaNetModel_1_SwitchActor_h)
-#define __LbaNetModel_1_SwitchActor_h
+#if !defined(__LbaNetModel_1_ScriptableActor_h)
+#define __LbaNetModel_1_ScriptableActor_h
 
-#include "ActivableActor.h"
-
+#include "Actor.h"
+#include "GameEvents.h"
 
 /***********************************************************************
- * Module:  TextActor.h
+ * Module:  LiftActor.h
  * Author:  vivien
  * Modified: lundi 27 juillet 2009 14:53:50
- * Purpose: Declaration of the class SwitchActor
+ * Purpose: Declaration of the class Actor
  *********************************************************************/
-class SwitchActor : public ActivableActor
+class ScriptableActor : public Actor
 {
 public:
 	//! constructor
-	SwitchActor(float activationdistance, int activationtype);
+	ScriptableActor(const std::vector<PlayerScriptPart> & scripts, bool IsLift);
 
 	//! destructor
-	virtual ~SwitchActor();
+	virtual ~ScriptableActor();
+
+	//! do all check to be done when idle
+	virtual int Process(double tnow, float tdiff);
 
 	//! called on signal
 	virtual bool OnSignal(long SignalNumber);
+
+	//! accessor
+	std::vector<PlayerScriptPart> & GetScripts()
+	{return _scripts;}
 
 	//! get current actor state
 	//! return false if the actor is stateless
@@ -54,12 +61,32 @@ public:
 	//! set the actor state
 	virtual void Setstate(const ActorStateInfo & currState);
 
+	//! check if the actor should be attached
+	virtual bool CheckAttach(Actor * act);
+
+	//! check if the actor should be dettached
+	virtual bool CheckDettach(Actor * act);
+
+	//! if the actor needs to be updated client side
+	virtual bool NeedsUpdate();
+
 protected:
-	//! process activation
-	virtual void ProcessActivation(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation);
+	//! increase script position
+	void IncreaseScriptPosition();
 
-	bool	_switchOn;
+protected:
+	std::vector<PlayerScriptPart>	_scripts;
+	size_t							_curr_script_position;
 
+	std::vector<long>				_receivedsignals;
+	bool							_started_timer;
+	double							_timer_start_time;
+
+	int								_playedsound;
+	unsigned long					_playingsound;
+
+	bool							_IsLift;
+	bool							_needs_update;
 };
 
 #endif

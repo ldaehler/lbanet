@@ -38,8 +38,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /***********************************************************
 	Constructor
 ***********************************************************/
-ExitActor::ExitActor(float activationdistance, float deltaX, float deltaY, float deltaZ, int direction)
-: _deltaX(deltaX), _deltaY(deltaY), _deltaZ(deltaZ), _direction(direction), ActivableActor(activationdistance)
+ExitActor::ExitActor(float activationdistance, float deltaX, float deltaY, float deltaZ, int direction, int activationtype)
+: _deltaX(deltaX), _deltaY(deltaY), _deltaZ(deltaZ), _direction(direction), ActivableActor(activationdistance, activationtype)
 {
 
 }

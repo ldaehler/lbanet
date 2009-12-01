@@ -23,40 +23,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#if !defined(__LbaNetModel_1_TextActor_h)
-#define __LbaNetModel_1_TextActor_h
+#ifndef __LBA_STREAM_READER__
+#define __LBA_STREAM_READER__
 
-#include "ActivableActor.h"
+#include <string>
+#define SR_NUM_SECTOR_IN_BUFFER (3)
+#define SR_BUFFER_SIZE (2048*SR_NUM_SECTOR_IN_BUFFER)
 
-
-/***********************************************************************
- * Module:  TextActor.h
- * Author:  vivien
- * Modified: lundi 27 juillet 2009 14:53:50
- * Purpose: Declaration of the class Actor
- *********************************************************************/
-class TextActor : public ActivableActor
+/*
+************************************************************************************************************************
+*                                                 class StreamReader
+************************************************************************************************************************
+*/
+class StreamReader
 {
 public:
-	//! constructor
-	TextActor(float activationdistance, long textid, int activationtype);
 
-	//! destructor
-	virtual ~TextActor();
+	StreamReader(const char* fileName);
 
-	//!accessors
-	long GetTextId()
-	{return _textid;}
+	~StreamReader();
 
-	void SetTextId(long id)
-	{_textid = id;}
+	void get(void* destPtr, unsigned long size);
+	void seek(unsigned long seekPosition);
 
-protected:
-	//! process activation
-	virtual void ProcessActivation(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation);
+	bool isOpen() {return m_isOpen;}
 
 private:
-	long _textid;
+
+	FILE* m_fileHandle;
+	bool m_isOpen;
+	unsigned char m_buffer[SR_BUFFER_SIZE];
+	unsigned long m_positionInBuffer;
+	unsigned long m_currentSector;
+
+	bool open(const char* fileName);
+	void close();
+	void feedBuffer();
 };
+
 
 #endif

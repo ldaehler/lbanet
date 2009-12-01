@@ -39,7 +39,7 @@ class FloorSwitch : public ZoneActivableActor
 {
 public:
 	//! constructor
-	FloorSwitch(float ZoneSizeX, float ZoneSizeY, float ZoneSizeZ);
+	FloorSwitch(float ZoneSizeX, float ZoneSizeY, float ZoneSizeZ, int activationtype);
 
 	//! destructor
 	virtual ~FloorSwitch();

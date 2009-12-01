@@ -22,41 +22,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
+#ifndef __LBA_HQR_HAND__
+#define __LBA_HQR_HAND__
 
-#if !defined(__LbaNetModel_1_TextActor_h)
-#define __LbaNetModel_1_TextActor_h
-
-#include "ActivableActor.h"
+#include <string>
 
 
-/***********************************************************************
- * Module:  TextActor.h
- * Author:  vivien
- * Modified: lundi 27 juillet 2009 14:53:50
- * Purpose: Declaration of the class Actor
- *********************************************************************/
-class TextActor : public ActivableActor
+
+/*
+************************************************************************************************************************
+*                                                 class HQRHandler
+************************************************************************************************************************
+*/
+class HQRHandler
 {
 public:
-	//! constructor
-	TextActor(float activationdistance, long textid, int activationtype);
+	HQRHandler(const std::string & fileName);
+	unsigned char *Load_HQR(int imageNumber, unsigned int &dataSize);
 
-	//! destructor
-	virtual ~TextActor();
-
-	//!accessors
-	long GetTextId()
-	{return _textid;}
-
-	void SetTextId(long id)
-	{_textid = id;}
-
-protected:
-	//! process activation
-	virtual void ProcessActivation(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation);
 
 private:
-	long _textid;
+	std::string m_fileName;
+
+	void HQR_Expand(int decompressedSize, unsigned char *destination, unsigned char *source);
 };
+
 
 #endif

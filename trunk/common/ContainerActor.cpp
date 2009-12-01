@@ -34,8 +34,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /***********************************************************
 	Constructor
 ***********************************************************/
-ContainerActor::ContainerActor(float ZoneSizeX, float ZoneSizeY, float ZoneSizeZ)
-: ZoneActivableActor(ZoneSizeX, ZoneSizeY, ZoneSizeZ)
+ContainerActor::ContainerActor(float ZoneSizeX, float ZoneSizeY, float ZoneSizeZ, int activationtype)
+: ZoneActivableActor(ZoneSizeX, ZoneSizeY, ZoneSizeZ, activationtype)
 {
 
 }
@@ -215,7 +215,7 @@ void ContainerActor::CleanOldItems()
 	std::map<long, double>::iterator it = _currentContentTime.begin();
 	while(it != _currentContentTime.end())
 	{
-		if((currtime - it->second) > 172800000) // if object older than 48h - destroy
+		if((currtime - it->second) > 800000000) // if object older than 2 weeks - destroy
 		{
 			UpdateContent(it->first, -_currentContent[it->first], true);
 			_currentContentTime.erase(it);

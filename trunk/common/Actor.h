@@ -52,6 +52,11 @@ struct ActorStateInfo
 	float			Y;
 	float			Z;
 	float			Rotation;
+
+
+	//used for NPC
+	bool			Visible;
+	std::vector<std::pair<long, long> >			Targets;
 };
 
 
@@ -84,19 +89,10 @@ public:
    void Hide(void);
 
 	// set actor position in the scene
-	virtual void SetPosition(float  posX, float  posY, float  posZ)
-	{
-		_posX = posX;
-		_posY = posY;
-		_posZ = posZ;
+	virtual void SetPosition(float  posX, float  posY, float  posZ);
 
-		if(_posX < -10)
-			_posX = -10;
-		if(_posY < -10)
-			_posY = -10;
-		if(_posZ < -10)
-			_posZ = -10;
-	}
+	// update actor position in the scene
+	virtual void UpdatePosition(float deltaposX, float  deltaposY, float  deltaposZ, float tdiff);
 
 	// update Y coordinate
 	void UpdateY(float  deltaY)
@@ -176,7 +172,7 @@ public:
 
 	//! activate an actor
 	virtual bool Activate(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation,
-								bool DirectActivation=true)
+								int actionType, bool DirectActivation=true)
 	{return false;}
 
 	//! check zone activation
@@ -285,6 +281,16 @@ public:
 	//! set the actor state
 	virtual void Setstate(const ActorStateInfo & currState){}
 
+	//! if the actor needs to be updated client side
+	virtual bool NeedsUpdate()
+	{return false;}
+
+	//! visible
+	bool Visible()
+	{ return _visible;}
+
+	//! update actor to target a player
+	virtual void UpdateTargetedActor(long playerid, bool target){}
 
 protected:
    long		_ID;						// entity unique ID
@@ -327,6 +333,8 @@ protected:
    std::vector<Actor *>	_attachedActors;
 
    SignalerBase * _signaler;
+
+   std::vector<std::pair<long, long> >	_actiontargets;
 };
 
 #endif

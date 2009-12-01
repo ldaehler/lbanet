@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#include "LiftActor.h"
+#include "ScriptableActor.h"
 #include <math.h>
 #include <algorithm>
 
@@ -31,21 +31,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ThreadSafeWorkpile.h"
 #include "DataLoader.h"
 #include "MusicHandler.h"
+#include "CharacterRenderer.h"
+#else
+#include "ServerCharacterRenderer.h"
 #endif
+
+#ifndef M_PI
+#define M_PI    3.14159265358979323846f
+#endif
+
 
 /***********************************************************
 	Constructor
 ***********************************************************/
-LiftActor::LiftActor(const std::vector<PlayerScriptPart> & scripts)
+ScriptableActor::ScriptableActor(const std::vector<PlayerScriptPart> & scripts, bool IsLift)
 : _scripts(scripts), _curr_script_position(0), _started_timer(false),
-	_playedsound(-1), _playingsound(0)
+	_playedsound(-1), _playingsound(0), _IsLift(IsLift), _needs_update(false)
 {
 }
 
 /***********************************************************
 	Destructor
 ***********************************************************/
-LiftActor::~LiftActor()
+ScriptableActor::~ScriptableActor()
 {
 #ifndef _LBANET_SERVER_SIDE_
 	if(_playingsound > 0)
@@ -59,11 +67,11 @@ LiftActor::~LiftActor()
 /***********************************************************
 do all check to be done when idle
 ***********************************************************/
-int LiftActor::Process(double tnow, float tdiff)
+int ScriptableActor::Process(double tnow, float tdiff)
 {
 	if(_curr_script_position < _scripts.size())
 	{
-		PlayerScriptPart ps = _scripts[_curr_script_position];
+		PlayerScriptPart &ps = _scripts[_curr_script_position];
 
 		#ifndef _LBANET_SERVER_SIDE_
 		if(ps.Sound >= 0)
@@ -78,7 +86,7 @@ int LiftActor::Process(double tnow, float tdiff)
 
 				std::string soundp = DataLoader::getInstance()->GetSoundPath(ps.Sound);
 				if(soundp != "")
-					_playingsound = MusicHandler::getInstance()->PlaySample(soundp, -1);
+					_playingsound = MusicHandler::getInstance()->PlaySample(soundp, ps.SoundNum);
 			}
 		}
 		else
@@ -90,6 +98,12 @@ int LiftActor::Process(double tnow, float tdiff)
 			}
 		}
 		_playedsound = ps.Sound;
+
+		if(ps.Animation >= 0 && _Renderer)
+			static_cast<CharacterRenderer *>(_Renderer)->setActorAnimation(ps.Animation);
+		#else
+		if(ps.Animation >= 0 && _Renderer)
+			static_cast<ServerCharacterRenderer *>(_Renderer)->setActorAnimation(ps.Animation);
 		#endif
 
 		switch(ps.Type)
@@ -98,18 +112,20 @@ int LiftActor::Process(double tnow, float tdiff)
 			{
 				double expectedR = ps.ValueA;
 				double currR = GetRotation();
-				double diff = expectedR - currR;
-				if(expectedR == 0)
-				{
-					double diff2 = 360 - currR;
-					if(fabs(diff2) < fabs(diff))
-						diff = diff2;
-				}
+				double diff, diff2;
+				if(expectedR < currR)
+					expectedR += 360;
+
+				diff = expectedR - currR;
+				diff2 = diff-360;
+
+				if(fabs(diff2) < fabs(diff))
+					diff = diff2;
 
 				float step = (float)(tdiff*ps.Speed * ((diff > 0) ? 1 : -1));
 				if(fabs(step) > fabs(diff))
 				{
-					++_curr_script_position;
+					IncreaseScriptPosition();
 					step = (float)diff;
 				}
 
@@ -142,17 +158,46 @@ int LiftActor::Process(double tnow, float tdiff)
 					stepZ = diffZ;
 
 				if(stepX == 0 && stepY == 0 && stepZ == 0)
-					++_curr_script_position;
+					IncreaseScriptPosition();
 
-				SetPosition(GetPosX() + (float)stepX, GetPosY() + (float)stepY, GetPosZ() + (float)stepZ);
+				UpdatePosition(stepX, stepY, stepZ, tdiff);
+			}
+			break;
 
-				std::vector<Actor *>::iterator itaa = _attachedActors.begin();
-				std::vector<Actor *>::iterator endaa = _attachedActors.end();
-				for(;itaa != endaa; ++itaa)
+			case 2: // animation
+			{
+				int animend = (int)ps.ValueA;
+				#ifndef _LBANET_SERVER_SIDE_
+				if(_Renderer)
 				{
-					(*itaa)->SetPosition((*itaa)->GetPosX() + (float)stepX, (*itaa)->GetPosY() + (float)stepY, (*itaa)->GetPosZ() + (float)stepZ);
-					(*itaa)->SetAddedVelocity((float)(stepX/tdiff), (float)(stepY/tdiff), (float)(stepZ/tdiff));
+					if(animend >= 0)
+					{
+						
+						if(static_cast<CharacterRenderer *>(_Renderer)->getKeyframe() >= animend)
+							IncreaseScriptPosition();
+					}
+					else
+					{
+						if(static_cast<CharacterRenderer *>(_Renderer)->Process(tnow, tdiff) == 1)
+							IncreaseScriptPosition();
+					}
 				}
+				#else
+				if(_Renderer)
+				{
+					if(animend >= 0)
+					{
+						
+						if(static_cast<ServerCharacterRenderer *>(_Renderer)->getKeyframe() >= animend)
+							IncreaseScriptPosition();
+					}
+					else
+					{
+						if(static_cast<ServerCharacterRenderer *>(_Renderer)->Process(tnow, tdiff) == 1)
+							IncreaseScriptPosition();
+					}
+				}
+				#endif
 			}
 			break;
 
@@ -163,7 +208,7 @@ int LiftActor::Process(double tnow, float tdiff)
 				int targetsignal = (int)ps.ValueB;
 				SendSignal(targetsignal, vectar);
 
-				++_curr_script_position;
+				IncreaseScriptPosition();
 			}
 			break;
 
@@ -174,7 +219,7 @@ int LiftActor::Process(double tnow, float tdiff)
 				if(it != _receivedsignals.end())
 				{
 					_receivedsignals.erase(it);
-					++_curr_script_position;
+					IncreaseScriptPosition();
 				}
 			}
 			break;
@@ -191,19 +236,94 @@ int LiftActor::Process(double tnow, float tdiff)
 					if(tnow - _timer_start_time > ps.ValueA)
 					{
 						_started_timer = false;
-						++_curr_script_position;
+						IncreaseScriptPosition();
 					}
 				}
 
 			}
 			break;
+
+			case 6: // do a curve
+			{
+				// do rotation part
+				double expectedR = ps.ValueA;
+				double currR = GetRotation();
+				double diff, diff2;
+				if(expectedR < currR)
+					expectedR += 360;
+
+				diff = expectedR - currR;
+				diff2 = diff-360;
+
+				if(fabs(diff2) < fabs(diff))
+					diff = diff2;
+
+				float step = (float)(tdiff*ps.Speed * ((diff > 0) ? 1 : -1));
+				if(fabs(step) > fabs(diff))
+				{
+					IncreaseScriptPosition();
+					step = (float)diff;
+				}
+
+				SetRotation(GetRotation() + step);
+
+				// do translation part
+				{
+					double translationSpeed = -ps.ValueB;
+
+
+					int nbA = ((int)GetRotation()) / 90;
+					int modA = ((int)GetRotation()) % 90;
+
+
+					float radA =  M_PI * (modA) / 180.0f;
+					double _velocityX, _velocityZ;
+
+					if(nbA == 0)
+					{
+						_velocityX = sin(radA) * -translationSpeed;
+						_velocityZ = cos(radA) * -translationSpeed;
+					}
+					if(nbA == 1)
+					{
+						_velocityX = cos((float)radA) * -translationSpeed;
+						_velocityZ = sin((float)radA) * translationSpeed;
+					}
+					if(nbA == 2)
+					{
+						_velocityX = sin(radA) * translationSpeed;
+						_velocityZ = cos(radA) * translationSpeed;
+					}
+					if(nbA == 3)
+					{
+						_velocityX = cos((float)radA) * translationSpeed;
+						_velocityZ = sin((float)radA) * -translationSpeed;
+					}
+
+					double stepX = tdiff*_velocityX;
+					double stepZ = tdiff*_velocityZ;
+					UpdatePosition(stepX, 0, stepZ, tdiff);
+				}
+			}
+			break;
+
+	
+			case 7: // hide
+			{
+				Hide();
+				++_curr_script_position;
+			}
+			break;		
+	
+			case 8: // show
+			{
+				Show();
+				++_curr_script_position;
+			}
+			break;	
 		}
 
-		if(_curr_script_position >= _scripts.size())
-			_curr_script_position = 0;
 	}
-
-
 
 
 
@@ -214,18 +334,76 @@ int LiftActor::Process(double tnow, float tdiff)
 /***********************************************************
 called on signal
 ***********************************************************/
-bool LiftActor::OnSignal(long SignalNumber)
+bool ScriptableActor::OnSignal(long SignalNumber)
 {
 	_receivedsignals.push_back(SignalNumber);
 	return true;
 }
 
+/***********************************************************
+get current actor state
+return false if the actor is stateless
+***********************************************************/
+bool ScriptableActor::Getstate(ActorStateInfo & currState)
+{
+	currState.ActorId = _ID;
+	currState.CurrentScript = _curr_script_position;
+	currState.CurrentSignals = _receivedsignals;
+	currState.X = GetPosX();
+	currState.Y = GetPosY();
+	currState.Z = GetPosZ();
+	currState.Rotation = GetRotation();
+	currState.Visible = Visible();
+	currState.Targets = _actiontargets;
+	return true;
+}
+
+
+/***********************************************************
+set the actor state
+***********************************************************/
+void ScriptableActor::Setstate(const ActorStateInfo & currState)
+{
+	_receivedsignals = currState.CurrentSignals;
+	while(_curr_script_position != currState.CurrentScript)
+	{
+		if(_curr_script_position < _scripts.size())
+		{
+			PlayerScriptPart &ps = _scripts[_curr_script_position];
+			if(_scripts[_curr_script_position].Type == 3)
+			{
+				std::vector<long> vectar;
+				vectar.push_back((int)ps.ValueA);
+				int targetsignal = (int)ps.ValueB;
+				SendSignal(targetsignal, vectar);
+			}
+		}
+
+		IncreaseScriptPosition();
+	}
+
+
+	SetRotation(currState.Rotation);
+	SetPosition(currState.X, currState.Y, currState.Z);
+
+	if(currState.Visible)
+		Show();
+	else
+		Hide();
+
+	_actiontargets = currState.Targets;
+}
+
+
 
 /***********************************************************
 check if the actor should be attached
 ***********************************************************/
-bool LiftActor::CheckAttach(Actor * act)
+bool ScriptableActor::CheckAttach(Actor * act)
 {
+	if(!_IsLift)
+		return false;
+
 	float posX = GetPosX();
 	float posY = GetPosY();
 	float posZ = GetPosZ();
@@ -248,8 +426,11 @@ bool LiftActor::CheckAttach(Actor * act)
 /***********************************************************
 check if the actor should be dettached
 ***********************************************************/
-bool LiftActor::CheckDettach(Actor * act)
+bool ScriptableActor::CheckDettach(Actor * act)
 {
+	if(!_IsLift)
+		return false;
+
 	float posX = GetPosX();
 	float posY = GetPosY();
 	float posZ = GetPosZ();
@@ -266,28 +447,26 @@ bool LiftActor::CheckDettach(Actor * act)
 
 
 /***********************************************************
-get current actor state
-return false if the actor is stateless
+increase script position
 ***********************************************************/
-bool LiftActor::Getstate(ActorStateInfo & currState)
+void ScriptableActor::IncreaseScriptPosition()
 {
-	currState.CurrentScript = _curr_script_position;
-	currState.CurrentSignals = _receivedsignals;
-	currState.X = GetPosX();
-	currState.Y = GetPosY();
-	currState.Z = GetPosZ();
-	currState.Rotation = GetRotation();
-	return true;
+	++_curr_script_position;
+
+	if(_curr_script_position >= _scripts.size())
+	{
+		_curr_script_position = 0;
+		_needs_update = true;
+	}
 }
 
 
 /***********************************************************
-set the actor state
+if the actor needs to be updated client side
 ***********************************************************/
-void LiftActor::Setstate(const ActorStateInfo & currState)
+bool ScriptableActor::NeedsUpdate()
 {
-	_receivedsignals = currState.CurrentSignals;
-	_curr_script_position = currState.CurrentScript;
-	SetRotation(currState.Rotation);
-	SetPosition(currState.X, currState.Y, currState.Z);
+	bool res = _needs_update;
+	_needs_update = false;
+	return res;
 }

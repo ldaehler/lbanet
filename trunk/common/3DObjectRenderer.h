@@ -23,40 +23,48 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#if !defined(__LbaNetModel_1_TextActor_h)
-#define __LbaNetModel_1_TextActor_h
-
-#include "ActivableActor.h"
+#if !defined(__LbaNetModel_1_3DObjectRenderer_h)
+#define __LbaNetModel_1_3DObjectRenderer_h
 
 
 /***********************************************************************
- * Module:  TextActor.h
+ * Module:  3DObjectRenderer.h
  * Author:  vivien
- * Modified: lundi 27 juillet 2009 14:53:50
- * Purpose: Declaration of the class Actor
- *********************************************************************/
-class TextActor : public ActivableActor
+ * Modified: mercredi 15 juillet 2009 13:34:13
+ * Purpose: Declaration of the class 3DObjectRenderer
+ **********************************************************************/
+class D3ObjectRenderer
 {
 public:
 	//! constructor
-	TextActor(float activationdistance, long textid, int activationtype);
+   D3ObjectRenderer();
 
-	//! destructor
-	virtual ~TextActor();
+   //! destructor
+   virtual ~D3ObjectRenderer();
 
-	//!accessors
-	long GetTextId()
-	{return _textid;}
+   //! show object
+   void Show(void);
 
-	void SetTextId(long id)
-	{_textid = id;}
+   //! hide object
+   void Hide(void);
+
+   //! check if object is visible
+   bool IsVisible(void)
+   {return Visible;}
+
+   //! render object
+   virtual void Render() = 0;
+
+	// do all check to be done when idle
+	virtual int Process(double tnow, float tdiff) = 0;
+
+	//! called to reload element when resizing screen
+	virtual void Reload(){}
+	//! cleanup
+	virtual void CleanUp(){}
 
 protected:
-	//! process activation
-	virtual void ProcessActivation(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation);
-
-private:
-	long _textid;
+   bool Visible;
 };
 
 #endif

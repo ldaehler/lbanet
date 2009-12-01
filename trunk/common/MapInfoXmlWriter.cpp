@@ -35,8 +35,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "FloorSwitch.h"
 #include "AreaSwitch.h"
 #include "GameEvents.h"
-#include "LiftActor.h"
+#include "ScriptableActor.h"
 #include "HurtArea.h"
+#include "NPCActor.h"
+#include "ScriptedZoneActor.h"
 
 #include <fstream>
 
@@ -342,6 +344,7 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 					TextActor * tmpa = static_cast<TextActor *>(it->second);
 					act->SetDoubleAttribute("activationdistance", tmpa->GetActivationDistance());
 					act->SetAttribute("textid", tmpa->GetTextId());
+					act->SetAttribute("activationtype", tmpa->GetActivationType());
 				}
 			}
 			break;
@@ -355,6 +358,7 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 					act->SetDoubleAttribute("deltaY", tmpa->GetDY());
 					act->SetDoubleAttribute("deltaZ", tmpa->GetDZ());
 					act->SetAttribute("direction", tmpa->GetDir());
+					act->SetAttribute("activationtype", tmpa->GetActivationType());
 				}
 			}
 			break;
@@ -368,6 +372,7 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 					act->SetDoubleAttribute("deltaY", tmpa->GetDY());
 					act->SetDoubleAttribute("deltaZ", tmpa->GetDZ());
 					act->SetAttribute("direction", tmpa->GetDir());
+					act->SetAttribute("activationtype", tmpa->GetActivationType());
 				}
 			}
 			break;
@@ -401,6 +406,7 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 					act->SetDoubleAttribute("zonesizeX", tmpa->GetZoneX());
 					act->SetDoubleAttribute("zonesizeY", tmpa->GetZoneY());
 					act->SetDoubleAttribute("zonesizeZ", tmpa->GetZoneZ());
+					act->SetAttribute("activationtype", tmpa->GetActivationType());
 
 					const std::vector<ItemGroup> & lootlist = tmpa->GetLootList();
 					for(size_t cci=0; cci<lootlist.size(); ++cci)
@@ -428,6 +434,7 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 					UpExitActor * tmpa = static_cast<UpExitActor *>(it->second);
 					act->SetDoubleAttribute("activationdistance", tmpa->GetActivationDistance());
 					act->SetAttribute("direction", tmpa->GetDir());
+					act->SetAttribute("activationtype", tmpa->GetActivationType());
 				}
 			}
 			break;
@@ -437,6 +444,7 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 				{
 					SwitchActor * tmpa = static_cast<SwitchActor *>(it->second);
 					act->SetDoubleAttribute("activationdistance", tmpa->GetActivationDistance());
+					act->SetAttribute("activationtype", tmpa->GetActivationType());
 				}
 			}
 			break;
@@ -459,6 +467,7 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 					act->SetDoubleAttribute("zonesizeX", tmpa->GetZoneX());
 					act->SetDoubleAttribute("zonesizeY", tmpa->GetZoneY());
 					act->SetDoubleAttribute("zonesizeZ", tmpa->GetZoneZ());
+					act->SetAttribute("activationtype", tmpa->GetActivationType());
 				}
 			}
 			break;
@@ -470,7 +479,7 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 					TiXmlElement * scripts = new TiXmlElement( "scripts" );
 					act->LinkEndChild(scripts);
 
-					LiftActor * tmpa = static_cast<LiftActor *>(it->second);
+					ScriptableActor * tmpa = static_cast<ScriptableActor *>(it->second);
 					const std::vector<PlayerScriptPart> & scriptsV = tmpa->GetScripts();
 					for(size_t cci=0; cci<scriptsV.size(); ++cci)
 					{
@@ -501,6 +510,63 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 			break;
 
 
+			case 12:	//NPC actor class
+			{
+				{
+					NPCActor * tmpa = static_cast<NPCActor *>(it->second);
+					act->SetAttribute("NPCType", tmpa->GetNPCType());
+					act->SetDoubleAttribute("activationdistance", tmpa->GetActivationDistance());
+					act->SetAttribute("Name", tmpa->GetName());
+
+					TiXmlElement * scripts = new TiXmlElement( "scripts" );
+					act->LinkEndChild(scripts);
+
+					const std::vector<PlayerScriptPart> & scriptsV = tmpa->GetScripts();
+					for(size_t cci=0; cci<scriptsV.size(); ++cci)
+					{
+						TiXmlElement * script = new TiXmlElement( "script" );
+						scripts->LinkEndChild(script);
+
+						script->SetAttribute("type", scriptsV[cci].Type);
+						script->SetDoubleAttribute("ValueA", scriptsV[cci].ValueA);
+						script->SetDoubleAttribute("ValueB", scriptsV[cci].ValueB);
+						script->SetDoubleAttribute("ValueC", scriptsV[cci].ValueC);
+						script->SetDoubleAttribute("Speed", scriptsV[cci].Speed);
+						script->SetDoubleAttribute("Sound", scriptsV[cci].Sound);
+						script->SetDoubleAttribute("Animation", scriptsV[cci].Animation);
+					}
+				}
+			}
+			break;
+
+
+			case 13:	//scripted zone actor
+			{
+				{
+					ScriptedZoneActor * tmpa = static_cast<ScriptedZoneActor *>(it->second);
+					act->SetDoubleAttribute("zonesizeX", tmpa->GetZoneX());
+					act->SetDoubleAttribute("zonesizeY", tmpa->GetZoneY());
+					act->SetDoubleAttribute("zonesizeZ", tmpa->GetZoneZ());
+					act->SetAttribute("activationtype", tmpa->GetActivationType());
+
+					TiXmlElement * scripts = new TiXmlElement( "scripts" );
+					act->LinkEndChild(scripts);
+					const std::vector<PlayerScriptPart> & scriptsV = tmpa->GetScripts();
+					for(size_t cci=0; cci<scriptsV.size(); ++cci)
+					{
+						TiXmlElement * script = new TiXmlElement( "script" );
+						scripts->LinkEndChild(script);
+
+						script->SetAttribute("type", scriptsV[cci].Type);
+						script->SetDoubleAttribute("ValueA", scriptsV[cci].ValueA);
+						script->SetDoubleAttribute("ValueB", scriptsV[cci].ValueB);
+						script->SetDoubleAttribute("ValueC", scriptsV[cci].ValueC);
+						script->SetDoubleAttribute("Speed", scriptsV[cci].Speed);
+						script->SetDoubleAttribute("Sound", scriptsV[cci].Sound);
+					}
+				}
+			}
+			break;
 		}
 	}
 

@@ -40,8 +40,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /***********************************************************
 	Constructor
 ***********************************************************/
-UpExitActor::UpExitActor(float activationdistance, int direction)
-: _direction(direction), ActivableActor(activationdistance)
+UpExitActor::UpExitActor(float activationdistance, int direction, int activationtype)
+: _direction(direction), ActivableActor(activationdistance, activationtype)
 {
 
 }

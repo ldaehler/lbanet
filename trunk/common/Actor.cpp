@@ -24,10 +24,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include "Actor.h"
+#include "3DObjectRenderer.h"
 
 #ifndef _LBANET_SERVER_SIDE_
 #include "TextWritter.h"
-#include "3DObjectRenderer.h"
 #include <windows.h>    // Header File For Windows
 #include <GL/gl.h>      // Header File For The OpenGL32 Library
 #endif
@@ -43,7 +43,8 @@ Actor::Actor()
 	_VelocityX(0), _VelocityY(0), _VelocityZ(0), _movable(false),
 	_sizeX(0),_sizeY(0), _sizeZ(0), _visible(true), _outputsignal(-1),
 	_attachedsound(-1), _renderertype(0),
-	_AddedVelocityX(0), _AddedVelocityY(0), _AddedVelocityZ(0), _signaler(NULL)
+	_AddedVelocityX(0), _AddedVelocityY(0), _AddedVelocityZ(0), 
+	_signaler(NULL)
 {
 
 }
@@ -53,10 +54,8 @@ Actor::Actor()
 ***********************************************************/
 Actor::~Actor()
 {
-#ifndef _LBANET_SERVER_SIDE_
 	if(_Renderer)
 		delete _Renderer;
-#endif
 }
 
 /***********************************************************
@@ -92,11 +91,8 @@ void Actor::Render(int RoomCut)
 ***********************************************************/
 int Actor::Process(double tnow, float tdiff)
 {
-#ifndef _LBANET_SERVER_SIDE_
 	if(_Renderer)
 		return _Renderer->Process(tnow, tdiff);
-#endif
-
 	return 0;
 }
 
@@ -108,10 +104,8 @@ void Actor::Show(void)
 {
 	_visible = true;
 
-#ifndef _LBANET_SERVER_SIDE_
 	if(_Renderer)
 		return _Renderer->Show();
-#endif
 }
 
 /***********************************************************
@@ -121,10 +115,8 @@ void Actor::Hide(void)
 {
 	_visible = false;
 
-#ifndef _LBANET_SERVER_SIDE_
 	if(_Renderer)
 		return _Renderer->Hide();
-#endif
 }
 
 
@@ -150,12 +142,10 @@ SetRenderer()
 ***********************************************************/
 void Actor::SetRenderer(D3ObjectRenderer* renderer)
 {
-#ifndef _LBANET_SERVER_SIDE_
 	if(_Renderer)
 		delete _Renderer;
 
 	_Renderer = renderer;
-#endif
 }
 
 
@@ -182,10 +172,8 @@ called to reload element when resizing screen
 ***********************************************************/
 void Actor::Reload()
 {
-#ifndef _LBANET_SERVER_SIDE_
 	if(_Renderer)
 		_Renderer->Reload();
-#endif
 }
 
 /***********************************************************
@@ -193,10 +181,8 @@ cleanup
 ***********************************************************/
 void Actor::CleanUp()
 {
-#ifndef _LBANET_SERVER_SIDE_
 	if(_Renderer)
 		_Renderer->CleanUp();
-#endif
 }
 
 
@@ -313,4 +299,45 @@ void Actor::SendSignal(long signal, const std::vector<long> &targets)
 {
 	if(targets.size() > 0 && _signaler)
 		_signaler->SendSignal(signal, targets);
+}
+
+
+
+/***********************************************************
+update actor position in the scene
+***********************************************************/
+void Actor::UpdatePosition(float  deltaposX, float  deltaposY, float  deltaposZ, float tdiff)
+{
+	SetPosition(GetPosX() + (float)deltaposX, GetPosY() + (float)deltaposY, GetPosZ() + (float)deltaposZ);
+
+	std::vector<Actor *>::iterator itaa = _attachedActors.begin();
+	std::vector<Actor *>::iterator endaa = _attachedActors.end();
+	for(;itaa != endaa; ++itaa)
+		(*itaa)->SetAddedVelocity((float)(deltaposX/tdiff), (float)(deltaposY/tdiff), (float)(deltaposZ/tdiff));
+}
+
+
+/***********************************************************
+set actor position in the scene
+***********************************************************/
+void Actor::SetPosition(float  posX, float  posY, float  posZ)
+{
+	std::vector<Actor *>::iterator itaa = _attachedActors.begin();
+	std::vector<Actor *>::iterator endaa = _attachedActors.end();
+	for(;itaa != endaa; ++itaa)
+		(*itaa)->SetPosition(	(*itaa)->GetPosX() + _posX-posX, 
+								(*itaa)->GetPosY() + _posY-posY, 
+								(*itaa)->GetPosZ() + _posZ-posZ);
+
+
+	_posX = posX;
+	_posY = posY;
+	_posZ = posZ;
+
+	if(_posX < -10)
+		_posX = -10;
+	if(_posY < -10)
+		_posY = -10;
+	if(_posZ < -10)
+		_posZ = -10;
 }

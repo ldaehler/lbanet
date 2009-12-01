@@ -36,17 +36,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "SwitchActor.h"
 #include "FloorSwitch.h"
 #include "AreaSwitch.h"
-#include "LiftActor.h"
+#include "ScriptableActor.h"
 #include "GameEvents.h"
 #include "SignalerBase.h"
 #include "HurtArea.h"
 #include "LivingActor.h"
+#include "NPCActor.h"
+#include "ScriptedZoneActor.h"
+#include "3DObjectRenderer.h"
 
 #ifndef _LBANET_SERVER_SIDE_
-#include "3DObjectRenderer.h"
 #include "SpriteRenderer.h"
 #include "AviVideoRenderer.h"
 #include "ms3d.h"
+#include "CharacterRenderer.h"
+#else
+#include "ServerCharacterRenderer.h"
 #endif
 
 
@@ -398,10 +403,11 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 			pElem->QueryValueAttribute("outputsignal", &outputsignal);
 			pElem->QueryValueAttribute("attachedsound", &attachedsound);
 
-#ifndef _LBANET_SERVER_SIDE_
+
 			if(pElem->QueryValueAttribute("renderertype", &renderertype) == TIXML_SUCCESS)
 				if(renderertarget.size() > 0)
 				{
+#ifndef _LBANET_SERVER_SIDE_
 					//renderer = new SpriteRenderer();
 					switch(renderertype)
 					{
@@ -448,9 +454,32 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 								}
 							}
 						break;
+						case 3: // character renderer
+							{
+								if(renderertarget.size() > 1)
+								{
+									CharacterRenderer * tmp = new CharacterRenderer(AnimationSpeed);
+									tmp->changeAnimEntity(renderertarget[0], renderertarget[1]);
+									tmp->setActorAnimation(0);
+									renderer = tmp;
+								}
+							}
+						break;
 					}
-				}
+#else
+					if(renderertype == 3)
+					{
+						if(renderertarget.size() > 1)
+						{
+							ServerCharacterRenderer * tmp = new ServerCharacterRenderer(AnimationSpeed);
+							tmp->changeAnimEntity(renderertarget[0], renderertarget[1]);
+							tmp->setActorAnimation(0);
+							renderer = tmp;
+						}
+					}
 #endif
+				}
+
 
 			Actor * act;
 			switch(type)
@@ -464,7 +493,9 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 					float activationdistance;
 					pElem->QueryValueAttribute("activationdistance", &activationdistance);
 					pElem->QueryValueAttribute("textid", &textid);
-					act = new TextActor(activationdistance, textid);
+					int activationtype=1;
+					pElem->QueryValueAttribute("activationtype", &activationtype);
+					act = new TextActor(activationdistance, textid, activationtype);
 				}
 				break;
 				case 2:	//ladder actor class
@@ -477,7 +508,9 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 					pElem->QueryValueAttribute("deltaY", &deltaY);
 					pElem->QueryValueAttribute("deltaZ", &deltaZ);
 					pElem->QueryValueAttribute("direction", &direction);
-					act = new LadderActor(activationdistance, deltaX, deltaY, deltaZ, direction);
+					int activationtype=1;
+					pElem->QueryValueAttribute("activationtype", &activationtype);
+					act = new LadderActor(activationdistance, deltaX, deltaY, deltaZ, direction, activationtype);
 				}
 				break;
 				case 3:	//exit actor class
@@ -490,7 +523,9 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 					pElem->QueryValueAttribute("deltaY", &deltaY);
 					pElem->QueryValueAttribute("deltaZ", &deltaZ);
 					pElem->QueryValueAttribute("direction", &direction);
-					act = new ExitActor(activationdistance, deltaX, deltaY, deltaZ, direction);
+					int activationtype=1;
+					pElem->QueryValueAttribute("activationtype", &activationtype);
+					act = new ExitActor(activationdistance, deltaX, deltaY, deltaZ, direction, activationtype);
 				}
 				break;
 
@@ -538,7 +573,9 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 					pElem->QueryValueAttribute("zonesizeX", &zoneSizeX);
 					pElem->QueryValueAttribute("zonesizeY", &zoneSizeY);
 					pElem->QueryValueAttribute("zonesizeZ", &zoneSizeZ);
-					ContainerActor *tmpC = new ContainerActor(zoneSizeX, zoneSizeY, zoneSizeZ);
+					int activationtype=1;
+					pElem->QueryValueAttribute("activationtype", &activationtype);
+					ContainerActor *tmpC = new ContainerActor(zoneSizeX, zoneSizeY, zoneSizeZ, activationtype);
 
 					// get the contained items
 					std::vector<ItemGroup> items;
@@ -576,7 +613,9 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 					float activationdistance;
 					pElem->QueryValueAttribute("activationdistance", &activationdistance);
 					pElem->QueryValueAttribute("direction", &direction);
-					act = new UpExitActor(activationdistance, direction);
+					int activationtype=1;
+					pElem->QueryValueAttribute("activationtype", &activationtype);
+					act = new UpExitActor(activationdistance, direction, activationtype);
 				}
 				break;
 
@@ -584,7 +623,9 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 				{
 					float activationdistance;
 					pElem->QueryValueAttribute("activationdistance", &activationdistance);
-					act = new SwitchActor(activationdistance);
+					int activationtype=1;
+					pElem->QueryValueAttribute("activationtype", &activationtype);
+					act = new SwitchActor(activationdistance, activationtype);
 				}
 				break;
 
@@ -604,31 +645,42 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 					pElem->QueryValueAttribute("zonesizeX", &zoneSizeX);
 					pElem->QueryValueAttribute("zonesizeY", &zoneSizeY);
 					pElem->QueryValueAttribute("zonesizeZ", &zoneSizeZ);
-					act = new FloorSwitch(zoneSizeX, zoneSizeY, zoneSizeZ);
+					int activationtype=1;
+					pElem->QueryValueAttribute("activationtype", &activationtype);
+					act = new FloorSwitch(zoneSizeX, zoneSizeY, zoneSizeZ, activationtype);
 				}
 				break;
 
 				case 10:	//lift actor class
 				{
 					std::vector<PlayerScriptPart> scripts;
-					TiXmlElement* pElem2=pElem->FirstChild("scripts")->FirstChildElement();
-					for( pElem2; pElem2; pElem2=pElem2->NextSiblingElement())
+					TiXmlNode* pNode2=pElem->FirstChild("scripts");
+					if(pNode2)
 					{
-						PlayerScriptPart ps;
-						ps.ValueA = -1;
-						ps.ValueB = -1;
-						ps.ValueC = -1;
-						ps.Sound = -1;
-						ps.Speed = -1;
-						pElem2->QueryValueAttribute("type", &ps.Type);
-						pElem2->QueryValueAttribute("ValueA", &ps.ValueA);
-						pElem2->QueryValueAttribute("ValueB", &ps.ValueB);
-						pElem2->QueryValueAttribute("ValueC", &ps.ValueC);
-						pElem2->QueryValueAttribute("Speed", &ps.Speed);
-						pElem2->QueryValueAttribute("Sound", &ps.Sound);
-						scripts.push_back(ps);
+						TiXmlElement*pElem2=pNode2->FirstChildElement();
+						for( pElem2; pElem2; pElem2=pElem2->NextSiblingElement())
+						{
+							PlayerScriptPart ps;
+							ps.ValueA = -1;
+							ps.ValueB = -1;
+							ps.ValueC = -1;
+							ps.Sound = -1;
+							ps.SoundNum = -1;
+							ps.Speed = -1;
+							ps.Animation = -1;
+
+							pElem2->QueryValueAttribute("type", &ps.Type);
+							pElem2->QueryValueAttribute("ValueA", &ps.ValueA);
+							pElem2->QueryValueAttribute("ValueB", &ps.ValueB);
+							pElem2->QueryValueAttribute("ValueC", &ps.ValueC);
+							pElem2->QueryValueAttribute("Speed", &ps.Speed);
+							pElem2->QueryValueAttribute("Sound", &ps.Sound);
+							pElem2->QueryValueAttribute("SoundNum", &ps.SoundNum);
+							pElem2->QueryValueAttribute("Animation", &ps.Animation);
+							scripts.push_back(ps);
+						}
 					}
-					act = new LiftActor(scripts);
+					act = new ScriptableActor(scripts, true);
 				}
 				break;
 
@@ -646,16 +698,82 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 
 				case 12:	//NPC class
 				{
-					LivingActor *tmpL = new LivingActor(AnimationSpeed);
-					tmpL->DisplayName(false);
+					int npctype=1;
+					float activationdistance=10;//6;
+					pElem->QueryValueAttribute("activationdistance", &activationdistance);
+					pElem->QueryValueAttribute("NPCType", &npctype);
+					const char *namea = pElem->Attribute("Name");
+					std::string NameNPC = "NPC";
+					if(namea)
+						NameNPC = namea;
 
-					if(renderertarget.size() > 1)
+					std::vector<PlayerScriptPart> scripts;
+					TiXmlNode* pNode2=pElem->FirstChild("scripts");
+					if(pNode2)
 					{
-						tmpL->changeAnimEntity(renderertarget[0], renderertarget[1]);
-						tmpL->setActorAnimation(0);
+						TiXmlElement*pElem2=pNode2->FirstChildElement();
+						for( pElem2; pElem2; pElem2=pElem2->NextSiblingElement())
+						{
+							PlayerScriptPart ps;
+							ps.ValueA = -1;
+							ps.ValueB = -1;
+							ps.ValueC = -1;
+							ps.Sound = -1;
+							ps.Speed = -1;
+							ps.SoundNum = -1;
+							ps.Animation = -1;
+							pElem2->QueryValueAttribute("type", &ps.Type);
+							pElem2->QueryValueAttribute("ValueA", &ps.ValueA);
+							pElem2->QueryValueAttribute("ValueB", &ps.ValueB);
+							pElem2->QueryValueAttribute("ValueC", &ps.ValueC);
+							pElem2->QueryValueAttribute("Speed", &ps.Speed);
+							pElem2->QueryValueAttribute("Sound", &ps.Sound);
+							pElem2->QueryValueAttribute("SoundNum", &ps.SoundNum);
+							pElem2->QueryValueAttribute("Animation", &ps.Animation);
+							scripts.push_back(ps);
+						}
 					}
+					act = new NPCActor(scripts, false, npctype, activationdistance, NameNPC);
+				}
+				break;
 
-					act = tmpL;
+
+				case 13: //scripted zone actor class
+				{
+					float zoneSizeX=0, zoneSizeY=0, zoneSizeZ=0;
+					pElem->QueryValueAttribute("zonesizeX", &zoneSizeX);
+					pElem->QueryValueAttribute("zonesizeY", &zoneSizeY);
+					pElem->QueryValueAttribute("zonesizeZ", &zoneSizeZ);
+					int activationtype=1;
+					pElem->QueryValueAttribute("activationtype", &activationtype);
+
+					std::vector<PlayerScriptPart> scripts;
+					TiXmlNode* pNode2=pElem->FirstChild("scripts");
+					if(pNode2)
+					{
+						TiXmlElement*pElem2=pNode2->FirstChildElement();
+						for( pElem2; pElem2; pElem2=pElem2->NextSiblingElement())
+						{
+							PlayerScriptPart ps;
+							ps.ValueA = -1;
+							ps.ValueB = -1;
+							ps.ValueC = -1;
+							ps.Sound = -1;
+							ps.Speed = -1;
+							ps.SoundNum = -1;
+							ps.Animation = -1;
+							pElem2->QueryValueAttribute("type", &ps.Type);
+							pElem2->QueryValueAttribute("ValueA", &ps.ValueA);
+							pElem2->QueryValueAttribute("ValueB", &ps.ValueB);
+							pElem2->QueryValueAttribute("ValueC", &ps.ValueC);
+							pElem2->QueryValueAttribute("Speed", &ps.Speed);
+							pElem2->QueryValueAttribute("Sound", &ps.Sound);
+							pElem2->QueryValueAttribute("SoundNum", &ps.SoundNum);
+							pElem2->QueryValueAttribute("Animation", &ps.Animation);
+							scripts.push_back(ps);
+						}
+					}
+					act = new ScriptedZoneActor(zoneSizeX, zoneSizeY, zoneSizeZ, scripts, activationtype);
 				}
 				break;
 			}
@@ -669,8 +787,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 			act->SetDepthMask(depthmask);
 			act->SetMovable(movable);
 
-			if(type != 12)
-				act->SetRenderer(renderer);
+			act->SetRenderer(renderer);
 
 			act->SetType(type);
 			act->SetOutputSignal(outputsignal, stargets);
