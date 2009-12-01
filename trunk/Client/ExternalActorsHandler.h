@@ -110,6 +110,8 @@ protected:
 	std::map<long, Actor *> _actors;
 	PhysicHandler * _pH;
 
+	bool _needupdate;
+
 };
 
 #endif

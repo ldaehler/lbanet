@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	Constructor
 ***********************************************************/
 ExternalActorsHandler::ExternalActorsHandler()
-: _pH(NULL)
+: _pH(NULL), _needupdate(false)
 {
 
 }
@@ -50,6 +50,9 @@ render object
 ***********************************************************/
 void ExternalActorsHandler::Render(int RoomCut)
 {
+	if(_needupdate)
+		return;
+
 	std::map<long, Actor *>::iterator it =  _actors.begin();
 	std::map<long, Actor *>::iterator end =  _actors.end();
 	for(; it != end; ++it)
@@ -110,6 +113,7 @@ void ExternalActorsHandler::SetActors(const std::map<long, Actor *> & actors)
 {
 	Cleanup();
 	_actors = actors;
+	_needupdate = true;
 }
 
 
@@ -307,6 +311,8 @@ void ExternalActorsHandler::UpdateActorStates(const std::vector<ActorStateInfo> 
 		if(itmap != _actors.end())
 			itmap->second->Setstate(*it);
 	}
+
+	_needupdate = false;
 }
 
 

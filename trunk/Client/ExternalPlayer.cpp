@@ -65,6 +65,11 @@ void ExternalPlayer::Update(const LbaNet::ActorInfo & ainfo)
 		_renderer->DisplayName(ainfo.DisplayName);
 		_renderer->SetName(ainfo.Name);
 
+		if(ainfo.Visible)
+			_renderer->Show();
+		else
+			_renderer->Hide();
+
 
 		_renderer->changeAnimEntity(ainfo.Model, ainfo.Body);
 		_renderer->setActorAnimation(ainfo.Animation);

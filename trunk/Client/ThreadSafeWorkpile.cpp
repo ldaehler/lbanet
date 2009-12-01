@@ -430,7 +430,7 @@ bool ThreadSafeWorkpile::ActorStatesUpdated(std::vector<ActorStateInfo> & newsta
 	if(m_new_actor_state)
 	{
 		res = true;
-		newstate = m_actors_states;
+		newstate.swap(m_actors_states);
 		m_new_actor_state = false;
 	}
 
@@ -919,4 +919,43 @@ void ThreadSafeWorkpile::GetDestroyedItems(std::vector<long> & destroyedItems)
 	destroyedItems.clear();
 	IceUtil::Mutex::Lock lock(m_mutex_destroy_items);
 	destroyedItems.swap(m_destroyed_items);
+}
+
+
+/***********************************************************
+set targetedacotr
+***********************************************************/
+void ThreadSafeWorkpile::SetTargetedActor(long actorid)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_targeted_actors);
+	m_targetedactors.push_back(actorid);
+}
+
+/***********************************************************
+get destroyed items
+***********************************************************/
+void ThreadSafeWorkpile::GetTargetedActors(std::vector<long> & targetedactors)
+{
+	targetedactors.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_targeted_actors);
+	targetedactors.swap(m_targetedactors);
+}
+
+/***********************************************************
+set untargetedacotr
+***********************************************************/
+void ThreadSafeWorkpile::SetUntargetedActor(long actorid)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_targeted_actors);
+	m_untargetedactors.push_back(actorid);
+}
+
+/***********************************************************
+get destroyed items
+***********************************************************/
+void ThreadSafeWorkpile::GetUntargetedActors(std::vector<long> & untargetedactors)
+{
+	untargetedactors.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_targeted_actors);
+	untargetedactors.swap(m_untargetedactors);
 }

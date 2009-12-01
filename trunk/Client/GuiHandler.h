@@ -116,6 +116,9 @@ public:
 	// refresh options
 	void RefreshOption();
 
+	// show dialog with NPC
+	void ShowDialog(long ActorId, const std::string &ActorName, bool Show);
+
 protected:
 	//! inject time to the GUI
 	void inject_time_pulse();

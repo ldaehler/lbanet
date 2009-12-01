@@ -38,6 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ContainerBox.h"
 #include "LetterEditorBox.h"
 #include "LetterViewerBox.h"
+#include "DialogBox.h"
 
 namespace CEGUI
 {
@@ -138,6 +139,9 @@ public:
 	// display inventory
 	void ShowInventory();
 
+	// show dialog with NPC
+	void ShowDialog(long ActorId, const std::string &ActorName, bool Show);
+
 private:
 	ChatBox			_cb;
 	CommunityBox	_comb;
@@ -147,6 +151,7 @@ private:
 	ContainerBox	_containerb;
 	LetterEditorBox _lettereditb;
 	LetterViewerBox _letterviewb;
+	NPCDialogBox	_dialogb;
 
 	EditorBox *		_editb;
 };

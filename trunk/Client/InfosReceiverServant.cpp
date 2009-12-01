@@ -159,6 +159,15 @@ void InfosReceiverServant::UpdateActorState(const LbaNet::ActorUpdateInfo &newin
 	asi.Z = newinfo.Z;
 	asi.Rotation = newinfo.Rotation;
 
+	// used for NPC
+	asi.Visible = newinfo.Visible;
+
+	LbaNet::TargetedSeq::const_iterator ittar = newinfo.Targets.begin();
+	LbaNet::TargetedSeq::const_iterator endtar = newinfo.Targets.end();
+	for(; ittar != endtar; ++ittar)
+		asi.Targets.push_back(std::make_pair<long, long>(ittar->TargetActorId, ittar->TargetPlayerId));
+
+
 	ThreadSafeWorkpile::getInstance()->UpdateSingleActorState(asi);
 }
 
