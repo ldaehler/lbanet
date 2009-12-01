@@ -33,8 +33,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /***********************************************************
 	Constructor
 ***********************************************************/
-TextActor::TextActor(float activationdistance, long textid)
-: _textid(textid), ActivableActor(activationdistance)
+TextActor::TextActor(float activationdistance, long textid, int activationtype)
+: _textid(textid), ActivableActor(activationdistance, activationtype)
 {
 
 }

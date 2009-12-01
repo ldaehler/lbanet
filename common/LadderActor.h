@@ -39,7 +39,8 @@ class LadderActor : public ActivableActor
 {
 public:
 	//! constructor
-	LadderActor(float activationdistance, float deltaX, float deltaY, float deltaZ, int direction);
+	LadderActor(float activationdistance, float deltaX, float deltaY, float deltaZ, int direction, 
+					int activationtype);
 
 	//! destructor
 	virtual ~LadderActor();

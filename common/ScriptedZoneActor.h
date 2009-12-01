@@ -23,59 +23,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#if !defined(__LbaNetModel_1_ZoneActivableActor_h)
-#define __LbaNetModel_1_ZoneActivableActor_h
+#if !defined(__LbaNetModel_1_ScriptedZoneActor_h)
+#define __LbaNetModel_1_ScriptedZoneActor_h
 
-#include "Actor.h"
-
+#include "ZoneActivableActor.h"
+#include "GameEvents.h"
 
 /***********************************************************************
- * Module:  ZoneActivableActor.h
+ * Module:  ScriptedZoneActor.h
  * Author:  vivien
  * Modified: lundi 27 juillet 2009 14:53:50
  * Purpose: Declaration of the class Actor
  *********************************************************************/
-class ZoneActivableActor : public Actor
+class ScriptedZoneActor : public ZoneActivableActor
 {
 public:
 	//! constructor
-	ZoneActivableActor(float ZoneSizeX, float ZoneSizeY, float ZoneSizeZ, int activationtype);
+	ScriptedZoneActor(float ZoneSizeX, float ZoneSizeY, float ZoneSizeZ, 
+						const std::vector<PlayerScriptPart> & scripts, int activationtype);
 
 	//! destructor
-	virtual ~ZoneActivableActor();
+	virtual ~ScriptedZoneActor();
 
-	//! activate an actor
-	virtual bool Activate(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation,
-								int actionType, bool DirectActivation=true);
 
-	//! render editor
-	void RenderEditor();
+	//! process zone activation
+	virtual void ProcessActivation(float PlayerPosX, float PlayerPosY, float PlayerPosZ,
+										float PlayerRotation);
 
-	//!accessors
-	float GetZoneX()
-	{return _ZoneSizeX;}
-	float GetZoneY()
-	{return _ZoneSizeY;}
-	float GetZoneZ()
-	{return _ZoneSizeZ;}
-	int GetActivationType()
-	{return _activationtype;}
+	//! accessor
+	std::vector<PlayerScriptPart> & GetScripts()
+	{return _scripts;}
 
-	void SetZoneX(float v)
-	{_ZoneSizeX = v;}
-	void SetZoneY(float v)
-	{_ZoneSizeY = v;}
-	void SetZoneZ(float v)
-	{_ZoneSizeZ = v;}
-	void SetActivationType(int type)
-	{_activationtype = type;}
-
-private:
-	float _ZoneSizeX;
-	float _ZoneSizeY;
-	float _ZoneSizeZ;
-
-	int _activationtype;
+protected:
+	std::vector<PlayerScriptPart>	_scripts;
 };
 
 #endif

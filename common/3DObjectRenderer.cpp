@@ -22,41 +22,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-
-#if !defined(__LbaNetModel_1_TextActor_h)
-#define __LbaNetModel_1_TextActor_h
-
-#include "ActivableActor.h"
+#include "3DObjectRenderer.h"
 
 
-/***********************************************************************
- * Module:  TextActor.h
- * Author:  vivien
- * Modified: lundi 27 juillet 2009 14:53:50
- * Purpose: Declaration of the class Actor
- *********************************************************************/
-class TextActor : public ActivableActor
+/***********************************************************
+constructor
+***********************************************************/
+D3ObjectRenderer::D3ObjectRenderer()
+: Visible(true)
 {
-public:
-	//! constructor
-	TextActor(float activationdistance, long textid, int activationtype);
+}
 
-	//! destructor
-	virtual ~TextActor();
 
-	//!accessors
-	long GetTextId()
-	{return _textid;}
+/***********************************************************
+destructor
+***********************************************************/
+D3ObjectRenderer::~D3ObjectRenderer()
+{
+}
 
-	void SetTextId(long id)
-	{_textid = id;}
+/***********************************************************
+show object
+***********************************************************/
+void D3ObjectRenderer::Show(void)
+{
+	Visible = true;
+}
 
-protected:
-	//! process activation
-	virtual void ProcessActivation(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation);
-
-private:
-	long _textid;
-};
-
-#endif
+/***********************************************************
+hide object
+***********************************************************/
+void D3ObjectRenderer::Hide(void)
+{
+	Visible = false;
+}

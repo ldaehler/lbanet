@@ -36,8 +36,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /***********************************************************
 	Constructor
 ***********************************************************/
-SwitchActor::SwitchActor(float activationdistance)
-: ActivableActor(activationdistance), _switchOn(false)
+SwitchActor::SwitchActor(float activationdistance, int activationtype)
+: ActivableActor(activationdistance, activationtype), _switchOn(false)
 {
 
 }

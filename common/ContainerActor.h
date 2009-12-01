@@ -43,7 +43,7 @@ class ContainerActor : public ZoneActivableActor
 {
 public:
 	//! constructor
-	ContainerActor(float ZoneSizeX, float ZoneSizeY, float ZoneSizeZ);
+	ContainerActor(float ZoneSizeX, float ZoneSizeY, float ZoneSizeZ, int activationtype);
 
 	//! destructor
 	virtual ~ContainerActor();

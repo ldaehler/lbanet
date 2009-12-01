@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#include "FloorSwitch.h"
+#include "ScriptedZoneActor.h"
 
 #ifndef _LBANET_SERVER_SIDE_
 #include "ThreadSafeWorkpile.h"
@@ -36,8 +36,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /***********************************************************
 	Constructor
 ***********************************************************/
-FloorSwitch::FloorSwitch(float ZoneSizeX, float ZoneSizeY, float ZoneSizeZ, int activationtype)
-: ZoneActivableActor(ZoneSizeX, ZoneSizeY, ZoneSizeZ, activationtype)
+ScriptedZoneActor::ScriptedZoneActor(float ZoneSizeX, float ZoneSizeY, float ZoneSizeZ, 
+										const std::vector<PlayerScriptPart> & scripts, int activationtype)
+: ZoneActivableActor(ZoneSizeX, ZoneSizeY, ZoneSizeZ, activationtype), _scripts(scripts)
 {
 
 }
@@ -46,7 +47,7 @@ FloorSwitch::FloorSwitch(float ZoneSizeX, float ZoneSizeY, float ZoneSizeZ, int 
 /***********************************************************
 	Destructor
 ***********************************************************/
-FloorSwitch::~FloorSwitch()
+ScriptedZoneActor::~ScriptedZoneActor()
 {
 
 }
@@ -55,55 +56,13 @@ FloorSwitch::~FloorSwitch()
 /***********************************************************
 process zone activation
 ***********************************************************/
-void FloorSwitch::ProcessActivation(float PlayerPosX, float PlayerPosY, float PlayerPosZ,
+void ScriptedZoneActor::ProcessActivation(float PlayerPosX, float PlayerPosY, float PlayerPosZ,
 	float PlayerRotation)
 {
 #ifndef _LBANET_SERVER_SIDE_
-	std::vector<PlayerScriptPart> script;
-
-	// play short switch animation
-	{
-	PlayerScriptPart anim1;
-	anim1.Type = 2;
-	anim1.Animation = 23;
-	anim1.ValueA = -1;
-	script.push_back(anim1);
-	}
-
-	{
-	PlayerScriptPart inform;
-	inform.Type = 3;
-	inform.ValueA = (float)GetId();
-	inform.ValueB = 3;	// event id
-	script.push_back(inform);
-	}
-
-	ThreadSafeWorkpile::getInstance()->AddEvent(new MainPlayerScriptedEvent(script));
+	ThreadSafeWorkpile::getInstance()->AddEvent(new MainPlayerScriptedEvent(_scripts));
 #endif
 }
 
 
-/***********************************************************
-	called on signal
-***********************************************************/
-bool FloorSwitch::OnSignal(long SignalNumber)
-{
-	if(SignalNumber == 3)	// animation finished signal
-	{
-		#ifndef _LBANET_SERVER_SIDE_
-		if(_attachedsound >= 0)
-		{
-			std::string soundp = DataLoader::getInstance()->GetSoundPath(_attachedsound);
-			if(soundp != "")
-				MusicHandler::getInstance()->PlaySample(soundp, 0);
-		}
-		#endif
-
-		SendSignal(_outputsignal, _targets);
-
-		return true;
-	}
-
-	return false;
-}
 

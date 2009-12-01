@@ -33,8 +33,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /***********************************************************
 	Constructor
 ***********************************************************/
-ActivableActor::ActivableActor(float activationdistance)
-: _activationdistance(activationdistance)
+ActivableActor::ActivableActor(float activationdistance, int activationtype)
+: _activationdistance(activationdistance), _activationtype(activationtype)
 {
 
 }
@@ -53,11 +53,14 @@ ActivableActor::~ActivableActor()
 activate an actor
 ***********************************************************/
 bool ActivableActor::Activate(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation,
-								bool DirectActivation)
+								int actionType, bool DirectActivation)
 {
 	float distX = _posX-PlayerPosX;
 	float distY = _posY-PlayerPosY;
 	float distZ = _posZ-PlayerPosZ;
+
+	if(_activationtype != actionType)
+		return false;
 
 	double distance = (distX * distX) + (distY * distY) + (distZ * distZ);
 	if(distance > _activationdistance)

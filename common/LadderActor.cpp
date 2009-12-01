@@ -40,8 +40,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /***********************************************************
 	Constructor
 ***********************************************************/
-LadderActor::LadderActor(float activationdistance, float deltaX, float deltaY, float deltaZ, int direction)
-: _deltaX(deltaX), _deltaY(deltaY), _deltaZ(deltaZ), _direction(direction), ActivableActor(activationdistance)
+LadderActor::LadderActor(float activationdistance, float deltaX, float deltaY, float deltaZ, int direction, int activationtype)
+: _deltaX(deltaX), _deltaY(deltaY), _deltaZ(deltaZ), _direction(direction), ActivableActor(activationdistance, activationtype)
 {
 
 }

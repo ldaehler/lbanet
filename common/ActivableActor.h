@@ -39,24 +39,30 @@ class ActivableActor : public Actor
 {
 public:
 	//! constructor
-	ActivableActor(float activationdistance);
+	ActivableActor(float activationdistance, int activationtype);
 
 	//! destructor
 	virtual ~ActivableActor();
 
 	//! activate an actor
 	virtual bool Activate(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation,
-								bool DirectActivation=true);
+								int actionType, bool DirectActivation=true);
 
 	//!accessors
 	float GetActivationDistance()
 	{return _activationdistance;}
+	int GetActivationType()
+	{return _activationtype;}
 
 	void SetActivationDistance(float ad)
 	{_activationdistance = ad;}
+	void SetActivationType(int type)
+	{_activationtype = type;}
 
 private:
 	float _activationdistance;
+
+	int _activationtype;
 };
 
 #endif

@@ -284,8 +284,15 @@ struct PlayerScriptPart
 {
 	int Type;	//0 = rotation - 1=translation - 2=animation - 3=inform targetA -
 				// 4=wait fo signal -5= wait number of ms
+				// 6= do a curve
+				// 7= hide - 8=show
+				// 9= change player stance
+				// 10= attach player to actor
+				// 11= detach player from actor
+
 	int Animation;
 	int Sound;
+	int SoundNum;
 	float ValueA;
 	float ValueB;
 	float ValueC;
@@ -328,6 +335,8 @@ public:
 //2 -> close door signal
 //3 -> animation finished signal
 //4 -> switch open/close door signal
+//6 to 10 -> reserved to inform main player of events
+
 class GameSignalvent : public GameEvent
 {
 public:
@@ -559,6 +568,30 @@ public:
 	{
 		_type = 23;	
 	}
+};
+
+
+
+/*
+************************************************************************************************************************
+*                                                  class DisplayDialogEvent
+*
+*	used to display NPC dialog
+************************************************************************************************************************
+*/
+class DisplayDialogEvent : public GameEvent
+{
+public:
+	//! constructor
+	DisplayDialogEvent(long ActorId, const std::string & ActorName, bool Show)
+		: _ActorId(ActorId), _ActorName(ActorName), _Show(Show)
+	{
+		_type = 24;	
+	}
+	
+	long _ActorId;
+	std::string _ActorName;
+	bool _Show;
 };
 
 #endif
