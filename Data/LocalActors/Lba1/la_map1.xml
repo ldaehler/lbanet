@@ -8,4 +8,17 @@
     <actor id="5" type="1" posX="54.999001" posY="0.000000" posZ="46.000000" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" activationdistance="6.000000" textid="59" />
     <actor id="6" type="5" posX="42.999001" posY="2.000000" posZ="9.999020" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" zonesizeX="0.999023" zonesizeY="4.996090" zonesizeZ="0.999023" />
     <actor id="7" type="6" posX="53.000000" posY="0.000000" posZ="46.000000" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="1" attachedsound="-1" signaltargets="8" activationdistance="6.000000" direction="180" />
+    <actor id="21" type="13" posX="53.500000" posY="6.000000" posZ="13.500000" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" zonesizeX="2.000000" zonesizeY="5.000000" zonesizeZ="2.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" activationtype="2">
+         <scripts> 
+            <script type="9" ValueA="4"/>
+            <script type="0" ValueA="0" Speed="0.1" Animation="3"/>            
+            <script type="4" ValueA="6" Animation="5"/> 
+            <script type="7" />
+            <script type="10" ValueA="14" />            
+            <script type="4" ValueA="7" /> 
+            <script type="11" ValueA="14" />
+            <script type="1" ValueA="6.1" ValueB="1.0" ValueC="44.5" Speed="0.05"/>           
+            <script type="8" />
+       </scripts>   
+    </actor>  
 </actors>
