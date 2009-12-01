@@ -6,11 +6,47 @@
     <actor id="11" type="4" posX="32.500000" posY="6.000000" posZ="40.499992" sizeX="1.500000" sizeY="4.999998" sizeZ="0.500000" rotation="0.000000" passable="0" depthmask="1" movable="0" outputsignal="1" attachedsound="-1" signaltargets="10" renderertype="0" renderertarget="18" zoneSizeX="2.000000" zoneSizeY="5.000000" zoneSizeZ="2.500000" locked="0" keyid="0" hide="0" destroykey="0" OpenTransX="3.000000" OpenTransY="0.000000" OpenTransZ="0.000000" OpenTransSpeedX="0.004000" OpenTransSpeedY="0.000000" OpenTransSpeedZ="0.000000" />
     <actor id="12" type="4" posX="36.000000" posY="2.000000" posZ="14.500019" sizeX="0.500000" sizeY="8.000000" sizeZ="1.250000" rotation="0.000000" passable="0" depthmask="1" movable="0" outputsignal="1" attachedsound="36" signaltargets="13" renderertype="0" renderertarget="17" zoneSizeX="2.000000" zoneSizeY="8.000000" zoneSizeZ="1.450000" locked="0" keyid="0" hide="0" destroykey="0" OpenTransX="-0.200000" OpenTransY="0.000000" OpenTransZ="-3.000000" OpenTransSpeedX="-0.004000" OpenTransSpeedY="0.000000" OpenTransSpeedZ="-0.004000" />
     <actor id="13" type="4" posX="36.000000" posY="2.000000" posZ="17.000010" sizeX="0.500000" sizeY="8.000000" sizeZ="1.250000" rotation="0.000000" passable="0" depthmask="1" movable="0" outputsignal="1" attachedsound="-1" signaltargets="12" renderertype="0" renderertarget="17" zoneSizeX="2.000000" zoneSizeY="8.000000" zoneSizeZ="1.450000" locked="0" keyid="0" hide="0" destroykey="0" OpenTransX="-0.200000" OpenTransY="0.000000" OpenTransZ="2.000000" OpenTransSpeedX="-0.004000" OpenTransSpeedY="0.000000" OpenTransSpeedZ="0.004000" />
-    <actor id="14" type="12" posX="10.000000" posY="6.000000" posZ="44.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="306.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="10,0" />
+    <actor id="14" type="10" posX="10.000000" posY="7.000000" posZ="45.000000" sizeX="2.000000" sizeY="5.000000" sizeZ="2.000000" rotation="90.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="10,0">
+        <scripts>         
+            <script type="1" ValueA="29.200000" ValueB="7.000000" ValueC="45.000000" Speed="0.005000" Sound="113.000000" Animation="1" /> 
+            <script type="3" ValueA="10" ValueB="1" />
+            <script type="3" ValueA="11" ValueB="1" /> 
+            <script type="6" ValueA="180.000000" ValueB="0.00500" Speed="0.1" Sound="113.000000" Animation="1" />
+            <script type="1" ValueA="32.000000" ValueB="7.000000" ValueC="39.700000" Speed="0.005000" Sound="113.000000" Animation="1" />
+            <script type="3" ValueA="10" ValueB="2" />
+            <script type="3" ValueA="11" ValueB="2" />            
+            <script type="6" ValueA="90.000000" ValueB="0.00500" Speed="0.1" Sound="113.000000" Animation="1" />           
+            <script type="1" ValueA="52.200000" ValueB="7.000000" ValueC="37.000000" Speed="0.005000" Sound="113.000000" Animation="1" />
+            <script type="6" ValueA="0.000000" ValueB="0.00500" Speed="0.1" Sound="113.000000" Animation="1" />            
+            <script type="5" ValueA="600.000000" Sound="113.000000" Animation="1"/>
+            <script type="1" ValueA="55.000000" ValueB="7.000000" ValueC="17.000000" Speed="0.0025000" Sound="113.000000" Animation="1" />
+            <script type="5" ValueA="1500.000000" Sound="66.000000" Animation="1" SoundNum="0" />
+            <script type="3" ValueA="-2" ValueB="6" /> 
+            <script type="1" ValueA="55.000000" ValueB="7.000000" ValueC="34.200000" Speed="0.005000" Sound="113.000000" Animation="1" />        
+            <script type="6" ValueA="270.000000" ValueB="0.00500" Speed="0.1" Sound="113.000000" Animation="1" />             
+            <script type="1" ValueA="34.700000" ValueB="7.000000" ValueC="37.000000" Speed="0.005000" Sound="113.000000" Animation="1" /> 
+            <script type="3" ValueA="10" ValueB="1" />
+            <script type="3" ValueA="11" ValueB="1" /> 
+            <script type="6" ValueA="0.000000" ValueB="0.00500" Speed="0.1" Sound="113.000000" Animation="1" />
+            <script type="1" ValueA="32.000000" ValueB="7.000000" ValueC="42.200000" Speed="0.005000" Sound="113.000000" Animation="1" />       
+            <script type="3" ValueA="10" ValueB="2" />
+            <script type="3" ValueA="11" ValueB="2" />             
+            <script type="6" ValueA="270.000000" ValueB="0.00500" Speed="0.1" Sound="113.000000" Animation="1" />              
+            <script type="1" ValueA="18.00000" ValueB="7.000000" ValueC="45.000000" Speed="0.005000" Sound="113.000000" Animation="1" />
+            <script type="6" ValueA="0.000000" ValueB="0.00500" Speed="0.1" Sound="113.000000" Animation="1" />
+            <script type="1" ValueA="15.20000" ValueB="7.000000" ValueC="51.000000" Speed="0.005000" Sound="113.000000" Animation="1" />           
+            <script type="5" ValueA="600.000000" Sound="113.000000" Animation="1"/>
+            <script type="1" ValueA="15.20000" ValueB="7.000000" ValueC="47.700000" Speed="0.005000" Sound="113.000000" Animation="1" />            
+            <script type="6" ValueA="90.000000" ValueB="-0.00500" Speed="0.1" Sound="113.000000" Animation="1" />
+            <script type="2" ValueA="-1" Animation="3" Sound="11.000000" SoundNum="0" />
+            <script type="3" ValueA="-2" ValueB="7" />
+            <script type="5" ValueA="500.000000" Animation="1"/>            
+       </scripts>   
+    </actor>
     <actor id="15" type="12" posX="20.312500" posY="0.062500" posZ="57.562500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="11,0" />
     <actor id="16" type="12" posX="45.582031" posY="6.000000" posZ="30.347656" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="12,0" />
     <actor id="17" type="12" posX="27.000000" posY="6.000000" posZ="32.625000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="231.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="12,0" />
-    <actor id="18" type="12" posX="32.128906" posY="6.000000" posZ="46.375000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="12,0" />
+    <actor id="18" type="12" posX="34.5" posY="6.000000" posZ="47.5" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="12,0" />
     <actor id="19" type="12" posX="57.000000" posY="6.000000" posZ="11.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="13,0" />
     <actor id="20" type="12" posX="0.000000" posY="-1.000000" posZ="0.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="9,0" />
 </actors>
