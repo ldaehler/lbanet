@@ -352,6 +352,17 @@ public:
 	//! get destroyed items
 	void GetDestroyedItems(std::vector<long> & destroyedItems);
 
+	//! set targetedacotr
+	void SetTargetedActor(long actorid);
+
+	//! get destroyed items
+	void GetTargetedActors(std::vector<long> & targetedactors);
+
+	//! set untargetedacotr
+	void SetUntargetedActor(long actorid);
+
+	//! get destroyed items
+	void GetUntargetedActors(std::vector<long> & untargetedactors);
 
 protected:
 
@@ -399,7 +410,7 @@ private:
 	IceUtil::Mutex								m_mutex_letters;
 	IceUtil::Mutex								m_mutex_letter_queries;
 	IceUtil::Mutex								m_mutex_destroy_items;
-
+	IceUtil::Mutex								m_mutex_targeted_actors;
 
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_irc;
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_sending_loop;
@@ -480,6 +491,9 @@ private:
 
 	std::vector<long>							m_letter_queries;
 	std::vector<long>							m_destroyed_items;
+
+	std::vector<long>							m_targetedactors;
+	std::vector<long>							m_untargetedactors;
 
 	static ThreadSafeWorkpile *					_singletonInstance;
 };

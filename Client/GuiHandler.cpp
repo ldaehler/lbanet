@@ -546,7 +546,7 @@ display inventory
 ***********************************************************/
 void GuiHandler::ShowInventory()
 {
-	_game_gui->ShowInventory();
+	if(_game_gui)_game_gui->ShowInventory();
 }
 
 
@@ -555,6 +555,14 @@ display inventory
 ***********************************************************/
 void GuiHandler::RefreshOption()
 {
-	_option_gui->SendNameColor();
+	if(_option_gui)_option_gui->SendNameColor();
 }
 
+
+/***********************************************************
+show dialog with NPC
+***********************************************************/
+void GuiHandler::ShowDialog(long ActorId, const std::string &ActorName, bool Show)
+{
+	if(_game_gui)_game_gui->ShowDialog(ActorId, ActorName, Show);
+}

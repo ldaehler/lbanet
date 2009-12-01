@@ -58,14 +58,18 @@ public:
 	int				_nameG;
 	int				_nameB;
 
+	bool			_visible;
+
 
 	// set reckon value
 	void Set( const double &posX, const double &posY, const double &posZ,
 				const double &rotation, const double &velocityX, const double &velocityY,
 				const double &velocityZ, const double &velocityR,
 				int Model, int Body, int Animation, short color,
-				int	nameR, int	nameG, int	nameB)
+				int	nameR, int	nameG, int	nameB, bool Visible)
 	{
+		_visible = Visible;
+
 		_posX = posX;
 		_posY = posY;
 		_posZ = posZ;
@@ -106,8 +110,11 @@ public:
 					const double &rotation, double velocityX, double velocityY,
 					double velocityZ, double velocityR,
 					int Model, int Body, int Animation, short color,
-					int	nameR, int	nameG, int	nameB) const
+					int	nameR, int	nameG, int	nameB, bool Visible) const
 	{
+		if(_visible != Visible)
+			return false;
+
 		if(_Model != Model)
 			return false;
 

@@ -41,7 +41,8 @@ constructor
 ***********************************************************/
 GameGUI::GameGUI()
 : _cb(this), _comb(this), _telb(this), _invb(this, 50), 
-	_shortb(this, 50), _containerb(this, 50), _editb(NULL), _lettereditb(this), _letterviewb(this)
+	_shortb(this, 50), _containerb(this, 50), _editb(NULL), _lettereditb(this), 
+	_letterviewb(this), _dialogb(this)
 {
 	#ifdef _LBANET_SET_EDITOR_
 	_editb = new EditorBox(this);
@@ -72,6 +73,7 @@ void GameGUI::Initialize()
 		_containerb.Initialize(_root);
 		_lettereditb.Initialize(_root);
 		_letterviewb.Initialize(_root);
+		_dialogb.Initialize(_root);
 		CGMessageBox::getInstance()->Initialize(_root);
 
 
@@ -432,4 +434,13 @@ display inventory
 void GameGUI::ShowInventory()
 {
 	_invb.Show();
+}
+
+
+/***********************************************************
+show dialog with NPC
+***********************************************************/
+void GameGUI::ShowDialog(long ActorId, const std::string &ActorName, bool Show)
+{
+	_dialogb.ShowDialog(ActorId, ActorName, Show);
 }

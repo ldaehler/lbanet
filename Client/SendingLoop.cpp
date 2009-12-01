@@ -206,6 +206,14 @@ bool IceConnectionManager::ChangeActorsRoom(const std::string& newRoom, const st
 			asi.Z = actorsstates[i].Z;
 			asi.Rotation = actorsstates[i].Rotation;
 
+			//NPC info
+			asi.Visible = actorsstates[i].Visible;
+
+			LbaNet::TargetedSeq::const_iterator ittar = actorsstates[i].Targets.begin();
+			LbaNet::TargetedSeq::const_iterator endtar = actorsstates[i].Targets.end();
+			for(; ittar != endtar; ++ittar)
+				asi.Targets.push_back(std::make_pair<long, long>(ittar->TargetActorId, ittar->TargetPlayerId));
+
 			newstate.push_back(asi);
 		}
 		ThreadSafeWorkpile::getInstance()->UpdateActorState(newstate);
@@ -630,6 +638,45 @@ void IceConnectionManager::DestroyItem(long Id)
     }
 }
 
+ 
+/***********************************************************
+set player targeted by actor
+***********************************************************/   
+void IceConnectionManager::SetTargeted(long ActorId)
+{
+	try
+	{
+		_session->SetTargeted(ActorId);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception SetTargeted: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception SetTargeted "));
+    }
+}
+ 
+/***********************************************************
+set player untargeted by actor
+***********************************************************/   
+void IceConnectionManager::SetUnTargeted(long ActorId)
+{
+	try
+	{
+		_session->SetUnTargeted(ActorId);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception SetUnTargeted: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception SetUnTargeted "));
+    }
+} 
+
 
 /***********************************************************
 constructor
@@ -815,7 +862,20 @@ void SendingLoopThread::run()
 		for(size_t i=0; i<destroyeditems.size() > 0; ++i)
 			_connectionMananger.DestroyItem(destroyeditems[i]);
 
-		
+	
+		//-----------------------------------
+		// process targeted actors
+		std::vector<long> targetedactors;
+		ThreadSafeWorkpile::getInstance()->GetTargetedActors(targetedactors);
+		for(size_t i=0; i<targetedactors.size() > 0; ++i)
+			_connectionMananger.SetTargeted(targetedactors[i]);	
+	
+		//-----------------------------------
+		// process untargeted actors
+		std::vector<long> untargetedactors;
+		ThreadSafeWorkpile::getInstance()->GetUntargetedActors(untargetedactors);
+		for(size_t i=0; i<untargetedactors.size() > 0; ++i)
+			_connectionMananger.SetUnTargeted(untargetedactors[i]);	
 
 
 		if(ThreadSafeWorkpile::getInstance()->HasUpdatedInfo(_last_ai))

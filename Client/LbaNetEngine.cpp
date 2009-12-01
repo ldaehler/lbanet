@@ -748,6 +748,12 @@ void LbaNetEngine::HandleGameEvents()
 			case 23: // focus chatbox event
 				FocusChatbox(true);
 			break;
+
+			case 24: // display NPC dialog
+					DisplayDialogEvent * evcs = 
+						static_cast<DisplayDialogEvent *> (*it);
+					m_guiHandler.ShowDialog(evcs->_ActorId, evcs->_ActorName, evcs->_Show);
+			break;
 		}
 
 		delete *it;

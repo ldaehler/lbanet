@@ -635,14 +635,14 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 						_corrected_velocityY, _corrected_velocityZ, _velocityR,
 						_player->GetModel(), _player->GetBody(), _player->GetAnimation(),
 						_player->GetBodyColor(), _player->GetNameR(), 
-						_player->GetNameG(), _player->GetNameB()))
+						_player->GetNameG(), _player->GetNameB(), _player->Visible()))
 	{
 		_dr.Set(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ(),
 						_player->GetRotation(), _corrected_velocityX,
 						_corrected_velocityY, _corrected_velocityZ, _velocityR,
 						_player->GetModel(), _player->GetBody(), _player->GetAnimation(),
 						_player->GetBodyColor(), _player->GetNameR(), 
-						_player->GetNameG(), _player->GetNameB());
+						_player->GetNameG(), _player->GetNameB(), _player->Visible());
 
 
 		LbaNet::ActorInfo nai;
@@ -664,6 +664,7 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 		nai.NameR = _player->GetNameR();
 		nai.NameG = _player->GetNameG();
 		nai.NameB = _player->GetNameB();
+		nai.Visible = _player->Visible();
 		ThreadSafeWorkpile::getInstance()->UpdateInfo(nai);
 	}
 
