@@ -21,7 +21,9 @@ module LbaNet
 	    
 	    void UpdateContainerInfo(ContainerInfo container);
 	    
-	    void InformInventoryChanges(UpdatedItemSeq InventoryChanges);	    
+	    void InformInventoryChanges(UpdatedItemSeq InventoryChanges);
+	    
+	    void UpdateActorState(ActorUpdateInfo newinfo);
 	};
 	
 	

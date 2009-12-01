@@ -79,6 +79,14 @@ module LbaNet
 	    
 	    // destroy an inventory item
 	    void DestroyItem(long Id);
+	    
+	    
+	    // set player targeted by actor
+	    void SetTargeted(long ActorId);
+	    
+		    
+	    // set player untargeted by actor
+	    void SetUnTargeted(long ActorId);    
 	};
 
 };

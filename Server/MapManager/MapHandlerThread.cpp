@@ -141,6 +141,19 @@ bool MapHandlerThread::Leave(const ActorLifeInfo &PlayerId)
 	}
 
 
+	// untarget actors
+	std::map<Ice::Long, Ice::Long>::iterator ittargeted =_targetedactor.find(PlayerId.ActorId);
+	if(ittargeted != _targetedactor.end())
+	{
+		std::map<long, Actor *>::iterator itact = _actors.find(ittargeted->second);
+		if(itact != _actors.end())
+			itact->second->UpdateTargetedActor(PlayerId.ActorId, false);
+
+		_targetedactor.erase(ittargeted);
+	}
+
+
+
 	if(itp != _players.end())
 		_players.erase(itp);
 
@@ -273,6 +286,8 @@ void MapHandlerThread::run()
 		std::vector<LifeManaInfo> lfminfos;
 		std::vector<ContainerQueryInfo> conqinfos;
 		std::vector<ContainerUpdateInfo> conuinfos;
+		std::vector<TargetedActorPlayer> targetedinfos;
+		std::vector<TargetedActorPlayer> untargetedinfos;
 
 		_SD->GetJoined(joinedmap);
 		_SD->GetUpdatedinfo(pinfos);
@@ -284,6 +299,8 @@ void MapHandlerThread::run()
 		_SD->GetAllUpdateLifeMana(lfminfos);
 		_SD->GetAllContainerQuerys(conqinfos);
 		_SD->GetAllContainerUpdates(conuinfos);
+		_SD->GetAllTargetedActors(targetedinfos);
+		_SD->GetAllUntargetedActors(untargetedinfos);
 
 		Lock sync(*this);
 		// update state
@@ -383,6 +400,22 @@ void MapHandlerThread::run()
 				for(; it != end; ++it)
 					UpdateContainerUpdate(*it);
 			}
+
+			//targeted update info
+			{
+				std::vector<TargetedActorPlayer>::const_iterator it = targetedinfos.begin();
+				std::vector<TargetedActorPlayer>::const_iterator end = targetedinfos.end();
+				for(; it != end; ++it)
+					UpdateTargetedActor(*it, true);
+			}
+
+			//untargeted update info
+			{
+				std::vector<TargetedActorPlayer>::const_iterator it = untargetedinfos.begin();
+				std::vector<TargetedActorPlayer>::const_iterator end = untargetedinfos.end();
+				for(; it != end; ++it)
+					UpdateTargetedActor(*it, false);
+			}
 		}
 
 
@@ -394,7 +427,45 @@ void MapHandlerThread::run()
 		std::map<long, Actor *>::iterator it =_actors.begin();
 		std::map<long, Actor *>::iterator end =_actors.end();
 		for(; it != end; ++it)
+		{
 			it->second->Process(tnow, tdiff);
+			if(it->second->NeedsUpdate())
+			{
+				ActorStateInfo currState;
+				if(it->second->Getstate(currState))
+				{
+					LbaNet::ActorUpdateInfo ui;
+					ui.ActorId = currState.ActorId;
+					ui.On = currState.On;
+					ui.Open = currState.Open;
+					ui.Counter = currState.Counter;
+					ui.SignalOn = currState.SignalOn;
+					ui.CurrentScript = currState.CurrentScript;
+					ui.X = currState.X;
+					ui.Y = currState.Y;
+					ui.Z = currState.Z;
+					ui.Rotation = currState.Rotation;
+					ui.Visible = currState.Visible;
+
+					std::vector<std::pair<long, long>>::iterator ittar = currState.Targets.begin();
+					std::vector<std::pair<long, long>>::iterator endtar = currState.Targets.end();
+					for(; ittar != endtar; ++ittar)
+					{
+						LbaNet::TargetedInfo tinfo;
+						tinfo.TargetActorId = ittar->first;
+						tinfo.TargetPlayerId = ittar->second;
+						ui.Targets.push_back(tinfo);
+					}
+
+					std::vector<long>::const_iterator itcs = currState.CurrentSignals.begin();
+					std::vector<long>::const_iterator endcs = currState.CurrentSignals.end();
+					for(; itcs != endcs; ++itcs)
+						ui.CurrentSignals.push_back(*itcs);
+
+					_publisher->UpdateActorState(ui);
+				}
+			}
+		}
 
 		// if no player since 2min - stop the thread
 		if(_stopping && tnow -_timerstart > 120000)
@@ -429,6 +500,17 @@ LbaNet::UpdateSeq MapHandlerThread::GetUpdatedInfo()
 			ui.Y = actState.Y;
 			ui.Z = actState.Z;
 			ui.Rotation = actState.Rotation;
+			ui.Visible = actState.Visible;
+
+			std::vector<std::pair<long, long>>::iterator ittar = actState.Targets.begin();
+			std::vector<std::pair<long, long>>::iterator endtar = actState.Targets.end();
+			for(; ittar != endtar; ++ittar)
+			{
+				LbaNet::TargetedInfo tinfo;
+				tinfo.TargetActorId = ittar->first;
+				tinfo.TargetPlayerId = ittar->second;
+				ui.Targets.push_back(tinfo);
+			}
 
 			std::vector<long>::iterator itcs = actState.CurrentSignals.begin();
 			std::vector<long>::iterator endcs = actState.CurrentSignals.end();
@@ -664,5 +746,27 @@ void MapHandlerThread::UpdateContainerUpdate(const ContainerUpdateInfo &itinfo)
 			// remove lock
 			_lockedContainers.erase(itloc);
 		}
+	}
+}
+
+
+/***********************************************************
+update targeted actor
+***********************************************************/
+void MapHandlerThread::UpdateTargetedActor(const TargetedActorPlayer & info, bool targeted)
+{
+	std::map<long, Actor *>::iterator it =	_actors.find(info.ActorId);
+	if(it != _actors.end())
+	{
+		if(targeted)
+			_targetedactor[info.PlayerId] = info.ActorId;
+		else
+		{
+			std::map<Ice::Long, Ice::Long>::iterator ittar =_targetedactor.find(info.PlayerId);
+			if(ittar != _targetedactor.end())
+				_targetedactor.erase(ittar);
+		}
+
+		it->second->UpdateTargetedActor(info.PlayerId, targeted);
 	}
 }

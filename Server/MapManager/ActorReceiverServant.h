@@ -71,13 +71,20 @@ public:
 									const Ice::Current&);
 
 	//! AskForContainer
-    void AskForContainer(Ice::Long ActorId, Ice::Long ContainerId, const LbaNet::ClientSessionPrx &callback, 
+    virtual void AskForContainer(Ice::Long ActorId, Ice::Long ContainerId, const LbaNet::ClientSessionPrx &callback, 
 								const Ice::Current&);
     
 	//! UpdateContainer
-    void UpdateContainer(Ice::Long ContainerId, Ice::Long ActorId, const LbaNet::ItemList &Taken, 
+   virtual  void UpdateContainer(Ice::Long ContainerId, Ice::Long ActorId, const LbaNet::ItemList &Taken, 
 							const LbaNet::ItemList &Put, const LbaNet::ClientSessionPrx &callback,
 							const Ice::Current&);
+	    
+	    
+    // set player targeted by actor
+   virtual void SetTargeted(Ice::Long PlayerId, Ice::Long ActorId, const Ice::Current&);
+    	    
+    // set player untargeted by actor
+    virtual void SetUnTargeted(Ice::Long PlayerId, Ice::Long ActorId, const Ice::Current&);   
 
 private:
 	SharedData * _SD;
