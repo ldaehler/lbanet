@@ -104,6 +104,9 @@ protected:
 	void UpdateContainerQuery(const ContainerQueryInfo &itinfo);
 	void UpdateContainerUpdate(const ContainerUpdateInfo &itinfo);
 
+	void UpdateTargetedActor(const TargetedActorPlayer & info, bool targeted);
+
+
 private:
 	ActorsObserverPrx							_publisher;
 
@@ -127,6 +130,8 @@ private:
 	MapManagerServant *							_stopper;
 
 	std::string									_mapName;
+
+	std::map<Ice::Long, Ice::Long>				_targetedactor;
 };
 
 #endif

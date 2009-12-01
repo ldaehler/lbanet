@@ -181,6 +181,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\common\3DObjectRenderer.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\ActivableActor.cpp"
 				>
 			</File>
@@ -233,11 +237,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\Entities.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\ExitActor.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\common\FloorSwitch.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\HQRHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\HQRlib.cpp"
 				>
 			</File>
 			<File
@@ -250,10 +266,6 @@
 			</File>
 			<File
 				RelativePath="..\infrastructure\cpp\LbaTypes.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common\LiftActor.cpp"
 				>
 			</File>
 			<File
@@ -277,6 +289,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\NPCActor.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\Randomizer.cpp"
 				>
 			</File>
@@ -285,7 +301,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\ScriptableActor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\ScriptedZoneActor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\ServerCharacterRenderer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\ServerLBA1ModelClass.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SessionServant.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\StreamReader.cpp"
 				>
 			</File>
 			<File

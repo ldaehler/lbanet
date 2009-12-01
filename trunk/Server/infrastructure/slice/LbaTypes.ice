@@ -15,6 +15,7 @@ module LbaNet
 		int			NameR;
 		int			NameG;
 		int			NameB;
+		bool			Visible;
 		
 		// actor coordinates
 		float			X;
@@ -90,6 +91,14 @@ module LbaNet
 		long			ActorId;
 	};
 	
+	struct TargetedInfo
+	{
+		long TargetActorId;
+		long TargetPlayerId;
+	};
+	
+	sequence<TargetedInfo> TargetedSeq;	
+	
 	struct ActorUpdateInfo
 	{
 		// id of the activated object
@@ -110,7 +119,12 @@ module LbaNet
 		float			Y;
 		float			Z;
 		float			Rotation;
+		
+		// NPC info
+		bool			Visible;
+		TargetedSeq		Targets;
 	};
+	
 	
 	sequence<ActorUpdateInfo> UpdateSeq;
 	

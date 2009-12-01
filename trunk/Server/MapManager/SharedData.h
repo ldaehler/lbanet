@@ -68,6 +68,12 @@ struct ContainerUpdateInfo
 };
 
 
+struct TargetedActorPlayer
+{
+	Ice::Long ActorId;
+	Ice::Long PlayerId;
+};
+
 /***********************************************************************
  * Module:  SharedData.h
  * Author:  vivien
@@ -153,7 +159,17 @@ public:
 	// get all items used
 	void GetAllContainerUpdates(std::vector<ContainerUpdateInfo> & vec);
 
+	// update targeted actors
+	void UpdateTargetedActor(const TargetedActorPlayer & tinfo);
 
+	// update targeted actors
+	void UpdateUntargetedActor(const TargetedActorPlayer & tinfo);
+
+	// get all items used
+	void GetAllTargetedActors(std::vector<TargetedActorPlayer> & vec);
+
+	// get all items used
+	void GetAllUntargetedActors(std::vector<TargetedActorPlayer> & vec);
 
 protected:
 	SharedData(const SharedData &);
@@ -170,7 +186,7 @@ private:
 	IceUtil::Mutex								m_mutex_item_used;
 	IceUtil::Mutex								m_mutex_container_queries;
 	IceUtil::Mutex								m_mutex_container_updates;
-
+	IceUtil::Mutex								m_mutex_targeted_actors;
 
 	std::vector<std::pair<ActorLifeInfo, bool> >	m_joined_players;
 	std::vector<LbaNet::ActorInfo>				m_players_info;
@@ -184,6 +200,9 @@ private:
 
 	std::vector<ContainerQueryInfo>				m_container_queries;
 	std::vector<ContainerUpdateInfo>			m_container_updates;
+
+	std::vector<TargetedActorPlayer>			m_targeted_actors;
+	std::vector<TargetedActorPlayer>			m_untargeted_actors;
 
 	bool										m_running;
 };

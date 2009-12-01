@@ -261,3 +261,42 @@ void SharedData::GetAllContainerUpdates(std::vector<ContainerUpdateInfo> & vec)
 	IceUtil::Mutex::Lock lock(m_mutex_container_updates);
 	m_container_updates.swap(vec);
 }
+
+
+/***********************************************************
+update targeted actors
+***********************************************************/
+void SharedData::UpdateTargetedActor(const TargetedActorPlayer & tinfo)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_targeted_actors);
+	m_targeted_actors.push_back(tinfo);
+}
+
+/***********************************************************
+update targeted actors
+***********************************************************/
+void SharedData::UpdateUntargetedActor(const TargetedActorPlayer & tinfo)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_targeted_actors);
+	m_untargeted_actors.push_back(tinfo);
+}
+
+/***********************************************************
+get all items used
+***********************************************************/
+void SharedData::GetAllTargetedActors(std::vector<TargetedActorPlayer> & vec)
+{
+	vec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_targeted_actors);
+	m_targeted_actors.swap(vec);
+}
+
+/***********************************************************
+get all items used
+***********************************************************/
+void SharedData::GetAllUntargetedActors(std::vector<TargetedActorPlayer> & vec)
+{
+	vec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_targeted_actors);
+	m_untargeted_actors.swap(vec);
+}

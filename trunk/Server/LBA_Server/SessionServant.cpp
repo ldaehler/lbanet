@@ -1028,3 +1028,44 @@ void SessionServant::DestroyItem(Ice::Long  Id, const ::Ice::Current&)
 	}
 }
 
+      
+/***********************************************************
+set player targeted by actor
+***********************************************************/  
+void SessionServant::SetTargeted(Ice::Long ActorId, const ::Ice::Current&)
+{
+	try
+	{
+		if(_actors_manager)
+			_actors_manager->SetTargeted(_userNum, ActorId);
+	}
+	catch(const IceUtil::Exception& ex)
+	{
+		std::cout<<"SessionServant - Exception during SetTargeted: "<< ex.what()<<std::endl;
+	}
+	catch(...)
+	{
+		std::cout<<"SessionServant - Unknown exception during SetTargeted"<<std::endl;
+	}
+}
+
+    
+/***********************************************************
+set player untargeted by actor
+***********************************************************/    
+void SessionServant::SetUnTargeted(Ice::Long ActorId, const ::Ice::Current&)
+{
+	try
+	{
+		if(_actors_manager)
+			_actors_manager->SetUnTargeted(_userNum, ActorId);
+	}
+	catch(const IceUtil::Exception& ex)
+	{
+		std::cout<<"SessionServant - Exception during SetUnTargeted: "<< ex.what()<<std::endl;
+	}
+	catch(...)
+	{
+		std::cout<<"SessionServant - Unknown exception during SetUnTargeted"<<std::endl;
+	}
+} 

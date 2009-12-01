@@ -163,6 +163,13 @@ public:
 	    
 	// destroy an inventory item
 	virtual void DestroyItem(Ice::Long  Id, const ::Ice::Current&);
+	    
+    // set player targeted by actor
+    virtual void SetTargeted(Ice::Long ActorId, const ::Ice::Current&);
+    
+	    
+    // set player untargeted by actor
+    virtual void SetUnTargeted(Ice::Long ActorId, const ::Ice::Current&);  
 
 protected:
 	void ApplyInternalInventoryChanges(const UpdatedItemSeq &InventoryChanges, bool InformPlayer);

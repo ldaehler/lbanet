@@ -66,6 +66,9 @@ public:
 
 	// apply inventory changes
 	virtual  void InformInventoryChanges(const LbaNet::UpdatedItemSeq &InventoryChanges, const Ice::Current&){}
+	    
+	// Update Actor State
+	virtual  void UpdateActorState(const LbaNet::ActorUpdateInfo &newinfo, const Ice::Current&){}
 
 private:
 	SharedData * _SD;

@@ -25,6 +25,13 @@ module LbaNet
 	    void UpdateContainer(long ContainerId, long ActorId, ItemList Taken, ItemList Put, ClientSession* callback);
 	    
 	    void UpdateLifeMana(long ActorId, int LifeDelta, int ManaDelta);
+	    
+		    
+	    // set player targeted by actor
+	    void SetTargeted(long PlayerId, long ActorId);
+	    	    
+	    // set player untargeted by actor
+	    void SetUnTargeted(long PlayerId, long ActorId);    
 	};
 };
 

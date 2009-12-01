@@ -138,3 +138,29 @@ void ActorReceiverServant::UpdateContainer(Ice::Long ContainerId, Ice::Long Acto
 	qinfo.clientPtr = callback;
 	_SD->UpdateContainerUpdate(qinfo);
 }
+
+
+    
+/***********************************************************
+set player targeted by actor
+***********************************************************/
+void ActorReceiverServant::SetTargeted(Ice::Long PlayerId, 
+									   Ice::Long ActorId, const Ice::Current&)
+{
+	TargetedActorPlayer info;
+	info.ActorId = ActorId;
+	info.PlayerId = PlayerId;
+	_SD->UpdateTargetedActor(info);
+}
+
+/***********************************************************
+set player untargeted by actor
+***********************************************************/
+void ActorReceiverServant::SetUnTargeted(Ice::Long PlayerId, 
+										 Ice::Long ActorId, const Ice::Current&)
+{
+	TargetedActorPlayer info;
+	info.ActorId = ActorId;
+	info.PlayerId = PlayerId;
+	_SD->UpdateUntargetedActor(info);
+}  
