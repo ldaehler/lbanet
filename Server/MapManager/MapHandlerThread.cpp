@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "MapManagerServant.h"
 #include "HurtArea.h"
 #include "DoorActor.h"
+#include "NPCActor.h"
 
 /***********************************************************
 	Constructor
@@ -201,8 +202,9 @@ void MapHandlerThread::ActivateActor(const ActorActivationInfoWithCallback& ai)
 							LbaNet::UpdatedItem itm;
 							itm.ItemId = dact->GetKeyId();
 							itm.NewCount = -1;
+							itm.InformPlayer = true;
 							InventoryChanges.push_back(itm);
-							ai.clientPtr->ApplyInventoryChanges(InventoryChanges, true);
+							ai.clientPtr->ApplyInventoryChanges(InventoryChanges);
 						}
 					}
 				}
@@ -683,68 +685,110 @@ object used
 void MapHandlerThread::UpdateContainerUpdate(const ContainerUpdateInfo &itinfo)
 {
 	std::map<long, Actor *>::iterator it =	_actors.find((long)itinfo.ContainerId);
-	if(it != _actors.end() && it->second->GetType() == 5) // if we have a container
+	if(it != _actors.end()) 
 	{
-		std::map<Ice::Long, std::pair<Ice::Long, time_t> >::iterator itloc =
-														_lockedContainers.find(itinfo.ContainerId);
-
-		// if the container is really locked by the player
-		if((itloc != _lockedContainers.end()) && (itloc->second.first == itinfo.ActorId))
+		if(it->second->GetType() == 5) // if we have a container
 		{
-			ContainerActor * cont = static_cast<ContainerActor *>(it->second);
+			std::map<Ice::Long, std::pair<Ice::Long, time_t> >::iterator itloc =
+															_lockedContainers.find(itinfo.ContainerId);
 
-			// prepare the update of player inventory
-			LbaNet::UpdatedItemSeq InventoryChanges;
-
-			// get current container content
-			std::map<long, int> content = cont->GetCurrentContent();
-
-			// for all taken object
-			LbaNet::ItemList::const_iterator ittak = itinfo.Taken.begin();
-			LbaNet::ItemList::const_iterator endtak = itinfo.Taken.end();
-			for(; ittak != endtak; ++ittak)
+			// if the container is really locked by the player
+			if((itloc != _lockedContainers.end()) && (itloc->second.first == itinfo.ActorId))
 			{
-				std::map<long, int>::iterator itlocal = content.find(ittak->first);
-				if(itlocal != content.end())
-				{
-					if(itlocal->second >= ittak->second)
-					{
-						// update player inventory
-						LbaNet::UpdatedItem itm;
-						itm.ItemId = ittak->first;
-						itm.NewCount = ittak->second;
-						InventoryChanges.push_back(itm);
+				ContainerActor * cont = static_cast<ContainerActor *>(it->second);
 
-						//update container content
-						cont->UpdateContent(ittak->first, -ittak->second);
+				// prepare the update of player inventory
+				LbaNet::UpdatedItemSeq InventoryChanges;
+
+				// get current container content
+				std::map<long, int> content = cont->GetCurrentContent();
+
+				// for all taken object
+				LbaNet::ItemList::const_iterator ittak = itinfo.Taken.begin();
+				LbaNet::ItemList::const_iterator endtak = itinfo.Taken.end();
+				for(; ittak != endtak; ++ittak)
+				{
+					std::map<long, int>::iterator itlocal = content.find(ittak->first);
+					if(itlocal != content.end())
+					{
+						if(itlocal->second >= ittak->second)
+						{
+							// update player inventory
+							LbaNet::UpdatedItem itm;
+							itm.ItemId = ittak->first;
+							itm.NewCount = ittak->second;
+							itm.InformPlayer = false;
+							InventoryChanges.push_back(itm);
+
+							//update container content
+							cont->UpdateContent(ittak->first, -ittak->second);
+						}
+					}
+				}
+
+
+				// for all added object
+				LbaNet::ItemList::const_iterator itput = itinfo.Put.begin();
+				LbaNet::ItemList::const_iterator endput = itinfo.Put.end();
+				for(; itput != endput; ++itput)
+				{
+					//update container content
+					cont->UpdateContent(itput->first, itput->second);
+
+					// update player inventory
+					LbaNet::UpdatedItem itm;
+					itm.ItemId = itput->first;
+					itm.NewCount = -itput->second;
+					itm.InformPlayer = false;
+					InventoryChanges.push_back(itm);
+				}
+
+
+
+				//final update player inventory
+				if(itinfo.clientPtr)
+					itinfo.clientPtr->ApplyInventoryChanges(InventoryChanges);
+
+				// remove lock
+				_lockedContainers.erase(itloc);
+			}
+		}
+
+		if(it->second->GetType() == 12) // if we have a NPC
+		{
+			NPCActor * npc = static_cast<NPCActor *>(it->second);
+			if(npc->GetNPCType() == 2) // if we have a trader NPC
+			{
+				if(itinfo.Taken.size() == 1 && itinfo.Put.size() == 1)
+				{
+					//! get trader items
+					const std::map<long, TraderItem> & items = npc->GetItems();
+					std::map<long, TraderItem>::const_iterator itit = items.find(itinfo.Taken.begin()->first);
+					if(itit != items.end()) // if trader has this item
+					{
+						if(itinfo.clientPtr)
+						{
+							LbaNet::UpdatedItemSeq InventoryChanges;
+
+							// first update the money count
+							LbaNet::UpdatedItem itm;
+							itm.ItemId = itinfo.Put.begin()->first;
+							itm.NewCount = -itinfo.Put.begin()->second;
+							itm.InformPlayer = false;
+							InventoryChanges.push_back(itm);
+
+							//then add the object
+							LbaNet::UpdatedItem itm2;
+							itm2.ItemId = itinfo.Taken.begin()->first;
+							itm2.NewCount = itinfo.Taken.begin()->second;
+							itm2.InformPlayer = true;
+							InventoryChanges.push_back(itm2);
+
+							itinfo.clientPtr->ApplyInventoryChanges(InventoryChanges);
+						}
 					}
 				}
 			}
-
-
-			// for all added object
-			LbaNet::ItemList::const_iterator itput = itinfo.Put.begin();
-			LbaNet::ItemList::const_iterator endput = itinfo.Put.end();
-			for(; itput != endput; ++itput)
-			{
-				//update container content
-				cont->UpdateContent(itput->first, itput->second);
-
-				// update player inventory
-				LbaNet::UpdatedItem itm;
-				itm.ItemId = itput->first;
-				itm.NewCount = -itput->second;
-				InventoryChanges.push_back(itm);
-			}
-
-
-
-			//final update player inventory
-			if(itinfo.clientPtr)
-				itinfo.clientPtr->ApplyInventoryChanges(InventoryChanges, false);
-
-			// remove lock
-			_lockedContainers.erase(itloc);
 		}
 	}
 }
