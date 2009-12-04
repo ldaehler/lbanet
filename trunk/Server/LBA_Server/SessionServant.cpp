@@ -618,8 +618,9 @@ void SessionServant::UseItem(Ice::Long ItemId, const Ice::Current& cur)
 			LbaNet::UpdatedItem itm;
 			itm.ItemId = ItemId;
 			itm.NewCount = -1;
+			itm.InformPlayer = true;
 			InventoryChanges.push_back(itm);
-			ApplyInternalInventoryChanges(InventoryChanges, true);
+			ApplyInternalInventoryChanges(InventoryChanges);
 		}
 
 		try
@@ -772,10 +773,10 @@ void SessionServant::cleanEphemereItems()
 /***********************************************************
 callback functions to apply inventory changes
 ***********************************************************/
-void SessionServant::ApplyInventoryChanges(const UpdatedItemSeq &InventoryChanges, bool InformPlayer, const Ice::Current&)
+void SessionServant::ApplyInventoryChanges(const UpdatedItemSeq &InventoryChanges, const Ice::Current&)
 {
     Lock sync(*this);
-	ApplyInternalInventoryChanges(InventoryChanges, InformPlayer);
+	ApplyInternalInventoryChanges(InventoryChanges);
 }
 
 
@@ -995,10 +996,11 @@ void SessionServant::AddLetter(const std::string& title, const std::string& mess
 		LbaNet::UpdatedItem itm;
 		itm.ItemId = letterid + _FIRST_USER_CREATED_ID_; // user created inventory obejct start at 10 000 000
 		itm.NewCount = 1;
+		itm.InformPlayer = true;
 		InventoryChanges.push_back(itm);
 
 		Lock sync(*this);
-		ApplyInternalInventoryChanges(InventoryChanges, false);
+		ApplyInternalInventoryChanges(InventoryChanges);
 	}
 }
 
@@ -1028,8 +1030,9 @@ void SessionServant::DestroyItem(Ice::Long  Id, const ::Ice::Current&)
 		LbaNet::UpdatedItem itm;
 		itm.ItemId = Id;
 		itm.NewCount = -itlocal->second.Number;
+		itm.InformPlayer = false;
 		InventoryChanges.push_back(itm);
-		ApplyInternalInventoryChanges(InventoryChanges, false);
+		ApplyInternalInventoryChanges(InventoryChanges);
 	}
 }
 
@@ -1096,7 +1099,7 @@ void SessionServant::BuyItem(Ice::Long FromActorId, Ice::Long Itemid, const ::Ic
 			// check how much money we have
 			LbaNet::InventoryMap::iterator iti = _playerInventory.InventoryStructure.find(8); 
 			if(iti != _playerInventory.InventoryStructure.end())
-				number = iti->second.Number
+				number = iti->second.Number;
 			else
 				return;
 		}
