@@ -517,6 +517,8 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 					act->SetAttribute("NPCType", tmpa->GetNPCType());
 					act->SetDoubleAttribute("activationdistance", tmpa->GetActivationDistance());
 					act->SetAttribute("Name", tmpa->GetName());
+					pElem->SetAttribute("neededitem", tmpa->GetNeededItemId());
+					pElem->SetAttribute("destroyitem", tmpa->GetDesItem());
 
 					TiXmlElement * scripts = new TiXmlElement( "scripts" );
 					act->LinkEndChild(scripts);

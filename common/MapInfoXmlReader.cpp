@@ -736,7 +736,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 
 					NPCActor *tmpact = new NPCActor(scripts, false, npctype, activationdistance, NameNPC);
 
-					TiXmlNode* itemGroup=pElemC->FirstChild("items");
+					TiXmlNode* itemGroup=pElem->FirstChild("items");
 					if(itemGroup)
 					{
 						std::map<long, TraderItem> items;
@@ -766,6 +766,11 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 					int activationtype=1;
 					pElem->QueryValueAttribute("activationtype", &activationtype);
 
+					long neededitem=-1;
+					pElem->QueryValueAttribute("neededitem", &neededitem);
+					bool destroyitem = false;
+					pElem->QueryValueAttribute("destroyitem", &destroyitem);
+
 					std::vector<PlayerScriptPart> scripts;
 					TiXmlNode* pNode2=pElem->FirstChild("scripts");
 					if(pNode2)
@@ -792,7 +797,8 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 							scripts.push_back(ps);
 						}
 					}
-					act = new ScriptedZoneActor(zoneSizeX, zoneSizeY, zoneSizeZ, scripts, activationtype);
+					act = new ScriptedZoneActor(zoneSizeX, zoneSizeY, zoneSizeZ, scripts, 
+												activationtype, neededitem, destroyitem);
 				}
 				break;
 			}

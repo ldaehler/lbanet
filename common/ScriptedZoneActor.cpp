@@ -37,8 +37,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	Constructor
 ***********************************************************/
 ScriptedZoneActor::ScriptedZoneActor(float ZoneSizeX, float ZoneSizeY, float ZoneSizeZ, 
-										const std::vector<PlayerScriptPart> & scripts, int activationtype)
-: ZoneActivableActor(ZoneSizeX, ZoneSizeY, ZoneSizeZ, activationtype), _scripts(scripts)
+										const std::vector<PlayerScriptPart> & scripts, int activationtype,
+										int NeededItemId, bool DestroyItem)
+: ZoneActivableActor(ZoneSizeX, ZoneSizeY, ZoneSizeZ, activationtype), 
+	_scripts(scripts), _NeededItemId(NeededItemId), _DestroyItem(DestroyItem)
 {
 
 }
