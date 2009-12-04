@@ -130,7 +130,7 @@ public:
     virtual bool HasItem(Ice::Long ItemId, int QUantity, const Ice::Current&);
    
    // callback functions to apply inventory changes
-    virtual void ApplyInventoryChanges(const UpdatedItemSeq &InventoryChanges, bool InformPlayer, const Ice::Current&);
+    virtual void ApplyInventoryChanges(const UpdatedItemSeq &InventoryChanges, const Ice::Current&);
 
     // callback functions to update container info
     virtual  void UpdateContainerInfo(const ContainerInfo &container, const Ice::Current&);	
