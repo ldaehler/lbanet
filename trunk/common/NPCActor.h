@@ -84,6 +84,7 @@ protected:
 	bool	_activated;
 
 	std::string _Name;
+
 };
 
 #endif

@@ -1095,6 +1095,8 @@ bool MapInfoXmlReader::LoadInventory(const std::string &Filename, std::map<long,
 			int tmpv = 0;
 			pElem->QueryValueAttribute("Ephemere", &tmpv);
 			spi.Ephemere = (tmpv == 1);
+			spi.Price = 1;
+			pElem->QueryValueAttribute("Price", &spi.Price);
 
 			const char * fromc = pElem->Attribute("From");
 			const char * datec = pElem->Attribute("Date");
