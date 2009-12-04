@@ -57,7 +57,7 @@ module LbaNet
 	    bool HasItem(long ItemId, int QUantity);
 	   
 	   // callback functions
-	    void ApplyInventoryChanges(UpdatedItemSeq InventoryChanges, bool informplayer);
+	    void ApplyInventoryChanges(UpdatedItemSeq InventoryChanges);
 	    
 	    void UpdateContainerInfo(ContainerInfo container);
 	    
@@ -86,7 +86,10 @@ module LbaNet
 	    
 		    
 	    // set player untargeted by actor
-	    void SetUnTargeted(long ActorId);    
+	    void SetUnTargeted(long ActorId); 
+	    
+	    // buy item
+	    void BuyItem(long FromActorId, long Itemid); 
 	};
 
 };
