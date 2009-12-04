@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "HurtArea.h"
 #include "DoorActor.h"
 #include "NPCActor.h"
+#include "ScriptedZoneActor.h"
 
 /***********************************************************
 	Constructor
@@ -206,6 +207,30 @@ void MapHandlerThread::ActivateActor(const ActorActivationInfoWithCallback& ai)
 							InventoryChanges.push_back(itm);
 							ai.clientPtr->ApplyInventoryChanges(InventoryChanges);
 						}
+					}
+				}
+			}
+
+			if(it->second->GetType() == 13) //if it is a scriptable zone
+			{
+				ScriptedZoneActor * dact = static_cast<ScriptedZoneActor *>(it->second);
+				long item = dact->GetNeededItemId();
+				if(item >= 0)
+				{
+					// if we do not have the item - can not activate
+					if(!ai.clientPtr || !ai.clientPtr->HasItem(item, 1))
+						return;
+
+					// if needed - destroy the item
+					if(dact->GetDesItem())
+					{
+						LbaNet::UpdatedItemSeq InventoryChanges;
+						LbaNet::UpdatedItem itm;
+						itm.ItemId = item;
+						itm.NewCount = -1;
+						itm.InformPlayer = true;
+						InventoryChanges.push_back(itm);
+						ai.clientPtr->ApplyInventoryChanges(InventoryChanges);
 					}
 				}
 			}
