@@ -296,7 +296,7 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 
 			case 3: // inform event
 			{
-				if(ThreadSafeWorkpile::getInstance()->IsServeron())
+				if(ps.Flag && ThreadSafeWorkpile::getInstance()->IsServeron())
 				{
 					LbaNet::ActorSignalInfo se;
 					se.SignalId = (long)ps.ValueB;
