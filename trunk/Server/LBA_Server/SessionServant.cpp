@@ -159,7 +159,7 @@ ActorsParticipantPrx SessionServant::ChangeRoom(		const std::string& newroom,
     id.category = "_" + _userId;
     id.name = IceUtil::generateUUID();
 
-	ActorsParticipantServant *actors_room_ptr = new ActorsParticipantServant(newroom, actorname, observer, _manager);
+	ActorsParticipantServant *actors_room_ptr = new ActorsParticipantServant(newroom, _userNum, actorname, observer, _manager);
     _actors_room = ActorsParticipantPrx::uncheckedCast(current.adapter->add(actors_room_ptr, id));
 	_curr_actor_room = newroom;
 	_actors_manager = _map_manager->JoinMap(_curr_actor_room, _userNum, _lifeinfo);

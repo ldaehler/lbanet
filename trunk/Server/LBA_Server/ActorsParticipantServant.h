@@ -36,7 +36,8 @@ class ActorsParticipantServant : public ActorsParticipant
 {
 public:
 	//! constructor
-	ActorsParticipantServant(const std::string& room, std::string actor_name,
+	ActorsParticipantServant(const std::string& room, long actor_id,
+								const std::string &actor_name,
 								const ActorsObserverPrx& observer,
 								const RoomManagerPrx& manager);
 
@@ -49,7 +50,7 @@ public:
 
 private:
 	const std::string _room;
-	const std::string _actor_name;
+	const long _actor_id;
     const RoomManagerPrx _manager;
     const ActorsObserverPrx _observer;
     const ActorsObserverPrx _publish;

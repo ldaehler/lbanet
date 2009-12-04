@@ -29,10 +29,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /***********************************************************
 constructor
 ***********************************************************/
-ActorsParticipantServant::ActorsParticipantServant(const std::string& room, std::string actor_name,
+ActorsParticipantServant::ActorsParticipantServant(const std::string& room, long actor_id,
+													const std::string &actor_name,
 													const ActorsObserverPrx& observer,
 													const RoomManagerPrx& manager)
-:	 _room(room), _actor_name(actor_name),
+:	 _room(room), _actor_id(actor_id),
     _manager(manager),
     _observer(observer),
     _publish(manager->JoinActorRoom(room, actor_name, observer))
@@ -47,7 +48,7 @@ ActorsParticipantServant::~ActorsParticipantServant()
 {
     try
     {
-		_publish->Quitted(_actor_name);
+		_publish->Quitted(_actor_id);
 		_manager->LeaveActorRoom(_room, _observer);
     }
     catch(...)
