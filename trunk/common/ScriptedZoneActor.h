@@ -40,7 +40,8 @@ class ScriptedZoneActor : public ZoneActivableActor
 public:
 	//! constructor
 	ScriptedZoneActor(float ZoneSizeX, float ZoneSizeY, float ZoneSizeZ, 
-						const std::vector<PlayerScriptPart> & scripts, int activationtype);
+						const std::vector<PlayerScriptPart> & scripts, int activationtype,
+						int NeededItemId, bool DestroyItem);
 
 	//! destructor
 	virtual ~ScriptedZoneActor();
@@ -54,8 +55,21 @@ public:
 	std::vector<PlayerScriptPart> & GetScripts()
 	{return _scripts;}
 
+	long GetNeededItemId()
+	{return _NeededItemId;}
+	bool GetDesItem()
+	{return _DestroyItem;}
+
+	void SetNeededItemId(long v)
+	{_NeededItemId = v;}
+	void SetDesItem(bool v)
+	{_DestroyItem = v;}
+
 protected:
 	std::vector<PlayerScriptPart>	_scripts;
+
+	int _NeededItemId;
+	bool _DestroyItem;
 };
 
 #endif

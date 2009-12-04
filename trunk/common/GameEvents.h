@@ -296,6 +296,7 @@ struct PlayerScriptPart
 	float ValueA;
 	float ValueB;
 	float ValueC;
+	bool Flag;
 
 	float Speed;
 };

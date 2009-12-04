@@ -73,6 +73,7 @@ void SwitchActor::ProcessActivation(float PlayerPosX, float PlayerPosY, float Pl
 	inform.Type = 3;
 	inform.ValueA = GetId();
 	inform.ValueB = 3;	// event id
+	inform.Flag = true;
 	script.push_back(inform);
 	}
 
