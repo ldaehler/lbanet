@@ -154,6 +154,7 @@ module LbaNet
 	{
 		long ItemId;
 		int NewCount;
+		bool InformPlayer;
 	};
 	sequence<UpdatedItem> UpdatedItemSeq;
 	
