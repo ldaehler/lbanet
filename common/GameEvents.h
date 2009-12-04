@@ -583,8 +583,10 @@ class DisplayDialogEvent : public GameEvent
 {
 public:
 	//! constructor
-	DisplayDialogEvent(long ActorId, const std::string & ActorName, bool Show)
-		: _ActorId(ActorId), _ActorName(ActorName), _Show(Show)
+	DisplayDialogEvent(long ActorId, const std::string & ActorName, bool IsTrader, bool Show,
+							const std::vector<long> &inventory)
+		: _ActorId(ActorId), _ActorName(ActorName), _Show(Show), 
+			_IsTrader(IsTrader), _inventory(inventory)
 	{
 		_type = 24;	
 	}
@@ -592,6 +594,8 @@ public:
 	long _ActorId;
 	std::string _ActorName;
 	bool _Show;
+	bool _IsTrader;
+	std::vector<long> _inventory;
 };
 
 #endif

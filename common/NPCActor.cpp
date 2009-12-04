@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "NPCActor.h"
 #include <math.h>
 #include <algorithm>
+#include "Player.h"
 
 #ifndef _LBANET_SERVER_SIDE_
 #include "ThreadSafeWorkpile.h"
@@ -64,7 +65,42 @@ do all check to be done when idle
 int NPCActor::Process(double tnow, float tdiff)
 {
 	if(_actiontargets.size() > 0)
-	{
+	{	
+#ifndef _LBANET_SERVER_SIDE_
+		long playerid = _actiontargets[0].second;
+		if(playerid >= 0)
+		{
+			Player * pl = ThreadSafeWorkpile::getInstance()->GetPlayer(playerid);
+			if(pl)
+			{
+				float distX = _posX-pl->GetPosX();
+				float distY = _posY-pl->GetPosY();
+				float distZ = _posZ-pl->GetPosZ();
+
+				double distance2 = sqrt((distX * distX) + (distZ * distZ));
+				float expectedR = (float)(180 * acos(-distZ / distance2) / M_PI);
+				if(-distX < 0)
+					expectedR = 360-expectedR;
+
+				double currR = GetRotation();
+				double diff, diff2;
+				if(expectedR < currR)
+					expectedR += 360;
+
+				diff = expectedR - currR;
+				diff2 = diff-360;
+
+				if(fabs(diff2) < fabs(diff))
+					diff = diff2;
+
+				float step = (float)(tdiff*0.2 * ((diff > 0) ? 1 : -1));
+				if(fabs(step) > fabs(diff))
+					step = (float)diff;
+
+				SetRotation(GetRotation() + step);
+			}
+		}
+#endif
 
 		return Actor::Process(tnow, tdiff);
 	}
@@ -104,10 +140,15 @@ bool NPCActor::Activate(float PlayerPosX, float PlayerPosY, float PlayerPosZ, fl
 
 
 #ifndef _LBANET_SERVER_SIDE_
-	if(actionType == 1 || actionType == 2)
+	if(_NPCType == 1 || _NPCType == 2)
 	{
+		std::vector<long> inv;
+		inv.push_back(1);
+		inv.push_back(2);
+		inv.push_back(11);
+		inv.push_back(12);
 		ThreadSafeWorkpile::getInstance()->SetTargetedActor(_ID);
-		ThreadSafeWorkpile::getInstance()->AddEvent(new DisplayDialogEvent(_ID, _Name, true));
+		ThreadSafeWorkpile::getInstance()->AddEvent(new DisplayDialogEvent(_ID, _Name, _NPCType == 2, true, inv));
 		_activated = true;
 	}
 #endif
@@ -134,8 +175,13 @@ int NPCActor::ActivateZone(float PlayerPosX, float PlayerPosY, float PlayerPosZ,
 		double distance = (distX * distX) + (distY * distY) + (distZ * distZ);
 		if(distance > _activationdistance)
 		{
+			std::vector<long> inv;
+			inv.push_back(1);
+			inv.push_back(2);
+			inv.push_back(11);
+			inv.push_back(12);
 			ThreadSafeWorkpile::getInstance()->SetUntargetedActor(_ID);
-			ThreadSafeWorkpile::getInstance()->AddEvent(new DisplayDialogEvent(_ID, _Name, false));
+			ThreadSafeWorkpile::getInstance()->AddEvent(new DisplayDialogEvent(_ID, _Name, _NPCType == 2, false, inv));
 			_activated = false;
 		}
 	}

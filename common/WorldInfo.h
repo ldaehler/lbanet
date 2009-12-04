@@ -231,6 +231,7 @@ struct ItemInfo
 	int Max;
 	std::string Description;
 	int Effect;
+	int Price;
 	bool Ephemere;
 	std::string From;
 	std::string Date;
