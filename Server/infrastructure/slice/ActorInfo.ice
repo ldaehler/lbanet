@@ -10,7 +10,7 @@ module LbaNet
 	interface ActorsObserver
 	{
 	    void UpdatedInfo(ActorInfo asi);
-	    void Quitted(string ActorName);
+	    void Quitted(long PlayerId);
 	    
 	    void ActivatedActor(ActorActivationInfo ai);  
 	    void SignaledActor(ActorSignalInfo ai);	
