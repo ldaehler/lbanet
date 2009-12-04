@@ -733,7 +733,26 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 							scripts.push_back(ps);
 						}
 					}
-					act = new NPCActor(scripts, false, npctype, activationdistance, NameNPC);
+
+					NPCActor *tmpact = new NPCActor(scripts, false, npctype, activationdistance, NameNPC);
+
+					TiXmlNode* itemGroup=pElemC->FirstChild("items");
+					if(itemGroup)
+					{
+						std::map<long, TraderItem> items;
+						TiXmlElement*pElem2=itemGroup->FirstChildElement();
+						for( pElem2; pElem2; pElem2=pElem2->NextSiblingElement())
+						{
+							TraderItem itm;
+							itm.id = -1;
+							pElem2->QueryValueAttribute("id", &itm.id);
+							items[itm.id] = itm;
+						}
+
+						tmpact->SetItems(items);
+					}
+
+					act = tmpact;
 				}
 				break;
 

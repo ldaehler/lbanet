@@ -28,6 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ScriptableActor.h"
 #include "GameEvents.h"
+#include <map>
+#include "WorldInfo.h"
 
 /***********************************************************************
  * Module:  LiftActor.h
@@ -73,9 +75,16 @@ public:
 	std::string GetName()
 	{return _Name;}
 
-
 	//! update actor to target a player
-	virtual void UpdateTargetedActor(long playerid,bool target);
+	virtual void UpdateTargetedActor(long playerid, bool target);
+
+	//! set trader item
+	void SetItems(const std::map<long, TraderItem> &items)
+	{ _items = items; }
+
+	//! get trader items
+	const std::map<long, TraderItem> &GetItems()
+	{ return _items; }
 
 protected:
 	int		_NPCType;
@@ -85,6 +94,7 @@ protected:
 
 	std::string _Name;
 
+	std::map<long, TraderItem>	_items;
 };
 
 #endif

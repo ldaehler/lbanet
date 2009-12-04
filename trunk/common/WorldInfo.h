@@ -255,4 +255,10 @@ struct ItemGroup
 };
 
 
+struct TraderItem
+{
+	long id;
+};
+
+
 #endif
