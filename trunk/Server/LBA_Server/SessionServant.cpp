@@ -661,9 +661,10 @@ bool SessionServant::HasItem(Ice::Long ItemId, int QUantity, const Ice::Current&
 /***********************************************************
 callback functions to apply inventory changes
 ***********************************************************/
-void SessionServant::ApplyInternalInventoryChanges(const UpdatedItemSeq &InventoryChanges, bool InformPlayer)
+void SessionServant::ApplyInternalInventoryChanges(const UpdatedItemSeq &InventoryChanges)
 {
 	UpdatedItemSeq clientseq;
+	UpdatedItemSeq clientInventoryChanges;
 
 	UpdatedItemSeq::const_iterator it = InventoryChanges.begin();
 	UpdatedItemSeq::const_iterator end = InventoryChanges.end();
@@ -697,16 +698,20 @@ void SessionServant::ApplyInternalInventoryChanges(const UpdatedItemSeq &Invento
 				clientseq.push_back(itm);
 			}
 		}
+
+		if(it->InformPlayer)
+			clientInventoryChanges.push_back(*it);
 	}
 
 	try
 	{
 		if(clientseq.size() > 0 && _client_observer)
+		{
 			_client_observer->ApplyInventoryChanges(clientseq);
 
-		if(InformPlayer)
-			_client_observer->InformInventoryChanges(InventoryChanges);
-
+			if(clientInventoryChanges.size() > 0)
+				_client_observer->InformInventoryChanges(clientInventoryChanges);
+		}
 	}
     catch(const IceUtil::Exception& ex)
     {
@@ -1069,3 +1074,48 @@ void SessionServant::SetUnTargeted(Ice::Long ActorId, const ::Ice::Current&)
 		std::cout<<"SessionServant - Unknown exception during SetUnTargeted"<<std::endl;
 	}
 } 
+
+
+    
+/***********************************************************
+buy item
+***********************************************************/
+void SessionServant::BuyItem(Ice::Long FromActorId, Ice::Long Itemid, const ::Ice::Current&)
+{
+	int price = 0;
+	int number = 0;
+
+	{
+		Lock sync(*this);
+		std::map<long, ItemInfo>::iterator itdb = _inventory_db.find(Itemid);
+		if(itdb != _inventory_db.end())
+		{
+			// get the price for the object
+			int price = itdb->second.Price;
+
+			// check how much money we have
+			LbaNet::InventoryMap::iterator iti = _playerInventory.InventoryStructure.find(8); 
+			if(iti != _playerInventory.InventoryStructure.end())
+				number = iti->second.Number
+			else
+				return;
+		}
+		else
+			return;
+	}
+
+
+	//if we have enough money
+	if(number >= price)
+	{
+		// send to map handler to make change to inventory
+		if(_actors_manager)
+		{
+			ItemList CheckedPut;
+			CheckedPut[8] = price;
+			ItemList CheckTaken;
+			CheckTaken[Itemid] = 1;
+			_actors_manager->UpdateContainer(FromActorId, _userNum, CheckTaken, CheckedPut, _selfptr);
+		}
+	}
+}

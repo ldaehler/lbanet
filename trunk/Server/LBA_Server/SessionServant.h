@@ -166,13 +166,15 @@ public:
 	    
     // set player targeted by actor
     virtual void SetTargeted(Ice::Long ActorId, const ::Ice::Current&);
-    
-	    
+        
     // set player untargeted by actor
-    virtual void SetUnTargeted(Ice::Long ActorId, const ::Ice::Current&);  
+    virtual void SetUnTargeted(Ice::Long ActorId, const ::Ice::Current&);
+  
+    // buy item
+    virtual void BuyItem(Ice::Long FromActorId, Ice::Long Itemid, const ::Ice::Current&);
 
 protected:
-	void ApplyInternalInventoryChanges(const UpdatedItemSeq &InventoryChanges, bool InformPlayer);
+	void ApplyInternalInventoryChanges(const UpdatedItemSeq &InventoryChanges);
 
 	void cleanEphemereItems();
 
