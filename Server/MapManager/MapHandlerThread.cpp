@@ -541,8 +541,8 @@ LbaNet::UpdateSeq MapHandlerThread::GetUpdatedInfo()
 			ui.Rotation = actState.Rotation;
 			ui.Visible = actState.Visible;
 
-			std::vector<std::pair<long, long>>::iterator ittar = actState.Targets.begin();
-			std::vector<std::pair<long, long>>::iterator endtar = actState.Targets.end();
+			std::vector<std::pair<long, long> >::iterator ittar = actState.Targets.begin();
+			std::vector<std::pair<long, long> >::iterator endtar = actState.Targets.end();
 			for(; ittar != endtar; ++ittar)
 			{
 				LbaNet::TargetedInfo tinfo;
