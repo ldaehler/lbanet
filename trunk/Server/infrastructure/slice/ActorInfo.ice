@@ -24,6 +24,8 @@ module LbaNet
 	    void InformInventoryChanges(UpdatedItemSeq InventoryChanges);
 	    
 	    void UpdateActorState(ActorUpdateInfo newinfo);
+	    
+	    void ActivationAborted(ActorActivationInfo ai);
 	};
 	
 	

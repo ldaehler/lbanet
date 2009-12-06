@@ -217,9 +217,15 @@ void MapHandlerThread::ActivateActor(const ActorActivationInfoWithCallback& ai)
 				long item = dact->GetNeededItemId();
 				if(item >= 0)
 				{
-					// if we do not have the item - can not activate
-					if(!ai.clientPtr || !ai.clientPtr->HasItem(item, 1))
+					if(!ai.clientPtr)
 						return;
+
+					// if we do not have the item - can not activate
+					if(!ai.clientPtr->HasItem(item, 1))
+					{
+						ai.clientPtr->ActivatedActor(ai.ainfo, false);
+						return;
+					}
 
 					// if needed - destroy the item
 					if(dact->GetDesItem())
@@ -230,9 +236,15 @@ void MapHandlerThread::ActivateActor(const ActorActivationInfoWithCallback& ai)
 						itm.NewCount = -1;
 						itm.InformPlayer = true;
 						InventoryChanges.push_back(itm);
-						ai.clientPtr->ApplyInventoryChanges(InventoryChanges);
+						if(ai.clientPtr) 
+							ai.clientPtr->ApplyInventoryChanges(InventoryChanges);
 					}
-				}
+
+					if(ai.clientPtr)
+						ai.clientPtr->ActivatedActor(ai.ainfo, true);
+				}			
+
+				return;
 			}
 
 			it->second->ProcessActivation(ai.ainfo.X, ai.ainfo.Y, ai.ainfo.Z, ai.ainfo.Rotation);

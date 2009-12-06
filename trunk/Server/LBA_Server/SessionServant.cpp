@@ -1083,7 +1083,7 @@ void SessionServant::SetUnTargeted(Ice::Long ActorId, const ::Ice::Current&)
 /***********************************************************
 buy item
 ***********************************************************/
-void SessionServant::BuyItem(Ice::Long FromActorId, Ice::Long Itemid, const ::Ice::Current&)
+void SessionServant::BuyItem(Ice::Long FromActorId, Ice::Long Itemid, const ::Ice::Current& cur)
 {
 	int price = 0;
 	int number = 0;
@@ -1094,7 +1094,7 @@ void SessionServant::BuyItem(Ice::Long FromActorId, Ice::Long Itemid, const ::Ic
 		if(itdb != _inventory_db.end())
 		{
 			// get the price for the object
-			int price = itdb->second.Price;
+			price = itdb->second.Price;
 
 			// check how much money we have
 			LbaNet::InventoryMap::iterator iti = _playerInventory.InventoryStructure.find(8); 
@@ -1111,14 +1111,29 @@ void SessionServant::BuyItem(Ice::Long FromActorId, Ice::Long Itemid, const ::Ic
 	//if we have enough money
 	if(number >= price)
 	{
-		// send to map handler to make change to inventory
-		if(_actors_manager)
-		{
-			ItemList CheckedPut;
-			CheckedPut[8] = price;
-			ItemList CheckTaken;
-			CheckTaken[Itemid] = 1;
-			_actors_manager->UpdateContainer(FromActorId, _userNum, CheckTaken, CheckedPut, _selfptr);
-		}
+		ItemList CheckedPut;
+		CheckedPut[8] = price;
+		ItemList CheckTaken;
+		CheckTaken[Itemid] = 1;
+		UpdateInventoryFromContainer(FromActorId, CheckTaken, CheckedPut, cur);
+	}
+}
+
+
+    
+/***********************************************************
+tell client only if actor is activated
+***********************************************************/   
+void SessionServant::ActivatedActor(const LbaNet::ActorActivationInfo &ai, bool succeded, const ::Ice::Current&)
+{
+	if(succeded)
+	{
+		if(_client_observer)
+			_client_observer->ActivatedActor(ai);
+	}
+	else
+	{
+		if(_client_observer)
+			_client_observer->ActivationAborted(ai);
 	}
 }
