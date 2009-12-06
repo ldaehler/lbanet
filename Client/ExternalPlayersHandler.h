@@ -50,7 +50,7 @@ class ExternalPlayersHandler
 public:
 
 	// constructor
-	ExternalPlayersHandler(const std::string &mainActorName, float animationSpeed);
+	ExternalPlayersHandler(float animationSpeed);
 
 	// destructor
 	~ExternalPlayersHandler();
@@ -66,24 +66,22 @@ public:
 	void UpdateActor(const LbaNet::ActorInfo & ai);
 
 	// remove the actor from the list if present
-	void RemoveActor(const std::string & ActorName);
+	void RemoveActor(long ActorId);
 
 	// reset all actors - typically called when changing map
 	void ResetActors(const std::string &newmapName);
-
-	//set main player name
-	void SetMainName(const std::string &mainActorName)
-	{_mainActorName = mainActorName;}
 
 	// if actor already ther - update infroamtion
 	// else add actor to the list
 	void UpdateLifeActor(const LbaNet::ActorLifeInfo & ai);
 
+	//! get player from id
+	Player * GetPlayer(long playerid);
+
 private:
-	std::map<std::string, ExternalPlayer *>	_actors;
-	std::string								_mainActorName;
-	std::string								_mapName;
-	float									_animationSpeed;
+	std::map<long, ExternalPlayer *>	_actors;
+	std::string							_mapName;
+	float								_animationSpeed;
 };
 
 

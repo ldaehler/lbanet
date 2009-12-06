@@ -35,6 +35,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Actor.h"
 
 class GameEvent;
+class MainPlayerHandler;
+class ExternalPlayersHandler;
+class Player;
 
 /***********************************************************************
  * Module:  ThreadSafeWorkpile.h
@@ -174,13 +177,13 @@ public:
 	void UpdateActor(const LbaNet::ActorInfo & ai);
 
 	// remove the actor from the list if present
-	void RemoveActor(const std::string & ActorName);
+	void RemoveActor(long ActorName);
 
 	// get the last update info
 	void GetExtActorUpdate(std::vector<LbaNet::ActorInfo> & vec);
 
 	// get the last update info
-	void GetQuittedActors(std::vector<std::string> & vec);
+	void GetQuittedActors(std::vector<long> & vec);
 
 	// add an activation event
 	void AddActivationEvent(const LbaNet::ActorActivationInfo & ai);
@@ -200,6 +203,12 @@ public:
 
 	// get all activation event
 	void GetAllActivated(std::vector<LbaNet::ActorActivationInfo> & vec);
+
+	// add an activation event
+	void ActivationAborted(const LbaNet::ActorActivationInfo & ai);
+
+	// get all activation event
+	void GetAllActivationAborted(std::vector<LbaNet::ActorActivationInfo> & vec);
 
 	// set if the server is on or not
 	void SetServeron(bool serveron);
@@ -364,6 +373,22 @@ public:
 	//! get destroyed items
 	void GetUntargetedActors(std::vector<long> & untargetedactors);
 
+
+	//! set pointer to main player
+	void SetMainPlayer(MainPlayerHandler * mplayer);
+
+	//! set external players
+	void SetExternalPlayer(ExternalPlayersHandler * explayers);
+
+	//! get player from id
+	Player * GetPlayer(long playerid);
+
+	//! buy item 
+	void BuyItem(long FromActorId, long itemid);
+
+	//! get all items bought
+	void GetBoughtItem(std::vector<std::pair<long,long> > & items);
+
 protected:
 
 	//! construtor
@@ -372,7 +397,8 @@ protected:
 			m_send_cycle_time(20), m_is_updated(false), m_map_changed(false), m_server_on(false),
 			m_player_id(-1), m_new_actor_state(false), m_name_color_changed(false),
 			m_world_changed(false), m_player_pos_info_updated(false), m_waiting_container_info(false),
-			m_updated_container(false), m_exchanged_container(false), m_closed_container(false)
+			m_updated_container(false), m_exchanged_container(false), m_closed_container(false),
+			m_mplayer(NULL), m_explayers(NULL)
 	{}
 
 	ThreadSafeWorkpile(const ThreadSafeWorkpile &);
@@ -411,6 +437,8 @@ private:
 	IceUtil::Mutex								m_mutex_letter_queries;
 	IceUtil::Mutex								m_mutex_destroy_items;
 	IceUtil::Mutex								m_mutex_targeted_actors;
+	IceUtil::Mutex								m_mutex_buy_items;
+	IceUtil::Mutex								m_mutex_act_aborted;
 
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_irc;
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_sending_loop;
@@ -439,7 +467,7 @@ private:
 	MapChangedInformation						m_map_changed_info;								
 
 	std::vector<LbaNet::ActorInfo>				m_ext_info;
-	std::vector<std::string>					m_quitted_actors;
+	std::vector<long>					m_quitted_actors;
 	std::vector<LbaNet::ActorLifeInfo>			m_ext_life_info;
 
 	bool										m_server_on;
@@ -494,6 +522,15 @@ private:
 
 	std::vector<long>							m_targetedactors;
 	std::vector<long>							m_untargetedactors;
+
+	MainPlayerHandler *							m_mplayer;
+	ExternalPlayersHandler *					m_explayers;
+
+	std::vector<std::pair<long,long> >			m_bought_items;
+
+	std::vector<LbaNet::ActorActivationInfo>	m_act_aborted;
+
+
 
 	static ThreadSafeWorkpile *					_singletonInstance;
 };

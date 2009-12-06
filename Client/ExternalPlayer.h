@@ -122,6 +122,9 @@ public:
 	// draw the object
     void draw(int RoomCut);
 
+	Player * GetPlayer()
+	{return _renderer;}
+
 private:
 	double			_last_update;
 

@@ -178,6 +178,9 @@ render object
 ***********************************************************/
 void MainPlayerHandler::Render()
 {
+	if(!_player->Visible())
+		return;
+
 	// draw the shadow
     glEnable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
@@ -213,6 +216,12 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 
 	if(_state == Ac_scripted)
 	{
+		if(_curr_script_position >= (int)_curr_script.size())
+		{
+			Stopstate();
+			return 0;
+		}
+
 		PlayerScriptPart ps = _curr_script[_curr_script_position];
 		if(ps.Animation >= 0)
 			_player->setActorAnimation(ps.Animation);
@@ -361,6 +370,16 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 				return 6;
 			}
 			break;
+	
+			case 12: // teleport player to another map
+			{
+				++_curr_script_position;
+				_newmap = ps.NewMap;
+				_spawning = ps.Spawning;
+				return 7;
+			}
+			break;
+
 		}
 
 		if(_curr_script_position >= (int)_curr_script.size())
@@ -1713,4 +1732,13 @@ give signal to main player
 void MainPlayerHandler::SetSignal(int newsignal)
 {
 	_currentsignal = newsignal;
+}
+
+
+/***********************************************************
+show player
+***********************************************************/
+void MainPlayerHandler::Show()
+{
+	_player->Show();
 }

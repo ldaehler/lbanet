@@ -127,6 +127,9 @@ public:
     // set player untargeted by actor
     void SetUnTargeted(long ActorId);    
 
+	//! buy item 
+	void BuyItem(long FromActorId, long itemid);
+
 private:
 
     const Ice::ObjectAdapterPtr							_adapter;	// ice adapter

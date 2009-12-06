@@ -33,8 +33,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /***********************************************************
 constructor
 ***********************************************************/
-ExternalPlayersHandler::ExternalPlayersHandler(const std::string &mainActorName, float animationSpeed)
-: _mainActorName(mainActorName), _animationSpeed(animationSpeed)
+ExternalPlayersHandler::ExternalPlayersHandler(float animationSpeed)
+:  _animationSpeed(animationSpeed)
 {
 
 }
@@ -56,8 +56,8 @@ draw function
 ***********************************************************/
 void ExternalPlayersHandler::draw(int RoomCut)
 {
-	std::map<std::string, ExternalPlayer *>::iterator it = _actors.begin();
-	std::map<std::string, ExternalPlayer *>::iterator end = _actors.end();
+	std::map<long, ExternalPlayer *>::iterator it = _actors.begin();
+	std::map<long, ExternalPlayer *>::iterator end = _actors.end();
 
 	for(;it!=end; ++it)
 		it->second->draw(RoomCut);
@@ -73,7 +73,7 @@ int ExternalPlayersHandler::Process(double tnow, float tdiff)
 	// update from external info
 	ThreadSafeWorkpile * wp = ThreadSafeWorkpile::getInstance();
 	std::vector<LbaNet::ActorInfo> vecai;
-	std::vector<std::string> vecq;
+	std::vector<long> vecq;
 	std::vector<LbaNet::ActorLifeInfo> veclai;
 	wp->GetExtActorUpdate(vecai);
 	wp->GetQuittedActors(vecq);
@@ -88,8 +88,8 @@ int ExternalPlayersHandler::Process(double tnow, float tdiff)
 
 
 	// update actors spped and animation
-	std::map<std::string, ExternalPlayer *>::iterator it = _actors.begin();
-	std::map<std::string, ExternalPlayer *>::iterator end = _actors.end();
+	std::map<long, ExternalPlayer *>::iterator it = _actors.begin();
+	std::map<long, ExternalPlayer *>::iterator end = _actors.end();
 
 	for(;it!=end; ++it)
 		it->second->Process(tnow, tdiff);
@@ -107,10 +107,10 @@ void ExternalPlayersHandler::UpdateActor(const LbaNet::ActorInfo & ai)
 	if(ai.MapName != _mapName)
 		return;
 
-	if(ai.Name == _mainActorName)
+	if(ai.ActorId == ThreadSafeWorkpile::getInstance()->GetPlayerId())
 		return;
 
-	std::map<std::string, ExternalPlayer *>::iterator it = _actors.find(ai.Name);
+	std::map<long, ExternalPlayer *>::iterator it = _actors.find(ai.ActorId);
 	if(it != _actors.end())
 	{
 		it->second->Update(ai);
@@ -118,7 +118,7 @@ void ExternalPlayersHandler::UpdateActor(const LbaNet::ActorInfo & ai)
 	else
 	{
 		ExternalPlayer * act = new ExternalPlayer(ai, _animationSpeed);
-		_actors.insert(std::pair<std::string, ExternalPlayer *>(ai.Name,act));
+		_actors.insert(std::pair<long, ExternalPlayer *>(ai.ActorId,act));
 	}
 }
 
@@ -130,18 +130,16 @@ else add actor to the list
 **********************************************************/
 void ExternalPlayersHandler::UpdateLifeActor(const LbaNet::ActorLifeInfo & ai)
 {
-	if(ai.Name == _mainActorName)
+	if(ai.ActorId == ThreadSafeWorkpile::getInstance()->GetPlayerId())
 	{
 		ThreadSafeWorkpile::getInstance()->AddEvent(new PlayerLifeChangedEvent(ai.CurrentLife, 
 															ai.MaxLife, ai.CurrentMana, ai.MaxMana));
 	}
 	else
 	{
-		std::map<std::string, ExternalPlayer *>::iterator it = _actors.find(ai.Name);
+		std::map<long, ExternalPlayer *>::iterator it = _actors.find(ai.ActorId);
 		if(it != _actors.end())
-		{
 			it->second->UpdateLife(ai);
-		}
 	}
 }
 
@@ -149,12 +147,12 @@ void ExternalPlayersHandler::UpdateLifeActor(const LbaNet::ActorLifeInfo & ai)
 /***********************************************************
 remove the actor from the list if present
 **********************************************************/
-void ExternalPlayersHandler::RemoveActor(const std::string & ActorName)
+void ExternalPlayersHandler::RemoveActor(long ActorId)
 {
-	if(ActorName == _mainActorName)
+	if(ActorId == ThreadSafeWorkpile::getInstance()->GetPlayerId())
 		return;
 
-	std::map<std::string, ExternalPlayer *>::iterator it = _actors.find(ActorName);
+	std::map<long, ExternalPlayer *>::iterator it = _actors.find(ActorId);
 	if(it != _actors.end())
 	{
 		delete it->second;
@@ -169,8 +167,8 @@ reset all actors - typically called when changing map
 **********************************************************/
 void ExternalPlayersHandler::ResetActors(const std::string &newmapName)
 {
-	std::map<std::string, ExternalPlayer *>::iterator it = _actors.begin();
-	std::map<std::string, ExternalPlayer *>::iterator end = _actors.begin();
+	std::map<long, ExternalPlayer *>::iterator it = _actors.begin();
+	std::map<long, ExternalPlayer *>::iterator end = _actors.begin();
 
 	for(;it!=end; ++it)
 		delete it->second;
@@ -179,5 +177,21 @@ void ExternalPlayersHandler::ResetActors(const std::string &newmapName)
 
 
 	_mapName = newmapName;
+}
+
+
+
+/***********************************************************
+get player from id
+**********************************************************/
+Player * ExternalPlayersHandler::GetPlayer(long playerid)
+{
+	std::map<long, ExternalPlayer *>::iterator it = _actors.find(playerid);
+	if(it != _actors.end())
+	{
+		return it->second->GetPlayer();
+	}
+
+	return NULL;
 }
 

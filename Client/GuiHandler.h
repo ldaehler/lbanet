@@ -45,6 +45,7 @@ namespace CEGUI
 #include <vector>
 #include <list>
 #include <map>
+#include "WorldInfo.h"
 struct TPInfo;
 
 /***********************************************************************
@@ -117,7 +118,8 @@ public:
 	void RefreshOption();
 
 	// show dialog with NPC
-	void ShowDialog(long ActorId, const std::string &ActorName, bool Show);
+	void ShowDialog(long ActorId, const std::string &ActorName, bool IsTrader, bool Show,
+						const std::map<long, TraderItem> &inventory);
 
 protected:
 	//! inject time to the GUI

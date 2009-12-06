@@ -23,7 +23,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "ThreadSafeWorkpile.h"
-
+#include "MainPlayerHandler.h"
+#include "ExternalPlayersHandler.h"
+#include "Player.h"
 
 ThreadSafeWorkpile* ThreadSafeWorkpile::_singletonInstance = NULL;
 
@@ -289,7 +291,7 @@ void ThreadSafeWorkpile::UpdateActor(const LbaNet::ActorInfo & ai)
 /***********************************************************
 remove the actor from the list if present
 ***********************************************************/
-void ThreadSafeWorkpile::RemoveActor(const std::string & ActorName)
+void ThreadSafeWorkpile::RemoveActor(long ActorName)
 {
 	IceUtil::Mutex::Lock lock(m_mutex_ext_actor_info);
 	m_quitted_actors.push_back(ActorName);
@@ -308,7 +310,7 @@ void ThreadSafeWorkpile::GetExtActorUpdate(std::vector<LbaNet::ActorInfo> & vec)
 /***********************************************************
 get the last update info
 ***********************************************************/
-void ThreadSafeWorkpile::GetQuittedActors(std::vector<std::string> & vec)
+void ThreadSafeWorkpile::GetQuittedActors(std::vector<long> & vec)
 {
 	IceUtil::Mutex::Lock lock(m_mutex_ext_actor_info);
 	vec.clear();
@@ -376,6 +378,28 @@ void ThreadSafeWorkpile::GetAllActivated(std::vector<LbaNet::ActorActivationInfo
 	IceUtil::Mutex::Lock lock(m_mutex_external_activation);
 	vec.clear();
 	m_ext_activations.swap(vec);
+}
+
+
+
+/***********************************************************
+add an activation event
+***********************************************************/
+void ThreadSafeWorkpile::ActivationAborted(const LbaNet::ActorActivationInfo & ai)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_act_aborted);
+	m_act_aborted.push_back(ai);
+}
+
+
+/***********************************************************
+get all activation event
+***********************************************************/
+void ThreadSafeWorkpile::GetAllActivationAborted(std::vector<LbaNet::ActorActivationInfo> & vec)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_act_aborted);
+	vec.clear();
+	m_act_aborted.swap(vec);
 }
 
 
@@ -958,4 +982,63 @@ void ThreadSafeWorkpile::GetUntargetedActors(std::vector<long> & untargetedactor
 	untargetedactors.clear();
 	IceUtil::Mutex::Lock lock(m_mutex_targeted_actors);
 	untargetedactors.swap(m_untargetedactors);
+}
+
+
+
+/***********************************************************
+set pointer to main player
+***********************************************************/
+void ThreadSafeWorkpile::SetMainPlayer(MainPlayerHandler * mplayer)
+{
+	m_mplayer = mplayer;
+}
+
+/***********************************************************
+set external players
+***********************************************************/
+void ThreadSafeWorkpile::SetExternalPlayer(ExternalPlayersHandler * explayers)
+{
+	m_explayers = explayers;
+}
+
+
+/***********************************************************
+get player from id
+***********************************************************/
+Player * ThreadSafeWorkpile::GetPlayer(long playerid)
+{
+	if(playerid == m_player_id)
+	{
+		if(m_mplayer)
+			return m_mplayer->GetPlayer();
+	}
+	else
+	{
+		if(m_explayers)
+			return m_explayers->GetPlayer(playerid);
+	}
+
+	return NULL;
+}
+
+
+
+/***********************************************************
+buy item 
+***********************************************************/
+void ThreadSafeWorkpile::BuyItem(long FromActorId, long itemid)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_buy_items);
+	m_bought_items.push_back(std::make_pair<long,long>(FromActorId, itemid));
+}
+
+/***********************************************************
+get all items bought
+***********************************************************/
+void ThreadSafeWorkpile::GetBoughtItem(std::vector<std::pair<long,long> > & items)
+{
+	items.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_buy_items);
+	items.swap(m_bought_items);
 }

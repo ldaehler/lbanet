@@ -39,7 +39,7 @@ namespace CEGUI
 #include <list>
 #include <map>
 #include <vector>
-
+#include "WorldInfo.h"
 
 //*************************************************************************************************
 //*                               class NPCDialogBox
@@ -52,7 +52,7 @@ class NPCDialogBox
 {
  public:
 	//! constructor
-	 NPCDialogBox(GameGUI * gamgui);
+	 NPCDialogBox(GameGUI * gamgui, int boxsize);
 
 	//! destructor
 	virtual ~NPCDialogBox();
@@ -61,7 +61,8 @@ class NPCDialogBox
 	void Initialize(CEGUI::Window* Root);
 
 	//! display the chatbox on screen
-	void ShowDialog(long ActorId, const std::string &ActorName, bool Show);
+	void ShowDialog(long ActorId, const std::string &ActorName, bool IsTrader, bool Show,
+		const std::map<long, TraderItem> &inventory);
 
 	//! handle windows closing event
 	bool HandleClose(const CEGUI::EventArgs& e);
@@ -69,18 +70,53 @@ class NPCDialogBox
 	//! handle listbox selected
 	bool Handlelbelected(const CEGUI::EventArgs& e);
 
+	//! handle windows resize event
+	bool HandleResize (const CEGUI::EventArgs& e);
+
+	//! handle windows resize event
+	bool HandleObjectClicked (const CEGUI::EventArgs& e);
+
+
+	//! process what is needed in the game GUI
+	void Process();
+
 protected:
 	//! close dialog and inform actor
 	void CloseDialog();
 
+	//! open trading dialog
+	void OpenTradeDialog();
+
 	//! build dialog depending of the actor
-	void BuildDialog(long ActorId);
+	void BuildDialog(long ActorId, bool IsTrader);
+
+	//! resize inventory
+	void ResizeBox();
+
+
+	//! add an object
+	void AddItem(long Id, CEGUI::Window* parent);
+
+	//! clean current items
+	void CleanItems();
+
+	//! set player money
+	void RefreshMoney();
 
 private:
 	CEGUI::Window*			_myBox;
+	CEGUI::Window*			_mytradeBox;
 	GameGUI *				_gamgui;
+	int						_boxsize;
+	int						_currentmoney;
+
+	std::vector<CEGUI::Window*>	_inv_boxes;
 
 	long					_current_dialoged_actor;
+
+	std::vector<CEGUI::Window*>	_objects;
+
+	std::map<long, TraderItem>	_curr_inventory;
 };
 
 #endif
