@@ -26,6 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ThreadSafeWorkpile.h"
 #include "LetterEditorBox.h"
 #include "LetterViewerBox.h"
+#include "MessageBox.h"
+#include "DialogBox.h"
 
 InventoryHandler* InventoryHandler::_singletonInstance = NULL;
 
@@ -49,7 +51,8 @@ InventoryHandler * InventoryHandler::getInstance()
 	Constructor
 ***********************************************************/
 InventoryHandler::InventoryHandler()
-: _inventoryUpdated(false), _shorcutUpdated(false), m_leditor(NULL), m_lviewer(NULL)
+: _inventoryUpdated(false), _shorcutUpdated(false), 
+	m_leditor(NULL), m_lviewer(NULL)
 {
 
 }
@@ -363,6 +366,7 @@ void InventoryHandler::UpdateInventoryItem(long ObjectId, int NewCount)
 	{
 		_currInventory[ObjectId] = std::make_pair<int, int>(NewCount, -1);
 	}
+
 }
 
 
@@ -416,6 +420,8 @@ void InventoryHandler::SetLetterViewer(LetterViewerBox * lviewer)
 	m_lviewer = lviewer;
 }
 
+
+
 /***********************************************************
 update db with info
 ***********************************************************/
@@ -436,4 +442,75 @@ void InventoryHandler::UpdateUserCreatedItemInfo(long Id, const std::string & fr
 
 	IceUtil::Mutex::Lock lock(m_mutex_inv);
 	_db[Id] = itinf;
+}
+
+
+
+/***********************************************************
+get the type of item
+***********************************************************/
+int InventoryHandler::GetItemNumber(long id)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_inv);
+
+	std::map<long, std::pair<int, int> >::iterator it = _currInventory.find(id);
+	if(it != _currInventory.end())
+		return it->second.first;
+	else
+		return 0;
+}
+
+
+/***********************************************************
+get the price of item
+***********************************************************/
+int InventoryHandler::GetItemPrice(long id)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_inv);
+
+	std::map<long, ItemInfo>::iterator itdb = _db.find(id);	
+	if(itdb != _db.end())
+		return itdb->second.Price;
+	else
+		return 1;
+}
+
+
+
+/***********************************************************
+buy item
+***********************************************************/
+void InventoryHandler::BuyItem(long actorid, long itemid)
+{
+	int price = 0;
+	int moneywehave = 0;
+
+	{
+		IceUtil::Mutex::Lock lock(m_mutex_inv);
+		std::map<long, ItemInfo>::iterator itdb = _db.find(itemid);	
+		if(itdb != _db.end())
+		{
+			price = itdb->second.Price;
+		}
+		else return;
+
+		std::map<long, std::pair<int, int> >::iterator itnb = _currInventory.find(itemid);
+		if(itnb != _currInventory.end())
+		{
+			if((itnb->second.first + 1) >  itdb->second.Max)
+				return;
+		}
+
+
+		std::map<long, std::pair<int, int> >::iterator it = _currInventory.find(GetMoneyItemId());
+		if(it != _currInventory.end())
+		{
+			moneywehave = it->second.first;
+		}
+	}
+
+	if(price <= moneywehave)
+		ThreadSafeWorkpile::getInstance()->BuyItem(actorid, itemid);
+	else
+		CGMessageBox::getInstance()->Show("Trade cancelled", "You do not have enough kashes to buy this item!");
 }

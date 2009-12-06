@@ -82,6 +82,16 @@ int ExternalActorsHandler::Process(double tnow, float tdiff)
 		}
 	}
 
+	// update aborted activation
+	std::vector<LbaNet::ActorActivationInfo> vecaiab;
+	wp->GetAllActivationAborted(vecaiab);
+	for(size_t i=0; i<vecaiab.size(); ++i)
+	{
+		const LbaNet::ActorActivationInfo & ai = vecaiab[i];
+		std::map<long, Actor *>::iterator it = _actors.find((long)ai.ActivatedId);
+		if(it != _actors.end())
+			it->second->InformActivationAborted();
+	}
 
 	std::map<long, Actor *>::iterator it =  _actors.begin();
 	std::map<long, Actor *>::iterator end =  _actors.end();

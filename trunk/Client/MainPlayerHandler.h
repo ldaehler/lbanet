@@ -311,6 +311,16 @@ public:
 	long GetAttachActor()
 	{ return _attachactor;}
 
+	// get map player will pe teleported
+	std::string GetNewMap()
+	{ return _newmap;}
+
+	// get map player will pe teleported
+	std::string GetSpawning()
+	{ return _spawning;}
+
+	// show player
+	void Show();
 
 protected:
 	bool MoveActor(bool Upward, float timediff);
@@ -439,6 +449,11 @@ protected:
 
 	// actor used for attach/detach
 	long			_attachactor;
+
+
+	std::string		_newmap;
+	std::string		_spawning;
+
 };
 
 #endif

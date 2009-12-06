@@ -562,7 +562,8 @@ void GuiHandler::RefreshOption()
 /***********************************************************
 show dialog with NPC
 ***********************************************************/
-void GuiHandler::ShowDialog(long ActorId, const std::string &ActorName, bool Show)
+void GuiHandler::ShowDialog(long ActorId, const std::string &ActorName, bool IsTrader, bool Show,
+								const std::map<long, TraderItem> &inventory)
 {
-	if(_game_gui)_game_gui->ShowDialog(ActorId, ActorName, Show);
+	if(_game_gui)_game_gui->ShowDialog(ActorId, ActorName, IsTrader, Show, inventory);
 }

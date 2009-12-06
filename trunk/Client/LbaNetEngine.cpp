@@ -752,7 +752,8 @@ void LbaNetEngine::HandleGameEvents()
 			case 24: // display NPC dialog
 					DisplayDialogEvent * evcs = 
 						static_cast<DisplayDialogEvent *> (*it);
-					m_guiHandler.ShowDialog(evcs->_ActorId, evcs->_ActorName, evcs->_Show);
+					m_guiHandler.ShowDialog(evcs->_ActorId, evcs->_ActorName, evcs->_IsTrader, 
+											evcs->_Show, evcs->_inventory);
 			break;
 		}
 

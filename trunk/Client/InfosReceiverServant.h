@@ -43,7 +43,7 @@ public:
 	virtual void UpdatedInfo(const LbaNet::ActorInfo& asi, const Ice::Current&);
 
 	// callback function called when a message is received from IceStorm
-	virtual void Quitted(const std::string& ActorName, const Ice::Current&);
+	virtual void Quitted(Ice::Long PlayerId, const Ice::Current&);
 
 
 	// callback function called when a message is received from IceStorm
@@ -66,6 +66,9 @@ public:
 	    
 	// Update Actor State
 	virtual  void UpdateActorState(const LbaNet::ActorUpdateInfo &newinfo, const Ice::Current&);
+   
+	// Update Actor State
+	virtual  void ActivationAborted(const LbaNet::ActorActivationInfo &ai, const Ice::Current&);
 };
 
 #endif

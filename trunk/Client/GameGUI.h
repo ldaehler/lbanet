@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "LetterEditorBox.h"
 #include "LetterViewerBox.h"
 #include "DialogBox.h"
+#include "WorldInfo.h"
 
 namespace CEGUI
 {
@@ -140,7 +141,8 @@ public:
 	void ShowInventory();
 
 	// show dialog with NPC
-	void ShowDialog(long ActorId, const std::string &ActorName, bool Show);
+	void ShowDialog(long ActorId, const std::string &ActorName, bool IsTrader, bool Show,
+						const std::map<long, TraderItem> &inventory);
 
 private:
 	ChatBox			_cb;

@@ -678,6 +678,28 @@ void IceConnectionManager::SetUnTargeted(long ActorId)
 } 
 
 
+ 
+/***********************************************************
+set player untargeted by actor
+***********************************************************/   
+void IceConnectionManager::BuyItem(long FromActorId, long itemid)
+{
+	try
+	{
+		_session->BuyItem(FromActorId, itemid);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception BuyItem: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception BuyItem "));
+    }
+} 
+
+
+
 /***********************************************************
 constructor
 ***********************************************************/
@@ -758,6 +780,18 @@ void SendingLoopThread::run()
 			if(ThreadSafeWorkpile::getInstance()->IsUpdatedInvFromContainer(cinfo))
 				_connectionMananger.UpdateInvFromContainer(cinfo);
 		}
+
+
+		//-----------------------------------
+		// process bought item update
+		{
+			std::vector<std::pair<long,long> > boughtinfo;
+			ThreadSafeWorkpile::getInstance()->GetBoughtItem(boughtinfo);
+			for(size_t i=0; i< boughtinfo.size(); ++i)
+				_connectionMananger.BuyItem(boughtinfo[i].first, boughtinfo[i].second);
+		}
+
+		
 
 		//-----------------------------------
 		// process change world

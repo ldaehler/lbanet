@@ -2014,9 +2014,9 @@ bool LBA1ModelClass::AnimateModel(void)
         }
         else
         {
-            currentX = lastCurrentX;
-  	        currentY = lastCurrentY;
-            currentZ = lastCurrentZ;
+            currentX = 0;//lastCurrentX;
+  	        currentY = 0;//lastCurrentY;
+            currentZ = 0;//lastCurrentZ;
         }
 
         if(abs(currentX)>=7816 || abs(currentY)>=3908 || abs(currentZ)>=7816)

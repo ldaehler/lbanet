@@ -52,9 +52,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 const short	LbaNetModel::m_body_color_map[] = {-1, 2, 19, 32, 36, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 243};
 
 
-#ifndef _LBANET_SET_EDITOR_
-#define _LBANET_SET_EDITOR_
-#endif
+//#ifndef _LBANET_SET_EDITOR_
+//#define _LBANET_SET_EDITOR_
+//#endif
 
 
 /***********************************************************
@@ -124,7 +124,10 @@ LbaNetModel::LbaNetModel(GuiHandler*	guiH)
 	_camera->SetZenit(camzenit);
 	_camera->SetPerspective(perspec);
 
-	_externalPlayers = new ExternalPlayersHandler("", m_AnimationSpeed);
+	_externalPlayers = new ExternalPlayersHandler(m_AnimationSpeed);
+
+	ThreadSafeWorkpile::getInstance()->SetMainPlayer(_mainPlayerHandler);
+	ThreadSafeWorkpile::getInstance()->SetExternalPlayer(_externalPlayers);
 }
 
 
@@ -506,6 +509,7 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float 
 	m_main_actor_starting_Rotation = R;
 	_mainPlayerHandler->SetAttached(false);
 	ReplaceMain();
+	_mainPlayerHandler->Show();
 }
 
 
@@ -710,6 +714,11 @@ int LbaNetModel::Process()
 			_externalActorsHandler->ForcedDettach((Actor *)_mainPlayerHandler->GetPlayer(), 
 													_mainPlayerHandler->GetAttachActor());
 		break;
+
+		case 7:
+			ChangeMap(_mainPlayerHandler->GetNewMap(), _mainPlayerHandler->GetSpawning());
+			return 1;
+		break;
 	}
 
 	_externalPlayers->Process(tnow, tdiff);
@@ -728,7 +737,6 @@ set the player name
 void LbaNetModel::SetPlayerName(const std::string & name)
 {
 	_mainPlayerHandler->SetName(name);
-	_externalPlayers->SetMainName(name);
 }
 
 

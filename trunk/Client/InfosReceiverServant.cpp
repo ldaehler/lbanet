@@ -36,9 +36,9 @@ void InfosReceiverServant::UpdatedInfo(const LbaNet::ActorInfo& asi, const Ice::
 
 
 // callback function called when a message is received from IceStorm
-void InfosReceiverServant::Quitted(const std::string& ActorName, const Ice::Current&)
+void InfosReceiverServant::Quitted(Ice::Long PlayerId, const Ice::Current&)
 {
-	ThreadSafeWorkpile::getInstance()->RemoveActor(ActorName);
+	ThreadSafeWorkpile::getInstance()->RemoveActor(PlayerId);
 }
 
 
@@ -122,7 +122,7 @@ void InfosReceiverServant::UpdateContainerInfo(const LbaNet::ContainerInfo &cont
 		else
 		{
 			std::stringstream strs;
-			strs<<"You received "<<-InventoryChanges[i].NewCount<<" [colour='FFFFFFFF'][image='set:"<<ImageSetHandler::GetInstance()->GetInventoryMiniImage(InventoryChanges[i].ItemId)<<"   image:full_image']"; 
+			strs<<"You received "<<InventoryChanges[i].NewCount<<" [colour='FFFFFFFF'][image='set:"<<ImageSetHandler::GetInstance()->GetInventoryMiniImage(InventoryChanges[i].ItemId)<<"   image:full_image']"; 
 			ThreadSafeWorkpile::ChatTextData cdata;
 			cdata.Channel = "All";
 			cdata.Sender = "info";
@@ -169,6 +169,13 @@ void InfosReceiverServant::UpdateActorState(const LbaNet::ActorUpdateInfo &newin
 
 
 	ThreadSafeWorkpile::getInstance()->UpdateSingleActorState(asi);
+}
+
+
+// Update Actor State
+void InfosReceiverServant::ActivationAborted(const LbaNet::ActorActivationInfo &ai, const Ice::Current&)
+{
+	ThreadSafeWorkpile::getInstance()->ActivationAborted(ai);
 }
 
 

@@ -42,7 +42,7 @@ constructor
 GameGUI::GameGUI()
 : _cb(this), _comb(this), _telb(this), _invb(this, 50), 
 	_shortb(this, 50), _containerb(this, 50), _editb(NULL), _lettereditb(this), 
-	_letterviewb(this), _dialogb(this)
+	_letterviewb(this), _dialogb(this, 50)
 {
 	#ifdef _LBANET_SET_EDITOR_
 	_editb = new EditorBox(this);
@@ -241,6 +241,7 @@ void GameGUI::Process()
 	_shortb.Process();
 	_invb.Process();
 	_containerb.Process();
+	_dialogb.Process();
 }
 
 
@@ -440,7 +441,8 @@ void GameGUI::ShowInventory()
 /***********************************************************
 show dialog with NPC
 ***********************************************************/
-void GameGUI::ShowDialog(long ActorId, const std::string &ActorName, bool Show)
+void GameGUI::ShowDialog(long ActorId, const std::string &ActorName, bool IsTrader, bool Show,
+							const std::map<long, TraderItem> &inventory)
 {
-	_dialogb.ShowDialog(ActorId, ActorName, Show);
+	_dialogb.ShowDialog(ActorId, ActorName, IsTrader, Show, inventory);
 }

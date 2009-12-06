@@ -44,7 +44,7 @@ struct ActionFromInventory
 
 class LetterEditorBox;
 class LetterViewerBox;
-
+class NPCDialogBox;
 
 /***********************************************************************
  * Module:  InventoryHandler.h
@@ -134,6 +134,19 @@ public:
 	void UpdateUserCreatedItemInfo(long Id, const std::string & from, const std::string & date,
 									const std::string & subject, const std::string & message);
 
+	//! get the number of item in inventory
+	int GetItemNumber(long id);
+
+	//! get the price of item
+	int GetItemPrice(long id);
+
+	//! buy item
+	void BuyItem(long actorid, long itemid);
+	
+	//! get money item id
+	long GetMoneyItemId()
+	{return 8;}
+
 protected:
 	//! constructor
 	InventoryHandler();
@@ -157,6 +170,7 @@ private:
 
 	LetterEditorBox *						m_leditor;
 	LetterViewerBox *						m_lviewer;
+	NPCDialogBox *							m_ldialog;
 
 	// singleton
 	static InventoryHandler *				_singletonInstance;
