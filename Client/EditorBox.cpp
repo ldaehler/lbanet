@@ -364,6 +364,8 @@ void EditorBox::Initialize(CEGUI::Window* Root)
 			cbatype->addItem(new MyEditorListItem("Floor Switch"));
 			cbatype->addItem(new MyEditorListItem("Lift Actor"));
 			cbatype->addItem(new MyEditorListItem("Hurting zone"));
+			cbatype->addItem(new MyEditorListItem("NPC Actors"));
+			cbatype->addItem(new MyEditorListItem("Scripted zone"));
 		}
 
 		{
@@ -372,6 +374,7 @@ void EditorBox::Initialize(CEGUI::Window* Root)
 			cbatype->addItem(new MyEditorListItem("Sprite"));
 			cbatype->addItem(new MyEditorListItem("Video"));
 			cbatype->addItem(new MyEditorListItem("Ms3d model"));
+			cbatype->addItem(new MyEditorListItem("Lba1 model"));
 		}
 
 		static_cast<CEGUI::Listbox *> (
@@ -838,6 +841,9 @@ void EditorBox::Initialize(CEGUI::Window* Root)
 	listscript->addColumn("Value C", 3, CEGUI::UDim(0.16f, 0));
 	listscript->addColumn("Speed", 4, CEGUI::UDim(0.16f, 0));
 	listscript->addColumn("Sound", 5, CEGUI::UDim(0.16f, 0));
+	listscript->addColumn("SoundNum", 6, CEGUI::UDim(0.16f, 0));
+	listscript->addColumn("Animation", 7, CEGUI::UDim(0.16f, 0));
+	listscript->addColumn("Flag", 8, CEGUI::UDim(0.16f, 0));
 
 	listscript->subscribeEvent(CEGUI::MultiColumnList::EventSelectionChanged,
 										CEGUI::Event::Subscriber (&EditorBox::Handleliftscriptsselected, this));
@@ -1957,10 +1963,16 @@ bool EditorBox::Handleactorselected (const CEGUI::EventArgs& e)
 				types = "Floor Switch";
 			break;
 			case 10:
-				types = "Lift Actor";
+				types = "Scriptable Actor";
 			break;
 			case 11:
 				types = "Hurting zone";
+			break;
+			case 12:
+				types = "NPC Actor";
+			break;
+			case 13:
+				types = "Scripted zone";
 			break;
 		}
 
