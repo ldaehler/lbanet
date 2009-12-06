@@ -70,9 +70,15 @@ public:
 	//! if the actor needs to be updated client side
 	virtual bool NeedsUpdate();
 
+	bool GetAutoAttach()
+	{return _IsLift;}
+
+	void SetAutoAttach(bool autoa)
+	{_IsLift = autoa;}
+
 protected:
 	//! increase script position
-	void IncreaseScriptPosition();
+	void IncreaseScriptPosition(bool forcedreset = false);
 
 protected:
 	std::vector<PlayerScriptPart>	_scripts;

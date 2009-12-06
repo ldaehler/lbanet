@@ -476,10 +476,12 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 			case 10:	//lift actor class
 			{
 				{
+					ScriptableActor * tmpa = static_cast<ScriptableActor *>(it->second);
+					act->SetAttribute("autoattach", tmpa->GetAutoAttach());		
+
 					TiXmlElement * scripts = new TiXmlElement( "scripts" );
 					act->LinkEndChild(scripts);
 
-					ScriptableActor * tmpa = static_cast<ScriptableActor *>(it->second);
 					const std::vector<PlayerScriptPart> & scriptsV = tmpa->GetScripts();
 					for(size_t cci=0; cci<scriptsV.size(); ++cci)
 					{
