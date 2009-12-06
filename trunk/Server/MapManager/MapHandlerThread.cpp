@@ -486,8 +486,8 @@ void MapHandlerThread::run()
 					ui.Rotation = currState.Rotation;
 					ui.Visible = currState.Visible;
 
-					std::vector<std::pair<long, long>>::iterator ittar = currState.Targets.begin();
-					std::vector<std::pair<long, long>>::iterator endtar = currState.Targets.end();
+					std::vector<std::pair<long, long> >::iterator ittar = currState.Targets.begin();
+					std::vector<std::pair<long, long> >::iterator endtar = currState.Targets.end();
 					for(; ittar != endtar; ++ittar)
 					{
 						LbaNet::TargetedInfo tinfo;
