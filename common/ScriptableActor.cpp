@@ -311,14 +311,14 @@ int ScriptableActor::Process(double tnow, float tdiff)
 			case 7: // hide
 			{
 				Hide();
-				++_curr_script_position;
+				IncreaseScriptPosition();
 			}
 			break;		
 	
 			case 8: // show
 			{
 				Show();
-				++_curr_script_position;
+				IncreaseScriptPosition();
 			}
 			break;	
 	
@@ -333,7 +333,7 @@ int ScriptableActor::Process(double tnow, float tdiff)
 				}		
 				#endif
 				
-				++_curr_script_position;
+				IncreaseScriptPosition();
 			}
 			break;	
 		}
@@ -394,7 +394,7 @@ void ScriptableActor::Setstate(const ActorStateInfo & currState)
 			}
 		}
 
-		IncreaseScriptPosition();
+		IncreaseScriptPosition(true);
 	}
 
 
@@ -464,14 +464,19 @@ bool ScriptableActor::CheckDettach(Actor * act)
 /***********************************************************
 increase script position
 ***********************************************************/
-void ScriptableActor::IncreaseScriptPosition()
+void ScriptableActor::IncreaseScriptPosition(bool forcedreset)
 {
 	++_curr_script_position;
 
 	if(_curr_script_position >= _scripts.size())
 	{
+		#ifdef _LBANET_SERVER_SIDE_
 		_curr_script_position = 0;
 		_needs_update = true;
+		#else
+		if(forcedreset || !ThreadSafeWorkpile::getInstance()->IsServeron())
+			_curr_script_position = 0;
+		#endif
 	}
 }
 

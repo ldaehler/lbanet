@@ -653,6 +653,9 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 
 				case 10:	//lift actor class
 				{
+					bool autoattach = true;
+					pElem->QueryValueAttribute("autoattach", &autoattach);					
+
 					std::vector<PlayerScriptPart> scripts;
 					TiXmlNode* pNode2=pElem->FirstChild("scripts");
 					if(pNode2)
@@ -682,7 +685,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 							scripts.push_back(ps);
 						}
 					}
-					act = new ScriptableActor(scripts, true);
+					act = new ScriptableActor(scripts, autoattach);
 				}
 				break;
 
