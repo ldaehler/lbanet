@@ -321,6 +321,21 @@ int ScriptableActor::Process(double tnow, float tdiff)
 				++_curr_script_position;
 			}
 			break;	
+	
+			case 9: // change body
+			{
+				#ifndef _LBANET_SERVER_SIDE_
+				if(_Renderer)
+				{
+					CharacterRenderer * rend = static_cast<CharacterRenderer *>(_Renderer);
+					rend->changeAnimEntity(rend->GetModel(), (int)ps.ValueA);
+					rend->setActorAnimation(((ps.Animation>= 0) ? ps.Animation : 0));
+				}		
+				#endif
+				
+				++_curr_script_position;
+			}
+			break;	
 		}
 
 	}

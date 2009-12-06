@@ -491,7 +491,10 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 						script->SetDoubleAttribute("ValueB", scriptsV[cci].ValueB);
 						script->SetDoubleAttribute("ValueC", scriptsV[cci].ValueC);
 						script->SetDoubleAttribute("Speed", scriptsV[cci].Speed);
-						script->SetDoubleAttribute("Sound", scriptsV[cci].Sound);
+						script->SetAttribute("Sound", scriptsV[cci].Sound);
+						script->SetAttribute("SoundNum", scriptsV[cci].SoundNum);
+						script->SetAttribute("Animation", scriptsV[cci].Animation);
+						script->SetAttribute("Flag", scriptsV[cci].Flag);
 					}
 				}
 			}
@@ -517,8 +520,6 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 					act->SetAttribute("NPCType", tmpa->GetNPCType());
 					act->SetDoubleAttribute("activationdistance", tmpa->GetActivationDistance());
 					act->SetAttribute("Name", tmpa->GetName());
-					pElem->SetAttribute("neededitem", tmpa->GetNeededItemId());
-					pElem->SetAttribute("destroyitem", tmpa->GetDesItem());
 
 					TiXmlElement * scripts = new TiXmlElement( "scripts" );
 					act->LinkEndChild(scripts);
@@ -534,8 +535,10 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 						script->SetDoubleAttribute("ValueB", scriptsV[cci].ValueB);
 						script->SetDoubleAttribute("ValueC", scriptsV[cci].ValueC);
 						script->SetDoubleAttribute("Speed", scriptsV[cci].Speed);
-						script->SetDoubleAttribute("Sound", scriptsV[cci].Sound);
-						script->SetDoubleAttribute("Animation", scriptsV[cci].Animation);
+						script->SetAttribute("Sound", scriptsV[cci].Sound);
+						script->SetAttribute("SoundNum", scriptsV[cci].SoundNum);
+						script->SetAttribute("Animation", scriptsV[cci].Animation);
+						script->SetAttribute("Flag", scriptsV[cci].Flag);
 					}
 				}
 			}
@@ -550,6 +553,9 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 					act->SetDoubleAttribute("zonesizeY", tmpa->GetZoneY());
 					act->SetDoubleAttribute("zonesizeZ", tmpa->GetZoneZ());
 					act->SetAttribute("activationtype", tmpa->GetActivationType());
+					act->SetAttribute("neededitem", tmpa->GetNeededItemId());
+					act->SetAttribute("destroyitem", tmpa->GetDesItem());
+					act->SetAttribute("abortedmessage", tmpa->GetAbortedMessage());
 
 					TiXmlElement * scripts = new TiXmlElement( "scripts" );
 					act->LinkEndChild(scripts);
@@ -564,7 +570,13 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 						script->SetDoubleAttribute("ValueB", scriptsV[cci].ValueB);
 						script->SetDoubleAttribute("ValueC", scriptsV[cci].ValueC);
 						script->SetDoubleAttribute("Speed", scriptsV[cci].Speed);
-						script->SetDoubleAttribute("Sound", scriptsV[cci].Sound);
+						script->SetAttribute("Sound", scriptsV[cci].Sound);
+						script->SetAttribute("SoundNum", scriptsV[cci].SoundNum);
+						script->SetAttribute("Animation", scriptsV[cci].Animation);
+						script->SetAttribute("Flag", scriptsV[cci].Flag);
+
+						script->SetAttribute("newMap", scriptsV[cci].NewMap);
+						script->SetAttribute("spawning", scriptsV[cci].Spawning);
 					}
 				}
 			}

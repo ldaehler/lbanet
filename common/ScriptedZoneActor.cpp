@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GameEvents.h"
 #include "MusicHandler.h"
 #include "DataLoader.h"
+#include "MessageBox.h"
 #endif
 
 
@@ -38,9 +39,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************/
 ScriptedZoneActor::ScriptedZoneActor(float ZoneSizeX, float ZoneSizeY, float ZoneSizeZ, 
 										const std::vector<PlayerScriptPart> & scripts, int activationtype,
-										int NeededItemId, bool DestroyItem)
+										int NeededItemId, bool DestroyItem, const std::string & abortedmessage)
 : ZoneActivableActor(ZoneSizeX, ZoneSizeY, ZoneSizeZ, activationtype), 
-	_scripts(scripts), _NeededItemId(NeededItemId), _DestroyItem(DestroyItem)
+	_scripts(scripts), _NeededItemId(NeededItemId), _DestroyItem(DestroyItem), _abortedmessage(abortedmessage)
 {
 
 }
@@ -63,6 +64,18 @@ void ScriptedZoneActor::ProcessActivation(float PlayerPosX, float PlayerPosY, fl
 {
 #ifndef _LBANET_SERVER_SIDE_
 	ThreadSafeWorkpile::getInstance()->AddEvent(new MainPlayerScriptedEvent(_scripts));
+#endif
+}
+
+
+/***********************************************************
+inform aborted activation
+***********************************************************/
+void ScriptedZoneActor::InformActivationAborted()
+{
+#ifndef _LBANET_SERVER_SIDE_
+	if(_abortedmessage != "")
+		CGMessageBox::getInstance()->Show("Information", _abortedmessage);
 #endif
 }
 

@@ -27,6 +27,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define __LBANET_GAME_EVENTS_H__
 
 
+#include <map>
+#include "WorldInfo.h"
+
 /*
 ************************************************************************************************************************
 *                                                  class GameEvent
@@ -297,6 +300,8 @@ struct PlayerScriptPart
 	float ValueB;
 	float ValueC;
 	bool Flag;
+	std::string NewMap;
+	std::string Spawning;
 
 	float Speed;
 };
@@ -585,7 +590,7 @@ class DisplayDialogEvent : public GameEvent
 public:
 	//! constructor
 	DisplayDialogEvent(long ActorId, const std::string & ActorName, bool IsTrader, bool Show,
-							const std::vector<long> &inventory)
+							const std::map<long, TraderItem> &inventory)
 		: _ActorId(ActorId), _ActorName(ActorName), _Show(Show), 
 			_IsTrader(IsTrader), _inventory(inventory)
 	{
@@ -596,7 +601,7 @@ public:
 	std::string _ActorName;
 	bool _Show;
 	bool _IsTrader;
-	std::vector<long> _inventory;
+	std::map<long, TraderItem> _inventory;
 };
 
 #endif

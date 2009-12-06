@@ -142,13 +142,8 @@ bool NPCActor::Activate(float PlayerPosX, float PlayerPosY, float PlayerPosZ, fl
 #ifndef _LBANET_SERVER_SIDE_
 	if(_NPCType == 1 || _NPCType == 2)
 	{
-		std::vector<long> inv;
-		inv.push_back(1);
-		inv.push_back(2);
-		inv.push_back(11);
-		inv.push_back(12);
 		ThreadSafeWorkpile::getInstance()->SetTargetedActor(_ID);
-		ThreadSafeWorkpile::getInstance()->AddEvent(new DisplayDialogEvent(_ID, _Name, _NPCType == 2, true, inv));
+		ThreadSafeWorkpile::getInstance()->AddEvent(new DisplayDialogEvent(_ID, _Name, _NPCType == 2, true, _items));
 		_activated = true;
 	}
 #endif
@@ -175,13 +170,8 @@ int NPCActor::ActivateZone(float PlayerPosX, float PlayerPosY, float PlayerPosZ,
 		double distance = (distX * distX) + (distY * distY) + (distZ * distZ);
 		if(distance > _activationdistance)
 		{
-			std::vector<long> inv;
-			inv.push_back(1);
-			inv.push_back(2);
-			inv.push_back(11);
-			inv.push_back(12);
 			ThreadSafeWorkpile::getInstance()->SetUntargetedActor(_ID);
-			ThreadSafeWorkpile::getInstance()->AddEvent(new DisplayDialogEvent(_ID, _Name, _NPCType == 2, false, inv));
+			ThreadSafeWorkpile::getInstance()->AddEvent(new DisplayDialogEvent(_ID, _Name, _NPCType == 2, false, _items));
 			_activated = false;
 		}
 	}
