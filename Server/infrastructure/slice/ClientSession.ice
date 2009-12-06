@@ -89,7 +89,10 @@ module LbaNet
 	    void SetUnTargeted(long ActorId); 
 	    
 	    // buy item
-	    void BuyItem(long FromActorId, long Itemid); 
+	    void BuyItem(long FromActorId, long Itemid);
+	    
+	    // tell client only if actor is activated
+	    void ActivatedActor(ActorActivationInfo ai, bool succeded);
 	};
 
 };

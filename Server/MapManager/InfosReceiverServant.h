@@ -69,6 +69,9 @@ public:
 	    
 	// Update Actor State
 	virtual  void UpdateActorState(const LbaNet::ActorUpdateInfo &newinfo, const Ice::Current&){}
+	    
+	// Update Actor State
+	virtual  void ActivationAborted(const LbaNet::ActorActivationInfo &ai, const Ice::Current&){}
 
 private:
 	SharedData * _SD;

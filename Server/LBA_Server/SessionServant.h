@@ -172,6 +172,9 @@ public:
   
     // buy item
     virtual void BuyItem(Ice::Long FromActorId, Ice::Long Itemid, const ::Ice::Current&);
+	    
+	// tell client only if actor is activated
+	virtual void ActivatedActor(const LbaNet::ActorActivationInfo &ai, bool succeded, const ::Ice::Current&);
 
 protected:
 	void ApplyInternalInventoryChanges(const UpdatedItemSeq &InventoryChanges);
