@@ -152,6 +152,8 @@ void CharacterRenderer::changeAnimEntity(int entityNum, int bodyNum, bool forced
 			oldc = 243;
 		_modelRenderer->changeAllPolygonColors(oldc, _bodyColor);
 	}
+
+	setActorAnimation(0);
 }
 
 
