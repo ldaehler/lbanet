@@ -94,10 +94,19 @@ get inventory image
 ***********************************************************/
 std::string ImageSetHandler::GetInventoryMiniImage(long InventoryId)
 {
-	if(InventoryId > _inventory_filenames.size())
-		return "";
+	std::string file;
 
-	std::string file = _inventory_filenames[InventoryId-1];
+	if(InventoryHandler::InventoryItemIsUserCreated(InventoryId))
+		file = "letter";
+	else 
+	{
+		if(InventoryId > _inventory_filenames.size())
+			return "";
+		else
+			file = _inventory_filenames[InventoryId-1];
+	}
+
+
 	std::string res = "mini_" + file;
 
 	if(!CEGUI::ImagesetManager::getSingleton().isDefined(res))
