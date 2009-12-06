@@ -5,10 +5,31 @@
     <actor id="6" type="12" posX="30.250000" posY="7.000000" posZ="2.656250" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="12,0" />
     <actor id="7" type="12" posX="55.593750" posY="4.859375" posZ="42.187500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="12,0" />
     <actor id="8" type="12" posX="58.875000" posY="4.859375" posZ="42.187500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="12,0" />
-    <actor id="9" type="12" posX="51.312500" posY="7.000000" posZ="12.406250" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="328.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="39,0" />
+    <actor id="9" type="10" posX="51.0000" posY="7.000000" posZ="12.00" sizeX="1.000000" sizeY="5.000000" sizeZ="1.000000" rotation="328.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="39,1">
+        <scripts>
+	    <script type="4" ValueA="5.000000" Animation="0" />
+	    <script type="9" ValueA="0"/>
+            <script type="6" ValueA="270.000000" ValueB="-0.002500" Speed="0.05" Animation="2" Sound="113.000000" />
+            <script type="5" ValueA="500.000000" Animation="2"  Sound="113.000000"/>
+            <script type="6" ValueA="180.000000" ValueB="0.002500" Speed="0.05" Animation="2" Sound="113.000000" />  
+            <script type="1" ValueA="51.000000" ValueB="7.000000" ValueC="0.000000" Speed="0.005000" Sound="113.000000" Animation="0" />           
+            <script type="3" ValueA="-2" ValueB="6" />
+        </scripts>     
+    </actor>    
     <actor id="10" type="12" posX="29.000000" posY="10.000000" posZ="58.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="18,0" />
     <actor id="11" type="12" posX="58.000000" posY="10.000000" posZ="17.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="18,0" />
     <actor id="12" type="12" posX="43.000000" posY="7.000000" posZ="46.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="433.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="38,0" />
     <actor id="13" type="12" posX="0.000000" posY="-1.000000" posZ="0.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="9,0" />
     <actor id="14" type="12" posX="37.500000" posY="14.187500" posZ="25.718750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="18,0" />
+
+    <actor id="15" type="13" posX="51.000000" posY="7.000000" posZ="12.000000" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" zonesizeX="2.000000" zonesizeY="5.000000" zonesizeZ="2.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" activationtype="1" neededitem="11" destroyitem="1" abortedmessage="You need oil to use the car.">
+         <scripts> 
+            <script type="7"/>
+            <script type="10" ValueA="9" />
+            <script type="3" ValueA="9" ValueB="5" Flag="0"/>
+            <script type="4" ValueA="6"/>
+            <script type="11" ValueA="9" /> 
+            <script type="12" newMap="Map24_1" spawning="spawning0" />            
+       </scripts>   
+    </actor>
 </actors>

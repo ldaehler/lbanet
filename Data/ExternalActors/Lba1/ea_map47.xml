@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="UTF8" ?>
 <actors>
-    <actor id="0" type="12" posX="42.000000" posY="1.000000" posZ="53.812500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="177.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="39,0" />
+    <actor id="0" type="10" posX="42.000000" posY="1.000000" posZ="54.000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="180.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="39,0">
+         <scripts>
+	    <script type="4" ValueA="5.000000" Animation="0" />
+	    <script type="9" ValueA="0"/>
+            <script type="0" ValueA="0.000000" Speed="0.05000" Sound="113.000000" Animation="0" />    
+            <script type="1" ValueA="42.000000" ValueB="1.000000" ValueC="60.000000" Speed="0.005000" Sound="113.000000" Animation="0" />           
+            <script type="3" ValueA="-2" ValueB="6" />
+        </scripts>     
+    </actor>  
+    
     <actor id="1" type="12" posX="0.000000" posY="-1.000000" posZ="0.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="9,0" />
+
+  
+    <actor id="2" type="13" posX="42.000000" posY="1.000000" posZ="54.000000" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" zonesizeX="2.000000" zonesizeY="5.000000" zonesizeZ="2.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" activationtype="1" neededitem="11" destroyitem="1" abortedmessage="You need oil to use the car.">
+         <scripts> 
+            <script type="7"/>
+            <script type="10" ValueA="0" />
+            <script type="3" ValueA="0" ValueB="5" Flag="0"/>
+            <script type="4" ValueA="6"/>
+            <script type="11" ValueA="0" /> 
+            <script type="12" newMap="Map42_1" spawning="spawning10" />            
+       </scripts>   
+    </actor>
+    
 </actors>
