@@ -68,6 +68,21 @@ static void Tokenize(const std::string& str,
 	}
 }
 
+
+static std::string replaceall(const std::string & str, const std::string & toreplace, const std::string & with)
+{
+	std::string res = str;
+
+    int len = toreplace.size(), pos;
+	while((pos=res.find(toreplace)) != std::string::npos)
+    {
+        res=res.substr(0,pos)+with+res.substr(pos+len); 
+    }
+
+	return res;
+} 
+
+
 /***********************************************************
 constructor
 ***********************************************************/
@@ -445,10 +460,11 @@ long DatabaseHandler::AddLetter(long myId, const std::string& title, const std::
 			return resF;
 	}
 
+	std::string replaced = replaceall(message, "'", "#quote#");
 
 	mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
 	query << "INSERT INTO letters (userid, creationdate, title, message) VALUES('";
-	query << myId << "', UTC_TIMESTAMP(), '"<< title <<"', '" << message << "')";
+	query << myId << "', UTC_TIMESTAMP(), '"<< title <<"', '" << replaced << "')";
 	if(!query.exec())
 	{
 		std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update INSERT letters failed for user id "<<myId<<" : "<<query.error()<<std::endl;
@@ -495,6 +511,7 @@ LbaNet::LetterInfo DatabaseHandler::GetLetterInfo(Ice::Long LetterId)
 			res[0][1].to_string(resF.Date);
 			resF.Title= res[0][2].c_str();
 			resF.Message= res[0][3].c_str();
+			resF.Message = replaceall(resF.Message, "#quote#", "'");
 		}
 	}
 	else
