@@ -12,7 +12,7 @@
     <actor id="17" type="12" posX="6.000000" posY="2.000000" posZ="42.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="365.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="45,0">
     </actor>    
     <actor id="18" type="12" posX="34.218750" posY="1.000000" posZ="9.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="13,0" />
-    <actor id="19" type="10" posX="54.00" posY="4.000000" posZ="57.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="177.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="46,0">
+    <actor id="19" type="10" autoattach="0" posX="54.00" posY="4.000000" posZ="57.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="177.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="46,0">
         <scripts>
 	    <script type="4" ValueA="5.000000" Animation="0" />
             <script type="0" ValueA="0.000000" Speed="0.05000" Sound="113.000000" Animation="0" />    
