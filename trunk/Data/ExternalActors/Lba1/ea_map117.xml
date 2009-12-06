@@ -15,3 +15,4 @@
     <actor id="12" type="12" posX="32.000000" posY="0.000000" posZ="52.156250" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="46,0" />
     <actor id="13" type="12" posX="47.531250" posY="0.000000" posZ="19.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="49,0" />
 </actors>
+
