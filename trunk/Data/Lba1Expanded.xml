@@ -588,7 +588,6 @@
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
                 <exit name="exit0" TopRightX="60.998047" TopRightY="10.996094" TopRightZ="0.998047" BottomLeftX="54.000000" BottomLeftY="5.000000" BottomLeftZ="0.000000" newMap="Map12_1" spawning="spawning1" />
-                <exit name="exit1" TopRightX="41.000000" TopRightY="8.000000" TopRightZ="38.000000" BottomLeftX="40.000000" BottomLeftY="4.000000" BottomLeftZ="36.000000" newMap="Map6_1" spawning="spawning0" />
                 <exit name="exit14" TopRightX="6.998047" TopRightY="17.996094" TopRightZ="4.998047" BottomLeftX="6.000000" BottomLeftY="13.000000" BottomLeftZ="2.000000" newMap="Map22_1" spawning="spawning1" />
                 <exit name="exit15" TopRightX="13.998047" TopRightY="9.996094" TopRightZ="13.998047" BottomLeftX="11.000000" BottomLeftY="5.000000" BottomLeftZ="13.000000" newMap="Map22_1" spawning="spawning2" />
                 <exit name="exit16" TopRightX="9.998047" TopRightY="9.996094" TopRightZ="39.998047" BottomLeftX="9.000000" BottomLeftY="5.000000" BottomLeftZ="37.000000" newMap="Map23_1" spawning="spawning1" />
@@ -994,7 +993,6 @@
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
                 <exit name="exit0" TopRightX="62.998047" TopRightY="14.996094" TopRightZ="63.998047" BottomLeftX="56.000000" BottomLeftY="8.000000" BottomLeftZ="63.000000" newMap="Map13_1" spawning="spawning2" />
-                <exit name="exit1" TopRightX="57.000000" TopRightY="14.000000" TopRightZ="1.000000" BottomLeftX="49.000000" BottomLeftY="8.000000" BottomLeftZ="0.000000" newMap="Map24_1" spawning="spawning0" />
                 <exit name="exit2" TopRightX="24.000000" TopRightY="15.000000" TopRightZ="51.000000" BottomLeftX="21.000000" BottomLeftY="7.000000" BottomLeftZ="50.000000" newMap="MyMap1_1" spawning="spawning0" />
                 <exit name="exit4" TopRightX="63.998047" TopRightY="13.996094" TopRightZ="53.998047" BottomLeftX="63.000000" BottomLeftY="8.000000" BottomLeftZ="47.000000" newMap="Map18_1" spawning="spawning3" />
             </exits>
@@ -1190,7 +1188,6 @@
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
-                <exit name="exit0" TopRightX="63.998047" TopRightY="10.000000" TopRightZ="62.000000" BottomLeftX="55.000000" BottomLeftY="5.000000" BottomLeftZ="61.000000" newMap="Map19_1" spawning="spawning0" />
                 <exit name="exit1" TopRightX="43.998047" TopRightY="12.996094" TopRightZ="0.998047" BottomLeftX="41.000000" BottomLeftY="8.000000" BottomLeftZ="0.000000" newMap="Map39_1" spawning="spawning2" />
                 <exit name="exit13" TopRightX="18.998047" TopRightY="6.996094" TopRightZ="31.998047" BottomLeftX="18.000000" BottomLeftY="3.000000" BottomLeftZ="29.000000" newMap="Map102_1" spawning="spawning1" />
                 <exit name="exit3" TopRightX="38.998047" TopRightY="11.996094" TopRightZ="1.998047" BottomLeftX="36.000000" BottomLeftY="8.000000" BottomLeftZ="0.000000" newMap="Map42_1" spawning="spawning2" />
@@ -1246,9 +1243,7 @@
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
                 <exit name="exit0" TopRightX="62.998047" TopRightY="13.996094" TopRightZ="0.998047" BottomLeftX="56.000000" BottomLeftY="4.000000" BottomLeftZ="0.000000" newMap="Map13_1" spawning="spawning3" />
-                <exit name="exit1" TopRightX="1.000000" TopRightY="10.000000" TopRightZ="11.000000" BottomLeftX="0.000000" BottomLeftY="4.000000" BottomLeftZ="8.000000" newMap="Map37_1" spawning="spawning3" />
                 <exit name="exit4" TopRightX="48.998047" TopRightY="8.996094" TopRightZ="21.998047" BottomLeftX="48.000000" BottomLeftY="1.000000" BottomLeftZ="19.000000" newMap="Map52_1" spawning="spawning1" />
-                <exit name="exit8" TopRightX="4.531250" TopRightY="20.000000" TopRightZ="12.000000" BottomLeftX="2.531250" BottomLeftY="15.000000" BottomLeftZ="10.000000" newMap="Map37_1" spawning="spawning1" />
             </exits>
         </Map>
         <!--Map of Principal Island, Shop-->
@@ -1596,7 +1591,6 @@
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
-                <exit name="exit1" TopRightX="64.000000" TopRightY="10.000000" TopRightZ="61.000000" BottomLeftX="63.000000" BottomLeftY="1.000000" BottomLeftZ="58.000000" newMap="Map25_1" spawning="spawning0" />
                 <exit name="exit2" TopRightX="34.998047" TopRightY="8.996094" TopRightZ="44.998047" BottomLeftX="33.000000" BottomLeftY="8.000000" BottomLeftZ="43.000000" newMap="Map38_1" spawning="spawning1" />
             </exits>
         </Map>
@@ -1796,9 +1790,7 @@
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
-                <exit name="exit1" TopRightX="55.000000" TopRightY="10.000000" TopRightZ="64.000000" BottomLeftX="49.000000" BottomLeftY="4.000000" BottomLeftZ="63.000000" newMap="Map45_1" spawning="spawning1" />
                 <exit name="exit14" TopRightX="28.998047" TopRightY="9.996094" TopRightZ="9.998047" BottomLeftX="25.000000" BottomLeftY="5.000000" BottomLeftZ="9.000000" newMap="Map43_1" spawning="spawning1" />
-                <exit name="exit2" TopRightX="55.000000" TopRightY="10.000000" TopRightZ="1.000000" BottomLeftX="49.000000" BottomLeftY="4.000000" BottomLeftZ="0.000000" newMap="Map47_1" spawning="spawning1" />
                 <exit name="exit21" TopRightX="0.998047" TopRightY="13.996094" TopRightZ="36.998047" BottomLeftX="0.000000" BottomLeftY="6.000000" BottomLeftZ="31.000000" newMap="Map44_1" spawning="spawning1" />
                 <exit name="exit25" TopRightX="63.998047" TopRightY="7.996094" TopRightZ="0.998047" BottomLeftX="61.000000" BottomLeftY="4.000000" BottomLeftZ="0.000000" newMap="Map47_1" spawning="spawning1" />
                 <exit name="exit26" TopRightX="25.998047" TopRightY="5.996094" TopRightZ="52.998047" BottomLeftX="25.000000" BottomLeftY="2.000000" BottomLeftZ="49.000000" newMap="Map49_1" spawning="spawning1" />
@@ -1911,7 +1903,6 @@
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
-                <exit name="exit2" TopRightX="29.000000" TopRightY="6.000000" TopRightZ="1.000000" BottomLeftX="24.000000" BottomLeftY="1.000000" BottomLeftZ="0.000000" newMap="Map42_1" spawning="spawning9" />
             </exits>
         </Map>
         <!--Map of Emerald Moon, X Room-->
@@ -1999,7 +1990,6 @@
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
                 <exit name="exit1" TopRightX="43.000000" TopRightY="9.000000" TopRightZ="42.000000" BottomLeftX="41.000000" BottomLeftY="1.000000" BottomLeftZ="41.000000" newMap="Map46_1" spawning="spawning1" />
-                <exit name="exit4" TopRightX="44.000000" TopRightY="7.000000" TopRightZ="57.000000" BottomLeftX="40.000000" BottomLeftY="1.000000" BottomLeftZ="55.000000" newMap="Map42_1" spawning="spawning10" />
             </exits>
         </Map>
         <!--Map of Proxima Island, Forgers house-->
@@ -2719,7 +2709,6 @@
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
                 <exit name="exit0" TopRightX="63.998047" TopRightY="8.996094" TopRightZ="52.998047" BottomLeftX="63.000000" BottomLeftY="1.000000" BottomLeftZ="45.000000" newMap="Map2_1" spawning="spawning6" />
-                <exit name="exit1" TopRightX="23.000000" TopRightY="8.000000" TopRightZ="40.000000" BottomLeftX="21.000000" BottomLeftY="5.000000" BottomLeftZ="39.000000" newMap="Map11_1" spawning="spawning1" />
                 <exit name="exit12" TopRightX="40.998047" TopRightY="10.996094" TopRightZ="23.998047" BottomLeftX="37.000000" BottomLeftY="5.000000" BottomLeftZ="23.000000" newMap="Map35_1" spawning="spawning1" />
                 <exit name="exit15" TopRightX="0.998047" TopRightY="7.996094" TopRightZ="1.998047" BottomLeftX="0.000000" BottomLeftY="4.000000" BottomLeftZ="0.000000" newMap="Map11_1" spawning="spawning1" />
                 <exit name="exit17" TopRightX="58.998047" TopRightY="8.996094" TopRightZ="24.998047" BottomLeftX="56.000000" BottomLeftY="5.000000" BottomLeftZ="24.000000" newMap="Map104_1" spawning="spawning1" />

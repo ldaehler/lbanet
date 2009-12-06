@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF8" ?>
 <actors>
-    <actor id="23" type="12" posX="34.968750" posY="0.000000" posZ="32.750000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="177.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="24,0" />
+    <actor id="23" type="10" posX="37.0" posY="0.000000" posZ="33.00000" sizeX="2.000000" sizeY="10.000000" sizeZ="2.000000" rotation="177.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="24,0">
+        <scripts>
+            <script type="4" ValueA="5.000000" Animation="0" />
+            <script type="5" ValueA="3000.000000" Animation="1" Sound="95.000000" SoundNum="0" />
+            <script type="1" ValueA="31.000000" ValueB="0.000000" ValueC="33.000000" Speed="0.0012000" Sound="111.000000" Animation="1" />           
+            <script type="5" ValueA="600.000000" Animation="1" Sound="111.000000" />            
+            <script type="1" ValueA="31.000000" ValueB="0.000000" ValueC="55.000000" Speed="0.0025000" Sound="111.000000" Animation="1" />
+            <script type="6" ValueA="90.000000" ValueB="-0.002500" Speed="0.05" Animation="1" Sound="111.000000" />
+            <script type="5" ValueA="3000.000000" Animation="1" Sound="95.000000" SoundNum="0" />
+            <script type="6" ValueA="0.000000" ValueB="0.002500" Speed="0.05" Animation="1" Sound="111.000000" />
+            <script type="3" ValueA="-2" ValueB="6" />             
+        </scripts>     
+    </actor>      
     <actor id="24" type="12" posX="41.281250" posY="4.000000" posZ="39.781250" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="26,0" />
     <actor id="25" type="12" posX="43.000000" posY="4.000000" posZ="53.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="12,0" />
     <actor id="26" type="12" posX="55.250000" posY="4.000000" posZ="15.750000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="121.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="12,0" />
@@ -18,4 +30,14 @@
     <actor id="38" type="12" posX="2.000000" posY="14.000000" posZ="13.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="16,0" />
     <actor id="39" type="12" posX="12.000000" posY="4.000000" posZ="38.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="433.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="7,0" />
     <actor id="40" type="12" posX="0.000000" posY="-1.000000" posZ="0.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="9,0" />
+    <actor id="41" type="13" posX="41.000000" posY="4.000000" posZ="37.000000" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" zonesizeX="1.000000" zonesizeY="5.000000" zonesizeZ="1.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" activationtype="1" neededitem="12" destroyitem="1" abortedmessage="You need a ferry ticket to come onboard.">
+         <scripts> 
+            <script type="7"/>
+            <script type="10" ValueA="23" />
+            <script type="3" ValueA="23" ValueB="5" Flag="0"/>
+            <script type="4" ValueA="6"/>
+            <script type="11" ValueA="23" /> 
+            <script type="12" newMap="Map6_1" spawning="spawning0" />            
+       </scripts>   
+    </actor> 
 </actors>
