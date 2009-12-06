@@ -89,6 +89,6 @@ Version 0.75 changes:
 
 - Added merchants. You can now buy items from some of the NPC all over the maps.
 
-- Added actor travel feature. You should now be able to take use the ferries but also the cars and motorbikes.
+- Added actor travel feature. You should now be able to use the ferries but also the cars and motorbikes.
 
 - Added scripted zone. Just try to hide in the trash in the map out of citadel prison ;)
