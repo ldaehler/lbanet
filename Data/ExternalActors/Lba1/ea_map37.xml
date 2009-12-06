@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF8" ?>
 <actors>
-    <actor id="4" type="10" posX="57.000" posY="0.000000" posZ="62.000" sizeX="1.500000" sizeY="5.000000" sizeZ="0.600000" rotation="90.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="46,0">
+    <actor id="4" type="10" autoattach="false" posX="57.000" posY="0.000000" posZ="62.000" sizeX="1.500000" sizeY="5.000000" sizeZ="0.600000" rotation="90.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="46,0">
         <scripts>
 	    <script type="4" ValueA="5.000000" Animation="0" />
             <script type="1" ValueA="64.000000" ValueB="0.000000" ValueC="62.000000" Speed="0.005000" Sound="113.000000" Animation="1" />           
