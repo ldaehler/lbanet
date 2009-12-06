@@ -325,9 +325,9 @@ void Actor::SetPosition(float  posX, float  posY, float  posZ)
 	std::vector<Actor *>::iterator itaa = _attachedActors.begin();
 	std::vector<Actor *>::iterator endaa = _attachedActors.end();
 	for(;itaa != endaa; ++itaa)
-		(*itaa)->SetPosition(	(*itaa)->GetPosX() + _posX-posX, 
-								(*itaa)->GetPosY() + _posY-posY, 
-								(*itaa)->GetPosZ() + _posZ-posZ);
+		(*itaa)->SetPosition(	(*itaa)->GetPosX() + posX-_posX, 
+								(*itaa)->GetPosY() + posY-_posY, 
+								(*itaa)->GetPosZ() + posZ-_posZ);
 
 
 	_posX = posX;

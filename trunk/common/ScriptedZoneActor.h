@@ -41,7 +41,7 @@ public:
 	//! constructor
 	ScriptedZoneActor(float ZoneSizeX, float ZoneSizeY, float ZoneSizeZ, 
 						const std::vector<PlayerScriptPart> & scripts, int activationtype,
-						int NeededItemId, bool DestroyItem);
+						int NeededItemId, bool DestroyItem, const std::string & abortedmessage);
 
 	//! destructor
 	virtual ~ScriptedZoneActor();
@@ -65,11 +65,23 @@ public:
 	void SetDesItem(bool v)
 	{_DestroyItem = v;}
 
+	std::string GetAbortedMessage()
+	{ return _abortedmessage;}
+
+	void SetAbortedMessage(const std::string & abortedmessage)
+	{ _abortedmessage = abortedmessage;}
+
+
+
+	//! inform aborted activation
+	virtual void InformActivationAborted();
+
 protected:
 	std::vector<PlayerScriptPart>	_scripts;
 
 	int _NeededItemId;
 	bool _DestroyItem;
+	std::string _abortedmessage;
 };
 
 #endif

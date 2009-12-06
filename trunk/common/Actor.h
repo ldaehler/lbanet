@@ -292,6 +292,10 @@ public:
 	//! update actor to target a player
 	virtual void UpdateTargetedActor(long playerid, bool target){}
 
+
+	//! inform aborted activation
+	virtual void InformActivationAborted(){}
+
 protected:
    long		_ID;						// entity unique ID
    std::string	_sid;

@@ -668,6 +668,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 							ps.SoundNum = -1;
 							ps.Speed = -1;
 							ps.Animation = -1;
+							ps.Flag = true;
 
 							pElem2->QueryValueAttribute("type", &ps.Type);
 							pElem2->QueryValueAttribute("ValueA", &ps.ValueA);
@@ -677,6 +678,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 							pElem2->QueryValueAttribute("Sound", &ps.Sound);
 							pElem2->QueryValueAttribute("SoundNum", &ps.SoundNum);
 							pElem2->QueryValueAttribute("Animation", &ps.Animation);
+							pElem2->QueryValueAttribute("Flag", &ps.Flag);
 							scripts.push_back(ps);
 						}
 					}
@@ -722,6 +724,8 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 							ps.Speed = -1;
 							ps.SoundNum = -1;
 							ps.Animation = -1;
+							ps.Flag = true;
+
 							pElem2->QueryValueAttribute("type", &ps.Type);
 							pElem2->QueryValueAttribute("ValueA", &ps.ValueA);
 							pElem2->QueryValueAttribute("ValueB", &ps.ValueB);
@@ -730,26 +734,30 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 							pElem2->QueryValueAttribute("Sound", &ps.Sound);
 							pElem2->QueryValueAttribute("SoundNum", &ps.SoundNum);
 							pElem2->QueryValueAttribute("Animation", &ps.Animation);
+							pElem2->QueryValueAttribute("Flag", &ps.Flag);
 							scripts.push_back(ps);
 						}
 					}
 
 					NPCActor *tmpact = new NPCActor(scripts, false, npctype, activationdistance, NameNPC);
 
-					TiXmlNode* itemGroup=pElem->FirstChild("items");
-					if(itemGroup)
+					if(npctype == 2)
 					{
-						std::map<long, TraderItem> items;
-						TiXmlElement*pElem2=itemGroup->FirstChildElement();
-						for( pElem2; pElem2; pElem2=pElem2->NextSiblingElement())
+						TiXmlNode* itemGroup=pElem->FirstChild("items");
+						if(itemGroup)
 						{
-							TraderItem itm;
-							itm.id = -1;
-							pElem2->QueryValueAttribute("id", &itm.id);
-							items[itm.id] = itm;
-						}
+							std::map<long, TraderItem> items;
+							TiXmlElement*pElem2=itemGroup->FirstChildElement();
+							for( pElem2; pElem2; pElem2=pElem2->NextSiblingElement())
+							{
+								TraderItem itm;
+								itm.id = -1;
+								pElem2->QueryValueAttribute("id", &itm.id);
+								items[itm.id] = itm;
+							}
 
-						tmpact->SetItems(items);
+							tmpact->SetItems(items);
+						}
 					}
 
 					act = tmpact;
@@ -771,6 +779,12 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 					bool destroyitem = false;
 					pElem->QueryValueAttribute("destroyitem", &destroyitem);
 
+					const char *abortedmessage = pElem->Attribute("abortedmessage");
+					std::string abortedmessages;
+					if(abortedmessage)
+						abortedmessages = abortedmessage;
+
+
 					std::vector<PlayerScriptPart> scripts;
 					TiXmlNode* pNode2=pElem->FirstChild("scripts");
 					if(pNode2)
@@ -786,6 +800,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 							ps.Speed = -1;
 							ps.SoundNum = -1;
 							ps.Animation = -1;
+							ps.Flag = true;
 							pElem2->QueryValueAttribute("type", &ps.Type);
 							pElem2->QueryValueAttribute("ValueA", &ps.ValueA);
 							pElem2->QueryValueAttribute("ValueB", &ps.ValueB);
@@ -794,11 +809,21 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 							pElem2->QueryValueAttribute("Sound", &ps.Sound);
 							pElem2->QueryValueAttribute("SoundNum", &ps.SoundNum);
 							pElem2->QueryValueAttribute("Animation", &ps.Animation);
+							pElem2->QueryValueAttribute("Flag", &ps.Flag);
+
+							const char *newMap = pElem2->Attribute("newMap");
+							if(newMap)
+								ps.NewMap = newMap;
+
+							const char *spawning = pElem2->Attribute("spawning");
+							if(spawning)
+								ps.Spawning = spawning;
+
 							scripts.push_back(ps);
 						}
 					}
 					act = new ScriptedZoneActor(zoneSizeX, zoneSizeY, zoneSizeZ, scripts, 
-												activationtype, neededitem, destroyitem);
+												activationtype, neededitem, destroyitem, abortedmessages);
 				}
 				break;
 			}
