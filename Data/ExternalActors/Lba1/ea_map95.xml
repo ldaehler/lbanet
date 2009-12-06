@@ -6,3 +6,4 @@
     <actor id="17" type="12" posX="28.218750" posY="5.000000" posZ="48.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="16,0" />
     <actor id="18" type="12" posX="44.000000" posY="8.000000" posZ="19.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="54,0" />
 </actors>
+

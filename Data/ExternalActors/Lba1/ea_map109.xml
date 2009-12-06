@@ -9,3 +9,4 @@
     <actor id="11" type="12" posX="32.000000" posY="3.000000" posZ="22.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="41,0" />
     <actor id="12" type="12" posX="55.000000" posY="8.000000" posZ="2.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="41,0" />
 </actors>
+

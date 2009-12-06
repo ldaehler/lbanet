@@ -7,3 +7,4 @@
     <actor id="6" type="12" posX="23.031250" posY="3.000000" posZ="29.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="13,0" />
     <actor id="7" type="12" posX="51.593750" posY="9.000000" posZ="4.468750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="16,0" />
 </actors>
+
