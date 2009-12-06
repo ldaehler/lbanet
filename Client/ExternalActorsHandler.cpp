@@ -123,7 +123,9 @@ void ExternalActorsHandler::SetActors(const std::map<long, Actor *> & actors)
 {
 	Cleanup();
 	_actors = actors;
-	_needupdate = true;
+
+	if(ThreadSafeWorkpile::getInstance()->IsServeron())
+		_needupdate = true;
 }
 
 
