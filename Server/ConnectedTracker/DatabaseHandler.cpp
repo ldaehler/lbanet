@@ -72,7 +72,7 @@ long DatabaseHandler::CheckLogin(const std::string & PlayerName, const std::stri
 
 	mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
 	query << "SELECT id FROM users WHERE status = '1' AND username = '"<<PlayerName;
-	query << "' COLLATE utf8_general_cs AND password = '"<<Password<<"'";
+	query << "' COLLATE latin1_general_cs AND password = '"<<Password<<"'";
 	if (mysqlpp::StoreQueryResult res = query.store())
 	{
 		if(res.size() > 0)
