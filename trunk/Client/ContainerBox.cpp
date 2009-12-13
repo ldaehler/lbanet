@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "InventoryHandler.h"
 #include "SynchronizedTimeHandler.h"
 #include "MessageBox.h"
-
+#include "ChooseNumberBox.h"
 
 #define _NB_BOX_CONTAINER_ 12
 
@@ -123,6 +123,9 @@ void ContainerBox::Initialize(CEGUI::Window* Root)
 
 		frw->show();
 		_myBox->hide();
+
+		frw->subscribeEvent(CEGUI::Window::EventKeyDown,
+			CEGUI::Event::Subscriber (&ContainerBox::HandleEnterKey, this));
 	}
 	catch(CEGUI::Exception &ex)
 	{
@@ -190,7 +193,16 @@ bool ContainerBox::handle_ItemDroppedInContainer(const CEGUI::EventArgs& args)
 	// make sure we drop a valid item
 	if((dd_args.dragDropItem->getChildCount() > 1) && dd_args.dragDropItem->getChildAtIdx(1)->getID() == 2)
 	{
-		switchfrominventorytocontainer(dd_args.dragDropItem->getID(), true);
+		long Id = dd_args.dragDropItem->getID();
+		std::vector<std::pair<long, int> >::iterator itinv = _inventory_data.begin();
+		std::vector<std::pair<long, int> >::iterator endinv = _inventory_data.end();
+		for(; itinv != endinv; ++itinv)
+		{
+			if(itinv->first == Id)
+				ChooseNumberBox::getInstance()->Show(this, Id, itinv->second, true);
+		}
+
+		//switchfrominventorytocontainer(dd_args.dragDropItem->getID(), true);
 	}
 
     return true;
@@ -211,7 +223,12 @@ bool ContainerBox::handle_ItemDroppedInInventory(const CEGUI::EventArgs& args)
 	// make sure we drop a valid item
 	if((dd_args.dragDropItem->getChildCount() > 1) && dd_args.dragDropItem->getChildAtIdx(1)->getID() == 3)
 	{
-		switchfromcontainertoinventory(dd_args.dragDropItem->getID(), true);
+		long Id = dd_args.dragDropItem->getID();
+		LbaNet::ItemList::iterator itcontent = _currContainer.Content.find(Id);
+		if(itcontent != _currContainer.Content.end())
+			ChooseNumberBox::getInstance()->Show(this, Id, itcontent->second, false);
+
+		//switchfromcontainertoinventory(dd_args.dragDropItem->getID(), true);
 	}
 
     return true;
@@ -231,7 +248,16 @@ bool ContainerBox::handle_ItemDroppedInContainerItem(const CEGUI::EventArgs& arg
 	// make sure we drop a valid item
 	if((dd_args.dragDropItem->getChildCount() > 1) && dd_args.dragDropItem->getChildAtIdx(1)->getID() == 2)
 	{
-		switchfrominventorytocontainer(dd_args.dragDropItem->getID(), true);
+		long Id = dd_args.dragDropItem->getID();
+		std::vector<std::pair<long, int> >::iterator itinv = _inventory_data.begin();
+		std::vector<std::pair<long, int> >::iterator endinv = _inventory_data.end();
+		for(; itinv != endinv; ++itinv)
+		{
+			if(itinv->first == Id)
+				ChooseNumberBox::getInstance()->Show(this, Id, itinv->second, true);
+		}
+
+		//switchfrominventorytocontainer(dd_args.dragDropItem->getID(), true);
 	}
 
     return true;
@@ -252,7 +278,12 @@ bool ContainerBox::handle_ItemDroppedInInventoryItem(const CEGUI::EventArgs& arg
 	// make sure we drop a valid item
 	if((dd_args.dragDropItem->getChildCount() > 1) && dd_args.dragDropItem->getChildAtIdx(1)->getID() == 3)
 	{
-		switchfromcontainertoinventory(dd_args.dragDropItem->getID(), true);
+		long Id = dd_args.dragDropItem->getID();
+		LbaNet::ItemList::iterator itcontent = _currContainer.Content.find(Id);
+		if(itcontent != _currContainer.Content.end())
+			ChooseNumberBox::getInstance()->Show(this, Id, itcontent->second, false);
+
+		//switchfromcontainertoinventory(dd_args.dragDropItem->getID(), true);
 	}
 
     return true;
@@ -272,7 +303,7 @@ bool ContainerBox::HandleContainerItemClicked (const CEGUI::EventArgs& e)
 	// use object
 	if(dd_args.button == CEGUI::RightButton)
 	{
-		switchfromcontainertoinventory(dd_args.window->getID(), false);
+		switchfromcontainertoinventory(dd_args.window->getID(), 1);
 	}
 
     return true;
@@ -289,7 +320,7 @@ bool ContainerBox::HandleInventoryItemClicked (const CEGUI::EventArgs& e)
 	// use object
 	if(dd_args.button == CEGUI::RightButton)
 	{
-		switchfrominventorytocontainer(dd_args.window->getID(), false);
+		switchfrominventorytocontainer(dd_args.window->getID(), 1);
 	}
 
     return true;
@@ -722,12 +753,12 @@ int ContainerBox::AddItemFromInventoryToContainer(long Id, int number)
 /***********************************************************
 switch item from container to inventory
 ***********************************************************/
-void ContainerBox::switchfromcontainertoinventory(long Id, bool full)
+void ContainerBox::switchfromcontainertoinventory(long Id, long number)
 {
 	LbaNet::ItemList::iterator itcontent = _currContainer.Content.find(Id);
 	if(itcontent != _currContainer.Content.end())
 	{
-		int taken = AddItemFromContainerToInventory(Id, (full ? itcontent->second : 1));
+		int taken = AddItemFromContainerToInventory(Id, number);
 		if(taken > 0)
 		{
 			std::map<long, std::pair<CEGUI::Window*, CEGUI::Window*> >::iterator itcont = 
@@ -737,7 +768,8 @@ void ContainerBox::switchfromcontainertoinventory(long Id, bool full)
 			{
 				if(itcont != _cont_objects.end())
 				{
-					itcont->second.first->destroy();
+					CEGUI::WindowManager::getSingleton().destroyWindow(itcont->second.first);
+					//itcont->second.first->destroy();
 					_cont_objects.erase(itcont);
 				}
 				_currContainer.Content.erase(itcontent);
@@ -761,7 +793,7 @@ void ContainerBox::switchfromcontainertoinventory(long Id, bool full)
 /***********************************************************
 switch item from inventory to container
 ***********************************************************/
-void ContainerBox::switchfrominventorytocontainer(long Id, bool full)
+void ContainerBox::switchfrominventorytocontainer(long Id, long number)
 {
 	std::vector<std::pair<long, int> >::iterator itinv = _inventory_data.begin();
 	std::vector<std::pair<long, int> >::iterator endinv = _inventory_data.end();
@@ -770,13 +802,14 @@ void ContainerBox::switchfrominventorytocontainer(long Id, bool full)
 	{
 		if(itinv->first == Id)
 		{
-			int taken = AddItemFromInventoryToContainer(Id, (full ? itinv->second : 1));
+			int taken = AddItemFromInventoryToContainer(Id, number);
 			if(taken > 0)
 			{
 				itinv->second -= taken;
 				if(itinv->second <= 0)
 				{
-					itinvwin->first->destroy();
+					CEGUI::WindowManager::getSingleton().destroyWindow(itinvwin->first);
+					//itinvwin->first->destroy();
 					*itinvwin = std::make_pair<CEGUI::Window*, CEGUI::Window*>(NULL, NULL);
 					*itinv = std::make_pair<long, int>(-1, 0);
 				}
@@ -936,4 +969,35 @@ bool ContainerBox::HandleInventoryEnter (const CEGUI::EventArgs& e)
 	}
 
 	return true;
+}
+
+
+
+/***********************************************************
+callback
+***********************************************************/
+void ContainerBox::CallbackChooseNumber(long id, long choosennumber, bool flag)
+{
+	if(flag)
+		switchfrominventorytocontainer(id, choosennumber);
+	else
+		switchfromcontainertoinventory(id, choosennumber);
+}
+
+
+
+/***********************************************************
+catch key event
+***********************************************************/
+bool ContainerBox::HandleEnterKey (const CEGUI::EventArgs& e)
+{
+	const CEGUI::KeyEventArgs& we =
+    static_cast<const CEGUI::KeyEventArgs&>(e);
+
+	if(we.scancode == CEGUI::Key::Space || we.scancode == CEGUI::Key::W)
+	{
+		return HandleCancel(e);
+	}
+
+	return false;
 }

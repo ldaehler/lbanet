@@ -76,6 +76,11 @@ class NPCDialogBox
 	//! handle windows resize event
 	bool HandleObjectClicked (const CEGUI::EventArgs& e);
 
+	//! catch key event
+	bool HandleEnterKey (const CEGUI::EventArgs& e);
+
+	//! catch mouse enter event
+	bool HandleMouseEnter (const CEGUI::EventArgs& e);
 
 	//! process what is needed in the game GUI
 	void Process();

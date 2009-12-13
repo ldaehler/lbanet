@@ -106,8 +106,11 @@ void NPCDialogBox::Initialize(CEGUI::Window* Root)
 
 		CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
 			CEGUI::WindowManager::getSingleton().getWindow("DialogFrame/listbox"));
-		lb->subscribeEvent(CEGUI::Listbox::EventSelectionChanged,
+		lb->subscribeEvent(CEGUI::Listbox::EventMouseClick,
 						CEGUI::Event::Subscriber (&NPCDialogBox::Handlelbelected, this));
+		lb->subscribeEvent(CEGUI::Listbox::EventMouseMove,
+			CEGUI::Event::Subscriber (&NPCDialogBox::HandleMouseEnter, this));
+
 		_myBox->hide();
 		_mytradeBox->hide();
 
@@ -128,6 +131,9 @@ void NPCDialogBox::Initialize(CEGUI::Window* Root)
 		}
 
 		ResizeBox();
+
+		frw->subscribeEvent(CEGUI::Window::EventKeyDown,
+			CEGUI::Event::Subscriber (&NPCDialogBox::HandleEnterKey, this));
 	}
 	catch(CEGUI::Exception &ex)
 	{
@@ -179,6 +185,7 @@ void NPCDialogBox::ShowDialog(long ActorId, const std::string &ActorName, bool I
 		_curr_inventory = inventory;
 		BuildDialog(ActorId, IsTrader);
 		_myBox->show();
+		_myBox->activate();
 		_current_dialoged_actor = ActorId;
 	}
 	else
@@ -212,7 +219,7 @@ void NPCDialogBox::BuildDialog(long ActorId, bool IsTrader)
 
 	CEGUI::ListboxItem *it = new MyDialogItem("Good bye. (End conversation)", true, false);
 	lb->addItem(it);
-
+	lb->setItemSelectState(it, true);
 }
 
 
@@ -357,7 +364,6 @@ void NPCDialogBox::CleanItems()
 /***********************************************************
 clean current items
 ***********************************************************/
-//! handle windows resize event
 bool NPCDialogBox::HandleObjectClicked (const CEGUI::EventArgs& e)
 {
 	const CEGUI::MouseEventArgs& dd_args = static_cast<const CEGUI::MouseEventArgs&>(e);
@@ -387,4 +393,44 @@ void NPCDialogBox::Process()
 		RefreshMoney();
 	}
 
+}
+
+
+
+/***********************************************************
+catch key event
+***********************************************************/
+bool NPCDialogBox::HandleEnterKey (const CEGUI::EventArgs& e)
+{
+	const CEGUI::KeyEventArgs& we =
+    static_cast<const CEGUI::KeyEventArgs&>(e);
+
+	if(we.scancode == CEGUI::Key::Space || we.scancode == CEGUI::Key::W)
+	{
+		CloseDialog();
+		return true;
+	}
+
+	return false;
+}
+
+
+
+/***********************************************************
+catch mouse enter event
+***********************************************************/
+bool NPCDialogBox::HandleMouseEnter (const CEGUI::EventArgs& e)
+{
+	CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
+		CEGUI::WindowManager::getSingleton().getWindow("DialogFrame/listbox"));
+
+	const CEGUI::MouseEventArgs& wine =
+    static_cast<const CEGUI::MouseEventArgs&>(e);
+
+	CEGUI::Point localPos(CEGUI::CoordConverter::screenToWindow(*lb, wine.position));
+	CEGUI::ListboxItem * itm = lb->getItemAtPoint(localPos);
+	if(itm)
+		lb->setItemSelectState(itm, true);
+
+	return true;
 }

@@ -124,6 +124,10 @@ void LoginGUI::Initialize(const std::string &clientversion)
 			CEGUI::Event::Subscriber (&LoginGUI::HandleCloseTextClicked, this));
 
 		CEGUI::WindowManager::getSingleton().getWindow("ClientVersionText")->setText(clientversion);
+
+
+		CEGUI::WindowManager::getSingleton().getWindow("PasswordText")->subscribeEvent(CEGUI::Window::EventKeyDown,
+			CEGUI::Event::Subscriber (&LoginGUI::HandleEnterKey, this));
 	}
 	catch(CEGUI::Exception &ex)
 	{
@@ -313,4 +317,33 @@ bool LoginGUI::HandleCloseTextClicked (const CEGUI::EventArgs& e)
 	}
 
 	return true;
+}
+
+
+
+/***********************************************************
+called to infrom the gui that it is displayed
+***********************************************************/
+void LoginGUI::Displayed()
+{
+	CEGUI::WindowManager::getSingleton().getWindow("PasswordText")->activate();
+	
+}
+
+
+
+/***********************************************************
+catch key event
+***********************************************************/
+bool LoginGUI::HandleEnterKey (const CEGUI::EventArgs& e)
+{
+	const CEGUI::KeyEventArgs& we =
+    static_cast<const CEGUI::KeyEventArgs&>(e);
+
+	if(we.scancode == CEGUI::Key::Return)
+	{	
+		return HandleConnect(e);
+	}
+
+	return false;
 }
