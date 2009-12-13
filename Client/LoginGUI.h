@@ -75,13 +75,16 @@ public:
 	bool HandleCloseTextClicked (const CEGUI::EventArgs& e);
 
 	//! called to infrom the gui that it is displayed
-	void Displayed(){}
+	void Displayed();
 
 	//! set if the server is on or not
 	void SetServrOn(bool ServerOn);
 
 	//! inform the user the login failed
 	void InformNotLoggedIn(int problem, const std::string & reason);
+
+	//! catch key event
+	bool HandleEnterKey (const CEGUI::EventArgs& e);
 
 private:
 

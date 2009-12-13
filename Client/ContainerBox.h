@@ -41,6 +41,7 @@ namespace CEGUI
 #include <vector>
 #include <LbaTypes.h>
 #include "ThreadSafeWorkpile.h"
+#include "GuiCallbackableBase.h"
 
 //*************************************************************************************************
 //*                               class ContainerBox
@@ -49,7 +50,7 @@ namespace CEGUI
 * @brief Class handling a ContainerBox
 *
 */
-class ContainerBox
+class ContainerBox : public GuiCallbackableBase
 {
  public:
 	//! constructor
@@ -95,6 +96,9 @@ class ContainerBox
 	//! handle windows enter event
 	bool HandleInventoryEnter (const CEGUI::EventArgs& e);
 
+	 //! callback
+	virtual void CallbackChooseNumber(long id, long choosennumber, bool flag);
+
 protected:
 
 	//! close box and send update to server
@@ -134,7 +138,7 @@ protected:
 	int AddItemFromContainerToInventory(long Id, int number);
 
 	//! switch item from container to inventory
-	void switchfromcontainertoinventory(long Id, bool full);
+	void switchfromcontainertoinventory(long Id, long number);
 
 
 	//! update taken and put vectors with last change from user
@@ -146,10 +150,13 @@ protected:
 	int AddItemFromInventoryToContainer(long Id, int number);
 	
 	//! switch item from inventory to container
-	void switchfrominventorytocontainer(long Id, bool full);
+	void switchfrominventorytocontainer(long Id, long number);
 
 	//! find first empty space in inventory
 	CEGUI::Window* FindFirstContainerEmptySpace();
+
+	//! catch key event
+	bool HandleEnterKey (const CEGUI::EventArgs& e);
 
 private:
 	CEGUI::Window*				_myBox;

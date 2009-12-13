@@ -78,6 +78,9 @@ void ChooseWorldGUI::Initialize(void)
 		lb->subscribeEvent (CEGUI::Listbox::EventSelectionChanged,
 			CEGUI::Event::Subscriber (&ChooseWorldGUI::HandleWorldSelected, this));
 
+		lb->subscribeEvent (CEGUI::Window::EventKeyDown,
+			CEGUI::Event::Subscriber (&ChooseWorldGUI::HandleEnterKey, this));
+
 		CEGUI::WindowManager::getSingleton().getWindow("CWLBaNetLogo")->disable();
 		CEGUI::WindowManager::getSingleton().getWindow("CWLBaNetLogoCenter")->disable();
 
@@ -86,6 +89,8 @@ void ChooseWorldGUI::Initialize(void)
 
 		static_cast<CEGUI::FrameWindow *>(
 			CEGUI::WindowManager::getSingleton().getWindow("CWWIndowFrame"))->setRollupEnabled(false);
+
+
 
 	}
 	catch(CEGUI::Exception &ex)
@@ -184,4 +189,31 @@ bool ChooseWorldGUI::HandleWorldSelected (const CEGUI::EventArgs& e)
 	}
 
 	return true;
+}
+
+
+
+/***********************************************************
+called to infrom the gui that it is displayed
+***********************************************************/
+void ChooseWorldGUI::Displayed()
+{
+	CEGUI::WindowManager::getSingleton().getWindow("ChooseWorldList")->activate();
+}
+
+
+/***********************************************************
+catch key event
+***********************************************************/
+bool ChooseWorldGUI::HandleEnterKey (const CEGUI::EventArgs& e)
+{
+	const CEGUI::KeyEventArgs& we =
+    static_cast<const CEGUI::KeyEventArgs&>(e);
+
+	if(we.scancode == CEGUI::Key::Return)
+	{	
+		return HandleConnect(e);
+	}
+
+	return false;
 }

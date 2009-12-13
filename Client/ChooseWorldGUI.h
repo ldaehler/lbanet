@@ -64,7 +64,10 @@ public:
 	bool HandleWorldSelected (const CEGUI::EventArgs& e);
 
 	//! called to infrom the gui that it is displayed
-	void Displayed(){}
+	void Displayed();
+
+	//! catch key event
+	bool HandleEnterKey (const CEGUI::EventArgs& e);
 
 private:
 	std::vector<WorldDesc>	_wlist;
