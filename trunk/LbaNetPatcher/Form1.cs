@@ -15,6 +15,8 @@ namespace LbaNetPatcher
 
         public MainWindow()
         {
+            _startedprocess = null;
+
             InitializeComponent();
 
             try
@@ -39,7 +41,7 @@ namespace LbaNetPatcher
             if (progressBar.Value == progressBar.Maximum)
                 progressBar.Value = 0;
 
-            if (_startedprocess.HasExited)
+            if (_startedprocess != null && _startedprocess.HasExited)
             {
                 if (_startedprocess.ExitCode == 0)
                 {
