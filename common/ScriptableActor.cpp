@@ -99,10 +99,10 @@ int ScriptableActor::Process(double tnow, float tdiff)
 		}
 		_playedsound = ps.Sound;
 
-		if(ps.Animation >= 0 && _Renderer)
+		if(ps.Animation >= 0 && _Renderer && _Renderer->GetType() == 3)
 			static_cast<CharacterRenderer *>(_Renderer)->setActorAnimation(ps.Animation);
 		#else
-		if(ps.Animation >= 0 && _Renderer)
+		if(ps.Animation >= 0 && _Renderer && _Renderer->GetType() == 3)
 			static_cast<ServerCharacterRenderer *>(_Renderer)->setActorAnimation(ps.Animation);
 		#endif
 
@@ -172,14 +172,15 @@ int ScriptableActor::Process(double tnow, float tdiff)
 				{
 					if(animend >= 0)
 					{
-						
-						if(static_cast<CharacterRenderer *>(_Renderer)->getKeyframe() >= animend)
-							IncreaseScriptPosition();
+						if(_Renderer && _Renderer->GetType() == 3)						
+							if(static_cast<CharacterRenderer *>(_Renderer)->getKeyframe() >= animend)
+								IncreaseScriptPosition();
 					}
 					else
 					{
-						if(static_cast<CharacterRenderer *>(_Renderer)->Process(tnow, tdiff) == 1)
-							IncreaseScriptPosition();
+						if(_Renderer && _Renderer->GetType() == 3)
+							if(static_cast<CharacterRenderer *>(_Renderer)->IsAnimationFinished())
+								IncreaseScriptPosition();
 					}
 				}
 				#else
@@ -187,14 +188,15 @@ int ScriptableActor::Process(double tnow, float tdiff)
 				{
 					if(animend >= 0)
 					{
-						
-						if(static_cast<ServerCharacterRenderer *>(_Renderer)->getKeyframe() >= animend)
-							IncreaseScriptPosition();
+						if(_Renderer && _Renderer->GetType() == 3)					
+							if(static_cast<ServerCharacterRenderer *>(_Renderer)->getKeyframe() >= animend)
+								IncreaseScriptPosition();
 					}
 					else
 					{
-						if(static_cast<ServerCharacterRenderer *>(_Renderer)->Process(tnow, tdiff) == 1)
-							IncreaseScriptPosition();
+						if(_Renderer && _Renderer->GetType() == 3)			
+							if(static_cast<ServerCharacterRenderer *>(_Renderer)->Process(tnow, tdiff) == 1)
+								IncreaseScriptPosition();
 					}
 				}
 				#endif

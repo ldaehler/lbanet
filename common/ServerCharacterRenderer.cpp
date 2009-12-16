@@ -51,6 +51,7 @@ ServerCharacterRenderer::ServerCharacterRenderer(float animationSpeed)
 	_currAnimation(-1), _currModel(-1), _currBody(-1), _displayHidden(false),
 	_animationSpeed(animationSpeed), _bodyColor(-1)
 {
+	_type = 3;
 }
 
 /***********************************************************

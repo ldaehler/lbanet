@@ -450,6 +450,10 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 									MS3DModel * tmp = new MS3DModel();
 									tmp->loadModelData( itsp->second.filename );
 									tmp->SetScale(itsp->second.ScaleX, itsp->second.ScaleY, itsp->second.ScaleZ);
+									tmp->SetTranslation(itsp->second.TransX, itsp->second.TransY, itsp->second.TransZ);
+									tmp->SetRotation(itsp->second.RotX, itsp->second.RotY, itsp->second.RotZ);
+
+
 									renderer = tmp;
 								}
 							}
@@ -712,6 +716,12 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 					if(namea)
 						NameNPC = namea;
 
+					const char *Welcomea = pElem->Attribute("Welcome");
+					std::string WelcomeNPC = "Good day, what can I do for you?";
+					if(Welcomea)
+						WelcomeNPC = Welcomea;
+
+
 					std::vector<PlayerScriptPart> scripts;
 					TiXmlNode* pNode2=pElem->FirstChild("scripts");
 					if(pNode2)
@@ -742,7 +752,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 						}
 					}
 
-					NPCActor *tmpact = new NPCActor(scripts, false, npctype, activationdistance, NameNPC);
+					NPCActor *tmpact = new NPCActor(scripts, false, npctype, activationdistance, NameNPC, WelcomeNPC);
 
 					if(npctype == 2)
 					{
@@ -1091,11 +1101,27 @@ bool MapInfoXmlReader::LoadModels(const std::string &Filename, std::map<long, Mo
 		for( ; pElem; pElem=pElem->NextSiblingElement())
 		{
 			ModelInfo spi;
+			spi.TransX=0;
+			spi.TransY=0;
+			spi.TransZ=0;
+			spi.RotX=0;
+			spi.RotY=0;
+			spi.RotZ=0;
+
 			spi.filename = pElem->Attribute("filename");
 			pElem->QueryValueAttribute("id", &spi.id);
+
 			pElem->QueryFloatAttribute("scaleX", &spi.ScaleX);
 			pElem->QueryFloatAttribute("scaleY", &spi.ScaleY);
 			pElem->QueryFloatAttribute("scaleZ", &spi.ScaleZ);
+
+			pElem->QueryFloatAttribute("transX", &spi.TransX);
+			pElem->QueryFloatAttribute("transY", &spi.TransY);
+			pElem->QueryFloatAttribute("transZ", &spi.TransZ);
+
+			pElem->QueryFloatAttribute("rotX", &spi.RotX);
+			pElem->QueryFloatAttribute("rotY", &spi.RotY);
+			pElem->QueryFloatAttribute("rotZ", &spi.RotZ);
 
 			vec[spi.id] = spi;
 		}

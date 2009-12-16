@@ -63,8 +63,13 @@ public:
 	//! cleanup
 	virtual void CleanUp(){}
 
+	int GetType()
+	{return _type;}
+
 protected:
    bool Visible;
+
+   int _type;
 };
 
 #endif

@@ -219,6 +219,14 @@ struct ModelInfo
 	float ScaleX;
 	float ScaleY;
 	float ScaleZ;
+
+	float TransX;
+	float TransY;
+	float TransZ;
+
+	float RotX;
+	float RotY;
+	float RotZ;
 };
 
 
