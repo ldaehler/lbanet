@@ -43,8 +43,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 CharacterRenderer::CharacterRenderer(float animationSpeed)
 : _modelRenderer(NULL),  _translatedAnimation(-1),
 	_currAnimation(-1), _currModel(-1), _currBody(-1), _displayHidden(false),
-	_animationSpeed(animationSpeed), _bodyColor(-1)
+	_animationSpeed(animationSpeed), _bodyColor(-1), _animationfinished(false)
 {
+	_type = 3;
 }
 
 /***********************************************************
@@ -76,6 +77,8 @@ void CharacterRenderer::Render()
 	if(!_modelRenderer || !Visible)
 		return;
 
+	if(_currModel < 0 || _currAnimation < 0)
+		return;
 
 
     glEnable(GL_BLEND);
@@ -165,14 +168,23 @@ void CharacterRenderer::setActorAnimation(int animNb)
 	if(!_modelRenderer)
 		return;
 
+	if(_currModel < 0)
+		return;
+
 	int tanim = GetAnimNumberOfEntity(animNb);
 	if(_translatedAnimation == tanim)
 		return;
 
-	_currAnimation = animNb;
-	_translatedAnimation = tanim;
 
 	entitiesTableStruct*  estruct = DataLoader::getInstance()->GetEntitiesInfo();
+	if(tanim < 0 || tanim >= estruct->entitiesTable[_currModel].numOfAnims)
+		return;
+
+	_currAnimation = animNb;
+	_translatedAnimation = tanim;
+	_animationfinished = false;
+
+
 	_modelRenderer->LoadAnim(estruct,
 		estruct->entitiesTable[_currModel].animList[_translatedAnimation].index);
 
@@ -190,9 +202,12 @@ int CharacterRenderer::Process(double tnow, float tdiff)
 	if(!_modelRenderer)
 		return 0;
 
-	bool animTerminated = _modelRenderer->AnimateModel();
+	if(_currModel < 0 || _currAnimation < 0)
+		return 0;
 
-	if(animTerminated)
+	_animationfinished = _modelRenderer->AnimateModel();
+
+	if(_animationfinished)
 		return 1;	// return 1 if animation is terminated
 	else
 		return 0;	// return 0 else

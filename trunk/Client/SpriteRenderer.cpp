@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 SpriteRenderer::SpriteRenderer()
 	: _currIndex(0), _texture_loaded(false)
 {
+	_type = 1;
 }
 
 /*

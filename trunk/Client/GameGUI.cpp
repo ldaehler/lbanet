@@ -442,8 +442,9 @@ void GameGUI::ShowInventory()
 /***********************************************************
 show dialog with NPC
 ***********************************************************/
-void GameGUI::ShowDialog(long ActorId, const std::string &ActorName, bool IsTrader, bool Show,
+void GameGUI::ShowDialog(long ActorId, const std::string &ActorName, const std::string & WelcomeSentence,
+							bool IsTrader, bool Show,
 							const std::map<long, TraderItem> &inventory)
 {
-	_dialogb.ShowDialog(ActorId, ActorName, IsTrader, Show, inventory);
+	_dialogb.ShowDialog(ActorId, ActorName, WelcomeSentence, IsTrader, Show, inventory);
 }

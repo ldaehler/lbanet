@@ -168,7 +168,8 @@ void NPCDialogBox::CloseDialog()
 /***********************************************************
 display the chatbox on screen
 ***********************************************************/
-void NPCDialogBox::ShowDialog(long ActorId, const std::string &ActorName, bool IsTrader, bool Show,
+void NPCDialogBox::ShowDialog(long ActorId, const std::string &ActorName, const std::string & WelcomeSentence,
+							  bool IsTrader, bool Show,
 								const std::map<long, TraderItem> &inventory)
 {
 	if(Show)
@@ -183,7 +184,7 @@ void NPCDialogBox::ShowDialog(long ActorId, const std::string &ActorName, bool I
 			CEGUI::WindowManager::getSingleton().getWindow("DialogFrame"))->setText("Dialog with "+ActorName);
 
 		_curr_inventory = inventory;
-		BuildDialog(ActorId, IsTrader);
+		BuildDialog(ActorId, WelcomeSentence, IsTrader);
 		_myBox->show();
 		_myBox->activate();
 		_current_dialoged_actor = ActorId;
@@ -200,10 +201,10 @@ void NPCDialogBox::ShowDialog(long ActorId, const std::string &ActorName, bool I
 /***********************************************************
 build dialog depending of the actor
 ***********************************************************/
-void NPCDialogBox::BuildDialog(long ActorId, bool IsTrader)
+void NPCDialogBox::BuildDialog(long ActorId, const std::string & WelcomeSentence, bool IsTrader)
 {
 	CEGUI::WindowManager::getSingleton().getWindow("DialogFrame/multiline")
-										->setText("Good day, what can I do for you?");
+										->setText(WelcomeSentence);
 
 
 	CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (

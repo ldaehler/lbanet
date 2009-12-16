@@ -83,6 +83,15 @@ public:
 
 	//! get body color
 	short GetBodyColor();
+
+	//! check if animation is finished
+	bool IsAnimationFinished()
+	{
+		bool res = _animationfinished;
+		_animationfinished = false;
+		return res;
+	}
+
 protected:
 	// translate anim number into correct animation depending of the entity
 	int GetAnimNumberOfEntity(int anim);
@@ -96,6 +105,8 @@ private:
 	float				_animationSpeed;
 
 	short				_bodyColor;
+
+	bool				_animationfinished;
 
 	LBA1ModelClass *	_modelRenderer;
 };
