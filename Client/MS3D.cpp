@@ -30,6 +30,16 @@ MS3DModel::MS3DModel()
 	m_ScaleX = 1;
 	m_ScaleY = 1;
 	m_ScaleZ = 1;
+
+	m_TransX = 0;
+	m_TransY = 0;
+	m_TransZ = 0;
+
+	m_RotX = 0;
+	m_RotY = 0;
+	m_RotZ = 0;
+
+	_type = 4;
 }
 
 MS3DModel::~MS3DModel()
@@ -172,17 +182,22 @@ bool MS3DModel::loadModelData( const std::string &filepath )
 		memcpy( m_pMaterials[i].m_specular, pMaterial->m_specular, sizeof( float )*4 );
 		memcpy( m_pMaterials[i].m_emissive, pMaterial->m_emissive, sizeof( float )*4 );
 		m_pMaterials[i].m_shininess = pMaterial->m_shininess;
-		if(strncmp( pMaterial->m_texture, ".\\", 2 ) == 0 )
+
+		std::string tmptext = std::string(pMaterial->m_texture, 128);
+		if(tmptext[0] != '\0')
 		{
-			// MS3D 1.5.x relative path
-			m_pMaterials[i].m_pTextureFilename = pathTemp + std::string(pMaterial->m_texture, 128);
-		}
-		else
-		{
-			// MS3D 1.4.x or earlier - absolute path
-			m_pMaterials[i].m_pTextureFilename = std::string(pMaterial->m_texture, 128);
-			m_pMaterials[i].m_pTextureFilename = m_pMaterials[i].m_pTextureFilename.substr(m_pMaterials[i].m_pTextureFilename.find_last_of("/")+1);
-			m_pMaterials[i].m_pTextureFilename = pathTemp + m_pMaterials[i].m_pTextureFilename;
+			if(strncmp( pMaterial->m_texture, ".\\", 2 ) == 0 )
+			{
+				// MS3D 1.5.x relative path
+				m_pMaterials[i].m_pTextureFilename = pathTemp + tmptext;
+			}
+			else
+			{
+				// MS3D 1.4.x or earlier - absolute path
+				m_pMaterials[i].m_pTextureFilename = tmptext;
+				m_pMaterials[i].m_pTextureFilename = m_pMaterials[i].m_pTextureFilename.substr(m_pMaterials[i].m_pTextureFilename.find_last_of("/")+1);
+				m_pMaterials[i].m_pTextureFilename = pathTemp + m_pMaterials[i].m_pTextureFilename;
+			}
 		}
 		pPtr += sizeof( MS3DMaterial );
 	}
@@ -198,7 +213,14 @@ bool MS3DModel::loadModelData( const std::string &filepath )
 
 void MS3DModel::Render()
 {
+	glTranslatef(m_TransX, m_TransY, m_TransZ);
+
+	glRotatef(m_RotX, 1, 0, 0);
+	glRotatef(m_RotY, 0, 1, 0);
+	glRotatef(m_RotZ, 0, 0, 1);
+
 	glScalef(m_ScaleX, m_ScaleY, m_ScaleZ);
+
 	glColor4f(1,1,1,1);
 
 	GLboolean texEnabled = glIsEnabled( GL_TEXTURE_2D );
@@ -214,13 +236,18 @@ void MS3DModel::Render()
 			glMaterialfv( GL_FRONT, GL_EMISSION,  m_pMaterials[materialIndex].m_emissive );
 			glMaterialf(  GL_FRONT, GL_SHININESS, m_pMaterials[materialIndex].m_shininess );
 
+
+
 			if ( m_pMaterials[materialIndex].m_texture > 0 )
 			{
 				glBindTexture( GL_TEXTURE_2D, m_pMaterials[materialIndex].m_texture );
 				glEnable( GL_TEXTURE_2D );
 			}
 			else
+			{
 				glDisable( GL_TEXTURE_2D );
+				glColor4f(m_pMaterials[materialIndex].m_ambient[0],m_pMaterials[materialIndex].m_ambient[1],m_pMaterials[materialIndex].m_ambient[2],m_pMaterials[materialIndex].m_ambient[3]);
+			}
 		}
 		else
 		{
@@ -290,6 +317,23 @@ void MS3DModel::SetScale(float X, float Y, float Z)
 	m_ScaleZ = Z;
 }
 
+
+
+//! set model translation
+void MS3DModel::SetTranslation(float X, float Y, float Z)
+{
+	m_TransX = X;
+	m_TransY = Y;
+	m_TransZ = Z;
+}
+
+//! set model rotation
+void MS3DModel::SetRotation(float X, float Y, float Z)
+{
+	m_RotX = X;
+	m_RotY = Y;
+	m_RotZ = Z;
+}
 
 
 

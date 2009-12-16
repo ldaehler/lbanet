@@ -171,6 +171,8 @@ AviVideoRenderer::AviVideoRenderer()
 		AVIFileInit();		// Opens The AVIFile Library
 
 	++_init_counter;
+
+	_type = 2;
 }
 
 /*

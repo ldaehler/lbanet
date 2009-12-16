@@ -61,7 +61,7 @@ class NPCDialogBox
 	void Initialize(CEGUI::Window* Root);
 
 	//! display the chatbox on screen
-	void ShowDialog(long ActorId, const std::string &ActorName, bool IsTrader, bool Show,
+	void ShowDialog(long ActorId, const std::string &ActorName, const std::string & WelcomeSentence, bool IsTrader, bool Show,
 		const std::map<long, TraderItem> &inventory);
 
 	//! handle windows closing event
@@ -93,7 +93,7 @@ protected:
 	void OpenTradeDialog();
 
 	//! build dialog depending of the actor
-	void BuildDialog(long ActorId, bool IsTrader);
+	void BuildDialog(long ActorId, const std::string & WelcomeSentence, bool IsTrader);
 
 	//! resize inventory
 	void ResizeBox();

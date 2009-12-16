@@ -133,6 +133,12 @@ public:
 	//! set model scale
 	void SetScale(float X, float Y, float Z);
 
+	//! set model translation
+	void SetTranslation(float X, float Y, float Z);
+
+	//! set model rotation
+	void SetRotation(float X, float Y, float Z);
+
 protected:
 
 	int m_numMeshes;
@@ -150,6 +156,14 @@ protected:
 	float m_ScaleX;
 	float m_ScaleY;
 	float m_ScaleZ;
+
+	float m_TransX;
+	float m_TransY;
+	float m_TransZ;
+
+	float m_RotX;
+	float m_RotY;
+	float m_RotZ;
 };
 
 

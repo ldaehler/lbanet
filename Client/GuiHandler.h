@@ -118,7 +118,8 @@ public:
 	void RefreshOption();
 
 	// show dialog with NPC
-	void ShowDialog(long ActorId, const std::string &ActorName, bool IsTrader, bool Show,
+	void ShowDialog(long ActorId, const std::string &ActorName, const std::string & WelcomeSentence,
+						bool IsTrader, bool Show,
 						const std::map<long, TraderItem> &inventory);
 
 protected:

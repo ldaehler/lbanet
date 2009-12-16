@@ -2571,6 +2571,10 @@ bool EditorBox::Handleactorrendererchanged (const CEGUI::EventArgs& e)
 					MS3DModel * tmp = new MS3DModel();
 					tmp->loadModelData( minf->filename );
 					tmp->SetScale(minf->ScaleX, minf->ScaleY, minf->ScaleZ);
+					tmp->SetTranslation(minf->TransX, minf->TransY, minf->TransZ);
+					tmp->SetRotation(minf->RotX, minf->RotY, minf->RotZ);
+
+
 					_selActor->SetRenderer(tmp);
 				}
 			break;
