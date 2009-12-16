@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 constructor
 ***********************************************************/
 D3ObjectRenderer::D3ObjectRenderer()
-: Visible(true)
+: Visible(true), _type(-1)
 {
 }
 

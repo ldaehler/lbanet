@@ -45,9 +45,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	Constructor
 ***********************************************************/
 NPCActor::NPCActor(const std::vector<PlayerScriptPart> & scripts, bool IsLift, 
-					int NPCType, float activationdistance, std::string Name)
+					int NPCType, float activationdistance, const std::string &Name, 
+					const std::string &WelcomeSentence)
 : ScriptableActor(scripts, IsLift), _NPCType(NPCType), 
-	_activationdistance(activationdistance), _activated(false), _Name(Name)
+	_activationdistance(activationdistance), _activated(false), _Name(Name),
+	_WelcomeSentence(WelcomeSentence)
 {
 }
 
@@ -143,7 +145,7 @@ bool NPCActor::Activate(float PlayerPosX, float PlayerPosY, float PlayerPosZ, fl
 	if(_NPCType == 1 || _NPCType == 2)
 	{
 		ThreadSafeWorkpile::getInstance()->SetTargetedActor(_ID);
-		ThreadSafeWorkpile::getInstance()->AddEvent(new DisplayDialogEvent(_ID, _Name, _NPCType == 2, true, _items));
+		ThreadSafeWorkpile::getInstance()->AddEvent(new DisplayDialogEvent(_ID, _Name, _WelcomeSentence, _NPCType == 2, true, _items));
 		_activated = true;
 	}
 #endif
@@ -171,7 +173,7 @@ int NPCActor::ActivateZone(float PlayerPosX, float PlayerPosY, float PlayerPosZ,
 		if(distance > _activationdistance)
 		{
 			ThreadSafeWorkpile::getInstance()->SetUntargetedActor(_ID);
-			ThreadSafeWorkpile::getInstance()->AddEvent(new DisplayDialogEvent(_ID, _Name, _NPCType == 2, false, _items));
+			ThreadSafeWorkpile::getInstance()->AddEvent(new DisplayDialogEvent(_ID, _Name, _WelcomeSentence, _NPCType == 2, false, _items));
 			_activated = false;
 		}
 	}

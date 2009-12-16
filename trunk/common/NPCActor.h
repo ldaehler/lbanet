@@ -42,7 +42,8 @@ class NPCActor : public ScriptableActor
 public:
 	//! constructor
 	NPCActor(const std::vector<PlayerScriptPart> & scripts, bool IsLift, 
-		int NPCType, float activationdistance, std::string Name);
+		int NPCType, float activationdistance, const std::string &Name, 
+		const std::string &WelcomeSentence);
 
 	//! destructor
 	virtual ~NPCActor();
@@ -93,6 +94,8 @@ protected:
 	bool	_activated;
 
 	std::string _Name;
+
+	std::string _WelcomeSentence;
 
 	std::map<long, TraderItem>	_items;
 };
