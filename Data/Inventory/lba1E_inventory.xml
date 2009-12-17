@@ -18,7 +18,7 @@
     <item id="14" filename="health" type="1" valueA="2" Max="10" Price="1" Description="Glass of Gluwein: this can keep you warm for the evening." Effect="80"/>
     <item id="15" filename="health" type="1" valueA="1" Max="10" Price="2" Description="Lebkuchen: delicious cake!" Effect="80"/>
     <item id="16" filename="health" type="1" valueA="1" Max="10" Price="1" Description="Christmas candy cane: you can not get enough of this sweets." Effect="80"/>
-    <item id="17" filename="health" type="6" valueA="0" Max="1" Price="1" Description="Lbanet Christmas 2009 gift: it seems to be nothing inside yet..." Effect="1"/>
+    <item id="17" filename="health" type="6" valueA="0" Max="1" Price="1" Description="Lbanet Christmas 2009 gift: strangly there is nothing inside yet..." Effect="1"/>
 
 
 </items>

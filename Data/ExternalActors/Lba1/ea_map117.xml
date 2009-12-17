@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF8" ?>
 <actors>
-    <actor id="0" Welcome="We are going to play all night! Could you go fetch me some more coffee please." type="12" posX="34.000000" posY="2.000000" posZ="38.875000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="66,0">
+    <actor id="0" Welcome="We are going to play all night! Could you go fetch me some more coffee please." type="12" posX="34.000000" posY="2.000000" posZ="38.875000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="90.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="66,0">
         <scripts>
             <script type="5" ValueA="10000.000000" Animation="1"/>        
             <script type="5" ValueA="10000.000000" Animation="2"/>        
