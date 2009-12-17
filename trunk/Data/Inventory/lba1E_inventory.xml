@@ -12,4 +12,13 @@
     <item id="10" filename="letter" type="8" valueA="0" Max="1" From="Architect's father" Subject="My house key" Description="Note to myself: here is an extra key from my house in the case I loose mine again."/>   
     <item id="11" filename="Gas" type="6" valueA="0" Max="10" Price="10" Description="Oil, used by cars and motorbike."/>   
     <item id="12" filename="Ticket" type="6" valueA="0" Max="1" Price="10" Description="Ferry ticket, you need one to take the ferry."/>   
+
+
+    <item id="13" filename="health" type="1" valueA="3" Max="10" Price="2" Description="Glass of Champagne: there is nothing better to celebrate!" Effect="80"/>
+    <item id="14" filename="health" type="1" valueA="2" Max="10" Price="1" Description="Glass of Gluwein: this can keep you warm for the evening." Effect="80"/>
+    <item id="15" filename="health" type="1" valueA="1" Max="10" Price="2" Description="Lebkuchen: delicious cake!" Effect="80"/>
+    <item id="16" filename="health" type="1" valueA="1" Max="10" Price="1" Description="Christmas candy cane: you can not get enough of this sweets." Effect="80"/>
+    <item id="17" filename="health" type="6" valueA="0" Max="1" Price="1" Description="Lbanet Christmas 2009 gift: it seems to be nothing inside yet..." Effect="1"/>
+
+
 </items>

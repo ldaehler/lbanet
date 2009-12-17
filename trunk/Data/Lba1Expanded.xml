@@ -14,6 +14,7 @@
         <teleport name="Temple of Bu" map="Map8_1" sparea="spawning1" />
         <teleport name="Tippett Island" map="Map74_1" sparea="spawning2" />
         <teleport name="White Leaf Desert" map="Map39_1" sparea="spawning2" />
+        <teleport name="Party place" map="Map116_1" sparea="spawning0" />        
     </teleports>
     <files>
         <file name="bricks" path="Data/lba_brick_info.txt" />
@@ -513,7 +514,7 @@
             </exits>
         </Map>
         <!--Map of Citadel Island, end sequence (2)-->
-        <Map name="Map117_1" type="exterior" music="Music/Midi_mi_win32.midi" repeatmusic="0">
+        <Map name="Map117_1" type="exterior" music="Music/LBA1-Track8.mp3" repeatmusic="-1">
             <description>Citadel Island, end sequence (2)</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
