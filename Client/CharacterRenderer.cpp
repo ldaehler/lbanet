@@ -178,7 +178,7 @@ void CharacterRenderer::setActorAnimation(int animNb)
 
 	entitiesTableStruct*  estruct = DataLoader::getInstance()->GetEntitiesInfo();
 	if(tanim < 0 || tanim >= estruct->entitiesTable[_currModel].numOfAnims)
-		return;
+		tanim = 0;
 
 	_currAnimation = animNb;
 	_translatedAnimation = tanim;
