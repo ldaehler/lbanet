@@ -61,7 +61,7 @@ public:
 	void changeAnimEntity(int entityNum, int bodyNum=0, bool forced=false);
 
 	//! set the current animation to be played
-	void setActorAnimation(int animNb);
+	void setActorAnimation(int animNb, bool forced=false);
 
 
 	// set true if the actor should still display on the screen

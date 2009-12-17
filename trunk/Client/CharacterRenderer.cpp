@@ -163,7 +163,7 @@ void CharacterRenderer::changeAnimEntity(int entityNum, int bodyNum, bool forced
 /***********************************************************
 set the current animation to be played
 ***********************************************************/
-void CharacterRenderer::setActorAnimation(int animNb)
+void CharacterRenderer::setActorAnimation(int animNb, bool forced)
 {
 	if(!_modelRenderer)
 		return;
@@ -172,7 +172,7 @@ void CharacterRenderer::setActorAnimation(int animNb)
 		return;
 
 	int tanim = GetAnimNumberOfEntity(animNb);
-	if(_translatedAnimation == tanim)
+	if(!forced && _translatedAnimation == tanim)
 		return;
 
 
