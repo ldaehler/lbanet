@@ -3,7 +3,7 @@
     <actor id="0" Welcome="We are going to play all night! Could you go fetch me some more coffee please." type="12" posX="34.000000" posY="2.000000" posZ="38.875000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="90.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="66,0">
         <scripts>
             <script type="2" Animation="1"/>         
-            <script type="5" ValueA="10000.000000" Animation="1"/>        
+            <script type="5" ValueA="1000.000000" Animation="1"/>        
             <script type="5" ValueA="10000.000000" Animation="2"/>                   
         </scripts>     
     </actor>  
@@ -11,7 +11,7 @@
 
     <actor id="1" Welcome="This guitar is fabulous! It was totally worth the price I got it from this weird ponytail guy." type="12" posX="35.062500" posY="2.000000" posZ="41.562500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="90.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="65,0">
         <scripts>
-            <script type="5" ValueA="10000.000000" Animation="6"/>        
+            <script type="5" ValueA="1000.000000" Animation="6"/>        
             <script type="2" Animation="4"/>        
             <script type="5" ValueA="10000.000000" Animation="6"/>        
             <script type="2" Animation="4"/>
@@ -33,7 +33,7 @@
     
     <actor id="4" Welcome="Man. This is so good. I can't get enough of it!" type="12" posX="38.750000" posY="0.000000" posZ="45.375000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="265.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="61,0">
         <scripts>
-             <script type="5" ValueA="10000.000000" Animation="1"/>       
+             <script type="5" ValueA="1000.000000" Animation="1"/>       
             <script type="2" Animation="2"/>         
             <script type="5" ValueA="10000.000000" Animation="1"/>        
             <script type="2" Animation="2"/>
@@ -46,7 +46,7 @@
    
     <actor id="6" type="12" Name="Zoe" Welcome="Hey sweetie! What are you waiting for? Come to dance with us!" posX="44.125000" posY="0.000000" posZ="43.500000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="270.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="22,0">
         <scripts>
-            <script type="5" ValueA="10000.000000" Animation="17"/>        
+            <script type="5" ValueA="1000.000000" Animation="17"/>        
             <script type="2" Animation="11"/>        
             <script type="5" ValueA="10000.000000" Animation="17"/>        
             <script type="2" Animation="11"/>
@@ -58,7 +58,7 @@
     
     <actor id="7" type="12" Name="Funfrock" Welcome="Why are you staring at me like that! Everybody needs to have a litle break from time to time. Anyway, tonight is party night. Let's dance baby!" posX="45.000000" posY="0.000000" posZ="39.468750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="270.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="69,0">
         <scripts>
-            <script type="5" ValueA="10000.000000" Animation="12"/>          
+            <script type="5" ValueA="1000.000000" Animation="12"/>          
             <script type="2" Animation="14"/>        
             <script type="5" ValueA="10000.000000" Animation="12"/>        
             <script type="2" Animation="14"/>
@@ -120,7 +120,7 @@
    
     <actor id="13"Name="Joe" Welcome="I just teleported back from the reality. The Lbanet team is giving you their best wishes for the new year! Cheers!" type="12" posX="47.531250" posY="0.000000" posZ="19.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="49,0">
         <scripts>    
-            <script type="5" ValueA="10000.000000" Animation="0"/>             
+            <script type="5" ValueA="1000.000000" Animation="0"/>             
             <script type="5" ValueA="10000.000000" Animation="0"/>        
         </scripts>     
     </actor> 
