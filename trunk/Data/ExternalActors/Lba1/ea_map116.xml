@@ -53,7 +53,7 @@
     </actor>
     
     
-    <actor id="21" NPCType="2" Welcome="Ho Ho Ho! Meeeery christmas kid! Have you been nice this year? Oh whatever, just choose a present and get yourself moving. Who comes next? Oh man I sooo start to hate this job..."  activationdistance="10.000000" Name="Santa" type="12" posX="30.100000" posY="0.000000" posZ="17.700001" sizeX="1.000000" sizeY="5.000000" sizeZ="1.000000" rotation="0.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="2" renderertarget="8">
+    <actor id="21" NPCType="2" Welcome="Ho Ho Ho! Meeeery christmas kid! Have you been nice this year? Oh whatever, just choose a present and get yourself moving. The next pleeeaaase? Oh man I sooo start to hate this job..."  activationdistance="10.000000" Name="Santa" type="12" posX="30.100000" posY="0.000000" posZ="17.700001" sizeX="1.000000" sizeY="5.000000" sizeZ="1.000000" rotation="0.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="2" renderertarget="8">
          <items>
         	<item id="17" />           	
         </items>     
