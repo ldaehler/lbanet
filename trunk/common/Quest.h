@@ -23,46 +23,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/uniform_01.hpp>
-
-
-
-#if !defined(__LbaNetModel_1_Randomizer_h)
-#define __LbaNetModel_1_Randomizer_h
-
+#if !defined(__LbaNetModel_1_Quest_h)
+#define __LbaNetModel_1_Quest_h
 
 /***********************************************************************
- * Module:  Randomizer.h
+ * Module:  Quest.h
  * Author:  vivien
  * Modified: lundi 27 juillet 2009 14:53:50
- * Purpose: Declaration of the class Randomizer
+ * Purpose: Declaration of the class Quest
  *********************************************************************/
-class Randomizer
+class Quest
 {
 public:
+	//! constructor
+	Quest();
 
-	// singleton pattern
-   static Randomizer * getInstance();
+	//! destructor
+	virtual ~Quest();
 
-	//! give a number between 0 and 1
-	double Rand();
-
-	//! give a integer number between 0 and max
-	int RandInt(int max);
 
 protected:
-	//! construtor
-	Randomizer();
-	Randomizer(const Randomizer &);
-	const Randomizer & operator=(const Randomizer &);
-
 
 private:
-	boost::mt19937									_engine;
-	boost::uniform_01<boost::mt19937>				_generator;
 
-	static Randomizer *								_singletonInstance;
 };
 
 #endif

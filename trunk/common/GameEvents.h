@@ -589,20 +589,19 @@ class DisplayDialogEvent : public GameEvent
 {
 public:
 	//! constructor
-	DisplayDialogEvent(long ActorId, const std::string & ActorName, const std::string & WelcomeSentence, 
-							bool IsTrader, bool Show,
+	DisplayDialogEvent(long ActorId, const std::string & ActorName, DialogHandlerPtr Dialog, 
+							bool Show,
 							const std::map<long, TraderItem> &inventory)
 		: _ActorId(ActorId), _ActorName(ActorName), _Show(Show), 
-			_IsTrader(IsTrader), _inventory(inventory), _WelcomeSentence(WelcomeSentence)
+			_inventory(inventory), _Dialog(Dialog)
 	{
 		_type = 24;	
 	}
 	
 	long _ActorId;
 	std::string _ActorName;
-	std::string _WelcomeSentence;
+	DialogHandlerPtr _Dialog;
 	bool _Show;
-	bool _IsTrader;
 	std::map<long, TraderItem> _inventory;
 };
 

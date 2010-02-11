@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GameEvents.h"
 #include <map>
 #include "WorldInfo.h"
+#include "Dialog.h"
 
 /***********************************************************************
  * Module:  LiftActor.h
@@ -42,8 +43,8 @@ class NPCActor : public ScriptableActor
 public:
 	//! constructor
 	NPCActor(const std::vector<PlayerScriptPart> & scripts, bool IsLift, 
-		int NPCType, float activationdistance, const std::string &Name, 
-		const std::string &WelcomeSentence);
+				int NPCType, float activationdistance, const std::string &Name, 
+				DialogHandlerPtr Dialog);
 
 	//! destructor
 	virtual ~NPCActor();
@@ -95,7 +96,7 @@ protected:
 
 	std::string _Name;
 
-	std::string _WelcomeSentence;
+	DialogHandlerPtr _Dialog;
 
 	std::map<long, TraderItem>	_items;
 };
