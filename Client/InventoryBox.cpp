@@ -172,7 +172,7 @@ void InventoryBox::ResizeBox()
 	float width = rect.getSize().d_width;
 	int nbboxhori = (int)width / (_boxsize+2);
 
-	for(int i=0; i<_inv_boxes.size(); ++i)
+	for(int i=0; i<(int)_inv_boxes.size(); ++i)
 	{
 		int x = i / nbboxhori;
 		int y = i % nbboxhori;

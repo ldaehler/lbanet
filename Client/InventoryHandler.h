@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include "WorldInfo.h"
 #include <IceUtil/Mutex.h>
+#include "InventoryHandlerBase.h"
 
 struct ActionFromInventory
 {
@@ -52,7 +53,7 @@ class NPCDialogBox;
  * Modified: lundi 27 juillet 2009 14:59:34
  * Purpose: Declaration of the class InventoryHandler
  ***********************************************************************/
-class InventoryHandler
+class InventoryHandler : public InventoryHandlerBase
 {
 public:
 

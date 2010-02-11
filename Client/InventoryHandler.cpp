@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "LetterViewerBox.h"
 #include "MessageBox.h"
 #include "DialogBox.h"
+#include "DataLoader.h"
 
 InventoryHandler* InventoryHandler::_singletonInstance = NULL;
 
@@ -133,7 +134,7 @@ ActionFromInventory InventoryHandler::ItemUsed(long ObjectId, bool LifeFull, boo
 	if(it == _currInventory.end())
 		return res;
 
-	std::map<long, ItemInfo>::iterator itdb =	_db.find(ObjectId);
+	std::map<long, ItemInfo>::iterator itdb = _db.find(ObjectId);
 
 	// if item not in db - return without doing any thing
 	if(itdb == _db.end())
@@ -177,8 +178,10 @@ ActionFromInventory InventoryHandler::ItemUsed(long ObjectId, bool LifeFull, boo
 			break;
 		case 8: // letters item, open them
 			if(m_lviewer)
-				m_lviewer->Show(itdb->first, itdb->second.Date, itdb->second.From, 
-									itdb->second.Subject, itdb->second.Description);
+				m_lviewer->Show(itdb->first, itdb->second.Date, 
+									DataLoader::getInstance()->GetInventoryText(itdb->second.FromId), 
+									DataLoader::getInstance()->GetInventoryText(itdb->second.SubjectId), 
+									DataLoader::getInstance()->GetInventoryText(itdb->second.DescriptionId));
 			break;
 	}
 
@@ -273,9 +276,9 @@ std::string InventoryHandler::GetItemDescription(long ObjectId)
 	if(itdb != _db.end())
 	{
 		if(itdb->second.type == 8)
-			return ("From: " + itdb->second.From + " Subject: " + itdb->second.Subject);
+			return ("From: " + DataLoader::getInstance()->GetInventoryText(itdb->second.FromId) + " Subject: " + DataLoader::getInstance()->GetInventoryText(itdb->second.SubjectId));
 		else
-			return itdb->second.Description;
+			return DataLoader::getInstance()->GetInventoryText(itdb->second.DescriptionId);
 	}
 	else
 		return "";
@@ -431,16 +434,17 @@ void InventoryHandler::UpdateUserCreatedItemInfo(long Id, const std::string & fr
 	if(Id < 0)
 		return;
 
+	IceUtil::Mutex::Lock lock(m_mutex_inv);
+
 	ItemInfo itinf;
 	itinf.id = Id;
 	itinf.type = 8;
 	itinf.Max = 1;
-	itinf.Description = message;
-	itinf.From = from;
+	itinf.DescriptionId = DataLoader::getInstance()->AddInventoryText(message);
+	itinf.FromId = DataLoader::getInstance()->AddInventoryText(from);
 	itinf.Date = date;
-	itinf.Subject = subject;
+	itinf.SubjectId = DataLoader::getInstance()->AddInventoryText(subject);
 
-	IceUtil::Mutex::Lock lock(m_mutex_inv);
 	_db[Id] = itinf;
 }
 

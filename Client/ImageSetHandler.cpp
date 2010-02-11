@@ -69,7 +69,7 @@ std::string ImageSetHandler::GetInventoryImage(long InventoryId)
 		file = "letter";
 	else 
 	{
-		if(InventoryId > _inventory_filenames.size())
+		if(InventoryId > (int)_inventory_filenames.size())
 			return "";
 		else
 			file = _inventory_filenames[InventoryId-1];
@@ -100,7 +100,7 @@ std::string ImageSetHandler::GetInventoryMiniImage(long InventoryId)
 		file = "letter";
 	else 
 	{
-		if(InventoryId > _inventory_filenames.size())
+		if(InventoryId > (int)_inventory_filenames.size())
 			return "";
 		else
 			file = _inventory_filenames[InventoryId-1];

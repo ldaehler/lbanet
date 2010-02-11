@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="LBANet"
 	ProjectGUID="{B46236F6-9F3B-4B3A-BD27-13E94D8833F2}"
 	RootNamespace="perspectivemapviewer"
@@ -259,6 +259,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\common\Dialog.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DialogBox.cpp"
 				>
 			</File>
@@ -332,6 +336,10 @@
 			</File>
 			<File
 				RelativePath=".\InventoryBox.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\common\InventoryCondition.cpp"
 				>
 			</File>
 			<File
@@ -448,6 +456,10 @@
 			</File>
 			<File
 				RelativePath="..\common\Player.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\common\Quest.cpp"
 				>
 			</File>
 			<File
@@ -589,6 +601,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\common\ConditionBase.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ConfigurationManager.h"
 				>
 			</File>
@@ -606,6 +622,10 @@
 			</File>
 			<File
 				RelativePath=".\DataLoader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\Dialog.h"
 				>
 			</File>
 			<File
@@ -681,11 +701,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\HQRlib.h"
+				RelativePath="..\common\HQRlib.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\HQRlib.h"
+				RelativePath=".\HQRlib.h"
 				>
 			</File>
 			<File
@@ -705,7 +725,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\common\InventoryCondition.h"
+				>
+			</File>
+			<File
 				RelativePath=".\InventoryHandler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\InventoryHandlerBase.h"
 				>
 			</File>
 			<File
@@ -809,6 +837,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\common\Quest.h"
+				>
+			</File>
+			<File
 				RelativePath=".\resource.h"
 				>
 			</File>
@@ -849,11 +881,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\StreamReader.h"
+				RelativePath="..\common\StreamReader.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\StreamReader.h"
+				RelativePath=".\StreamReader.h"
 				>
 			</File>
 			<File

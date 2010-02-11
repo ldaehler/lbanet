@@ -637,7 +637,7 @@ void LbaNetEngine::HandleGameEvents()
 				}
 			break;
 
-			case 11: // display game event
+			case 11: // display text event
 				{
 					if(m_currentstate == EGaming)
 					{
@@ -752,8 +752,8 @@ void LbaNetEngine::HandleGameEvents()
 			case 24: // display NPC dialog
 					DisplayDialogEvent * evcs = 
 						static_cast<DisplayDialogEvent *> (*it);
-					m_guiHandler.ShowDialog(evcs->_ActorId, evcs->_ActorName, evcs->_WelcomeSentence,
-											evcs->_IsTrader, evcs->_Show, evcs->_inventory);
+					m_guiHandler.ShowDialog(evcs->_ActorId, evcs->_ActorName, evcs->_Dialog,
+												evcs->_Show, evcs->_inventory);
 			break;
 		}
 
