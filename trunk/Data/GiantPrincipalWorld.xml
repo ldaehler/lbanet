@@ -7,7 +7,12 @@
         <file name="bricks" path="Data/lba_brick_info.txt" />
         <file name="sprites" path="Data/Sprites/sprites.xml" />
         <file name="videos" path="Data/Sprites/videos.xml" />
- 	<file name="inventory" path="Data/Inventory/lba1_inventory.xml" />       
+ 	<file name="inventory" path="Data/Inventory/lba1_inventory.xml" /> 
+        <file name="sounds" path="Data/Samples/sounds.xml" />      
+        <file name="models" path="Data/Models/models.xml" />
+        <file name="quests" path="Data/Quest/lba1_quests.xml" />        
+        <file name="inventorytext" path="Data/Texts/Lba1/inventory.xml" />      
+        <file name="questtext" path="Data/Texts/Lba1/quest.xml" />  	
     </files>
     <maps>
         <!--Map of Citadel Island-->
