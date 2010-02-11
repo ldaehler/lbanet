@@ -30,6 +30,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <vector>
 
+#include "ConditionBase.h"
+
+class DialogHandler;
+typedef boost::shared_ptr<DialogHandler> DialogHandlerPtr;
+
+
+
+
+
 // contain information about a light element
 struct LighInfo
 {
@@ -237,13 +246,13 @@ struct ItemInfo
 	int type;
 	int valueA;
 	int Max;
-	std::string Description;
+	long DescriptionId;
 	int Effect;
 	int Price;
 	bool Ephemere;
-	std::string From;
+	long FromId;
 	std::string Date;
-	std::string Subject;
+	long SubjectId;
 };
 
 
@@ -266,7 +275,24 @@ struct ItemGroup
 struct TraderItem
 {
 	long id;
+	ConditionBasePtr condition;
 };
 
+
+struct PlayerChoiceDisplay
+{
+	std::string Text;
+	bool QuitDialog;
+	bool ResetDialog;
+	bool StartTrade;
+	size_t Index;
+};
+
+struct DialogDisplay
+{
+	std::string NPCTalk;
+
+	std::vector<PlayerChoiceDisplay> PlayerChoices;
+};
 
 #endif

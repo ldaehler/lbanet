@@ -22,57 +22,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-
-#include "Randomizer.h"
-#include <ctime>
-
-
-Randomizer* Randomizer::_singletonInstance = NULL;
-
+#include "InventoryCondition.h"
 
 
 /***********************************************************
-	singleton pattern
+check if the condition is true or not
 ***********************************************************/
-Randomizer * Randomizer::getInstance()
+bool InventoryCondition::Passed()
 {
-    if(!_singletonInstance)
-    {
-        _singletonInstance = new Randomizer();
-		return _singletonInstance;
-    }
-    else
-    {
-		return _singletonInstance;
-    }
-
-}
-
-
-/***********************************************************
-	Constructor
-***********************************************************/
-Randomizer::Randomizer()
-: _engine(clock()), _generator(_engine)
-{
-
-}
-
-
-/***********************************************************
-give a number between 0 and 1
-***********************************************************/
-double Randomizer::Rand()
-{
-	return _generator();
-}
-
-
-
-/***********************************************************
-give a integer number between 0 and max
-***********************************************************/
-int Randomizer::RandInt(int max)
-{
-	return (int)(_generator() * max);
+	if(_invH)
+		if(_StrictlyEqual)
+			return (_invH->GetItemNumber(_InventoryObjectId) == _NeededObjectNumber);
+		else
+			return (_invH->GetItemNumber(_InventoryObjectId) >= _NeededObjectNumber);
+	else
+		return false;
 }

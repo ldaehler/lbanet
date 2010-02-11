@@ -30,6 +30,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include <map>
 
+#include "Dialog.h"
+#include "InventoryHandlerBase.h"
 
 class TiXmlElement;
 class Actor;
@@ -54,13 +56,14 @@ public:
 									std::map<long, SpriteInfo> &vidinfos,
 									std::map<long, ModelInfo> &modelinfos,
 									std::map<long, Actor *> & vec,
-									SignalerBase * signaler, float AnimationSpeed);
+									SignalerBase * signaler, float AnimationSpeed, 
+									InventoryHandlerBase * invH);
 
 	// load all sprites info
 	static bool LoadSprites(const std::string &Filename, std::map<long, SpriteInfo> &vec);
 
 	// get a text from file
-	static std::string GetText(const std::string &Filename, long textid);
+	static std::map<long, std::string> LoadTextFile(const std::string &Filename);
 
 	// get a text from file
 	static void GetAllTexts(const std::string &Filename, std::map<long, std::string> &txts);
@@ -77,6 +80,25 @@ public:
 protected:
 	// load a map information into memory
 	static MapInfo LoadMap(TiXmlElement* pElem);
+
+
+	// load a condition information into memory
+	static ConditionBasePtr LoadCondition(TiXmlElement* pElem, InventoryHandlerBase * invH);
+	
+
+	// load a dialog information into memory
+	static DialogHandlerPtr LoadDialog(TiXmlElement* pElem, InventoryHandlerBase * invH);
+
+
+	// load a dialog entry information into memory
+	static DialogEntryPtr LoadDialogEntry(TiXmlElement* pElem, InventoryHandlerBase * invH);
+
+
+	// load a dialog player choice information into memory
+	static DialogTreePlayerChoicePtr LoadPlayerChoice(TiXmlElement* pElem, InventoryHandlerBase * invH);
+
+	// load a dialog tree root information into memory
+	static DialogTreeRootPtr LoadTreeRoot(TiXmlElement* pElem, InventoryHandlerBase * invH);
 
 };
 
