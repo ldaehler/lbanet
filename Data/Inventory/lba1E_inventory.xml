@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <items>
-    <item id="1" filename="health" type="1" valueA="1" Max="10" Price="5" Description="Health potion: recover part of your life when using it." Effect="30"/>
-    <item id="2" filename="magic" type="1" valueA="2" Max="10" Price="5" Description="Mana potion: recover part of your magic when using it." Effect="30"/>
-    <item id="3" filename="clover" type="1" valueA="3" Max="3" Price="20" Description="Clover: recover your full life and magic when using it." Effect="100"/>
-    <item id="4" filename="key" type="2" valueA="0" Max="10" Description="Small key: open some of the locked doors." Ephemere="1"/>
-    <item id="5" filename="Horse" type="3" valueA="5" Max="1" Description="Horse: you can ride it on outside maps."/>
-    <item id="6" filename="Dino" type="3" valueA="6" Max="1" Description="Dino fly: you can fly it on outside maps."/>
-    <item id="7" filename="protopack" type="3" valueA="7" Max="1" Price="5" Description="Protopack: can be used to fly over water."/>
-    <item id="8" filename="kash" type="6" valueA="0" Max="9999" Description="Kash(es): money used on Twinsun"/>
-    <item id="9" filename="Feather" type="7" valueA="0" Max="1" Description="Feather, you can use it to write letters."/>
-    <item id="10" filename="letter" type="8" valueA="0" Max="1" From="Architect's father" Subject="My house key" Description="Note to myself: here is an extra key from my house in the case I loose mine again."/>   
-    <item id="11" filename="Gas" type="6" valueA="0" Max="10" Price="10" Description="Oil, used by cars and motorbike."/>   
-    <item id="12" filename="Ticket" type="6" valueA="0" Max="1" Price="10" Description="Ferry ticket, you need one to take the ferry."/>   
+    <item id="1" filename="health" type="1" valueA="1" Max="10" Price="5" Description="0" Effect="30"/>
+    <item id="2" filename="magic" type="1" valueA="2" Max="10" Price="5" Description="1" Effect="30"/>
+    <item id="3" filename="clover" type="1" valueA="3" Max="3" Price="20" Description="2" Effect="100"/>
+    <item id="4" filename="key" type="2" valueA="0" Max="10" Description="3" Ephemere="1"/>
+    <item id="5" filename="Horse" type="3" valueA="5" Max="1" Description="4"/>
+    <item id="6" filename="Dino" type="3" valueA="6" Max="1" Description="5"/>
+    <item id="7" filename="protopack" type="3" valueA="7" Max="1" Price="5" Description="6"/>
+    <item id="8" filename="kash" type="6" valueA="0" Max="9999" Description="7"/>
+    <item id="9" filename="Feather" type="7" valueA="0" Max="1" Description="8"/>
+    <item id="10" filename="letter" type="8" valueA="0" Max="1" From="9" Subject="10" Description="11"/>   
+    <item id="11" filename="Gas" type="6" valueA="0" Max="10" Price="10" Description="12"/>   
+    <item id="12" filename="Ticket" type="6" valueA="0" Max="1" Price="10" Description="13"/>   
 
 
-    <item id="13" filename="glass" type="1" valueA="3" Max="10" Price="2" Description="Glass of Champagne: there is nothing better to celebrate!" Effect="80"/>
-    <item id="14" filename="gluehwein" type="1" valueA="2" Max="10" Price="1" Description="Glass of Gluehwein: this can keep you warm for the evening." Effect="80"/>
-    <item id="15" filename="Lebkuchen" type="1" valueA="1" Max="10" Price="2" Description="Lebkuchen: delicious cake!" Effect="80"/>
-    <item id="16" filename="candy" type="1" valueA="1" Max="10" Price="1" Description="Christmas candy cane: you can not get enough of this sweets." Effect="80"/>
-    <item id="17" filename="giftbox" type="6" valueA="0" Max="1" Price="1" Description="Lbanet Christmas 2009 gift: strangly there is nothing inside yet..." Effect="1"/>
-
-
+    <item id="13" filename="glass" type="1" valueA="3" Max="10" Price="2" Description="14" Effect="80"/>
+    <item id="14" filename="gluehwein" type="1" valueA="2" Max="10" Price="1" Description="15" Effect="80"/>
+    <item id="15" filename="Lebkuchen" type="1" valueA="1" Max="10" Price="2" Description="16" Effect="80"/>
+    <item id="16" filename="candy" type="1" valueA="1" Max="10" Price="1" Description="17" Effect="80"/>
+    <item id="17" filename="giftbox" type="6" valueA="0" Max="1" Price="1" Description="18" Effect="1"/>
 </items>
