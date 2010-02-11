@@ -92,6 +92,10 @@ public:
 
 	//! get the text given a text id
 	std::string GetText(long TextId);
+	std::string GetInventoryText(long TextId);
+	std::string GetQuestText(long TextId);
+
+	long AddInventoryText(std::string Text);
 
 	//! save back the current world into file
 	bool SaveCurrentWorld();
@@ -182,6 +186,11 @@ private:
 	std::map<long, ModelInfo> _models;
 	std::map<long, ItemInfo>	_inventory;
 
+	std::map<long, std::string>	_map_texts;
+	std::map<long, std::string>	_inventory_texts;
+	std::map<long, std::string>	_quests_texts;
+
+
 	std::string				_textfile;
 	std::string				_currentworldfile;
 	std::string				_spritefile;
@@ -189,6 +198,10 @@ private:
 	std::string				_soundfile;
 	std::string				_modelsfile;
 	std::string				_inventoryfile;
+	std::string				_questfile;
+
+	std::string				_inventorytextfile;
+	std::string				_questtextfile;
 
 	std::string				_lang;
 

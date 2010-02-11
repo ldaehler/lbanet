@@ -869,7 +869,7 @@ void SendingLoopThread::run()
 		// process removed friends
 		std::vector<std::string> rfriends;
 		ThreadSafeWorkpile::getInstance()->GetRemovedFriend(rfriends);
-		for(size_t i=0; i<rfriends.size() > 0; ++i)
+		for(size_t i=0; i<rfriends.size(); ++i)
 			_connectionMananger.RemoveFriend(rfriends[i]);
 
 
@@ -877,7 +877,7 @@ void SendingLoopThread::run()
 		// process send letters
 		std::vector<ThreadSafeWorkpile::WrittenLetter> rletters;
 		ThreadSafeWorkpile::getInstance()->GetWrittenLetters(rletters);
-		for(size_t i=0; i<rletters.size() > 0; ++i)
+		for(size_t i=0; i<rletters.size(); ++i)
 			_connectionMananger.SendLetter(rletters[i]);
 
 
@@ -885,7 +885,7 @@ void SendingLoopThread::run()
 		// process letter info queries
 		std::vector<long> rletterqueries;
 		ThreadSafeWorkpile::getInstance()->GetLetterInfoQuerys(rletterqueries);
-		for(size_t i=0; i<rletterqueries.size() > 0; ++i)
+		for(size_t i=0; i<rletterqueries.size(); ++i)
 			_connectionMananger.AskLetterInfo(rletterqueries[i]);
 
 
@@ -893,7 +893,7 @@ void SendingLoopThread::run()
 		// process destroyed items
 		std::vector<long> destroyeditems;
 		ThreadSafeWorkpile::getInstance()->GetDestroyedItems(destroyeditems);
-		for(size_t i=0; i<destroyeditems.size() > 0; ++i)
+		for(size_t i=0; i<destroyeditems.size(); ++i)
 			_connectionMananger.DestroyItem(destroyeditems[i]);
 
 	
@@ -901,14 +901,14 @@ void SendingLoopThread::run()
 		// process targeted actors
 		std::vector<long> targetedactors;
 		ThreadSafeWorkpile::getInstance()->GetTargetedActors(targetedactors);
-		for(size_t i=0; i<targetedactors.size() > 0; ++i)
+		for(size_t i=0; i<targetedactors.size(); ++i)
 			_connectionMananger.SetTargeted(targetedactors[i]);	
 	
 		//-----------------------------------
 		// process untargeted actors
 		std::vector<long> untargetedactors;
 		ThreadSafeWorkpile::getInstance()->GetUntargetedActors(untargetedactors);
-		for(size_t i=0; i<untargetedactors.size() > 0; ++i)
+		for(size_t i=0; i<untargetedactors.size(); ++i)
 			_connectionMananger.SetUnTargeted(untargetedactors[i]);	
 
 

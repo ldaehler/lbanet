@@ -40,6 +40,7 @@ namespace CEGUI
 #include <map>
 #include <vector>
 #include "WorldInfo.h"
+#include "Dialog.h"
 
 //*************************************************************************************************
 //*                               class NPCDialogBox
@@ -61,8 +62,9 @@ class NPCDialogBox
 	void Initialize(CEGUI::Window* Root);
 
 	//! display the chatbox on screen
-	void ShowDialog(long ActorId, const std::string &ActorName, const std::string & WelcomeSentence, bool IsTrader, bool Show,
-		const std::map<long, TraderItem> &inventory);
+	void ShowDialog(long ActorId, const std::string &ActorName, 
+						DialogHandlerPtr Dialog, bool Show,
+						const std::map<long, TraderItem> &inventory);
 
 	//! handle windows closing event
 	bool HandleClose(const CEGUI::EventArgs& e);
@@ -93,7 +95,7 @@ protected:
 	void OpenTradeDialog();
 
 	//! build dialog depending of the actor
-	void BuildDialog(long ActorId, const std::string & WelcomeSentence, bool IsTrader);
+	void BuildDialog();
 
 	//! resize inventory
 	void ResizeBox();
@@ -122,6 +124,9 @@ private:
 	std::vector<CEGUI::Window*>	_objects;
 
 	std::map<long, TraderItem>	_curr_inventory;
+	DialogHandlerPtr			_curr_Dialog;
+
+	bool						_rebuildDialog;
 };
 
 #endif

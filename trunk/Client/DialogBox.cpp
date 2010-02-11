@@ -42,14 +42,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class MyDialogItem : public CEGUI::ListboxTextItem
 {
 public:
-    MyDialogItem (const CEGUI::String& text, bool SelectionQuitDialog, bool SelectionTrade) 
-		: CEGUI::ListboxTextItem(text), _SelectionQuitDialog(SelectionQuitDialog), _SelectionTrade(SelectionTrade)
+    MyDialogItem (const CEGUI::String& text, bool SelectionQuitDialog, 
+						bool SelectionTrade, bool ResetDialog, size_t index) 
+		: CEGUI::ListboxTextItem(text), _SelectionQuitDialog(SelectionQuitDialog), 
+		_SelectionTrade(SelectionTrade), _SelectionResetDialog(ResetDialog),
+		_SelectionIdx(index)
     {
         setSelectionBrushImage("TaharezLook", "MultiListSelectionBrush");
     }
 
 	bool _SelectionQuitDialog;
 	bool _SelectionTrade;
+	bool _SelectionResetDialog;
+	size_t _SelectionIdx;
 };
 
 
@@ -57,7 +62,8 @@ public:
 constructor
 ***********************************************************/
 NPCDialogBox::NPCDialogBox(GameGUI * gamgui, int boxsize)
-: _gamgui(gamgui), _current_dialoged_actor(-1), _boxsize(boxsize), _currentmoney(-1)
+: _gamgui(gamgui), _current_dialoged_actor(-1), _boxsize(boxsize), 
+	_currentmoney(-1), _rebuildDialog(false)
 {
 
 
@@ -122,8 +128,8 @@ void NPCDialogBox::Initialize(CEGUI::Window* Root)
 			int y = i % 3;
 
 			tmpwindow = CEGUI::WindowManager::getSingleton().createWindow("TaharezLook/StaticText");
-			tmpwindow->setArea(CEGUI::UDim(0,5+(_boxsize+2)*y), CEGUI::UDim(0,5+(_boxsize+2)*x), 
-								CEGUI::UDim(0, _boxsize), CEGUI::UDim(0, _boxsize));
+			tmpwindow->setArea(CEGUI::UDim(0,5+((float)_boxsize+2)*y), CEGUI::UDim(0,5+((float)_boxsize+2)*x), 
+								CEGUI::UDim(0, (float)_boxsize), CEGUI::UDim(0, (float)_boxsize));
 			pane->addChildWindow(tmpwindow);
 
 			tmpwindow->setID(i);
@@ -168,9 +174,9 @@ void NPCDialogBox::CloseDialog()
 /***********************************************************
 display the chatbox on screen
 ***********************************************************/
-void NPCDialogBox::ShowDialog(long ActorId, const std::string &ActorName, const std::string & WelcomeSentence,
-							  bool IsTrader, bool Show,
-								const std::map<long, TraderItem> &inventory)
+void NPCDialogBox::ShowDialog(long ActorId, const std::string &ActorName, 
+								  DialogHandlerPtr Dialog,
+								  bool Show, const std::map<long, TraderItem> &inventory)
 {
 	if(Show)
 	{
@@ -184,10 +190,12 @@ void NPCDialogBox::ShowDialog(long ActorId, const std::string &ActorName, const 
 			CEGUI::WindowManager::getSingleton().getWindow("DialogFrame"))->setText("Dialog with "+ActorName);
 
 		_curr_inventory = inventory;
-		BuildDialog(ActorId, WelcomeSentence, IsTrader);
+		_curr_Dialog = Dialog;
+		_current_dialoged_actor = ActorId;
+
+		BuildDialog();
 		_myBox->show();
 		_myBox->activate();
-		_current_dialoged_actor = ActorId;
 	}
 	else
 	{
@@ -201,26 +209,40 @@ void NPCDialogBox::ShowDialog(long ActorId, const std::string &ActorName, const 
 /***********************************************************
 build dialog depending of the actor
 ***********************************************************/
-void NPCDialogBox::BuildDialog(long ActorId, const std::string & WelcomeSentence, bool IsTrader)
+void NPCDialogBox::BuildDialog()
 {
-	CEGUI::WindowManager::getSingleton().getWindow("DialogFrame/multiline")
-										->setText(WelcomeSentence);
-
-
-	CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
-		CEGUI::WindowManager::getSingleton().getWindow("DialogFrame/listbox"));
-
-	lb->resetList();
-
-	if(IsTrader)
+	if(_curr_Dialog)
 	{
-		CEGUI::ListboxItem *it = new MyDialogItem("Trade", false, true);
-		lb->addItem(it);
+		DialogDisplay dlgd = _curr_Dialog->GetCurrentDialog();
+
+		CEGUI::WindowManager::getSingleton().getWindow("DialogFrame/multiline")
+											->setText(dlgd.NPCTalk);
+
+
+		CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
+			CEGUI::WindowManager::getSingleton().getWindow("DialogFrame/listbox"));
+
+		lb->resetList();
+
+		for(size_t i=0; i<dlgd.PlayerChoices.size(); ++i)
+		{
+			
+			CEGUI::ListboxItem *it = new MyDialogItem(	dlgd.PlayerChoices[i].Text, 
+														dlgd.PlayerChoices[i].QuitDialog, 
+														dlgd.PlayerChoices[i].StartTrade,
+														dlgd.PlayerChoices[i].ResetDialog,
+														dlgd.PlayerChoices[i].Index);
+			lb->addItem(it);		
+		}
+	}
+	else
+	{
+		CEGUI::WindowManager::getSingleton().getWindow("DialogFrame/multiline")
+											->setText("Hi!");
+
+		CEGUI::ListboxItem *it = new MyDialogItem("Bye!", true, false, false, 0);
 	}
 
-	CEGUI::ListboxItem *it = new MyDialogItem("Good bye. (End conversation)", true, false);
-	lb->addItem(it);
-	lb->setItemSelectState(it, true);
 }
 
 
@@ -237,10 +259,33 @@ bool NPCDialogBox::Handlelbelected(const CEGUI::EventArgs& e)
 	if(it)
 	{
 		if(it->_SelectionQuitDialog)
+		{
 			CloseDialog();
+			return true;
+		}
 
 		if(it->_SelectionTrade)
+		{
 			OpenTradeDialog();
+			return true;
+		}
+
+		if(it->_SelectionResetDialog)
+		{
+			if(_curr_Dialog)
+			{
+				_curr_Dialog->ResetDialog();
+				_rebuildDialog = true;
+			}
+			return true;
+		}
+
+		if(_curr_Dialog)
+		{
+			_curr_Dialog->FollowPlayerChoice(it->_SelectionIdx);
+			_rebuildDialog = true;
+		}
+		return true;
 	}
 
 	return true;
@@ -258,7 +303,16 @@ void NPCDialogBox::OpenTradeDialog()
 	CleanItems();
 	std::map<long, TraderItem>::iterator it = _curr_inventory.begin();
 	for(size_t i=0; it != _curr_inventory.end(); ++i, ++it)
-		 AddItem(it->first, _inv_boxes[i]);
+	{
+		if(it->second.condition)
+		{
+			if(it->second.condition->Passed())
+				AddItem(it->first, _inv_boxes[i]);
+		}
+		else
+			AddItem(it->first, _inv_boxes[i]);
+		 
+	}
 
 	_mytradeBox->show();
 }
@@ -290,8 +344,8 @@ void NPCDialogBox::ResizeBox()
 		int x = i / nbboxhori;
 		int y = i % nbboxhori;
 
-		_inv_boxes[i]->setPosition(CEGUI::UVector2(CEGUI::UDim(0,(_boxsize+2)*y), 
-													CEGUI::UDim(0,(_boxsize+2)*x)));
+		_inv_boxes[i]->setPosition(CEGUI::UVector2(CEGUI::UDim(0,((float)_boxsize+2.0f)*y), 
+													CEGUI::UDim(0,((float)_boxsize+2.0f)*x)));
 	}
 }
 
@@ -394,6 +448,11 @@ void NPCDialogBox::Process()
 		RefreshMoney();
 	}
 
+	if(_rebuildDialog)
+	{
+		_rebuildDialog = false;
+		BuildDialog();
+	}
 }
 
 

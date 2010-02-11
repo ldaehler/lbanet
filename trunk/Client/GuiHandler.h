@@ -118,9 +118,8 @@ public:
 	void RefreshOption();
 
 	// show dialog with NPC
-	void ShowDialog(long ActorId, const std::string &ActorName, const std::string & WelcomeSentence,
-						bool IsTrader, bool Show,
-						const std::map<long, TraderItem> &inventory);
+	void ShowDialog(long ActorId, const std::string &ActorName, DialogHandlerPtr Dialog,
+						bool Show,	const std::map<long, TraderItem> &inventory);
 
 protected:
 	//! inject time to the GUI

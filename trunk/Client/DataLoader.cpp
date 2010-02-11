@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DataFileHandler.h"
 #include "Entities.h"
 #include "Actor.h"
+#include "InventoryHandler.h"
 
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -138,9 +139,16 @@ bool DataLoader::LoadWorld(std::string WorldName)
 		std::string brfile = _currentWorld.Files["bricks"];
 		_spritefile = _currentWorld.Files["sprites"];
 		_videofile = _currentWorld.Files["videos"];
-		_soundfile = "Data/Samples/sounds.xml";
-		_modelsfile = "Data/Models/models.xml";
+		_soundfile = _currentWorld.Files["sounds"];
+		_modelsfile = _currentWorld.Files["models"];
 		_inventoryfile = _currentWorld.Files["inventory"];
+		_questfile = _currentWorld.Files["quests"];
+
+		_inventorytextfile = _currentWorld.Files["inventorytext"];
+		_questtextfile = _currentWorld.Files["questtext"];
+
+		_inventorytextfile.insert(_inventorytextfile.find("Texts/") + 6, _lang + "/");
+		_questtextfile.insert(_questtextfile.find("Texts/") + 6, _lang + "/");
 
 		_brickInfo = new BrickInfoHandler(brfile);
 
@@ -149,6 +157,8 @@ bool DataLoader::LoadWorld(std::string WorldName)
 		MapInfoXmlReader::LoadModels(_modelsfile, _models);
 		MapInfoXmlReader::LoadInventory(_inventoryfile, _inventory);
 
+		_inventory_texts = MapInfoXmlReader::LoadTextFile(_inventorytextfile);
+		_quests_texts = MapInfoXmlReader::LoadTextFile(_questtextfile);
 
 		_currentMap = _currentWorld.FirstMap;
 		return true;
@@ -180,6 +190,8 @@ bool DataLoader::LoadMap(std::string MapName)
 	_textfile = "Data/" + MI->Files["Texts"];
 
 	_textfile.insert(_textfile.find("Texts/") + 6, _lang + "/");
+
+	_map_texts = MapInfoXmlReader::LoadTextFile(_textfile);
 
 	return true;
 }
@@ -248,7 +260,8 @@ bool DataLoader::GetLocalMapActors(std::map<long, Actor *> & vec, float Animatio
 	if(file == "")
 		return false;
 
-	return MapInfoXmlReader::LoadActors("Data/" + file, _sprites, _videos, _models, vec, &_signaler, AnimationSpeed);
+	return MapInfoXmlReader::LoadActors("Data/" + file, _sprites, _videos, _models, vec, 
+								&_signaler, AnimationSpeed, InventoryHandler::getInstance());
 }
 
 
@@ -262,7 +275,8 @@ bool DataLoader::GetExternalMapActors(std::map<long, Actor *> & vec, float Anima
 	if(file == "")
 		return false;
 
-	return MapInfoXmlReader::LoadActors("Data/" + file, _sprites, _videos, _models, vec, &_signaler, AnimationSpeed);
+	return MapInfoXmlReader::LoadActors("Data/" + file, _sprites, _videos, _models, vec, 
+								&_signaler, AnimationSpeed, InventoryHandler::getInstance());
 }
 
 
@@ -271,9 +285,46 @@ get the text given a text id
 ***********************************************************/
 std::string DataLoader::GetText(long TextId)
 {
-	return MapInfoXmlReader::GetText(_textfile, TextId);
+	return _map_texts[TextId];
 }
 
+
+/***********************************************************
+get the text given a text id
+***********************************************************/
+std::string DataLoader::GetInventoryText(long TextId)
+{
+	return _inventory_texts[TextId];
+}
+
+/***********************************************************
+get the text given a text id
+***********************************************************/
+std::string DataLoader::GetQuestText(long TextId)
+{
+	return _quests_texts[TextId];
+}
+
+
+
+/***********************************************************
+get the text given a text id
+***********************************************************/
+long DataLoader::AddInventoryText(std::string Text)
+{
+	long id = 0;
+
+	if(_inventory_texts.size() > 0)	
+	{
+		id = _inventory_texts.rbegin()->first + 1;
+		while(_inventory_texts.find(id) != _inventory_texts.end())
+			++id;
+	}
+
+	_inventory_texts[id] = Text;
+
+	return id;
+}
 
 
 /***********************************************************

@@ -107,8 +107,8 @@ void ContainerBox::Initialize(CEGUI::Window* Root)
 			int y = i % 3;
 
 			tmpwindow = CEGUI::WindowManager::getSingleton().createWindow("TaharezLook/StaticText");
-			tmpwindow->setArea(CEGUI::UDim(0,5+(_boxsize+2)*y), CEGUI::UDim(0,5+(_boxsize+2)*x), 
-								CEGUI::UDim(0, _boxsize), CEGUI::UDim(0, _boxsize));
+			tmpwindow->setArea(CEGUI::UDim(0,5+((float)_boxsize+2)*y), CEGUI::UDim(0,5+((float)_boxsize+2)*x), 
+								CEGUI::UDim(0, (float)_boxsize), CEGUI::UDim(0, (float)_boxsize));
 			pane->addChildWindow(tmpwindow);
 
 			tmpwindow->subscribeEvent(
@@ -471,7 +471,7 @@ std::pair<CEGUI::Window*, CEGUI::Window*> ContainerBox::AddInventoryItem(long Id
 	tmp->setID(Id);
 
 	CEGUI::Window*	tmp2 = CEGUI::WindowManager::getSingleton().createWindow("TaharezLook/StaticImage");
-	tmp2->setArea(CEGUI::UDim(0,5), CEGUI::UDim(0,12), CEGUI::UDim(0, _boxsize-10), CEGUI::UDim(0, _boxsize-20));
+	tmp2->setArea(CEGUI::UDim(0,5.0f), CEGUI::UDim(0,12.0f), CEGUI::UDim(0, (float)_boxsize-10.0f), CEGUI::UDim(0, (float)_boxsize-20.0f));
 
 	std::string imagesetname = ImageSetHandler::GetInstance()->GetInventoryImage(Id);
 	tmp2->setProperty("Image", "set:" + imagesetname + " image:full_image");
@@ -571,8 +571,8 @@ void ContainerBox::ResizeInventory(int newsize)
 		int y = i % 4;
 
 		tmpwindow = CEGUI::WindowManager::getSingleton().createWindow("TaharezLook/StaticText");
-		tmpwindow->setArea(CEGUI::UDim(0,5+(_boxsize+2)*y), CEGUI::UDim(0,5+(_boxsize+2)*x),
-							CEGUI::UDim(0, _boxsize), CEGUI::UDim(0, _boxsize));
+		tmpwindow->setArea(CEGUI::UDim(0,5+((float)_boxsize+2)*y), CEGUI::UDim(0,5+((float)_boxsize+2.0f)*x),
+							CEGUI::UDim(0, (float)_boxsize), CEGUI::UDim(0, (float)_boxsize));
 		pane->addChildWindow(tmpwindow);
 
         tmpwindow->subscribeEvent(
