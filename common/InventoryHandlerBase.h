@@ -49,6 +49,13 @@ public:
 
 	//! update item number
 	virtual void UpdateItemNumber(long itemid, int deltaCount) = 0;	
+
+
+	//! inform class that a quest has been started
+	virtual void InformQuestStarted(long Questid) = 0;
+
+	//! inform class that a quest has been finished
+	virtual void InformQuestFinished(long Questid) = 0;
 };
 
 

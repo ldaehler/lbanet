@@ -92,6 +92,10 @@ void QuestHandler::TriggerQuestStart(long QuestId)
 
 
 #ifdef _LBANET_SERVER_SIDE_
+	// inform client quest is started
+	if(_InvH)
+		_InvH->InformQuestStarted(QuestId);
+
 	std::map<long, QuestPtr>::iterator it = _questDb.find(QuestId);
 	if(it != _questDb.end())
 	{
@@ -122,6 +126,11 @@ void QuestHandler::TriggerQuestEnd(long QuestId)
 
 		// add to quest finished
 		_questFinished.push_back(QuestId);
+
+
+		// inform client quest is finished
+		if(_InvH)
+			_InvH->InformQuestFinished(QuestId);
 
 
 		// trigger stuff at end quest
