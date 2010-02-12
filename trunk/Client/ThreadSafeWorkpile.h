@@ -389,6 +389,28 @@ public:
 	//! get all items bought
 	void GetBoughtItem(std::vector<std::pair<long,long> > & items);
 
+
+	//! quest started
+	void AddQuestStarted(long QuestId);
+
+	//! quest finished
+	void AddQuestFinished(long QuestId);
+
+
+	//! quest started
+	void GetQuestStarted(std::vector<long> & vec);
+
+	//! quest finished
+	void GetQuestFinished(std::vector<long> & vec);
+
+	//! called when questbook needs an update
+	void NeedQuestBookUpdate();
+
+	//! check if update needed
+	bool QuestBookUpdateNeeded();
+
+
+
 protected:
 
 	//! construtor
@@ -398,7 +420,7 @@ protected:
 			m_player_id(-1), m_new_actor_state(false), m_name_color_changed(false),
 			m_world_changed(false), m_player_pos_info_updated(false), m_waiting_container_info(false),
 			m_updated_container(false), m_exchanged_container(false), m_closed_container(false),
-			m_mplayer(NULL), m_explayers(NULL)
+			m_mplayer(NULL), m_explayers(NULL), m_update_questbook(false)
 	{}
 
 	ThreadSafeWorkpile(const ThreadSafeWorkpile &);
@@ -439,6 +461,10 @@ private:
 	IceUtil::Mutex								m_mutex_targeted_actors;
 	IceUtil::Mutex								m_mutex_buy_items;
 	IceUtil::Mutex								m_mutex_act_aborted;
+
+	IceUtil::Mutex								m_mutex_start_quest;
+	IceUtil::Mutex								m_mutex_end_quest;
+	IceUtil::Mutex								m_mutex_questbook_update;
 
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_irc;
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_sending_loop;
@@ -530,7 +556,9 @@ private:
 
 	std::vector<LbaNet::ActorActivationInfo>	m_act_aborted;
 
-
+	std::vector<long>							m_quest_started;
+	std::vector<long>							m_quest_ended;
+	bool										m_update_questbook;
 
 	static ThreadSafeWorkpile *					_singletonInstance;
 };
