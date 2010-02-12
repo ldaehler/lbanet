@@ -151,6 +151,12 @@ public:
 	//! update item number - should not be used in client side
 	virtual void UpdateItemNumber(long itemid, int deltaCount){}
 
+	//! inform class that a quest has been started - should not be used in client side
+	virtual void InformQuestStarted(long Questid){}
+
+	//! inform class that a quest has been finished - should not be used in client side
+	virtual void InformQuestFinished(long Questid){}
+
 protected:
 	//! constructor
 	InventoryHandler();
