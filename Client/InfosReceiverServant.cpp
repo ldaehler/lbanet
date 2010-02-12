@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GameEvents.h"
 #include "InventoryHandler.h"
 #include "ImageSetHandler.h"
+#include "QuestHandler.h"
 
 // callback function called when a message is received from IceStorm
 void InfosReceiverServant::UpdatedInfo(const LbaNet::ActorInfo& asi, const Ice::Current&)
@@ -176,6 +177,38 @@ void InfosReceiverServant::UpdateActorState(const LbaNet::ActorUpdateInfo &newin
 void InfosReceiverServant::ActivationAborted(const LbaNet::ActorActivationInfo &ai, const Ice::Current&)
 {
 	ThreadSafeWorkpile::getInstance()->ActivationAborted(ai);
+}
+
+
+// InitQuestStartedFinished  
+void InfosReceiverServant::InitQuestStartedFinished(const LbaNet::QuestSeq &Started, 
+													const LbaNet::QuestSeq &Finished, 
+													const Ice::Current&)
+{
+	std::vector<long> questStarted;
+	for(size_t i=0; i<Started.size(); ++i)
+		questStarted.push_back(Started[i]);
+
+	std::vector<long> questFinished;
+	for(size_t i=0; i<Finished.size(); ++i)
+		questFinished.push_back(Finished[i]);
+
+	QuestHandler::getInstance()->SetStartedFinished(questStarted, questFinished);
+	ThreadSafeWorkpile::getInstance()->NeedQuestBookUpdate();
+}
+
+// InformQuestStarted
+void InfosReceiverServant::InformQuestStarted(Ice::Long QuestId, const Ice::Current&)
+{
+	QuestHandler::getInstance()->TriggerQuestStart(QuestId);
+	ThreadSafeWorkpile::getInstance()->NeedQuestBookUpdate();
+}
+
+// InformQuestFinished  
+void InfosReceiverServant::InformQuestFinished(Ice::Long QuestId, const Ice::Current&)
+{
+	QuestHandler::getInstance()->TriggerQuestEnd(QuestId);
+	ThreadSafeWorkpile::getInstance()->NeedQuestBookUpdate();
 }
 
 

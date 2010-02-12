@@ -1042,3 +1042,62 @@ void ThreadSafeWorkpile::GetBoughtItem(std::vector<std::pair<long,long> > & item
 	IceUtil::Mutex::Lock lock(m_mutex_buy_items);
 	items.swap(m_bought_items);
 }
+
+
+
+/***********************************************************
+quest started
+***********************************************************/
+void ThreadSafeWorkpile::AddQuestStarted(long QuestId)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_start_quest);
+	m_quest_started.push_back(QuestId);
+}
+
+/***********************************************************
+quest finished
+***********************************************************/
+void ThreadSafeWorkpile::AddQuestFinished(long QuestId)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_end_quest);
+	m_quest_ended.push_back(QuestId);
+}
+
+
+/***********************************************************
+quest started
+***********************************************************/
+void ThreadSafeWorkpile::GetQuestStarted(std::vector<long> & vec)
+{
+	vec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_start_quest);
+	vec.swap(m_quest_started);
+}
+
+/***********************************************************
+quest finished
+***********************************************************/
+void ThreadSafeWorkpile::GetQuestFinished(std::vector<long> & vec)
+{
+	vec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_end_quest);
+	vec.swap(m_quest_ended);
+}
+
+/***********************************************************
+called when questbook needs an update
+***********************************************************/
+void ThreadSafeWorkpile::NeedQuestBookUpdate()
+{
+	IceUtil::Mutex::Lock lock(m_mutex_questbook_update);
+	m_update_questbook = true;
+}
+
+/***********************************************************
+check if update needed
+***********************************************************/
+bool ThreadSafeWorkpile::QuestBookUpdateNeeded()
+{
+	IceUtil::Mutex::Lock lock(m_mutex_questbook_update);
+	return m_update_questbook;
+}

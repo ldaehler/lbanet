@@ -700,6 +700,49 @@ void IceConnectionManager::BuyItem(long FromActorId, long itemid)
 
 
 
+
+ 
+/***********************************************************
+start quest
+***********************************************************/   
+void IceConnectionManager::StartQuest(long QuestId)
+{
+	try
+	{
+		_session->StartQuest(QuestId);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception start quest: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception start quest "));
+    }
+} 
+
+ 
+/***********************************************************
+end quest
+***********************************************************/   
+void IceConnectionManager::EndQuest(long QuestId)
+{
+	try
+	{
+		_session->EndQuest(QuestId);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception end quest: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception end quest "));
+    }
+}
+
+
+
 /***********************************************************
 constructor
 ***********************************************************/
@@ -910,6 +953,9 @@ void SendingLoopThread::run()
 		ThreadSafeWorkpile::getInstance()->GetUntargetedActors(untargetedactors);
 		for(size_t i=0; i<untargetedactors.size(); ++i)
 			_connectionMananger.SetUnTargeted(untargetedactors[i]);	
+
+
+
 
 
 		if(ThreadSafeWorkpile::getInstance()->HasUpdatedInfo(_last_ai))

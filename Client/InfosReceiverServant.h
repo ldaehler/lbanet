@@ -69,6 +69,16 @@ public:
    
 	// Update Actor State
 	virtual  void ActivationAborted(const LbaNet::ActorActivationInfo &ai, const Ice::Current&);
+
+	// InitQuestStartedFinished  
+    virtual  void InitQuestStartedFinished(const LbaNet::QuestSeq &Started, 
+											const LbaNet::QuestSeq &Finished, const Ice::Current&);
+    
+	// InformQuestStarted
+	virtual  void InformQuestStarted(Ice::Long QuestId, const Ice::Current&);
+  	
+	// InformQuestFinished  
+    virtual  void InformQuestFinished(Ice::Long QuestId, const Ice::Current&);
 };
 
 #endif

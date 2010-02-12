@@ -130,6 +130,13 @@ public:
 	//! buy item 
 	void BuyItem(long FromActorId, long itemid);
 
+
+	//! start quest
+	void StartQuest(long QuestId);
+
+	//! end quest
+	void EndQuest(long QuestId);
+
 private:
 
     const Ice::ObjectAdapterPtr							_adapter;	// ice adapter

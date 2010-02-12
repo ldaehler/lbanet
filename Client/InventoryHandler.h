@@ -148,6 +148,9 @@ public:
 	long GetMoneyItemId()
 	{return 8;}
 
+	//! update item number - should not be used in client side
+	virtual void UpdateItemNumber(long itemid, int deltaCount){}
+
 protected:
 	//! constructor
 	InventoryHandler();
