@@ -93,6 +93,15 @@ module LbaNet
 	    
 	    // tell client only if actor is activated
 	    void ActivatedActor(ActorActivationInfo ai, bool succeded);
+	    
+	    
+	    
+	    // called when quest should start
+	    void StartQuest(long QuestId);
+	    
+	    
+	    // called when quest should end
+	    void EndQuest(long QuestId);	    
 	};
 
 };

@@ -214,8 +214,11 @@ module LbaNet
 		string Writter;
 		string Title;
 		string Message;
-	};	
-};
+	};
+	
+	
+	sequence<long> QuestSeq;	
+};	
 
 #endif
 
