@@ -23,8 +23,14 @@ module LbaNet
 	    
 	    void InformInventoryChanges(UpdatedItemSeq InventoryChanges);
 	    
-	    void UpdateActorState(ActorUpdateInfo newinfo);
+	    void UpdateActorState(ActorUpdateInfo newinfo);   
 	    
+	    void InitQuestStartedFinished(QuestSeq Started, QuestSeq Finished);
+	    
+	    void InformQuestStarted(long QuestId);
+	    
+	    void InformQuestFinished(long QuestId);	    
+	   
 	    void ActivationAborted(ActorActivationInfo ai);
 	};
 	
