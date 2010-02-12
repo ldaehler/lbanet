@@ -39,10 +39,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DatabaseHandler.h"
 #include "WorldInfo.h"
 
+#include "InventoryHandlerBase.h"
+#include "QuestHandler.h"	
+
+
 using namespace LbaNet;
 
 
-class SessionServant : public ClientSession, public IceUtil::Mutex
+class SessionServant : public ClientSession, public IceUtil::Mutex, public InventoryHandlerBase
 {
 public:
 	//! constructor
@@ -176,6 +180,27 @@ public:
 	// tell client only if actor is activated
 	virtual void ActivatedActor(const LbaNet::ActorActivationInfo &ai, bool succeded, const ::Ice::Current&);
 
+	// start a quest
+    virtual void StartQuest(Ice::Long QuestId, const ::Ice::Current&);
+	
+	// end a quest
+    virtual void EndQuest(Ice::Long QuestId, const ::Ice::Current&);
+
+
+	//! get the number of item in inventory
+	virtual int GetItemNumber(long id);
+
+	//! update item number
+	virtual void UpdateItemNumber(long itemid, int deltaCount);	
+
+
+	//! inform class that a quest has been started
+	virtual void InformQuestStarted(long Questid);
+
+	//! inform class that a quest has been finished
+	virtual void InformQuestFinished(long Questid);
+
+
 protected:
 	void ApplyInternalInventoryChanges(const UpdatedItemSeq &InventoryChanges);
 
@@ -213,6 +238,8 @@ private:
 	std::map<std::string, std::string>	_session_world_inventory_files;
 
 	LbaNet::ClientSessionPrx			_selfptr;
+
+	QuestHandler						_QH;
 };
 
 #endif

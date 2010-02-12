@@ -39,7 +39,8 @@ SessionServant::SessionServant(const std::string& userId, const RoomManagerPrx& 
 									const ConnectedTrackerPrx& ctracker, const MapManagerPrx& map_manager,
 									std::string	version, DatabaseHandler & dbh)
 : _manager(manager), _curr_actor_room(""), _userId(userId), _ctracker(ctracker), _map_manager(map_manager),
-	_userNum(-1), _version(version), _currColor("FFFFFFFF"), _dbh(dbh), _selfptr(NULL), _client_observer(NULL)
+	_userNum(-1), _version(version), _currColor("FFFFFFFF"), _dbh(dbh), _selfptr(NULL), _client_observer(NULL),
+	_QH(reinterpret_cast<InventoryHandlerBase *>(this))
 {
 	_userNum = _ctracker->Connect(_userId);
 
@@ -848,7 +849,7 @@ void SessionServant::UpdateInventoryFromContainer(Ice::Long ContainerId, const I
 			LbaNet::InventoryMap::iterator itlocal = _playerInventory.InventoryStructure.find(it->first);
 			if(itlocal != _playerInventory.InventoryStructure.end())
 			{
-				if((it->first >= _FIRST_USER_CREATED_ID_) || _inventory_db[it->first].type == 1 || 
+				if((it->first >= _FIRST_USER_CREATED_ID_) || _inventory_db[it->first].type == 1 ||
 						_inventory_db[it->first].type == 6)
 					if(itlocal->second.Number >= it->second)
 						CheckedPut[it->first] = it->second;
@@ -1016,16 +1017,16 @@ LbaNet::LetterInfo SessionServant::GetLetterInfo(Ice::Long LetterId, const ::Ice
 	return li;
 }
 
-  
+
 /***********************************************************
 destroy an inventory item
-***********************************************************/  
+***********************************************************/
 void SessionServant::DestroyItem(Ice::Long  Id, const ::Ice::Current&)
 {
 	Lock sync(*this);
 	LbaNet::InventoryMap::iterator itlocal = _playerInventory.InventoryStructure.find(Id);
 	if(itlocal != _playerInventory.InventoryStructure.end())
-	{	
+	{
 		UpdatedItemSeq InventoryChanges;
 		LbaNet::UpdatedItem itm;
 		itm.ItemId = Id;
@@ -1036,10 +1037,10 @@ void SessionServant::DestroyItem(Ice::Long  Id, const ::Ice::Current&)
 	}
 }
 
-      
+
 /***********************************************************
 set player targeted by actor
-***********************************************************/  
+***********************************************************/
 void SessionServant::SetTargeted(Ice::Long ActorId, const ::Ice::Current&)
 {
 	try
@@ -1057,10 +1058,10 @@ void SessionServant::SetTargeted(Ice::Long ActorId, const ::Ice::Current&)
 	}
 }
 
-    
+
 /***********************************************************
 set player untargeted by actor
-***********************************************************/    
+***********************************************************/
 void SessionServant::SetUnTargeted(Ice::Long ActorId, const ::Ice::Current&)
 {
 	try
@@ -1076,10 +1077,10 @@ void SessionServant::SetUnTargeted(Ice::Long ActorId, const ::Ice::Current&)
 	{
 		std::cout<<"SessionServant - Unknown exception during SetUnTargeted"<<std::endl;
 	}
-} 
+}
 
 
-    
+
 /***********************************************************
 buy item
 ***********************************************************/
@@ -1097,7 +1098,7 @@ void SessionServant::BuyItem(Ice::Long FromActorId, Ice::Long Itemid, const ::Ic
 			price = itdb->second.Price;
 
 			// check how much money we have
-			LbaNet::InventoryMap::iterator iti = _playerInventory.InventoryStructure.find(8); 
+			LbaNet::InventoryMap::iterator iti = _playerInventory.InventoryStructure.find(8);
 			if(iti != _playerInventory.InventoryStructure.end())
 				number = iti->second.Number;
 			else
@@ -1120,10 +1121,29 @@ void SessionServant::BuyItem(Ice::Long FromActorId, Ice::Long Itemid, const ::Ic
 }
 
 
-    
+
+/***********************************************************
+start a quest
+***********************************************************/
+void SessionServant::StartQuest(Ice::Long QuestId, const ::Ice::Current&)
+{
+	_QH.TriggerQuestStart(QuestId);
+}
+
+
+/***********************************************************
+end a quest
+***********************************************************/
+void SessionServant::EndQuest(Ice::Long QuestId, const ::Ice::Current&)
+{
+	_QH.TriggerQuestEnd(QuestId);
+}
+
+
+
 /***********************************************************
 tell client only if actor is activated
-***********************************************************/   
+***********************************************************/
 void SessionServant::ActivatedActor(const LbaNet::ActorActivationInfo &ai, bool succeded, const ::Ice::Current&)
 {
 	if(succeded)
@@ -1136,4 +1156,85 @@ void SessionServant::ActivatedActor(const LbaNet::ActorActivationInfo &ai, bool 
 		if(_client_observer)
 			_client_observer->ActivationAborted(ai);
 	}
+}
+
+
+
+/***********************************************************
+get the number of item in inventory
+***********************************************************/
+int SessionServant::GetItemNumber(long id)
+{
+    Lock sync(*this);
+
+	LbaNet::InventoryMap::iterator itlocal = _playerInventory.InventoryStructure.find(id);
+	if(itlocal != _playerInventory.InventoryStructure.end())
+	{
+		return itlocal->second.Number;
+	}
+	else
+		return 0;
+}
+
+/***********************************************************
+update item number
+***********************************************************/
+void SessionServant::UpdateItemNumber(long itemid, int deltaCount)
+{
+	UpdatedItemSeq InventoryChanges;
+	LbaNet::UpdatedItem itm;
+    itm.ItemId = itemid;
+    itm.NewCount = deltaCount;
+    itm.InformPlayer = true;
+	InventoryChanges.push_back(itm);
+
+    Lock sync(*this);
+	ApplyInternalInventoryChanges(InventoryChanges);
+}	
+
+
+
+
+/***********************************************************
+inform class that a quest has been started
+***********************************************************/
+void SessionServant::InformQuestStarted(long Questid)
+{
+    Lock sync(*this);
+
+	try
+	{
+		if(_client_observer)
+			_client_observer->InformQuestStarted(Questid);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		std::cout<<"SessionServant - Exception during InformQuestStarted: "<< ex.what()<<std::endl;
+    }
+    catch(...)
+    {
+		std::cout<<"SessionServant - Unknown exception during InformQuestStarted"<<std::endl;
+    }
+}
+
+/***********************************************************
+inform class that a quest has been finished
+***********************************************************/
+void SessionServant::InformQuestFinished(long Questid)
+{
+    Lock sync(*this);
+
+	try
+	{
+		if(_client_observer)
+			_client_observer->InformQuestFinished(Questid);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		std::cout<<"SessionServant - Exception during InformQuestStarted: "<< ex.what()<<std::endl;
+    }
+    catch(...)
+    {
+		std::cout<<"SessionServant - Unknown exception during InformQuestStarted"<<std::endl;
+    }
 }
