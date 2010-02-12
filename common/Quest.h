@@ -26,6 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #if !defined(__LbaNetModel_1_Quest_h)
 #define __LbaNetModel_1_Quest_h
 
+
+#include "WorldInfo.h"
 /***********************************************************************
  * Module:  Quest.h
  * Author:  vivien
@@ -36,16 +38,48 @@ class Quest
 {
 public:
 	//! constructor
-	Quest();
+	Quest(long QuestId, long titleTextId, long descriptionTextId,
+			std::vector<ConditionBasePtr> conditionsToSucceed,
+			std::vector<long> questsStartingAtStart,
+			std::vector<long> questsStartingAtEnd,
+			std::vector<long> questsTriggeredAtEnd,
+
+			std::vector<std::pair<long, int> > objectsGivenAtEnd,
+			std::vector<std::pair<long, int> > objectsTakenAtEnd);
 
 	//! destructor
-	virtual ~Quest();
+	virtual ~Quest(){}
 
 
-protected:
+	//! check if condition are passed to finish quest
+	bool CheckCondition();
+
+
+
+
+	//! accessors
+	long GetTitle(){ return _titleTextId; }
+	long GetDescription(){ return _descriptionTextId; }
+
+	const std::vector<ConditionBasePtr>&	GetConditions(){ return _conditionsToSucceed;}
+	const std::vector<long>&				GetQuestsStartingAtStart(){ return _questsStartingAtStart;}
+	const std::vector<long>&				GetQuestsStartingAtEnd(){ return _questsStartingAtEnd;}
+	const std::vector<long>&				GetQuestsTriggeredAtEnd(){ return _questsTriggeredAtEnd;}
+
+	const std::vector<std::pair<long, int> >& GetObjectsGivenAtEnd(){ return _objectsGivenAtEnd;}
+	const std::vector<std::pair<long, int> >&GetObjectsTakenAtEnd(){ return _objectsTakenAtEnd;}
 
 private:
+	long							_QuestId;
+	long							_titleTextId;
+	long							_descriptionTextId;
+	std::vector<ConditionBasePtr>	_conditionsToSucceed;
+	std::vector<long>				_questsStartingAtStart;
+	std::vector<long>				_questsStartingAtEnd;
+	std::vector<long>				_questsTriggeredAtEnd;
 
+	std::vector<std::pair<long, int> >	_objectsGivenAtEnd;
+	std::vector<std::pair<long, int> >	_objectsTakenAtEnd;
 };
 
 #endif

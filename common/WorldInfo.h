@@ -35,7 +35,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class DialogHandler;
 typedef boost::shared_ptr<DialogHandler> DialogHandlerPtr;
 
-
+class Quest;
+typedef boost::shared_ptr<Quest> QuestPtr;
 
 
 
@@ -293,6 +294,14 @@ struct DialogDisplay
 	std::string NPCTalk;
 
 	std::vector<PlayerChoiceDisplay> PlayerChoices;
+};
+
+
+struct QuestInfo
+{
+	long		Id;
+	std::string Tittle;
+	std::string Description;
 };
 
 #endif

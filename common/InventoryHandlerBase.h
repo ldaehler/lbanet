@@ -46,7 +46,9 @@ public:
 
 	//! get the number of item in inventory
 	virtual int GetItemNumber(long id) = 0;
-	
+
+	//! update item number
+	virtual void UpdateItemNumber(long itemid, int deltaCount) = 0;	
 };
 
 

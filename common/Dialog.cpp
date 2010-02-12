@@ -27,8 +27,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Randomizer.h"
 #include "ConditionBase.h"
 
+
 #ifndef _LBANET_SERVER_SIDE_
 #include "DataLoader.h"
+#include "ThreadSafeWorkpile.h"
 #endif
 
 /***********************************************************
@@ -94,7 +96,13 @@ trigger any attached event to the dialog
 ***********************************************************/
 void DialogTreeRoot::Trigger()
 {
+#ifndef _LBANET_SERVER_SIDE_
+	for(size_t i=0; i<_QuestsToStart.size(); ++i)
+		ThreadSafeWorkpile::getInstance()->AddQuestStarted(_QuestsToStart[i]);
 
+	for(size_t i=0; i<_QuestsToTrigger.size(); ++i)
+		ThreadSafeWorkpile::getInstance()->AddQuestFinished(_QuestsToTrigger[i]);
+#endif
 }
 
 
