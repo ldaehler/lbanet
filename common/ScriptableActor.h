@@ -83,6 +83,7 @@ protected:
 protected:
 	std::vector<PlayerScriptPart>	_scripts;
 	size_t							_curr_script_position;
+	size_t							_last_script_position;
 
 	std::vector<long>				_receivedsignals;
 	bool							_started_timer;
@@ -93,6 +94,8 @@ protected:
 
 	bool							_IsLift;
 	bool							_needs_update;
+
+	bool							_forceanim;
 };
 
 #endif
