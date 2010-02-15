@@ -77,6 +77,10 @@ public:
 	// load inventory info
 	static bool LoadInventory(const std::string &Filename, std::map<long, ItemInfo> &mapinv);
 
+	// load quest info
+	static bool LoadQuests(const std::string &Filename, std::map<long, QuestPtr> &quests, 
+								InventoryHandlerBase * invH);
+
 protected:
 	// load a map information into memory
 	static MapInfo LoadMap(TiXmlElement* pElem);
