@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Entities.h"
 #include "Actor.h"
 #include "InventoryHandler.h"
+#include "QuestHandler.h"
 
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -159,6 +160,11 @@ bool DataLoader::LoadWorld(std::string WorldName)
 
 		_inventory_texts = MapInfoXmlReader::LoadTextFile(_inventorytextfile);
 		_quests_texts = MapInfoXmlReader::LoadTextFile(_questtextfile);
+
+		// load quests for this world
+		std::map<long, QuestPtr> quests;
+		MapInfoXmlReader::LoadInventoryLoadQuests(_questfile, quests, InventoryHandler::getInstance());
+		QuestHandler::getInstance()->Initialize(quests);
 
 		_currentMap = _currentWorld.FirstMap;
 		return true;
