@@ -43,7 +43,6 @@ public:
 			std::vector<long> questsStartingAtStart,
 			std::vector<long> questsStartingAtEnd,
 			std::vector<long> questsTriggeredAtEnd,
-
 			std::vector<std::pair<long, int> > objectsGivenAtEnd,
 			std::vector<std::pair<long, int> > objectsTakenAtEnd);
 

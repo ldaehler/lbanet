@@ -46,7 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "3DObjectRenderer.h"
 #include "ConditionBase.h"
 #include "InventoryCondition.h"
-
+#include "Quest.h"
 
 #ifndef _LBANET_SERVER_SIDE_
 #include "SpriteRenderer.h"
@@ -1502,4 +1502,153 @@ DialogTreeRootPtr MapInfoXmlReader::LoadTreeRoot(TiXmlElement* pElem, InventoryH
 												QuitDialogEnabled, GoToRootEnabled,
 												CustomQuitDialog, CustomGoToRootDialog));
 
+}
+
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+- load quest info
+--------------------------------------------------------------------------------------------------
+*/
+bool MapInfoXmlReader::LoadQuests(const std::string &Filename, std::map<long, QuestPtr> &quests,
+									InventoryHandlerBase * invH)
+{
+	quests.clear();
+
+
+	TiXmlDocument doc(Filename);
+	if (!doc.LoadFile())
+		return false;
+
+	TiXmlHandle hDoc(&doc);
+	TiXmlElement* pElem;
+
+	// block: actors attributes
+	{
+		pElem=hDoc.FirstChildElement().Element();
+
+		// should always have a valid root but handle gracefully if it does
+		if (!pElem)
+			return false;
+
+
+		// for each actors
+		pElem=pElem->FirstChildElement();
+		for( ; pElem; pElem=pElem->NextSiblingElement())
+		{
+			long QuestId, TitleTextId, DescriptionTextId;
+
+			pElem->QueryValueAttribute("Id", &QuestId);
+			pElem->QueryValueAttribute("TitleTextId", &TitleTextId);
+			pElem->QueryValueAttribute("DescriptionTextId", &DescriptionTextId);
+
+			std::vector<long> QuestsStartingAtStart;
+			std::vector<long> QuestsStartingAtEnd;
+			std::vector<long> QuestsTriggeredAtEnd;
+
+			TiXmlElement* pElemC = pElem->FirstChildElement( "QuestsStartingAtStart" );
+			if(pElemC)
+			{
+				pElemC = pElemC->FirstChildElement();
+				for( ; pElemC; pElemC=pElemC->NextSiblingElement())
+				{
+					long qid = -1;
+					pElem->QueryValueAttribute("Id", &qid);
+					if(qid >= 0)
+						QuestsStartingAtStart.push_back(qid);
+				}
+			}
+
+			pElemC = pElem->FirstChildElement( "QuestsStartingAtEnd" );
+			if(pElemC)
+			{
+				pElemC = pElemC->FirstChildElement();
+				for( ; pElemC; pElemC=pElemC->NextSiblingElement())
+				{
+					long qid = -1;
+					pElem->QueryValueAttribute("Id", &qid);
+					if(qid >= 0)
+						QuestsStartingAtEnd.push_back(qid);
+				}
+			}
+
+			pElemC = pElem->FirstChildElement( "QuestsTriggeredAtEnd" );
+			if(pElemC)
+			{
+				pElemC = pElemC->FirstChildElement();
+				for( ; pElemC; pElemC=pElemC->NextSiblingElement())
+				{
+					long qid = -1;
+					pElem->QueryValueAttribute("Id", &qid);
+					if(qid >= 0)
+						QuestsTriggeredAtEnd.push_back(qid);
+				}
+			}
+
+
+			std::vector<std::pair<long, int> > ObjectsGivenAtEnd;
+			std::vector<std::pair<long, int> > ObjectsTakenAtEnd;
+
+			pElemC = pElem->FirstChildElement( "ObjectsGivenAtEnd" );
+			if(pElemC)
+			{
+				pElemC = pElemC->FirstChildElement();
+				for( ; pElemC; pElemC=pElemC->NextSiblingElement())
+				{
+					long qid = -1;
+					int number = 0;
+					pElem->QueryValueAttribute("Id", &qid);
+					pElem->QueryValueAttribute("Number", &number);
+
+					if(qid >= 0)
+						ObjectsGivenAtEnd.push_back(std::make_pair<long, int>(qid, number));
+				}
+			}
+
+			pElemC = pElem->FirstChildElement( "ObjectsTakenAtEnd" );
+			if(pElemC)
+			{
+				pElemC = pElemC->FirstChildElement();
+				for( ; pElemC; pElemC=pElemC->NextSiblingElement())
+				{
+					long qid = -1;
+					int number = 0;
+					pElem->QueryValueAttribute("Id", &qid);
+					pElem->QueryValueAttribute("Number", &number);
+
+					if(qid >= 0)
+						ObjectsTakenAtEnd.push_back(std::make_pair<long, int>(qid, number));
+				}
+			}
+
+
+			std::vector<ConditionBasePtr> ConditionsToSucceed;
+
+			pElemC = pElem->FirstChildElement( "Conditions" );
+			if(pElemC)
+			{
+				pElemC = pElemC->FirstChildElement();
+				for( ; pElemC; pElemC=pElemC->NextSiblingElement())
+				{
+					ConditionBasePtr ptr = LoadCondition(pElemC, invH);
+					if(ptr)
+						ConditionsToSucceed.push_back(ptr);
+				}
+			}
+
+
+			quests[QuestId] = QuestPtr(new Quest(QuestId, TitleTextId, DescriptionTextId,
+													ConditionsToSucceed,
+													QuestsStartingAtStart,
+													QuestsStartingAtEnd,
+													QuestsTriggeredAtEnd,
+													ObjectsGivenAtEnd,
+													ObjectsTakenAtEnd));
+
+		}
+	}
+
+	return true;
 }

@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef _LBANET_SERVER_SIDE_
 #include "DataLoader.h"
+#include "InventoryHandler.h"
 #endif
 
 
@@ -37,7 +38,13 @@ singleton pattern
 QuestHandler * QuestHandler::getInstance()
 {
     if(!_singletonInstance)
-        _singletonInstance = new QuestHandler(NULL);
+	{
+		#ifndef _LBANET_SERVER_SIDE_
+        _singletonInstance = new QuestHandler(InventoryHandler::getInstance());
+		#else
+		_singletonInstance = new QuestHandler(NULL);
+		#endif
+	}
 
 	return _singletonInstance;
 }
