@@ -46,7 +46,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************/
 ScriptableActor::ScriptableActor(const std::vector<PlayerScriptPart> & scripts, bool IsLift)
 : _scripts(scripts), _curr_script_position(0), _started_timer(false),
-	_playedsound(-1), _playingsound(0), _IsLift(IsLift), _needs_update(false)
+	_playedsound(-1), _playingsound(0), _IsLift(IsLift), _needs_update(false),
+	_forceanim(false)
 {
 }
 
@@ -99,8 +100,14 @@ int ScriptableActor::Process(double tnow, float tdiff)
 		}
 		_playedsound = ps.Sound;
 
+		if(ps.Type == 2 && _last_script_position != _curr_script_position)
+			_forceanim = true;
+
 		if(ps.Animation >= 0 && _Renderer && _Renderer->GetType() == 3)
-			static_cast<CharacterRenderer *>(_Renderer)->setActorAnimation(ps.Animation);
+			static_cast<CharacterRenderer *>(_Renderer)->setActorAnimation(ps.Animation, _forceanim);
+
+		_forceanim = false;
+		_last_script_position = _curr_script_position;
 		#else
 		if(ps.Animation >= 0 && _Renderer && _Renderer->GetType() == 3)
 			static_cast<ServerCharacterRenderer *>(_Renderer)->setActorAnimation(ps.Animation);
@@ -183,6 +190,19 @@ int ScriptableActor::Process(double tnow, float tdiff)
 								IncreaseScriptPosition();
 					}
 				}
+
+				if(!_started_timer)
+				{
+					_started_timer = true;
+					_timer_start_time = tnow;
+				}
+				else
+				{
+					// put a timer in case the animation gets stuck
+					if(tnow - _timer_start_time > 30000)
+						IncreaseScriptPosition();
+				}
+
 				#else
 				if(_Renderer)
 				{
@@ -236,12 +256,8 @@ int ScriptableActor::Process(double tnow, float tdiff)
 				else
 				{
 					if(tnow - _timer_start_time > ps.ValueA)
-					{
-						_started_timer = false;
 						IncreaseScriptPosition();
-					}
 				}
-
 			}
 			break;
 
@@ -409,6 +425,7 @@ void ScriptableActor::Setstate(const ActorStateInfo & currState)
 		Hide();
 
 	_actiontargets = currState.Targets;
+	_forceanim = true;
 }
 
 
@@ -469,6 +486,7 @@ increase script position
 void ScriptableActor::IncreaseScriptPosition(bool forcedreset)
 {
 	++_curr_script_position;
+	_started_timer = false;
 
 	if(_curr_script_position >= _scripts.size())
 	{
