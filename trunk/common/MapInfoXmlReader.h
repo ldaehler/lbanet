@@ -36,6 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class TiXmlElement;
 class Actor;
 class SignalerBase;
+class QuestHandler;
 
 //*************************************************************************************************
 //*                                      class MapInfoXmlReader
@@ -57,7 +58,7 @@ public:
 									std::map<long, ModelInfo> &modelinfos,
 									std::map<long, Actor *> & vec,
 									SignalerBase * signaler, float AnimationSpeed, 
-									InventoryHandlerBase * invH);
+									InventoryHandlerBase * invH, QuestHandler * qH);
 
 	// load all sprites info
 	static bool LoadSprites(const std::string &Filename, std::map<long, SpriteInfo> &vec);
@@ -79,7 +80,7 @@ public:
 
 	// load quest info
 	static bool LoadQuests(const std::string &Filename, std::map<long, QuestPtr> &quests, 
-								InventoryHandlerBase * invH);
+								InventoryHandlerBase * invH, QuestHandler * qH);
 
 protected:
 	// load a map information into memory
@@ -87,22 +88,27 @@ protected:
 
 
 	// load a condition information into memory
-	static ConditionBasePtr LoadCondition(TiXmlElement* pElem, InventoryHandlerBase * invH);
+	static ConditionBasePtr LoadCondition(TiXmlElement* pElem, InventoryHandlerBase * invH,
+												QuestHandler * qH);
 	
 
 	// load a dialog information into memory
-	static DialogHandlerPtr LoadDialog(TiXmlElement* pElem, InventoryHandlerBase * invH);
+	static DialogHandlerPtr LoadDialog(TiXmlElement* pElem, InventoryHandlerBase * invH,
+											QuestHandler * qH);
 
 
 	// load a dialog entry information into memory
-	static DialogEntryPtr LoadDialogEntry(TiXmlElement* pElem, InventoryHandlerBase * invH);
+	static DialogEntryPtr LoadDialogEntry(TiXmlElement* pElem, InventoryHandlerBase * invH,
+												  QuestHandler * qH);
 
 
 	// load a dialog player choice information into memory
-	static DialogTreePlayerChoicePtr LoadPlayerChoice(TiXmlElement* pElem, InventoryHandlerBase * invH);
+	static DialogTreePlayerChoicePtr LoadPlayerChoice(TiXmlElement* pElem, InventoryHandlerBase * invH,
+														QuestHandler * qH);
 
 	// load a dialog tree root information into memory
-	static DialogTreeRootPtr LoadTreeRoot(TiXmlElement* pElem, InventoryHandlerBase * invH);
+	static DialogTreeRootPtr LoadTreeRoot(TiXmlElement* pElem, InventoryHandlerBase * invH,
+												  QuestHandler * qH);
 
 };
 

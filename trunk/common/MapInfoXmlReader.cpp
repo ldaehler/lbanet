@@ -47,6 +47,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ConditionBase.h"
 #include "InventoryCondition.h"
 #include "Quest.h"
+#include "QuestCondition.h"
+#include "QuestHandler.h"
+
 
 #ifndef _LBANET_SERVER_SIDE_
 #include "SpriteRenderer.h"
@@ -333,7 +336,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 									std::map<long, ModelInfo> &modelinfos,
 									std::map<long, Actor *> & vec,
 									SignalerBase * signaler, float AnimationSpeed,
-									InventoryHandlerBase * invH)
+									InventoryHandlerBase * invH, QuestHandler * qH)
 {
 	vec.clear();
 
@@ -753,7 +756,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 
 					DialogHandlerPtr dialogptr = DialogHandlerPtr();
 					#ifndef _LBANET_SERVER_SIDE_
-					dialogptr = LoadDialog(pElem->FirstChildElement("Dialog"), invH);
+					dialogptr = LoadDialog(pElem->FirstChildElement("Dialog"), invH, qH);
 					#endif
 
 					NPCActor *tmpact = new NPCActor(scripts, false, npctype, activationdistance, NameNPC, 
@@ -771,7 +774,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 								TraderItem itm;
 								itm.id = -1;
 								pElem2->QueryValueAttribute("id", &itm.id);
-								itm.condition = LoadCondition(pElem2->FirstChildElement("Condition"), invH);
+								itm.condition = LoadCondition(pElem2->FirstChildElement("Condition"), invH, qH);
 								 
 								items[itm.id] = itm;
 							}
@@ -1203,7 +1206,9 @@ bool MapInfoXmlReader::LoadInventory(const std::string &Filename, std::map<long,
 - load a condition information into memory
 --------------------------------------------------------------------------------------------------
 */
-ConditionBasePtr MapInfoXmlReader::LoadCondition(TiXmlElement* pElem, InventoryHandlerBase * invH)
+ConditionBasePtr MapInfoXmlReader::LoadCondition(TiXmlElement* pElem, 
+												 InventoryHandlerBase * invH,
+												  QuestHandler * qH)
 {
 	// should always have a valid root but handle gracefully if it does
 	if (!pElem)
@@ -1224,7 +1229,7 @@ ConditionBasePtr MapInfoXmlReader::LoadCondition(TiXmlElement* pElem, InventoryH
 
 		case 1: // negate condition
 		{
-			ConditionBasePtr ptr = LoadCondition(hRoot.FirstChild( "Condition" ).Element(), invH);
+			ConditionBasePtr ptr = LoadCondition(hRoot.FirstChild( "Condition" ).Element(), invH, qH);
 			return ConditionBasePtr(new NegateCondition(ptr));
 		}
 		break;
@@ -1236,7 +1241,7 @@ ConditionBasePtr MapInfoXmlReader::LoadCondition(TiXmlElement* pElem, InventoryH
 			std::vector<ConditionBasePtr> clist;
 			for( ; pElemC; pElemC=pElemC->NextSiblingElement())
 			{
-				clist.push_back(LoadCondition(pElemC, invH));
+				clist.push_back(LoadCondition(pElemC, invH, qH));
 			}
 
 			return ConditionBasePtr(new ConditionList(clist));
@@ -1244,7 +1249,46 @@ ConditionBasePtr MapInfoXmlReader::LoadCondition(TiXmlElement* pElem, InventoryH
 		break;
 
 
-		case 6: // object in inventory
+		case 3: // quest started
+		{
+			long QuestId = -1;
+			pElem->QueryValueAttribute("QuestId", &QuestId);
+
+			return ConditionBasePtr(new QuestStartedCondition(QuestId, qH));
+		}
+		break;
+
+
+		case 4: // quest finished
+		{
+			long QuestId = -1;
+			pElem->QueryValueAttribute("QuestId", &QuestId);
+
+			return ConditionBasePtr(new QuestFinishedCondition(QuestId, qH));
+		}
+		break;
+
+
+		case 5: // quest not started neither finished
+		{
+			long QuestId = -1;
+			pElem->QueryValueAttribute("QuestId", &QuestId);
+
+			return ConditionBasePtr(new QuestNotDoneCondition(QuestId, qH));
+		}
+		break;
+
+
+		case 6: // quest condition passed
+		{
+			long QuestId = -1;
+			pElem->QueryValueAttribute("QuestId", &QuestId);
+
+			return ConditionBasePtr(new QuestConditionsPassedCondition(QuestId, qH));
+		}
+		break;
+
+		case 7: // object in inventory
 		{
 			long ObjectId = -1;
 			pElem->QueryValueAttribute("ObjectId", &ObjectId);
@@ -1271,7 +1315,8 @@ ConditionBasePtr MapInfoXmlReader::LoadCondition(TiXmlElement* pElem, InventoryH
 - load a dialog information into memory
 --------------------------------------------------------------------------------------------------
 */
-DialogHandlerPtr MapInfoXmlReader::LoadDialog(TiXmlElement* pElem, InventoryHandlerBase * invH)
+DialogHandlerPtr MapInfoXmlReader::LoadDialog(TiXmlElement* pElem, InventoryHandlerBase * invH,
+												  QuestHandler * qH)
 {
 	// should always have a valid root but handle gracefully if it does
 	if (!pElem)
@@ -1285,8 +1330,8 @@ DialogHandlerPtr MapInfoXmlReader::LoadDialog(TiXmlElement* pElem, InventoryHand
 	pElem->QueryValueAttribute("StandardGoToRootDialog", &StandardGoToRootDialog);
 	pElem->QueryValueAttribute("TradingDialog", &TradingDialog);
 
-	DialogEntryPtr entryptr = MapInfoXmlReader::LoadDialogEntry(hRoot.FirstChild( "DialogEntry" ).Element(), invH);
-	DialogTreeRootPtr treeptr = MapInfoXmlReader::LoadTreeRoot(hRoot.FirstChild( "DialogTree" ).Element(), invH);
+	DialogEntryPtr entryptr = MapInfoXmlReader::LoadDialogEntry(hRoot.FirstChild( "DialogEntry" ).Element(), invH, qH);
+	DialogTreeRootPtr treeptr = MapInfoXmlReader::LoadTreeRoot(hRoot.FirstChild( "DialogTree" ).Element(), invH, qH);
 
 
 	return DialogHandlerPtr(new	DialogHandler(entryptr, treeptr,
@@ -1301,7 +1346,8 @@ DialogHandlerPtr MapInfoXmlReader::LoadDialog(TiXmlElement* pElem, InventoryHand
 - load a dialog entry information into memory
 --------------------------------------------------------------------------------------------------
 */
-DialogEntryPtr MapInfoXmlReader::LoadDialogEntry(TiXmlElement* pElem, InventoryHandlerBase * invH)
+DialogEntryPtr MapInfoXmlReader::LoadDialogEntry(TiXmlElement* pElem, InventoryHandlerBase * invH,
+												  QuestHandler * qH)
 {
 	// should always have a valid root but handle gracefully if it does
 	if (!pElem)
@@ -1328,7 +1374,7 @@ DialogEntryPtr MapInfoXmlReader::LoadDialogEntry(TiXmlElement* pElem, InventoryH
 		{
 			long TextId = -1;
 			pElem->QueryValueAttribute("TextId", &TextId);
-			ConditionBasePtr ptr = LoadCondition(hRoot.FirstChild( "Condition" ).Element(), invH);
+			ConditionBasePtr ptr = LoadCondition(hRoot.FirstChild( "Condition" ).Element(), invH, qH);
 			return DialogEntryPtr(new ConditionnalDialogEntry(TextId, ptr));
 		}
 		break;
@@ -1340,7 +1386,7 @@ DialogEntryPtr MapInfoXmlReader::LoadDialogEntry(TiXmlElement* pElem, InventoryH
 			std::vector<DialogEntryPtr> clist;
 			for( ; pElemC; pElemC=pElemC->NextSiblingElement())
 			{
-				clist.push_back(LoadDialogEntry(pElemC, invH));
+				clist.push_back(LoadDialogEntry(pElemC, invH, qH));
 			}
 
 			return DialogEntryPtr(new RandomDialogEntry(clist));
@@ -1354,7 +1400,7 @@ DialogEntryPtr MapInfoXmlReader::LoadDialogEntry(TiXmlElement* pElem, InventoryH
 			std::vector<DialogEntryPtr> clist;
 			for( ; pElemC; pElemC=pElemC->NextSiblingElement())
 			{
-				clist.push_back(LoadDialogEntry(pElemC, invH));
+				clist.push_back(LoadDialogEntry(pElemC, invH, qH));
 			}
 
 			return DialogEntryPtr(new DialogEntryList(clist));
@@ -1372,7 +1418,8 @@ DialogEntryPtr MapInfoXmlReader::LoadDialogEntry(TiXmlElement* pElem, InventoryH
 - load a dialog player choice information into memory
 --------------------------------------------------------------------------------------------------
 */
-DialogTreePlayerChoicePtr MapInfoXmlReader::LoadPlayerChoice(TiXmlElement* pElem, InventoryHandlerBase * invH)
+DialogTreePlayerChoicePtr MapInfoXmlReader::LoadPlayerChoice(TiXmlElement* pElem, InventoryHandlerBase * invH,
+																QuestHandler * qH)
 {
 	// should always have a valid root but handle gracefully if it does
 	if (!pElem)
@@ -1393,15 +1440,15 @@ DialogTreePlayerChoicePtr MapInfoXmlReader::LoadPlayerChoice(TiXmlElement* pElem
 	{
 		case 0: //DialogTreePlayerChoice
 		{
-			DialogTreeRootPtr ptr = LoadTreeRoot(hRoot.FirstChild( "DialogTree" ).Element(), invH);
+			DialogTreeRootPtr ptr = LoadTreeRoot(hRoot.FirstChild( "DialogTree" ).Element(), invH, qH);
 			return DialogTreePlayerChoicePtr(new DialogTreePlayerChoice(TextId, ConditionBasePtr(), ptr));
 		}
 		break;
 
 		case 1: // DialogTreePlayerChoice with validation condition
 		{
-			ConditionBasePtr condptr = LoadCondition(hRoot.FirstChild( "Condition" ).Element(), invH);
-			DialogTreeRootPtr ptr = LoadTreeRoot(hRoot.FirstChild( "DialogTree" ).Element(), invH);
+			ConditionBasePtr condptr = LoadCondition(hRoot.FirstChild( "Condition" ).Element(), invH, qH);
+			DialogTreeRootPtr ptr = LoadTreeRoot(hRoot.FirstChild( "DialogTree" ).Element(), invH, qH);
 			return DialogTreePlayerChoicePtr(new DialogTreePlayerChoice(TextId, condptr, ptr));
 		}
 		break;
@@ -1410,9 +1457,9 @@ DialogTreePlayerChoicePtr MapInfoXmlReader::LoadPlayerChoice(TiXmlElement* pElem
 		case 2: // ConditionalDialogTreePlayerChoice
 		{
 			TiXmlElement* treeelem = hRoot.FirstChild( "DialogTree" ).Element();
-			DialogTreeRootPtr ptr = LoadTreeRoot(treeelem, invH);
-			DialogTreeRootPtr ptr2 = LoadTreeRoot(treeelem->NextSiblingElement(), invH);
-			ConditionBasePtr condptr = LoadCondition(hRoot.FirstChild( "Condition" ).Element(), invH);
+			DialogTreeRootPtr ptr = LoadTreeRoot(treeelem, invH, qH);
+			DialogTreeRootPtr ptr2 = LoadTreeRoot(treeelem->NextSiblingElement(), invH, qH);
+			ConditionBasePtr condptr = LoadCondition(hRoot.FirstChild( "Condition" ).Element(), invH, qH);
 			return DialogTreePlayerChoicePtr(new 
 				ConditionalDialogTreePlayerChoice(TextId, ConditionBasePtr(), ptr, ptr2, condptr));
 		}
@@ -1422,12 +1469,12 @@ DialogTreePlayerChoicePtr MapInfoXmlReader::LoadPlayerChoice(TiXmlElement* pElem
 		case 3: // ConditionalDialogTreePlayerChoice with validation condition
 		{
 			TiXmlElement* treeelem = hRoot.FirstChild( "DialogTree" ).Element();
-			DialogTreeRootPtr ptr = LoadTreeRoot(treeelem, invH);
-			DialogTreeRootPtr ptr2 = LoadTreeRoot(treeelem->NextSiblingElement("DialogTree"), invH);
+			DialogTreeRootPtr ptr = LoadTreeRoot(treeelem, invH, qH);
+			DialogTreeRootPtr ptr2 = LoadTreeRoot(treeelem->NextSiblingElement("DialogTree"), invH, qH);
 
 			TiXmlElement* condelem = hRoot.FirstChild( "Condition" ).Element();
-			ConditionBasePtr condptr = LoadCondition(condelem, invH);
-			ConditionBasePtr condptr2 = LoadCondition(condelem->NextSiblingElement("Condition"), invH);
+			ConditionBasePtr condptr = LoadCondition(condelem, invH, qH);
+			ConditionBasePtr condptr2 = LoadCondition(condelem->NextSiblingElement("Condition"), invH, qH);
 
 			return DialogTreePlayerChoicePtr(new 
 				ConditionalDialogTreePlayerChoice(TextId, condptr, ptr, ptr2, condptr2));
@@ -1444,7 +1491,8 @@ DialogTreePlayerChoicePtr MapInfoXmlReader::LoadPlayerChoice(TiXmlElement* pElem
 - load a dialog tree root information into memory
 --------------------------------------------------------------------------------------------------
 */
-DialogTreeRootPtr MapInfoXmlReader::LoadTreeRoot(TiXmlElement* pElem, InventoryHandlerBase * invH)
+DialogTreeRootPtr MapInfoXmlReader::LoadTreeRoot(TiXmlElement* pElem, InventoryHandlerBase * invH,
+												  QuestHandler * qH)
 {
 	// should always have a valid root but handle gracefully if it does
 	if (!pElem)
@@ -1473,7 +1521,7 @@ DialogTreeRootPtr MapInfoXmlReader::LoadTreeRoot(TiXmlElement* pElem, InventoryH
 	std::vector<DialogTreePlayerChoicePtr> clist;
 	for( ; pElemC; pElemC=pElemC->NextSiblingElement("PlayerChoice"))
 	{
-		clist.push_back(LoadPlayerChoice(pElemC, invH));
+		clist.push_back(LoadPlayerChoice(pElemC, invH, qH));
 	}
 
 	pElemC = hRoot.FirstChild( "QuestToStart" ).Element();
@@ -1513,7 +1561,7 @@ DialogTreeRootPtr MapInfoXmlReader::LoadTreeRoot(TiXmlElement* pElem, InventoryH
 --------------------------------------------------------------------------------------------------
 */
 bool MapInfoXmlReader::LoadQuests(const std::string &Filename, std::map<long, QuestPtr> &quests,
-									InventoryHandlerBase * invH)
+									InventoryHandlerBase * invH, QuestHandler * qH)
 {
 	quests.clear();
 
@@ -1632,7 +1680,7 @@ bool MapInfoXmlReader::LoadQuests(const std::string &Filename, std::map<long, Qu
 				pElemC = pElemC->FirstChildElement();
 				for( ; pElemC; pElemC=pElemC->NextSiblingElement())
 				{
-					ConditionBasePtr ptr = LoadCondition(pElemC, invH);
+					ConditionBasePtr ptr = LoadCondition(pElemC, invH, qH);
 					if(ptr)
 						ConditionsToSucceed.push_back(ptr);
 				}

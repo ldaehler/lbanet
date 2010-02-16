@@ -46,8 +46,9 @@ typedef boost::shared_ptr<ConditionBase> ConditionBasePtr;
  * 2 - list of condition
  * 3 - quest started
  * 4 - quest finished
- * 5 - quest condition passed
- * 6 - object in inventory
+ * 5 - quest not started neither finished
+ * 6 - quest condition passed
+ * 7 - object in inventory
  * 10 - custom condition using Lua scripts
  *
  *
