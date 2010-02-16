@@ -552,7 +552,7 @@ void DatabaseHandler::GetQuestInfo(const std::string& WorldName, long PlayerId,
 		if(res.size() > 0)
 		{
 			query.clear();
-			query << "SELECT id, status FROM Quests";
+			query << "SELECT questid, status FROM quests";
 			query << " WHERE worldid = '"<<res[0][0]<<"'";
 			if (mysqlpp::StoreQueryResult res2 = query.store())
 			{
@@ -604,7 +604,7 @@ void DatabaseHandler::SetQuestInfo(const std::string& WorldName, long PlayerId,
 		if(res.size() > 0)
 		{
 			query.clear();
-			query << "DELETE FROM Quests";
+			query << "DELETE FROM quests";
 			query << " WHERE worldid = '"<<res[0][0]<<"'";
 			if(!query.exec())
 				std::cerr<<IceUtil::Time::now()<<": LBA_Server - Quest DELETE failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
@@ -614,7 +614,7 @@ void DatabaseHandler::SetQuestInfo(const std::string& WorldName, long PlayerId,
 			for(;iti != endi; ++iti)
 			{
 				query.clear();
-				query << "INSERT INTO Quests (worldid, id, status) VALUES('";
+				query << "INSERT INTO quests (worldid, questid, status) VALUES('";
 				query << res[0][0] << "', '" << *iti << "', '" << 0  << "')";
 				if(!query.exec())
 					std::cerr<<IceUtil::Time::now()<<": LBA_Server - Quest INSERT failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
@@ -625,7 +625,7 @@ void DatabaseHandler::SetQuestInfo(const std::string& WorldName, long PlayerId,
 			for(;iti != endi; ++iti)
 			{
 				query.clear();
-				query << "INSERT INTO Quests (worldid, id, status) VALUES('";
+				query << "INSERT INTO quests (worldid, questid, status) VALUES('";
 				query << res[0][0] << "', '" << *iti << "', '" << 1  << "')";
 				if(!query.exec())
 					std::cerr<<IceUtil::Time::now()<<": LBA_Server - Quest INSERT failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
