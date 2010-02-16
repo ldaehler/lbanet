@@ -81,6 +81,15 @@ public:
     LbaNet::LetterInfo GetLetterInfo(Ice::Long LetterId);
 
 
+	// get quest information
+	void GetQuestInfo(const std::string& WorldName, long PlayerId, 
+						std::vector<long> &questStarted, std::vector<long> &questFinished);
+
+
+	// set quest information
+	void SetQuestInfo(const std::string& WorldName, long PlayerId, 
+						const std::vector<long> &questStarted, const std::vector<long> &questFinished);
+
 protected:
 	DatabaseHandler(const DatabaseHandler &);
 	const DatabaseHandler & operator=(const DatabaseHandler &);
