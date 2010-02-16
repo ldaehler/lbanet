@@ -163,7 +163,8 @@ bool DataLoader::LoadWorld(std::string WorldName)
 
 		// load quests for this world
 		std::map<long, QuestPtr> quests;
-		MapInfoXmlReader::LoadInventoryLoadQuests(_questfile, quests, InventoryHandler::getInstance());
+		MapInfoXmlReader::LoadQuests(_questfile, quests, InventoryHandler::getInstance(),
+										QuestHandler::getInstance());
 		QuestHandler::getInstance()->Initialize(quests);
 
 		_currentMap = _currentWorld.FirstMap;
@@ -267,7 +268,8 @@ bool DataLoader::GetLocalMapActors(std::map<long, Actor *> & vec, float Animatio
 		return false;
 
 	return MapInfoXmlReader::LoadActors("Data/" + file, _sprites, _videos, _models, vec, 
-								&_signaler, AnimationSpeed, InventoryHandler::getInstance());
+										&_signaler, AnimationSpeed, InventoryHandler::getInstance(),
+										QuestHandler::getInstance());
 }
 
 
@@ -282,7 +284,8 @@ bool DataLoader::GetExternalMapActors(std::map<long, Actor *> & vec, float Anima
 		return false;
 
 	return MapInfoXmlReader::LoadActors("Data/" + file, _sprites, _videos, _models, vec, 
-								&_signaler, AnimationSpeed, InventoryHandler::getInstance());
+										&_signaler, AnimationSpeed, InventoryHandler::getInstance(),
+										QuestHandler::getInstance());
 }
 
 
