@@ -55,6 +55,12 @@ SessionServant::SessionServant(const std::string& userId, const RoomManagerPrx& 
 	_session_world_inventory_files["Lba1Expanded"] = "Data/Inventory/lba1E_inventory.xml";
 	_session_world_inventory_files["GiantCitadelWorld"] = "Data/Inventory/lba1_inventory.xml";
 	_session_world_inventory_files["GiantPrincipalWorld"] = "Data/Inventory/lba1_inventory.xml";
+
+
+	_session_world_quest_files["Lba1OriginalWorld"] = "Data/Quest/lba1.xml";
+	_session_world_quest_files["Lba1Expanded"] = "Data/Quest/lba1E.xml";
+	_session_world_quest_files["GiantCitadelWorld"] = "Data/Quest/lba1.xml";
+	_session_world_quest_files["GiantPrincipalWorld"] = "Data/Quest/lba1.xml";
 }
 
 
@@ -170,6 +176,20 @@ ActorsParticipantPrx SessionServant::ChangeRoom(		const std::string& newroom,
 
 
 
+
+/***********************************************************
+quit current world
+***********************************************************/
+void SessionServant::QuitCurrentWorld()
+{
+	cleanEphemereItems();
+	_dbh.UpdateInventory(_playerInventory, _currWorldName, _userNum);
+	_dbh.SetQuestInfo(_currWorldName, _userNum, _QH.GetQuestsStarted(), _QH.GetQuestsFinished());
+	_dbh.QuitWorld(_currWorldName, _userNum);
+}
+
+
+
 /***********************************************************
 destroy the session
 ***********************************************************/
@@ -178,8 +198,7 @@ void SessionServant::destroy(const Ice::Current& current)
     Lock sync(*this);
 	try
 	{
-		_dbh.UpdateInventory(_playerInventory, _currWorldName, _userNum);
-		_dbh.QuitWorld(_currWorldName, _userNum);
+		QuitCurrentWorld();
 		_ctracker->Disconnect(_userNum);
 	}
 	catch(...)
@@ -494,6 +513,8 @@ void SessionServant::PlayerRaisedFromDead(const Ice::Current&)
 }
 
 
+
+
 /***********************************************************
 player has changed world
 ***********************************************************/
@@ -502,19 +523,30 @@ LbaNet::SavedWorldInfo SessionServant::ChangeWorld(const std::string& WorldName,
 {
     Lock sync(*this);
 
-	cleanEphemereItems();
-
 	// save old world info
-	_dbh.UpdateInventory(_playerInventory, _currWorldName, _userNum);
-	_dbh.QuitWorld(_currWorldName, _userNum);
-	_currWorldName = WorldName;
+	QuitCurrentWorld();
+
 
 	// retrieve info from db
+	_currWorldName = WorldName;
 	LbaNet::SavedWorldInfo swinfo = _dbh.ChangeWorld(WorldName, _userNum);
 
 	// reload inventory
 	_inventory_db.clear();
 	MapInfoXmlReader::LoadInventory(_session_world_inventory_files[WorldName], _inventory_db);
+
+
+	// reload quest info
+	std::map<long, QuestPtr> quests;
+	MapInfoXmlReader::LoadQuests(_session_world_quest_files[WorldName], quests, 
+									reinterpret_cast<InventoryHandlerBase *>(this), &_QH);
+	_QH.Initialize(quests);
+
+	std::vector<long> questStarted, questFinished;
+	_dbh.GetQuestInfo(WorldName, _userNum, questStarted, questFinished);
+	_QH.SetStartedFinished(questStarted, questFinished);
+	InitializeClientQuests(questStarted, questFinished);
+
 
 	// only for test - remove that part
 	if((WorldName != "Lba1Expanded") && (swinfo.inventory.InventoryStructure.size() == 0))
@@ -1228,6 +1260,38 @@ void SessionServant::InformQuestFinished(long Questid)
 	{
 		if(_client_observer)
 			_client_observer->InformQuestFinished(Questid);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		std::cout<<"SessionServant - Exception during InformQuestStarted: "<< ex.what()<<std::endl;
+    }
+    catch(...)
+    {
+		std::cout<<"SessionServant - Unknown exception during InformQuestStarted"<<std::endl;
+    }
+}
+
+
+
+/***********************************************************
+init client with quests started and finished
+***********************************************************/
+void SessionServant::InitializeClientQuests(std::vector<long> questStarted, std::vector<long> questFinished)
+{
+    Lock sync(*this);
+
+	try
+	{
+		if(_client_observer)
+		{
+			LbaNet::QuestSeq started, finished;
+			for(size_t i=0; i<questStarted.size(); ++i)
+				started.push_back(questStarted[i]);
+			for(size_t i=0; i<questFinished.size(); ++i)
+				finished.push_back(questFinished[i]);
+
+			_client_observer->InitQuestStartedFinished(started, finished);
+		}
 	}
     catch(const IceUtil::Exception& ex)
     {

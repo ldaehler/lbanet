@@ -204,7 +204,11 @@ public:
 protected:
 	void ApplyInternalInventoryChanges(const UpdatedItemSeq &InventoryChanges);
 
+	void QuitCurrentWorld();
 	void cleanEphemereItems();
+
+	// init client with quests started and finished
+	void InitializeClientQuests(std::vector<long> questStarted, std::vector<long> questFinished);
 
 private:
 	std::string							_userId;
@@ -236,6 +240,7 @@ private:
 	InventoryInfo						_playerInventory;
 	std::map<long, ItemInfo>			_inventory_db;
 	std::map<std::string, std::string>	_session_world_inventory_files;
+	std::map<std::string, std::string>	_session_world_quest_files;
 
 	LbaNet::ClientSessionPrx			_selfptr;
 

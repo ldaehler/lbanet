@@ -523,3 +523,118 @@ LbaNet::LetterInfo DatabaseHandler::GetLetterInfo(Ice::Long LetterId)
 
 	return resF;
 }
+
+
+
+/***********************************************************
+get quest information
+***********************************************************/
+void DatabaseHandler::GetQuestInfo(const std::string& WorldName, long PlayerId, 
+					std::vector<long> &questStarted, std::vector<long> &questFinished)
+{
+	if(WorldName == "")
+		return;
+
+	Lock sync(*this);
+	if(!_mysqlH.connected())
+	{
+		Connect();
+		if(!_mysqlH.connected())
+			return;
+	}
+
+	mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
+	query << "SELECT id FROM usertoworldmap";
+	query << " WHERE userid = '"<<PlayerId<<"'";
+	query << " AND worldname = '"<<WorldName<<"'";
+	if (mysqlpp::StoreQueryResult res = query.store())
+	{
+		if(res.size() > 0)
+		{
+			query.clear();
+			query << "SELECT id, status FROM Quests";
+			query << " WHERE worldid = '"<<res[0][0]<<"'";
+			if (mysqlpp::StoreQueryResult res2 = query.store())
+			{
+				for(size_t i=0; i<res2.size(); ++i)
+				{
+					int status = res2[i][1];
+					if(status == 0)
+						questStarted.push_back(res2[i][0]);
+
+					if(status == 1)
+						questFinished.push_back(res2[i][0]);
+				}
+			}
+			else
+				std::cerr<<IceUtil::Time::now()<<": LBA_Server - Quest SELECT failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
+		}
+	}
+	else
+	{
+		if(_mysqlH.connected())
+			_mysqlH.disconnect();
+	}
+}
+
+
+/***********************************************************
+set quest information
+***********************************************************/
+void DatabaseHandler::SetQuestInfo(const std::string& WorldName, long PlayerId, 
+					const std::vector<long> &questStarted, const std::vector<long> &questFinished)
+{
+	if(WorldName == "")
+		return;
+
+	Lock sync(*this);
+	if(!_mysqlH.connected())
+	{
+		Connect();
+		if(!_mysqlH.connected())
+			return;
+	}
+
+	mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
+	query << "SELECT id FROM usertoworldmap";
+	query << " WHERE userid = '"<<PlayerId<<"'";
+	query << " AND worldname = '"<<WorldName<<"'";
+	if (mysqlpp::StoreQueryResult res = query.store())
+	{
+		if(res.size() > 0)
+		{
+			query.clear();
+			query << "DELETE FROM Quests";
+			query << " WHERE worldid = '"<<res[0][0]<<"'";
+			if(!query.exec())
+				std::cerr<<IceUtil::Time::now()<<": LBA_Server - Quest DELETE failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
+
+			std::vector<long>::const_iterator iti = questStarted.begin();
+			std::vector<long>::const_iterator endi = questStarted.end();
+			for(;iti != endi; ++iti)
+			{
+				query.clear();
+				query << "INSERT INTO Quests (worldid, id, status) VALUES('";
+				query << res[0][0] << "', '" << *iti << "', '" << 0  << "')";
+				if(!query.exec())
+					std::cerr<<IceUtil::Time::now()<<": LBA_Server - Quest INSERT failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
+			}
+
+			iti = questFinished.begin();
+			endi = questFinished.end();
+			for(;iti != endi; ++iti)
+			{
+				query.clear();
+				query << "INSERT INTO Quests (worldid, id, status) VALUES('";
+				query << res[0][0] << "', '" << *iti << "', '" << 1  << "')";
+				if(!query.exec())
+					std::cerr<<IceUtil::Time::now()<<": LBA_Server - Quest INSERT failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
+			}
+		}
+	}
+	else
+	{
+		if(_mysqlH.connected())
+			_mysqlH.disconnect();
+	}
+}
