@@ -1,67 +1,23 @@
 <?xml version="1.0" encoding="UTF8" ?>
 <actors>
-    <actor id="1" type="12" Welcome="You have to try out this Champagne. Cuvee speciale. Thats some strong stuff we got here." posX="15.031250" posY="0.000000" posZ="51.187500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="13,0" NPCType="2" activationdistance="10.000000" Name="NPC">
-        <scripts />
-         <items>
-        	<item id="13" /> 
-          	<item id="14" />      
-          	<item id="15" />
-          	<item id="16" />          	
-        </items>         
-    </actor>
-    <actor id="2" type="12" Welcome="Its time for celebration! Come over here I might have something for you." posX="12.000000" posY="0.000000" posZ="35.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="13,0" NPCType="2" activationdistance="10.000000" Name="NPC">
-        <scripts />
-         <items>
-        	<item id="13" /> 
-          	<item id="14" />      
-          	<item id="15" />
-          	<item id="16" />          	
-        </items>         
-    </actor>
-    <actor id="3" type="12" Welcome="Merry Christmas!" posX="14.000000" posY="0.000000" posZ="34.531250" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="295.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="37,0" NPCType="1" activationdistance="10.000000" Name="NPC">
-        <scripts />
-    </actor>
-    <actor id="4" type="12" Welcome="Happy new year!!" posX="16.812500" posY="0.000000" posZ="35.968750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="225.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="37,0" NPCType="1" activationdistance="10.000000" Name="NPC">
-        <scripts />
-    </actor>
-    <actor id="5" type="12" Welcome="Merry Christmas!" posX="5.875000" posY="0.000000" posZ="44.562500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="8.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="25,0" NPCType="1" activationdistance="10.000000" Name="NPC">
-        <scripts />
-    </actor>
-    <actor id="6" Welcome="Don't mind me I am just an extra. They only put me there because I had a nice looking suit." type="12" posX="25.000000" posY="0.000000" posZ="43.125000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="73.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="15,0" NPCType="1" activationdistance="10.000000" Name="NPC">
-        <scripts />
-    </actor>
-    <actor id="8" type="12" Welcome="Happy new year!!" posX="21.125000" posY="0.000000" posZ="61.468750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="65.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="11,0" NPCType="1" activationdistance="10.000000" Name="NPC">
-        <scripts />
-    </actor>
-    <actor id="9" type="12" Welcome="Merry Christmas!" posX="31.000000" posY="0.000000" posZ="55.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="13,0" NPCType="1" activationdistance="10.000000" Name="NPC">
-        <scripts />
-    </actor>
-    <actor id="11" Welcome="They are throwing a pretty big party over there. You might want to have a look at it!" type="12" posX="35.781250" posY="0.000000" posZ="55.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="62,0" NPCType="1" activationdistance="10.000000" Name="NPC">
-        <scripts />
-    </actor>
-    <actor id="12" Welcome="I am stuck inside the ground ever since I uncovered this statue. Everybody is gone to the party without even noticing me! Could you please give me a hand?" type="12" posX="33.781250" posY="0.000000" posZ="41.062500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="26,0" NPCType="1" activationdistance="10.000000" Name="NPC">
-        <scripts />
-    </actor>
-    <actor id="14" type="12" Welcome="Happy new year!!" posX="43.000000" posY="0.000000" posZ="60.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="73.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="37,0" NPCType="1" activationdistance="10.000000" Name="NPC">
-        <scripts />
-    </actor>
-    <actor id="17" type="10" Welcome="Merry Christmas!" posX="58.000000" posY="0.000000" posZ="21.500000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="73.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="60,1" NPCType="1" activationdistance="10.000000" Name="NPC">
-        <scripts />
-    </actor>
-    <actor id="18" type="12" Welcome="Santa doesn't want to give me any gift... I am sure he is keeping all of them for himself!" posX="31.000000" posY="0.000000" posZ="33.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="134.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="25,0" NPCType="1" activationdistance="10.000000" Name="NPC">
-        <scripts />
-    </actor>
-    
-    
-    <actor id="21" NPCType="2" Welcome="Ho Ho Ho! Meeeery christmas kid! Have you been nice this year? Oh whatever, just choose a present and get yourself moving. The next pleeeaaase? Oh man I sooo start to hate this job..."  activationdistance="10.000000" Name="Santa" type="12" posX="30.100000" posY="0.000000" posZ="17.700001" sizeX="1.000000" sizeY="5.000000" sizeZ="1.000000" rotation="0.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="2" renderertarget="8">
-         <items>
-        	<item id="17" />           	
-        </items>     
-    </actor>
-    
-    <actor id="25" NPCType="1" Welcome="Never seen a talking snowman?? Anyway you might want to talk to santa over there." activationdistance="10.000000" Name="Snowman" type="12" posX="43.000000" posY="0.000000" posZ="33.099998" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="50.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="2" renderertarget="10" />
-    <actor id="26" NPCType="1" Welcome="Never seen a talking snowman?? Anyway you might want to talk to santa over there." activationdistance="10.000000" Name="Snowman" type="12" posX="23.000000" posY="0.000000" posZ="38.400002" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="310.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="2" renderertarget="10" />   
-    <actor id="27" NPCType="1" Welcome="Never seen a talking snowman?? Anyway you might want to talk to santa over there." activationdistance="10.000000" Name="Snowman" type="12" posX="42.900002" posY="0.000000" posZ="51.000000" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="50.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="2" renderertarget="10" />
-
-
+    <actor id="0" type="12" posX="5.000000" posY="4.000000" posZ="38.187500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="22,0" />
+    <actor id="1" type="12" posX="15.031250" posY="0.000000" posZ="51.187500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="13,0" />
+    <actor id="2" type="12" posX="12.000000" posY="0.000000" posZ="35.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="13,0" />
+    <actor id="3" type="12" posX="14.000000" posY="0.000000" posZ="34.531250" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="655.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="37,0" />
+    <actor id="4" type="12" posX="16.812500" posY="0.000000" posZ="35.968750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="585.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="37,0" />
+    <actor id="5" type="12" posX="5.875000" posY="0.000000" posZ="44.562500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="8.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="25,0" />
+    <actor id="6" type="12" posX="25.000000" posY="0.000000" posZ="43.125000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="433.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="15,0" />
+    <actor id="7" type="12" posX="19.125000" posY="0.000000" posZ="60.625000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="21,0" />
+    <actor id="8" type="12" posX="21.125000" posY="0.000000" posZ="61.468750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="65.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="11,0" />
+    <actor id="9" type="12" posX="31.000000" posY="0.000000" posZ="55.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="13,0" />
+    <actor id="10" type="12" posX="34.000000" posY="0.000000" posZ="55.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="21,0" />
+    <actor id="11" type="12" posX="35.781250" posY="0.000000" posZ="55.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="62,0" />
+    <actor id="12" type="12" posX="33.781250" posY="0.000000" posZ="41.062500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="26,0" />
+    <actor id="13" type="12" posX="34.281250" posY="0.000000" posZ="32.750000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="125.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="81,0" />
+    <actor id="14" type="12" posX="43.000000" posY="0.000000" posZ="60.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="433.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="37,0" />
+    <actor id="15" type="12" posX="57.000000" posY="1.000000" posZ="6.343750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="565.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="64,0" />
+    <actor id="16" type="12" posX="44.687500" posY="0.000000" posZ="12.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="21,0" />
+    <actor id="17" type="12" posX="58.000000" posY="0.000000" posZ="21.500000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="433.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="60,0" />
+    <actor id="18" type="12" posX="31.000000" posY="0.000000" posZ="33.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="134.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="25,0" />
 </actors>
+

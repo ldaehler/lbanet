@@ -492,7 +492,7 @@
             </exits>
         </Map>
         <!--Map of Citadel Island, end sequence (1)-->
-        <Map name="Map116_1" type="exterior" music="Music/m02B.mp3" repeatmusic="-1">
+        <Map name="Map116_1" type="exterior" music="Music/Midi_mi_win20.midi" repeatmusic="-1">
             <description>Citadel Island, end sequence (1)</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
