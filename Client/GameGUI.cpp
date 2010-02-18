@@ -328,6 +328,12 @@ bool GameGUI::DisplayGameText(long textid, bool show)
 				else
 					txs->appendText((const unsigned char *)tmp.c_str());
 
+				while(((idxs+4) < (int)str.size()) && (str[idxs+3] == '@') && (str[idxs+4] == ' '))
+				{
+					txs->appendText("\n");
+					idxs+= 2;
+				}
+
 				str = str.substr(idxs+3);
 			}
 

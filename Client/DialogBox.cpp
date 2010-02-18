@@ -192,6 +192,7 @@ void NPCDialogBox::ShowDialog(long ActorId, const std::string &ActorName,
 		_curr_inventory = inventory;
 		_curr_Dialog = Dialog;
 		_current_dialoged_actor = ActorId;
+		_curr_Dialog->ResetDialog();
 
 		BuildDialog();
 		_myBox->show();
@@ -211,18 +212,52 @@ build dialog depending of the actor
 ***********************************************************/
 void NPCDialogBox::BuildDialog()
 {
+	CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
+		CEGUI::WindowManager::getSingleton().getWindow("DialogFrame/listbox"));
+	lb->resetList();
+
 	if(_curr_Dialog)
 	{
 		DialogDisplay dlgd = _curr_Dialog->GetCurrentDialog();
 
-		CEGUI::WindowManager::getSingleton().getWindow("DialogFrame/multiline")
-											->setText(dlgd.NPCTalk);
+		// display NPC dialog text
+		{
+			CEGUI::Window* txs = CEGUI::WindowManager::getSingleton().getWindow("DialogFrame/multiline");
+			std::string str = dlgd.NPCTalk;
+			int idxs = 0;
+			bool firsttime=true;
+			while((idxs = str.find(" @ ")) != std::string::npos)
+			{
+				std::string tmp = str.substr(0, idxs);
+				if(tmp == "")
+					tmp = "\n";
 
+				if(firsttime)
+				{
+					firsttime = false;
+					txs->setText((const unsigned char *)tmp.c_str());
+				}
+				else
+					txs->appendText((const unsigned char *)tmp.c_str());
 
-		CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
-			CEGUI::WindowManager::getSingleton().getWindow("DialogFrame/listbox"));
+				while(((idxs+4) < (int)str.size()) && (str[idxs+3] == '@') && (str[idxs+4] == ' '))
+				{
+					txs->appendText("\n");
+					idxs+= 2;
+				}
 
-		lb->resetList();
+				str = str.substr(idxs+3);
+			}
+
+			if(firsttime)
+			{
+				firsttime = false;
+				txs->setText((const unsigned char *)str.c_str());
+			}
+			else
+				txs->appendText((const unsigned char *)str.c_str());
+		}
+
 
 		for(size_t i=0; i<dlgd.PlayerChoices.size(); ++i)
 		{
@@ -240,7 +275,8 @@ void NPCDialogBox::BuildDialog()
 		CEGUI::WindowManager::getSingleton().getWindow("DialogFrame/multiline")
 											->setText("Hi!");
 
-		CEGUI::ListboxItem *it = new MyDialogItem("Bye!", true, false, false, 0);
+		CEGUI::ListboxItem *it = new MyDialogItem("Goodbye!", true, false, false, 0);
+		lb->addItem(it);
 	}
 
 }
@@ -487,8 +523,7 @@ bool NPCDialogBox::HandleMouseEnter (const CEGUI::EventArgs& e)
 	const CEGUI::MouseEventArgs& wine =
     static_cast<const CEGUI::MouseEventArgs&>(e);
 
-	CEGUI::Point localPos(CEGUI::CoordConverter::screenToWindow(*lb, wine.position));
-	CEGUI::ListboxItem * itm = lb->getItemAtPoint(localPos);
+	CEGUI::ListboxItem * itm = lb->getItemAtPoint(wine.position);
 	if(itm)
 		lb->setItemSelectState(itm, true);
 

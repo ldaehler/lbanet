@@ -709,11 +709,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\HQRlib.h"
+				RelativePath=".\HQRlib.h"
 				>
 			</File>
 			<File
-				RelativePath=".\HQRlib.h"
+				RelativePath="..\common\HQRlib.h"
 				>
 			</File>
 			<File
