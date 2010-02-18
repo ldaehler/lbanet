@@ -10,7 +10,7 @@
 	<file name="inventory" path="Data/Inventory/lba1_inventory.xml" />   
         <file name="sounds" path="Data/Samples/sounds.xml" />      
         <file name="models" path="Data/Models/models.xml" />
-        <file name="quests" path="Data/Quest/lba1_quests.xml" />        
+        <file name="quests" path="Data/Quest/lba1.xml" />        
         <file name="inventorytext" path="Data/Texts/Lba1/inventory.xml" />      
         <file name="questtext" path="Data/Texts/Lba1/quest.xml" /> 	
     </files>
