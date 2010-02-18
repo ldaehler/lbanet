@@ -302,6 +302,7 @@ struct QuestInfo
 	long		Id;
 	std::string Tittle;
 	std::string Description;
+	bool		Visible;
 };
 
 #endif

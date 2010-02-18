@@ -1458,7 +1458,7 @@ DialogTreePlayerChoicePtr MapInfoXmlReader::LoadPlayerChoice(TiXmlElement* pElem
 		{
 			TiXmlElement* treeelem = hRoot.FirstChild( "DialogTree" ).Element();
 			DialogTreeRootPtr ptr = LoadTreeRoot(treeelem, invH, qH);
-			DialogTreeRootPtr ptr2 = LoadTreeRoot(treeelem->NextSiblingElement(), invH, qH);
+			DialogTreeRootPtr ptr2 = LoadTreeRoot(treeelem->NextSiblingElement("DialogTree"), invH, qH);
 			ConditionBasePtr condptr = LoadCondition(hRoot.FirstChild( "Condition" ).Element(), invH, qH);
 			return DialogTreePlayerChoicePtr(new 
 				ConditionalDialogTreePlayerChoice(TextId, ConditionBasePtr(), ptr, ptr2, condptr));
@@ -1586,11 +1586,13 @@ bool MapInfoXmlReader::LoadQuests(const std::string &Filename, std::map<long, Qu
 		pElem=pElem->FirstChildElement();
 		for( ; pElem; pElem=pElem->NextSiblingElement())
 		{
-			long QuestId, TitleTextId, DescriptionTextId;
+			long QuestId, TitleTextId=-1, DescriptionTextId=-1;
+			bool Visible = true;
 
 			pElem->QueryValueAttribute("Id", &QuestId);
 			pElem->QueryValueAttribute("TitleTextId", &TitleTextId);
 			pElem->QueryValueAttribute("DescriptionTextId", &DescriptionTextId);
+			pElem->QueryValueAttribute("Visible", &Visible);
 
 			std::vector<long> QuestsStartingAtStart;
 			std::vector<long> QuestsStartingAtEnd;
@@ -1603,7 +1605,7 @@ bool MapInfoXmlReader::LoadQuests(const std::string &Filename, std::map<long, Qu
 				for( ; pElemC; pElemC=pElemC->NextSiblingElement())
 				{
 					long qid = -1;
-					pElem->QueryValueAttribute("Id", &qid);
+					pElemC->QueryValueAttribute("Id", &qid);
 					if(qid >= 0)
 						QuestsStartingAtStart.push_back(qid);
 				}
@@ -1616,7 +1618,7 @@ bool MapInfoXmlReader::LoadQuests(const std::string &Filename, std::map<long, Qu
 				for( ; pElemC; pElemC=pElemC->NextSiblingElement())
 				{
 					long qid = -1;
-					pElem->QueryValueAttribute("Id", &qid);
+					pElemC->QueryValueAttribute("Id", &qid);
 					if(qid >= 0)
 						QuestsStartingAtEnd.push_back(qid);
 				}
@@ -1629,7 +1631,7 @@ bool MapInfoXmlReader::LoadQuests(const std::string &Filename, std::map<long, Qu
 				for( ; pElemC; pElemC=pElemC->NextSiblingElement())
 				{
 					long qid = -1;
-					pElem->QueryValueAttribute("Id", &qid);
+					pElemC->QueryValueAttribute("Id", &qid);
 					if(qid >= 0)
 						QuestsTriggeredAtEnd.push_back(qid);
 				}
@@ -1647,8 +1649,8 @@ bool MapInfoXmlReader::LoadQuests(const std::string &Filename, std::map<long, Qu
 				{
 					long qid = -1;
 					int number = 0;
-					pElem->QueryValueAttribute("Id", &qid);
-					pElem->QueryValueAttribute("Number", &number);
+					pElemC->QueryValueAttribute("Id", &qid);
+					pElemC->QueryValueAttribute("Number", &number);
 
 					if(qid >= 0)
 						ObjectsGivenAtEnd.push_back(std::make_pair<long, int>(qid, number));
@@ -1663,8 +1665,8 @@ bool MapInfoXmlReader::LoadQuests(const std::string &Filename, std::map<long, Qu
 				{
 					long qid = -1;
 					int number = 0;
-					pElem->QueryValueAttribute("Id", &qid);
-					pElem->QueryValueAttribute("Number", &number);
+					pElemC->QueryValueAttribute("Id", &qid);
+					pElemC->QueryValueAttribute("Number", &number);
 
 					if(qid >= 0)
 						ObjectsTakenAtEnd.push_back(std::make_pair<long, int>(qid, number));
@@ -1693,7 +1695,8 @@ bool MapInfoXmlReader::LoadQuests(const std::string &Filename, std::map<long, Qu
 													QuestsStartingAtEnd,
 													QuestsTriggeredAtEnd,
 													ObjectsGivenAtEnd,
-													ObjectsTakenAtEnd));
+													ObjectsTakenAtEnd,
+													Visible));
 
 		}
 	}

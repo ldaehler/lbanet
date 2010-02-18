@@ -35,15 +35,16 @@ Quest::Quest(long QuestId, long titleTextId, long descriptionTextId,
 		std::vector<long> questsTriggeredAtEnd,
 
 		std::vector<std::pair<long, int> > objectsGivenAtEnd,
-		std::vector<std::pair<long, int> > objectsTakenAtEnd)
+		std::vector<std::pair<long, int> > objectsTakenAtEnd,
+		bool Visible)
 
 	: _QuestId(QuestId), _titleTextId(titleTextId), 
-		_descriptionTextId(descriptionTextId), _conditionsToSucceed(),
+		_descriptionTextId(descriptionTextId), _conditionsToSucceed(conditionsToSucceed),
 		_questsStartingAtStart(questsStartingAtStart),
 		_questsStartingAtEnd(questsStartingAtEnd),
 		_questsTriggeredAtEnd(questsTriggeredAtEnd),
 		_objectsGivenAtEnd(objectsGivenAtEnd),
-		_objectsTakenAtEnd(objectsTakenAtEnd)
+		_objectsTakenAtEnd(objectsTakenAtEnd), _Visible(Visible)
 {
 
 }

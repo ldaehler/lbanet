@@ -44,7 +44,8 @@ public:
 			std::vector<long> questsStartingAtEnd,
 			std::vector<long> questsTriggeredAtEnd,
 			std::vector<std::pair<long, int> > objectsGivenAtEnd,
-			std::vector<std::pair<long, int> > objectsTakenAtEnd);
+			std::vector<std::pair<long, int> > objectsTakenAtEnd,
+			bool Visible);
 
 	//! destructor
 	virtual ~Quest(){}
@@ -59,6 +60,7 @@ public:
 	//! accessors
 	long GetTitle(){ return _titleTextId; }
 	long GetDescription(){ return _descriptionTextId; }
+	bool GetVisible(){ return _Visible; }
 
 	const std::vector<ConditionBasePtr>&	GetConditions(){ return _conditionsToSucceed;}
 	const std::vector<long>&				GetQuestsStartingAtStart(){ return _questsStartingAtStart;}
@@ -72,6 +74,8 @@ private:
 	long							_QuestId;
 	long							_titleTextId;
 	long							_descriptionTextId;
+	bool							_Visible;
+
 	std::vector<ConditionBasePtr>	_conditionsToSucceed;
 	std::vector<long>				_questsStartingAtStart;
 	std::vector<long>				_questsStartingAtEnd;
