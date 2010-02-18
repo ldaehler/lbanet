@@ -65,6 +65,7 @@ get a random dialog entry
 long DialogEntryList::GetText()
 {
 	if(_Entries.size() == 0)
+		return -1;
 
 	for(size_t i=0; i<_Entries.size(); ++i)
 	{

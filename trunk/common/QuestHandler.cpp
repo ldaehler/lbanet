@@ -266,8 +266,12 @@ QuestInfo QuestHandler::GetQuestInfo(long QuestId)
 		res.Id = itm->first;
 
 		#ifndef _LBANET_SERVER_SIDE_
-		res.Tittle = DataLoader::getInstance()->GetQuestText(itm->second->GetTitle());
-		res.Description = DataLoader::getInstance()->GetQuestText(itm->second->GetDescription());
+		res.Visible = itm->second->GetVisible();
+		if(res.Visible)
+		{
+			res.Tittle = DataLoader::getInstance()->GetQuestText(itm->second->GetTitle());
+			res.Description = DataLoader::getInstance()->GetQuestText(itm->second->GetDescription());
+		}
 		#endif
 	}
 
