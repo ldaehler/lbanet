@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF8" ?>
 <quests>
-	<quest Id="1" TitleTextId="0" DescriptionTextId="1">
+	<quest Id="1" TitleTextId="0" DescriptionTextId="1" QuestAreaTextId="2">
 		<QuestsStartingAtStart>
 			<quest Id="2" />
 		</QuestsStartingAtStart>
