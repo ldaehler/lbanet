@@ -102,8 +102,7 @@ void QuestHandler::TriggerQuestStart(long QuestId)
 	// inform client quest is started
 	if(_InvH)
 		_InvH->InformQuestStarted(QuestId);
-	else
-		std::cout<<"Problem do not have invh ptr"<<std::endl;
+
 
 	std::map<long, QuestPtr>::iterator it = _questDb.find(QuestId);
 	if(it != _questDb.end())
@@ -130,7 +129,7 @@ void QuestHandler::TriggerQuestEnd(long QuestId)
 	{
 		// remove from quest started
 		std::vector<long>::iterator it = std::find(_questStarted.begin(), _questStarted.end(), QuestId);
-		if(it == _questStarted.end())
+		if(it != _questStarted.end())
 			_questStarted.erase(it);
 
 		// add to quest finished
@@ -175,7 +174,7 @@ void QuestHandler::TriggerQuestEnd(long QuestId)
 	{
 		// remove from quest started
 		std::vector<long>::iterator it = std::find(_questStarted.begin(), _questStarted.end(), QuestId);
-		if(it == _questStarted.end())
+		if(it != _questStarted.end())
 			_questStarted.erase(it);
 
 		// add to quest finished
