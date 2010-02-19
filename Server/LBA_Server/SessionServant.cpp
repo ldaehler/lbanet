@@ -547,6 +547,8 @@ LbaNet::SavedWorldInfo SessionServant::ChangeWorld(const std::string& WorldName,
 
 	std::vector<long> questStarted, questFinished;
 	_dbh.GetQuestInfo(WorldName, _userNum, questStarted, questFinished);
+
+	std::cout<<"Got "<<questStarted.size()<<" quests started and "<<questFinished.size()<<" quests finished"<<std::endl;
 	_QH.SetStartedFinished(questStarted, questFinished);
 	InitializeClientQuests(questStarted, questFinished);
 
@@ -1215,10 +1217,14 @@ inform class that a quest has been started
 ***********************************************************/
 void SessionServant::InformQuestStarted(long Questid)
 {
+	std::cout<<"InformQuestStarted"<<std::endl;
+
 	try
 	{
 		if(_client_observer)
 			_client_observer->InformQuestStarted(Questid);
+		else
+			std::cout<<"can not inform quest started :"<<Questid<<" - no client ptr"<<std::endl;
 	}
     catch(const IceUtil::Exception& ex)
     {
@@ -1235,10 +1241,15 @@ inform class that a quest has been finished
 ***********************************************************/
 void SessionServant::InformQuestFinished(long Questid)
 {
+	std::cout<<"InformQuestFinished"<<std::endl;
+
+
 	try
 	{
 		if(_client_observer)
 			_client_observer->InformQuestFinished(Questid);
+		else
+			std::cout<<"can not inform quest finished :"<<Questid<<" - no client ptr"<<std::endl;
 	}
     catch(const IceUtil::Exception& ex)
     {
@@ -1257,6 +1268,8 @@ init client with quests started and finished
 ***********************************************************/
 void SessionServant::InitializeClientQuests(std::vector<long> questStarted, std::vector<long> questFinished)
 {
+	std::cout<<"InitializeClientQuests"<<std::endl;
+
 	try
 	{
 		if(_client_observer)
@@ -1269,6 +1282,8 @@ void SessionServant::InitializeClientQuests(std::vector<long> questStarted, std:
 
 			_client_observer->InitQuestStartedFinished(started, finished);
 		}
+		else
+			std::cout<<"can not init quest at client side - no client ptr"<<std::endl;
 	}
     catch(const IceUtil::Exception& ex)
     {
