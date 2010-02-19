@@ -245,6 +245,7 @@ private:
 	LbaNet::ClientSessionPrx			_selfptr;
 
 	QuestHandler						_QH;
+	bool								_needquestupdate;
 };
 
 #endif
