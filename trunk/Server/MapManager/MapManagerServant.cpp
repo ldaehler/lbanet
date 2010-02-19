@@ -54,10 +54,10 @@ MapManagerServant::MapManagerServant(const Ice::CommunicatorPtr& communicator,
 
 			std::map<long, SpriteInfo> tmp;
 			std::map<long, ModelInfo> tmp2;
-			MapInfoXmlReader::LoadActors("Data/" + localfile, tmp, tmp, tmp2, tmpactors, NULL, 2.2f);
+			MapInfoXmlReader::LoadActors("Data/" + localfile, tmp, tmp, tmp2, tmpactors, NULL, 2.2f, NULL, NULL);
 
 			std::map<long, Actor *> map;
-			MapInfoXmlReader::LoadActors("Data/" + externalfile, tmp, tmp, tmp2, map, NULL, 2.2f);
+			MapInfoXmlReader::LoadActors("Data/" + externalfile, tmp, tmp, tmp2, map, NULL, 2.2f, NULL, NULL);
 			std::map<long, Actor *>::iterator it = map.begin();
 			std::map<long, Actor *>::iterator end = map.end();
 			for(;it != end; ++it)
