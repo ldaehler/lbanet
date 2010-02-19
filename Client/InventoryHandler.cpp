@@ -53,7 +53,7 @@ InventoryHandler * InventoryHandler::getInstance()
 ***********************************************************/
 InventoryHandler::InventoryHandler()
 : _inventoryUpdated(false), _shorcutUpdated(false), 
-	m_leditor(NULL), m_lviewer(NULL)
+	m_leditor(NULL), m_lviewer(NULL), _inventorysize(0)
 {
 
 }
