@@ -25,11 +25,7 @@
 		<QuestsStartingAtEnd>
 			<quest Id="3" />
 		</QuestsStartingAtEnd>
-		
-		<QuestsTriggeredAtEnd>
-			<quest Id="1" />
-		</QuestsTriggeredAtEnd>	
-		
+	
 		<ObjectsGivenAtEnd>
 			<object Id="13" Number="1" />
 		</ObjectsGivenAtEnd>
