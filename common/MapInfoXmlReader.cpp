@@ -1529,7 +1529,7 @@ DialogTreeRootPtr MapInfoXmlReader::LoadTreeRoot(TiXmlElement* pElem, InventoryH
 	for( ; pElemC; pElemC=pElemC->NextSiblingElement("QuestToStart"))
 	{
 		long qid = -1;
-		pElem->QueryValueAttribute("Id", &qid);
+		pElemC->QueryValueAttribute("Id", &qid);
 		if(qid >= 0)
 			QuestsToStart.push_back(qid);
 	}
@@ -1539,7 +1539,7 @@ DialogTreeRootPtr MapInfoXmlReader::LoadTreeRoot(TiXmlElement* pElem, InventoryH
 	for( ; pElemC; pElemC=pElemC->NextSiblingElement("QuestToTrigger"))
 	{
 		long qid = -1;
-		pElem->QueryValueAttribute("Id", &qid);
+		pElemC->QueryValueAttribute("Id", &qid);
 		if(qid >= 0)
 			QuestsToTrigger.push_back(qid);
 	}
