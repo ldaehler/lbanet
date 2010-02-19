@@ -38,7 +38,7 @@ class Quest
 {
 public:
 	//! constructor
-	Quest(long QuestId, long titleTextId, long descriptionTextId,
+	Quest(long QuestId, long titleTextId, long descriptionTextId, long QuestAreaTextId,
 			std::vector<ConditionBasePtr> conditionsToSucceed,
 			std::vector<long> questsStartingAtStart,
 			std::vector<long> questsStartingAtEnd,
@@ -61,6 +61,8 @@ public:
 	long GetTitle(){ return _titleTextId; }
 	long GetDescription(){ return _descriptionTextId; }
 	bool GetVisible(){ return _Visible; }
+	long GetQuestArea(){ return _QuestAreaTextId; }
+
 
 	const std::vector<ConditionBasePtr>&	GetConditions(){ return _conditionsToSucceed;}
 	const std::vector<long>&				GetQuestsStartingAtStart(){ return _questsStartingAtStart;}
@@ -75,6 +77,7 @@ private:
 	long							_titleTextId;
 	long							_descriptionTextId;
 	bool							_Visible;
+	long							_QuestAreaTextId;
 
 	std::vector<ConditionBasePtr>	_conditionsToSucceed;
 	std::vector<long>				_questsStartingAtStart;

@@ -1586,13 +1586,14 @@ bool MapInfoXmlReader::LoadQuests(const std::string &Filename, std::map<long, Qu
 		pElem=pElem->FirstChildElement();
 		for( ; pElem; pElem=pElem->NextSiblingElement())
 		{
-			long QuestId, TitleTextId=-1, DescriptionTextId=-1;
+			long QuestId, TitleTextId=-1, DescriptionTextId=-1, QuestAreaTextId=-1;
 			bool Visible = true;
 
 			pElem->QueryValueAttribute("Id", &QuestId);
 			pElem->QueryValueAttribute("TitleTextId", &TitleTextId);
 			pElem->QueryValueAttribute("DescriptionTextId", &DescriptionTextId);
 			pElem->QueryValueAttribute("Visible", &Visible);
+			pElem->QueryValueAttribute("QuestAreaTextId", &QuestAreaTextId);
 
 			std::vector<long> QuestsStartingAtStart;
 			std::vector<long> QuestsStartingAtEnd;
@@ -1689,7 +1690,7 @@ bool MapInfoXmlReader::LoadQuests(const std::string &Filename, std::map<long, Qu
 			}
 
 
-			quests[QuestId] = QuestPtr(new Quest(QuestId, TitleTextId, DescriptionTextId,
+			quests[QuestId] = QuestPtr(new Quest(QuestId, TitleTextId, DescriptionTextId, QuestAreaTextId,
 													ConditionsToSucceed,
 													QuestsStartingAtStart,
 													QuestsStartingAtEnd,

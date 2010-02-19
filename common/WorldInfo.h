@@ -303,6 +303,7 @@ struct QuestInfo
 	std::string Tittle;
 	std::string Description;
 	bool		Visible;
+	std::string QuestArea;
 };
 
 #endif
