@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "MessageBox.h"
 #include "ChooseNumberBox.h"
 
+
 //#ifndef _LBANET_SET_EDITOR_
 //#define _LBANET_SET_EDITOR_
 //#endif
@@ -74,6 +75,7 @@ void GameGUI::Initialize()
 		_lettereditb.Initialize(_root);
 		_letterviewb.Initialize(_root);
 		_dialogb.Initialize(_root);
+		_journalb.Initialize(_root);
 		CGMessageBox::getInstance()->Initialize(_root);
 		ChooseNumberBox::getInstance()->Initialize(_root);
 
@@ -122,6 +124,11 @@ void GameGUI::Initialize()
 			CEGUI::PushButton::EventClicked,
 			CEGUI::Event::Subscriber (&GameGUI::HandleShortcutClicked, this));
 
+		static_cast<CEGUI::PushButton *> (CEGUI::WindowManager::getSingleton().getWindow("btnquest"))->subscribeEvent (
+			CEGUI::PushButton::EventClicked,
+			CEGUI::Event::Subscriber (&GameGUI::HandleJournalClicked, this));
+
+		
 
 		
 		CEGUI::FrameWindow * frw = static_cast<CEGUI::FrameWindow *> (
@@ -232,6 +239,17 @@ bool GameGUI::HandleShortcutClicked (const CEGUI::EventArgs& e)
 	return true;
 }
 
+
+/***********************************************************
+handle send button event
+***********************************************************/
+bool GameGUI::HandleJournalClicked (const CEGUI::EventArgs& e)
+{
+	_journalb.Show();
+	return true;
+}
+
+
 /***********************************************************
 process what is needed in the game GUI
 ***********************************************************/
@@ -243,6 +261,7 @@ void GameGUI::Process()
 	_invb.Process();
 	_containerb.Process();
 	_dialogb.Process();
+	_journalb.Process();
 }
 
 
