@@ -271,6 +271,7 @@ QuestInfo QuestHandler::GetQuestInfo(long QuestId)
 		{
 			res.Tittle = DataLoader::getInstance()->GetQuestText(itm->second->GetTitle());
 			res.Description = DataLoader::getInstance()->GetQuestText(itm->second->GetDescription());
+			res.QuestArea = DataLoader::getInstance()->GetQuestText(itm->second->GetQuestArea());
 		}
 		#endif
 	}

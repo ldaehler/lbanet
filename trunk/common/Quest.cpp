@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /***********************************************************
 constructor
 ***********************************************************/
-Quest::Quest(long QuestId, long titleTextId, long descriptionTextId,
+Quest::Quest(long QuestId, long titleTextId, long descriptionTextId, long QuestAreaTextId,
 		std::vector<ConditionBasePtr> conditionsToSucceed,
 		std::vector<long> questsStartingAtStart,
 		std::vector<long> questsStartingAtEnd,
@@ -38,7 +38,7 @@ Quest::Quest(long QuestId, long titleTextId, long descriptionTextId,
 		std::vector<std::pair<long, int> > objectsTakenAtEnd,
 		bool Visible)
 
-	: _QuestId(QuestId), _titleTextId(titleTextId), 
+	: _QuestId(QuestId), _titleTextId(titleTextId), _QuestAreaTextId(QuestAreaTextId),
 		_descriptionTextId(descriptionTextId), _conditionsToSucceed(conditionsToSucceed),
 		_questsStartingAtStart(questsStartingAtStart),
 		_questsStartingAtEnd(questsStartingAtEnd),
