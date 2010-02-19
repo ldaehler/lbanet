@@ -545,27 +545,7 @@ LbaNet::SavedWorldInfo SessionServant::ChangeWorld(const std::string& WorldName,
 	std::vector<long> questStarted, questFinished;
 	_dbh.GetQuestInfo(WorldName, _userNum, questStarted, questFinished);
 	_QH.SetStartedFinished(questStarted, questFinished);
-	InitializeClientQuests(questStarted, questFinished);
-
-
-	// only for test - remove that part
-	if((WorldName != "Lba1Expanded") && (swinfo.inventory.InventoryStructure.size() == 0))
-	{
-		LbaNet::InventoryItem itm;
-		itm.Number = 1;
-		itm.PlaceInInventory = 0;
-		swinfo.inventory.InventoryStructure[7] = itm;
-		itm.PlaceInInventory = 1;
-		swinfo.inventory.InventoryStructure[5] = itm;
-		itm.PlaceInInventory = 2;
-		swinfo.inventory.InventoryStructure[6] = itm;
-
-
-		swinfo.inventory.UsedShorcuts[0] = 7;
-		swinfo.inventory.UsedShorcuts[1] = 5;
-		swinfo.inventory.UsedShorcuts[2] = 6;
-	}
-
+	//InitializeClientQuests(questStarted, questFinished);
 
 
 	_playerInventory = swinfo.inventory;
