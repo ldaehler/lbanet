@@ -40,7 +40,7 @@ SessionServant::SessionServant(const std::string& userId, const RoomManagerPrx& 
 									std::string	version, DatabaseHandler & dbh)
 : _manager(manager), _curr_actor_room(""), _userId(userId), _ctracker(ctracker), _map_manager(map_manager),
 	_userNum(-1), _version(version), _currColor("FFFFFFFF"), _dbh(dbh), _selfptr(NULL), _client_observer(NULL),
-	_QH(const_cast<InventoryHandlerBase *>(this))
+	_QH(reinterpret_cast<InventoryHandlerBase *>(this))
 {
 	_userNum = _ctracker->Connect(_userId);
 
