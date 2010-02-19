@@ -548,7 +548,7 @@ LbaNet::SavedWorldInfo SessionServant::ChangeWorld(const std::string& WorldName,
 	// reload quest info
 	std::map<long, QuestPtr> quests;
 	MapInfoXmlReader::LoadQuests(_session_world_quest_files[WorldName], quests, 
-									reinterpret_cast<InventoryHandlerBase *>(this), &_QH);
+									const_cast<SessionServant *>(this), &_QH);
 	_QH.Initialize(quests);
 
 	std::vector<long> questStarted, questFinished;
@@ -1222,8 +1222,6 @@ inform class that a quest has been started
 ***********************************************************/
 void SessionServant::InformQuestStarted(long Questid)
 {
-	std::cout<<"InformQuestStarted"<<std::endl;
-
 	try
 	{
 		if(_client_observer)
@@ -1246,9 +1244,6 @@ inform class that a quest has been finished
 ***********************************************************/
 void SessionServant::InformQuestFinished(long Questid)
 {
-	std::cout<<"InformQuestFinished"<<std::endl;
-
-
 	try
 	{
 		if(_client_observer)
