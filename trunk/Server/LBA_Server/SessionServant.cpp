@@ -40,7 +40,7 @@ SessionServant::SessionServant(const std::string& userId, const RoomManagerPrx& 
 									std::string	version, DatabaseHandler & dbh)
 : _manager(manager), _curr_actor_room(""), _userId(userId), _ctracker(ctracker), _map_manager(map_manager),
 	_userNum(-1), _version(version), _currColor("FFFFFFFF"), _dbh(dbh), _selfptr(NULL), _client_observer(NULL),
-	_QH(reinterpret_cast<InventoryHandlerBase *>(this))
+	_QH(const_cast<InventoryHandlerBase *>(this))
 {
 	_userNum = _ctracker->Connect(_userId);
 
@@ -1232,8 +1232,6 @@ inform class that a quest has been started
 ***********************************************************/
 void SessionServant::InformQuestStarted(long Questid)
 {
-    Lock sync(*this);
-
 	try
 	{
 		if(_client_observer)
@@ -1254,8 +1252,6 @@ inform class that a quest has been finished
 ***********************************************************/
 void SessionServant::InformQuestFinished(long Questid)
 {
-    Lock sync(*this);
-
 	try
 	{
 		if(_client_observer)
@@ -1278,8 +1274,6 @@ init client with quests started and finished
 ***********************************************************/
 void SessionServant::InitializeClientQuests(std::vector<long> questStarted, std::vector<long> questFinished)
 {
-    Lock sync(*this);
-
 	try
 	{
 		if(_client_observer)
