@@ -537,14 +537,14 @@ LbaNet::SavedWorldInfo SessionServant::ChangeWorld(const std::string& WorldName,
 
 
 	// reload quest info
-	std::map<long, QuestPtr> quests;
-	MapInfoXmlReader::LoadQuests(_session_world_quest_files[WorldName], quests, 
-									reinterpret_cast<InventoryHandlerBase *>(this), &_QH);
-	_QH.Initialize(quests);
+	//std::map<long, QuestPtr> quests;
+	//MapInfoXmlReader::LoadQuests(_session_world_quest_files[WorldName], quests, 
+	//								reinterpret_cast<InventoryHandlerBase *>(this), &_QH);
+	//_QH.Initialize(quests);
 
-	std::vector<long> questStarted, questFinished;
-	_dbh.GetQuestInfo(WorldName, _userNum, questStarted, questFinished);
-	_QH.SetStartedFinished(questStarted, questFinished);
+	//std::vector<long> questStarted, questFinished;
+	//_dbh.GetQuestInfo(WorldName, _userNum, questStarted, questFinished);
+	//_QH.SetStartedFinished(questStarted, questFinished);
 	//InitializeClientQuests(questStarted, questFinished);
 
 
@@ -1212,19 +1212,19 @@ inform class that a quest has been started
 ***********************************************************/
 void SessionServant::InformQuestStarted(long Questid)
 {
-	try
-	{
-		if(_client_observer)
-			_client_observer->InformQuestStarted(Questid);
-	}
-    catch(const IceUtil::Exception& ex)
-    {
-		std::cout<<"SessionServant - Exception during InformQuestStarted: "<< ex.what()<<std::endl;
-    }
-    catch(...)
-    {
-		std::cout<<"SessionServant - Unknown exception during InformQuestStarted"<<std::endl;
-    }
+	//try
+	//{
+	//	if(_client_observer)
+	//		_client_observer->InformQuestStarted(Questid);
+	//}
+ //   catch(const IceUtil::Exception& ex)
+ //   {
+	//	std::cout<<"SessionServant - Exception during InformQuestStarted: "<< ex.what()<<std::endl;
+ //   }
+ //   catch(...)
+ //   {
+	//	std::cout<<"SessionServant - Unknown exception during InformQuestStarted"<<std::endl;
+ //   }
 }
 
 /***********************************************************
@@ -1232,19 +1232,19 @@ inform class that a quest has been finished
 ***********************************************************/
 void SessionServant::InformQuestFinished(long Questid)
 {
-	try
-	{
-		if(_client_observer)
-			_client_observer->InformQuestFinished(Questid);
-	}
-    catch(const IceUtil::Exception& ex)
-    {
-		std::cout<<"SessionServant - Exception during InformQuestStarted: "<< ex.what()<<std::endl;
-    }
-    catch(...)
-    {
-		std::cout<<"SessionServant - Unknown exception during InformQuestStarted"<<std::endl;
-    }
+	//try
+	//{
+	//	if(_client_observer)
+	//		_client_observer->InformQuestFinished(Questid);
+	//}
+ //   catch(const IceUtil::Exception& ex)
+ //   {
+	//	std::cout<<"SessionServant - Exception during InformQuestStarted: "<< ex.what()<<std::endl;
+ //   }
+ //   catch(...)
+ //   {
+	//	std::cout<<"SessionServant - Unknown exception during InformQuestStarted"<<std::endl;
+ //   }
 }
 
 
@@ -1254,25 +1254,25 @@ init client with quests started and finished
 ***********************************************************/
 void SessionServant::InitializeClientQuests(std::vector<long> questStarted, std::vector<long> questFinished)
 {
-	try
-	{
-		if(_client_observer)
-		{
-			LbaNet::QuestSeq started, finished;
-			for(size_t i=0; i<questStarted.size(); ++i)
-				started.push_back(questStarted[i]);
-			for(size_t i=0; i<questFinished.size(); ++i)
-				finished.push_back(questFinished[i]);
+	//try
+	//{
+	//	if(_client_observer)
+	//	{
+	//		LbaNet::QuestSeq started, finished;
+	//		for(size_t i=0; i<questStarted.size(); ++i)
+	//			started.push_back(questStarted[i]);
+	//		for(size_t i=0; i<questFinished.size(); ++i)
+	//			finished.push_back(questFinished[i]);
 
-			_client_observer->InitQuestStartedFinished(started, finished);
-		}
-	}
-    catch(const IceUtil::Exception& ex)
-    {
-		std::cout<<"SessionServant - Exception during InformQuestStarted: "<< ex.what()<<std::endl;
-    }
-    catch(...)
-    {
-		std::cout<<"SessionServant - Unknown exception during InformQuestStarted"<<std::endl;
-    }
+	//		_client_observer->InitQuestStartedFinished(started, finished);
+	//	}
+	//}
+ //   catch(const IceUtil::Exception& ex)
+ //   {
+	//	std::cout<<"SessionServant - Exception during InformQuestStarted: "<< ex.what()<<std::endl;
+ //   }
+ //   catch(...)
+ //   {
+	//	std::cout<<"SessionServant - Unknown exception during InformQuestStarted"<<std::endl;
+ //   }
 }
