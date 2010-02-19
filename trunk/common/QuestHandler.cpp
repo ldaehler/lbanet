@@ -102,6 +102,8 @@ void QuestHandler::TriggerQuestStart(long QuestId)
 	// inform client quest is started
 	if(_InvH)
 		_InvH->InformQuestStarted(QuestId);
+	else
+		std::cout<<"Problem do not have invh ptr"<<std::endl;
 
 	std::map<long, QuestPtr>::iterator it = _questDb.find(QuestId);
 	if(it != _questDb.end())
