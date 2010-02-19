@@ -26,7 +26,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ThreadSafeWorkpile.h"
 #include "GameEvents.h"
 #include "InventoryHandler.h"
-#include "ImageSetHandler.h"
 #include "QuestHandler.h"
 
 // callback function called when a message is received from IceStorm
@@ -112,23 +111,13 @@ void InfosReceiverServant::UpdateContainerInfo(const LbaNet::ContainerInfo &cont
 	{
 		if(InventoryChanges[i].NewCount < 0)
 		{
-			std::stringstream strs;
-			strs<<"You used "<<-InventoryChanges[i].NewCount<<" [colour='FFFFFFFF'][image='set:"<<ImageSetHandler::GetInstance()->GetInventoryMiniImage(InventoryChanges[i].ItemId)<<"   image:full_image']"; 
-			ThreadSafeWorkpile::ChatTextData cdata;
-			cdata.Channel = "All";
-			cdata.Sender = "info";
-			cdata.Text = strs.str();
-			ThreadSafeWorkpile::getInstance()->AddChatData(cdata);
+			ThreadSafeWorkpile::getInstance()->AddEvent(new ObjectUpdateEvent(InventoryChanges[i].ItemId, 
+																		false, -InventoryChanges[i].NewCount));
 		}
 		else
 		{
-			std::stringstream strs;
-			strs<<"You received "<<InventoryChanges[i].NewCount<<" [colour='FFFFFFFF'][image='set:"<<ImageSetHandler::GetInstance()->GetInventoryMiniImage(InventoryChanges[i].ItemId)<<"   image:full_image']"; 
-			ThreadSafeWorkpile::ChatTextData cdata;
-			cdata.Channel = "All";
-			cdata.Sender = "info";
-			cdata.Text = strs.str();
-			ThreadSafeWorkpile::getInstance()->AddChatData(cdata);
+			ThreadSafeWorkpile::getInstance()->AddEvent(new ObjectUpdateEvent(InventoryChanges[i].ItemId, 
+																		true, InventoryChanges[i].NewCount));
 		}
 	}
  }

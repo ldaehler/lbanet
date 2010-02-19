@@ -43,6 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GameEvents.h"
 #include "ConfigurationManager.h"
 #include "DataLoader.h"
+#include "ImageSetHandler.h"
 
 #define TICK_INTERVAL    30 //16
 
@@ -750,10 +751,41 @@ void LbaNetEngine::HandleGameEvents()
 			break;
 
 			case 24: // display NPC dialog
+				{
 					DisplayDialogEvent * evcs = 
 						static_cast<DisplayDialogEvent *> (*it);
 					m_guiHandler.ShowDialog(evcs->_ActorId, evcs->_ActorName, evcs->_Dialog,
 												evcs->_Show, evcs->_inventory);
+				}
+			break;
+
+
+			case 25: // object update event
+				{
+					ObjectUpdateEvent * evcs = 
+						static_cast<ObjectUpdateEvent *> (*it);
+
+					if(!evcs->_Received)
+					{
+						std::stringstream strs;
+						strs<<"You used "<<evcs->_Number<<" [colour='FFFFFFFF'][image='set:"<<ImageSetHandler::GetInstance()->GetInventoryMiniImage(evcs->_ObjectId)<<"   image:full_image']"; 
+						ThreadSafeWorkpile::ChatTextData cdata;
+						cdata.Channel = "All";
+						cdata.Sender = "info";
+						cdata.Text = strs.str();
+						ThreadSafeWorkpile::getInstance()->AddChatData(cdata);
+					}
+					else
+					{
+						std::stringstream strs;
+						strs<<"You received "<<evcs->_Number<<" [colour='FFFFFFFF'][image='set:"<<ImageSetHandler::GetInstance()->GetInventoryMiniImage(evcs->_ObjectId)<<"   image:full_image']"; 
+						ThreadSafeWorkpile::ChatTextData cdata;
+						cdata.Channel = "All";
+						cdata.Sender = "info";
+						cdata.Text = strs.str();
+						ThreadSafeWorkpile::getInstance()->AddChatData(cdata);
+					}
+				}
 			break;
 		}
 

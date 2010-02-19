@@ -396,6 +396,12 @@ void InventoryBox::Process()
 		int inventorysize;
 		std::map<long, std::pair<int, int> > currinv = InventoryHandler::getInstance()->GetCurrentInventory(inventorysize);
 		
+		if(inventorysize > 500)
+		{
+			LogHandler::getInstance()->LogToFile("Problem with inventory size - much bigger than expected!!");
+			inventorysize = 500;
+		}
+
 		ResizeInventory(inventorysize);
 		
 		std::map<long, std::pair<int, int> >::iterator it = currinv.begin();

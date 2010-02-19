@@ -1099,5 +1099,7 @@ check if update needed
 bool ThreadSafeWorkpile::QuestBookUpdateNeeded()
 {
 	IceUtil::Mutex::Lock lock(m_mutex_questbook_update);
-	return m_update_questbook;
+	bool res = m_update_questbook;
+	m_update_questbook = false;
+	return res;
 }

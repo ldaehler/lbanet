@@ -68,26 +68,26 @@ destructor
 ***********************************************************/
 JournalBox::~JournalBox()
 {
-	//try
-	//{
-	//	CEGUI::FrameWindow * frw = static_cast<CEGUI::FrameWindow *> (
-	//		CEGUI::WindowManager::getSingleton().getWindow("InventoryFrame"));
+	try
+	{
+		CEGUI::FrameWindow * frw = static_cast<CEGUI::FrameWindow *> (
+			CEGUI::WindowManager::getSingleton().getWindow("JournalFrame"));
 
-	//	CEGUI::UVector2 vec = frw->getPosition();
-	//	ConfigurationManager::GetInstance()->SetFloat("Gui.Inventorybox.PosX", vec.d_x.d_scale);
-	//	ConfigurationManager::GetInstance()->SetFloat("Gui.Inventorybox.PosY", vec.d_y.d_scale);
-	//	ConfigurationManager::GetInstance()->SetFloat("Gui.Inventorybox.SizeX", frw->getWidth().d_scale);
-	//	ConfigurationManager::GetInstance()->SetFloat("Gui.Inventorybox.SizeY", frw->getHeight().d_scale);
-	//	ConfigurationManager::GetInstance()->SetFloat("Gui.Inventorybox.OffsetPosX", vec.d_x.d_offset);
-	//	ConfigurationManager::GetInstance()->SetFloat("Gui.Inventorybox.OffsetPosY", vec.d_y.d_offset);
-	//	ConfigurationManager::GetInstance()->SetFloat("Gui.Inventorybox.OffsetSizeX", frw->getWidth().d_offset);
-	//	ConfigurationManager::GetInstance()->SetFloat("Gui.Inventorybox.OffsetSizeY", frw->getHeight().d_offset);
-	//	ConfigurationManager::GetInstance()->SetBool("Gui.Inventorybox.Visible", frw->isVisible());
-	//}
-	//catch(CEGUI::Exception &ex)
-	//{
-	//	LogHandler::getInstance()->LogToFile(std::string("Exception destructor Inventorybox: ") + ex.getMessage().c_str());
-	//}
+		CEGUI::UVector2 vec = frw->getPosition();
+		ConfigurationManager::GetInstance()->SetFloat("Gui.JournalBox.PosX", vec.d_x.d_scale);
+		ConfigurationManager::GetInstance()->SetFloat("Gui.JournalBox.PosY", vec.d_y.d_scale);
+		ConfigurationManager::GetInstance()->SetFloat("Gui.JournalBox.SizeX", frw->getWidth().d_scale);
+		ConfigurationManager::GetInstance()->SetFloat("Gui.JournalBox.SizeY", frw->getHeight().d_scale);
+		ConfigurationManager::GetInstance()->SetFloat("Gui.JournalBox.OffsetPosX", vec.d_x.d_offset);
+		ConfigurationManager::GetInstance()->SetFloat("Gui.JournalBox.OffsetPosY", vec.d_y.d_offset);
+		ConfigurationManager::GetInstance()->SetFloat("Gui.JournalBox.OffsetSizeX", frw->getWidth().d_offset);
+		ConfigurationManager::GetInstance()->SetFloat("Gui.JournalBox.OffsetSizeY", frw->getHeight().d_offset);
+		ConfigurationManager::GetInstance()->SetBool("Gui.JournalBox.Visible", frw->isVisible());
+	}
+	catch(CEGUI::Exception &ex)
+	{
+		LogHandler::getInstance()->LogToFile(std::string("Exception destructor Inventorybox: ") + ex.getMessage().c_str());
+	}
 }
 
 
@@ -121,68 +121,26 @@ void JournalBox::Initialize(CEGUI::Window* Root)
 		tree2->subscribeEvent(CEGUI::Listbox::EventSelectionChanged,
 							CEGUI::Event::Subscriber (&JournalBox::HandleQuestDoneTreeSelected, this));
 
-		// Create a top-most TreeCtrlEntry
-		//std::vector<CEGUI::String> desc;
 
+		float PosX, PosY, SizeX, SizeY, OPosX, OPosY, OSizeX, OSizeY;
+		bool Visible;
+		ConfigurationManager::GetInstance()->GetFloat("Gui.JournalBox.PosX", PosX);
+		ConfigurationManager::GetInstance()->GetFloat("Gui.JournalBox.PosY", PosY);
+		ConfigurationManager::GetInstance()->GetFloat("Gui.JournalBox.SizeX", SizeX);
+		ConfigurationManager::GetInstance()->GetFloat("Gui.JournalBox.SizeY", SizeY);
+		ConfigurationManager::GetInstance()->GetFloat("Gui.JournalBox.OffsetPosX", OPosX);
+		ConfigurationManager::GetInstance()->GetFloat("Gui.JournalBox.OffsetPosY", OPosY);
+		ConfigurationManager::GetInstance()->GetFloat("Gui.JournalBox.OffsetSizeX", OSizeX);
+		ConfigurationManager::GetInstance()->GetFloat("Gui.JournalBox.OffsetSizeY", OSizeY);
+		ConfigurationManager::GetInstance()->GetBool("Gui.JournalBox.Visible", Visible);
+		frw->setPosition(CEGUI::UVector2(CEGUI::UDim(PosX, OPosX), CEGUI::UDim(PosY, OPosY)));
+		frw->setWidth(CEGUI::UDim(SizeX, OSizeX));
+		frw->setHeight(CEGUI::UDim(SizeY, OSizeY));
 
-		//CEGUI::TreeItem * titmr = new MyTreeItem("Root", desc);
-		//tree->addItem(titmr);
-
-		//desc.push_back("test1");
-		//CEGUI::TreeItem * titm = new MyTreeItem("test1", desc);
-		//titmr->addItem(titm);
-
-		//desc.push_back("test2");
-		//titm = new MyTreeItem("test2", desc);
-		//titmr->addItem(titm);
-
-		//desc.push_back("test3");
-		//titm = new MyTreeItem("test3", desc);
-		//titmr->addItem(titm);
-
-		//desc.push_back("test4");
-		//titm = new MyTreeItem("test4", desc);
-		//titmr->addItem(titm);
-
-		//desc.clear();
-		//CEGUI::TreeItem * titmr2 = new MyTreeItem("Root2", desc);
-		//tree->addItem(titmr2);
-
-		//desc.push_back("test1");
-		//titm = new MyTreeItem("test1", desc);
-		//titmr2->addItem(titm);
-
-		//desc.push_back("test2");
-		//titm = new MyTreeItem("test2", desc);
-		//titmr2->addItem(titm);
-
-		//desc.push_back("test3");
-		//titm = new MyTreeItem("test3", desc);
-		//titmr2->addItem(titm);
-
-		//desc.push_back("test4");
-		//titm = new MyTreeItem("test4", desc);
-		//titmr2->addItem(titm);
-
-		//float PosX, PosY, SizeX, SizeY, OPosX, OPosY, OSizeX, OSizeY;
-		//bool Visible;
-		//ConfigurationManager::GetInstance()->GetFloat("Gui.Inventorybox.PosX", PosX);
-		//ConfigurationManager::GetInstance()->GetFloat("Gui.Inventorybox.PosY", PosY);
-		//ConfigurationManager::GetInstance()->GetFloat("Gui.Inventorybox.SizeX", SizeX);
-		//ConfigurationManager::GetInstance()->GetFloat("Gui.Inventorybox.SizeY", SizeY);
-		//ConfigurationManager::GetInstance()->GetFloat("Gui.Inventorybox.OffsetPosX", OPosX);
-		//ConfigurationManager::GetInstance()->GetFloat("Gui.Inventorybox.OffsetPosY", OPosY);
-		//ConfigurationManager::GetInstance()->GetFloat("Gui.Inventorybox.OffsetSizeX", OSizeX);
-		//ConfigurationManager::GetInstance()->GetFloat("Gui.Inventorybox.OffsetSizeY", OSizeY);
-		//ConfigurationManager::GetInstance()->GetBool("Gui.Inventorybox.Visible", Visible);
-		//frw->setPosition(CEGUI::UVector2(CEGUI::UDim(PosX, OPosX), CEGUI::UDim(PosY, OPosY)));
-		//frw->setWidth(CEGUI::UDim(SizeX, OSizeX));
-		//frw->setHeight(CEGUI::UDim(SizeY, OSizeY));
-
-		//if(Visible)
-		//	frw->show();
-		//else
-		//	frw->hide();
+		if(Visible)
+			frw->show();
+		else
+			frw->hide();
 
 
 		static_cast<CEGUI::TabControl *> (
