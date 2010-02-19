@@ -605,4 +605,30 @@ public:
 	std::map<long, TraderItem> _inventory;
 };
 
+
+
+/*
+************************************************************************************************************************
+*                                                  class ObjectUpdateEvent
+*
+*	used to display NPC dialog
+************************************************************************************************************************
+*/
+class ObjectUpdateEvent : public GameEvent
+{
+public:
+	//! constructor
+	ObjectUpdateEvent(long ObjectId, bool Received, int Number)
+		: _ObjectId(ObjectId), _Received(Received), _Number(Number)
+	{
+		_type = 25;	
+	}
+	
+	long	_ObjectId;
+	bool	_Received;
+	int		_Number;
+};
+
+
+
 #endif
