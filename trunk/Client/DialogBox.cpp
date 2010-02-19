@@ -192,7 +192,9 @@ void NPCDialogBox::ShowDialog(long ActorId, const std::string &ActorName,
 		_curr_inventory = inventory;
 		_curr_Dialog = Dialog;
 		_current_dialoged_actor = ActorId;
-		_curr_Dialog->ResetDialog();
+
+		if(_curr_Dialog)
+			_curr_Dialog->ResetDialog();
 
 		BuildDialog();
 		_myBox->show();

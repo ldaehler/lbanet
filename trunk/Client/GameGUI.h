@@ -40,6 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "LetterViewerBox.h"
 #include "DialogBox.h"
 #include "WorldInfo.h"
+#include "JournalBox.h"
 
 namespace CEGUI
 {
@@ -98,6 +99,9 @@ public:
 	//! handle send button event
 	bool HandleShortcutClicked (const CEGUI::EventArgs& e);
 
+	//! handle send button event
+	bool HandleJournalClicked (const CEGUI::EventArgs& e);
+
 	// process what is needed in the game GUI
 	virtual void Process();
 
@@ -154,6 +158,7 @@ private:
 	LetterEditorBox _lettereditb;
 	LetterViewerBox _letterviewb;
 	NPCDialogBox	_dialogb;
+	JournalBox		_journalb;
 
 	EditorBox *		_editb;
 };

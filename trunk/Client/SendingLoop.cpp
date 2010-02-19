@@ -955,6 +955,19 @@ void SendingLoopThread::run()
 			_connectionMananger.SetUnTargeted(untargetedactors[i]);	
 
 
+	
+		//-----------------------------------
+		// process quests
+		std::vector<long> startedQuests;
+		ThreadSafeWorkpile::getInstance()->GetQuestStarted(startedQuests);
+		for(size_t i=0; i<startedQuests.size(); ++i)
+			_connectionMananger.StartQuest(startedQuests[i]);	
+
+		std::vector<long> endedQuests;
+		ThreadSafeWorkpile::getInstance()->GetQuestFinished(endedQuests);
+		for(size_t i=0; i<endedQuests.size(); ++i)
+			_connectionMananger.EndQuest(endedQuests[i]);	
+
 
 
 
