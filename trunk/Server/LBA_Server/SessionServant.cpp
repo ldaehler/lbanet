@@ -40,7 +40,7 @@ SessionServant::SessionServant(const std::string& userId, const RoomManagerPrx& 
 									std::string	version, DatabaseHandler & dbh)
 : _manager(manager), _curr_actor_room(""), _userId(userId), _ctracker(ctracker), _map_manager(map_manager),
 	_userNum(-1), _version(version), _currColor("FFFFFFFF"), _dbh(dbh), _selfptr(NULL), _client_observer(NULL),
-	_QH(reinterpret_cast<InventoryHandlerBase *>(this)), _currWorldName(""), _needquestupdate(false)
+	_QH(const_cast<SessionServant *>(this)), _currWorldName(""), _needquestupdate(false)
 {
 	_userNum = _ctracker->Connect(_userId);
 
@@ -554,7 +554,6 @@ LbaNet::SavedWorldInfo SessionServant::ChangeWorld(const std::string& WorldName,
 	std::vector<long> questStarted, questFinished;
 	_dbh.GetQuestInfo(WorldName, _userNum, questStarted, questFinished);
 
-	std::cout<<"Got "<<questStarted.size()<<" quests started and "<<questFinished.size()<<" quests finished"<<std::endl;
 	_QH.SetStartedFinished(questStarted, questFinished);
 	_needquestupdate = true;
 
@@ -1274,8 +1273,6 @@ init client with quests started and finished
 ***********************************************************/
 void SessionServant::InitializeClientQuests(std::vector<long> questStarted, std::vector<long> questFinished)
 {
-	std::cout<<"InitializeClientQuests"<<std::endl;
-
 	try
 	{
 		if(_client_observer)
