@@ -40,7 +40,7 @@ SessionServant::SessionServant(const std::string& userId, const RoomManagerPrx& 
 									std::string	version, DatabaseHandler & dbh)
 : _manager(manager), _curr_actor_room(""), _userId(userId), _ctracker(ctracker), _map_manager(map_manager),
 	_userNum(-1), _version(version), _currColor("FFFFFFFF"), _dbh(dbh), _selfptr(NULL), _client_observer(NULL),
-	_QH(reinterpret_cast<InventoryHandlerBase *>(this)), _currWorldName("")
+	_QH(reinterpret_cast<InventoryHandlerBase *>(this)), _currWorldName(""), _needquestupdate(false)
 {
 	_userNum = _ctracker->Connect(_userId);
 
@@ -130,6 +130,12 @@ ActorsParticipantPrx SessionServant::ChangeRoom(		const std::string& newroom,
 {
     Lock sync(*this);
 	_client_observer = observer;
+
+	if(_needquestupdate)
+	{
+		_needquestupdate = false;
+		InitializeClientQuests(_QH.GetQuestsStarted(), _QH.GetQuestsFinished());
+	}
 
 
 	cleanEphemereItems();
@@ -550,7 +556,7 @@ LbaNet::SavedWorldInfo SessionServant::ChangeWorld(const std::string& WorldName,
 
 	std::cout<<"Got "<<questStarted.size()<<" quests started and "<<questFinished.size()<<" quests finished"<<std::endl;
 	_QH.SetStartedFinished(questStarted, questFinished);
-	InitializeClientQuests(questStarted, questFinished);
+	_needquestupdate = true;
 
 
 	_playerInventory = swinfo.inventory;
