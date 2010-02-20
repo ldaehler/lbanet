@@ -9,7 +9,7 @@
 			</DialogEntry>
 								
 			<DialogEntry type="1" TextId="270">
-				<Condition type="4" QuestId="3">		
+				<Condition type="3" QuestId="3">		
 				</Condition>					
 			</DialogEntry>			
 			
