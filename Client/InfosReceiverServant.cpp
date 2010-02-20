@@ -27,7 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GameEvents.h"
 #include "InventoryHandler.h"
 #include "QuestHandler.h"
-#include "DataLoader.h"
 
 
 // callback function called when a message is received from IceStorm
@@ -194,13 +193,18 @@ void InfosReceiverServant::InformQuestStarted(Ice::Long QuestId, const Ice::Curr
 	QuestHandler::getInstance()->TriggerQuestStart(QuestId);
 	ThreadSafeWorkpile::getInstance()->NeedQuestBookUpdate(false);
 
-	std::stringstream strs;
-	strs<<"New quest: " << DataLoader::getInstance()->GetQuestText(QuestId); 
-	ThreadSafeWorkpile::ChatTextData cdata;
-	cdata.Channel = "All";
-	cdata.Sender = "info";
-	cdata.Text = strs.str();
-	ThreadSafeWorkpile::getInstance()->AddChatData(cdata);
+	QuestInfo qi = QuestHandler::getInstance()->GetQuestInfo(QuestId);
+
+	if(qi.Visible)
+	{
+		std::stringstream strs;
+		strs<<"New quest: " << qi.Tittle; 
+		ThreadSafeWorkpile::ChatTextData cdata;
+		cdata.Channel = "All";
+		cdata.Sender = "info";
+		cdata.Text = strs.str();
+		ThreadSafeWorkpile::getInstance()->AddChatData(cdata);
+	}
 }
 
 // InformQuestFinished  
