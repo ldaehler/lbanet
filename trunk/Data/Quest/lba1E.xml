@@ -11,19 +11,19 @@
 		</ObjectsGivenAtEnd>
 		
 		<ObjectsTakenAtEnd>
-			<object Id="19" Number="1" />
+			<object Id="18" Number="1" />
 		</ObjectsTakenAtEnd>
 		
 		<Conditions>
 			<Condition type="4" QuestId="2" />
-			<Condition type="7" ObjectId="19" ObjectNumber="1" StrictlyEqual="1" />
+			<Condition type="7" ObjectId="18" ObjectNumber="1" StrictlyEqual="1" />
 		</Conditions>		
 	</quest>
 	
 	
 	<quest Id="2" Visible="0">
 		<ObjectsGivenAtEnd>
-			<object Id="19" Number="1" />
+			<object Id="18" Number="1" />
 		</ObjectsGivenAtEnd>
 		
 		<ObjectsTakenAtEnd>
@@ -31,8 +31,24 @@
 		</ObjectsTakenAtEnd>
 		
 		<Conditions>
-			<Condition type="7" ObjectId="8" ObjectNumber="20" />
+			<Condition type="7" ObjectId="8" ObjectNumber="30" />
 		</Conditions>	
 	</quest>
+	
+	
+	<quest Id="3" TitleTextId="3" DescriptionTextId="4" QuestAreaTextId="5">
+				
+		<ObjectsGivenAtEnd>
+			<object Id="5" Number="1" />	
+		</ObjectsGivenAtEnd>
+		
+		<ObjectsTakenAtEnd>
+			<object Id="19" Number="1" />
+		</ObjectsTakenAtEnd>
+		
+		<Conditions>
+			<Condition type="7" ObjectId="19" ObjectNumber="1" StrictlyEqual="1" />
+		</Conditions>		
+	</quest>	
 	
 </quests>
