@@ -145,7 +145,7 @@
     <Image Name="TabContentPaneLower" XPos="52" YPos="99" Width="6" Height="7" />
     <Image Name="TabContentPaneRight" XPos="62" YPos="89" Width="7" Height="6" />
     <Image Name="TabContentPaneUpper" XPos="52" YPos="77" Width="6" Height="8" />
-    <Image Name="TabHorizontalFiller" XPos="197" YPos="201" Width="7" Height="1" />
+
     <Image Name="VertScrollDownHover" XPos="182" YPos="46" Width="12" Height="12" />
     <Image Name="ButtonRightHighlight" XPos="96" YPos="56" Width="12" Height="16" />
     <Image Name="ComboboxDividerRight" XPos="164" YPos="68" Width="14" Height="1" />
@@ -245,7 +245,8 @@
     <Image Name="MiniVertScrollThumbMiddleNormal" XPos="214" YPos="65" Width="7" Height="5" />
    
     <Image Name="EditBoxCarat" XPos="60" YPos="112" Width="1" Height="20" />   
-   
+    <Image Name="TabHorizontalFiller" XPos="150" YPos="183" Width="7" Height="1" />
+    
     <Image Name="NewTitlebarLeft" XPos="61" YPos="126" Width="13" Height="15" />
     <Image Name="NewTitlebarMiddle" XPos="77" YPos="126" Width="12" Height="15" />
     <Image Name="NewTitlebarRight" XPos="92" YPos="126" Width="12" Height="15" />
