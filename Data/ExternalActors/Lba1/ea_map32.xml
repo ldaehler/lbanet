@@ -1,6 +1,46 @@
 <?xml version="1.0" encoding="UTF8" ?>
 <actors>
-    <actor id="2" type="12" posX="50.375000" posY="0.000000" posZ="54.187500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="148.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="47,0" />
+    <actor id="2" type="12" posX="51.375000" posY="0.000000" posZ="55.187500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="148.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="47,1">
+    	<Dialog StandardQuitDialog="275" StandardGoToRootDialog="276">
+    		<DialogEntry type="3">
+			<DialogEntry type="1" TextId="268">
+				<Condition type="5" QuestId="3">		
+				</Condition>					
+			</DialogEntry>
+								
+			<DialogEntry type="1" TextId="270">
+				<Condition type="4" QuestId="3">		
+				</Condition>					
+			</DialogEntry>			
+			
+			<DialogEntry type="0" TextId="172">
+			</DialogEntry>
+    		</DialogEntry>
+    		
+       		<DialogTree>	
+        		<PlayerChoice type="1" TextId="269">
+				<Condition type="5" QuestId="3">		
+				</Condition>
+       			       	<DialogTree TextId="271" GoToRootEnabled="0">
+       			       		<QuestToStart Id="3" />
+        			</DialogTree>	       	
+       			</PlayerChoice>        		
+       		
+         		<PlayerChoice type="3" TextId="272">
+				<Condition type="3" QuestId="3">		
+				</Condition>
+				<Condition type="6" QuestId="3">
+				</Condition>				
+       			       	<DialogTree TextId="273" GoToRootEnabled="0">
+					<QuestToTrigger Id="3" />
+        			</DialogTree>
+        			<DialogTree TextId="274">
+        			</DialogTree>       			
+       			</PlayerChoice>	
+    		</DialogTree> 		
+	</Dialog>  
+    </actor>      
+    
     <actor id="3" type="12" posX="0.000000" posY="-1.000000" posZ="0.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="9,0" />
 </actors>
 
