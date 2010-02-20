@@ -25,14 +25,14 @@
     <Image Name="MouseTextBar" XPos="172" YPos="127" Width="7" Height="18" />
     <Image Name="MultiListTop" XPos="181" YPos="81" Width="6" Height="7" />
     <Image Name="StaticBottom" XPos="52" YPos="100" Width="6" Height="6" />
-    <Image Name="SysAreaRight" XPos="122" YPos="193" Width="13" Height="24" />
+
     <Image Name="TitlebarLeft" XPos="68" YPos="2" Width="8" Height="24" />
     <Image Name="CheckboxHover" XPos="110" YPos="30" Width="12" Height="12" />
     <Image Name="EditBoxMiddle" XPos="47" YPos="108" Width="4" Height="25" />
     <Image Name="ListboxBottom" XPos="52" YPos="99" Width="6" Height="7" />
     <Image Name="MultiListLeft" XPos="170" YPos="92" Width="7" Height="6" />
     <Image Name="StaticTopLeft" XPos="41" YPos="78" Width="6" Height="6" />
-    <Image Name="SysAreaMiddle" XPos="107" YPos="193" Width="12" Height="24" />
+
     <Image Name="TitlebarRight" XPos="92" YPos="193" Width="12" Height="24" />
     <Image Name="TooltipMiddle" XPos="72" YPos="171" Width="6" Height="6" />
     <Image Name="VertScrollTop" XPos="182" YPos="2" Width="20" Height="8" />
@@ -66,7 +66,7 @@
     <Image Name="MouseNoSoCursor" XPos="221" YPos="127" Width="8" Height="18" />
     <Image Name="MouseNwSeCursor" XPos="230" YPos="126" Width="14" Height="14" />
     <Image Name="MultiListBottom" XPos="181" YPos="102" Width="6" Height="7" />
-    <Image Name="NewTitlebarLeft" XPos="61" YPos="193" Width="13" Height="24" />
+
     <Image Name="PopupMenuMiddle" XPos="191" YPos="209" Width="1" Height="1" />
     <Image Name="ProgressBarLeft" XPos="71" YPos="74" Width="7" Height="12" />
     <Image Name="RadioButtonMark" XPos="124" YPos="16" Width="12" Height="12" />
@@ -81,7 +81,7 @@
     <Image Name="ComboboxEditLeft" XPos="138" YPos="2" Width="8" Height="16" />
     <Image Name="ComboboxListLeft" XPos="138" YPos="48" Width="8" Height="8" />
     <Image Name="MultiListTopLeft" XPos="170" YPos="81" Width="7" Height="7" />
-    <Image Name="NewTitlebarRight" XPos="92" YPos="193" Width="12" Height="24" />
+
     <Image Name="ProgressBarRight" XPos="88" YPos="74" Width="6" Height="12" />
     <Image Name="RadioButtonHover" XPos="124" YPos="30" Width="12" Height="12" />
     <Image Name="SpinnerDownHover" XPos="82" YPos="118" Width="10" Height="6" />
@@ -109,7 +109,7 @@
     <Image Name="ListboxBottomLeft" XPos="41" YPos="99" Width="7" Height="7" />
     <Image Name="MultiListBackdrop" XPos="181" YPos="92" Width="6" Height="6" />
     <Image Name="MultiListTopRight" XPos="191" YPos="81" Width="7" Height="7" />
-    <Image Name="NewTitlebarMiddle" XPos="77" YPos="193" Width="12" Height="24" />
+
     <Image Name="PopupMenuFrameTop" XPos="191" YPos="204" Width="1" Height="2" />
     <Image Name="ProgressBarMiddle" XPos="80" YPos="74" Width="6" Height="12" />
     <Image Name="RadioButtonNormal" XPos="124" YPos="2" Width="12" Height="12" />
@@ -243,4 +243,10 @@
     <Image Name="MiniHorzScrollThumbMiddleNormal" XPos="239" YPos="87" Width="5" Height="7" />
     <Image Name="MiniVertScrollThumbBottomNormal" XPos="214" YPos="76" Width="7" Height="5" />
     <Image Name="MiniVertScrollThumbMiddleNormal" XPos="214" YPos="65" Width="7" Height="5" />
+          
+    <Image Name="NewTitlebarLeft" XPos="61" YPos="127" Width="13" Height="16" />
+    <Image Name="NewTitlebarMiddle" XPos="77" YPos="127" Width="12" Height="16" />
+    <Image Name="NewTitlebarRight" XPos="92" YPos="127" Width="12" Height="16" />
+    <Image Name="SysAreaMiddle" XPos="107" YPos="127" Width="12" Height="16" />
+    <Image Name="SysAreaRight" XPos="122" YPos="127" Width="13" Height="16" />    
 </Imageset>
