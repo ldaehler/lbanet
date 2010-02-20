@@ -89,6 +89,10 @@ public:
 	{
 		using namespace CEGUI;
 
+		if (d_selected && d_selectBrush != 0)
+			d_selectBrush->draw(buffer, targetRect, clipper,
+								getModulateAlphaColourRect(d_selectCols, alpha));
+
 		if (!d_renderedStringValid)
 			parseTextString();
 

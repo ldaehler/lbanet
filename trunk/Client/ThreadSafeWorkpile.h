@@ -98,6 +98,12 @@ public:
 		std::string message;
 	};
 
+	struct QuestUpdate
+	{
+		bool NeedUpdate;
+		bool NeedReset;
+	};
+
 
 	//! destructor
 	~ThreadSafeWorkpile();
@@ -404,10 +410,10 @@ public:
 	void GetQuestFinished(std::vector<long> & vec);
 
 	//! called when questbook needs an update
-	void NeedQuestBookUpdate();
+	void NeedQuestBookUpdate(bool reset);
 
 	//! check if update needed
-	bool QuestBookUpdateNeeded();
+	QuestUpdate QuestBookUpdateNeeded();
 
 
 
@@ -420,8 +426,10 @@ protected:
 			m_player_id(-1), m_new_actor_state(false), m_name_color_changed(false),
 			m_world_changed(false), m_player_pos_info_updated(false), m_waiting_container_info(false),
 			m_updated_container(false), m_exchanged_container(false), m_closed_container(false),
-			m_mplayer(NULL), m_explayers(NULL), m_update_questbook(false)
-	{}
+			m_mplayer(NULL), m_explayers(NULL)
+	{
+		m_update_questbook.NeedUpdate = false;
+	}
 
 	ThreadSafeWorkpile(const ThreadSafeWorkpile &);
 	const ThreadSafeWorkpile & operator=(const ThreadSafeWorkpile &);
@@ -558,7 +566,7 @@ private:
 
 	std::vector<long>							m_quest_started;
 	std::vector<long>							m_quest_ended;
-	bool										m_update_questbook;
+	QuestUpdate									m_update_questbook;
 
 	static ThreadSafeWorkpile *					_singletonInstance;
 };
