@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF8" ?>
+﻿<?xml version="1.0" encoding="UTF8" ?>
 <texts>
 <text id="0">Museo de la Marina, tarifas: @ Niños ... 3 Kashes @ Adultos ... 5 Kashes.</text>
 <text id="1">Bienvenido a Proxim-City @ (Isla Próxima).</text>
@@ -86,20 +86,20 @@
 <text id="83">¡Hola!</text>
 <text id="84">Me interesa la historia del pirata El Tuerto.</text>
 <text id="85">No hay más combustible.</text>
-<text id="86"></text>
-<text id="87"></text>
-<text id="88"></text>
-<text id="89"></text>
-<text id="90"></text>
-<text id="91"></text>
-<text id="92"></text>
-<text id="93"></text>
-<text id="94"></text>
-<text id="95"></text>
-<text id="96"></text>
-<text id="97"></text>
-<text id="98"></text>
-<text id="99"></text>
+<text id="86">Ok, I will try to find one for you.</text>
+<text id="87">Thanks, come back as soon as you can!</text>
+<text id="88">I might have found what you where looking for...</text>
+<text id="89">No no, I need a hair dryer, nothing else!</text>
+<text id="90">Bye!</text>
+<text id="91">I see, let's talk about something else...</text>
+<text id="92">(continue)</text>
+<text id="93">Yes sure!</text>
+<text id="94">Thanks a lot! Here you go.</text>
+<text id="95">So did you found a hair dryer?</text>
+<text id="96">Do you know where I could find a hair dryer?</text>
+<text id="97">I have seen a salesman wandering in town with his suitcase. You might want to go and ask him.</text>
+<text id="98">Thank you, bye!</text>
+<text id="99">Great! I take one!</text>
 <text id="100"></text>
 <text id="101"></text>
 <text id="102"></text>

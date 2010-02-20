@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF8" ?>
+﻿<?xml version="1.0" encoding="UTF8" ?>
 <texts>
 <text id="0">Marinemuseum, Eintritt : @ Kinder ... 3 Kashes @ Erwachsene ... 5 Kashes. </text>
 <text id="1">Willkommen in Proxim-City @ (Insel Proxima). </text>
@@ -86,20 +86,20 @@
 <text id="83">Hallo !</text>
 <text id="84">Ich interessiere mich für die Geschichte des Piraten EinAuge.</text>
 <text id="85">Kein Kraftstoff mehr.</text>
-<text id="86"></text>
-<text id="87"></text>
-<text id="88"></text>
-<text id="89"></text>
-<text id="90"></text>
-<text id="91"></text>
-<text id="92"></text>
-<text id="93"></text>
-<text id="94"></text>
-<text id="95"></text>
-<text id="96"></text>
-<text id="97"></text>
-<text id="98"></text>
-<text id="99"></text>
+<text id="86">Ok, I will try to find one for you.</text>
+<text id="87">Thanks, come back as soon as you can!</text>
+<text id="88">I might have found what you where looking for...</text>
+<text id="89">No no, I need a hair dryer, nothing else!</text>
+<text id="90">Bye!</text>
+<text id="91">I see, let's talk about something else...</text>
+<text id="92">(continue)</text>
+<text id="93">Yes sure!</text>
+<text id="94">Thanks a lot! Here you go.</text>
+<text id="95">So did you found a hair dryer?</text>
+<text id="96">Do you know where I could find a hair dryer?</text>
+<text id="97">I have seen a salesman wandering in town with his suitcase. You might want to go and ask him.</text>
+<text id="98">Thank you, bye!</text>
+<text id="99">Great! I take one!</text>
 <text id="100"></text>
 <text id="101"></text>
 <text id="102"></text>
