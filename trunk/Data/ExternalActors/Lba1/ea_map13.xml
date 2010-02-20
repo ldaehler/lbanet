@@ -2,15 +2,85 @@
 <actors>
     <actor id="12" type="12" posX="43.593750" posY="10.000000" posZ="3.187500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="184.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="17,0" />
     <actor id="13" type="12" posX="6.000000" posY="13.000000" posZ="11.468750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="249.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="12,0" />
-    <actor id="14" type="12" posX="57.000000" posY="0.000000" posZ="57.062500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="13,0" />
-    <actor id="15" type="12" posX="57.000000" posY="0.000000" posZ="58.062500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="13,0" />
+   
+    
+    <actor id="14" type="12" posX="57.000000" posY="0.000000" posZ="57.062500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="13,0">
+    	<Dialog StandardQuitDialog="275" StandardGoToRootDialog="276">
+    		<DialogEntry type="3">
+			<DialogEntry type="0" TextId="172">
+			</DialogEntry>
+    		</DialogEntry>
+    		
+       		<DialogTree>	
+        		<PlayerChoice type="1" TextId="277">
+				<Condition type="3" QuestId="3">		
+				</Condition>
+       			       	<DialogTree TextId="278" GoToRootEnabled="0" CustomQuitDialog="279">
+        			</DialogTree>	       	
+       			</PlayerChoice>
+    		</DialogTree> 		
+	</Dialog>     
+    </actor>     
+    
+    <actor id="15" type="12" posX="57.000000" posY="0.000000" posZ="58.062500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="13,0">
+    	<Dialog StandardQuitDialog="275" StandardGoToRootDialog="276">
+    		<DialogEntry type="3">
+			<DialogEntry type="0" TextId="172">
+			</DialogEntry>
+    		</DialogEntry>
+    		
+       		<DialogTree>	
+        		<PlayerChoice type="1" TextId="277">
+				<Condition type="3" QuestId="3">		
+				</Condition>
+       			       	<DialogTree TextId="278" GoToRootEnabled="0" CustomQuitDialog="279">
+        			</DialogTree>	       	
+       			</PlayerChoice>
+    		</DialogTree> 		
+	</Dialog>     
+    </actor>     
+    
     <actor id="16" type="12" posX="13.000000" posY="10.000000" posZ="32.843750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="21,0" />
     <actor id="17" type="12" posX="18.906250" posY="13.000000" posZ="20.968750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="7,0" />
     <actor id="18" type="12" posX="9.000000" posY="13.000000" posZ="29.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="405.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="16,0" />
     <actor id="19" type="12" posX="29.000000" posY="10.000000" posZ="48.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="153.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="7,0" />
-    <actor id="20" type="12" posX="11.000000" posY="10.000000" posZ="44.125000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="423.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="13,0" />
+    <actor id="20" type="12" posX="11.000000" posY="10.000000" posZ="44.125000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="423.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="13,0">
+    	<Dialog StandardQuitDialog="275" StandardGoToRootDialog="276">
+    		<DialogEntry type="3">
+			<DialogEntry type="0" TextId="172">
+			</DialogEntry>
+    		</DialogEntry>
+    		
+       		<DialogTree>	
+        		<PlayerChoice type="1" TextId="277">
+				<Condition type="3" QuestId="3">		
+				</Condition>
+       			       	<DialogTree TextId="278" GoToRootEnabled="0" CustomQuitDialog="279">
+        			</DialogTree>	       	
+       			</PlayerChoice>
+    		</DialogTree> 		
+	</Dialog>     
+    </actor>     
+    
     <actor id="21" type="12" posX="37.687500" posY="0.000000" posZ="40.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="37,0" />
-    <actor id="22" type="12" posX="46.218750" posY="4.000000" posZ="52.875000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="15,0" />
+    <actor id="22" type="12" posX="46.218750" posY="4.000000" posZ="52.875000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="15,0">
+    	<Dialog StandardQuitDialog="275" StandardGoToRootDialog="276">
+    		<DialogEntry type="3">
+			<DialogEntry type="0" TextId="172">
+			</DialogEntry>
+    		</DialogEntry>
+    		
+       		<DialogTree>	
+        		<PlayerChoice type="1" TextId="277">
+				<Condition type="3" QuestId="3">		
+				</Condition>
+       			       	<DialogTree TextId="278" GoToRootEnabled="0" CustomQuitDialog="279">
+        			</DialogTree>	       	
+       			</PlayerChoice>
+    		</DialogTree> 		
+	</Dialog>     
+    </actor>         
+    
     <actor id="23" type="12" posX="54.093750" posY="0.000000" posZ="41.218750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="21,0" />
     <actor id="24" type="12" posX="38.000000" posY="11.000000" posZ="1.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="7,0" />
     <actor id="25" type="12" posX="47.000000" posY="3.000000" posZ="22.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="11,0" />
