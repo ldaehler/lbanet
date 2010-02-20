@@ -35,13 +35,59 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "QuestHandler.h"
 
 
+
+// string helper function
+static void Trim(std::string& str)
+{
+	std::string::size_type pos = str.find_last_not_of(' ');
+	if(pos != std::string::npos)
+	{
+		str.erase(pos + 1);
+		pos = str.find_first_not_of(' ');
+
+		if(pos != std::string::npos)
+			str.erase(0, pos);
+	}
+	else
+		str.clear();
+
+}
+
+// string helper function
+static void StringTokenize(const std::string& str,
+						std::vector<std::string>& tokens,
+						const std::string& delimiters)
+{
+	// Skip delimiters at beginning.
+	std::string::size_type lastPos = str.find_first_not_of(delimiters, 0);
+	// Find first "non-delimiter".
+	std::string::size_type pos     = str.find_first_of(delimiters, lastPos);
+
+
+
+	while (std::string::npos != pos || std::string::npos != lastPos)
+	{
+		// Found a token, add it to the vector.
+		std::string tmp = str.substr(lastPos, pos - lastPos);
+		Trim(tmp);
+		tokens.push_back(tmp);
+
+		// Skip delimiters.  Note the "not_of"
+		lastPos = str.find_first_not_of(delimiters, pos);
+
+		// Find next "non-delimiter"
+		pos = str.find_first_of(delimiters, lastPos);
+	}
+}
+
+
 // Sample sub-class for ListboxTextItem that auto-sets the selection brush
 // image.  This saves doing it manually every time in the code.
 class MyTreeItem : public CEGUI::TreeItem
 {
 public:
-	MyTreeItem (const CEGUI::String& text, const std::vector<CEGUI::String> & Desc, long QuestId = -1) 
-		: CEGUI::TreeItem(text), Description(Desc)
+	MyTreeItem (const CEGUI::String& text, const std::vector<CEGUI::String> & Desc, long QId = -1) 
+		: CEGUI::TreeItem(text), Description(Desc), QuestId(QId)
     {
 		if(Desc.size() > 0)
 			setSelectionBrushImage("TaharezLook", "MultiListSelectionBrush");
@@ -56,6 +102,7 @@ public:
 constructor
 ***********************************************************/
 JournalBox::JournalBox()
+: _first_book_init(true)
 {
 
 
@@ -83,6 +130,56 @@ JournalBox::~JournalBox()
 		ConfigurationManager::GetInstance()->SetFloat("Gui.JournalBox.OffsetSizeX", frw->getWidth().d_offset);
 		ConfigurationManager::GetInstance()->SetFloat("Gui.JournalBox.OffsetSizeY", frw->getHeight().d_offset);
 		ConfigurationManager::GetInstance()->SetBool("Gui.JournalBox.Visible", frw->isVisible());
+
+		{
+			std::string qtreedown;
+			std::string selected;
+			std::map<std::string, CEGUI::TreeItem *>::iterator itm =	_mapquestarea.begin();
+			std::map<std::string, CEGUI::TreeItem *>::iterator endm =	_mapquestarea.end();
+			for(; itm != endm; ++itm)
+			{
+				if(itm->second->getIsOpen())
+				{
+					qtreedown += "##" + itm->first;
+				}
+
+				std::vector<CEGUI::TreeItem*> items = itm->second->getItemList();
+				for(size_t i=0; i<items.size(); ++i)
+				{
+					if(items[i]->isSelected())
+						selected = items[i]->getText().c_str();
+				}
+			}
+
+			ConfigurationManager::GetInstance()->SetString("Gui.JournalBox.QuestTreeOpen", qtreedown);
+			ConfigurationManager::GetInstance()->SetString("Gui.JournalBox.QuestTreeSelected", selected);
+		}
+
+		{
+			std::string qtreedown;
+			std::string selected;
+			std::map<std::string, CEGUI::TreeItem *>::iterator itm =	_mapquestdonearea.begin();
+			std::map<std::string, CEGUI::TreeItem *>::iterator endm =	_mapquestdonearea.end();
+			for(; itm != endm; ++itm)
+			{
+				if(itm->second->getIsOpen())
+				{
+					qtreedown += "##" + itm->first;
+				}
+
+				std::vector<CEGUI::TreeItem*> items = itm->second->getItemList();
+				for(size_t i=0; i<items.size(); ++i)
+				{
+					if(items[i]->isSelected())
+						selected = items[i]->getText().c_str();
+				}
+			}
+
+			ConfigurationManager::GetInstance()->SetString("Gui.JournalBox.QuestDoneTreeOpen", qtreedown);
+			ConfigurationManager::GetInstance()->SetString("Gui.JournalBox.QuestDoneTreeSelected", selected);
+		}
+
+
 	}
 	catch(CEGUI::Exception &ex)
 	{
@@ -143,6 +240,18 @@ void JournalBox::Initialize(CEGUI::Window* Root)
 			frw->hide();
 
 
+		// get quest topic tree which should be opened
+		std::string treeqopen, treedqopen;
+		ConfigurationManager::GetInstance()->GetString("Gui.JournalBox.QuestTreeOpen", treeqopen);
+		ConfigurationManager::GetInstance()->GetString("Gui.JournalBox.QuestDoneTreeOpen", treedqopen);
+
+		ConfigurationManager::GetInstance()->GetString("Gui.JournalBox.QuestTreeSelected", _selected_tree_quests);
+		ConfigurationManager::GetInstance()->GetString("Gui.JournalBox.QuestDoneTreeSelected", _selected_tree_done_quests);
+
+		StringTokenize(treeqopen, _open_tree_quests, "##");
+		StringTokenize(treedqopen, _open_tree_done_quests, "##");
+
+
 		static_cast<CEGUI::TabControl *> (
 			CEGUI::WindowManager::getSingleton().getWindow("Root/JournalWin/tab"))->setSelectedTab("Root/JournalWin/tab/questtab");
 	}
@@ -186,10 +295,38 @@ process what is needed in the game GUI
 ***********************************************************/
 void JournalBox::Process()
 {
-	if(ThreadSafeWorkpile::getInstance()->QuestBookUpdateNeeded())
-		RebuildBook();
+	ThreadSafeWorkpile::QuestUpdate qu = ThreadSafeWorkpile::getInstance()->QuestBookUpdateNeeded();
+	if(qu.NeedUpdate)
+		RebuildBook(qu.NeedReset);
 }
 
+
+
+/***********************************************************
+display description
+***********************************************************/
+void JournalBox::DisplayDescription (const std::vector<CEGUI::String> & text, bool questdone)
+{
+	CEGUI::Window* descwin = NULL;
+	if(questdone)
+		descwin = CEGUI::WindowManager::getSingleton().getWindow("Root/JournalWin/tab/questdonetab/Description");
+	else
+		descwin = CEGUI::WindowManager::getSingleton().getWindow("Root/JournalWin/tab/questtab/Description");
+
+	bool firsttime = true;
+	descwin->setText("");
+
+	for(size_t i=0; i<text.size(); ++i)
+	{
+		if(firsttime)
+		{
+			firsttime = false;
+			descwin->setText(text[i]);
+		}
+		else
+			descwin->appendText(text[i]);
+	}
+}
 
 
 /***********************************************************
@@ -201,27 +338,8 @@ bool JournalBox::HandleQuestTreeSelected (const CEGUI::EventArgs& e)
 		CEGUI::WindowManager::getSingleton().getWindow("Root/JournalWin/tab/questtab/Tree"));
 
 	const MyTreeItem * it = static_cast<const MyTreeItem *>(tree->getFirstSelectedItem());
-
 	if(it)
-	{
-		CEGUI::Window* descwin = 
-			CEGUI::WindowManager::getSingleton().getWindow("Root/JournalWin/tab/questtab/Description");
-
-		bool firsttime = true;
-		descwin->setText("");
-
-		for(size_t i=0; i<it->Description.size(); ++i)
-		{
-			if(firsttime)
-			{
-				firsttime = false;
-				descwin->setText(it->Description[i]);
-			}
-			else
-				descwin->appendText(it->Description[i]);
-		}
-	}
-	
+		DisplayDescription (it->Description, false);
 
 	return true;
 }
@@ -236,26 +354,8 @@ bool JournalBox::HandleQuestDoneTreeSelected (const CEGUI::EventArgs& e)
 		CEGUI::WindowManager::getSingleton().getWindow("Root/JournalWin/tab/questdonetab/Tree"));
 
 	const MyTreeItem * it = static_cast<const MyTreeItem *>(tree->getFirstSelectedItem());
-
 	if(it)
-	{
-		CEGUI::Window* descwin = 
-			CEGUI::WindowManager::getSingleton().getWindow("Root/JournalWin/tab/questdonetab/Description");
-
-		bool firsttime = true;
-		descwin->setText("");
-
-		for(size_t i=0; i<it->Description.size(); ++i)
-		{
-			if(firsttime)
-			{
-				firsttime = false;
-				descwin->setText(it->Description[i]);
-			}
-			else
-				descwin->appendText(it->Description[i]);
-		}
-	}
+		DisplayDescription (it->Description, true);
 	
 
 	return true;
@@ -266,26 +366,56 @@ bool JournalBox::HandleQuestDoneTreeSelected (const CEGUI::EventArgs& e)
 /***********************************************************
 call to regenerate the quest book display
 ***********************************************************/
-void JournalBox::RebuildBook()
+void JournalBox::RebuildBook(bool reset)
 {
 	CEGUI::Tree * tree = static_cast<CEGUI::Tree *> (
 		CEGUI::WindowManager::getSingleton().getWindow("Root/JournalWin/tab/questtab/Tree"));
-	tree->resetList();
 
 	CEGUI::Tree * tree2 = static_cast<CEGUI::Tree *> (
 		CEGUI::WindowManager::getSingleton().getWindow("Root/JournalWin/tab/questdonetab/Tree"));
-	tree2->resetList();
 
-	CEGUI::WindowManager::getSingleton().getWindow("Root/JournalWin/tab/questtab/Description")->setText("");
-	CEGUI::WindowManager::getSingleton().getWindow("Root/JournalWin/tab/questdonetab/Description")->setText("");
+	if(reset)
+	{
+		tree->resetList();
+		tree2->resetList();
+		_mapquestarea.clear();
+		_mapquestdonearea.clear();
+		CEGUI::WindowManager::getSingleton().getWindow("Root/JournalWin/tab/questtab/Description")->setText("");
+		CEGUI::WindowManager::getSingleton().getWindow("Root/JournalWin/tab/questdonetab/Description")->setText("");
+		_first_book_init = true;
+	}
 
 	std::vector<long> started = QuestHandler::getInstance()->GetQuestsStarted();
 	std::vector<long> finished = QuestHandler::getInstance()->GetQuestsFinished();
 
 	// rebuild quests
 	{
-		std::map<std::string, CEGUI::TreeItem *> tmpmap;
+		// remove extra quests
+		std::map<std::string, CEGUI::TreeItem *>::iterator itmap = _mapquestarea.begin();
+		while(itmap != _mapquestarea.end())
+		{
+			bool remove = false;
+			std::vector<CEGUI::TreeItem*> items = itmap->second->getItemList();
+			for(size_t i=0; i<items.size(); ++i)
+			{
+				if(std::find(started.begin(), started.end(), static_cast<MyTreeItem *> (items[i])->QuestId) == started.end())
+				{	
+					itmap->second->removeItem(items[i]);
+					if(itmap->second->getItemCount() == 0)
+						remove = true;
+				}
+			}
 
+			if(remove)
+			{
+				tree->removeItem(itmap->second);
+				itmap = _mapquestarea.erase(itmap);
+			}
+			else
+				++itmap;
+		}
+
+		// add missing quests
 		for(size_t i=0; i<started.size(); ++i)
 		{
 			QuestInfo qi = QuestHandler::getInstance()->GetQuestInfo(started[i]);
@@ -297,21 +427,54 @@ void JournalBox::RebuildBook()
 				std::vector<CEGUI::String> listt;
 				CreateTextList(qi.Description, listt);
 
-				CEGUI::TreeItem * titm = new MyTreeItem((const unsigned char *)qi.Tittle.c_str(), listt, qi.Id);
 
 
-				std::map<std::string, CEGUI::TreeItem *>::iterator itm = tmpmap.find(qi.QuestArea);
-				if(itm != tmpmap.end())
+				std::map<std::string, CEGUI::TreeItem *>::iterator itm = _mapquestarea.find(qi.QuestArea);
+				if(itm != _mapquestarea.end())
 				{
-					itm->second->addItem(titm);
+					bool found = false;
+					std::vector<CEGUI::TreeItem*> items = itm->second->getItemList();
+					for(size_t i=0; i<items.size(); ++i)
+					{
+						if(static_cast<MyTreeItem *> (items[i])->QuestId == qi.Id)
+						{	
+							found = true;
+							break;
+						}
+					}
+
+					if(!found)
+					{
+						MyTreeItem * titm = new MyTreeItem((const unsigned char *)qi.Tittle.c_str(), listt, qi.Id);
+						itm->second->addItem(titm);
+
+						if(_first_book_init)
+						{
+							if(_selected_tree_quests == qi.Tittle)
+							{
+								titm->setSelected(true);
+								DisplayDescription (titm->Description, false);
+							}
+						}
+					}
 				}
 				else
 				{
+					MyTreeItem * titm = new MyTreeItem((const unsigned char *)qi.Tittle.c_str(), listt, qi.Id);
 					std::vector<CEGUI::String> empty;
 					CEGUI::TreeItem * root = new MyTreeItem((const unsigned char *)qi.QuestArea.c_str(), empty);
 					tree->addItem(root);
 					root->addItem(titm);
-					tmpmap[qi.QuestArea] = root;
+					_mapquestarea[qi.QuestArea] = root;
+
+					if(_first_book_init)
+					{
+						if(_selected_tree_quests == qi.Tittle)
+						{
+							titm->setSelected(true);
+							DisplayDescription (titm->Description, false);
+						}
+					}
 				}
 			}
 		}
@@ -320,8 +483,32 @@ void JournalBox::RebuildBook()
 
 	// rebuild quests done
 	{
-		std::map<std::string, CEGUI::TreeItem *> tmpmap;
+		// remove extra quests
+		std::map<std::string, CEGUI::TreeItem *>::iterator itmap = _mapquestdonearea.begin();
+		while(itmap != _mapquestdonearea.end())
+		{
+			bool remove = false;
+			std::vector<CEGUI::TreeItem*> items = itmap->second->getItemList();
+			for(size_t i=0; i<items.size(); ++i)
+			{
+				if(std::find(finished.begin(), finished.end(), static_cast<MyTreeItem *> (items[i])->QuestId) == finished.end())
+				{	
+					itmap->second->removeItem(items[i]);
+					if(itmap->second->getItemCount() == 0)
+						remove = true;
+				}
+			}
 
+			if(remove)
+			{
+				tree->removeItem(itmap->second);
+				itmap = _mapquestdonearea.erase(itmap);
+			}
+			else
+				++itmap;
+		}
+
+		// add missing quests
 		for(size_t i=0; i<finished.size(); ++i)
 		{
 			QuestInfo qi = QuestHandler::getInstance()->GetQuestInfo(finished[i]);
@@ -333,22 +520,91 @@ void JournalBox::RebuildBook()
 				std::vector<CEGUI::String> listt;
 				CreateTextList(qi.Description, listt);
 
-				CEGUI::TreeItem * titm = new MyTreeItem((const unsigned char *)qi.Tittle.c_str(), listt, qi.Id);
 
 
-				std::map<std::string, CEGUI::TreeItem *>::iterator itm = tmpmap.find(qi.QuestArea);
-				if(itm != tmpmap.end())
+				std::map<std::string, CEGUI::TreeItem *>::iterator itm = _mapquestdonearea.find(qi.QuestArea);
+				if(itm != _mapquestdonearea.end())
 				{
-					itm->second->addItem(titm);
+					bool found = false;
+					std::vector<CEGUI::TreeItem*> items = itm->second->getItemList();
+					for(size_t i=0; i<items.size(); ++i)
+					{
+						if(static_cast<MyTreeItem *> (items[i])->QuestId == qi.Id)
+						{	
+							found = true;
+							break;
+						}
+					}
+
+					if(!found)
+					{
+						MyTreeItem * titm = new MyTreeItem((const unsigned char *)qi.Tittle.c_str(), listt, qi.Id);
+						itm->second->addItem(titm);
+
+						if(_first_book_init)
+						{
+							if(_selected_tree_done_quests == qi.Tittle)
+							{
+								titm->setSelected(true);
+								DisplayDescription (titm->Description, true);
+							}
+						}
+					}
 				}
 				else
 				{
+					MyTreeItem * titm = new MyTreeItem((const unsigned char *)qi.Tittle.c_str(), listt, qi.Id);
 					std::vector<CEGUI::String> empty;
 					CEGUI::TreeItem * root = new MyTreeItem((const unsigned char *)qi.QuestArea.c_str(), empty);
 					tree2->addItem(root);
 					root->addItem(titm);
-					tmpmap[qi.QuestArea] = root;
+					_mapquestdonearea[qi.QuestArea] = root;
+
+					if(_first_book_init)
+					{
+						if(_selected_tree_done_quests == qi.Tittle)
+						{
+							titm->setSelected(true);
+							DisplayDescription (titm->Description, true);
+						}
+					}
 				}
+			}
+		}
+	}
+
+
+	if(!_first_book_init)
+	{
+		if(tree->getFirstSelectedItem() == NULL)
+			CEGUI::WindowManager::getSingleton().getWindow("Root/JournalWin/tab/questtab/Description")->setText("");
+		
+		if(tree2->getFirstSelectedItem() == NULL)
+			CEGUI::WindowManager::getSingleton().getWindow("Root/JournalWin/tab/questdonetab/Description")->setText("");
+	}
+
+	if(_first_book_init)
+	{
+		_first_book_init = false;
+
+		{
+			std::map<std::string, CEGUI::TreeItem *>::iterator itm =	_mapquestarea.begin();
+			std::map<std::string, CEGUI::TreeItem *>::iterator endm =	_mapquestarea.end();
+			for(; itm != endm; ++itm)
+			{
+				if(std::find(_open_tree_quests.begin(), _open_tree_quests.end(), itm->first) != _open_tree_quests.end())
+					itm->second->toggleIsOpen();
+			}
+
+		}
+
+		{
+			std::map<std::string, CEGUI::TreeItem *>::iterator itm =	_mapquestdonearea.begin();
+			std::map<std::string, CEGUI::TreeItem *>::iterator endm =	_mapquestdonearea.end();
+			for(; itm != endm; ++itm)
+			{
+				if(std::find(_open_tree_done_quests.begin(), _open_tree_done_quests.end(), itm->first) != _open_tree_done_quests.end())
+					itm->second->toggleIsOpen();
 			}
 		}
 	}

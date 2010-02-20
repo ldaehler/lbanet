@@ -34,6 +34,7 @@ namespace CEGUI
 	class EventArgs;
 	class Listbox;
 	class String;
+	class TreeItem;
 }
 
 #include <string>
@@ -79,14 +80,25 @@ class JournalBox
 
 protected:
 	//! call to regenerate the quest book display
-	void RebuildBook();
+	void RebuildBook(bool reset);
 
 	//! create description list
 	void CreateTextList(std::string text, std::vector<CEGUI::String> & list);
 
+	//! display description
+	void DisplayDescription(const std::vector<CEGUI::String> & text, bool questdone);
+
 private:
 	CEGUI::Window*			_myBox;
 
+	std::map<std::string, CEGUI::TreeItem *>	_mapquestarea;
+	std::map<std::string, CEGUI::TreeItem *>	_mapquestdonearea;
+
+	std::vector<std::string>					_open_tree_quests;
+	std::vector<std::string>					_open_tree_done_quests;
+	std::string									_selected_tree_quests;
+	std::string									_selected_tree_done_quests;
+	bool										_first_book_init;
 };
 
 #endif

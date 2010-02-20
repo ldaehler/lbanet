@@ -1087,19 +1087,20 @@ void ThreadSafeWorkpile::GetQuestFinished(std::vector<long> & vec)
 /***********************************************************
 called when questbook needs an update
 ***********************************************************/
-void ThreadSafeWorkpile::NeedQuestBookUpdate()
+void ThreadSafeWorkpile::NeedQuestBookUpdate(bool reset)
 {
 	IceUtil::Mutex::Lock lock(m_mutex_questbook_update);
-	m_update_questbook = true;
+	m_update_questbook.NeedUpdate = true;
+	m_update_questbook.NeedReset = reset;
 }
 
 /***********************************************************
 check if update needed
 ***********************************************************/
-bool ThreadSafeWorkpile::QuestBookUpdateNeeded()
+ThreadSafeWorkpile::QuestUpdate ThreadSafeWorkpile::QuestBookUpdateNeeded()
 {
 	IceUtil::Mutex::Lock lock(m_mutex_questbook_update);
-	bool res = m_update_questbook;
-	m_update_questbook = false;
+	QuestUpdate res = m_update_questbook;
+	m_update_questbook.NeedUpdate = false;
 	return res;
 }

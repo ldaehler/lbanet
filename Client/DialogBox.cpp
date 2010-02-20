@@ -41,6 +41,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // image.  This saves doing it manually every time in the code.
 class MyDialogItem : public CEGUI::ListboxTextItem
 {
+private:
+	CEGUI::FormattedRenderedString * d_formattedRenderedString;
+
 public:
     MyDialogItem (const CEGUI::String& text, bool SelectionQuitDialog, 
 						bool SelectionTrade, bool ResetDialog, size_t index) 
@@ -49,13 +52,65 @@ public:
 		_SelectionIdx(index)
     {
         setSelectionBrushImage("TaharezLook", "MultiListSelectionBrush");
+
+        d_formattedRenderedString =
+            new CEGUI::RenderedStringWordWrapper
+                <CEGUI::LeftAlignedRenderedString>(d_renderedString);
     }
+
+	//! destructor
+    ~MyDialogItem ()
+    {
+        delete d_formattedRenderedString;
+    }
+
+	/*************************************************************************
+		Required implementations of pure virtuals from the base class.
+	*************************************************************************/
+    CEGUI::Size getPixelSize(void) const
+	{
+		using namespace CEGUI;
+
+		if (!d_renderedStringValid)
+			parseTextString();
+
+		CEGUI::Size parentsi = getOwnerWindow()->getInnerRectClipper().getSize();
+		parentsi.d_width -= 20; // TODO - change constant by the real value of the scrollbar
+		
+        d_formattedRenderedString->format(parentsi);
+		return CEGUI::Size(parentsi.d_width, d_formattedRenderedString->getVerticalExtent());
+	}
+
+
+    void draw(CEGUI::GeometryBuffer& buffer, const CEGUI::Rect& targetRect, float alpha, 
+					const CEGUI::Rect* clipper) const
+	{
+		using namespace CEGUI;
+
+		if (d_selected && d_selectBrush != 0)
+			d_selectBrush->draw(buffer, targetRect, clipper,
+								getModulateAlphaColourRect(d_selectCols, alpha));
+
+		if (!d_renderedStringValid)
+			parseTextString();
+
+        d_formattedRenderedString->format(targetRect.getSize());
+
+		const ColourRect final_colours(
+			getModulateAlphaColourRect(ColourRect(0xFFFFFFFF), alpha));
+
+        d_formattedRenderedString->draw(buffer,
+                                        targetRect.getPosition(),									
+										&final_colours, clipper);
+	}
 
 	bool _SelectionQuitDialog;
 	bool _SelectionTrade;
 	bool _SelectionResetDialog;
 	size_t _SelectionIdx;
 };
+
+
 
 
 /***********************************************************
