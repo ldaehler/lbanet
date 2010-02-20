@@ -105,3 +105,16 @@ Version 0.755 changes:
 - you can now use the action key to close the container window
 
 - you can now choose the amount of item you want to take/ put from/in the container when you drag and drop it.
+
+
+__________________________
+Version 0.8 changes:
+- added dialog mechanism. Now NPC can have extended conditionnnal dialog trees.
+
+- added quest feature. 
+
+- added journal in game (parchment icon)
+
+- 2 quests have been added in LbaxExpanded world for testing purpose. The first one is given by Baldino. For the second one just go have a look at Principal Island stables ;-)
+
+
