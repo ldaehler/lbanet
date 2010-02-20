@@ -1,8 +1,63 @@
 <?xml version="1.0" encoding="UTF8" ?>
 <actors>
-    <actor id="1" type="12" posX="52.468750" posY="3.000000" posZ="53.125000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="45.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="11,0" />
-    <actor id="2" type="12" posX="55.160156" posY="0.000000" posZ="50.386719" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="116.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="57,0" />
-    <actor id="3" type="12" posX="0.000000" posY="-1.000000" posZ="0.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="9,0" />
-    <actor id="4" type="12" posX="53.187500" posY="6.062500" posZ="60.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="18,0" />
+    <actor id="1" type="12" posX="55.00" posY="0.000000" posZ="52.0000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="45.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="11,0">
+    	<Dialog StandardQuitDialog="90" StandardGoToRootDialog="91">
+    		<DialogEntry type="3">
+			<DialogEntry type="1" TextId="47">
+				<Condition type="5" QuestId="1">		
+				</Condition>					
+			</DialogEntry>
+			
+			<DialogEntry type="1" TextId="95">
+				<Condition type="3" QuestId="1">		
+				</Condition>					
+			</DialogEntry>			
+					
+			<DialogEntry type="1" TextId="50">
+				<Condition type="4" QuestId="1">		
+				</Condition>					
+			</DialogEntry>			
+			
+			<DialogEntry type="0" TextId="55">
+			</DialogEntry>
+    		</DialogEntry>
+    		
+       		<DialogTree>	
+        		<PlayerChoice type="1" TextId="86">
+				<Condition type="5" QuestId="1">		
+				</Condition>
+       			       	<DialogTree TextId="87" GoToRootEnabled="0">
+       			       		<QuestToStart Id="1" />
+        			</DialogTree>	       	
+       			</PlayerChoice>        		
+       		
+         		<PlayerChoice type="3" TextId="88">
+				<Condition type="3" QuestId="1">		
+				</Condition>
+				<Condition type="6" QuestId="1">
+				</Condition>				
+       			       	<DialogTree TextId="48" GoToRootEnabled="0" QuitDialogEnabled="0">
+					<PlayerChoice type="0" TextId="92">
+						<DialogTree TextId="49" QuitDialogEnabled="0" CustomGoToRootDialog="24">
+							<PlayerChoice type="0" TextId="93">
+								<DialogTree TextId="94" GoToRootEnabled="0">
+									<QuestToTrigger Id="1" />
+								</DialogTree>							
+							</PlayerChoice>							
+						</DialogTree>	       	
+					</PlayerChoice>         			       	
+       			       		
+        			</DialogTree>
+        			<DialogTree TextId="89">
+        			</DialogTree>       			
+       			</PlayerChoice>	
+    		</DialogTree> 		
+	</Dialog>  
+    </actor>     
+    
+    
+    <actor id="2" type="0" posX="55.160156" posY="0.000000" posZ="50.386719" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="116.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="57,0" />
+    <actor id="3" type="0" posX="0.000000" posY="-1.000000" posZ="0.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="9,0" />
+    <actor id="4" type="0" posX="53.187500" posY="6.062500" posZ="60.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="18,0" />
 </actors>
 

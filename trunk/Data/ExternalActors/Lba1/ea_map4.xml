@@ -5,70 +5,8 @@
     <actor id="4" type="4" posX="4.999999" posY="15.100000" posZ="57.999969" sizeX="1.000000" sizeY="1.000000" sizeZ="1.000000" rotation="0.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="0" renderertarget="27" zoneSizeX="2.000000" zoneSizeY="2.000000" zoneSizeZ="2.000000" locked="0" keyid="0" hide="0" destroykey="0" OpenTransX="-2.000000" OpenTransY="0.400000" OpenTransZ="0.000000" OpenTransSpeedX="-0.004000" OpenTransSpeedY="0.010000" OpenTransSpeedZ="0.000000" />
     
     <actor id="5" type="12" posX="47.117188" posY="0.000000" posZ="9.265625" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="514.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="17,0" >
-    	<Dialog StandardQuitDialog="97" StandardGoToRootDialog="134">
-    		<DialogEntry type="3">
-			<DialogEntry type="1" TextId="196">
-				<Condition type="3" QuestId="2">		
-				</Condition>					
-			</DialogEntry>    		
-			<DialogEntry type="0" TextId="197">
-			</DialogEntry>
-    		</DialogEntry>
-    		
-       		<DialogTree>		
-         		<PlayerChoice type="3" TextId="198">
-				<Condition type="3" QuestId="2">		
-				</Condition>
-				<Condition type="6" QuestId="2">
-				</Condition>				
-       			       	<DialogTree TextId="199">
-       			       		<QuestToTrigger Id="2" />
-        			</DialogTree>
-        			<DialogTree TextId="200">
-        			</DialogTree>       			
-        			
-       			</PlayerChoice>     			
-
-       			<PlayerChoice type="0" TextId="141">
-       			       	<DialogTree TextId="78">
-        			</DialogTree>	       	
-       			</PlayerChoice>       			
-    		</DialogTree> 		
-	</Dialog>  
     </actor>     
-    
-    
     <actor id="6" type="12" posX="27.000000" posY="1.000000" posZ="20.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="453.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="12,0">
-    	<Dialog StandardQuitDialog="97" StandardGoToRootDialog="134">
-    		<DialogEntry type="3">
-			<DialogEntry type="1" TextId="196">
-				<Condition type="3" QuestId="3">		
-				</Condition>					
-			</DialogEntry>    		
-			<DialogEntry type="0" TextId="197">
-			</DialogEntry>
-    		</DialogEntry>
-    		
-       		<DialogTree>		
-         		<PlayerChoice type="3" TextId="198">
-				<Condition type="3" QuestId="3">		
-				</Condition>
-				<Condition type="6" QuestId="3">
-				</Condition>				
-       			       	<DialogTree TextId="199">
-       			       		<QuestToTrigger Id="3" />
-        			</DialogTree>
-        			<DialogTree TextId="200">
-        			</DialogTree>       			
-        			
-       			</PlayerChoice>     			
-
-       			<PlayerChoice type="0" TextId="141">
-       			       	<DialogTree TextId="78">
-        			</DialogTree>	       	
-       			</PlayerChoice>       			
-    		</DialogTree> 		
-	</Dialog>  
     </actor>     
         
     
