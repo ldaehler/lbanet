@@ -6,53 +6,33 @@
 		</QuestsStartingAtStart>
 				
 		<ObjectsGivenAtEnd>
-			<object Id="16" Number="1" />
+			<object Id="7" Number="1" />
+			<object Id="8" Number="10" />			
 		</ObjectsGivenAtEnd>
 		
 		<ObjectsTakenAtEnd>
-			<object Id="14" Number="1" />
+			<object Id="19" Number="1" />
 		</ObjectsTakenAtEnd>
 		
 		<Conditions>
-			<Condition type="4" QuestId="3" />
-			<Condition type="7" ObjectId="14" ObjectNumber="1" StrictlyEqual="1" />
+			<Condition type="4" QuestId="2" />
+			<Condition type="7" ObjectId="19" ObjectNumber="1" StrictlyEqual="1" />
 		</Conditions>		
 	</quest>
 	
 	
 	<quest Id="2" Visible="0">
-		
-		<QuestsStartingAtEnd>
-			<quest Id="3" />
-		</QuestsStartingAtEnd>
-	
 		<ObjectsGivenAtEnd>
-			<object Id="13" Number="1" />
+			<object Id="19" Number="1" />
 		</ObjectsGivenAtEnd>
 		
 		<ObjectsTakenAtEnd>
-			<object Id="8" Number="10" />
+			<object Id="8" Number="30" />
 		</ObjectsTakenAtEnd>
 		
 		<Conditions>
-			<Condition type="7" ObjectId="8" ObjectNumber="10" />
+			<Condition type="7" ObjectId="8" ObjectNumber="20" />
 		</Conditions>	
 	</quest>
 	
-	
-	<quest Id="3" Visible="0">
-				
-		<ObjectsGivenAtEnd>
-			<object Id="14" Number="1" />
-		</ObjectsGivenAtEnd>
-		
-		<ObjectsTakenAtEnd>
-			<object Id="13" Number="1" />
-		</ObjectsTakenAtEnd>
-		
-		<Conditions>
-			<Condition type="4" QuestId="2" />
-			<Condition type="7" ObjectId="13" ObjectNumber="1" />
-		</Conditions>	
-	</quest>	
 </quests>
