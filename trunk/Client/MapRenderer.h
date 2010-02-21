@@ -93,6 +93,8 @@ private:
 
 	const MapInfo *			_mapinfo;
 	bool					_display_exits;
+
+	PhysicHandler *			_phH;
 };
 
 #endif
