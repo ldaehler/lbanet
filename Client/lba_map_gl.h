@@ -63,6 +63,9 @@ public:
 	// perpare the room for display
 	void RecompileRoom(int Cut);
 
+	// return the brick index use at a specific map position
+	int GetBrickIndex(int X, int Y, int Z);
+
 
 	// class members
     unsigned int list_name;
@@ -74,8 +77,6 @@ protected:
 	// load map into memory
 	void LoadMap(const std::string &filename);
 
-	// return the brick index use at a specific map position
-	int GetBrickIndex(int X, int Y, int Z);
 
 
 
