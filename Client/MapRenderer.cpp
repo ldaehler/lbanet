@@ -26,16 +26,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "lba_map_gl.h"
 #include "TextWritter.h"
 #include "ConfigurationManager.h"
+#include "PhysicHandler.h"
 
 #include <windows.h>    // Header File For Windows
 #include <GL/gl.h>      // Header File For The OpenGL32 Library
 #include <GL/glu.h>     // Header File For The GLu32 Library
 
+
+std::vector<PlaneInfo> testplanecarace;
+
 /***********************************************************
 	Constructor
 ***********************************************************/
 MapRenderer::MapRenderer()
-: _map_gl(NULL), _mapinfo(NULL)
+: _map_gl(NULL), _mapinfo(NULL), _phH(NULL)
 {
 	ConfigurationManager::GetInstance()->GetBool("Options.Video.DisplayExits", _display_exits);
 }
@@ -67,10 +71,49 @@ bool MapRenderer::LoadMap(const std::string &filename, PhysicHandler * phH,
 							const MapInfo * mapinfo)
 {
 	CleanUp();
+	_phH = phH;
 
 	_mapinfo = mapinfo;
 	_map_gl = new LBA_MAP_GL(filename, phH);
 	_current_cut = -1;
+	_phH->SearchFloors(_map_gl);
+	_phH->SearchWallX(_map_gl);
+	_phH->SearchWallZ(_map_gl);
+
+	std::vector<PlaneInfo> planes = _phH->GetPlanes();
+	PlaneInfo pi = planes[0];
+	std::vector<TexPlaneInfo> textareas;
+	int sizeX= (pi.EndX-pi.StartX);
+	int sizeY= (pi.EndZ-pi.StartZ);
+	short * area = new short[sizeX*sizeY];
+	short * tmppt = area;
+	for(int i=0; i<sizeX; ++i)
+	{
+		for(int j=0; j<sizeY; ++j)
+		{
+			*tmppt = _map_gl->GetBrickIndex(pi.StartX+i, pi.StartY, pi.StartZ+j);
+			++tmppt;
+		}
+	}
+
+	_phH->SplitToTexture(area, sizeX, sizeY, textareas);
+	delete[] area;
+
+	testplanecarace.clear();
+	for(size_t cc=0; cc<textareas.size(); ++cc)
+	{
+		PlaneInfo pfi;
+		pfi.StartX=textareas[cc].StartX+pi.StartX;
+		pfi.StartY=pi.StartY;
+		pfi.StartZ=textareas[cc].StartY+pi.StartZ;
+
+		pfi.EndX=textareas[cc].EndX+pi.StartX;
+		pfi.EndY=pi.EndY;
+		pfi.EndZ=textareas[cc].EndY+pi.StartZ;
+		testplanecarace.push_back(pfi);
+	}
+
+
 	return true;
 }
 
@@ -102,6 +145,207 @@ void MapRenderer::Render()
 		if(_display_exits)
 			DisplayExitZones();
 	}
+
+
+	if(_phH)
+	{
+		std::vector<PlaneInfo> planes = _phH->GetPlanes();
+		std::vector<PlaneInfo> planesh = _phH->GetPlanesHidden();
+		std::vector<PlaneInfo> planess = _phH->GetPlanesSee();
+		std::vector<PlaneInfo> WallX = _phH->GetWallsX();
+		std::vector<PlaneInfo> WallXh = _phH->GetWallsXHidden();
+		std::vector<PlaneInfo> WallZ = _phH->GetWallsZ();
+		std::vector<PlaneInfo> WallZh = _phH->GetWallsZHidden();
+
+		glEnable(GL_BLEND);
+		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_DEPTH_TEST);
+
+		glLineWidth(2.0f);
+
+		for(size_t i=0; i<testplanecarace.size(); ++i)
+		{
+			PlaneInfo pif = testplanecarace[i];
+			glPushMatrix();
+
+			glTranslated(0, pif.StartY/2. + 0.5, 0);
+			glColor4f(0.0f,0.0f,1.0f, 1.f);
+			glBegin(GL_LINES);
+				glVertex3f(pif.StartX,0,pif.StartZ);
+				glVertex3f(pif.EndX,0,pif.StartZ);
+				glVertex3f(pif.EndX,0,pif.StartZ);
+				glVertex3f(pif.EndX,0,pif.EndZ);
+				glVertex3f(pif.EndX,0,pif.EndZ);
+				glVertex3f(pif.StartX,0,pif.EndZ);
+				glVertex3f(pif.StartX,0,pif.EndZ);
+				glVertex3f(pif.StartX,0,pif.StartZ);
+			glEnd();
+
+			glPopMatrix();
+		}
+
+
+		//for(size_t i=0; i<planes.size(); ++i)
+		//{
+		//	PlaneInfo pif = planes[i];
+		//	glPushMatrix();
+
+		//	glTranslated(0, pif.StartY/2. + 0.5, 0);
+		//	glColor4f(0.0f,0.0f,1.0f, 1.f);
+		//	glBegin(GL_LINES);
+		//		glVertex3f(pif.StartX,0,pif.StartZ);
+		//		glVertex3f(pif.EndX,0,pif.StartZ);
+		//		glVertex3f(pif.EndX,0,pif.StartZ);
+		//		glVertex3f(pif.EndX,0,pif.EndZ);
+		//		glVertex3f(pif.EndX,0,pif.EndZ);
+		//		glVertex3f(pif.StartX,0,pif.EndZ);
+		//		glVertex3f(pif.StartX,0,pif.EndZ);
+		//		glVertex3f(pif.StartX,0,pif.StartZ);
+		//	glEnd();
+
+		//	glPopMatrix();
+		//}
+
+
+		//for(size_t i=0; i<planesh.size(); ++i)
+		//{
+		//	PlaneInfo pif = planesh[i];
+		//	glPushMatrix();
+
+		//	glTranslated(0, pif.StartY/2. + 0.5, 0);
+		//	glColor4f(1.0f,0.0f,0.0f, 1.f);
+		//	glBegin(GL_LINES);
+		//		glVertex3f(pif.StartX,0,pif.StartZ);
+		//		glVertex3f(pif.EndX,0,pif.StartZ);
+		//		glVertex3f(pif.EndX,0,pif.StartZ);
+		//		glVertex3f(pif.EndX,0,pif.EndZ);
+		//		glVertex3f(pif.EndX,0,pif.EndZ);
+		//		glVertex3f(pif.StartX,0,pif.EndZ);
+		//		glVertex3f(pif.StartX,0,pif.EndZ);
+		//		glVertex3f(pif.StartX,0,pif.StartZ);
+		//	glEnd();
+
+		//	glPopMatrix();
+		//}
+
+
+		//for(size_t i=0; i<planess.size(); ++i)
+		//{
+		//	PlaneInfo pif = planess[i];
+		//	glPushMatrix();
+
+		//	glTranslated(0, pif.StartY/2. + 0.5, 0);
+		//	glColor4f(0.0f,1.0f,0.0f, 1.f);
+		//	glBegin(GL_LINES);
+		//		glVertex3f(pif.StartX,0,pif.StartZ);
+		//		glVertex3f(pif.EndX,0,pif.StartZ);
+		//		glVertex3f(pif.EndX,0,pif.StartZ);
+		//		glVertex3f(pif.EndX,0,pif.EndZ);
+		//		glVertex3f(pif.EndX,0,pif.EndZ);
+		//		glVertex3f(pif.StartX,0,pif.EndZ);
+		//		glVertex3f(pif.StartX,0,pif.EndZ);
+		//		glVertex3f(pif.StartX,0,pif.StartZ);
+		//	glEnd();
+
+		//	glPopMatrix();
+		//}
+
+
+		//for(size_t i=0; i<WallX.size(); ++i)
+		//{
+		//	PlaneInfo pif = WallX[i];
+		//	glPushMatrix();
+
+		//	glTranslated(pif.StartY+1, 0, 0);
+		//	glColor4f(0.0f,0.0f,1.0f, 1.f);
+		//	glBegin(GL_LINES);
+		//		glVertex3f(0,pif.StartX/2.f,pif.StartZ);
+		//		glVertex3f(0,pif.EndX/2.f,pif.StartZ);
+		//		glVertex3f(0,pif.EndX/2.f,pif.StartZ);
+		//		glVertex3f(0,pif.EndX/2.f,pif.EndZ);
+		//		glVertex3f(0,pif.EndX/2.f,pif.EndZ);
+		//		glVertex3f(0,pif.StartX/2.f,pif.EndZ);
+		//		glVertex3f(0,pif.StartX/2.f,pif.EndZ);
+		//		glVertex3f(0,pif.StartX/2.f,pif.StartZ);
+		//	glEnd();
+
+		//	glPopMatrix();
+		//}
+
+		//for(size_t i=0; i<WallXh.size(); ++i)
+		//{
+		//	PlaneInfo pif = WallXh[i];
+		//	glPushMatrix();
+
+		//	glTranslated(pif.StartY, 0, 0);
+		//	glColor4f(1.0f,0.0f,0.0f, 1.f);
+		//	glBegin(GL_LINES);
+		//		glVertex3f(0,pif.StartX/2.f,pif.StartZ);
+		//		glVertex3f(0,pif.EndX/2.f,pif.StartZ);
+		//		glVertex3f(0,pif.EndX/2.f,pif.StartZ);
+		//		glVertex3f(0,pif.EndX/2.f,pif.EndZ);
+		//		glVertex3f(0,pif.EndX/2.f,pif.EndZ);
+		//		glVertex3f(0,pif.StartX/2.f,pif.EndZ);
+		//		glVertex3f(0,pif.StartX/2.f,pif.EndZ);
+		//		glVertex3f(0,pif.StartX/2.f,pif.StartZ);
+		//	glEnd();
+
+		//	glPopMatrix();
+		//}
+
+
+		//for(size_t i=0; i<WallZ.size(); ++i)
+		//{
+		//	PlaneInfo pif = WallZ[i];
+		//	glPushMatrix();
+
+		//	glTranslated(0, 0, pif.StartY+1);
+		//	glColor4f(0.0f,0.0f,1.0f, 1.f);
+		//	glBegin(GL_LINES);
+		//		glVertex3f(pif.StartX,pif.StartZ/2.f,0);
+		//		glVertex3f(pif.EndX,pif.StartZ/2.f,0);
+		//		glVertex3f(pif.EndX,pif.StartZ/2.f,0);
+		//		glVertex3f(pif.EndX,pif.EndZ/2.f,0);
+		//		glVertex3f(pif.EndX,pif.EndZ/2.f,0);
+		//		glVertex3f(pif.StartX,pif.EndZ/2.f,0);
+		//		glVertex3f(pif.StartX,pif.EndZ/2.f,0);
+		//		glVertex3f(pif.StartX,pif.StartZ/2.f,0);
+		//	glEnd();
+
+		//	glPopMatrix();
+		//}
+
+		//for(size_t i=0; i<WallZh.size(); ++i)
+		//{
+		//	PlaneInfo pif = WallZh[i];
+		//	glPushMatrix();
+
+		//	glTranslated(0, 0, pif.StartY);
+		//	glColor4f(1.0f,0.0f,0.0f, 1.f);
+		//	glBegin(GL_LINES);
+		//		glVertex3f(pif.StartX,pif.StartZ/2.f,0);
+		//		glVertex3f(pif.EndX,pif.StartZ/2.f,0);
+		//		glVertex3f(pif.EndX,pif.StartZ/2.f,0);
+		//		glVertex3f(pif.EndX,pif.EndZ/2.f,0);
+		//		glVertex3f(pif.EndX,pif.EndZ/2.f,0);
+		//		glVertex3f(pif.StartX,pif.EndZ/2.f,0);
+		//		glVertex3f(pif.StartX,pif.EndZ/2.f,0);
+		//		glVertex3f(pif.StartX,pif.StartZ/2.f,0);
+		//	glEnd();
+
+		//	glPopMatrix();
+		//}
+
+
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_TEXTURE_2D);
+	}
+
+
+
+
+
+
 }
 
 

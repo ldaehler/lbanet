@@ -26,8 +26,154 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define __LBA_NET_PHYSIC_HANDLER_H__
 
 #include <string>
+#include <vector>
+
 class LocalActorsHandler;
 class ExternalActorsHandler;
+
+
+struct PlaneInfo
+{
+	int StartX;
+	int StartY;
+	int StartZ;
+
+	int EndX;
+	int EndY;
+	int EndZ;
+};
+
+struct TexPlaneInfo
+{
+	int StartX;
+	int StartY;
+
+	int EndX;
+	int EndY;
+
+	int textureid;
+};
+
+
+class TextInfo
+{
+public: 
+	//! constructor
+	TextInfo(){}
+
+	//! denstructor
+	virtual ~TextInfo(){}
+
+	virtual int GetTexture(int X, int Y) = 0;
+};
+
+
+
+class SingleTextInfo : public TextInfo
+{
+public: 
+	//! constructor
+	SingleTextInfo(int TexId)
+	: _TexId(TexId){}
+
+	//! denstructor
+	virtual ~SingleTextInfo(){}
+
+	virtual int GetTexture(int X, int Y)
+	{ return _TexId;}
+
+private:
+	int _TexId;
+};
+
+
+
+class DuoTextInfoX : public TextInfo
+{
+public: 
+	//! constructor
+	DuoTextInfoX(int TexId, int TextId2)
+	: _TexId(TexId), _TextId2(TextId2){}
+
+	//! denstructor
+	virtual ~DuoTextInfoX(){}
+
+	virtual int GetTexture(int X, int Y)
+	{ 
+		if ( X & 1)
+			return _TextId2;
+		else
+			return _TexId;
+	}
+
+private:
+	int _TexId;
+	int _TextId2;
+};
+
+
+class DuoTextInfoY : public TextInfo
+{
+public: 
+	//! constructor
+	DuoTextInfoY(int TexId, int TextId2)
+	: _TexId(TexId), _TextId2(TextId2){}
+
+	//! denstructor
+	virtual ~DuoTextInfoY(){}
+
+	virtual int GetTexture(int X, int Y)
+	{ 
+		if ( Y & 1)
+			return _TextId2;
+		else
+			return _TexId;
+	}
+
+private:
+	int _TexId;
+	int _TextId2;
+};
+
+
+class QuadraTextInfo : public TextInfo
+{
+public: 
+	//! constructor
+	QuadraTextInfo(int TexId, int TextId2, int TexId3, int TextId4)
+	: _TexId(TexId), _TextId2(TextId2), _TexId3(TexId3), _TextId4(TextId4)
+	{}
+
+	//! denstructor
+	virtual ~QuadraTextInfo(){}
+
+	virtual int GetTexture(int X, int Y)
+	{ 
+		if ( X & 1)
+		{
+			if ( Y & 1)
+				return _TextId4;
+			else
+				return _TexId3;
+		}
+		else
+		{
+			if ( Y & 1)
+				return _TextId2;
+			else
+				return _TexId;
+		}
+	}
+
+private:
+	int _TexId;
+	int _TextId2;
+	int _TexId3;
+	int _TextId4;
+};
+
+
+class LBA_MAP_GL;
 
 //*************************************************************************************************
 //*                                      class PhysicHandler
@@ -109,6 +255,46 @@ public:
 	// return the sound of a specific brick
 	short GetSound(int X, int Y, int Z);
 
+
+	//! look for floors  in the map
+	void SearchFloors(LBA_MAP_GL * mapgl);
+	void SearchFloorsNormal(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ);
+	void SearchFloorsHidden(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ);
+	void SearchFloorsSee(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ);
+
+	void SearchWallX(LBA_MAP_GL * mapgl);
+	void SearchWallXNormal(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ);
+	void SearchWallXHidden(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ);
+
+	void SearchWallZ(LBA_MAP_GL * mapgl);
+	void SearchWallZNormal(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ);
+	void SearchWallZHidden(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ);
+
+	std::vector<PlaneInfo> GetPlanes()
+	{ return _planes; }
+
+	std::vector<PlaneInfo> GetPlanesHidden()
+	{ return _planeshidden; }
+
+	std::vector<PlaneInfo> GetPlanesSee()
+	{ return _planessee; }
+
+	std::vector<PlaneInfo> GetWallsX()
+	{ return _wallsX; }
+
+	std::vector<PlaneInfo> GetWallsXHidden()
+	{ return _wallsXhidden; }
+
+	std::vector<PlaneInfo> GetWallsZ()
+	{ return _wallsZ; }
+
+	std::vector<PlaneInfo> GetWallsZHidden()
+	{ return _wallsZhidden; }
+
+
+	//! split rectangle into part with same textures
+	void SplitToTexture(short * area, int sizeX, int sizeY, std::vector<TexPlaneInfo> & res);
+
 protected:
 
 	// allocate a memory buffer of given size
@@ -127,6 +313,33 @@ protected:
 	bool EmptyUnderActor(double X, double Y, double Z,
 							double actorSizeX, double actorSizeY, double actorSizeZ);
 
+
+	//! look for floors  in the map
+	void SearchFloors(short * thisY, int Y, std::vector<PlaneInfo> &planes, int sizeX, int sizeY, int sizeZ);
+
+
+	//! look for floors  in the map
+	int SearchMaxFloor(short * center, int idxX, int idxZ,
+						int &startX, int &startZ,
+						int &endX, int &endZ, int sizeX, int sizeY, int sizeZ);
+
+	bool IsSolidHorLine(short * start, int size, int sizeX, int sizeY, int sizeZ);
+	bool IsSolidVerLine(short * start, int size, int sizeX, int sizeY, int sizeZ);
+
+
+
+	//! look for floors  in the map
+	int SearchMaxTexture(short * center, int idxX, int idxY,
+							int &startX, int &startY,
+							int &endX, int &endY, int sizeX, int sizeY, TextInfo * txi);
+
+	bool IsTexHorLine(short * start, int size, int sizeX, int sizeY, 
+							int idxX, int idxY, TextInfo * txi);
+
+	bool IsTexVerLine(short * start, int size, int sizeX, int sizeY, 
+							int idxX, int idxY, TextInfo * txi);
+
+
 private:
 
 	// cube representing the map physic
@@ -139,6 +352,17 @@ private:
 	int			_sizeX;
 	int			_sizeY;
 	int			_sizeZ;
+
+	std::vector<PlaneInfo> _planes;
+	std::vector<PlaneInfo> _planeshidden;
+	std::vector<PlaneInfo> _planessee;
+
+	std::vector<PlaneInfo> _wallsX;
+	std::vector<PlaneInfo> _wallsXhidden;
+
+	std::vector<PlaneInfo> _wallsZ;
+	std::vector<PlaneInfo> _wallsZhidden;
+
 };
 
 #endif

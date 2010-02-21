@@ -24,12 +24,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "PhysicHandler.h"
 
+#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <assert.h>
 #include <math.h>
+#include <set>
+
 #include "LocalActorsHandler.h"
 #include "ExternalActorsHandler.h"
+#include "lba_map_gl.h"
 
 /*
 --------------------------------------------------------------------------------------------------
@@ -655,3 +659,1078 @@ short PhysicHandler::GetSound(int X, int Y, int Z)
 	return res;
 }
 
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+look for floors  in the map
+--------------------------------------------------------------------------------------------------
+*/
+void PhysicHandler::SearchWallX(LBA_MAP_GL * mapgl)
+{
+	SearchWallXNormal(mapgl, _sizeY, _sizeX, _sizeZ);
+	//SearchWallXHidden(mapgl, _sizeY, _sizeX, _sizeZ);
+}
+
+/*
+--------------------------------------------------------------------------------------------------
+look for floors  in the map
+--------------------------------------------------------------------------------------------------
+*/
+void PhysicHandler::SearchWallXNormal(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ)
+{
+	_wallsX.clear();
+
+	short * buffer = new short[sizeX*sizeY*sizeZ];
+	for(int k=0; k<sizeY; ++k)
+	{
+		for(int i=0; i<sizeX; ++i)
+		{
+			for(int j=0; j<sizeZ; ++j)
+			{
+				buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = _physicCube[(i*_sizeX*_sizeZ)+(k*_sizeZ)+j];
+			}
+		}
+	}
+
+	for(int k=0; k<sizeY; ++k)
+	{
+		for(int i=0; i<sizeX; ++i)
+		{
+			for(int j=0; j<sizeZ; ++j)
+			{
+				if(mapgl->GetBrickIndex(k, i, j) == 0)
+				{
+					buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
+				}
+			}
+		}
+	}
+
+	for(int k=0; k<sizeY; ++k)
+	{
+		for(int i=0; i<sizeX; ++i)
+		{
+			for(int j=0; j<sizeZ; ++j)
+			{
+				if((k+1)<sizeY)
+				{
+					if(buffer[((k+1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0)
+						buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
+				}
+			}
+		}
+	}
+
+
+	short * ptr = buffer;
+	for(int i=0; i<sizeY; ++i)
+	{
+		SearchFloors(ptr, i, _wallsX, sizeX, sizeY, sizeZ);
+		ptr += sizeX*sizeZ;
+	}
+
+
+	delete[] buffer;
+}
+
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+look for floors  in the map
+--------------------------------------------------------------------------------------------------
+*/
+void PhysicHandler::SearchWallXHidden(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ)
+{
+	_wallsXhidden.clear();
+
+	short * buffer = new short[sizeX*sizeY*sizeZ];
+	for(int k=0; k<sizeY; ++k)
+	{
+		for(int i=0; i<sizeX; ++i)
+		{
+			for(int j=0; j<sizeZ; ++j)
+			{
+				buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = _physicCube[(i*_sizeX*_sizeZ)+(k*_sizeZ)+j];
+			}
+		}
+	}
+
+
+	for(int k=sizeY-1; k>=0; --k)
+	{
+		for(int i=0; i<sizeX; ++i)
+		{
+			for(int j=0; j<sizeZ; ++j)
+			{
+				if((k-1)<sizeY)
+				{
+					if(buffer[((k-1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0)
+						buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
+				}
+			}
+		}
+	}
+
+	short * ptr = buffer;
+	for(int i=0; i<sizeY; ++i)
+	{
+		SearchFloors(ptr, i, _wallsXhidden, sizeX, sizeY, sizeZ);
+		ptr += sizeX*sizeZ;
+	}
+
+
+	delete[] buffer;
+}
+
+
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+look for floors  in the map
+--------------------------------------------------------------------------------------------------
+*/
+void PhysicHandler::SearchWallZ(LBA_MAP_GL * mapgl)
+{
+	SearchWallZNormal(mapgl, _sizeX, _sizeZ, _sizeY);
+	//SearchWallZHidden(mapgl, _sizeX, _sizeZ, _sizeY);
+}
+
+/*
+--------------------------------------------------------------------------------------------------
+look for floors  in the map
+--------------------------------------------------------------------------------------------------
+*/
+void PhysicHandler::SearchWallZNormal(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ)
+{
+	_wallsZ.clear();
+
+	short * buffer = new short[sizeX*sizeY*sizeZ];
+	for(int k=0; k<sizeY; ++k)
+	{
+		for(int i=0; i<sizeX; ++i)
+		{
+			for(int j=0; j<sizeZ; ++j)
+			{
+				buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = _physicCube[(j*_sizeX*_sizeZ)+(i*_sizeZ)+k];
+			}
+		}
+	}
+
+	for(int k=0; k<sizeY; ++k)
+	{
+		for(int i=0; i<sizeX; ++i)
+		{
+			for(int j=0; j<sizeZ; ++j)
+			{
+				if(mapgl->GetBrickIndex(i, j, k) == 0)
+				{
+					buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
+				}
+			}
+		}
+	}
+
+
+	for(int k=0; k<sizeY; ++k)
+	{
+		for(int i=0; i<sizeX; ++i)
+		{
+			for(int j=0; j<sizeZ; ++j)
+			{
+				if((k+1)<sizeY)
+				{
+					if(buffer[((k+1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0)
+						buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
+				}
+			}
+		}
+	}
+
+
+	short * ptr = buffer;
+	for(int i=0; i<sizeY; ++i)
+	{
+		SearchFloors(ptr, i, _wallsZ, sizeX, sizeY, sizeZ);
+		ptr += sizeX*sizeZ;
+	}
+
+
+	delete[] buffer;
+}
+
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+look for floors  in the map
+--------------------------------------------------------------------------------------------------
+*/
+void PhysicHandler::SearchWallZHidden(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ)
+{
+	_wallsZhidden.clear();
+
+	short * buffer = new short[sizeX*sizeY*sizeZ];
+	for(int k=0; k<sizeY; ++k)
+	{
+		for(int i=0; i<sizeX; ++i)
+		{
+			for(int j=0; j<sizeZ; ++j)
+			{
+				buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = _physicCube[(j*_sizeX*_sizeZ)+(i*_sizeZ)+k];
+			}
+		}
+	}
+
+
+	for(int k=sizeY-1; k>=0; --k)
+	{
+		for(int i=0; i<sizeX; ++i)
+		{
+			for(int j=0; j<sizeZ; ++j)
+			{
+				if((k-1)<sizeY)
+				{
+					if(buffer[((k-1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0)
+						buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
+				}
+			}
+		}
+	}
+
+	short * ptr = buffer;
+	for(int i=0; i<sizeY; ++i)
+	{
+		SearchFloors(ptr, i, _wallsZhidden, sizeX, sizeY, sizeZ);
+		ptr += sizeX*sizeZ;
+	}
+
+
+	delete[] buffer;
+}
+
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+look for floors  in the map
+--------------------------------------------------------------------------------------------------
+*/
+void PhysicHandler::SearchFloors(LBA_MAP_GL * mapgl)
+{
+	SearchFloorsNormal(mapgl, _sizeX, _sizeY, _sizeZ);
+	//SearchFloorsHidden(mapgl, _sizeX, _sizeY, _sizeZ);
+	SearchFloorsSee(mapgl, _sizeX, _sizeY, _sizeZ);
+}
+
+
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+look for floors  in the map
+--------------------------------------------------------------------------------------------------
+*/
+void PhysicHandler::SearchFloorsNormal(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ)
+{
+	_planes.clear();
+
+	short * buffer = new short[sizeX*sizeY*sizeZ];
+	memcpy ( buffer, _physicCube, sizeX*sizeY*sizeZ*sizeof(short) );
+
+	for(int k=0; k<sizeY; ++k)
+	{
+		for(int i=0; i<sizeX; ++i)
+		{
+			for(int j=0; j<sizeZ; ++j)
+			{
+				if(mapgl->GetBrickIndex(i, k, j) == 0)
+				{
+					buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
+				}
+			}
+		}
+	}
+
+	for(int k=0; k<sizeY; ++k)
+	{
+		for(int i=0; i<sizeX; ++i)
+		{
+			for(int j=0; j<sizeZ; ++j)
+			{
+				if((k+1)<sizeY)
+				{
+					if(buffer[((k+1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0)
+						buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
+				}
+			}
+		}
+	}
+
+
+
+	short * ptr = buffer;
+	for(int i=0; i<sizeY; ++i)
+	{
+		SearchFloors(ptr, i, _planes, sizeX, sizeY, sizeZ);
+		ptr += sizeX*sizeZ;
+	}
+
+
+	delete[] buffer;
+}
+
+
+/*
+--------------------------------------------------------------------------------------------------
+look for floors  in the map
+--------------------------------------------------------------------------------------------------
+*/
+void PhysicHandler::SearchFloorsHidden(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ)
+{
+	_planeshidden.clear();
+
+	short * buffer = new short[sizeX*sizeY*sizeZ];
+	memcpy ( buffer, _physicCube, sizeX*sizeY*sizeZ*sizeof(short) );
+
+
+	for(int k=0; k<sizeY; ++k)
+	{
+		for(int i=0; i<sizeX; ++i)
+		{
+			for(int j=0; j<sizeZ; ++j)
+			{
+				if((k+1)<sizeY)
+				{
+					if(buffer[((k+1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0)
+						buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
+				}
+			}
+		}
+	}
+
+	for(int k=0; k<sizeY; ++k)
+	{
+		for(int i=0; i<sizeX; ++i)
+		{
+			for(int j=0; j<sizeZ; ++j)
+			{
+				if(mapgl->GetBrickIndex(i, k, j) != 0)
+				{
+					buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
+				}
+			}
+		}
+	}
+
+
+
+
+	short * ptr = buffer;
+	for(int i=0; i<sizeY; ++i)
+	{
+		SearchFloors(ptr, i, _planeshidden, sizeX, sizeY, sizeZ);
+		ptr += sizeX*sizeZ;
+	}
+
+
+	delete[] buffer;
+}
+
+
+/*
+--------------------------------------------------------------------------------------------------
+look for floors  in the map
+--------------------------------------------------------------------------------------------------
+*/
+void PhysicHandler::SearchFloorsSee(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ)
+{
+	_planessee.clear();
+
+	short * buffer = new short[sizeX*sizeY*sizeZ];
+	memcpy ( buffer, _physicCube, sizeX*sizeY*sizeZ*sizeof(short) );
+
+	for(int k=0; k<sizeY; ++k)
+	{
+		for(int i=0; i<sizeX; ++i)
+		{
+			for(int j=0; j<sizeZ; ++j)
+			{
+				if(mapgl->GetBrickIndex(i, k, j) == 0)
+				{
+					buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
+				}
+
+				if(buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] < 15)
+					buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
+				else
+					buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 1;
+			}
+		}
+	}
+
+	for(int k=0; k<sizeY; ++k)
+	{
+		for(int i=0; i<sizeX; ++i)
+		{
+			for(int j=0; j<sizeZ; ++j)
+			{
+				if((k+1)<sizeY)
+				{
+					if(buffer[((k+1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0)
+						buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
+				}
+			}
+		}
+	}
+
+
+
+	short * ptr = buffer;
+	for(int i=0; i<sizeY; ++i)
+	{
+		SearchFloors(ptr, i, _planessee, sizeX, sizeY, sizeZ);
+		ptr += sizeX*sizeZ;
+	}
+
+
+	delete[] buffer;
+}
+
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+look for floors  in the map
+--------------------------------------------------------------------------------------------------
+*/
+void PhysicHandler::SearchFloors(short * thisY, int Y, std::vector<PlaneInfo> &planes, 
+									int sizeX, int sizeY, int sizeZ)
+{
+	bool found = true;
+
+	while(found)
+	{
+		short * ptr = thisY;
+		int maxsize = 0;
+		int maxsX = 0;
+		int maxsZ = 0;
+		int maxeX = 0;
+		int maxeZ = 0;
+		found = false;
+
+		for(int i=0; i<sizeX; ++i)
+		{
+			for(int j=0; j<sizeZ; ++j)
+			{
+				int startX, startZ, endX, endZ;
+				int areasize = SearchMaxFloor(ptr, i, j, startX, startZ, endX, endZ, sizeX, sizeY, sizeZ);
+				if(areasize > 0)
+				{
+					bool issquare = ((endX-startX) == (endZ-startZ));
+					if(issquare)
+					{
+						if(areasize >= maxsize)
+						{
+							maxsize = areasize;
+							maxsX = startX;
+							maxsZ = startZ;
+							maxeX = endX;
+							maxeZ = endZ;
+							found = true;
+						}
+					}
+					else
+					{
+						if(areasize > maxsize)
+						{
+							maxsize = areasize;
+							maxsX = startX;
+							maxsZ = startZ;
+							maxeX = endX;
+							maxeZ = endZ;
+							found = true;
+						}
+					}
+				}
+
+				++ptr;
+			}
+		}
+
+		if(found)
+		{
+			PlaneInfo pif;
+			pif.StartX = maxsX;
+			pif.StartY = Y;
+			pif.StartZ = maxsZ;
+
+			pif.EndX = maxeX;
+			pif.EndY = Y;
+			pif.EndZ = maxeZ;
+
+			planes.push_back(pif);
+
+			for(int i=maxsX; i<maxeX; ++i)
+			{
+				for(int j=maxsZ; j<maxeZ; ++j)
+				{
+					thisY[i*sizeZ+j] = 0;
+				}
+			}
+		}
+	}
+
+}
+
+
+/*
+--------------------------------------------------------------------------------------------------
+look for floors  in the map
+--------------------------------------------------------------------------------------------------
+*/
+int PhysicHandler::SearchMaxFloor(short * center, int idxX, int idxZ,
+									int &startX, int &startZ,
+									int &endX, int &endZ, int sizeX, int sizeY, int sizeZ)
+{
+	if(*center != 1)
+		return 0;
+
+	int squaresize = 1;
+
+	// look for the biggest centered square
+	while(true)
+	{
+		//check first corner
+		--idxX;
+		--idxZ;
+		++squaresize;
+		center -= (sizeZ+1);
+
+		if((idxX >= 0) && (idxZ >= 0))
+		{
+			if(IsSolidHorLine(center, squaresize, sizeX, sizeY, sizeZ))
+			{
+				if(IsSolidVerLine(center, squaresize, sizeX, sizeY, sizeZ))
+				{
+					continue;
+				}
+			}
+		}
+
+		++idxX;
+		++idxZ;
+		--squaresize;
+		center += (sizeZ+1);
+		break;
+	}
+
+
+	int squaresizeX = squaresize;
+	int squaresizeZ = squaresize;
+
+
+	int maxX = idxX;
+	int maxsizeX = squaresizeX;
+	int maxZ = idxZ;
+	int maxsizeZ = squaresizeZ;
+
+
+	// try to build bigger rectangles on X
+	{
+		short * ptr = center;
+
+		while(true)
+		{
+			ptr -= sizeZ;
+			--maxX;
+			++maxsizeX;
+			if(maxX >= 0)
+			{
+				if(IsSolidHorLine(ptr, squaresizeZ, sizeX, sizeY, sizeZ))
+					continue;
+			}
+
+			ptr += sizeZ;
+			++maxX;
+			--maxsizeX;
+			break;
+		}
+
+
+		ptr += (maxsizeX-1)*sizeZ;
+		while(true)
+		{
+			ptr += sizeZ;
+			++maxsizeX;
+			if((maxX+maxsizeX) <= sizeX)
+			{
+				if(IsSolidHorLine(ptr, squaresizeZ, sizeX, sizeY, sizeZ))
+					continue;
+			}
+
+			--maxsizeX;
+			break;
+		}
+
+	}
+
+
+	// try to build bigger rectangles on Z
+	{
+		short * ptr = center;
+
+		while(true)
+		{
+			--ptr;
+			--maxZ;
+			++maxsizeZ;
+			if(maxZ >= 0)
+			{
+				if(IsSolidVerLine(ptr, squaresizeX, sizeX, sizeY, sizeZ))
+					continue;
+			}
+
+			++ptr;
+			++maxZ;
+			--maxsizeZ;
+			break;
+		}
+
+
+
+		ptr += (maxsizeZ-1);
+		while(true)
+		{
+			++ptr;
+			++maxsizeZ;
+			if((maxZ+maxsizeZ) <= sizeZ)
+			{
+				if(IsSolidVerLine(ptr, squaresizeX, sizeX, sizeY, sizeZ))
+					continue;
+			}
+
+			--maxsizeZ;
+			break;
+		}	
+	}
+
+
+	if(maxsizeX >= maxsizeZ)
+	{
+		idxX=maxX;
+		squaresizeX=maxsizeX;
+	}
+	else
+	{
+		idxZ=maxZ;
+		squaresizeZ=maxsizeZ;
+	}
+
+
+
+	startX=idxX;
+	startZ=idxZ;
+	endX=startX+squaresizeX;
+	endZ=startZ+squaresizeZ;
+
+
+	return (squaresizeX*squaresizeZ);
+}
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+IsSolidHorLine
+--------------------------------------------------------------------------------------------------
+*/
+bool PhysicHandler::IsSolidHorLine(short * start, int size, int sizeX, int sizeY, int sizeZ)
+{
+	for(int i=0; i<size; ++i)
+	{
+		if(*start != 1)
+			return false;
+
+		++start;
+	}
+	
+	return true;
+}
+
+/*
+--------------------------------------------------------------------------------------------------
+IsSolidVerLine
+--------------------------------------------------------------------------------------------------
+*/
+bool PhysicHandler::IsSolidVerLine(short * start, int size, int sizeX, int sizeY, int sizeZ)
+{
+	for(int i=0; i<size; ++i)
+	{
+		if(*start != 1)
+			return false;
+
+		start+=sizeZ;
+	}
+	
+	return true;
+}
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+split rectangle into part with same textures
+--------------------------------------------------------------------------------------------------
+*/
+void PhysicHandler::SplitToTexture(short * area, int sizeX, int sizeY, std::vector<TexPlaneInfo> & res)
+{
+	//first check the number of different texture
+	std::set<short> texs;
+
+	short * tmpptr = area;
+	for(int i=0; i<sizeX; ++i)
+	{
+		for(int j=0; j<sizeY; ++j)
+		{
+			texs.insert(*tmpptr);
+			++tmpptr;
+		}
+	}
+
+	//if only one texture then easy job!
+	if(texs.size() == 1)
+	{
+		TexPlaneInfo pif;
+		pif.StartX = 0;
+		pif.StartY = 0;
+		pif.EndX = sizeX;
+		pif.EndY = sizeY;
+		pif.textureid = *(texs.begin());
+		res.push_back(pif);
+		return;
+	}
+
+	std::vector<TextInfo *> textinfos;
+	std::set<short>::iterator setit = texs.begin();
+	std::set<short>::iterator setend = texs.end();
+	for(; setit != setend; ++setit)
+	{
+		textinfos.push_back(new SingleTextInfo(*setit));
+
+		std::set<short>::iterator setit2 = texs.begin();
+		std::set<short>::iterator setend2 = texs.end();
+		for(; setit2 != setend2; ++setit2)
+		{
+			textinfos.push_back(new DuoTextInfoX(*setit, *setit2));
+			textinfos.push_back(new DuoTextInfoY(*setit, *setit2));
+
+			//std::set<short>::iterator setit3 = texs.begin();
+			//std::set<short>::iterator setend3 = texs.end();
+			//for(; setit3 != setend3; ++setit3)
+			//{
+			//	std::set<short>::iterator setit4 = texs.begin();
+			//	std::set<short>::iterator setend4 = texs.end();
+			//	for(; setit4 != setend4; ++setit4)
+			//	{
+			//		textinfos.push_back(new QuadraTextInfo(*setit, *setit2, *setit3, *setit4));
+			//	}
+			//}
+		}
+	}
+
+
+	bool found = true;
+	while(found)
+	{
+		short * ptr = area;
+		int maxsize = 0;
+		int maxsX = 0;
+		int maxsY = 0;
+		int maxeX = 0;
+		int maxeY = 0;
+		TextInfo * besttextid = NULL;
+		found = false;
+
+		for(int i=0; i<sizeX; ++i)
+		{
+			for(int j=0; j<sizeY; ++j)
+			{
+				for(size_t cc=0; cc<textinfos.size(); ++cc)
+				{
+					int startX, startY, endX, endY;
+					int areasize = 	SearchMaxTexture(ptr, i, j,	startX, startY, endX, endY,
+														sizeX, sizeY, textinfos[cc]);
+					if(areasize > 0)
+					{
+						bool issquare = ((endX-startX) == (endY-startY));
+						if(issquare)
+						{
+							if(areasize >= maxsize)
+							{
+								maxsize = areasize;
+								maxsX = startX;
+								maxsY = startY;
+								maxeX = endX;
+								maxeY = endY;
+								found = true;
+								besttextid = textinfos[cc];
+							}
+						}
+						else
+						{
+							if(areasize > maxsize)
+							{
+								maxsize = areasize;
+								maxsX = startX;
+								maxsY = startY;
+								maxeX = endX;
+								maxeY = endY;
+								found = true;
+								besttextid = textinfos[cc];
+							}
+						}
+					}
+				}
+
+				++ptr;
+			}
+		}
+
+		if(found)
+		{
+			TexPlaneInfo pif;
+			pif.StartX = maxsX;
+			pif.StartY = maxsY;
+
+			pif.EndX = maxeX;
+			pif.EndY = maxeY;
+			pif.textureid = besttextid->GetTexture(0, 0);
+			if(pif.textureid != 0)
+				res.push_back(pif);
+
+			for(int i=maxsX; i<maxeX; ++i)
+			{
+				for(int j=maxsY; j<maxeY; ++j)
+				{
+					area[i*sizeY+j] = 0;
+				}
+			}
+		}
+	}
+
+	for(size_t cc=0; cc<textinfos.size(); ++cc)
+		delete textinfos[cc];
+
+}
+
+
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+split rectangle into part with same textures
+--------------------------------------------------------------------------------------------------
+*/
+int PhysicHandler::SearchMaxTexture(short * center, int idxX, int idxY,
+										int &startX, int &startY,
+										int &endX, int &endY, int sizeX, int sizeY, TextInfo * txi)
+{
+	if(*center != txi->GetTexture(idxX, idxY))
+		return 0;
+
+	int squaresize = 1;
+
+	// look for the biggest centered square
+	while(true)
+	{
+		//check first corner
+		--idxX;
+		--idxY;
+		++squaresize;
+		center -= (sizeY+1);
+
+		if((idxX >= 0) && (idxY >= 0))
+		{
+			if(IsTexHorLine(center, squaresize, sizeX, sizeY, idxX, idxY, txi))
+			{
+				if(IsTexVerLine(center, squaresize, sizeX, sizeY, idxX, idxY, txi))
+				{
+					continue;
+				}
+			}
+		}
+
+		++idxX;
+		++idxY;
+		--squaresize;
+		center += (sizeY+1);
+		break;
+	}
+
+
+	int squaresizeX = squaresize;
+	int squaresizeY = squaresize;
+
+
+	int maxX = idxX;
+	int maxsizeX = squaresizeX;
+	int maxY = idxY;
+	int maxsizeY = squaresizeY;
+
+
+	// try to build bigger rectangles on X
+	{
+		short * ptr = center;
+
+		while(true)
+		{
+			ptr -= sizeY;
+			--maxX;
+			++maxsizeX;
+			if(maxX >= 0)
+			{
+				if(IsTexHorLine(ptr, squaresizeY, sizeX, sizeY, maxX, idxY, txi))
+					continue;
+			}
+
+			ptr += sizeY;
+			++maxX;
+			--maxsizeX;
+			break;
+		}
+
+
+		ptr += (maxsizeX-1)*sizeY;
+		while(true)
+		{
+			ptr += sizeY;
+			++maxsizeX;
+			if((maxX+maxsizeX) <= sizeX)
+			{
+				if(IsTexHorLine(ptr, squaresizeY, sizeX, sizeY, maxX, idxY, txi))
+					continue;
+			}
+
+			--maxsizeX;
+			break;
+		}
+
+	}
+
+
+	// try to build bigger rectangles on Y
+	{
+		short * ptr = center;
+
+		while(true)
+		{
+			--ptr;
+			--maxY;
+			++maxsizeY;
+			if(maxY >= 0)
+			{
+				if(IsTexVerLine(ptr, squaresizeX, sizeX, sizeY, idxX, maxY, txi))
+					continue;
+			}
+
+			++ptr;
+			++maxY;
+			--maxsizeY;
+			break;
+		}
+
+
+
+		ptr += (maxsizeY-1);
+		while(true)
+		{
+			++ptr;
+			++maxsizeY;
+			if((maxY+maxsizeY) <= sizeY)
+			{
+				if(IsTexVerLine(ptr, squaresizeX, sizeX, sizeY, idxX, maxY, txi))
+					continue;
+			}
+
+			--maxsizeY;
+			break;
+		}	
+	}
+
+
+	if(maxsizeX >= maxsizeY)
+	{
+		idxX=maxX;
+		squaresizeX=maxsizeX;
+	}
+	else
+	{
+		idxY=maxY;
+		squaresizeY=maxsizeY;
+	}
+
+
+
+	startX=idxX;
+	startY=idxY;
+	endX=startX+squaresizeX;
+	endY=startY+squaresizeY;
+
+
+	return (squaresizeX*squaresizeY);
+}
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+split rectangle into part with same textures
+--------------------------------------------------------------------------------------------------
+*/
+bool PhysicHandler::IsTexHorLine(short * start, int size, int sizeX, int sizeY, 
+								 int idxX, int idxY, TextInfo * txi)
+{
+	for(int i=0; i<size; ++i)
+	{
+		if(*start != txi->GetTexture(idxX, idxY))
+			return false;
+
+		++start;
+		++idxY;
+	}
+	
+	return true;
+}
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+split rectangle into part with same textures
+--------------------------------------------------------------------------------------------------
+*/
+bool PhysicHandler::IsTexVerLine(short * start, int size, int sizeX, int sizeY, 
+								 int idxX, int idxY, TextInfo * txi)
+{
+	for(int i=0; i<size; ++i)
+	{
+		if(*start != txi->GetTexture(idxX, idxY))
+			return false;
+
+		start+=sizeY;
+		++idxX;
+	}
+	
+	return true;
+}
