@@ -670,7 +670,7 @@ look for floors  in the map
 void PhysicHandler::SearchWallX(LBA_MAP_GL * mapgl)
 {
 	SearchWallXNormal(mapgl, _sizeY, _sizeX, _sizeZ);
-	//SearchWallXHidden(mapgl, _sizeY, _sizeX, _sizeZ);
+	SearchWallXHidden(mapgl, _sizeY, _sizeX, _sizeZ);
 }
 
 /*
@@ -694,19 +694,7 @@ void PhysicHandler::SearchWallXNormal(LBA_MAP_GL * mapgl, int sizeX, int sizeY, 
 		}
 	}
 
-	for(int k=0; k<sizeY; ++k)
-	{
-		for(int i=0; i<sizeX; ++i)
-		{
-			for(int j=0; j<sizeZ; ++j)
-			{
-				if(mapgl->GetBrickIndex(k, i, j) == 0)
-				{
-					buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
-				}
-			}
-		}
-	}
+
 
 	for(int k=0; k<sizeY; ++k)
 	{
@@ -766,7 +754,7 @@ void PhysicHandler::SearchWallXHidden(LBA_MAP_GL * mapgl, int sizeX, int sizeY, 
 		{
 			for(int j=0; j<sizeZ; ++j)
 			{
-				if((k-1)<sizeY)
+				if((k-1)>=0)
 				{
 					if(buffer[((k-1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0)
 						buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
@@ -798,7 +786,7 @@ look for floors  in the map
 void PhysicHandler::SearchWallZ(LBA_MAP_GL * mapgl)
 {
 	SearchWallZNormal(mapgl, _sizeX, _sizeZ, _sizeY);
-	//SearchWallZHidden(mapgl, _sizeX, _sizeZ, _sizeY);
+	SearchWallZHidden(mapgl, _sizeX, _sizeZ, _sizeY);
 }
 
 /*
@@ -818,20 +806,6 @@ void PhysicHandler::SearchWallZNormal(LBA_MAP_GL * mapgl, int sizeX, int sizeY, 
 			for(int j=0; j<sizeZ; ++j)
 			{
 				buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = _physicCube[(j*_sizeX*_sizeZ)+(i*_sizeZ)+k];
-			}
-		}
-	}
-
-	for(int k=0; k<sizeY; ++k)
-	{
-		for(int i=0; i<sizeX; ++i)
-		{
-			for(int j=0; j<sizeZ; ++j)
-			{
-				if(mapgl->GetBrickIndex(i, j, k) == 0)
-				{
-					buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
-				}
 			}
 		}
 	}
@@ -895,7 +869,7 @@ void PhysicHandler::SearchWallZHidden(LBA_MAP_GL * mapgl, int sizeX, int sizeY, 
 		{
 			for(int j=0; j<sizeZ; ++j)
 			{
-				if((k-1)<sizeY)
+				if((k-1)>=0)
 				{
 					if(buffer[((k-1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0)
 						buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
@@ -926,7 +900,6 @@ look for floors  in the map
 void PhysicHandler::SearchFloors(LBA_MAP_GL * mapgl)
 {
 	SearchFloorsNormal(mapgl, _sizeX, _sizeY, _sizeZ);
-	//SearchFloorsHidden(mapgl, _sizeX, _sizeY, _sizeZ);
 	SearchFloorsSee(mapgl, _sizeX, _sizeY, _sizeZ);
 }
 
@@ -946,35 +919,19 @@ void PhysicHandler::SearchFloorsNormal(LBA_MAP_GL * mapgl, int sizeX, int sizeY,
 	short * buffer = new short[sizeX*sizeY*sizeZ];
 	memcpy ( buffer, _physicCube, sizeX*sizeY*sizeZ*sizeof(short) );
 
-	for(int k=0; k<sizeY; ++k)
+
+	for(int k=1; k<(sizeY-1); ++k)
 	{
 		for(int i=0; i<sizeX; ++i)
 		{
 			for(int j=0; j<sizeZ; ++j)
 			{
-				if(mapgl->GetBrickIndex(i, k, j) == 0)
-				{
+				if( _physicCube[((k+1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0
+					&& _physicCube[((k-1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0 )
 					buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
-				}
 			}
 		}
 	}
-
-	for(int k=0; k<sizeY; ++k)
-	{
-		for(int i=0; i<sizeX; ++i)
-		{
-			for(int j=0; j<sizeZ; ++j)
-			{
-				if((k+1)<sizeY)
-				{
-					if(buffer[((k+1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0)
-						buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
-				}
-			}
-		}
-	}
-
 
 
 	short * ptr = buffer;
@@ -989,14 +946,15 @@ void PhysicHandler::SearchFloorsNormal(LBA_MAP_GL * mapgl, int sizeX, int sizeY,
 }
 
 
+
 /*
 --------------------------------------------------------------------------------------------------
 look for floors  in the map
 --------------------------------------------------------------------------------------------------
 */
-void PhysicHandler::SearchFloorsHidden(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ)
+void PhysicHandler::SearchFloorsSee(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ)
 {
-	_planeshidden.clear();
+	_planessee.clear();
 
 	short * buffer = new short[sizeX*sizeY*sizeZ];
 	memcpy ( buffer, _physicCube, sizeX*sizeY*sizeZ*sizeof(short) );
@@ -1017,46 +975,6 @@ void PhysicHandler::SearchFloorsHidden(LBA_MAP_GL * mapgl, int sizeX, int sizeY,
 		}
 	}
 
-	for(int k=0; k<sizeY; ++k)
-	{
-		for(int i=0; i<sizeX; ++i)
-		{
-			for(int j=0; j<sizeZ; ++j)
-			{
-				if(mapgl->GetBrickIndex(i, k, j) != 0)
-				{
-					buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
-				}
-			}
-		}
-	}
-
-
-
-
-	short * ptr = buffer;
-	for(int i=0; i<sizeY; ++i)
-	{
-		SearchFloors(ptr, i, _planeshidden, sizeX, sizeY, sizeZ);
-		ptr += sizeX*sizeZ;
-	}
-
-
-	delete[] buffer;
-}
-
-
-/*
---------------------------------------------------------------------------------------------------
-look for floors  in the map
---------------------------------------------------------------------------------------------------
-*/
-void PhysicHandler::SearchFloorsSee(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ)
-{
-	_planessee.clear();
-
-	short * buffer = new short[sizeX*sizeY*sizeZ];
-	memcpy ( buffer, _physicCube, sizeX*sizeY*sizeZ*sizeof(short) );
 
 	for(int k=0; k<sizeY; ++k)
 	{
@@ -1076,22 +994,6 @@ void PhysicHandler::SearchFloorsSee(LBA_MAP_GL * mapgl, int sizeX, int sizeY, in
 			}
 		}
 	}
-
-	for(int k=0; k<sizeY; ++k)
-	{
-		for(int i=0; i<sizeX; ++i)
-		{
-			for(int j=0; j<sizeZ; ++j)
-			{
-				if((k+1)<sizeY)
-				{
-					if(buffer[((k+1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0)
-						buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
-				}
-			}
-		}
-	}
-
 
 
 	short * ptr = buffer;
@@ -1427,25 +1329,25 @@ void PhysicHandler::SplitToTexture(short * area, int sizeX, int sizeY, std::vect
 	{
 		textinfos.push_back(new SingleTextInfo(*setit));
 
-		std::set<short>::iterator setit2 = texs.begin();
-		std::set<short>::iterator setend2 = texs.end();
-		for(; setit2 != setend2; ++setit2)
-		{
-			textinfos.push_back(new DuoTextInfoX(*setit, *setit2));
-			textinfos.push_back(new DuoTextInfoY(*setit, *setit2));
+		//std::set<short>::iterator setit2 = texs.begin();
+		//std::set<short>::iterator setend2 = texs.end();
+		//for(; setit2 != setend2; ++setit2)
+		//{
+		//	textinfos.push_back(new DuoTextInfoX(*setit, *setit2));
+		//	textinfos.push_back(new DuoTextInfoY(*setit, *setit2));
 
-			//std::set<short>::iterator setit3 = texs.begin();
-			//std::set<short>::iterator setend3 = texs.end();
-			//for(; setit3 != setend3; ++setit3)
-			//{
-			//	std::set<short>::iterator setit4 = texs.begin();
-			//	std::set<short>::iterator setend4 = texs.end();
-			//	for(; setit4 != setend4; ++setit4)
-			//	{
-			//		textinfos.push_back(new QuadraTextInfo(*setit, *setit2, *setit3, *setit4));
-			//	}
-			//}
-		}
+		//	//std::set<short>::iterator setit3 = texs.begin();
+		//	//std::set<short>::iterator setend3 = texs.end();
+		//	//for(; setit3 != setend3; ++setit3)
+		//	//{
+		//	//	std::set<short>::iterator setit4 = texs.begin();
+		//	//	std::set<short>::iterator setend4 = texs.end();
+		//	//	for(; setit4 != setend4; ++setit4)
+		//	//	{
+		//	//		textinfos.push_back(new QuadraTextInfo(*setit, *setit2, *setit3, *setit4));
+		//	//	}
+		//	//}
+		//}
 	}
 
 

@@ -43,15 +43,25 @@ struct PlaneInfo
 	int EndZ;
 };
 
+//struct TexNodeInfo
+//{
+//	int Px;
+//	int Py;
+//	int TexCoor1x;
+//	int TexCoor1y;
+//};
+
 struct TexPlaneInfo
 {
+	//std::vector<TexNodeInfo> texinfo;
+	int textureid;
+
+
 	int StartX;
 	int StartY;
 
 	int EndX;
 	int EndY;
-
-	int textureid;
 };
 
 
@@ -259,7 +269,6 @@ public:
 	//! look for floors  in the map
 	void SearchFloors(LBA_MAP_GL * mapgl);
 	void SearchFloorsNormal(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ);
-	void SearchFloorsHidden(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ);
 	void SearchFloorsSee(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ);
 
 	void SearchWallX(LBA_MAP_GL * mapgl);
