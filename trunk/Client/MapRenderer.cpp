@@ -76,9 +76,10 @@ bool MapRenderer::LoadMap(const std::string &filename, PhysicHandler * phH,
 	_mapinfo = mapinfo;
 	_map_gl = new LBA_MAP_GL(filename, phH);
 	_current_cut = -1;
-	//_phH->SearchFloors(_map_gl);
-	//_phH->SearchWallX(_map_gl);
-	_phH->SearchWallZ(_map_gl);
+	//_phH->SearchFloors();
+	//_phH->SearchWallX();
+	//_phH->SearchWallZ();
+	_phH->SearchStairs();
 		
 	//testplanecarace.clear();
 
@@ -161,6 +162,7 @@ void MapRenderer::Render()
 		std::vector<PlaneInfo> WallXh = _phH->GetWallsXHidden();
 		std::vector<PlaneInfo> WallZ = _phH->GetWallsZ();
 		std::vector<PlaneInfo> WallZh = _phH->GetWallsZHidden();
+		std::vector<StairInfo> stairs = _phH->GetStairs();
 
 		glEnable(GL_BLEND);
 		glDisable(GL_TEXTURE_2D);
@@ -188,6 +190,27 @@ void MapRenderer::Render()
 
 		//	glPopMatrix();
 		//}
+
+		for(size_t i=0; i<stairs.size(); ++i)
+		{
+			StairInfo pif = stairs[i];
+			glPushMatrix();
+
+			glTranslated(0, 0.5, 0);
+			glColor4f(0.0f,0.0f,1.0f, 1.f);
+			glBegin(GL_LINES);
+				glVertex3f(pif.C1X,pif.C1Y/2.0f,pif.C1Z);
+				glVertex3f(pif.C2X,pif.C2Y/2.0f,pif.C2Z);
+				glVertex3f(pif.C2X,pif.C2Y/2.0f,pif.C2Z);
+				glVertex3f(pif.C4X,pif.C4Y/2.0f,pif.C4Z);
+				glVertex3f(pif.C4X,pif.C4Y/2.0f,pif.C4Z);
+				glVertex3f(pif.C3X,pif.C3Y/2.0f,pif.C3Z);
+				glVertex3f(pif.C3X,pif.C3Y/2.0f,pif.C3Z);
+				glVertex3f(pif.C1X,pif.C1Y/2.0f,pif.C1Z);
+			glEnd();
+
+			glPopMatrix();
+		}
 
 
 		for(size_t i=0; i<planesh.size(); ++i)
