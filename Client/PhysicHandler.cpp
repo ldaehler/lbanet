@@ -667,10 +667,10 @@ short PhysicHandler::GetSound(int X, int Y, int Z)
 look for floors  in the map
 --------------------------------------------------------------------------------------------------
 */
-void PhysicHandler::SearchWallX(LBA_MAP_GL * mapgl)
+void PhysicHandler::SearchWallX()
 {
-	SearchWallXNormal(mapgl, _sizeY, _sizeX, _sizeZ);
-	SearchWallXHidden(mapgl, _sizeY, _sizeX, _sizeZ);
+	SearchWallXNormal(_sizeY, _sizeX, _sizeZ);
+	SearchWallXHidden(_sizeY, _sizeX, _sizeZ);
 }
 
 /*
@@ -678,7 +678,7 @@ void PhysicHandler::SearchWallX(LBA_MAP_GL * mapgl)
 look for floors  in the map
 --------------------------------------------------------------------------------------------------
 */
-void PhysicHandler::SearchWallXNormal(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ)
+void PhysicHandler::SearchWallXNormal(int sizeX, int sizeY, int sizeZ)
 {
 	_wallsX.clear();
 
@@ -731,7 +731,7 @@ void PhysicHandler::SearchWallXNormal(LBA_MAP_GL * mapgl, int sizeX, int sizeY, 
 look for floors  in the map
 --------------------------------------------------------------------------------------------------
 */
-void PhysicHandler::SearchWallXHidden(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ)
+void PhysicHandler::SearchWallXHidden(int sizeX, int sizeY, int sizeZ)
 {
 	_wallsXhidden.clear();
 
@@ -783,10 +783,10 @@ void PhysicHandler::SearchWallXHidden(LBA_MAP_GL * mapgl, int sizeX, int sizeY, 
 look for floors  in the map
 --------------------------------------------------------------------------------------------------
 */
-void PhysicHandler::SearchWallZ(LBA_MAP_GL * mapgl)
+void PhysicHandler::SearchWallZ()
 {
-	SearchWallZNormal(mapgl, _sizeX, _sizeZ, _sizeY);
-	SearchWallZHidden(mapgl, _sizeX, _sizeZ, _sizeY);
+	SearchWallZNormal(_sizeX, _sizeZ, _sizeY);
+	SearchWallZHidden(_sizeX, _sizeZ, _sizeY);
 }
 
 /*
@@ -794,7 +794,7 @@ void PhysicHandler::SearchWallZ(LBA_MAP_GL * mapgl)
 look for floors  in the map
 --------------------------------------------------------------------------------------------------
 */
-void PhysicHandler::SearchWallZNormal(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ)
+void PhysicHandler::SearchWallZNormal(int sizeX, int sizeY, int sizeZ)
 {
 	_wallsZ.clear();
 
@@ -846,7 +846,7 @@ void PhysicHandler::SearchWallZNormal(LBA_MAP_GL * mapgl, int sizeX, int sizeY, 
 look for floors  in the map
 --------------------------------------------------------------------------------------------------
 */
-void PhysicHandler::SearchWallZHidden(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ)
+void PhysicHandler::SearchWallZHidden(int sizeX, int sizeY, int sizeZ)
 {
 	_wallsZhidden.clear();
 
@@ -897,10 +897,10 @@ void PhysicHandler::SearchWallZHidden(LBA_MAP_GL * mapgl, int sizeX, int sizeY, 
 look for floors  in the map
 --------------------------------------------------------------------------------------------------
 */
-void PhysicHandler::SearchFloors(LBA_MAP_GL * mapgl)
+void PhysicHandler::SearchFloors()
 {
-	SearchFloorsNormal(mapgl, _sizeX, _sizeY, _sizeZ);
-	SearchFloorsSee(mapgl, _sizeX, _sizeY, _sizeZ);
+	SearchFloorsNormal(_sizeX, _sizeY, _sizeZ);
+	SearchFloorsSee(_sizeX, _sizeY, _sizeZ);
 }
 
 
@@ -912,7 +912,7 @@ void PhysicHandler::SearchFloors(LBA_MAP_GL * mapgl)
 look for floors  in the map
 --------------------------------------------------------------------------------------------------
 */
-void PhysicHandler::SearchFloorsNormal(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ)
+void PhysicHandler::SearchFloorsNormal(int sizeX, int sizeY, int sizeZ)
 {
 	_planes.clear();
 
@@ -952,7 +952,7 @@ void PhysicHandler::SearchFloorsNormal(LBA_MAP_GL * mapgl, int sizeX, int sizeY,
 look for floors  in the map
 --------------------------------------------------------------------------------------------------
 */
-void PhysicHandler::SearchFloorsSee(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ)
+void PhysicHandler::SearchFloorsSee(int sizeX, int sizeY, int sizeZ)
 {
 	_planessee.clear();
 
@@ -982,11 +982,6 @@ void PhysicHandler::SearchFloorsSee(LBA_MAP_GL * mapgl, int sizeX, int sizeY, in
 		{
 			for(int j=0; j<sizeZ; ++j)
 			{
-				if(mapgl->GetBrickIndex(i, k, j) == 0)
-				{
-					buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
-				}
-
 				if(buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] < 15)
 					buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
 				else
@@ -1635,4 +1630,196 @@ bool PhysicHandler::IsTexVerLine(short * start, int size, int sizeX, int sizeY,
 	}
 	
 	return true;
+}
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+split rectangle into part with same textures
+--------------------------------------------------------------------------------------------------
+*/
+void PhysicHandler::SearchStairs()
+{
+	_stairs.clear();
+	short * buffer = new short[_sizeX*_sizeY*_sizeZ];
+	memcpy ( buffer, _physicCube, _sizeX*_sizeY*_sizeZ*sizeof(short) );
+	SearchStairs(buffer, _sizeX, _sizeY, _sizeZ, _stairs);
+	delete[] buffer;
+}
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+split rectangle into part with same textures
+--------------------------------------------------------------------------------------------------
+*/
+void PhysicHandler::SearchStairs(short * start, int sizeX, int sizeY, int sizeZ,
+									std::vector<StairInfo> & stairs)
+{
+	for(int Y=0; Y< sizeY; ++Y)
+	{
+		for(int X=0; X< sizeX; ++X)
+		{
+			for(int Z=0; Z< sizeZ; ++Z)
+			{
+				StairInfo stri = PhysicHandler::FindStairUp(start, X, Y, Z, sizeX, sizeY, sizeZ, true);
+				if(stri.length > 0)
+				{
+					if(stri.type == 2 || stri.type == 5)
+					{
+						for(int lZ=Z+1; lZ< sizeZ; ++lZ)
+						{
+							StairInfo stri2 = PhysicHandler::FindStairUp(start, X, Y, lZ, sizeX, sizeY, sizeZ, false);
+							if(stri2.length == stri.length && stri2.type == stri.type)
+							{
+								stri.C2X = stri2.C2X;
+								stri.C2Y = stri2.C2Y;
+								stri.C2Z = stri2.C2Z;
+
+								stri.C4X = stri2.C4X;
+								stri.C4Y = stri2.C4Y;
+								stri.C4Z = stri2.C4Z;
+
+								 PhysicHandler::FindStairUp(start, X, Y, lZ, sizeX, sizeY, sizeZ, true);
+							}
+							else
+								break;
+						}
+					}
+
+					if(stri.type == 3 || stri.type == 4)
+					{
+						for(int lX=X+1; lX< sizeX; ++lX)
+						{
+							StairInfo stri2 = PhysicHandler::FindStairUp(start, lX, Y, Z, sizeX, sizeY, sizeZ, false);
+							if(stri2.length == stri.length && stri2.type == stri.type)
+							{
+								stri.C2X = stri2.C2X;
+								stri.C2Y = stri2.C2Y;
+								stri.C2Z = stri2.C2Z;
+
+								stri.C4X = stri2.C4X;
+								stri.C4Y = stri2.C4Y;
+								stri.C4Z = stri2.C4Z;
+
+								 PhysicHandler::FindStairUp(start, lX, Y, Z, sizeX, sizeY, sizeZ, true);
+							}
+							else
+								break;
+						}
+					}
+					stairs.push_back(stri);
+				}
+			}
+		}
+	}
+
+
+}
+
+
+/*
+--------------------------------------------------------------------------------------------------
+split rectangle into part with same textures
+--------------------------------------------------------------------------------------------------
+*/
+StairInfo PhysicHandler::FindStairUp(short * start, int idX, int idY, int idZ,  
+								int sizeX, int sizeY, int sizeZ, bool overwrite)
+{
+	StairInfo res;
+	res.length = 0;
+
+	int proto = start[idY*sizeX*sizeZ + idX*sizeZ + idZ];
+	if(proto == 2 || proto == 3 || proto == 4 || proto == 5)
+	{
+		++res.length;
+		res.type = proto;
+
+		if(overwrite)
+			start[idY*sizeX*sizeZ + idX*sizeZ + idZ] = 0;
+
+		int offsetX = 0;
+		int offsetZ = 0;
+		int minoffsetX = 0;
+		int minoffsetZ = 0;
+
+
+		if(res.type == 2)
+			++offsetZ;
+		if(res.type == 3)
+			++offsetX;
+		if(res.type == 4)
+		{
+			++offsetX;
+			++minoffsetZ;
+		}
+		if(res.type == 5)
+		{
+			++offsetZ;
+			++minoffsetX;
+		}
+
+
+		res.C1X = idX+minoffsetX;
+		res.C1Y = idY-1;
+		res.C1Z = idZ+minoffsetZ;
+
+		res.C2X = idX+offsetX+minoffsetX;
+		res.C2Y = idY-1;
+		res.C2Z = idZ+offsetZ+minoffsetZ;
+
+		res.C3X = 0+minoffsetX;
+		res.C3Y = -1;
+		res.C3Z = 0+minoffsetZ;
+
+		res.C4X = offsetX+minoffsetX;
+		res.C4Y = -1;
+		res.C4Z = offsetZ+minoffsetZ;
+
+
+		while(true)
+		{
+			++idY;
+
+			if(res.type == 2)
+				++idX;
+			if(res.type == 3)
+				++idZ;
+			if(res.type == 4)
+				--idZ;
+			if(res.type == 5)
+				--idX;
+
+			if((idY) < sizeY && (idY) >= 0)
+			{
+				if((idX) < sizeX && (idX) >= 0)
+				{
+					if((idZ) < sizeZ && (idZ) >= 0)
+					{
+						if(start[idY*sizeX*sizeZ + idX*sizeZ + idZ] == res.type)
+						{
+							if(overwrite)
+								start[idY*sizeX*sizeZ + idX*sizeZ + idZ] = 0;
+							++res.length;
+							continue;
+						}
+					}
+				}
+			}
+			break;
+		}
+
+
+		res.C3X += idX;
+		res.C3Y += idY;
+		res.C3Z += idZ;	
+
+		res.C4X += idX;
+		res.C4Y += idY;
+		res.C4Z += idZ;
+	}
+
+	return res;
 }

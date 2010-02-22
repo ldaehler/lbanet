@@ -32,6 +32,30 @@ class LocalActorsHandler;
 class ExternalActorsHandler;
 
 
+struct StairInfo
+{
+	int C1X;
+	int C1Y;
+	int C1Z;
+
+	int C2X;
+	int C2Y;
+	int C2Z;
+
+	int C3X;
+	int C3Y;
+	int C3Z;
+
+	int C4X;
+	int C4Y;
+	int C4Z;
+
+	int type;
+	int length;
+};
+
+
+
 struct PlaneInfo
 {
 	int StartX;
@@ -267,17 +291,23 @@ public:
 
 
 	//! look for floors  in the map
-	void SearchFloors(LBA_MAP_GL * mapgl);
-	void SearchFloorsNormal(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ);
-	void SearchFloorsSee(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ);
+	void SearchFloors();
+	void SearchFloorsNormal(int sizeX, int sizeY, int sizeZ);
+	void SearchFloorsSee(int sizeX, int sizeY, int sizeZ);
 
-	void SearchWallX(LBA_MAP_GL * mapgl);
-	void SearchWallXNormal(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ);
-	void SearchWallXHidden(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ);
+	void SearchWallX();
+	void SearchWallXNormal(int sizeX, int sizeY, int sizeZ);
+	void SearchWallXHidden(int sizeX, int sizeY, int sizeZ);
 
-	void SearchWallZ(LBA_MAP_GL * mapgl);
-	void SearchWallZNormal(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ);
-	void SearchWallZHidden(LBA_MAP_GL * mapgl, int sizeX, int sizeY, int sizeZ);
+	void SearchWallZ();
+	void SearchWallZNormal(int sizeX, int sizeY, int sizeZ);
+	void SearchWallZHidden(int sizeX, int sizeY, int sizeZ);
+
+
+	void SearchStairs();
+	void SearchStairs(short * start, int sizeX, int sizeY, int sizeZ, std::vector<StairInfo> & stairs);
+	StairInfo FindStairUp(short * start, int idX, int idY, int idZ, 
+						int sizeX, int sizeY, int sizeZ, bool overwrite);
 
 	std::vector<PlaneInfo> GetPlanes()
 	{ return _planes; }
@@ -300,6 +330,8 @@ public:
 	std::vector<PlaneInfo> GetWallsZHidden()
 	{ return _wallsZhidden; }
 
+	std::vector<StairInfo> GetStairs()
+	{ return _stairs; }
 
 	//! split rectangle into part with same textures
 	void SplitToTexture(short * area, int sizeX, int sizeY, std::vector<TexPlaneInfo> & res);
@@ -372,6 +404,7 @@ private:
 	std::vector<PlaneInfo> _wallsZ;
 	std::vector<PlaneInfo> _wallsZhidden;
 
+	std::vector<StairInfo> _stairs;
 };
 
 #endif

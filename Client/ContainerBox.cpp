@@ -996,7 +996,7 @@ bool ContainerBox::HandleEnterKey (const CEGUI::EventArgs& e)
 
 	if(we.scancode == CEGUI::Key::Space || we.scancode == CEGUI::Key::W)
 	{
-		return HandleCancel(e);
+		return HandleTakeAll(e);
 	}
 
 	return false;
