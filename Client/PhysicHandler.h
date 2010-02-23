@@ -54,6 +54,23 @@ struct StairInfo
 	int length;
 };
 
+struct CornerStairInfo
+{
+	int C1X;
+	int C1Y;
+	int C1Z;
+
+	int C2X;
+	int C2Y;
+	int C2Z;
+
+	int C3X;
+	int C3Y;
+	int C3Z;
+
+	int type;
+
+};
 
 
 struct PlaneInfo
@@ -305,6 +322,8 @@ public:
 
 
 	void SearchStairs();
+	void SearchCornerStairs(short * start, int sizeX, int sizeY, int sizeZ, std::vector<CornerStairInfo> & stairs);
+
 	void SearchStairs(short * start, int sizeX, int sizeY, int sizeZ, std::vector<StairInfo> & stairs);
 	StairInfo FindStairUp(short * start, int idX, int idY, int idZ, 
 						int sizeX, int sizeY, int sizeZ, bool overwrite);
@@ -332,6 +351,10 @@ public:
 
 	std::vector<StairInfo> GetStairs()
 	{ return _stairs; }
+
+	std::vector<CornerStairInfo> GetCornerStairs()
+	{ return _cornerstairs; }
+
 
 	//! split rectangle into part with same textures
 	void SplitToTexture(short * area, int sizeX, int sizeY, std::vector<TexPlaneInfo> & res);
@@ -381,6 +404,28 @@ protected:
 							int idxX, int idxY, TextInfo * txi);
 
 
+
+	void Search6CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+										int idX, int idY, int idZ,
+									   std::vector<CornerStairInfo> & stairs);
+
+	void Search7CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+										int idX, int idY, int idZ,
+									   std::vector<CornerStairInfo> & stairs);
+
+	void Search8CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+										int idX, int idY, int idZ,
+									   std::vector<CornerStairInfo> & stairs);
+
+	void Search10CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+										int idX, int idY, int idZ,
+									   std::vector<CornerStairInfo> & stairs);
+
+	void Search11CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+										int idX, int idY, int idZ,
+									   std::vector<CornerStairInfo> & stairs);
+
+
 private:
 
 	// cube representing the map physic
@@ -405,6 +450,7 @@ private:
 	std::vector<PlaneInfo> _wallsZhidden;
 
 	std::vector<StairInfo> _stairs;
+	std::vector<CornerStairInfo> _cornerstairs;
 };
 
 #endif
