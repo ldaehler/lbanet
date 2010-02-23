@@ -1646,6 +1646,37 @@ void PhysicHandler::SearchStairs()
 	short * buffer = new short[_sizeX*_sizeY*_sizeZ];
 	memcpy ( buffer, _physicCube, _sizeX*_sizeY*_sizeZ*sizeof(short) );
 
+
+
+	for(int k=0; k<_sizeY; ++k)
+	{
+		for(int i=0; i<_sizeX; ++i)
+		{
+			for(int j=0; j<_sizeZ; ++j)
+			{
+				if(buffer[(k*_sizeX*_sizeZ)+(i*_sizeZ)+j] == 1)
+					buffer[(k*_sizeX*_sizeZ)+(i*_sizeZ)+j] = 0;
+			}
+		}
+	}
+
+	for(int k=0; k<_sizeY; ++k)
+	{
+		for(int i=0; i<_sizeX; ++i)
+		{
+			for(int j=0; j<_sizeZ; ++j)
+			{
+				if((k+1)<_sizeY)
+				{
+					if(buffer[((k+1)*_sizeX*_sizeZ)+(i*_sizeZ)+j] != 0)
+						buffer[(k*_sizeX*_sizeZ)+(i*_sizeZ)+j] = 0;
+				}
+			}
+		}
+	}
+
+
+
 	SearchCornerStairs(buffer, _sizeX, _sizeY, _sizeZ, _cornerstairs);
 	SearchStairs(buffer, _sizeX, _sizeY, _sizeZ, _stairs);
 	delete[] buffer;
@@ -1666,11 +1697,14 @@ void PhysicHandler::SearchCornerStairs(short * start, int sizeX, int sizeY, int 
 		{
 			for(int Z=0; Z< sizeZ; ++Z)
 			{
-				//Search6CornerStairs(start, sizeX, sizeY, sizeZ, X, Y, Z, stairs);
-				//Search7CornerStairs(start, sizeX, sizeY, sizeZ, X, Y, Z, stairs);
+				Search6CornerStairs(start, sizeX, sizeY, sizeZ, X, Y, Z, stairs);
+				Search7CornerStairs(start, sizeX, sizeY, sizeZ, X, Y, Z, stairs);
 				Search8CornerStairs(start, sizeX, sizeY, sizeZ, X, Y, Z, stairs);
-				//Search10CornerStairs(start, sizeX, sizeY, sizeZ, X, Y, Z, stairs);
-				//Search11CornerStairs(start, sizeX, sizeY, sizeZ, X, Y, Z, stairs);
+				Search9CornerStairs(start, sizeX, sizeY, sizeZ, X, Y, Z, stairs);
+				Search10CornerStairs(start, sizeX, sizeY, sizeZ, X, Y, Z, stairs);
+				Search11CornerStairs(start, sizeX, sizeY, sizeZ, X, Y, Z, stairs);
+				Search12CornerStairs(start, sizeX, sizeY, sizeZ, X, Y, Z, stairs);
+				Search13CornerStairs(start, sizeX, sizeY, sizeZ, X, Y, Z, stairs);
 			}
 		}
 	}
@@ -1899,6 +1933,15 @@ void PhysicHandler::Search6CornerStairs(short * start, int sizeX, int sizeY, int
 		int localY=idY;
 		int localZ=idZ;
 
+		int keepX1=idX;
+		int keepY1=idY;
+		int keepZ1=idZ;
+
+		int keepX2=idX;
+		int keepY2=idY;
+		int keepZ2=idZ;
+
+
 		while(true)
 		{
 			++localX;
@@ -1917,7 +1960,7 @@ void PhysicHandler::Search6CornerStairs(short * start, int sizeX, int sizeY, int
 							//check left triangle side
 							{
 								bool truetriangle = true;
-								for(int tmpX=idX; tmpX<localX; ++tmpX)
+								for(int tmpX=keepX1; tmpX<localX; ++tmpX)
 								{
 									if(start[localY*sizeX*sizeZ + tmpX*sizeZ + localZ] != 3)
 										truetriangle = false;
@@ -1925,7 +1968,7 @@ void PhysicHandler::Search6CornerStairs(short * start, int sizeX, int sizeY, int
 
 								if(truetriangle)
 								{
-									for(int tmpX=idX; tmpX<localX; ++tmpX)
+									for(int tmpX=keepX1; tmpX<localX; ++tmpX)
 										start[localY*sizeX*sizeZ + tmpX*sizeZ + localZ] = 0;
 
 									cif.C2X = localX+1;
@@ -1949,13 +1992,17 @@ void PhysicHandler::Search6CornerStairs(short * start, int sizeX, int sizeY, int
 									cif.C3X = localX;
 									cif.C3Y = localY;
 									cif.C3Z = localZ+1;
+
+									keepX1 = localX;
+									keepY1 = localY;
+									keepZ1 = localY;
 								}
 							}
 
 							//check right triangle side
 							{
 								bool truetriangle = true;
-								for(int tmpZ=idZ; tmpZ<localZ; ++tmpZ)
+								for(int tmpZ=keepZ2; tmpZ<localZ; ++tmpZ)
 								{
 									if(start[localY*sizeX*sizeZ + localX*sizeZ + tmpZ] != 2)
 										truetriangle = false;
@@ -1963,7 +2010,7 @@ void PhysicHandler::Search6CornerStairs(short * start, int sizeX, int sizeY, int
 
 								if(truetriangle)
 								{
-									for(int tmpZ=idZ; tmpZ<localZ; ++tmpZ)
+									for(int tmpZ=keepZ2; tmpZ<localZ; ++tmpZ)
 										start[localY*sizeX*sizeZ + localX*sizeZ + tmpZ] = 0;
 
 									cif2.C2X = localX+1;
@@ -1987,6 +2034,10 @@ void PhysicHandler::Search6CornerStairs(short * start, int sizeX, int sizeY, int
 									cif2.C3X = localX+1;
 									cif2.C3Y = localY;
 									cif2.C3Z = localZ;
+
+									keepX2 = localX;
+									keepY2 = localY;
+									keepZ2 = localY;
 								}
 							}
 
@@ -2049,6 +2100,15 @@ void PhysicHandler::Search7CornerStairs(short * start, int sizeX, int sizeY, int
 		int localY=idY;
 		int localZ=idZ;
 
+		int keepX1=idX;
+		int keepY1=idY;
+		int keepZ1=idZ;
+
+		int keepX2=idX;
+		int keepY2=idY;
+		int keepZ2=idZ;
+
+
 		while(true)
 		{
 			--localX;
@@ -2067,7 +2127,7 @@ void PhysicHandler::Search7CornerStairs(short * start, int sizeX, int sizeY, int
 							//check left triangle side
 							{
 								bool truetriangle = true;
-								for(int tmpX=idX; tmpX>localX; --tmpX)
+								for(int tmpX=keepX1; tmpX>localX; --tmpX)
 								{
 									if(start[localY*sizeX*sizeZ + tmpX*sizeZ + localZ] != 4)
 										truetriangle = false;
@@ -2075,7 +2135,7 @@ void PhysicHandler::Search7CornerStairs(short * start, int sizeX, int sizeY, int
 
 								if(truetriangle)
 								{
-									for(int tmpX=idX; tmpX>localX; --tmpX)
+									for(int tmpX=keepX1; tmpX>localX; --tmpX)
 										start[localY*sizeX*sizeZ + tmpX*sizeZ + localZ] = 0;
 
 									cif.C2X = localX-1+1;
@@ -2099,13 +2159,17 @@ void PhysicHandler::Search7CornerStairs(short * start, int sizeX, int sizeY, int
 									cif.C3X = localX+1;
 									cif.C3Y = localY;
 									cif.C3Z = localZ-1+1;
+
+									keepX1 = localX;
+									keepY1 = localY;
+									keepZ1 = localY;
 								}
 							}
 
 							//check right triangle side
 							{
 								bool truetriangle = true;
-								for(int tmpZ=idZ; tmpZ>localZ; --tmpZ)
+								for(int tmpZ=keepZ2; tmpZ>localZ; --tmpZ)
 								{
 									if(start[localY*sizeX*sizeZ + localX*sizeZ + tmpZ] != 5)
 										truetriangle = false;
@@ -2113,7 +2177,7 @@ void PhysicHandler::Search7CornerStairs(short * start, int sizeX, int sizeY, int
 
 								if(truetriangle)
 								{
-									for(int tmpZ=idZ; tmpZ>localZ; --tmpZ)
+									for(int tmpZ=keepZ2; tmpZ>localZ; --tmpZ)
 										start[localY*sizeX*sizeZ + localX*sizeZ + tmpZ] = 0;
 
 									cif2.C2X = localX-1+1;
@@ -2137,6 +2201,347 @@ void PhysicHandler::Search7CornerStairs(short * start, int sizeX, int sizeY, int
 									cif2.C3X = localX-1+1;
 									cif2.C3Y = localY;
 									cif2.C3Z = localZ+1;
+
+									keepX2 = localX;
+									keepY2 = localY;
+									keepZ2 = localY;
+								}
+							}
+
+							continue;
+						}
+					}
+				}
+			}
+
+			stairs.push_back(cif);
+			stairs.push_back(cif2);
+			break;
+		}
+	}
+}
+
+
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+split rectangle into part with same textures
+--------------------------------------------------------------------------------------------------
+*/
+void PhysicHandler::Search8CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+										int idX, int idY, int idZ,
+									   std::vector<CornerStairInfo> & stairs)
+{
+	if(start[idY*sizeX*sizeZ + idX*sizeZ + idZ] == 8)
+	{
+		start[idY*sizeX*sizeZ + idX*sizeZ + idZ] = 0;
+
+		CornerStairInfo cif;
+		cif.C1X = idX;
+		cif.C1Y = idY-1;
+		cif.C1Z = idZ+1;
+
+		cif.C2X = idX+1;
+		cif.C2Y = idY;
+		cif.C2Z = idZ;
+
+		cif.C3X = idX+1;
+		cif.C3Y = idY;
+		cif.C3Z = idZ+1;
+
+		CornerStairInfo cif2;
+		cif2.C1X = idX;
+		cif2.C1Y = idY-1;
+		cif2.C1Z = idZ+1;
+
+		cif2.C2X = idX+1;
+		cif2.C2Y = idY;
+		cif2.C2Z = idZ;
+
+		cif2.C3X = idX;
+		cif2.C3Y = idY;
+		cif2.C3Z = idZ;
+
+
+		int localX=idX;
+		int localY=idY;
+		int localZ=idZ;
+
+		int keepX1=idX;
+		int keepY1=idY;
+		int keepZ1=idZ;
+
+		int keepX2=idX;
+		int keepY2=idY;
+		int keepZ2=idZ;
+
+
+		while(true)
+		{
+			++localX;
+			++localY;
+			--localZ;
+			if(localY< sizeY)
+			{
+				if(localX< sizeX)
+				{
+					if(localZ>= 0)
+					{
+						if(start[localY*sizeX*sizeZ + localX*sizeZ + localZ] == 8)
+						{
+							start[localY*sizeX*sizeZ + localX*sizeZ + localZ] = 0;
+
+							//check left triangle side
+							{
+								bool truetriangle = true;
+								for(int tmpX=keepX1; tmpX<localX; ++tmpX)
+								{
+									if(start[localY*sizeX*sizeZ + tmpX*sizeZ + localZ] != 4)
+										truetriangle = false;
+								}
+
+								if(truetriangle)
+								{
+									for(int tmpX=keepX1; tmpX<localX; ++tmpX)
+										start[localY*sizeX*sizeZ + tmpX*sizeZ + localZ] = 0;
+
+									cif2.C2X = localX+1;
+									cif2.C2Y = localY;
+									cif2.C2Z = localZ;
+
+									cif2.C3Z = localZ;
+									cif2.C3Y = localY;
+
+								}
+								else
+								{
+									stairs.push_back(cif2);
+									cif2.C1X = localX;
+									cif2.C1Y = localY-1;
+									cif2.C1Z = localZ+1;
+
+									cif2.C2X = localX+1;
+									cif2.C2Y = localY;
+									cif2.C2Z = localZ;
+
+									cif2.C3X = localX;
+									cif2.C3Y = localY;
+									cif2.C3Z = localZ;
+
+									keepX1 = localX;
+									keepY1 = localY;
+									keepZ1 = localY;
+								}
+							}
+
+							//check right triangle side
+							{
+								bool truetriangle = true;
+								for(int tmpZ=keepZ2; tmpZ>localZ; --tmpZ)
+								{
+									if(start[localY*sizeX*sizeZ + localX*sizeZ + tmpZ] != 2)
+										truetriangle = false;
+								}
+
+								if(truetriangle)
+								{
+									for(int tmpZ=keepZ2; tmpZ>localZ; --tmpZ)
+										start[localY*sizeX*sizeZ + localX*sizeZ + tmpZ] = 0;
+
+									cif.C2X = localX+1;
+									cif.C2Y = localY;
+									cif.C2Z = localZ;
+
+									cif.C3X = localX+1;
+									cif.C3Y = localY;
+								}
+								else
+								{
+									stairs.push_back(cif);
+									cif.C1X = localX;
+									cif.C1Y = localY-1;
+									cif.C1Z = localZ+1;
+
+									cif.C2X = localX+1;
+									cif.C2Y = localY;
+									cif.C2Z = localZ;
+
+									cif.C3X = localX+1;
+									cif.C3Y = localY;
+									cif.C3Z = localZ+1;
+
+									keepX2 = localX;
+									keepY2 = localY;
+									keepZ2 = localY;
+								}
+							}
+
+							continue;
+						}
+					}
+				}
+			}
+
+			stairs.push_back(cif);
+			stairs.push_back(cif2);
+			break;
+		}
+	}
+}
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+split rectangle into part with same textures
+--------------------------------------------------------------------------------------------------
+*/
+void PhysicHandler::Search9CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+										int idX, int idY, int idZ,
+									   std::vector<CornerStairInfo> & stairs)
+{
+	if(start[idY*sizeX*sizeZ + idX*sizeZ + idZ] == 9)
+	{
+		start[idY*sizeX*sizeZ + idX*sizeZ + idZ] = 0;
+
+		CornerStairInfo cif;
+		cif.C1X = idX;
+		cif.C1Y = idY;
+		cif.C1Z = idZ+1;
+
+		cif.C2X = idX+1;
+		cif.C2Y = idY-1;
+		cif.C2Z = idZ;
+
+		cif.C3X = idX+1;
+		cif.C3Y = idY;
+		cif.C3Z = idZ+1;
+
+		CornerStairInfo cif2;
+		cif2.C1X = idX;
+		cif2.C1Y = idY;
+		cif2.C1Z = idZ+1;
+
+		cif2.C2X = idX+1;
+		cif2.C2Y = idY-1;
+		cif2.C2Z = idZ;
+
+		cif2.C3X = idX;
+		cif2.C3Y = idY;
+		cif2.C3Z = idZ;
+
+
+		int localX=idX;
+		int localY=idY;
+		int localZ=idZ;
+
+		int keepX1=idX;
+		int keepY1=idY;
+		int keepZ1=idZ;
+
+		int keepX2=idX;
+		int keepY2=idY;
+		int keepZ2=idZ;
+
+
+		while(true)
+		{
+			--localX;
+			++localY;
+			++localZ;
+			if(localY< sizeY)
+			{
+				if(localX>= 0)
+				{
+					if(localZ>= 0)
+					{
+						if(start[localY*sizeX*sizeZ + localX*sizeZ + localZ] == 9)
+						{
+							start[localY*sizeX*sizeZ + localX*sizeZ + localZ] = 0;
+
+							//check left triangle side
+							{
+								bool truetriangle = true;
+								for(int tmpX=keepX1; tmpX>localX; --tmpX)
+								{
+									if(start[localY*sizeX*sizeZ + tmpX*sizeZ + localZ] != 3)
+										truetriangle = false;
+								}
+
+								if(truetriangle)
+								{
+									for(int tmpX=keepX1; tmpX>localX; --tmpX)
+										start[localY*sizeX*sizeZ + tmpX*sizeZ + localZ] = 0;
+
+									cif.C1X = localX;
+									cif.C1Y = localY;
+									cif.C1Z = localZ+1;
+
+									cif.C3Y = localY;
+									cif.C3Z = localZ+1;
+								}
+								else
+								{
+									stairs.push_back(cif);
+									cif.C1X = localX;
+									cif.C1Y = localY;
+									cif.C1Z = localZ+1;
+
+									cif.C2X = localX+1;
+									cif.C2Y = localY-1;
+									cif.C2Z = localZ;
+
+									cif.C3X = localX+1;
+									cif.C3Y = localY;
+									cif.C3Z = localZ+1;
+
+									keepX1 = localX;
+									keepY1 = localY;
+									keepZ1 = localY;
+								}
+							}
+
+							//check right triangle side
+							{
+								bool truetriangle = true;
+								for(int tmpZ=keepZ2; tmpZ<localZ; ++tmpZ)
+								{
+									if(start[localY*sizeX*sizeZ + localX*sizeZ + tmpZ] != 5)
+										truetriangle = false;
+								}
+
+								if(truetriangle)
+								{
+									for(int tmpZ=keepZ2; tmpZ<localZ; ++tmpZ)
+										start[localY*sizeX*sizeZ + localX*sizeZ + tmpZ] = 0;
+
+									cif2.C1X = localX;
+									cif2.C1Y = localY;
+									cif2.C1Z = localZ+1;
+
+									cif2.C3X = localX;
+									cif2.C3Y = localY;
+								}
+								else
+								{
+									stairs.push_back(cif2);
+									cif2.C1X = localX;
+									cif2.C1Y = localY;
+									cif2.C1Z = localZ+1;
+
+									cif2.C2X = localX+1;
+									cif2.C2Y = localY-1;
+									cif2.C2Z = localZ;
+
+									cif2.C3X = localX;
+									cif2.C3Y = localY;
+									cif2.C3Z = localZ;
+
+									keepX2 = localX;
+									keepY2 = localY;
+									keepZ2 = localY;
 								}
 							}
 
@@ -2201,6 +2606,14 @@ void PhysicHandler::Search10CornerStairs(short * start, int sizeX, int sizeY, in
 		int localY=idY;
 		int localZ=idZ;
 
+		int keepX1=idX;
+		int keepY1=idY;
+		int keepZ1=idZ;
+
+		int keepX2=idX;
+		int keepY2=idY;
+		int keepZ2=idZ;
+
 		while(true)
 		{
 			++localX;
@@ -2219,8 +2632,8 @@ void PhysicHandler::Search10CornerStairs(short * start, int sizeX, int sizeY, in
 							//check left triangle side
 							{
 								bool truetriangle = true;
-								int tmpY=idY;
-								for(int tmpX=idX; tmpX<localX; ++tmpX, ++tmpY)
+								int tmpY=keepY1;
+								for(int tmpX=keepX1; tmpX<localX; ++tmpX, ++tmpY)
 								{
 									if(start[tmpY*sizeX*sizeZ + tmpX*sizeZ + localZ] != 2)
 										truetriangle = false;
@@ -2228,8 +2641,8 @@ void PhysicHandler::Search10CornerStairs(short * start, int sizeX, int sizeY, in
 
 								if(truetriangle)
 								{
-									int tmpY=idY;
-									for(int tmpX=idX; tmpX<localX; ++tmpX, ++tmpY)
+									int tmpY=keepY1;
+									for(int tmpX=keepX1; tmpX<localX; ++tmpX, ++tmpY)
 										start[tmpY*sizeX*sizeZ + tmpX*sizeZ + localZ] = 0;
 
 									cif.C2X = localX+1;
@@ -2252,14 +2665,18 @@ void PhysicHandler::Search10CornerStairs(short * start, int sizeX, int sizeY, in
 									cif.C3X = localX;
 									cif.C3Y = localY-1;
 									cif.C3Z = localZ+1;
+
+									keepX1 = localX;
+									keepY1 = localY;
+									keepZ1 = localY;
 								}
 							}
 
 							//check right triangle side
 							{
 								bool truetriangle = true;
-								int tmpY=idY;
-								for(int tmpZ=idZ; tmpZ<localZ; ++tmpZ, ++tmpY)
+								int tmpY=keepY2;
+								for(int tmpZ=keepZ2; tmpZ<localZ; ++tmpZ, ++tmpY)
 								{
 									if(start[tmpY*sizeX*sizeZ + localX*sizeZ + tmpZ] != 3)
 										truetriangle = false;
@@ -2267,8 +2684,8 @@ void PhysicHandler::Search10CornerStairs(short * start, int sizeX, int sizeY, in
 
 								if(truetriangle)
 								{
-									int tmpY=idY;
-									for(int tmpZ=idZ; tmpZ<localZ; ++tmpZ, ++tmpY)
+									int tmpY=keepY2;
+									for(int tmpZ=keepZ2; tmpZ<localZ; ++tmpZ, ++tmpY)
 										start[tmpY*sizeX*sizeZ + localX*sizeZ + tmpZ] = 0;
 
 									cif2.C2X = localX+1;
@@ -2291,6 +2708,10 @@ void PhysicHandler::Search10CornerStairs(short * start, int sizeX, int sizeY, in
 									cif2.C3X = localX+1;
 									cif2.C3Y = localY-1;
 									cif2.C3Z = localZ;
+
+									keepX2 = localX;
+									keepY2 = localY;
+									keepZ2 = localY;
 								}
 							}
 
@@ -2353,6 +2774,14 @@ void PhysicHandler::Search11CornerStairs(short * start, int sizeX, int sizeY, in
 		int localY=idY;
 		int localZ=idZ;
 
+		int keepX1=idX;
+		int keepY1=idY;
+		int keepZ1=idZ;
+
+		int keepX2=idX;
+		int keepY2=idY;
+		int keepZ2=idZ;
+
 		while(true)
 		{
 			--localX;
@@ -2371,8 +2800,8 @@ void PhysicHandler::Search11CornerStairs(short * start, int sizeX, int sizeY, in
 							//check left triangle side
 							{
 								bool truetriangle = true;
-								int tmpY=idY;
-								for(int tmpX=idX; tmpX>localX; --tmpX, ++tmpY)
+								int tmpY=keepY1;
+								for(int tmpX=keepX1; tmpX>localX; --tmpX, ++tmpY)
 								{
 									if(start[tmpY*sizeX*sizeZ + tmpX*sizeZ + localZ] != 5)
 										truetriangle = false;
@@ -2380,15 +2809,14 @@ void PhysicHandler::Search11CornerStairs(short * start, int sizeX, int sizeY, in
 
 								if(truetriangle)
 								{
-									int tmpY=idY;
-									for(int tmpX=idX; tmpX>localX; --tmpX, ++tmpY)
+									int tmpY=keepY1;
+									for(int tmpX=keepX1; tmpX>localX; --tmpX, ++tmpY)
 										start[tmpY*sizeX*sizeZ + tmpX*sizeZ + localZ] = 0;
 
 									cif.C2X = localX-1+1;
 									cif.C2Y = localY;
 									cif.C2Z = localZ-1+1;
 
-									//cif.C3Y = localY;
 									cif.C3Z = localZ-1+1;
 								}
 								else
@@ -2405,14 +2833,18 @@ void PhysicHandler::Search11CornerStairs(short * start, int sizeX, int sizeY, in
 									cif.C3X = localX+1;
 									cif.C3Y = localY-1;
 									cif.C3Z = localZ-1+1;
+
+									keepX1 = localX;
+									keepY1 = localY;
+									keepZ1 = localY;
 								}
 							}
 
 							//check right triangle side
 							{
 								bool truetriangle = true;
-								int tmpY=idY;
-								for(int tmpZ=idZ; tmpZ>localZ; --tmpZ, ++tmpY)
+								int tmpY=keepY2;
+								for(int tmpZ=keepZ2; tmpZ>localZ; --tmpZ, ++tmpY)
 								{
 									if(start[tmpY*sizeX*sizeZ + localX*sizeZ + tmpZ] != 4)
 										truetriangle = false;
@@ -2420,8 +2852,8 @@ void PhysicHandler::Search11CornerStairs(short * start, int sizeX, int sizeY, in
 
 								if(truetriangle)
 								{
-									int tmpY=idY;
-									for(int tmpZ=idZ; tmpZ>localZ; --tmpZ, ++tmpY)
+									int tmpY=keepY2;
+									for(int tmpZ=keepZ2; tmpZ>localZ; --tmpZ, ++tmpY)
 										start[tmpY*sizeX*sizeZ + localX*sizeZ + tmpZ] = 0;
 
 									cif2.C2X = localX-1+1;
@@ -2429,7 +2861,6 @@ void PhysicHandler::Search11CornerStairs(short * start, int sizeX, int sizeY, in
 									cif2.C2Z = localZ-1+1;
 
 									cif2.C3X = localX-1+1;
-									//cif2.C3Y = localY;
 								}
 								else
 								{
@@ -2445,6 +2876,10 @@ void PhysicHandler::Search11CornerStairs(short * start, int sizeX, int sizeY, in
 									cif2.C3X = localX-1+1;
 									cif2.C3Y = localY-1;
 									cif2.C3Z = localZ+1;
+
+									keepX2 = localX;
+									keepY2 = localY;
+									keepZ2 = localY;
 								}
 							}
 
@@ -2468,11 +2903,11 @@ void PhysicHandler::Search11CornerStairs(short * start, int sizeX, int sizeY, in
 split rectangle into part with same textures
 --------------------------------------------------------------------------------------------------
 */
-void PhysicHandler::Search8CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+void PhysicHandler::Search12CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
 										int idX, int idY, int idZ,
 									   std::vector<CornerStairInfo> & stairs)
 {
-	if(start[idY*sizeX*sizeZ + idX*sizeZ + idZ] == 8)
+	if(start[idY*sizeX*sizeZ + idX*sizeZ + idZ] == 12)
 	{
 		start[idY*sizeX*sizeZ + idX*sizeZ + idZ] = 0;
 
@@ -2486,7 +2921,7 @@ void PhysicHandler::Search8CornerStairs(short * start, int sizeX, int sizeY, int
 		cif.C2Z = idZ;
 
 		cif.C3X = idX+1;
-		cif.C3Y = idY;
+		cif.C3Y = idY-1;
 		cif.C3Z = idZ+1;
 
 		CornerStairInfo cif2;
@@ -2499,13 +2934,21 @@ void PhysicHandler::Search8CornerStairs(short * start, int sizeX, int sizeY, int
 		cif2.C2Z = idZ;
 
 		cif2.C3X = idX;
-		cif2.C3Y = idY;
+		cif2.C3Y = idY-1;
 		cif2.C3Z = idZ;
 
 
 		int localX=idX;
 		int localY=idY;
 		int localZ=idZ;
+
+		int keepX1=idX;
+		int keepY1=idY;
+		int keepZ1=idZ;
+
+		int keepX2=idX;
+		int keepY2=idY;
+		int keepZ2=idZ;
 
 		while(true)
 		{
@@ -2518,35 +2961,35 @@ void PhysicHandler::Search8CornerStairs(short * start, int sizeX, int sizeY, int
 				{
 					if(localZ>= 0)
 					{
-						if(start[localY*sizeX*sizeZ + localX*sizeZ + localZ] == 8)
+						if(start[localY*sizeX*sizeZ + localX*sizeZ + localZ] == 12)
 						{
 							start[localY*sizeX*sizeZ + localX*sizeZ + localZ] = 0;
 
 							//check left triangle side
 							{
 								bool truetriangle = true;
-								for(int tmpX=idX; tmpX<localX; ++tmpX)
+								int tmpY=keepY1;
+								for(int tmpX=keepX1; tmpX<localX; ++tmpX, ++tmpY)
 								{
-									if(start[localY*sizeX*sizeZ + tmpX*sizeZ + localZ] != 4)
+									if(start[tmpY*sizeX*sizeZ + tmpX*sizeZ + localZ] != 2)
 										truetriangle = false;
 								}
 
 								if(truetriangle)
 								{
-									for(int tmpX=idX; tmpX<localX; ++tmpX)
-										start[localY*sizeX*sizeZ + tmpX*sizeZ + localZ] = 0;
+								int tmpY=keepY1;
+								for(int tmpX=keepX1; tmpX<localX; ++tmpX, ++tmpY)
+										start[tmpY*sizeX*sizeZ + tmpX*sizeZ + localZ] = 0;
 
 									cif2.C2X = localX+1;
 									cif2.C2Y = localY;
 									cif2.C2Z = localZ;
 
 									cif2.C3Z = localZ;
-									cif2.C3Y = localY;
-
 								}
 								else
 								{
-									stairs.push_back(cif);
+									stairs.push_back(cif2);
 									cif2.C1X = localX;
 									cif2.C1Y = localY-1;
 									cif2.C1Z = localZ+1;
@@ -2556,35 +2999,40 @@ void PhysicHandler::Search8CornerStairs(short * start, int sizeX, int sizeY, int
 									cif2.C2Z = localZ;
 
 									cif2.C3X = localX;
-									cif2.C3Y = localY;
+									cif2.C3Y = localY-1;
 									cif2.C3Z = localZ;
+
+									keepX1 = localX;
+									keepY1 = localY;
+									keepZ1 = localY;
 								}
 							}
 
 							//check right triangle side
 							{
 								bool truetriangle = true;
-								for(int tmpZ=idZ; tmpZ>localZ; --tmpZ)
+								int tmpY=keepY2;
+								for(int tmpZ=keepZ2; tmpZ>localZ; --tmpZ, ++tmpY)
 								{
-									if(start[localY*sizeX*sizeZ + localX*sizeZ + tmpZ] != 2)
+									if(start[tmpY*sizeX*sizeZ + localX*sizeZ + tmpZ] != 4)
 										truetriangle = false;
 								}
 
 								if(truetriangle)
 								{
-									for(int tmpZ=idZ; tmpZ>localZ; --tmpZ)
-										start[localY*sizeX*sizeZ + localX*sizeZ + tmpZ] = 0;
+									int tmpY=keepY2;
+									for(int tmpZ=keepZ2; tmpZ>localZ; --tmpZ, ++tmpY)
+										start[tmpY*sizeX*sizeZ + localX*sizeZ + tmpZ] = 0;
 
 									cif.C2X = localX+1;
 									cif.C2Y = localY;
 									cif.C2Z = localZ;
 
 									cif.C3X = localX+1;
-									cif.C3Y = localY;
 								}
 								else
 								{
-									stairs.push_back(cif2);
+									stairs.push_back(cif);
 									cif.C1X = localX;
 									cif.C1Y = localY-1;
 									cif.C1Z = localZ+1;
@@ -2594,8 +3042,12 @@ void PhysicHandler::Search8CornerStairs(short * start, int sizeX, int sizeY, int
 									cif.C2Z = localZ;
 
 									cif.C3X = localX+1;
-									cif.C3Y = localY;
+									cif.C3Y = localY-1;
 									cif.C3Z = localZ+1;
+
+									keepX2 = localX;
+									keepY2 = localY;
+									keepZ2 = localY;
 								}
 							}
 
@@ -2611,3 +3063,177 @@ void PhysicHandler::Search8CornerStairs(short * start, int sizeX, int sizeY, int
 		}
 	}
 }
+
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+split rectangle into part with same textures
+--------------------------------------------------------------------------------------------------
+*/
+void PhysicHandler::Search13CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+										int idX, int idY, int idZ,
+									   std::vector<CornerStairInfo> & stairs)
+{
+	if(start[idY*sizeX*sizeZ + idX*sizeZ + idZ] == 13)
+	{
+		start[idY*sizeX*sizeZ + idX*sizeZ + idZ] = 0;
+
+		CornerStairInfo cif;
+		cif.C1X = idX;
+		cif.C1Y = idY;
+		cif.C1Z = idZ+1;
+
+		cif.C2X = idX+1;
+		cif.C2Y = idY-1;
+		cif.C2Z = idZ;
+
+		cif.C3X = idX+1;
+		cif.C3Y = idY-1;
+		cif.C3Z = idZ+1;
+
+		CornerStairInfo cif2;
+		cif2.C1X = idX;
+		cif2.C1Y = idY;
+		cif2.C1Z = idZ+1;
+
+		cif2.C2X = idX+1;
+		cif2.C2Y = idY-1;
+		cif2.C2Z = idZ;
+
+		cif2.C3X = idX;
+		cif2.C3Y = idY-1;
+		cif2.C3Z = idZ;
+
+
+		int localX=idX;
+		int localY=idY;
+		int localZ=idZ;
+
+		int keepX1=idX;
+		int keepY1=idY;
+		int keepZ1=idZ;
+
+		int keepX2=idX;
+		int keepY2=idY;
+		int keepZ2=idZ;
+
+		while(true)
+		{
+			--localX;
+			++localY;
+			++localZ;
+			if(localY< sizeY)
+			{
+				if(localX>= 0)
+				{
+					if(localZ>= 0)
+					{
+						if(start[localY*sizeX*sizeZ + localX*sizeZ + localZ] == 13)
+						{
+							start[localY*sizeX*sizeZ + localX*sizeZ + localZ] = 0;
+
+							//check left triangle side
+							{
+								bool truetriangle = true;
+								int tmpY=keepY1;
+								for(int tmpX=keepX1; tmpX>localX; --tmpX, ++tmpY)
+								{
+									if(start[tmpY*sizeX*sizeZ + tmpX*sizeZ + localZ] != 5)
+										truetriangle = false;
+								}
+
+								if(truetriangle)
+								{
+									int tmpY=keepY1;
+									for(int tmpX=keepX1; tmpX>localX; --tmpX, ++tmpY)
+										start[tmpY*sizeX*sizeZ + tmpX*sizeZ + localZ] = 0;
+
+									cif.C1X = localX;
+									cif.C1Y = localY;
+									cif.C1Z = localZ+1;
+
+									//cif.C3Y = localY;
+									cif.C3Z = localZ+1;
+								}
+								else
+								{
+									stairs.push_back(cif);
+									cif.C1X = localX;
+									cif.C1Y = localY;
+									cif.C1Z = localZ+1;
+
+									cif.C2X = localX+1;
+									cif.C2Y = localY-1;
+									cif.C2Z = localZ;
+
+									cif.C3X = localX+1;
+									cif.C3Y = localY-1;
+									cif.C3Z = localZ+1;
+
+									keepX1 = localX;
+									keepY1 = localY;
+									keepZ1 = localY;
+								}
+							}
+
+							//check right triangle side
+							{
+								bool truetriangle = true;
+								int tmpY=keepY2;
+								for(int tmpZ=keepZ2; tmpZ<localZ; ++tmpZ, ++tmpY)
+								{
+									if(start[tmpY*sizeX*sizeZ + localX*sizeZ + tmpZ] != 3)
+										truetriangle = false;
+								}
+
+								if(truetriangle)
+								{
+									int tmpY=keepY2;
+									for(int tmpZ=keepZ2; tmpZ<localZ; ++tmpZ, ++tmpY)
+										start[tmpY*sizeX*sizeZ + localX*sizeZ + tmpZ] = 0;
+
+									cif2.C1X = localX;
+									cif2.C1Y = localY;
+									cif2.C1Z = localZ+1;
+
+									cif2.C3X = localX;
+									//cif2.C3Y = localY;
+								}
+								else
+								{
+									stairs.push_back(cif2);
+									cif2.C1X = localX;
+									cif2.C1Y = localY;
+									cif2.C1Z = localZ+1;
+
+									cif2.C2X = localX+1;
+									cif2.C2Y = localY-1;
+									cif2.C2Z = localZ;
+
+									cif2.C3X = localX;
+									cif2.C3Y = localY-1;
+									cif2.C3Z = localZ;
+
+									keepX2 = localX;
+									keepY2 = localY;
+									keepZ2 = localY;
+								}
+							}
+
+							continue;
+						}
+					}
+				}
+			}
+
+			stairs.push_back(cif);
+			stairs.push_back(cif2);
+			break;
+		}
+	}
+}
+
+
+

@@ -417,6 +417,10 @@ protected:
 										int idX, int idY, int idZ,
 									   std::vector<CornerStairInfo> & stairs);
 
+	void Search9CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+										int idX, int idY, int idZ,
+									   std::vector<CornerStairInfo> & stairs);
+
 	void Search10CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
 										int idX, int idY, int idZ,
 									   std::vector<CornerStairInfo> & stairs);
@@ -425,7 +429,13 @@ protected:
 										int idX, int idY, int idZ,
 									   std::vector<CornerStairInfo> & stairs);
 
+	void Search12CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+										int idX, int idY, int idZ,
+									   std::vector<CornerStairInfo> & stairs);
 
+	void Search13CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+										int idX, int idY, int idZ,
+									   std::vector<CornerStairInfo> & stairs);
 private:
 
 	// cube representing the map physic
