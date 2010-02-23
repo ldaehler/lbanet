@@ -76,9 +76,9 @@ bool MapRenderer::LoadMap(const std::string &filename, PhysicHandler * phH,
 	_mapinfo = mapinfo;
 	_map_gl = new LBA_MAP_GL(filename, phH);
 	_current_cut = -1;
-	//_phH->SearchFloors();
-	//_phH->SearchWallX();
-	//_phH->SearchWallZ();
+	_phH->SearchFloors();
+	_phH->SearchWallX();
+	_phH->SearchWallZ();
 	_phH->SearchStairs();
 		
 	//testplanecarace.clear();
