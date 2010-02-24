@@ -1,0 +1,19 @@
+#include "globals.h"
+#include "lba_map_gl.h"
+
+int main(int argc, char** argv)
+{
+	for(int i=0; i<133; ++i)
+	{
+		LBA_MAP_GL map(i, 0);
+		map.ExportMap();
+	}
+
+	for(int i=1; i<148; ++i)
+	{
+		LBA_MAP_GL map(i, 1);
+		map.ExportMap();
+	}
+
+	return 0;
+}
