@@ -82,7 +82,11 @@ struct PlaneInfo
 	int EndX;
 	int EndY;
 	int EndZ;
+
+	int water;
 };
+
+
 
 //struct TexNodeInfo
 //{
@@ -331,9 +335,6 @@ public:
 	std::vector<PlaneInfo> GetPlanes()
 	{ return _planes; }
 
-	std::vector<PlaneInfo> GetPlanesHidden()
-	{ return _planeshidden; }
-
 	std::vector<PlaneInfo> GetPlanesSee()
 	{ return _planessee; }
 
@@ -358,6 +359,8 @@ public:
 
 	//! split rectangle into part with same textures
 	void SplitToTexture(short * area, int sizeX, int sizeY, std::vector<TexPlaneInfo> & res);
+
+	void SavePlanes(const std::string & filename);
 
 protected:
 
@@ -450,7 +453,6 @@ private:
 	int			_sizeZ;
 
 	std::vector<PlaneInfo> _planes;
-	std::vector<PlaneInfo> _planeshidden;
 	std::vector<PlaneInfo> _planessee;
 
 	std::vector<PlaneInfo> _wallsX;

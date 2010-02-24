@@ -74,6 +74,7 @@ bool MapRenderer::LoadMap(const std::string &filename)
 	_phH->SearchWallX();
 	_phH->SearchWallZ();
 	_phH->SearchStairs();
+	_phH->SavePlanes("testsave.txt");
 	
 	return true;
 }
@@ -108,7 +109,7 @@ void MapRenderer::Render()
 	if(_phH)
 	{
 		std::vector<PlaneInfo> planes = _phH->GetPlanes();
-		std::vector<PlaneInfo> planesh = _phH->GetPlanesHidden();
+		std::vector<PlaneInfo> planesh;// = _phH->GetPlanesHidden();
 		std::vector<PlaneInfo> planess = _phH->GetPlanesSee();
 		std::vector<PlaneInfo> WallX = _phH->GetWallsX();
 		std::vector<PlaneInfo> WallXh = _phH->GetWallsXHidden();

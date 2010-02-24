@@ -30,10 +30,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <assert.h>
 #include <math.h>
 #include <set>
+#include <algorithm>
 
 #include "LocalActorsHandler.h"
 #include "ExternalActorsHandler.h"
 #include "lba_map_gl.h"
+
+
+
+bool PlaneSortX (const PlaneInfo &i, const PlaneInfo &j) { return (i.StartX<j.StartX); }
+bool PlaneSortY (const PlaneInfo &i, const PlaneInfo &j) { return (i.StartY<j.StartY); }
+bool PlaneSortZ (const PlaneInfo &i, const PlaneInfo &j) { return (i.StartZ<j.StartZ); }
+bool StairSortY (const StairInfo &i, const StairInfo &j) { return (i.C4Y<j.C4Y); }
 
 /*
 --------------------------------------------------------------------------------------------------
@@ -3237,3 +3245,87 @@ void PhysicHandler::Search13CornerStairs(short * start, int sizeX, int sizeY, in
 
 
 
+
+/*
+--------------------------------------------------------------------------------------------------
+SavePlanes
+--------------------------------------------------------------------------------------------------
+*/
+void PhysicHandler::SavePlanes(const std::string & filename)
+{
+	std::ofstream file(filename.c_str());
+	int sizePlanes = _planes.size() + _planessee.size();
+	int sizewallX =_wallsX.size() + _wallsXhidden.size();
+	int sizewallZ =_wallsZ.size() + _wallsZhidden.size();
+	int sizeStairs = _stairs.size();
+	int sizecornerStairs = _cornerstairs.size();
+
+	file<<sizePlanes<<" "<<sizewallX<<" "<<sizewallZ<<" "<<sizeStairs<<" "<<sizecornerStairs<<std::endl;
+
+	{
+		std::vector<PlaneInfo> pv;
+		for(size_t i=0; i<_planes.size(); ++i)
+		{
+			_planes[i].water = 0;
+			pv.push_back(_planes[i]);
+		}
+
+		for(size_t i=0; i<_planessee.size(); ++i)
+		{
+			_planessee[i].water = 1;
+			pv.push_back(_planessee[i]);
+		}
+
+
+		std::sort(pv.begin(), pv.end(), PlaneSortY);
+		for(size_t i=0; i<pv.size(); ++i)
+			file<<pv[i].StartY<<" "<<pv[i].StartX<<" "<<pv[i].StartZ<<" "<<pv[i].EndX<<" "<<pv[i].EndZ<<" "<<pv[i].water<<std::endl;
+	}
+
+	{
+		std::vector<PlaneInfo> wallxs;
+		for(size_t i=0; i<_wallsX.size(); ++i)
+		{
+			_wallsX[i].StartY += 1;
+			wallxs.push_back(_wallsX[i]);
+		}
+
+		for(size_t i=0; i<_wallsXhidden.size(); ++i)
+		{
+			wallxs.push_back(_wallsXhidden[i]);
+		}
+
+		std::sort(wallxs.begin(), wallxs.end(), PlaneSortY);
+		for(size_t i=0; i<wallxs.size(); ++i)
+			file<<wallxs[i].StartY<<" "<<wallxs[i].StartX<<" "<<wallxs[i].StartZ<<" "<<wallxs[i].EndX<<" "<<wallxs[i].EndZ<<std::endl;
+	}
+
+	{
+		std::vector<PlaneInfo> wallzs;
+		for(size_t i=0; i<_wallsZ.size(); ++i)
+		{
+			_wallsZ[i].StartY += 1;
+			wallzs.push_back(_wallsZ[i]);
+		}
+
+		for(size_t i=0; i<_wallsZhidden.size(); ++i)
+		{
+			wallzs.push_back(_wallsZhidden[i]);
+		}
+
+		std::sort(wallzs.begin(), wallzs.end(), PlaneSortY);
+		for(size_t i=0; i<wallzs.size(); ++i)
+			file<<wallzs[i].StartY<<" "<<wallzs[i].StartX<<" "<<wallzs[i].StartZ<<" "<<wallzs[i].EndX<<" "<<wallzs[i].EndZ<<std::endl;
+	}
+
+	{
+		std::sort(_stairs.begin(), _stairs.end(), StairSortY);
+		for(size_t i=0; i<_stairs.size(); ++i)
+			file<<_stairs[i].C1X<<" "<<_stairs[i].C1Y<<" "<<_stairs[i].C1Z<<" "<<_stairs[i].C2X<<" "<<_stairs[i].C2Y<<" "<<_stairs[i].C2Z<<" "<<_stairs[i].C3X<<" "<<_stairs[i].C3Y<<" "<<_stairs[i].C3Z<<" "<<_stairs[i].C4X<<" "<<_stairs[i].C4Y<<" "<<_stairs[i].C4Z<<std::endl;
+	}
+
+	{
+		for(size_t i=0; i<_cornerstairs.size(); ++i)
+			file<<_cornerstairs[i].C1X<<" "<<_cornerstairs[i].C1Y<<" "<<_cornerstairs[i].C1Z<<" "<<_cornerstairs[i].C2X<<" "<<_cornerstairs[i].C2Y<<" "<<_cornerstairs[i].C2Z<<" "<<_cornerstairs[i].C3X<<" "<<_cornerstairs[i].C3Y<<" "<<_cornerstairs[i].C3Z<<std::endl;
+	}
+}

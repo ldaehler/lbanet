@@ -494,10 +494,9 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float 
 			_exitsH->LoadMap(MI);
 
 			std::string mapN = "Data/" + MI->Files["Maps"];
-			//_mapRenderer->LoadMap(mapN, _physicHandler);
-			//_mapRenderer = new MapRenderer(mapN, _physicHandler);
-			//_mapRenderer = new ObjMapRenderer("Otringal.obj", "Otringal.png");
-			_mapRenderer = new MapMapRenderer("Test.map", "Otringal.png");
+			_mapRenderer = new MapRenderer(mapN, _physicHandler);
+			//_mapRenderer = new ObjMapRenderer("Prison.obj", "Prison.png");
+			//_mapRenderer = new MapMapRenderer("Test.map", "Otringal.png");
 
 			m_room_y_cut = -1;
 
