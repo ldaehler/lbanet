@@ -217,6 +217,7 @@ class LBA_BRICK
 
 struct LBA_INFO_BRICK{
 int index_brick;
+int new_index_brick;
 unsigned char shape;
 unsigned char material;
 unsigned int object;
@@ -288,6 +289,9 @@ class LBA_GRID
     public:
     LBA_INFO_BRICK ***info_brick;
     LBA_LAYOUT *layout;
+
+	LBA_INFO_BRICK *** GetBricks()
+	{ return info_brick; }
 
     LBA_GRID(VIRTUAL_FILE_READ_ONLY &pack_grid,VIRTUAL_FILE_READ_ONLY &pack_layout,int n,int LBA2)
     {
@@ -413,7 +417,7 @@ class LBA_MAP
 
 
 
-    int brick_list[5000];
+    int brick_list[10000];
     LBA_MAP(int n,int LBA2)
     {
         int i,j,k,l;
