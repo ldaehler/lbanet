@@ -22,61 +22,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#if !defined(__LbaNetModel_1_MapRenderer_h)
-#define __LbaNetModel_1_MapRenderer_h
+#if !defined(__LbaNetModel_1_MapRendererBase_h)
+#define __LbaNetModel_1_MapRendererBase_h
 
-class LBA_MAP_GL;
-class PhysicHandler;
-
-#include <string>
-#include <map>
-#include "WorldInfo.h"
-#include "MapRendererBase.h"
 
 
 /***********************************************************************
- * Module:  MapRenderer.h
+ * Module:  MapRendererBase.h
  * Author:  Vivien
  * Modified: dimanche 12 juillet 2009 21:09:21
- * Purpose: Declaration of the class MapRenderer
+ * Purpose: Declaration of the class MapRendererBase
  ***********************************************************************/
-class MapRenderer : public MapRendererBase
+class MapRendererBase
 {
 public:
 	//! constructor
-	MapRenderer(const std::string &filename, PhysicHandler * phH);
+	MapRendererBase(){}
 
 	//! destructor
-	virtual ~MapRenderer();
+	virtual ~MapRendererBase(){}
 
 
 	//! render
-	virtual void Render();
+	virtual void Render() = 0;
 
 	// cut the room at a certain Y to display only bottom
-	virtual void SetMapYLimit(int YLimit);
+	virtual void SetMapYLimit(int YLimit) = 0;
 
 	// flush the current map texture
-	virtual void FlushTexture();
+	virtual void FlushTexture() = 0;
 
 	//reload the current map texture
-	virtual void ReloadTexture();
+	virtual void ReloadTexture() = 0;
 
-
-private:
-	//! load new map
-	bool LoadMap(const std::string &filename);
-
-   //! cleanup
-   void CleanUp();
-
-
-private:
-	LBA_MAP_GL *			_map_gl;
-	int						_current_cut;
-	std::string				_currentmap_file;
-
-	PhysicHandler *			_phH;
 };
 
 #endif

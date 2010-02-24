@@ -22,13 +22,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-//#include "InventoryHandler.h"
-//#include "QuestHandler.h"
-//#include "QuestBook.h"
-
 #include "LbaNetModel.h"
 #include "Camera.h"
-#include "MapRenderer.h"
+#include "MapRendererBase.h"
 #include "DataLoader.h"
 #include "PhysicHandler.h"
 #include "MusicHandler.h"
@@ -42,7 +38,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ExternalActorsHandler.h"
 #include "LogHandler.h"
 #include "InventoryHandler.h"
+#include "ExitsHandler.h"
 
+//TODO - remove this
+#include "MapRenderer.h"
 
 #include <windows.h>    // Header File For Windows
 #include <GL/gl.h>      // Header File For The OpenGL32 Library
@@ -63,15 +62,16 @@ const short	LbaNetModel::m_body_color_map[] = {-1, 2, 19, 32, 36, 48, 64, 80, 96
 LbaNetModel::LbaNetModel(GuiHandler*	guiH)
 : _current_room_cut(-1), m_current_main_state(0), _game_paused(false),
 	m_current_main_body(0), _guiH(guiH), m_current_main_body_color(0), m_debug_map(0), 
-	m_room_y_cut(-1), m_need_full_check(false)
+	m_room_y_cut(-1), m_need_full_check(false), _mapRenderer(NULL)
 {
 	LogHandler::getInstance()->LogToFile("Initializing model class...");
 
     _camera= new Camera();
-	_mapRenderer = new MapRenderer();
 	_localActorsHandler = new LocalActorsHandler();
 	_externalActorsHandler = new ExternalActorsHandler();
 	_physicHandler = new PhysicHandler(_localActorsHandler, _externalActorsHandler);
+	_exitsH = new ExitsHandler();
+
 	_localActorsHandler->SetPhysic(_physicHandler);
 	_externalActorsHandler->SetPhysic(_physicHandler);
 	_inventoryHandler = InventoryHandler::getInstance();
@@ -144,11 +144,15 @@ LbaNetModel::~LbaNetModel()
 	}
 
 	delete _camera;
-	delete _mapRenderer;
+
+	if(_mapRenderer)
+		delete _mapRenderer;
+
 	delete _physicHandler;
 	delete _mainPlayerHandler;
 	delete _localActorsHandler;
 	delete _externalActorsHandler;
+	delete _exitsH;
 }
 
 /***********************************************************
@@ -176,7 +180,9 @@ clean up the textures before resizing
 ***********************************************************/
 void LbaNetModel::CleanupTexture()
 {
-	_mapRenderer->CleanUp();
+	if(_mapRenderer)
+		_mapRenderer->FlushTexture();
+
 	_localActorsHandler->CleanUp();
 	_externalActorsHandler->CleanUp();
 }
@@ -193,9 +199,10 @@ void LbaNetModel::SetScreenSize(int screenX, int screenY)
 	if(_current_map != "")
 	{
 		Pause();
-		MapInfo * MI = DataLoader::getInstance()->GetMapInfo();
-		std::string mapN = "Data/" + MI->Files["Maps"];
-		_mapRenderer->LoadMap(mapN, _physicHandler, MI);
+
+		if(_mapRenderer)
+			_mapRenderer->ReloadTexture();
+
 		_localActorsHandler->Reload();
 		_externalActorsHandler->Reload();
 		Resume(false);
@@ -244,7 +251,11 @@ void LbaNetModel::Draw()
 
 
 	// draw the map
-	_mapRenderer->Render();
+	if(_mapRenderer)
+		_mapRenderer->Render();
+
+	// draw exits
+	_exitsH->Render();
 
 	// render local actors
 	_localActorsHandler->Render(m_room_y_cut);
@@ -261,7 +272,9 @@ void LbaNetModel::Draw()
 
 #ifdef _LBANET_SET_EDITOR_
 	// render editor stuff
-	_mapRenderer->RenderEditor();
+	if(_mapRenderer)
+		_mapRenderer->RenderEditor();
+
 	_localActorsHandler->RenderEditor();
 	_externalActorsHandler->RenderEditor();
 #endif
@@ -476,8 +489,11 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float 
 		{
 			// load the map
 			MapInfo * MI = DataLoader::getInstance()->GetMapInfo();
+			_exitsH->LoadMap(MI);
+
 			std::string mapN = "Data/" + MI->Files["Maps"];
-			_mapRenderer->LoadMap(mapN, _physicHandler, MI);
+			//_mapRenderer->LoadMap(mapN, _physicHandler);
+			_mapRenderer = new MapRenderer(mapN, _physicHandler);
 
 			m_room_y_cut = -1;
 
@@ -528,7 +544,13 @@ clean up all loaded map data in memory
 void LbaNetModel::CleanupMap()
 {
 	_current_map="";
-	_mapRenderer->CleanUp();
+
+	if(_mapRenderer)
+	{
+		delete _mapRenderer;
+		_mapRenderer = NULL;
+	}
+
 	_physicHandler->ClearMemory();
 	_externalPlayers->ResetActors(_current_map);
 	_localActorsHandler->Cleanup();
@@ -583,7 +605,10 @@ int LbaNetModel::Process()
 			{
 				m_room_y_cut = rcut;
 				Pause();
-				_mapRenderer->CutRoom(m_room_y_cut);
+
+				if(_mapRenderer)
+					_mapRenderer->SetMapYLimit(m_room_y_cut);
+
 				Resume(false);
 			}
 		}
@@ -596,7 +621,7 @@ int LbaNetModel::Process()
 		std::string newRoom = "";
 		std::string newSpawning = "";
 		float Xoffset, Yoffset, Zoffset;
-		if(_mapRenderer->CheckIfExitRoom(_mainPlayerHandler->GetPosX(), _mainPlayerHandler->GetPosY(), _mainPlayerHandler->GetPosZ(),
+		if(_exitsH->CheckIfExitRoom(_mainPlayerHandler->GetPosX(), _mainPlayerHandler->GetPosY(), _mainPlayerHandler->GetPosZ(),
 											newRoom, newSpawning, Xoffset, Yoffset, Zoffset))
 		{
 			ChangeMap(newRoom, newSpawning, Xoffset, Yoffset, Zoffset);
@@ -605,7 +630,9 @@ int LbaNetModel::Process()
 			if(!_actor_in_exterior)
 			{
 				m_room_y_cut = _mainPlayerHandler->IsUnderRoof();
-				_mapRenderer->CutRoom(m_room_y_cut);
+
+				if(_mapRenderer)
+					_mapRenderer->SetMapYLimit(m_room_y_cut);
 			}
 		}
 		//else
@@ -1023,7 +1050,7 @@ display map exits
 ***********************************************************/
 void LbaNetModel::DisplayExits(bool display)
 {
-	_mapRenderer->DisplayExits(display);
+	_exitsH->DisplayExits(display);
 }
 
 
