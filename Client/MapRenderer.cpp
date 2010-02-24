@@ -24,8 +24,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "MapRenderer.h"
 #include "lba_map_gl.h"
-#include "TextWritter.h"
-#include "ConfigurationManager.h"
 #include "PhysicHandler.h"
 
 #include <windows.h>    // Header File For Windows
@@ -33,15 +31,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <GL/glu.h>     // Header File For The GLu32 Library
 
 
-std::vector<PlaneInfo> testplanecarace;
-
 /***********************************************************
 	Constructor
 ***********************************************************/
-MapRenderer::MapRenderer()
-: _map_gl(NULL), _mapinfo(NULL), _phH(NULL)
+MapRenderer::MapRenderer(const std::string &filename, PhysicHandler * phH)
+: _map_gl(NULL), _phH(phH)
 {
-	ConfigurationManager::GetInstance()->GetBool("Options.Video.DisplayExits", _display_exits);
+	LoadMap(filename);
 }
 
 /***********************************************************
@@ -67,59 +63,18 @@ void MapRenderer::CleanUp()
 /***********************************************************
 	load new map
 ***********************************************************/
-bool MapRenderer::LoadMap(const std::string &filename, PhysicHandler * phH,
-							const MapInfo * mapinfo)
+bool MapRenderer::LoadMap(const std::string &filename)
 {
 	CleanUp();
-	_phH = phH;
 
-	_mapinfo = mapinfo;
-	_map_gl = new LBA_MAP_GL(filename, phH);
+	_currentmap_file = filename;
+	_map_gl = new LBA_MAP_GL(filename, _phH);
 	_current_cut = -1;
 	_phH->SearchFloors();
 	_phH->SearchWallX();
 	_phH->SearchWallZ();
 	_phH->SearchStairs();
-		
-	//testplanecarace.clear();
-
-	//std::vector<PlaneInfo> planes = _phH->GetPlanes();
-	//for(int i=0; i<planes.size(); ++i)
-	//{
-	//	PlaneInfo pi = planes[i];
-	//	std::vector<TexPlaneInfo> textareas;
-	//	int sizeX= (pi.EndX-pi.StartX);
-	//	int sizeY= (pi.EndZ-pi.StartZ);
-	//	short * area = new short[sizeX*sizeY];
-	//	short * tmppt = area;
-	//	for(int i=0; i<sizeX; ++i)
-	//	{
-	//		for(int j=0; j<sizeY; ++j)
-	//		{
-	//			*tmppt = _map_gl->GetBrickIndex(pi.StartX+i, pi.StartY, pi.StartZ+j);
-	//			++tmppt;
-	//		}
-	//	}
-
-	//	_phH->SplitToTexture(area, sizeX, sizeY, textareas);
-	//	delete[] area;
-
-
-	//	for(size_t cc=0; cc<textareas.size(); ++cc)
-	//	{
-	//		PlaneInfo pfi;
-	//		pfi.StartX=textareas[cc].StartX+pi.StartX;
-	//		pfi.StartY=pi.StartY;
-	//		pfi.StartZ=textareas[cc].StartY+pi.StartZ;
-
-	//		pfi.EndX=textareas[cc].EndX+pi.StartX;
-	//		pfi.EndY=pi.EndY;
-	//		pfi.EndZ=textareas[cc].EndY+pi.StartZ;
-	//		testplanecarace.push_back(pfi);
-	//	}
-	//}
-
-
+	
 	return true;
 }
 
@@ -147,9 +102,6 @@ void MapRenderer::Render()
 		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		glCallList(_map_gl->list_name);
-
-		if(_display_exits)
-			DisplayExitZones();
 	}
 
 
@@ -170,27 +122,6 @@ void MapRenderer::Render()
 		glDisable(GL_DEPTH_TEST);
 
 		glLineWidth(2.0f);
-
-		//for(size_t i=0; i<testplanecarace.size(); ++i)
-		//{
-		//	PlaneInfo pif = testplanecarace[i];
-		//	glPushMatrix();
-
-		//	glTranslated(0, pif.StartY/2. + 0.5, 0);
-		//	glColor4f(0.0f,0.0f,1.0f, 1.f);
-		//	glBegin(GL_LINES);
-		//		glVertex3f(pif.StartX,0,pif.StartZ);
-		//		glVertex3f(pif.EndX,0,pif.StartZ);
-		//		glVertex3f(pif.EndX,0,pif.StartZ);
-		//		glVertex3f(pif.EndX,0,pif.EndZ);
-		//		glVertex3f(pif.EndX,0,pif.EndZ);
-		//		glVertex3f(pif.StartX,0,pif.EndZ);
-		//		glVertex3f(pif.StartX,0,pif.EndZ);
-		//		glVertex3f(pif.StartX,0,pif.StartZ);
-		//	glEnd();
-
-		//	glPopMatrix();
-		//}
 
 
 		for(size_t i=0; i<cstairs.size(); ++i)
@@ -391,265 +322,38 @@ void MapRenderer::Render()
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_TEXTURE_2D);
 	}
-
-
-
-
-
-
 }
 
 
 /***********************************************************
 cut the room at a certain Y to display only bottom
 ***********************************************************/
-void MapRenderer::CutRoom(int cut)
+void MapRenderer::SetMapYLimit(int YLimit)
 {
-	if(_current_cut == cut)
+	if(_current_cut == YLimit)
 		return;
 
-	_current_cut = cut;
+	_current_cut = YLimit;
 
 	if(_map_gl)
-		_map_gl->RecompileRoom(cut);
+		_map_gl->RecompileRoom(_current_cut);
 }
 
 
 
 /***********************************************************
-load a room in memroy to be displayed
+flush the current map texture
 ***********************************************************/
-void MapRenderer::DisplayExitZones()
+void MapRenderer::FlushTexture()
 {
-	std::map<std::string, ExitInfo>::const_iterator it = _mapinfo->Exits.begin();
-	std::map<std::string, ExitInfo>::const_iterator end = _mapinfo->Exits.end();
-
-	glEnable(GL_BLEND);
-	glDisable(GL_TEXTURE_2D);
-
-	for(; it != end; ++it)
-	{
-		float Xbl = it->second.BottomLeftX;
-		float Ybl = it->second.BottomLeftY/2;
-		float Zbl = it->second.BottomLeftZ;
-		float Xtr = it->second.TopRightX;
-		float Ztr = it->second.TopRightZ;
-
-		glPushMatrix();
-		{
-			glTranslated(0, 0.01, 0);
-
-			glBegin(GL_QUADS);
-				glColor4f(0.3f,0.0f,0.0f, 0.4f);
-				glVertex3f(Xbl,Ybl,Zbl);
-				glVertex3f(Xbl,Ybl,Ztr);
-				glVertex3f(Xtr,Ybl,Ztr);
-				glVertex3f(Xtr,Ybl,Zbl);
-			glEnd();
-		}
-		glPopMatrix();
-	}
-
-    glEnable(GL_TEXTURE_2D);
+	CleanUp();
 }
-
 
 /***********************************************************
-check if the main actor is exiting the room
-return the number of the new room if applicable
+reload the current map texture
 ***********************************************************/
-bool MapRenderer::CheckIfExitRoom(float currX, float currY, float currZ,
-									std::string & NewRoomName,
-									std::string & NewSpawningPoint,
-									float &Xoffset, float &Yoffset, float &Zoffset)
+void MapRenderer::ReloadTexture()
 {
-	if(!_mapinfo)
-		return false;
-
-
-	float X = currX;
-	float Y = currY + 1.f;
-	float Z = currZ;
-
-
-	std::map<std::string, ExitInfo>::const_iterator it = _mapinfo->Exits.begin();
-	std::map<std::string, ExitInfo>::const_iterator end = _mapinfo->Exits.end();
-
-	for(; it != end; ++it)
-	{
-		float Xbl = it->second.BottomLeftX;
-		float Ybl = it->second.BottomLeftY;
-		float Zbl = it->second.BottomLeftZ;
-
-		float Xtr = it->second.TopRightX;
-		float Ytr = it->second.TopRightY;
-		float Ztr = it->second.TopRightZ;
-
-		if (	(X >= Xbl && X <= Xtr) &&
-				(Y >= Ybl && Y <= Ytr) &&
-				(Z >= Zbl && Z <= Ztr)	)  // if the main actor is in zone
-		{
-			NewRoomName = it->second.NewMap; // change the room
-			NewSpawningPoint = it->second.Spawning;
-
-			Xoffset = (X - Xbl);
-			Yoffset = (int)(Y - Ybl);
-			Zoffset = (Z - Zbl);
-
-			return true;
-		}
-	}
-
-	return false;
+	_map_gl = new LBA_MAP_GL(_currentmap_file, _phH);
+	_map_gl->RecompileRoom(_current_cut);
 }
-
-
-
-/***********************************************************
-display spawning on the screen
-***********************************************************/
-void MapRenderer::DisplaySpawnings()
-{
-	std::map<std::string, SpawningInfo>::const_iterator it = _mapinfo->Spawnings.begin();
-	std::map<std::string, SpawningInfo>::const_iterator end = _mapinfo->Spawnings.end();
-
-
-
-	for(; it != end; ++it)
-	{
-		float Xbl = it->second.PosX;
-		float Ybl = it->second.PosY/2.0f;
-		float Zbl = it->second.PosZ;
-
-		glEnable(GL_BLEND);
-		glDisable(GL_TEXTURE_2D);
-		glDisable(GL_DEPTH_TEST);
-
-		glPushMatrix();
-		{
-			glLineWidth(2.0f);
-
-			glTranslated(0, 0.5, 0);
-
-			glBegin(GL_LINES);
-				glColor4f(0.0f,1.0f,0.0f, 1.f);
-				glVertex3f(Xbl,Ybl,Zbl);
-				glVertex3f(Xbl,Ybl+2,Zbl);
-				glVertex3f(Xbl-1,Ybl,Zbl);
-				glVertex3f(Xbl+1,Ybl,Zbl);
-				glVertex3f(Xbl,Ybl,Zbl-1);
-				glVertex3f(Xbl,Ybl,Zbl+1);
-			glEnd();
-
-			glPushMatrix();
-			glTranslated(Xbl-1,Ybl+2.1,Zbl+1);
-			glRotatef( 40, 0.0, 1.0, 0.0 );
-			glScalef(0.04f, 0.04f, 0.04f);
-			TextWritter::getInstance()->glPrintText(it->first, 0, false);
-			glPopMatrix();
-		}
-		glPopMatrix();
-	}
-	glEnable(GL_DEPTH_TEST);
-    glEnable(GL_TEXTURE_2D);
-}
-
-
-/***********************************************************
-load a room in memroy to be displayed
-***********************************************************/
-void MapRenderer::DisplayDetailsExitZones()
-{
-	std::map<std::string, ExitInfo>::const_iterator it = _mapinfo->Exits.begin();
-	std::map<std::string, ExitInfo>::const_iterator end = _mapinfo->Exits.end();
-
-
-	for(; it != end; ++it)
-	{
-		float Xbl = it->second.BottomLeftX;
-		float Ybl = it->second.BottomLeftY/2;
-		float Zbl = it->second.BottomLeftZ;
-		float Xtr = it->second.TopRightX;
-		float Ytr = it->second.TopRightY/2;
-		float Ztr = it->second.TopRightZ;
-
-		glEnable(GL_BLEND);
-		glDisable(GL_TEXTURE_2D);
-		glDisable(GL_DEPTH_TEST);
-
-		glPushMatrix();
-		{
-			glLineWidth(2.0f);
-
-			glTranslated(0, 0.01, 0);
-
-			glBegin(GL_LINES);
-				glColor4f(1.0f,0.0f,0.0f, 1.f);
-				glVertex3f(Xbl,Ybl,Zbl);
-				glVertex3f(Xbl,Ybl,Ztr);
-				glVertex3f(Xbl,Ybl,Ztr);
-				glVertex3f(Xtr,Ybl,Ztr);
-				glVertex3f(Xtr,Ybl,Ztr);
-				glVertex3f(Xtr,Ybl,Zbl);
-				glVertex3f(Xtr,Ybl,Zbl);
-				glVertex3f(Xbl,Ybl,Zbl);
-
-				glVertex3f(Xbl,Ytr,Zbl);
-				glVertex3f(Xbl,Ytr,Ztr);
-				glVertex3f(Xbl,Ytr,Ztr);
-				glVertex3f(Xtr,Ytr,Ztr);
-				glVertex3f(Xtr,Ytr,Ztr);
-				glVertex3f(Xtr,Ytr,Zbl);
-				glVertex3f(Xtr,Ytr,Zbl);
-				glVertex3f(Xbl,Ytr,Zbl);
-
-				glVertex3f(Xbl,Ybl,Zbl);
-				glVertex3f(Xbl,Ytr,Zbl);
-
-				glVertex3f(Xbl,Ybl,Ztr);
-				glVertex3f(Xbl,Ytr,Ztr);
-
-				glVertex3f(Xtr,Ybl,Ztr);
-				glVertex3f(Xtr,Ytr,Ztr);
-
-				glVertex3f(Xtr,Ybl,Zbl);
-				glVertex3f(Xtr,Ytr,Zbl);
-			glEnd();
-
-			glPushMatrix();
-			glTranslated(Xtr-1,Ytr+0.1,Ztr+1);
-			glRotatef( 40, 0.0, 1.0, 0.0 );
-			glScalef(0.04f, 0.04f, 0.04f);
-			TextWritter::getInstance()->glPrintText(it->first, 0, false);
-			glPopMatrix();
-		}
-		glPopMatrix();
-	}
-
-	glEnable(GL_DEPTH_TEST);
-    glEnable(GL_TEXTURE_2D);
-}
-
-
-
-/***********************************************************
-render editor part
-***********************************************************/
-void MapRenderer::RenderEditor()
-{
-	if(_mapinfo)
-	{
-		DisplayDetailsExitZones();
-		DisplaySpawnings();
-	}
-}
-
-
-/***********************************************************
-display map extis
-***********************************************************/
-void MapRenderer::DisplayExits(bool display)
-{
-	_display_exits = display;
-}
-

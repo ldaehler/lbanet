@@ -27,18 +27,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class InventoryHandler;
 class MainPlayerHandler;
-class MapRenderer;
+class MapRendererBase;
 class LocalActorsHandler;
 class ExternalActorsHandler;
 class PhysicHandler;
-class QuestHandler;
-class QuestBook;
 class Camera;
 class GuiHandler;
 class ExternalPlayersHandler;
 struct PlayerScriptPart;
 class Actor;
-
+class ExitsHandler;
 
 
 #include <string>
@@ -187,7 +185,7 @@ public:
 
 
 private:
-	MapRenderer*			_mapRenderer;
+	MapRendererBase*		_mapRenderer;
 	PhysicHandler*			_physicHandler;
 	MainPlayerHandler*		_mainPlayerHandler;
 	Camera *				_camera;
@@ -197,9 +195,8 @@ private:
 	ExternalActorsHandler*	_externalActorsHandler;
 
 	InventoryHandler*		_inventoryHandler;
-	QuestHandler*			_questHandler;
-	QuestBook*				_questBook;
 	GuiHandler*				_guiH;
+	ExitsHandler*			_exitsH;
 
 	std::string				_current_world;		// the current world in play
 	std::string				_current_map;		// the current map in play

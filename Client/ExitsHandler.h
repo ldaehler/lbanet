@@ -22,8 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#if !defined(__LbaNetModel_1_MapRenderer_h)
-#define __LbaNetModel_1_MapRenderer_h
+#if !defined(__LbaNetModel_1_ExitsHandler_h)
+#define __LbaNetModel_1_ExitsHandler_h
 
 class LBA_MAP_GL;
 class PhysicHandler;
@@ -31,52 +31,58 @@ class PhysicHandler;
 #include <string>
 #include <map>
 #include "WorldInfo.h"
-#include "MapRendererBase.h"
 
 
 /***********************************************************************
- * Module:  MapRenderer.h
+ * Module:  ExitsHandler.h
  * Author:  Vivien
  * Modified: dimanche 12 juillet 2009 21:09:21
- * Purpose: Declaration of the class MapRenderer
+ * Purpose: Declaration of the class ExitsHandler
  ***********************************************************************/
-class MapRenderer : public MapRendererBase
+class ExitsHandler
 {
 public:
 	//! constructor
-	MapRenderer(const std::string &filename, PhysicHandler * phH);
+   ExitsHandler();
 
 	//! destructor
-	virtual ~MapRenderer();
+   ~ExitsHandler();
+
+   //! load new map
+   void LoadMap(const MapInfo * mapinfo);
+
+   //! render
+   void Render();
+
+   // check if the main actor is exiting the room
+	// return the number of the new room if applicable
+	bool CheckIfExitRoom(float currX, float currY, float currZ,
+							std::string & NewRoomName,
+							std::string & NewSpawningPoint,
+							float &Xoffset, float &Yoffset, float &Zoffset);
 
 
-	//! render
-	virtual void Render();
+	//! render editor part
+	void RenderEditor();
 
-	// cut the room at a certain Y to display only bottom
-	virtual void SetMapYLimit(int YLimit);
 
-	// flush the current map texture
-	virtual void FlushTexture();
+	// display map extis
+	void DisplayExits(bool display);
 
-	//reload the current map texture
-	virtual void ReloadTexture();
+protected:
+	// display exit zones on the screen
+	void DisplayExitZones();
 
+	// display spawning on the screen
+	void DisplaySpawnings();
+
+	// display exit zones on the screen
+	void DisplayDetailsExitZones();
 
 private:
-	//! load new map
-	bool LoadMap(const std::string &filename);
 
-   //! cleanup
-   void CleanUp();
-
-
-private:
-	LBA_MAP_GL *			_map_gl;
-	int						_current_cut;
-	std::string				_currentmap_file;
-
-	PhysicHandler *			_phH;
+	const MapInfo *			_mapinfo;
+	bool					_display_exits;
 };
 
 #endif
