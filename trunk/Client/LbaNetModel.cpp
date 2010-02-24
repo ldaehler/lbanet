@@ -42,6 +42,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 //TODO - remove this
 #include "MapRenderer.h"
+#include "ObjMapRenderer.h"
+#include "MapMapRenderer.h"
 
 #include <windows.h>    // Header File For Windows
 #include <GL/gl.h>      // Header File For The OpenGL32 Library
@@ -493,7 +495,9 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float 
 
 			std::string mapN = "Data/" + MI->Files["Maps"];
 			//_mapRenderer->LoadMap(mapN, _physicHandler);
-			_mapRenderer = new MapRenderer(mapN, _physicHandler);
+			//_mapRenderer = new MapRenderer(mapN, _physicHandler);
+			//_mapRenderer = new ObjMapRenderer("Otringal.obj", "Otringal.png");
+			_mapRenderer = new MapMapRenderer("Test.map", "Otringal.png");
 
 			m_room_y_cut = -1;
 
