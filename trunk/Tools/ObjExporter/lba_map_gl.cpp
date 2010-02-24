@@ -2,6 +2,9 @@
 
 #include <sstream>
 
+#include <IL/il.h>
+#include <IL/ilu.h>
+
 void LBA_MAP_GL::face(double X,double Y,double Z,double texture_x,double texture_y,double h,int a,int b,int c,bool hidden)
 {
     double vertex[20][3];
@@ -282,6 +285,20 @@ if(lba_map->brick_list[lba_map->grid->info_brick[X][Z][Y].index_brick]!=126)//LB
        //             texture_map);
 
 
+	std::stringstream filename;
+	if(islba2)
+		filename<<"Maps/Lba2/map";
+	else
+		filename<<"Maps/Lba1/map";
+
+	filename<<mapnumber<<".png";
+
+	ILuint imn;
+	ilGenImages(1, &imn);
+	ilBindImage(imn);
+	ilTexImage( 2048, 2048, 1, 4, IL_RGBA, IL_UNSIGNED_BYTE, texture_map);
+	ilSaveImage(filename.str().c_str());
+	ilDeleteImages(1, &imn);
 
 
 

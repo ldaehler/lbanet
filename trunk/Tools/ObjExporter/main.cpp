@@ -1,8 +1,14 @@
 #include "globals.h"
 #include "lba_map_gl.h"
 
+#include <IL/il.h>
+#include <IL/ilu.h>
+
 int main(int argc, char** argv)
 {
+	ilInit();
+	iluInit();
+
 	for(int i=0; i<133; ++i)
 	{
 		LBA_MAP_GL map(i, 0);
