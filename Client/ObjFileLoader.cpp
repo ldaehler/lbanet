@@ -206,7 +206,8 @@ obj_model_t *ObjFileLoader::LoadObjFile(const std::string &filename)
 	/* second pass: read model data */
 	SecondPass (fp, mdl);
 
-	mdl->SaveToMapFile("Test.map");
+	
+	mdl->SaveToMapFile(filename.substr(0, filename.find_last_of(".")) + ".map");
 	mdl->Compile(-1);
 
 	fclose (fp);
