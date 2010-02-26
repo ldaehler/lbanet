@@ -341,3 +341,25 @@ void Actor::SetPosition(float  posX, float  posY, float  posZ)
 	if(_posZ < -10)
 		_posZ = -10;
 }
+
+
+/***********************************************************
+give actor bounding box
+***********************************************************/
+AABB Actor::GetBoundingBox()
+{
+	VECTOR pos(_posX, _posY, _posZ);
+	VECTOR size1(_sizeX, 0, _sizeZ);
+	VECTOR size2(_sizeX, _sizeY, _sizeZ);
+
+	return AABB(pos-size1, pos+size2);
+}
+
+
+/***********************************************************
+give actor position
+***********************************************************/
+VECTOR Actor::GetPosition()
+{
+	return VECTOR(_posX, _posY, _posZ);
+}

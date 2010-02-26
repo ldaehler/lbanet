@@ -32,6 +32,8 @@ class D3ObjectRenderer;
 #include <vector>
 #include <sstream>
 #include "SignalerBase.h"
+#include "vector.h"
+
 
 struct ActorStateInfo
 {
@@ -295,6 +297,12 @@ public:
 
 	//! inform aborted activation
 	virtual void InformActivationAborted(){}
+
+	//! give actor bounding box
+	AABB GetBoundingBox();
+
+	//! give actor position
+	VECTOR GetPosition();
 
 protected:
    long		_ID;						// entity unique ID
