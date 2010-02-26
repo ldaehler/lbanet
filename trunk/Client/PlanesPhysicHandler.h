@@ -35,6 +35,7 @@ class ExternalActorsHandler;
 
 
 
+
 //*************************************************************************************************
 //*                                      class PlanesPhysicHandler
 //*************************************************************************************************
@@ -56,29 +57,92 @@ public:
 	// actorSizeX and actorSizeZ are 1/2 the diameter from the center
 	// the physic engine will apply a gravity force to the move if not flying
 	// so that the actor might fall down if needed
-	virtual MoveOutput MoveActor(long ActorId, float ActorPosX, float ActorPosY, float ActorPosZ,
-									float ActorSizeX, float ActorSizeY, float ActorSizeZ,
-									float SpeedX, float SpeedY, float SpeedZ);
+	virtual MoveOutput MoveActor(long ActorId, const AABB & actorBB,
+									const VECTOR &Speed);
 
 
 	// return int > 0 if there is a roof on top of the given position
 	// function used to know when to cut the room display in half
-	virtual int IsUnderRoof(float ActorPosX, float ActorPosY, float ActorPosZ);
+	virtual int IsUnderRoof(const VECTOR & ActorPos);
 
 
 	// get closest floor from the actor position
-	virtual float GetClosestFloor(float ActorPosX, float ActorPosY, float ActorPosZ);
+	virtual float GetClosestFloor(const VECTOR & ActorPos);
 
 
 	// return a positive number giving the speed of the gravity on the Y axis
 	virtual float GetGravitySpeed();
 
+
+	// render physic shapes
+	virtual void Render();
+
 protected:
+
+
+	struct StairPlane
+	{
+		int C1X;
+		int C1Y;
+		int C1Z;
+
+		int C2X;
+		int C2Y;
+		int C2Z;
+
+		int C3X;
+		int C3Y;
+		int C3Z;
+
+		int C4X;
+		int C4Y;
+		int C4Z;
+	};
+
+	struct CornerStairPlane
+	{
+		int C1X;
+		int C1Y;
+		int C1Z;
+
+		int C2X;
+		int C2Y;
+		int C2Z;
+
+		int C3X;
+		int C3Y;
+		int C3Z;
+	};
+
+
+	struct NormalPlane
+	{
+		int Layer;
+
+		int StartX;
+		int StartZ;
+
+		int EndX;
+		int EndZ;
+
+		bool IsWater;
+	};
+
+
+
 
 private:
 
-	LocalActorsHandler*		_localAH;
-	ExternalActorsHandler*	_externalAH;
+	LocalActorsHandler*				_localAH;
+	ExternalActorsHandler*			_externalAH;
+
+
+	std::vector<NormalPlane>		_floors;
+	std::vector<NormalPlane>		_wallsX;
+	std::vector<NormalPlane>		_wallsZ;
+
+	std::vector<StairPlane>			_stairs;
+	std::vector<CornerStairPlane>	_corner_stairs;
 
 };
 

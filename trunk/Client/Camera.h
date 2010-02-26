@@ -43,6 +43,9 @@ public:
 	// constructor
 	Camera();
 
+	// reset camera position
+	void ResetPosition();
+
 	//! set actor attached to the camera
 	void SetAttachedActor(Actor * act);
 
