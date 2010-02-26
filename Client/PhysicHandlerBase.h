@@ -26,11 +26,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define __LBA_NET_PHYSIC_HANDLER_BASE_H__
 
 
+
+#include "vector.h"
+
+
 struct MoveOutput
 {
-	float	NewSpeedX;		// modified actor speed in X axis
-	float	NewSpeedY;		// modified actor speed in Y axis
-	float	NewSpeedZ;		// modified actor speed in Z axis
+	VECTOR	NewSpeed;		// modified actor speed
 	bool	TouchingWater;	// flag indicate if the actor is touchign water
 	bool	TouchingGround;	// flag indicate if the actor is on the ground or if he is flying/falling down
 };
@@ -51,28 +53,30 @@ public:
 	virtual ~PhysicHandlerBase(){}
 
 
-
 	// check if it is possible to move from one position to another
 	// the actor has a bounding box centered on currX, currZ
 	// and which goes up from currY
 	// actorSizeX and actorSizeZ are 1/2 the diameter from the center
 	// the physic engine will apply a gravity force to the move if not flying
 	// so that the actor might fall down if needed
-	virtual MoveOutput MoveActor(long ActorId, float ActorPosX, float ActorPosY, float ActorPosZ,
-									float ActorSizeX, float ActorSizeY, float ActorSizeZ,
-									float SpeedX, float SpeedY, float SpeedZ) = 0;
+	virtual MoveOutput MoveActor(long ActorId, const AABB & actorBB,
+									const VECTOR &Speed) = 0;
 
 
 	// return int > 0 if there is a roof on top of the given position
 	// function used to know when to cut the room display in half
-	virtual int IsUnderRoof(float ActorPosX, float ActorPosY, float ActorPosZ) = 0;
+	virtual int IsUnderRoof(const VECTOR & ActorPos) = 0;
 
 
 	// get closest floor from the actor position
-	virtual float GetClosestFloor(float ActorPosX, float ActorPosY, float ActorPosZ) = 0;
+	virtual float GetClosestFloor(const VECTOR & ActorPos) = 0;
 
 	// return a positive number giving the speed of the gravity on the Y axis
 	virtual float GetGravitySpeed() =0;
+
+
+	// render physic shapes
+	virtual void Render() =0;
 };
 
 #endif

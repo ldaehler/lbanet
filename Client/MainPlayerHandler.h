@@ -249,9 +249,9 @@ public:
 	float  GetPosY();
 	float  GetPosZ();
 	float  GetRotation();
-	float  GetSizeX(){return _sizeX;}
-	float  GetSizeY(){return _sizeY;}
-	float  GetSizeZ(){return _sizeZ;}
+	float  GetSizeX();
+	float  GetSizeY();
+	float  GetSizeZ();
 
 	//update position of the floor
 	void UpdateFloorY();
@@ -393,9 +393,6 @@ protected:
 	ActorState		_state;
 	float			_keepYfall;
 
-	float			_sizeX;
-	float			_sizeY;
-	float			_sizeZ;
 	float			_floorY;
 
 	int				_currentstance;

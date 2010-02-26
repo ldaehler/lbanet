@@ -103,7 +103,6 @@ LbaNetModel::LbaNetModel(GuiHandler*	guiH)
 	m_main_actor_starting_X = 0;
 	m_main_actor_starting_Y = 0;
 	m_main_actor_starting_Z = 0;
-	ReplaceMain();
 
 
 	int body;
@@ -260,6 +259,9 @@ void LbaNetModel::Draw()
 	// draw the map
 	if(_mapRenderer)
 		_mapRenderer->Render();
+
+	//if(_physicHandler)
+	//	_physicHandler->Render();
 
 	// draw exits
 	_exitsH->Render();
@@ -505,7 +507,7 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float 
 			//_mapRenderer = new ObjMapRenderer("Prison.obj", "Prison.png");
 			//_mapRenderer = new MapMapRenderer("Test.map", "Otringal.png");
 
-			_physicHandler = new PlanesPhysicHandler("", _localActorsHandler, _externalActorsHandler);
+			_physicHandler = new PlanesPhysicHandler("map3.phy", _localActorsHandler, _externalActorsHandler);
 			_mainPlayerHandler->SetPhysicHandler(_physicHandler);
 
 
@@ -566,7 +568,10 @@ void LbaNetModel::CleanupMap()
 	}
 
 	if(_physicHandler)
+	{
 		delete _physicHandler;
+		_physicHandler = NULL;
+	}
 
 
 	_externalPlayers->ResetActors(_current_map);
@@ -876,11 +881,9 @@ void LbaNetModel::ReplaceMain()
 
 	_mainPlayerHandler->SetRotation(m_main_actor_starting_Rotation);
 
-	_camera->SetTarget(	m_main_actor_starting_X,
-						m_main_actor_starting_Y,
-						m_main_actor_starting_Z);
+	_camera->ResetPosition();
 
-	_mainPlayerHandler->UpdateFloorY();
+	
 
 	if(!_localActorsHandler->ActivateZone(_mainPlayerHandler->GetPosX(), _mainPlayerHandler->GetPosY(),
 									_mainPlayerHandler->GetPosZ(), _mainPlayerHandler->GetRotation(), _mainPlayerHandler))

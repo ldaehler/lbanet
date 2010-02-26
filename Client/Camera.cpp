@@ -45,6 +45,18 @@ Camera::Camera()
 
 
 
+
+/***********************************************************
+reset camera position
+***********************************************************/
+void Camera::ResetPosition()
+{
+	if(_attached_actor)
+	{
+		SetTarget(_attached_actor->GetPosX(), _attached_actor->GetPosY(), _attached_actor->GetPosZ());
+	}
+}
+
 /***********************************************************
 set actor attached to the camera
 ***********************************************************/
@@ -68,6 +80,14 @@ void Camera::Process()
 		// start to move camera only when actor moves a certain distance
 		if(abs(actX - _targetx) > 3 || abs(actY - _targety) > 3 || abs(actZ - _targetz) > 3)
 			_movecamera = true;
+
+		if(abs(actX - _targetx) > 5 || abs(actY - _targety) > 5 || abs(actZ - _targetz) > 5)
+		{
+			ResetPosition();
+			_movecamera = false;
+			return;
+		}
+
 
 		if(_movecamera)
 		{

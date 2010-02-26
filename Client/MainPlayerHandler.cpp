@@ -107,11 +107,7 @@ MainPlayerHandler::MainPlayerHandler(float speedNormal, float speedSport,
 	_player->setActorAnimation(0);
 	_currentbody = 0;
 
-	_sizeX = 0.4f;
-	_sizeY = 5;
-	_sizeZ = 0.4f;
-
-	_player->SetSize(_sizeX, _sizeY, _sizeZ);
+	_player->SetSize(0.4f, 5, 0.4f);
 }
 
 
@@ -139,7 +135,7 @@ set actor position
 void MainPlayerHandler::SetPosition(float NewX, float NewY, float NewZ)
 {
 	_player->SetPosition(NewX, NewY, NewZ);
-
+	UpdateFloorY();
 }
 
 /***********************************************************
@@ -539,16 +535,13 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 	int res = -1;
 	if(_RoomP)
 	{
-		MoveOutput moveO = _RoomP->MoveActor(-1, _player->GetPosX(), _player->GetPosY(), _player->GetPosZ(),
-												_sizeX, _sizeY, _sizeZ,
-												_corrected_velocityX,
-												_corrected_velocityY, 
-												_corrected_velocityZ);
+		MoveOutput moveO = _RoomP->MoveActor(-1, _player->GetBoundingBox(),
+										VECTOR(_corrected_velocityX, _corrected_velocityY, _corrected_velocityZ));
 
 		// update actor speed
-		_corrected_velocityX = moveO.NewSpeedX;		
-		_corrected_velocityY = moveO.NewSpeedY;		
-		_corrected_velocityZ = moveO.NewSpeedZ;	
+		_corrected_velocityX = moveO.NewSpeed.x;		
+		_corrected_velocityY = moveO.NewSpeed.y;		
+		_corrected_velocityZ = moveO.NewSpeed.z;	
 
 		// update actor position
 		SetPosition(	_player->GetPosX()+_corrected_velocityX, 
@@ -966,7 +959,7 @@ return true if actor is hidden under roof
 ***********************************************************/
 int MainPlayerHandler::IsUnderRoof()
 {
-	return _RoomP->IsUnderRoof(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ());
+	return _RoomP->IsUnderRoof(_player->GetPosition());
 }
 
 
@@ -1396,20 +1389,20 @@ float  MainPlayerHandler::GetRotation()
 	return _player->GetRotation();
 }
 
+float  MainPlayerHandler::GetSizeX(){return _player->GetSizeX();}
+float  MainPlayerHandler::GetSizeY(){return _player->GetSizeY();}
+float  MainPlayerHandler::GetSizeZ(){return _player->GetSizeZ();}
+
 
 /***********************************************************
 update position of the floor
 ***********************************************************/
 void MainPlayerHandler::UpdateFloorY()
 {
-	float posX = GetPosX();
-	float posY = GetPosY();
-	float posZ = GetPosZ();
-
-	_floorY = posY;
+	_floorY = GetPosY();
 	if(_RoomP)
 	{
-		_floorY = _RoomP->GetClosestFloor(posX, posY, posZ);
+		_floorY = _RoomP->GetClosestFloor(_player->GetPosition());
 		//_floorY = std::min(_RoomP->GetFloorY(posX+1, posY, posZ) , _floorY);
 		//_floorY = std::min(_RoomP->GetFloorY(posX-1, posY, posZ) , _floorY);
 		//_floorY = std::min(_RoomP->GetFloorY(posX, posY, posZ+1) , _floorY);
