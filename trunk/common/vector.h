@@ -222,55 +222,14 @@ class AABB
 {
 private:
 	VECTOR P; //position
-	VECTOR S; //size
 	VECTOR E; //x,y,z extents
 
 public: 
-	//! constructor
-	AABB()
-		: P(VECTOR(0, 0, 0)), S(VECTOR(0, 0, 0)), E(VECTOR(0, 0, 0))
-	{}
 
 	//! constructor
-	AABB(const VECTOR& position, const VECTOR& size)
-		: P(position), S(size), E(position+size)
+	AABB(const VECTOR& p, const VECTOR& e)
+		: P(p), E(e)
 	{}
-
-	//! set position
-	void SetPosition(const VECTOR& p)
-	{
-		P = p;
-		E = P + S;
-	}
-
-	//! update position
-	void UpdatePosition(const VECTOR& deltap)
-	{
-		P += deltap;
-		E = P + S;
-	}
-
-	//! set size
-	void SetSize(const VECTOR& s)
-	{
-		S = s;
-		E = P + S;
-	}
-
-	//! get position
-	const VECTOR& GetPosition() const {return P;}
-	//! get size
-	const VECTOR& GetSize() const {return S;}
-
-	//! get position on all axis
-	SCALAR GetPosX() const {return P.x;}
-	SCALAR GetPosY() const {return P.y;}
-	SCALAR GetPosZ() const {return P.z;}
-
-	//! get size on all axis
-	SCALAR GetSizeX() const {return S.x;}
-	SCALAR GetSizeY() const {return S.y;}
-	SCALAR GetSizeZ() const {return S.z;}
 
 
 
