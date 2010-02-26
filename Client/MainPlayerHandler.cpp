@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "MainPlayerHandler.h"
 #include "SynchronizedTimeHandler.h"
 #include "Camera.h"
-#include "PhysicHandler.h"
+#include "PhysicHandlerBase.h"
 #include "ThreadSafeWorkpile.h"
 #include "MusicHandler.h"
 #include "DataLoader.h"
@@ -85,21 +85,20 @@ MainPlayerHandler::MainPlayerHandler(float speedNormal, float speedSport,
 										float speedFight,float speedDiscrete,
 										float speedHorse, float speedDino,
 										float animationSpeed,
-										float speedJump, float heightJump, float speedHurt,
-										PhysicHandler*	RoomP, Camera * cam)
+										float speedJump, float heightJump, float speedHurt)
 : _isMovingForward(false), _isMovingRotation(false),
 	_up_key_pressed(false),_down_key_pressed(false),
 	_right_key_pressed(false),_left_key_pressed(false),
 	_pageup_key_pressed(false), _pagedown_key_pressed(false),
 	_state(Ac_Normal), _current_stance(1)
-	, _velocityX(0), _velocityY(0), _velocityZ(0), _currMoveType(0)
+	, _velocityX(0), _velocityY(0), _velocityZ(0)
 	,_velocityR(0), _corrected_velocityX(0), _corrected_velocityY(0)
 	, _corrected_velocityZ(0), _remembering(false), _paused(false),
 	_speedNormal(speedNormal), _speedSport(speedSport),
 	_speedFight(speedFight), _speedDiscrete(speedDiscrete),
 	_speedHorse(speedHorse), _speedDino(speedDino),
 	_speedJump(speedJump), _heightJump(heightJump), _speedHurt(speedHurt),
-	_RoomP(RoomP), _currentstance(0), _camptr(cam),
+	_RoomP(NULL), _currentstance(0), 
 	_isAttached(false), _isDiscrete(false), _needCheck(false), _currentsignal(-1)
 {
 	_player = new Player(animationSpeed, true);
@@ -198,6 +197,184 @@ void MainPlayerHandler::Render()
 	_player->Render(-1);
 }
 
+
+/***********************************************************
+play script
+***********************************************************/
+int MainPlayerHandler::PlayScript(double tnow, float tdiff)
+{
+	if(_curr_script_position >= (int)_curr_script.size())
+	{
+		Stopstate();
+		return 0;
+	}
+
+	PlayerScriptPart ps = _curr_script[_curr_script_position];
+	if(ps.Animation >= 0)
+		_player->setActorAnimation(ps.Animation);
+
+	switch(ps.Type)
+	{
+		case 0: // rotation
+		{
+			double expectedR = ps.ValueA;
+			double currR = _player->GetRotation();
+			double diff, diff2;
+			if(expectedR < currR)
+				expectedR += 360;
+
+			diff = expectedR - currR;
+			diff2 = diff-360;
+
+			if(fabs(diff2) < fabs(diff))
+				diff = diff2;
+
+			float step = (float)(tdiff*ps.Speed * ((diff > 0) ? 1 : -1));
+			if(fabs(step) > fabs(diff))
+			{
+				++_curr_script_position;
+				step = (float)diff;
+			}
+			_velocityR = step / tdiff;
+			_player->SetRotation(_player->GetRotation() + step);
+		}
+		break;
+		case 1: // translation
+		{
+			double expectedX = ps.ValueA;
+			double expectedY = ps.ValueB;
+			double expectedZ = ps.ValueC;
+
+			double currX = _player->GetPosX();
+			double currY = _player->GetPosY();
+			double currZ = _player->GetPosZ();
+
+			double diffX = expectedX - currX;
+			double diffY = expectedY - currY;
+			double diffZ = expectedZ - currZ;
+
+			double stepX = tdiff*ps.Speed * ((diffX > 0) ? 1 : -1);
+			double stepY = tdiff*ps.Speed * ((diffY > 0) ? 1 : -1);
+			double stepZ = tdiff*ps.Speed * ((diffZ > 0) ? 1 : -1);
+
+			if(fabs(stepX) > fabs(diffX))
+				stepX = diffX;
+			if(fabs(stepY) > fabs(diffY))
+				stepY = diffY;
+			if(fabs(stepZ) > fabs(diffZ))
+				stepZ = diffZ;
+
+			if(stepX == 0 && stepY == 0 && stepZ == 0)
+				++_curr_script_position;
+
+			_corrected_velocityX = (float)stepX;
+			_corrected_velocityY = (float)stepY;
+			_corrected_velocityZ = (float)stepZ;
+			_player->SetPosition(_player->GetPosX() + (float)stepX, _player->GetPosY() + (float)stepY, _player->GetPosZ() + (float)stepZ);
+			UpdateFloorY();
+		}
+		break;
+		case 2: // animation
+		{
+			int animend = (int)ps.ValueA;
+			if(animend >= 0)
+			{
+				if(_player->getKeyframe() >= animend)
+					++_curr_script_position;
+			}
+			else
+			{
+				if(_player->Process(tnow, tdiff) == 1)
+					++_curr_script_position;
+			}
+		}
+		break;
+
+		case 3: // inform event
+		{
+			if(ps.Flag && ThreadSafeWorkpile::getInstance()->IsServeron())
+			{
+				LbaNet::ActorSignalInfo se;
+				se.SignalId = (long)ps.ValueB;
+				se.Targets.push_back((long)ps.ValueA);
+				ThreadSafeWorkpile::getInstance()->AddSignalEvent(se);
+			}
+			else
+			{
+				std::vector<long> vectar;
+				vectar.push_back((long)ps.ValueA);
+				long targetsignal = (long)ps.ValueB;
+				ThreadSafeWorkpile::getInstance()->AddEvent(new GameSignalvent(targetsignal, vectar));
+			}
+
+			++_curr_script_position;
+		}
+		break;
+
+		case 4: // wait for signal event
+		{
+			long sig = (long)ps.ValueA;
+			if(sig == _currentsignal)
+				++_curr_script_position;
+		}
+		break;
+
+		case 7: // hide
+		{
+			_player->Hide();
+			++_curr_script_position;
+		}
+		break;		
+
+		case 8: // show
+		{
+			_player->Show();
+			++_curr_script_position;
+		}
+		break;	
+
+		case 9: // change stance
+		{
+			PlayerChangeStance((int)ps.ValueA, true);
+			++_curr_script_position;
+		}
+		break;
+
+		case 10: // attach player to another actor
+		{
+			++_curr_script_position;
+			_attachactor = (long)ps.ValueA;
+			return 5;
+		}
+		break;
+
+		case 11: // dettach player from another actor
+		{
+			++_curr_script_position;
+			_attachactor = (long)ps.ValueA;
+			return 6;
+		}
+		break;
+
+		case 12: // teleport player to another map
+		{
+			++_curr_script_position;
+			_newmap = ps.NewMap;
+			_spawning = ps.Spawning;
+			return 7;
+		}
+		break;
+
+	}
+
+	if(_curr_script_position >= (int)_curr_script.size())
+		Stopstate();
+
+	_currentsignal = -1;
+	return -1;
+}
+
+
 /***********************************************************
 do all check to be done when idle
 ***********************************************************/
@@ -206,417 +383,248 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 	if(_paused)
 		return 0;
 
-
 	_velocityR = 0;
 	_corrected_velocityX = 0;
 	_corrected_velocityY = 0;
 	_corrected_velocityZ = 0;
 
-	int res = -1;
-
+	// in case of scripted event - do not take the usual process path
 	if(_state == Ac_scripted)
 	{
-		if(_curr_script_position >= (int)_curr_script.size())
-		{
-			Stopstate();
-			return 0;
-		}
-
-		PlayerScriptPart ps = _curr_script[_curr_script_position];
-		if(ps.Animation >= 0)
-			_player->setActorAnimation(ps.Animation);
-
-		switch(ps.Type)
-		{
-			case 0: // rotation
-			{
-				double expectedR = ps.ValueA;
-				double currR = _player->GetRotation();
-				double diff, diff2;
-				if(expectedR < currR)
-					expectedR += 360;
-
-				diff = expectedR - currR;
-				diff2 = diff-360;
-
-				if(fabs(diff2) < fabs(diff))
-					diff = diff2;
-
-				float step = (float)(tdiff*ps.Speed * ((diff > 0) ? 1 : -1));
-				if(fabs(step) > fabs(diff))
-				{
-					++_curr_script_position;
-					step = (float)diff;
-				}
-				_velocityR = step / tdiff;
-				_player->SetRotation(_player->GetRotation() + step);
-			}
-			break;
-			case 1: // translation
-			{
-				double expectedX = ps.ValueA;
-				double expectedY = ps.ValueB;
-				double expectedZ = ps.ValueC;
-
-				double currX = _player->GetPosX();
-				double currY = _player->GetPosY();
-				double currZ = _player->GetPosZ();
-
-				double diffX = expectedX - currX;
-				double diffY = expectedY - currY;
-				double diffZ = expectedZ - currZ;
-
-				double stepX = tdiff*ps.Speed * ((diffX > 0) ? 1 : -1);
-				double stepY = tdiff*ps.Speed * ((diffY > 0) ? 1 : -1);
-				double stepZ = tdiff*ps.Speed * ((diffZ > 0) ? 1 : -1);
-
-				if(fabs(stepX) > fabs(diffX))
-					stepX = diffX;
-				if(fabs(stepY) > fabs(diffY))
-					stepY = diffY;
-				if(fabs(stepZ) > fabs(diffZ))
-					stepZ = diffZ;
-
-				if(stepX == 0 && stepY == 0 && stepZ == 0)
-					++_curr_script_position;
-
-				_corrected_velocityX = (float)stepX;
-				_corrected_velocityY = (float)stepY;
-				_corrected_velocityZ = (float)stepZ;
-				_player->SetPosition(_player->GetPosX() + (float)stepX, _player->GetPosY() + (float)stepY, _player->GetPosZ() + (float)stepZ);
-				UpdateFloorY();
-			}
-			break;
-			case 2: // animation
-			{
-				int animend = (int)ps.ValueA;
-				if(animend >= 0)
-				{
-					if(_player->getKeyframe() >= animend)
-						++_curr_script_position;
-				}
-				else
-				{
-					if(_player->Process(tnow, tdiff) == 1)
-						++_curr_script_position;
-				}
-			}
-			break;
-
-			case 3: // inform event
-			{
-				if(ps.Flag && ThreadSafeWorkpile::getInstance()->IsServeron())
-				{
-					LbaNet::ActorSignalInfo se;
-					se.SignalId = (long)ps.ValueB;
-					se.Targets.push_back((long)ps.ValueA);
-					ThreadSafeWorkpile::getInstance()->AddSignalEvent(se);
-				}
-				else
-				{
-					std::vector<long> vectar;
-					vectar.push_back((long)ps.ValueA);
-					long targetsignal = (long)ps.ValueB;
-					ThreadSafeWorkpile::getInstance()->AddEvent(new GameSignalvent(targetsignal, vectar));
-				}
-
-
-
-				++_curr_script_position;
-			}
-			break;
-
-			case 4: // wait for signal event
-			{
-				long sig = (long)ps.ValueA;
-				if(sig == _currentsignal)
-					++_curr_script_position;
-			}
-			break;
-	
-			case 7: // hide
-			{
-				_player->Hide();
-				++_curr_script_position;
-			}
-			break;		
-	
-			case 8: // show
-			{
-				_player->Show();
-				++_curr_script_position;
-			}
-			break;	
-	
-			case 9: // change stance
-			{
-				PlayerChangeStance((int)ps.ValueA, true);
-				++_curr_script_position;
-			}
-			break;
-	
-			case 10: // attach player to another actor
-			{
-				++_curr_script_position;
-				_attachactor = (long)ps.ValueA;
-				return 5;
-			}
-			break;
-	
-			case 11: // dettach player from another actor
-			{
-				++_curr_script_position;
-				_attachactor = (long)ps.ValueA;
-				return 6;
-			}
-			break;
-	
-			case 12: // teleport player to another map
-			{
-				++_curr_script_position;
-				_newmap = ps.NewMap;
-				_spawning = ps.Spawning;
-				return 7;
-			}
-			break;
-
-		}
-
-		if(_curr_script_position >= (int)_curr_script.size())
-			Stopstate();
-
-		if(_camptr)
-			_camptr->SetTarget(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ());
-
-		res = 0;
-		_currentsignal = -1;
+		return FinishProcess(tnow, tdiff, PlayScript(tnow, tdiff));
 	}
-	else if(_state == Ac_FallingDown)
-	{
-		float dtFall = 0.03f * tdiff;
-		if(_nbYFall > dtFall)
-		{
-			_player->UpdateY(-dtFall);
-			_nbYFall-= dtFall;
-			_corrected_velocityY = -dtFall;
 
-			if(_camptr)
-				_camptr->SetTarget(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ());
+	// in the case we are drowning
+	if(_state == Ac_Drowning)
+	{
+		if(_player->getKeyframe() == 7)
+		{
+			if(!_drow_sound_started)
+			{
+				std::string soundp = DataLoader::getInstance()->GetSoundPath(M_SOUND_DROW_2);
+				if(soundp != "")
+					MusicHandler::getInstance()->PlaySample(soundp, 0);
+				_drow_sound_started = true;
+			}
+		}
+		else if(_player->getKeyframe() == 13)
+		{
+			if(!_drow_sound_started)
+			{
+				std::string soundp = DataLoader::getInstance()->GetSoundPath(M_SOUND_DROW_3);
+				if(soundp != "")
+					MusicHandler::getInstance()->PlaySample(soundp, 0);
+				_drow_sound_started = true;
+			}
 		}
 		else
-		{
-			_player->SetY(_fallarrivalY);
-			_nbYFall= 0;
-			_state = Ac_hurt_fall;
+			_drow_sound_started = false;
 
-			if(_camptr)
-				_camptr->SetTarget(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ());
-
-			if(_RoomP && _RoomP->StepOnWater(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ()))
-				if((tnow - _lastdeathtime) > 3000) // leave 10sec time to recover
-					return 1;	// the actor should die in water
-
-			if(_state != Ac_Flying && _player->GetPosY() == -1) // the actor should die by falling out of the map
-				return 2;
-
-			_needCheck = true;
-
-			if(_keepYfall > 6)
-				ThreadSafeWorkpile::getInstance()->AddPlayerHurtFall(_keepYfall-6);
-
-			// playing sound only if not in water
-			bool waitforanim = ChangeAnimToHurt(_keepYfall > 6);
-			if(waitforanim)
-			{
-				return 4;
-			}
-			else
-			{
-				Stopstate();
-				return 0;
-			}
-		}
-
+		return FinishProcess(tnow, tdiff, -1);
 	}
-	else
+
+
+	// in the case we are dying
+	if(_state == Ac_Dying)
 	{
-		if(_state == Ac_Drowning)
+		return FinishProcess(tnow, tdiff, -1);
+	}
+
+
+
+	// in case we are jumping
+	if(_state == Ac_Jumping)
+	{
+		// in case we are in sport mode
+		if(_currentstance == 2)
 		{
-			if(_player->getKeyframe() == 7)
+			if(_player->getKeyframe() > 2)
 			{
-				if(!_drow_sound_started)
+				CalculateVelocity(true, true, -_speedJump);
+
+				if(!_jump_sound_started)
 				{
-					std::string soundp = DataLoader::getInstance()->GetSoundPath(M_SOUND_DROW_2);
+					std::string soundp = DataLoader::getInstance()->GetSoundPath(M_SOUND_JUMP);
 					if(soundp != "")
 						MusicHandler::getInstance()->PlaySample(soundp, 0);
-					_drow_sound_started = true;
-				}
-			}
-			else if(_player->getKeyframe() == 13)
-			{
-				if(!_drow_sound_started)
-				{
-					std::string soundp = DataLoader::getInstance()->GetSoundPath(M_SOUND_DROW_3);
-					if(soundp != "")
-						MusicHandler::getInstance()->PlaySample(soundp, 0);
-					_drow_sound_started = true;
+					_jump_sound_started = true;
 				}
 			}
 			else
-				_drow_sound_started = false;
+			{
+				CalculateVelocity(true, true, 0);
+			}
+
+			if(_player->getKeyframe() > 2 && _player->getKeyframe() < 5)
+				_corrected_velocityY = _heightJump * tdiff;
+
+			if(_player->getKeyframe() > 4)
+				_corrected_velocityY = -_heightJump * tdiff;
 		}
-		else if(_state != Ac_Dying && _RoomP)
+
+		// in case we are in horse mode
+		if(_currentstance == 5)
 		{
-			float pY = _player->GetPosY();
-			float tmpY;
-			float cY = modf(pY, &tmpY);
+			CalculateVelocity(true, true, -_speedHorse);
 
-			if((cY < 0.000001) && (_state != Ac_Flying) && ((_state != Ac_protopack) || !_up_key_pressed) && (_state != Ac_Jumping))
-				if(_RoomP && _RoomP->StepOnWater(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ()))
-					if((tnow - _lastdeathtime) > 3000) // leave 10sec time to recover
-						return 1;	// the actor should die in water
+			if( _player->getKeyframe() < 3)
+				_corrected_velocityY = _heightJump * 2 * tdiff;
 
-			if(_state != Ac_Flying && _player->GetPosY() == -1) // the actor should die by falling out of the map
-				return 2;
+			if(_player->getKeyframe() > 2)
+				_corrected_velocityY = -_heightJump * 2 * tdiff;
+		}
 
-
-			if(_currentstance == 2)
-			{
-				if(_state == Ac_Jumping && _player->getKeyframe() > 2)
-				{
-					UpdateVelocity(1, true, -_speedJump);
-
-					if(!_jump_sound_started)
-					{
-						std::string soundp = DataLoader::getInstance()->GetSoundPath(M_SOUND_JUMP);
-						if(soundp != "")
-							MusicHandler::getInstance()->PlaySample(soundp, 0);
-						_jump_sound_started = true;
-					}
-				}
-				if(_state == Ac_Jumping && _player->getKeyframe() > 2 && _player->getKeyframe() < 5)
-				{
-					float dy = _heightJump * tdiff;
-					_RoomP->GoUpDown(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ(), dy, _sizeY);
-					if(dy > 0)
-					{
-						_player->UpdateY(dy);
-						if(_camptr)
-							_camptr->SetTarget(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ());
-					}
-					_corrected_velocityY = dy;
-				}
-				if(_state == Ac_Jumping && _player->getKeyframe() > 4)
-				{
-					float dy = -_heightJump * tdiff;
-					_RoomP->GoUpDown(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ(), dy, _sizeY);
-					if(dy < 0)
-					{
-						_player->UpdateY(dy);
-						if(_camptr)
-							_camptr->SetTarget(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ());
-					}
-					_corrected_velocityY = dy;
-				}
-			}
-			if(_currentstance == 5)
-			{
-				if(_state == Ac_Jumping)
-					UpdateVelocity(1, true, -_speedHorse);
-				if(_state == Ac_Jumping && _player->getKeyframe() < 3)
-				{
-					float dy = _heightJump * 2 * tdiff;
-					_RoomP->GoUpDown(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ(), dy, _sizeY);
-					if(dy > 0)
-					{
-						_player->UpdateY(dy);
-						if(_camptr)
-							_camptr->SetTarget(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ());
-					}
-					_corrected_velocityY = dy;
-				}
-				if(_state == Ac_Jumping && _player->getKeyframe() > 2)
-				{
-					float dy = -_heightJump * 2 * tdiff;
-					_RoomP->GoUpDown(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ(), dy, _sizeY);
-					if(dy < 0)
-					{
-						_player->UpdateY(dy);
-						if(_camptr)
-							_camptr->SetTarget(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ());
-					}
-					_corrected_velocityY = dy;
-				}
-			}
-
-			if(_state == Ac_hurt)
-			{
-				UpdateVelocity(1, true, _speedHurt);
-			}
-
-			if(_right_key_pressed && _state != Ac_Drowning && _state != Ac_Dying &&
-				_state != Ac_FallingDown && _state != Ac_hurt_fall && _state != Ac_Jumping && _state != Ac_hurt)
-			{
-				_velocityR = -0.15f;
-				_player->SetRotation(_player->GetRotation() - tdiff*0.15f);
-				UpdateVelocity(_currMoveType);
-				res = 0;
-			}
-
-			if(_left_key_pressed && _state != Ac_Drowning && _state != Ac_Dying &&
-				_state != Ac_FallingDown && _state != Ac_hurt_fall && _state != Ac_Jumping && _state != Ac_hurt)
-			{
-				_velocityR = 0.15f;
-				_player->SetRotation(_player->GetRotation() + tdiff*0.15f);
-				UpdateVelocity(_currMoveType);
-				res = 0;
-			}
-
-			if(_up_key_pressed || _state == Ac_Jumping ||  _state == Ac_hurt)
-			{
-				if(MoveActor(true, tdiff))
-					res = 0;
-			}
-			else if(_down_key_pressed)
-			{
-				if(MoveActor(false, tdiff))
-					res = 0;
-			}
+		_corrected_velocityX = _velocityX * tdiff;
+		_corrected_velocityZ = _velocityZ * tdiff;
+	}
 
 
+	// in case player has been touch and is hurt - make him move backward
+	if(_state == Ac_hurt)
+	{
+		CalculateVelocity(false, true, _speedHurt);
+	}
+
+
+	// if we are not jumping neither flying we need to add the gravity
+	if(_state != Ac_Jumping && _state != Ac_Flying)
+	{
+		if(_RoomP)
+			_corrected_velocityY = -_RoomP->GetGravitySpeed() * tdiff;
+	}
+
+
+
+	// normal case - check all player inputs and calculate new speeds
+	if(_state != Ac_Drowning && _state != Ac_Dying &&
+		_state != Ac_FallingDown && _state != Ac_hurt_fall &&
+		_state != Ac_Jumping && _state != Ac_hurt)
+	{
+		//if right key pressed
+		if(_right_key_pressed)
+		{
+			_velocityR = -0.15f;
+			_player->SetRotation(_player->GetRotation() - tdiff*0.15f);
+		}
+
+		//if left key pressed
+		if(_left_key_pressed)
+		{
+			_velocityR = 0.15f;
+			_player->SetRotation(_player->GetRotation() + tdiff*0.15f);
+		}
+
+		// if we are flying - check up/down input
+		if(_state == Ac_Flying)
+		{
 			if(_pageup_key_pressed)
-			{
-				float dy = 0.02f * tdiff;
-				_RoomP->GoUpDown(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ(), dy, _sizeY);
-				if(dy != 0)
-				{
-					_player->UpdateY(dy);
-					if(_camptr)
-						_camptr->SetTarget(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ());
-
-					res = 0;
-				}
-				_corrected_velocityY = dy;
-			}
+				_corrected_velocityY = 0.02f * tdiff;
 
 			if(_pagedown_key_pressed)
-			{
-				float dy = -0.02f * tdiff;
-				_RoomP->GoUpDown(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ(), dy, _sizeY);
-				if(dy != 0)
-				{
-					_player->UpdateY(dy);
-					if(_camptr)
-						_camptr->SetTarget(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ());
+				_corrected_velocityY = -0.02f * tdiff;
+		}
 
-					res = 0;
-				}
-				_corrected_velocityY = dy;
-			}
+		// if up/down key
+		if(_up_key_pressed || _down_key_pressed)
+		{
+			CalculateVelocity(_up_key_pressed);
+
+			_corrected_velocityX = _velocityX * tdiff;
+			_corrected_velocityZ = _velocityZ * tdiff;
 		}
 	}
 
 
+	// now check the physic handler 
+	int res = -1;
+	if(_RoomP)
+	{
+		MoveOutput moveO = _RoomP->MoveActor(-1, _player->GetPosX(), _player->GetPosY(), _player->GetPosZ(),
+												_sizeX, _sizeY, _sizeZ,
+												_corrected_velocityX,
+												_corrected_velocityY, 
+												_corrected_velocityZ);
+
+		// update actor speed
+		_corrected_velocityX = moveO.NewSpeedX;		
+		_corrected_velocityY = moveO.NewSpeedY;		
+		_corrected_velocityZ = moveO.NewSpeedZ;	
+
+		// update actor position
+		SetPosition(	_player->GetPosX()+_corrected_velocityX, 
+						_player->GetPosY()+_corrected_velocityY, 
+						_player->GetPosZ()+_corrected_velocityZ);
+
+
+		//if not flying or jumping make a few tests
+		if(_state != Ac_Jumping && _state != Ac_Flying)
+		{
+			//if(_player->GetPosY() < 0) // the actor should die by falling out of the map
+			//	return 2;
+
+			// if we are on water
+			if(moveO.TouchingWater)
+			{
+				//if we do not use the protopack then we drown
+				if((_state != Ac_protopack) || !_up_key_pressed)
+				{
+					if((tnow - _lastdeathtime) > 3000) // leave 10sec time to recover between 2 drowning
+						return 1;	// the actor should die in water
+				}
+			}
+
+
+			// if the actor does not touch the ground it means he is falling down
+			if(!moveO.TouchingGround)
+			{
+				StartFallDown();
+			}
+			else
+			{
+				//if we were falling down then player will be hurt by touching the ground
+				if(_state == Ac_FallingDown)
+				{
+					_needCheck = true;
+					float fallsize = _keepYfall - _player->GetPosY();
+
+					if(_keepYfall > 6)
+						ThreadSafeWorkpile::getInstance()->AddPlayerHurtFall(fallsize-6);
+
+					// playing sound
+					bool waitforanim = ChangeAnimToHurt(fallsize > 6);
+					if(waitforanim)
+					{
+						return 4;
+					}
+					else
+					{
+						Stopstate();
+						return 0;
+					}
+				}
+			}
+		}
+
+		// return the correct value if actor has moved
+		if(_corrected_velocityX != 0 || _corrected_velocityY != 0 || _corrected_velocityZ != 0)
+		{
+			res = 0;
+			UpdateFloorY();
+		}
+	}
+
+
+	return FinishProcess(tnow, tdiff, res);
+}
+
+
+
+
+/***********************************************************
+FinishProcess
+***********************************************************/
+int MainPlayerHandler::FinishProcess(double tnow, float tdiff, int res)
+{
 	int resA = _player->Process(tnow, tdiff);
 	if(resA == 1 && res == -1)	// if actor animation is terminated and there is no other event
 		res = 3;	// inform engine
@@ -640,11 +648,7 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 		_corrected_velocityY += _player->GetAddedvY();
 		_corrected_velocityZ += _player->GetAddedvZ();
 		_player->SetAddedVelocity(0, 0, 0);
-
-		if(_camptr)
-			_camptr->SetTarget(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ());
 	}
-
 
 
 
@@ -692,7 +696,6 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 }
 
 
-
 /***********************************************************
 player moves
 ***********************************************************/
@@ -728,8 +731,6 @@ void MainPlayerHandler::PlayerStartMove(int moveDirection)
 	{
 		case 1:
 			_up_key_pressed = true;
-			_currMoveType = 1;
-			UpdateVelocity(_currMoveType);
 
 			if(_state == Ac_protopack)
 			{
@@ -741,8 +742,6 @@ void MainPlayerHandler::PlayerStartMove(int moveDirection)
 		break;
 		case 2:
 			_down_key_pressed = true;
-			_currMoveType = -1;
-			UpdateVelocity(_currMoveType);
 		break;
 		case 3:
 			_left_key_pressed = true;
@@ -808,10 +807,6 @@ void MainPlayerHandler::PlayerStopMove(int moveDirection)
 		if(_isMovingForward && !_up_key_pressed && !_down_key_pressed)
 		{
 			_isMovingForward = false;
-			_currMoveType = 0;
-
-			if(_state != Ac_Jumping)
-				UpdateVelocity(_currMoveType);
 
 			if(_state == Ac_Normal || _state == Ac_Flying || _state == Ac_protopack)
 			{
@@ -904,72 +899,54 @@ void MainPlayerHandler::PlayerChangeStance(int StanceNumber, bool forced)
 			_player->changeAnimEntity(0, _currentbody);
 			if(_state == Ac_Flying || _state == Ac_protopack)
 				_state = Ac_Normal;
-			_pageup_key_pressed = false;
-			_pagedown_key_pressed = false;
-			UpdateVelocity(_currMoveType);
+
 			_player->setActorAnimation(GetActoAnim());
-			CheckY();
 		break;
 
 		case 2:
 			_player->changeAnimEntity(1, _currentbody);
 			if(_state == Ac_Flying || _state == Ac_protopack)
 				_state = Ac_Normal;
-			_pageup_key_pressed = false;
-			_pagedown_key_pressed = false;
-			UpdateVelocity(_currMoveType);
+
 			_player->setActorAnimation(GetActoAnim());
-			CheckY();
 		break;
 
 		case 3:
 			_player->changeAnimEntity(2, _currentbody);
 			if(_state == Ac_Flying || _state == Ac_protopack)
 				_state = Ac_Normal;
-			_pageup_key_pressed = false;
-			_pagedown_key_pressed = false;
-			UpdateVelocity(_currMoveType);
+
 			_player->setActorAnimation(GetActoAnim());
-			CheckY();
 		break;
 
 		case 4:
 			_player->changeAnimEntity(3, _currentbody);
 			if(_state == Ac_Flying || _state == Ac_protopack)
 				_state = Ac_Normal;
-			_pageup_key_pressed = false;
-			_pagedown_key_pressed = false;
-			UpdateVelocity(_currMoveType);
+	
 			_player->setActorAnimation(GetActoAnim());
-			CheckY();
 		break;
 
 		case 5:
 			_player->changeAnimEntity(47, 0);
 			if(_state == Ac_Flying || _state == Ac_protopack)
 				_state = Ac_Normal;
-			_pageup_key_pressed = false;
-			_pagedown_key_pressed = false;
-			UpdateVelocity(_currMoveType);
+
 			_player->setActorAnimation(GetActoAnim());
-			CheckY();
 		break;
 
 		case 6:
 			_player->changeAnimEntity(64, 0);
 			_state = Ac_Flying;
-			UpdateVelocity(_currMoveType);
 			_player->setActorAnimation(GetActoAnim());
 		break;
 
 		case 7:
 			_player->changeAnimEntity(4, 0);
 			_state = Ac_protopack;
-			UpdateVelocity(_currMoveType);
 			_player->setActorAnimation(GetActoAnim());
-			CheckY();
 
-			if(_currMoveType == 1)
+			if(_up_key_pressed)
 			{
 				std::string soundp = DataLoader::getInstance()->GetSoundPath(M_SOUND_PROTO_PACK);
 				if(soundp != "")
@@ -984,36 +961,6 @@ void MainPlayerHandler::PlayerChangeStance(int StanceNumber, bool forced)
 
 
 
-
-
-/***********************************************************
-check if actor goes up stairs or falldown
-***********************************************************/
-void MainPlayerHandler::CheckY()
-{
-	if(_isAttached)
-		return;
-
-	float newY = _RoomP->GetNextY(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ(), _sizeX, _sizeY, _sizeZ);
-	float deltaY = _player->GetPosY() - newY;
-
-
-	if(deltaY <= 2 && _state != Ac_Jumping && (_pageup_key_pressed == false || (_state != Ac_Flying)) || deltaY < 0)
-	{
-		_player->SetPosition(_player->GetPosX(), newY, _player->GetPosZ());
-		_corrected_velocityY -= deltaY;
-
-		if(_camptr)
-			_camptr->SetTarget(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ());
-	}
-	else
-	{
-		if(_state != Ac_Flying && _state != Ac_Jumping)
-			StartFallDown(deltaY, newY);
-	}
-}
-
-
 /***********************************************************
 return true if actor is hidden under roof
 ***********************************************************/
@@ -1021,6 +968,7 @@ int MainPlayerHandler::IsUnderRoof()
 {
 	return _RoomP->IsUnderRoof(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ());
 }
+
 
 
 /***********************************************************
@@ -1103,63 +1051,6 @@ void MainPlayerHandler::Stopstate()
 
 
 
-/***********************************************************
-function called to move the attached actor upward or backward
-***********************************************************/
-bool MainPlayerHandler::MoveActor(bool Upward, float timediff)
-{
-	bool res = false;
-
-
-	if(_state == Ac_Drowning || _state == Ac_Dying || _state == Ac_FallingDown || _state == Ac_hurt_fall)
-		return res;
-
-	if(_RoomP)
-	{
-		_corrected_velocityX = _velocityX*timediff;
-		_corrected_velocityZ = _velocityZ*timediff;
-		_RoomP->Move(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ(), _sizeX, _sizeY, _sizeZ,
-						_corrected_velocityX, _corrected_velocityZ, _state == Ac_Jumping);
-	}
-
-
-	float vXabs = abs(_corrected_velocityX);
-	float vZabs = abs(_corrected_velocityZ);
-
-	for(float x=0; x<vXabs; x+=0.1f)
-	{
-		float diff = vXabs - x;
-		float halfM = (diff >= 0.1) ? 0.1f : diff;
-
-		if(_corrected_velocityX<0)
-			halfM *= -1;
-
-		SetPosition(_player->GetPosX()+halfM, _player->GetPosY(), _player->GetPosZ());
-		CheckY();
-
-	}
-
-	for(float z=0; z<vZabs; z+=0.1f)
-	{
-		float diff = vZabs - z;
-		float halfM = (diff >= 0.1f) ? 0.1f : diff;
-
-		if(_corrected_velocityZ<0)
-			halfM *= -1;
-
-		SetPosition(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ()+halfM);
-		CheckY();
-	}
-
-
-	if(_camptr)
-		_camptr->SetTarget(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ());
-
-
-	UpdateFloorY();
-	return true;
-}
-
 
 /***********************************************************
 get actor moving speed
@@ -1190,18 +1081,15 @@ float MainPlayerHandler::GetMovingSpeed()
 /***********************************************************
 called when the actor must fall down
 ***********************************************************/
-void MainPlayerHandler::StartFallDown(float nbY, float fallarrivalY)
+void MainPlayerHandler::StartFallDown()
 {
 	if(_state != Ac_FallingDown)
 	{
 		if(_state == Ac_protopack)
 			MusicHandler::getInstance()->StopSample(_sound_proto);
 
-		//ResetMove();
 
-		_nbYFall = nbY;
-		_keepYfall = nbY;
-		_fallarrivalY = fallarrivalY;
+		_keepYfall = _player->GetPosY();
 
 		if(!_remembering)
 		{
@@ -1212,9 +1100,7 @@ void MainPlayerHandler::StartFallDown(float nbY, float fallarrivalY)
 		}
 
 		ChangeAnimToFallDown();
-
 		_state = Ac_FallingDown;
-
 	}
 }
 
@@ -1252,7 +1138,6 @@ void MainPlayerHandler::StartJump()
 	if(_state != Ac_Jumping)
 	{
 		_jump_sound_started = false;
-		UpdateVelocity(0);
 		_state = Ac_Jumping;
 
 		if(_player->GetModel() == 1)
@@ -1273,9 +1158,7 @@ void MainPlayerHandler::StopJump()
 	{
 		 _state = Ac_Normal;
 		_player->setActorAnimation(0);
-		UpdateVelocity(_currMoveType);
 		_player->setActorAnimation(GetActoAnim());
-		CheckY();
 
 		_needCheck = true;
 	}
@@ -1288,9 +1171,9 @@ void MainPlayerHandler::StopJump()
 /***********************************************************
 recalculate actor velocity
 ***********************************************************/
-void MainPlayerHandler::UpdateVelocity(int MoveType, bool ManualSpeed, float speed)
+void MainPlayerHandler::CalculateVelocity(bool MoveForward, bool ManualSpeed, float speed)
 {
-	float halfM = GetMovingSpeed() * MoveType * ((MoveType == 1) ? 1.0f : 0.5f) * -1;
+	float halfM = GetMovingSpeed() * (MoveForward ? -1.0f : 0.5f);
 	if(ManualSpeed)
 		halfM = speed;
 
@@ -1337,7 +1220,6 @@ void MainPlayerHandler::ResetMove()
 	_pageup_key_pressed = false;
 	_pagedown_key_pressed = false;
 
-	_currMoveType = 0;
 	_velocityX = 0;
 	_velocityY = 0;
 	_velocityZ = 0;
@@ -1375,7 +1257,6 @@ void MainPlayerHandler::Resume(bool interior, bool reinit)
 		}
 
 		StopJump();
-		CheckY();
 	}
 }
 
@@ -1436,7 +1317,7 @@ bool MainPlayerHandler::ChangeAnimToHurt(bool StrongHurt)
 	{
 		_player->setActorAnimation(12);
 
-		if(_currMoveType == 1)
+		if(_up_key_pressed)
 		{
 			MusicHandler::getInstance()->StopSample(_sound_proto);
 			std::string soundp = DataLoader::getInstance()->GetSoundPath(M_SOUND_PROTO_PACK);
@@ -1521,18 +1402,18 @@ update position of the floor
 ***********************************************************/
 void MainPlayerHandler::UpdateFloorY()
 {
-	int posX = (int)GetPosX();
-	int posY = (int)GetPosY();
-	int posZ = (int)GetPosZ();
+	float posX = GetPosX();
+	float posY = GetPosY();
+	float posZ = GetPosZ();
 
 	_floorY = posY;
 	if(_RoomP)
 	{
-		_floorY = _RoomP->GetFloorY(posX, posY, posZ);
-		_floorY = std::min(_RoomP->GetFloorY(posX+1, posY, posZ) , _floorY);
-		_floorY = std::min(_RoomP->GetFloorY(posX-1, posY, posZ) , _floorY);
-		_floorY = std::min(_RoomP->GetFloorY(posX, posY, posZ+1) , _floorY);
-		_floorY = std::min(_RoomP->GetFloorY(posX, posY, posZ-1) , _floorY);
+		_floorY = _RoomP->GetClosestFloor(posX, posY, posZ);
+		//_floorY = std::min(_RoomP->GetFloorY(posX+1, posY, posZ) , _floorY);
+		//_floorY = std::min(_RoomP->GetFloorY(posX-1, posY, posZ) , _floorY);
+		//_floorY = std::min(_RoomP->GetFloorY(posX, posY, posZ+1) , _floorY);
+		//_floorY = std::min(_RoomP->GetFloorY(posX, posY, posZ-1) , _floorY);
 	}
 }
 
@@ -1641,9 +1522,7 @@ void MainPlayerHandler::StopHurt()
 		 _state = Ac_Normal;
 		_player->changeAnimEntity(_remembermodel, _currentbody);
 		_player->setActorAnimation(0);
-		UpdateVelocity(_currMoveType);
 		_player->setActorAnimation(GetActoAnim());
-		CheckY();
 
 		// inform actor that the hurting animation is finished
 		std::vector<long> vectar;

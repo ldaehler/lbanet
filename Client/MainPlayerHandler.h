@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Camera;
 class Player;
-class PhysicHandler;
+class PhysicHandlerBase;
 
 #include <math.h>
 #include <vector>
@@ -176,8 +176,7 @@ public:
 	MainPlayerHandler(float speedNormal, float speedSport,
 						float speedFight,float speedDiscrete,
 						float speedHorse, float speedDino, float animationSpeed,
-						float speedJump, float heightJump, float speedHurt,
-						PhysicHandler*	RoomP, Camera * cam);
+						float speedJump, float heightJump, float speedHurt);
 
 	//! destructor
 	~MainPlayerHandler();
@@ -187,6 +186,10 @@ public:
 
 	// set the actor status
 	void SetStatus(const std::string & status);
+
+	// set physic handler
+	void SetPhysicHandler(PhysicHandlerBase * PH)
+	{_RoomP = PH;}
 
 
 	//! set actor position
@@ -266,8 +269,6 @@ public:
 	// display a scripted event using the player character
 	void DoPlayerScriptedEvent(const std::vector<PlayerScriptPart> &script);
 
-	// check if actor goes up stairs or falldown
-	void CheckY();
 
 	// set if the main actor is attached
 	void SetAttached(bool attached)
@@ -290,46 +291,55 @@ public:
 	// return true if the map need to be checked for player position
 	bool NeedCheck();
 
+
 	// return true if actor is jumping
 	bool IsJumping()
 	{ return _state == Ac_Jumping;}
+
 
 	//player life changed
 	// return true if actor die
 	bool PlayerLifeChanged(float CurLife, float MaxLife, float CurMana, float MaxMana);
 
+
 	// render the main player at a fixed position for picture
 	void RenderForPicture();
+
 
 	// set player name color
 	void SetNameColor(int R, int G, int B);
 
+
 	// give signal to main player
 	void SetSignal(int newsignal);
+
 
 	// actor used for attach/detach
 	long GetAttachActor()
 	{ return _attachactor;}
 
+
 	// get map player will pe teleported
 	std::string GetNewMap()
 	{ return _newmap;}
+
 
 	// get map player will pe teleported
 	std::string GetSpawning()
 	{ return _spawning;}
 
+
 	// show player
 	void Show();
 
+
 protected:
-	bool MoveActor(bool Upward, float timediff);
 
 	//get actor moving speed
 	float GetMovingSpeed();
 
 	// called when the actor must fall down
-	void StartFallDown(float nbY, float fallarrivalY);
+	void StartFallDown();
 
 	// called when the actor start  jump
 	void StartJump();
@@ -342,7 +352,7 @@ protected:
 
 	// recalculate actor velocity
 	// moveType: 0 - no move, 1 - move upward, -1 - move backward
-	void UpdateVelocity(int MoveType, bool ManualSpeed=false, float speed=0.0f);
+	void CalculateVelocity(bool MoveForward, bool ManualSpeed=false, float speed=0.0f);
 
 	// stop all move an reset all velocities
 	void ResetMove();
@@ -359,12 +369,17 @@ protected:
 	//get the size of the shadow circle depending of the actor
 	float GetShadowCircleSize();
 
+	// player script
+	int PlayScript(double tnow, float tdiff);
+
+	// finish process
+	int FinishProcess(double tnow, float tdiff, int res);
 
 protected:
 	enum ActorState { Ac_Normal=0, Ac_Drowning, Ac_Dying, Ac_Flying, Ac_Jumping, Ac_FallingDown, Ac_protopack, Ac_hurt_fall, Ac_scripted, Ac_hurt };
 
 	Player*			_player;
-	PhysicHandler*	_RoomP;
+	PhysicHandlerBase*	_RoomP;
 
 	bool			_isMovingForward;
 	bool			_isMovingRotation;
@@ -376,14 +391,12 @@ protected:
 	bool			_remembering;
 
 	ActorState		_state;
-	float			_nbYFall;
 	float			_keepYfall;
-	float			_fallarrivalY;
 
 	float			_sizeX;
 	float			_sizeY;
 	float			_sizeZ;
-	int				_floorY;
+	float			_floorY;
 
 	int				_currentstance;
 	int				_currentbody;
@@ -400,7 +413,6 @@ protected:
 	bool			_pagedown_key_pressed;
 
 
-	int				_currMoveType;
 	float			_velocityX;
 	float			_velocityY;
 	float			_velocityZ;
@@ -410,8 +422,6 @@ protected:
 	float			_corrected_velocityY;
 	float			_corrected_velocityZ;
 
-	// pointer to the camera
-	Camera *		_camptr;
 
 	DeadReckon		_dr;
 	bool			_paused;

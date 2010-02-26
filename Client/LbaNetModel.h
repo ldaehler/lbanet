@@ -30,7 +30,7 @@ class MainPlayerHandler;
 class MapRendererBase;
 class LocalActorsHandler;
 class ExternalActorsHandler;
-class PhysicHandler;
+class PhysicHandlerBase;
 class Camera;
 class GuiHandler;
 class ExternalPlayersHandler;
@@ -186,7 +186,7 @@ public:
 
 private:
 	MapRendererBase*		_mapRenderer;
-	PhysicHandler*			_physicHandler;
+	PhysicHandlerBase*		_physicHandler;
 	MainPlayerHandler*		_mainPlayerHandler;
 	Camera *				_camera;
 	ExternalPlayersHandler *_externalPlayers;

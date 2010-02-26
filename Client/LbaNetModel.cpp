@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Camera.h"
 #include "MapRendererBase.h"
 #include "DataLoader.h"
-#include "PhysicHandler.h"
+#include "PhysicHandlerBase.h"
 #include "MusicHandler.h"
 #include "MainPlayerHandler.h"
 #include "ConfigurationManager.h"
@@ -39,11 +39,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "LogHandler.h"
 #include "InventoryHandler.h"
 #include "ExitsHandler.h"
+#include "Player.h"
 
 //TODO - remove this
 #include "MapRenderer.h"
 #include "ObjMapRenderer.h"
 #include "MapMapRenderer.h"
+#include "PhysicHandler.h"
+#include "PlanesPhysicHandler.h"
 
 #include <windows.h>    // Header File For Windows
 #include <GL/gl.h>      // Header File For The OpenGL32 Library
@@ -64,18 +67,15 @@ const short	LbaNetModel::m_body_color_map[] = {-1, 2, 19, 32, 36, 48, 64, 80, 96
 LbaNetModel::LbaNetModel(GuiHandler*	guiH)
 : _current_room_cut(-1), m_current_main_state(0), _game_paused(false),
 	m_current_main_body(0), _guiH(guiH), m_current_main_body_color(0), m_debug_map(0), 
-	m_room_y_cut(-1), m_need_full_check(false), _mapRenderer(NULL)
+	m_room_y_cut(-1), m_need_full_check(false), _mapRenderer(NULL), _physicHandler(NULL)
 {
 	LogHandler::getInstance()->LogToFile("Initializing model class...");
 
     _camera= new Camera();
 	_localActorsHandler = new LocalActorsHandler();
 	_externalActorsHandler = new ExternalActorsHandler();
-	_physicHandler = new PhysicHandler(_localActorsHandler, _externalActorsHandler);
 	_exitsH = new ExitsHandler();
 
-	_localActorsHandler->SetPhysic(_physicHandler);
-	_externalActorsHandler->SetPhysic(_physicHandler);
 	_inventoryHandler = InventoryHandler::getInstance();
 
 
@@ -96,7 +96,9 @@ LbaNetModel::LbaNetModel(GuiHandler*	guiH)
 	LogHandler::getInstance()->LogToFile("Creating main player character...");
 	_mainPlayerHandler = new MainPlayerHandler(NormalSpeed, SportySpeed,
 								FightSpeed, DiscreteSpeed, HorseSpeed, DinoSpeed, m_AnimationSpeed,
-								JumpSpeed, JumpHeight, NormalSpeed/3, _physicHandler, _camera);
+								JumpSpeed, JumpHeight, NormalSpeed/3);
+
+	_camera->SetAttachedActor(_mainPlayerHandler->GetPlayer());
 
 	m_main_actor_starting_X = 0;
 	m_main_actor_starting_Y = 0;
@@ -150,7 +152,10 @@ LbaNetModel::~LbaNetModel()
 	if(_mapRenderer)
 		delete _mapRenderer;
 
-	delete _physicHandler;
+	if(_physicHandler)
+		delete _physicHandler;
+
+
 	delete _mainPlayerHandler;
 	delete _localActorsHandler;
 	delete _externalActorsHandler;
@@ -494,9 +499,15 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float 
 			_exitsH->LoadMap(MI);
 
 			std::string mapN = "Data/" + MI->Files["Maps"];
-			_mapRenderer = new MapRenderer(mapN, _physicHandler);
+
+			PhysicHandler * ph = new PhysicHandler(_localActorsHandler, _externalActorsHandler);
+			_mapRenderer = new MapRenderer(mapN, ph);
 			//_mapRenderer = new ObjMapRenderer("Prison.obj", "Prison.png");
 			//_mapRenderer = new MapMapRenderer("Test.map", "Otringal.png");
+
+			_physicHandler = new PlanesPhysicHandler("", _localActorsHandler, _externalActorsHandler);
+			_mainPlayerHandler->SetPhysicHandler(_physicHandler);
+
 
 			m_room_y_cut = -1;
 
@@ -554,7 +565,10 @@ void LbaNetModel::CleanupMap()
 		_mapRenderer = NULL;
 	}
 
-	_physicHandler->ClearMemory();
+	if(_physicHandler)
+		delete _physicHandler;
+
+
 	_externalPlayers->ResetActors(_current_map);
 	_localActorsHandler->Cleanup();
 	_externalActorsHandler->Cleanup();
@@ -654,7 +668,6 @@ int LbaNetModel::Process()
 					)
 				{
 					_mainPlayerHandler->SetAttached(false);
-					_mainPlayerHandler->CheckY();
 				}
 			}
 			else
@@ -751,6 +764,7 @@ int LbaNetModel::Process()
 		break;
 	}
 
+	_camera->Process();
 	_externalPlayers->Process(tnow, tdiff);
 	_localActorsHandler->Process(tnow, tdiff);
 	_externalActorsHandler->Process(tnow, tdiff);
@@ -867,7 +881,6 @@ void LbaNetModel::ReplaceMain()
 						m_main_actor_starting_Z);
 
 	_mainPlayerHandler->UpdateFloorY();
-	_mainPlayerHandler->CheckY();
 
 	if(!_localActorsHandler->ActivateZone(_mainPlayerHandler->GetPosX(), _mainPlayerHandler->GetPosY(),
 									_mainPlayerHandler->GetPosZ(), _mainPlayerHandler->GetRotation(), _mainPlayerHandler))

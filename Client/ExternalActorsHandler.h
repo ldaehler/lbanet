@@ -62,13 +62,6 @@ public:
 	//! get structure
 	short GetStructure(int X, int Y, int Z);
 
-	//! move movable objects
-	void Move(int X, int Y, int Z, float MoveX, float MoveZ);
-
-	//! set physic handler
-	void SetPhysic(PhysicHandler * pH)
-	{_pH = pH;}
-
 	//! try to activate actors
 	bool Activate(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation, int actionType);
 
@@ -108,7 +101,6 @@ public:
 
 protected:
 	std::map<long, Actor *> _actors;
-	PhysicHandler * _pH;
 
 	bool _needupdate;
 

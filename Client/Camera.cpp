@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "Camera.h"
+#include "Actor.h"
 
 #include <iostream>
 #include <math.h>
@@ -34,13 +35,73 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 constructor
 ***********************************************************/
 Camera::Camera()
-: _size(80.), _perpective(true)
+: _size(80.), _perpective(true), _attached_actor(NULL), _movecamera(false)
 {
 	SetTarget(32., 0, 32.);
 	SetDistance(30);
 	SetZenit(30);
 	SetAzimut(0);
 }
+
+
+
+/***********************************************************
+set actor attached to the camera
+***********************************************************/
+void Camera::SetAttachedActor(Actor * act)
+{
+	_attached_actor = act;
+}
+
+
+/***********************************************************
+process
+***********************************************************/
+void Camera::Process()
+{
+	if(_attached_actor)
+	{
+		double actX = _attached_actor->GetPosX();
+		double actY = _attached_actor->GetPosY();
+		double actZ = _attached_actor->GetPosZ();
+
+		// start to move camera only when actor moves a certain distance
+		if(abs(actX - _targetx) > 3 || abs(actY - _targety) > 3 || abs(actZ - _targetz) > 3)
+			_movecamera = true;
+
+		if(_movecamera)
+		{
+			double speedX = (actX - _lastactX);
+			double speedY = (actY - _lastactY);
+			double speedZ = (actZ - _lastactZ);
+			SetTarget(_targetx+speedX, _targety+speedY, _targetz+speedZ);
+
+			double deltaX = (actX - _targetx);
+			double deltaY = (actY - _targety);
+			double deltaZ = (actZ - _targetz);
+
+			if(abs(deltaX) > 0.1)
+				_targetx+=deltaX/100;
+			if(abs(deltaY) > 0.1)
+				_targety+=deltaY/100;
+			if(abs(deltaZ) > 0.1)
+				_targetz+=deltaZ/100;
+
+
+			if(actX == _lastactX && actY == _lastactY && actZ == _lastactZ)
+			{
+				_movecamera = false;		
+			}
+
+		}
+
+		_lastactX = actX;
+		_lastactY = actY;
+		_lastactZ = actZ;
+	}
+}
+
+
 
 /***********************************************************
 accessors

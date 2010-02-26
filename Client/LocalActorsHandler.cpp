@@ -30,7 +30,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	Constructor
 ***********************************************************/
 LocalActorsHandler::LocalActorsHandler()
-: _pH(NULL)
 {
 
 }
@@ -111,33 +110,6 @@ short LocalActorsHandler::GetStructure(int X, int Y, int Z)
 }
 
 
-
-/***********************************************************
-move movable objects
-***********************************************************/
-void LocalActorsHandler::Move(int X, int Y, int Z, float MoveX, float MoveZ)
-{
-	//std::map<long, Actor *>::iterator it =  _actors.begin();
-	//std::map<long, Actor *>::iterator end =  _actors.end();
-	//for(; it != end; ++it)
-	//{
-	//	int res=0;
-	//	if((*it)->IsMovable())
-	//	{
-	//		if((*it)->GetStructure(X, Y, Z) != 0)
-	//		{
-	//			if(_pH)
-	//			{
-	//				_pH->Move((*it)->GetPosX(), (*it)->GetPosY(), (*it)->GetPosZ(),
-	//					(*it)->GetSizeX()/2.0f, (*it)->GetSizeY(), (*it)->GetSizeZ()/2.0f,
-	//							MoveX, MoveZ, false);
-
-	//				(*it)->SetPosition((*it)->GetPosX()+MoveX, (*it)->GetPosY(), (*it)->GetPosZ()+MoveZ);
-	//			}
-	//		}
-	//	}
-	//}
-}
 
 
 
