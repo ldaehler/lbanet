@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="LBANet"
 	ProjectGUID="{B46236F6-9F3B-4B3A-BD27-13E94D8833F2}"
 	RootNamespace="perspectivemapviewer"
@@ -479,6 +479,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PlanesPhysicHandler.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\common\Player.cpp"
 				>
 			</File>
@@ -673,11 +677,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\Entities.h"
+				RelativePath=".\Entities.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Entities.h"
+				RelativePath="..\common\Entities.h"
 				>
 			</File>
 			<File
@@ -729,11 +733,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\HQRHandler.h"
+				RelativePath=".\HQRHandler.h"
 				>
 			</File>
 			<File
-				RelativePath=".\HQRHandler.h"
+				RelativePath="..\common\HQRHandler.h"
 				>
 			</File>
 			<File
@@ -890,6 +894,14 @@
 			</File>
 			<File
 				RelativePath=".\PhysicHandler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PhysicHandlerBase.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PlanesPhysicHandler.h"
 				>
 			</File>
 			<File

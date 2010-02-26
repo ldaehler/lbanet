@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	Constructor
 ***********************************************************/
 ExternalActorsHandler::ExternalActorsHandler()
-: _pH(NULL), _needupdate(false)
+: _needupdate(false)
 {
 
 }
@@ -144,15 +144,6 @@ short ExternalActorsHandler::GetStructure(int X, int Y, int Z)
 	}
 
 	return 0;
-}
-
-
-
-/***********************************************************
-move movable objects
-***********************************************************/
-void ExternalActorsHandler::Move(int X, int Y, int Z, float MoveX, float MoveZ)
-{
 }
 
 
