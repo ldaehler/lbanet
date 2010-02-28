@@ -552,8 +552,8 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 		//if not flying or jumping make a few tests
 		if(_state != Ac_Jumping && _state != Ac_Flying)
 		{
-			//if(_player->GetPosY() < 0) // the actor should die by falling out of the map
-			//	return 2;
+			if(_player->GetPosY() < 0) // the actor should die by falling out of the map
+				return 2;
 
 			// if we are on water
 			if(moveO.TouchingWater)
@@ -571,12 +571,14 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 			if(!moveO.TouchingGround)
 			{
 				StartFallDown();
+				_touchedground = false;
 			}
 			else
 			{
 				//if we were falling down then player will be hurt by touching the ground
-				if(_state == Ac_FallingDown)
+				if(!_touchedground && (_state == Ac_FallingDown))
 				{
+					_touchedground = true;
 					_needCheck = true;
 					float fallsize = _keepYfall - _player->GetPosY();
 
@@ -599,7 +601,7 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 		}
 
 		// return the correct value if actor has moved
-		if(_corrected_velocityX != 0 || _corrected_velocityY != 0 || _corrected_velocityZ != 0)
+		if(abs(_corrected_velocityX) > 0.0001f || abs(_corrected_velocityZ) > 0.0001f)
 		{
 			res = 0;
 			UpdateFloorY();
