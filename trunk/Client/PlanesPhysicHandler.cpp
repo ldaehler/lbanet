@@ -65,34 +65,55 @@ PlanesPhysicHandler::PlanesPhysicHandler(const std::string filename,
 	{
 		NormalPlane np;
 		file>>np.Layer;
-		file>>np.StartX;
-		file>>np.StartZ;
-		file>>np.EndX;
-		file>>np.EndZ;
+
+		float sx, sz, ex, ez;
+		file>>sx;
+		file>>sz;
+		file>>ex;
+		file>>ez;
+		np.Square._minX = MIN(sx, ex);
+		np.Square._maxX = MAX(sx, ex);
+		np.Square._minZ = MIN(sz, ez);
+		np.Square._maxZ = MAX(sz, ez);
+
 		file>>np.IsWater;
-		_floors.push_back(np);
+		_floors[np.Layer].push_back(np);
 	}
 
 	for(int i=0; i<sizewallX; ++i)
 	{
 		NormalPlane np;
 		file>>np.Layer;
-		file>>np.StartX;
-		file>>np.StartZ;
-		file>>np.EndX;
-		file>>np.EndZ;
-		_wallsX.push_back(np);
+
+		float sx, sz, ex, ez;
+		file>>sx;
+		file>>sz;
+		file>>ex;
+		file>>ez;
+		np.Square._minX = MIN(sx, ex);
+		np.Square._maxX = MAX(sx, ex);
+		np.Square._minZ = MIN(sz, ez);
+		np.Square._maxZ = MAX(sz, ez);
+
+		_wallsX[np.Layer].push_back(np);
 	}
 
 	for(int i=0; i<sizewallZ; ++i)
 	{
 		NormalPlane np;
 		file>>np.Layer;
-		file>>np.StartX;
-		file>>np.StartZ;
-		file>>np.EndX;
-		file>>np.EndZ;
-		_wallsZ.push_back(np);
+
+		float sx, sz, ex, ez;
+		file>>sx;
+		file>>sz;
+		file>>ex;
+		file>>ez;
+		np.Square._minX = MIN(sx, ex);
+		np.Square._maxX = MAX(sx, ex);
+		np.Square._minZ = MIN(sz, ez);
+		np.Square._maxZ = MAX(sz, ez);
+
+		_wallsZ[np.Layer].push_back(np);
 	}
 
 	for(int i=0; i<sizeStairs; ++i)
@@ -155,7 +176,27 @@ MoveOutput PlanesPhysicHandler::MoveActor(long ActorId, const AABB & actorBB,
 	MoveOutput res;
 	res.NewSpeed = Speed;
 	res.TouchingWater = false;
-	res.TouchingGround = true;
+	res.TouchingGround = false;
+
+	float ModifiedSpeedY;
+	if(ColisionWithFloor(actorBB, res.NewSpeed, ModifiedSpeedY, res.TouchingWater))
+	{
+		res.TouchingGround = true;
+		res.NewSpeed.y = ModifiedSpeedY;
+	}
+
+	float ModifiedSpeedX;
+	if(ColisionWithWallX(actorBB, res.NewSpeed, ModifiedSpeedX))
+	{
+		res.NewSpeed.x = ModifiedSpeedX;
+	}
+
+	float ModifiedSpeedZ;
+	if(ColisionWithWallZ(actorBB, res.NewSpeed, ModifiedSpeedZ))
+	{
+		res.NewSpeed.z = ModifiedSpeedZ;
+	}
+
 
 	return res;
 }
@@ -251,75 +292,87 @@ void PlanesPhysicHandler::Render()
 		glPopMatrix();
 	}
 
-
-	for(size_t i=0; i<_floors.size(); ++i)
+	std::map<int, std::vector<NormalPlane> >::iterator itfloor = _floors.begin();
+	std::map<int, std::vector<NormalPlane> >::iterator endfloor = _floors.end();
+	for(; itfloor != endfloor; ++itfloor)
 	{
-		NormalPlane pif = _floors[i];
-		glPushMatrix();
+		for(size_t i=0; i<itfloor->second.size(); ++i)
+		{
+			NormalPlane pif = itfloor->second[i];
+			glPushMatrix();
 
-		glTranslated(0, pif.Layer/2. + 0.5, 0);
-		if(pif.IsWater)
-			glColor4f(0.0f,1.0f,0.0f, 1.f);
-		else
-			glColor4f(0.0f,0.0f,1.0f, 1.f);
+			glTranslated(0, pif.Layer/2. + 0.5, 0);
+			if(pif.IsWater)
+				glColor4f(0.0f,1.0f,0.0f, 1.f);
+			else
+				glColor4f(0.0f,0.0f,1.0f, 1.f);
 
-		glBegin(GL_LINES);
-			glVertex3f(pif.StartX,0,pif.StartZ);
-			glVertex3f(pif.EndX,0,pif.StartZ);
-			glVertex3f(pif.EndX,0,pif.StartZ);
-			glVertex3f(pif.EndX,0,pif.EndZ);
-			glVertex3f(pif.EndX,0,pif.EndZ);
-			glVertex3f(pif.StartX,0,pif.EndZ);
-			glVertex3f(pif.StartX,0,pif.EndZ);
-			glVertex3f(pif.StartX,0,pif.StartZ);
-		glEnd();
+			glBegin(GL_LINES);
+				glVertex3f(pif.Square._minX,0,pif.Square._minZ);
+				glVertex3f(pif.Square._maxX,0,pif.Square._minZ);
+				glVertex3f(pif.Square._maxX,0,pif.Square._minZ);
+				glVertex3f(pif.Square._maxX,0,pif.Square._maxZ);
+				glVertex3f(pif.Square._maxX,0,pif.Square._maxZ);
+				glVertex3f(pif.Square._minX,0,pif.Square._maxZ);
+				glVertex3f(pif.Square._minX,0,pif.Square._maxZ);
+				glVertex3f(pif.Square._minX,0,pif.Square._minZ);
+			glEnd();
 
-		glPopMatrix();
+			glPopMatrix();
+		}
+	}
+
+	std::map<int, std::vector<NormalPlane> >::iterator itwallsX = _wallsX.begin();
+	std::map<int, std::vector<NormalPlane> >::iterator endwallsX = _wallsX.end();
+	for(; itwallsX != endwallsX; ++itwallsX)
+	{
+		for(size_t i=0; i<itwallsX->second.size(); ++i)
+		{
+			NormalPlane pif = itwallsX->second[i];
+			glPushMatrix();
+
+			glTranslated(pif.Layer, 0, 0);
+			glColor4f(1.0f,0.0f,0.0f, 1.f);
+			glBegin(GL_LINES);
+				glVertex3f(0,pif.Square._minX/2.f,pif.Square._minZ);
+				glVertex3f(0,pif.Square._maxX/2.f,pif.Square._minZ);
+				glVertex3f(0,pif.Square._maxX/2.f,pif.Square._minZ);
+				glVertex3f(0,pif.Square._maxX/2.f,pif.Square._maxZ);
+				glVertex3f(0,pif.Square._maxX/2.f,pif.Square._maxZ);
+				glVertex3f(0,pif.Square._minX/2.f,pif.Square._maxZ);
+				glVertex3f(0,pif.Square._minX/2.f,pif.Square._maxZ);
+				glVertex3f(0,pif.Square._minX/2.f,pif.Square._minZ);
+			glEnd();
+
+			glPopMatrix();
+		}
 	}
 
 
-	for(size_t i=0; i<_wallsX.size(); ++i)
+	std::map<int, std::vector<NormalPlane> >::iterator itwallsZ = _wallsZ.begin();
+	std::map<int, std::vector<NormalPlane> >::iterator endwallsZ = _wallsZ.end();
+	for(; itwallsZ != endwallsZ; ++itwallsZ)
 	{
-		NormalPlane pif = _wallsX[i];
-		glPushMatrix();
+		for(size_t i=0; i<itwallsZ->second.size(); ++i)
+		{
+			NormalPlane pif = itwallsZ->second[i];
+			glPushMatrix();
 
-		glTranslated(pif.Layer, 0, 0);
-		glColor4f(1.0f,0.0f,0.0f, 1.f);
-		glBegin(GL_LINES);
-			glVertex3f(0,pif.StartX/2.f,pif.StartZ);
-			glVertex3f(0,pif.EndX/2.f,pif.StartZ);
-			glVertex3f(0,pif.EndX/2.f,pif.StartZ);
-			glVertex3f(0,pif.EndX/2.f,pif.EndZ);
-			glVertex3f(0,pif.EndX/2.f,pif.EndZ);
-			glVertex3f(0,pif.StartX/2.f,pif.EndZ);
-			glVertex3f(0,pif.StartX/2.f,pif.EndZ);
-			glVertex3f(0,pif.StartX/2.f,pif.StartZ);
-		glEnd();
+			glTranslated(0, 0, pif.Layer);
+			glColor4f(1.0f,0.0f,1.0f, 1.f);
+			glBegin(GL_LINES);
+				glVertex3f(pif.Square._minX,pif.Square._minZ/2.f,0);
+				glVertex3f(pif.Square._maxX,pif.Square._minZ/2.f,0);
+				glVertex3f(pif.Square._maxX,pif.Square._minZ/2.f,0);
+				glVertex3f(pif.Square._maxX,pif.Square._maxZ/2.f,0);
+				glVertex3f(pif.Square._maxX,pif.Square._maxZ/2.f,0);
+				glVertex3f(pif.Square._minX,pif.Square._maxZ/2.f,0);
+				glVertex3f(pif.Square._minX,pif.Square._maxZ/2.f,0);
+				glVertex3f(pif.Square._minX,pif.Square._minZ/2.f,0);
+			glEnd();
 
-		glPopMatrix();
-	}
-
-
-
-	for(size_t i=0; i<_wallsZ.size(); ++i)
-	{
-		NormalPlane pif = _wallsZ[i];
-		glPushMatrix();
-
-		glTranslated(0, 0, pif.Layer);
-		glColor4f(1.0f,0.0f,1.0f, 1.f);
-		glBegin(GL_LINES);
-			glVertex3f(pif.StartX,pif.StartZ/2.f,0);
-			glVertex3f(pif.EndX,pif.StartZ/2.f,0);
-			glVertex3f(pif.EndX,pif.StartZ/2.f,0);
-			glVertex3f(pif.EndX,pif.EndZ/2.f,0);
-			glVertex3f(pif.EndX,pif.EndZ/2.f,0);
-			glVertex3f(pif.StartX,pif.EndZ/2.f,0);
-			glVertex3f(pif.StartX,pif.EndZ/2.f,0);
-			glVertex3f(pif.StartX,pif.StartZ/2.f,0);
-		glEnd();
-
-		glPopMatrix();
+			glPopMatrix();
+		}
 	}
 
 
@@ -329,4 +382,228 @@ void PlanesPhysicHandler::Render()
 }
 
 
+/*
+--------------------------------------------------------------------------------------------------
+- check collision with floor
+--------------------------------------------------------------------------------------------------
+*/
+bool PlanesPhysicHandler::ColisionWithFloor(const AABB & actorBB, const VECTOR &Speed, 
+											float &ModifiedSpeedY, bool &water)
+{
+	float moveY = Speed.y;
+	if(moveY == 0)
+		return false;
+
+	// calculate norm of speed
+	VECTOR speedNorm = Speed.unit();
+	std::vector<int> tovisit;
+	float startY = 0;
+
+	// if we go upward
+	if(moveY > 0)
+	{
+		startY = actorBB.E.y;
+		int stY = (int)(startY-0.0001f)+1;	// max actor Y
+		int stopY = (int)(startY+moveY);
+		for(;stY <= stopY; ++stY)
+			tovisit.push_back(stY);
+	}
+	else // if we go backward
+	{
+		startY = actorBB.P.y;
+		int stY = (int)startY;	// min actor Y
+		int stopY = (int)(startY+moveY-0.0001f)+1;
+		for(;stY >= stopY; --stY)
+			tovisit.push_back(stY);
+	}
+
+
+	for(size_t i=0; i<tovisit.size(); ++i)
+	{
+		const std::vector<NormalPlane> & vecfloor = _floors[tovisit[i]];
+		std::vector<NormalPlane>::const_iterator it = vecfloor.begin();
+		std::vector<NormalPlane>::const_iterator end = vecfloor.end();
+
+		// keep memory of the last checked layer
+		float lastcheckedLayer = -1;
+		Square2D memorysquare;
+
+		// check until the planes beeing after the actor move
+		for(; it != end; ++it)
+		{
+			if(it->Layer != lastcheckedLayer)
+			{
+				lastcheckedLayer = it->Layer;
+				float distance = (lastcheckedLayer-startY) / speedNorm.y;
+
+				float offsetx = speedNorm.x * distance;
+				float offsetz = speedNorm.z * distance;
+
+				memorysquare._minX = (actorBB.P.x + offsetx);
+				memorysquare._maxX = (actorBB.E.x + offsetx);
+				memorysquare._minZ = (actorBB.P.z + offsetz);
+				memorysquare._maxZ = (actorBB.E.z + offsetz);
+			}
+			
+			if(it->Square.Overlap(memorysquare))
+			{
+				ModifiedSpeedY = (lastcheckedLayer - startY);
+				ModifiedSpeedY += (ModifiedSpeedY > 0) ? -0.0001 : 0.0001;
+				water = it->IsWater;
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+
+/*
+--------------------------------------------------------------------------------------------------
+- check collision with wall X
+--------------------------------------------------------------------------------------------------
+*/
+bool PlanesPhysicHandler::ColisionWithWallX(const AABB & actorBB, const VECTOR &Speed, float &ModifiedSpeedX)
+{
+	float moveX = Speed.x;
+	if(moveX == 0)
+		return false;
+
+	// calculate norm of speed
+	VECTOR speedNorm = Speed.unit();
+	std::vector<int> tovisit;
+	float startX = 0;
+
+	// if we go upward
+	if(moveX > 0)
+	{
+		startX = actorBB.E.x;
+		int stX = (int)(startX-0.0001f)+1;	// max actor X
+		int stopX = (int)(startX+moveX);
+		for(;stX <= stopX; ++stX)
+			tovisit.push_back(stX);
+	}
+	else // if we go backward
+	{
+		startX = actorBB.P.x;
+		int stX = (int)startX;	// min actor X
+		int stopX = (int)(startX+moveX-0.0001f)+1;
+		for(;stX >= stopX; --stX)
+			tovisit.push_back(stX);
+	}
+
+	for(size_t i=0; i<tovisit.size(); ++i)
+	{
+		const std::vector<NormalPlane> & vecfloor = _wallsX[tovisit[i]];
+		std::vector<NormalPlane>::const_iterator it = vecfloor.begin();
+		std::vector<NormalPlane>::const_iterator end = vecfloor.end();
+
+		// keep memory of the last checked layer
+		float lastcheckedLayer = -1;
+		Square2D memorysquare;
+
+		// check until the planes beeing after the actor move
+		for(; it != end; ++it)
+		{
+			if(it->Layer != lastcheckedLayer)
+			{
+				lastcheckedLayer = it->Layer;
+				float distance = (lastcheckedLayer-startX) / speedNorm.x;
+
+				float offsety = speedNorm.y * distance;
+				float offsetz = speedNorm.z * distance;
+
+				memorysquare._minX = (actorBB.P.y + offsety);
+				memorysquare._maxX = (actorBB.E.y + offsety);
+				memorysquare._minZ = (actorBB.P.z + offsetz);
+				memorysquare._maxZ = (actorBB.E.z + offsetz);
+			}
+			
+			if(it->Square.Overlap(memorysquare))
+			{
+				ModifiedSpeedX = (lastcheckedLayer - startX);
+				ModifiedSpeedX += (ModifiedSpeedX > 0) ? -0.0001 : 0.0001;
+				return true;
+			}
+		}
+	}
+
+	return false;
+
+}
+
+/*
+--------------------------------------------------------------------------------------------------
+- check collision with wall Z
+--------------------------------------------------------------------------------------------------
+*/
+bool PlanesPhysicHandler::ColisionWithWallZ(const AABB & actorBB, const VECTOR &Speed, float &ModifiedSpeedZ)
+{
+	float moveZ = Speed.z;
+	if(moveZ == 0)
+		return false;
+
+	// calculate norm of speed
+	VECTOR speedNorm = Speed.unit();
+	std::vector<int> tovisit;
+	float startZ = 0;
+
+	// if we go upward
+	if(moveZ > 0)
+	{
+		startZ = actorBB.E.z;
+		int stZ = (int)(startZ-0.0001f)+1;	// max actor Z
+		int stopZ = (int)(startZ+moveZ);
+		for(;stZ <= stopZ; ++stZ)
+			tovisit.push_back(stZ);
+	}
+	else // if we go backward
+	{
+		startZ = actorBB.P.z;
+		int stZ = (int)startZ;	// min actor Z
+		int stopZ = (int)(startZ+moveZ-0.0001f)+1;
+		for(;stZ >= stopZ; --stZ)
+			tovisit.push_back(stZ);
+	}
+
+
+	for(size_t i=0; i<tovisit.size(); ++i)
+	{
+		const std::vector<NormalPlane> & vecfloor = _wallsZ[tovisit[i]];
+		std::vector<NormalPlane>::const_iterator it = vecfloor.begin();
+		std::vector<NormalPlane>::const_iterator end = vecfloor.end();
+
+		// keep memory of the last checked layer
+		float lastcheckedLayer = -1;
+		Square2D memorysquare;
+
+		// check until the planes beeing after the actor move
+		for(; it != end; ++it)
+		{
+			if(it->Layer != lastcheckedLayer)
+			{
+				lastcheckedLayer = it->Layer;
+				float distance = (lastcheckedLayer-startZ) / speedNorm.z;
+
+				float offsetx = speedNorm.x * distance;
+				float offsety = speedNorm.y * distance;
+
+				memorysquare._minX = (actorBB.P.x + offsetx);
+				memorysquare._maxX = (actorBB.E.x + offsetx);
+				memorysquare._minZ = (actorBB.P.y + offsety);
+				memorysquare._maxZ = (actorBB.E.y + offsety);
+			}
+			
+			if(it->Square.Overlap(memorysquare))
+			{
+				ModifiedSpeedZ = (lastcheckedLayer - startZ);
+				ModifiedSpeedZ += (ModifiedSpeedZ > 0) ? -0.0001 : 0.0001;
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
 

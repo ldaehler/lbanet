@@ -260,8 +260,8 @@ void LbaNetModel::Draw()
 	if(_mapRenderer)
 		_mapRenderer->Render();
 
-	//if(_physicHandler)
-	//	_physicHandler->Render();
+	if(_physicHandler)
+		_physicHandler->Render();
 
 	// draw exits
 	_exitsH->Render();

@@ -389,6 +389,7 @@ protected:
 	int				_rememberbody;
 	ActorState		_rememberstate;
 	bool			_remembering;
+	bool			_touchedground;
 
 	ActorState		_state;
 	float			_keepYfall;

@@ -27,6 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 #include <vector>
+#include <map>
+
 
 #include "PhysicHandlerBase.h"
 
@@ -78,6 +80,10 @@ public:
 	virtual void Render();
 
 protected:
+	// check collision with floor
+	bool ColisionWithFloor(const AABB & actorBB, const VECTOR &Speed, float &ModifiedSpeedY, bool &water);
+	bool ColisionWithWallX(const AABB & actorBB, const VECTOR &Speed, float &ModifiedSpeedX);
+	bool ColisionWithWallZ(const AABB & actorBB, const VECTOR &Speed, float &ModifiedSpeedZ);
 
 
 	struct StairPlane
@@ -118,12 +124,7 @@ protected:
 	struct NormalPlane
 	{
 		int Layer;
-
-		int StartX;
-		int StartZ;
-
-		int EndX;
-		int EndZ;
+		Square2D Square;
 
 		bool IsWater;
 	};
@@ -137,12 +138,12 @@ private:
 	ExternalActorsHandler*			_externalAH;
 
 
-	std::vector<NormalPlane>		_floors;
-	std::vector<NormalPlane>		_wallsX;
-	std::vector<NormalPlane>		_wallsZ;
+	std::map<int, std::vector<NormalPlane> >		_floors;
+	std::map<int, std::vector<NormalPlane> >		_wallsX;
+	std::map<int, std::vector<NormalPlane> >		_wallsZ;
 
-	std::vector<StairPlane>			_stairs;
-	std::vector<CornerStairPlane>	_corner_stairs;
+	std::vector<StairPlane>							_stairs;
+	std::vector<CornerStairPlane>					_corner_stairs;
 
 };
 
