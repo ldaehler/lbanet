@@ -97,22 +97,22 @@ public:
 	virtual void UpdatePosition(float deltaposX, float  deltaposY, float  deltaposZ, float tdiff);
 
 	// update Y coordinate
-	void UpdateY(float  deltaY)
-	{
-		_posY += deltaY;
+	//void UpdateY(float  deltaY)
+	//{
+	//	_posY += deltaY;
 
-		if(_posY < -10)
-			_posY = -10;
-	}
+	//	if(_posY < -10)
+	//		_posY = -10;
+	//}
 
-	// update Y coordinate
-	void SetY(float newY)
-	{
-		_posY = newY;
+	//// update Y coordinate
+	//void SetY(float newY)
+	//{
+	//	_posY = newY;
 
-		if(_posY < -10)
-			_posY = -10;
-	}
+	//	if(_posY < -10)
+	//		_posY = -10;
+	//}
 
 	// set actor rotation
 	void SetRotation(float  R)
@@ -140,6 +140,7 @@ public:
 		_sizeX = sizeX;
 		_sizeY = sizeY;
 		_sizeZ = sizeZ;
+		RefreshBB();
 	}
 
 	//! set passable state
@@ -299,10 +300,16 @@ public:
 	virtual void InformActivationAborted(){}
 
 	//! give actor bounding box
-	AABB GetBoundingBox();
+	const AABB &GetBoundingBox()
+	{return _boundingbox;}
 
 	//! give actor position
 	VECTOR GetPosition();
+
+protected:
+	//! refresh bounding box
+	void RefreshBB();
+
 
 protected:
    long		_ID;						// entity unique ID
@@ -315,6 +322,8 @@ protected:
    float	_sizeX;						// bounding box
    float	_sizeY;
    float	_sizeZ;
+
+   AABB		_boundingbox;
 
    float	_VelocityX;					// velocity
    float	_VelocityY;
