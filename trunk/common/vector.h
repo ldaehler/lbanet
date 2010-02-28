@@ -216,15 +216,18 @@ public:
 
  
 //*************************************************************************************************
-//*                                      oriented AABB bounding box class
+//*                                      axis oriented AABB bounding box class
 //*************************************************************************************************
 class AABB
 {
-private:
+public: 
 	VECTOR P; //position
 	VECTOR E; //x,y,z extents
 
 public: 
+	//! constructor
+	AABB()
+	{}
 
 	//! constructor
 	AABB(const VECTOR& p, const VECTOR& e)
@@ -321,6 +324,41 @@ public:
 		return (u0 <= u1);
 	} 
 }; 
+
+ 
+//*************************************************************************************************
+//*		2D square class
+//*************************************************************************************************
+class Square2D
+{
+public:
+	//! constructor
+	Square2D()
+		: _minX(0), _minZ(0), _maxX(0), _maxZ(0)
+	{}
+
+	//! constructor
+	Square2D(float minX, float minZ, float maxX, float maxZ)
+		: _minX(minX), _minZ(minZ), _maxX(maxX), _maxZ(maxZ)
+	{}
+
+	//! overlap
+	bool Overlap(const Square2D & B) const
+	{
+		if( (_minX >= B._maxX) || (_maxX <= B._minX) )
+			return false;
+
+		if( (_minZ >= B._maxZ) || (_maxZ <= B._minZ) )
+			return false;
+
+		return true;
+	}
+
+	float _minX;
+	float _minZ;
+	float _maxX;
+	float _maxZ;
+};
 
 
 #endif

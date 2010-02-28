@@ -340,19 +340,21 @@ void Actor::SetPosition(float  posX, float  posY, float  posZ)
 		_posY = -10;
 	if(_posZ < -10)
 		_posZ = -10;
+
+	RefreshBB();
 }
 
 
 /***********************************************************
-give actor bounding box
+refresh bounding box
 ***********************************************************/
-AABB Actor::GetBoundingBox()
+void Actor::RefreshBB()
 {
 	VECTOR pos(_posX, _posY, _posZ);
 	VECTOR size1(_sizeX, 0, _sizeZ);
 	VECTOR size2(_sizeX, _sizeY, _sizeZ);
 
-	return AABB(pos-size1, pos+size2);
+	_boundingbox = AABB(pos-size1, pos+size2);
 }
 
 
