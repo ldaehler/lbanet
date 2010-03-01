@@ -354,6 +354,17 @@ public:
 		return true;
 	}
 
+	//! overlap
+	bool Overlap(float ptX, float ptZ) const
+	{
+		if( (ptX > _minX) && (ptX < _maxX) )
+			if( (ptZ > _minZ) && (ptZ < _maxZ) )
+			return true;
+
+		return false;
+	}
+
+
 	float _minX;
 	float _minZ;
 	float _maxX;
