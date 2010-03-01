@@ -85,39 +85,31 @@ protected:
 	bool ColisionWithWallX(const AABB & actorBB, const VECTOR &Speed, float &ModifiedSpeedX);
 	bool ColisionWithWallZ(const AABB & actorBB, const VECTOR &Speed, float &ModifiedSpeedZ);
 
+	bool ColisionWithStair(const AABB & actorBB, const VECTOR &Speed, VECTOR &ModifiedSpeed);
 
 	struct StairPlane
 	{
-		int C1X;
-		int C1Y;
-		int C1Z;
+		VECTOR C1;
+		VECTOR C2;
+		VECTOR C3;
+		VECTOR C4;
 
-		int C2X;
-		int C2Y;
-		int C2Z;
+		VECTOR Normal;
+		float minX;
+		float maxX;
+		float minZ;
+		float maxZ;
+		float D;
 
-		int C3X;
-		int C3Y;
-		int C3Z;
-
-		int C4X;
-		int C4Y;
-		int C4Z;
 	};
 
 	struct CornerStairPlane
 	{
-		int C1X;
-		int C1Y;
-		int C1Z;
+		VECTOR C1;
+		VECTOR C2;
+		VECTOR C3;
 
-		int C2X;
-		int C2Y;
-		int C2Z;
-
-		int C3X;
-		int C3Y;
-		int C3Z;
+		VECTOR Normal;
 	};
 
 
@@ -144,6 +136,8 @@ private:
 
 	std::vector<StairPlane>							_stairs;
 	std::vector<CornerStairPlane>					_corner_stairs;
+
+	bool											_shiftcheck;
 
 };
 
