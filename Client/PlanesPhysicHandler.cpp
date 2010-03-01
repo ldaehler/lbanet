@@ -119,33 +119,91 @@ PlanesPhysicHandler::PlanesPhysicHandler(const std::string filename,
 	for(int i=0; i<sizeStairs; ++i)
 	{
 		StairPlane sp;
-		file>>sp.C1X;
-		file>>sp.C1Y;
-		file>>sp.C1Z;
-		file>>sp.C2X;
-		file>>sp.C2Y;
-		file>>sp.C2Z;
-		file>>sp.C3X;
-		file>>sp.C3Y;
-		file>>sp.C3Z;
-		file>>sp.C4X;
-		file>>sp.C4Y;
-		file>>sp.C4Z;
+		file>>sp.C1.x;
+		file>>sp.C1.y;
+		file>>sp.C1.z;
+		file>>sp.C2.x;
+		file>>sp.C2.y;
+		file>>sp.C2.z;
+		file>>sp.C3.x;
+		file>>sp.C3.y;
+		file>>sp.C3.z;
+		file>>sp.C4.x;
+		file>>sp.C4.y;
+		file>>sp.C4.z;
+
+		sp.Normal = ((sp.C2 - sp.C1).cross(sp.C3-sp.C1)).unit();
+		//sp.Normal.y = abs(sp.Normal.y);
+		sp.D = sp.Normal.dot(sp.C1);
+
+
+		// calculate min max X
+		{
+			sp.minX = sp.C1.x;
+			sp.maxX = sp.C1.x;
+
+			if(sp.C2.x > sp.maxX)
+				sp.maxX = sp.C2.x;
+
+			if(sp.C2.x < sp.minX)
+				sp.minX = sp.C2.x;
+
+			if(sp.C3.x > sp.maxX)
+				sp.maxX = sp.C3.x;
+
+			if(sp.C3.x < sp.minX)
+				sp.minX = sp.C3.x;
+
+			if(sp.C4.x > sp.maxX)
+				sp.maxX = sp.C4.x;
+
+			if(sp.C4.x < sp.minX)
+				sp.minX = sp.C4.x;
+		}
+
+
+		// calculate min max Z
+		{
+			sp.minZ = sp.C1.z;
+			sp.maxZ = sp.C1.z;
+
+			if(sp.C2.z > sp.maxZ)
+				sp.maxZ = sp.C2.z;
+
+			if(sp.C2.z < sp.minZ)
+				sp.minZ = sp.C2.z;
+
+			if(sp.C3.z > sp.maxZ)
+				sp.maxZ = sp.C3.z;
+
+			if(sp.C3.z < sp.minZ)
+				sp.minZ = sp.C3.z;
+
+			if(sp.C4.z > sp.maxZ)
+				sp.maxZ = sp.C4.z;
+
+			if(sp.C4.z < sp.minZ)
+				sp.minZ = sp.C4.z;
+		}
+
 		_stairs.push_back(sp);
 	}
 
 	for(int i=0; i<sizecornerStairs; ++i)
 	{
 		CornerStairPlane sp;
-		file>>sp.C1X;
-		file>>sp.C1Y;
-		file>>sp.C1Z;
-		file>>sp.C2X;
-		file>>sp.C2Y;
-		file>>sp.C2Z;
-		file>>sp.C3X;
-		file>>sp.C3Y;
-		file>>sp.C3Z;
+		file>>sp.C1.x;
+		file>>sp.C1.y;
+		file>>sp.C1.z;
+		file>>sp.C2.x;
+		file>>sp.C2.y;
+		file>>sp.C2.z;
+		file>>sp.C3.x;
+		file>>sp.C3.y;
+		file>>sp.C3.z;
+
+		sp.Normal = ((sp.C1 - sp.C2).cross(sp.C3-sp.C2)).unit();
+		sp.Normal.y = abs(sp.Normal.y);
 		_corner_stairs.push_back(sp);
 	}
 }
@@ -178,26 +236,53 @@ MoveOutput PlanesPhysicHandler::MoveActor(long ActorId, const AABB & actorBB,
 	res.TouchingWater = false;
 	res.TouchingGround = false;
 
-	float ModifiedSpeedY;
-	if(ColisionWithFloor(actorBB, res.NewSpeed, ModifiedSpeedY, res.TouchingWater))
+
+	if(ColisionWithStair(actorBB, res.NewSpeed, res.NewSpeed))
 	{
 		res.TouchingGround = true;
-		res.NewSpeed.y = ModifiedSpeedY;
 	}
-
-	float ModifiedSpeedX;
-	if(ColisionWithWallX(actorBB, res.NewSpeed, ModifiedSpeedX))
+	else
 	{
-		res.NewSpeed.x = ModifiedSpeedX;
+		float ModifiedSpeedY;
+		if(ColisionWithFloor(actorBB, res.NewSpeed, ModifiedSpeedY, res.TouchingWater))
+		{
+			res.TouchingGround = true;
+			res.NewSpeed.y = ModifiedSpeedY;
+		}
 	}
 
-	float ModifiedSpeedZ;
-	if(ColisionWithWallZ(actorBB, res.NewSpeed, ModifiedSpeedZ))
+	// shifting check order every frame so that we do not get stuck were we should not
+	if(_shiftcheck)
 	{
-		res.NewSpeed.z = ModifiedSpeedZ;
+		float ModifiedSpeedX;
+		if(ColisionWithWallX(actorBB, res.NewSpeed, ModifiedSpeedX))
+		{
+			res.NewSpeed.x = ModifiedSpeedX;
+		}
+
+		float ModifiedSpeedZ;
+		if(ColisionWithWallZ(actorBB, res.NewSpeed, ModifiedSpeedZ))
+		{
+			res.NewSpeed.z = ModifiedSpeedZ;
+		}
+	}
+	else
+	{
+		float ModifiedSpeedZ;
+		if(ColisionWithWallZ(actorBB, res.NewSpeed, ModifiedSpeedZ))
+		{
+			res.NewSpeed.z = ModifiedSpeedZ;
+		}
+
+		float ModifiedSpeedX;
+		if(ColisionWithWallX(actorBB, res.NewSpeed, ModifiedSpeedX))
+		{
+			res.NewSpeed.x = ModifiedSpeedX;
+		}
 	}
 
 
+	_shiftcheck = !_shiftcheck;
 	return res;
 }
 
@@ -233,7 +318,7 @@ float PlanesPhysicHandler::GetClosestFloor(const VECTOR & ActorPos)
 */
 float PlanesPhysicHandler::GetGravitySpeed()
 {
-	return 0.03f;
+	return 0.003f;
 }
 
 
@@ -259,12 +344,12 @@ void PlanesPhysicHandler::Render()
 		glTranslated(0, 0.5, 0);
 		glColor4f(0.0f, 0.0f, 1.0f, 1.f);
 		glBegin(GL_LINES);
-			glVertex3f(pif.C1X,pif.C1Y/2.0f,pif.C1Z);
-			glVertex3f(pif.C2X,pif.C2Y/2.0f,pif.C2Z);
-			glVertex3f(pif.C2X,pif.C2Y/2.0f,pif.C2Z);
-			glVertex3f(pif.C3X,pif.C3Y/2.0f,pif.C3Z);
-			glVertex3f(pif.C3X,pif.C3Y/2.0f,pif.C3Z);
-			glVertex3f(pif.C1X,pif.C1Y/2.0f,pif.C1Z);
+			glVertex3f(pif.C1.x,pif.C1.y/2.0f,pif.C1.z);
+			glVertex3f(pif.C2.x,pif.C2.y/2.0f,pif.C2.z);
+			glVertex3f(pif.C2.x,pif.C2.y/2.0f,pif.C2.z);
+			glVertex3f(pif.C3.x,pif.C3.y/2.0f,pif.C3.z);
+			glVertex3f(pif.C3.x,pif.C3.y/2.0f,pif.C3.z);
+			glVertex3f(pif.C1.x,pif.C1.y/2.0f,pif.C1.z);
 		glEnd();
 
 		glPopMatrix();
@@ -279,14 +364,14 @@ void PlanesPhysicHandler::Render()
 		glTranslated(0, 0.5, 0);
 		glColor4f(0.0f, 0.0f, 1.0f, 1.f);
 		glBegin(GL_LINES);
-			glVertex3f(pif.C1X,pif.C1Y/2.0f,pif.C1Z);
-			glVertex3f(pif.C2X,pif.C2Y/2.0f,pif.C2Z);
-			glVertex3f(pif.C2X,pif.C2Y/2.0f,pif.C2Z);
-			glVertex3f(pif.C4X,pif.C4Y/2.0f,pif.C4Z);
-			glVertex3f(pif.C4X,pif.C4Y/2.0f,pif.C4Z);
-			glVertex3f(pif.C3X,pif.C3Y/2.0f,pif.C3Z);
-			glVertex3f(pif.C3X,pif.C3Y/2.0f,pif.C3Z);
-			glVertex3f(pif.C1X,pif.C1Y/2.0f,pif.C1Z);
+			glVertex3f(pif.C1.x,pif.C1.y/2.0f,pif.C1.z);
+			glVertex3f(pif.C2.x,pif.C2.y/2.0f,pif.C2.z);
+			glVertex3f(pif.C2.x,pif.C2.y/2.0f,pif.C2.z);
+			glVertex3f(pif.C4.x,pif.C4.y/2.0f,pif.C4.z);
+			glVertex3f(pif.C4.x,pif.C4.y/2.0f,pif.C4.z);
+			glVertex3f(pif.C3.x,pif.C3.y/2.0f,pif.C3.z);
+			glVertex3f(pif.C3.x,pif.C3.y/2.0f,pif.C3.z);
+			glVertex3f(pif.C1.x,pif.C1.y/2.0f,pif.C1.z);
 		glEnd();
 
 		glPopMatrix();
@@ -607,3 +692,84 @@ bool PlanesPhysicHandler::ColisionWithWallZ(const AABB & actorBB, const VECTOR &
 	return false;
 }
 
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+- check collision with stairs
+--------------------------------------------------------------------------------------------------
+*/
+bool PlanesPhysicHandler::ColisionWithStair(const AABB & actorBB, const VECTOR &Speed, VECTOR &ModifiedSpeed)
+{
+	float moveX = Speed.x;
+	float moveZ = Speed.z;
+
+	// calculate norm of speed
+	VECTOR speedNorm = Speed.unit();
+	speedNorm.y = 0;
+
+	float startX = 0;
+	if(moveX > 0)
+		startX = actorBB.E.x;
+	else
+		startX = actorBB.P.x;
+
+	float startZ = 0;
+	if(moveZ > 0)
+		startZ = actorBB.E.z;
+	else
+		startZ = actorBB.P.z;
+
+
+	std::vector<StairPlane>::const_iterator it = _stairs.begin();
+	std::vector<StairPlane>::const_iterator end = _stairs.end();
+
+	// for each stairs
+	for(int i=0; it != end; ++it, ++i)
+	{
+
+
+		// project point to plane and check if we cross it
+		float DotProduct=speedNorm.dot(it->Normal);
+
+		// Determine If Ray Parallel To Plane
+		if (abs(DotProduct) > 0.000001f)
+		{
+			// Find Distance To Collision Point
+			float l2=(it->Normal.dot(it->C1-VECTOR(startX, actorBB.P.y, startZ)))/DotProduct;	
+
+			// Test If Collision Behind Start or after end
+			if (l2 > 0 && l2 < Speed.length())							
+			{
+				float collionsX = startX + (speedNorm.x * l2);
+				float collionsZ = startZ + (speedNorm.z * l2);
+				float collionsY = actorBB.P.y + (speedNorm.y * l2);
+
+				//if(i==7)
+				//{
+				//	std::cout<<l2<<std::endl;
+				//	std::cout<<collionsX<<std::endl;
+				//	std::cout<<collionsZ<<std::endl;
+				//}
+
+				if((collionsX >= it->minX) && (collionsX <= it->maxX))
+				{
+					if((collionsZ >= it->minZ) && (collionsZ <= it->maxZ))
+					{
+						float lefttomoveX = collionsX+(speedNorm.x * (Speed.length()-l2));
+						float lefttomoveZ = collionsZ+(speedNorm.z * (Speed.length()-l2));
+
+						float foundY = (it->D - (it->Normal.x * lefttomoveX) - (it->Normal.z * lefttomoveZ)) / it->Normal.y;
+						ModifiedSpeed.y = (foundY - collionsY);
+
+
+						//std::cout<<"colisionned!"<<std::endl;
+					}
+				}
+			}
+		}
+	}
+
+	return false;
+}
