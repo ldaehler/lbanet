@@ -714,6 +714,9 @@ void PhysicHandler::SearchWallXNormal(int sizeX, int sizeY, int sizeZ)
 				{
 					if(buffer[((k+1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0)
 						buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
+
+					if( buffer[(k*sizeX*sizeZ)+((i+1)*sizeZ)+j] > 1)
+						buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
 				}
 			}
 		}
@@ -765,6 +768,9 @@ void PhysicHandler::SearchWallXHidden(int sizeX, int sizeY, int sizeZ)
 				if((k-1)>=0)
 				{
 					if(buffer[((k-1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0)
+						buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
+
+					if( buffer[(k*sizeX*sizeZ)+((i+1)*sizeZ)+j] > 1)
 						buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
 				}
 			}
@@ -829,6 +835,9 @@ void PhysicHandler::SearchWallZNormal(int sizeX, int sizeY, int sizeZ)
 				{
 					if(buffer[((k+1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0)
 						buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
+
+					if( buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j+1] > 1)
+						buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
 				}
 			}
 		}
@@ -880,6 +889,9 @@ void PhysicHandler::SearchWallZHidden(int sizeX, int sizeY, int sizeZ)
 				if((k-1)>=0)
 				{
 					if(buffer[((k-1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0)
+						buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
+
+					if( buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j+1] > 1)
 						buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
 				}
 			}
@@ -936,6 +948,9 @@ void PhysicHandler::SearchFloorsNormal(int sizeX, int sizeY, int sizeZ)
 			{
 				if( _physicCube[((k+1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0
 					&& _physicCube[((k-1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0 )
+					buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
+
+				if( _physicCube[((k+1)*sizeX*sizeZ)+(i*sizeZ)+j] > 1)
 					buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
 			}
 		}

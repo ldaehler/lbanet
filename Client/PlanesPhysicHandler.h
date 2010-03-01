@@ -86,6 +86,9 @@ protected:
 	bool ColisionWithWallZ(const AABB & actorBB, const VECTOR &Speed, float &ModifiedSpeedZ);
 
 	bool ColisionWithStair(const AABB & actorBB, const VECTOR &Speed, VECTOR &ModifiedSpeed);
+	bool PointColisionWithFloor(const AABB & actorBB, const VECTOR &Speed, 
+											float &ModifiedSpeedY, bool &water);
+
 
 	struct StairPlane
 	{
