@@ -83,8 +83,8 @@ public:
 protected:
 	// check collision with floor
 	bool ColisionWithFloor(const AABB & actorBB, const VECTOR &Speed, float &ModifiedSpeedY, bool &water);
-	bool ColisionWithWallX(const AABB & actorBB, const VECTOR &Speed, float &ModifiedSpeedX);
-	bool ColisionWithWallZ(const AABB & actorBB, const VECTOR &Speed, float &ModifiedSpeedZ);
+	bool ColisionWithWallX(const AABB & actorBB, const VECTOR &Speed, float &ModifiedSpeedX, float &ModifiedSpeedY);
+	bool ColisionWithWallZ(const AABB & actorBB, const VECTOR &Speed, float &ModifiedSpeedZ, float &ModifiedSpeedY);
 
 
 	bool ColisionWithStair(const AABB & actorBB, const VECTOR &Speed, VECTOR &ModifiedSpeed);
