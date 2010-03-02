@@ -124,46 +124,46 @@ void MapRenderer::Render()
 		glLineWidth(2.0f);
 
 
-		//for(size_t i=0; i<cstairs.size(); ++i)
-		//{
-		//	CornerStairInfo pif = cstairs[i];
-		//	glPushMatrix();
+		for(size_t i=0; i<cstairs.size(); ++i)
+		{
+			CornerStairInfo pif = cstairs[i];
+			glPushMatrix();
 
-		//	glTranslated(0, 0.5, 0);
-		//	glColor4f(0.0f,0.0f,1.0f, 1.f);
-		//	glBegin(GL_LINES);
-		//		glVertex3f(pif.C1X,pif.C1Y/2.0f,pif.C1Z);
-		//		glVertex3f(pif.C2X,pif.C2Y/2.0f,pif.C2Z);
-		//		glVertex3f(pif.C2X,pif.C2Y/2.0f,pif.C2Z);
-		//		glVertex3f(pif.C3X,pif.C3Y/2.0f,pif.C3Z);
-		//		glVertex3f(pif.C3X,pif.C3Y/2.0f,pif.C3Z);
-		//		glVertex3f(pif.C1X,pif.C1Y/2.0f,pif.C1Z);
-		//	glEnd();
+			glTranslated(0, 0.5, 0);
+			glColor4f(0.0f,0.0f,1.0f, 1.f);
+			glBegin(GL_LINES);
+				glVertex3f(pif.C1X,pif.C1Y/2.0f,pif.C1Z);
+				glVertex3f(pif.C2X,pif.C2Y/2.0f,pif.C2Z);
+				glVertex3f(pif.C2X,pif.C2Y/2.0f,pif.C2Z);
+				glVertex3f(pif.C3X,pif.C3Y/2.0f,pif.C3Z);
+				glVertex3f(pif.C3X,pif.C3Y/2.0f,pif.C3Z);
+				glVertex3f(pif.C1X,pif.C1Y/2.0f,pif.C1Z);
+			glEnd();
 
-		//	glPopMatrix();
-		//}
+			glPopMatrix();
+		}
 
 
-		//for(size_t i=0; i<stairs.size(); ++i)
-		//{
-		//	StairInfo pif = stairs[i];
-		//	glPushMatrix();
+		for(size_t i=0; i<stairs.size(); ++i)
+		{
+			StairInfo pif = stairs[i];
+			glPushMatrix();
 
-		//	glTranslated(0, 0.5, 0);
-		//	glColor4f(0.0f,0.0f,1.0f, 1.f);
-		//	glBegin(GL_LINES);
-		//		glVertex3f(pif.C1X,pif.C1Y/2.0f,pif.C1Z);
-		//		glVertex3f(pif.C2X,pif.C2Y/2.0f,pif.C2Z);
-		//		glVertex3f(pif.C2X,pif.C2Y/2.0f,pif.C2Z);
-		//		glVertex3f(pif.C4X,pif.C4Y/2.0f,pif.C4Z);
-		//		glVertex3f(pif.C4X,pif.C4Y/2.0f,pif.C4Z);
-		//		glVertex3f(pif.C3X,pif.C3Y/2.0f,pif.C3Z);
-		//		glVertex3f(pif.C3X,pif.C3Y/2.0f,pif.C3Z);
-		//		glVertex3f(pif.C1X,pif.C1Y/2.0f,pif.C1Z);
-		//	glEnd();
+			glTranslated(0, 0.5, 0);
+			glColor4f(0.0f,0.0f,1.0f, 1.f);
+			glBegin(GL_LINES);
+				glVertex3f(pif.C1X,pif.C1Y/2.0f,pif.C1Z);
+				glVertex3f(pif.C2X,pif.C2Y/2.0f,pif.C2Z);
+				glVertex3f(pif.C2X,pif.C2Y/2.0f,pif.C2Z);
+				glVertex3f(pif.C4X,pif.C4Y/2.0f,pif.C4Z);
+				glVertex3f(pif.C4X,pif.C4Y/2.0f,pif.C4Z);
+				glVertex3f(pif.C3X,pif.C3Y/2.0f,pif.C3Z);
+				glVertex3f(pif.C3X,pif.C3Y/2.0f,pif.C3Z);
+				glVertex3f(pif.C1X,pif.C1Y/2.0f,pif.C1Z);
+			glEnd();
 
-		//	glPopMatrix();
-		//}
+			glPopMatrix();
+		}
 
 
 
@@ -256,47 +256,47 @@ void MapRenderer::Render()
 		//}
 
 
-		for(size_t i=0; i<WallZ.size(); ++i)
-		{
-			PlaneInfo pif = WallZ[i];
-			glPushMatrix();
+		//for(size_t i=0; i<WallZ.size(); ++i)
+		//{
+		//	PlaneInfo pif = WallZ[i];
+		//	glPushMatrix();
 
-			glTranslated(0, 0.5f, pif.StartY/*+1*/);
-			glColor4f(0.0f,0.0f,1.0f, 1.f);
-			glBegin(GL_LINES);
-				glVertex3f(pif.StartX,pif.StartZ/2.f,0);
-				glVertex3f(pif.EndX,pif.StartZ/2.f,0);
-				glVertex3f(pif.EndX,pif.StartZ/2.f,0);
-				glVertex3f(pif.EndX,pif.EndZ/2.f,0);
-				glVertex3f(pif.EndX,pif.EndZ/2.f,0);
-				glVertex3f(pif.StartX,pif.EndZ/2.f,0);
-				glVertex3f(pif.StartX,pif.EndZ/2.f,0);
-				glVertex3f(pif.StartX,pif.StartZ/2.f,0);
-			glEnd();
+		//	glTranslated(0, 0.5f, pif.StartY/*+1*/);
+		//	glColor4f(0.0f,0.0f,1.0f, 1.f);
+		//	glBegin(GL_LINES);
+		//		glVertex3f(pif.StartX,pif.StartZ/2.f,0);
+		//		glVertex3f(pif.EndX,pif.StartZ/2.f,0);
+		//		glVertex3f(pif.EndX,pif.StartZ/2.f,0);
+		//		glVertex3f(pif.EndX,pif.EndZ/2.f,0);
+		//		glVertex3f(pif.EndX,pif.EndZ/2.f,0);
+		//		glVertex3f(pif.StartX,pif.EndZ/2.f,0);
+		//		glVertex3f(pif.StartX,pif.EndZ/2.f,0);
+		//		glVertex3f(pif.StartX,pif.StartZ/2.f,0);
+		//	glEnd();
 
-			glPopMatrix();
-		}
+		//	glPopMatrix();
+		//}
 
-		for(size_t i=0; i<WallZh.size(); ++i)
-		{
-			PlaneInfo pif = WallZh[i];
-			glPushMatrix();
+		//for(size_t i=0; i<WallZh.size(); ++i)
+		//{
+		//	PlaneInfo pif = WallZh[i];
+		//	glPushMatrix();
 
-			glTranslated(0, 0.5f, pif.StartY);
-			glColor4f(1.0f,0.0f,0.0f, 1.f);
-			glBegin(GL_LINES);
-				glVertex3f(pif.StartX,pif.StartZ/2.f,0);
-				glVertex3f(pif.EndX,pif.StartZ/2.f,0);
-				glVertex3f(pif.EndX,pif.StartZ/2.f,0);
-				glVertex3f(pif.EndX,pif.EndZ/2.f,0);
-				glVertex3f(pif.EndX,pif.EndZ/2.f,0);
-				glVertex3f(pif.StartX,pif.EndZ/2.f,0);
-				glVertex3f(pif.StartX,pif.EndZ/2.f,0);
-				glVertex3f(pif.StartX,pif.StartZ/2.f,0);
-			glEnd();
+		//	glTranslated(0, 0.5f, pif.StartY);
+		//	glColor4f(1.0f,0.0f,0.0f, 1.f);
+		//	glBegin(GL_LINES);
+		//		glVertex3f(pif.StartX,pif.StartZ/2.f,0);
+		//		glVertex3f(pif.EndX,pif.StartZ/2.f,0);
+		//		glVertex3f(pif.EndX,pif.StartZ/2.f,0);
+		//		glVertex3f(pif.EndX,pif.EndZ/2.f,0);
+		//		glVertex3f(pif.EndX,pif.EndZ/2.f,0);
+		//		glVertex3f(pif.StartX,pif.EndZ/2.f,0);
+		//		glVertex3f(pif.StartX,pif.EndZ/2.f,0);
+		//		glVertex3f(pif.StartX,pif.StartZ/2.f,0);
+		//	glEnd();
 
-			glPopMatrix();
-		}
+		//	glPopMatrix();
+		//}
 
 
 		glEnable(GL_DEPTH_TEST);

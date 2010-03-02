@@ -133,7 +133,6 @@ PlanesPhysicHandler::PlanesPhysicHandler(const std::string filename,
 		file>>sp.C4.z;
 
 		sp.Normal = ((sp.C2 - sp.C1).cross(sp.C3-sp.C1)).unit();
-		//sp.Normal.y = abs(sp.Normal.y);
 		sp.D = sp.Normal.dot(sp.C1);
 
 
@@ -202,8 +201,9 @@ PlanesPhysicHandler::PlanesPhysicHandler(const std::string filename,
 		file>>sp.C3.y;
 		file>>sp.C3.z;
 
-		sp.Normal = ((sp.C1 - sp.C2).cross(sp.C3-sp.C2)).unit();
-		sp.Normal.y = abs(sp.Normal.y);
+		sp.tr_wh_y = Triangle2D(Point2D(sp.C1.x, sp.C1.z), Point2D(sp.C2.x, sp.C2.z), Point2D(sp.C3.x, sp.C3.z));
+
+		sp.Normal = ((sp.C2 - sp.C1).cross(sp.C3-sp.C1)).unit();
 		_corner_stairs.push_back(sp);
 	}
 }
@@ -238,58 +238,104 @@ MoveOutput PlanesPhysicHandler::MoveActor(long ActorId, const AABB & actorBB,
 
 	float ModifiedSpeedY;
 
-	// check if actor is on stairs
-	if(ColisionWithStair(actorBB, res.NewSpeed, res.NewSpeed))
+	bool collisioned = true;
+	while(collisioned)
 	{
-		res.TouchingGround = true;
-	}
-	
-	if(res.TouchingGround)
-	{
+		collisioned = false;
+
 		// if already on stairs do a quick check of the actor center with the ground
 		if(PointColisionWithFloor(actorBB, res.NewSpeed, ModifiedSpeedY, res.TouchingWater))
 		{
 			res.TouchingGround = true;
-			res.NewSpeed.y = ModifiedSpeedY;
+			if(res.NewSpeed.y != ModifiedSpeedY)
+			{
+				res.NewSpeed.y = ModifiedSpeedY;
+				collisioned = true;
+			}
 		}
-	}
-	else
-	{
-		// if actor still not touching ground then do a complete check
-		if(ColisionWithFloor(actorBB, res.NewSpeed, ModifiedSpeedY, res.TouchingWater))
+
+		// check if actor is on stairs
+		if(ColisionWithStair(actorBB, res.NewSpeed, res.NewSpeed))
 		{
 			res.TouchingGround = true;
-			res.NewSpeed.y = ModifiedSpeedY;
-		}
-	}
-
-	// shifting check order every frame so that we do not get stuck were we should not
-	if(_shiftcheck)
-	{
-		float ModifiedSpeedX;
-		if(ColisionWithWallX(actorBB, res.NewSpeed, ModifiedSpeedX))
-		{
-			res.NewSpeed.x = ModifiedSpeedX;
+			collisioned = true;
 		}
 
-		float ModifiedSpeedZ;
-		if(ColisionWithWallZ(actorBB, res.NewSpeed, ModifiedSpeedZ))
+		// check if colision with corner stairs
+		if(ColisionWithCornerStair(actorBB, res.NewSpeed, res.NewSpeed))
 		{
-			res.NewSpeed.z = ModifiedSpeedZ;
+			res.TouchingGround = true;
+			collisioned = true;
 		}
-	}
-	else
-	{
-		float ModifiedSpeedZ;
-		if(ColisionWithWallZ(actorBB, res.NewSpeed, ModifiedSpeedZ))
+		
+		if(!res.TouchingGround)
+		//{
+		//	// if already on stairs do a quick check of the actor center with the ground
+		//	if(PointColisionWithFloor(actorBB, res.NewSpeed, ModifiedSpeedY, res.TouchingWater))
+		//	{
+		//		res.TouchingGround = true;
+		//		res.NewSpeed.y = ModifiedSpeedY;
+		//		collisioned = true;
+		//	}
+		//}
+		//else
 		{
-			res.NewSpeed.z = ModifiedSpeedZ;
+			// if actor still not touching ground then do a complete check
+			if(ColisionWithFloor(actorBB, res.NewSpeed, ModifiedSpeedY, res.TouchingWater))
+			{
+				if(res.NewSpeed.y != ModifiedSpeedY)
+				{
+					res.TouchingGround = true;
+					res.NewSpeed.y = ModifiedSpeedY;
+					collisioned = true;
+				}
+			}
 		}
 
-		float ModifiedSpeedX;
-		if(ColisionWithWallX(actorBB, res.NewSpeed, ModifiedSpeedX))
+		// shifting check order every frame so that we do not get stuck were we should not
+		if(_shiftcheck)
 		{
-			res.NewSpeed.x = ModifiedSpeedX;
+			float ModifiedSpeedX;
+			if(ColisionWithWallX(actorBB, res.NewSpeed, ModifiedSpeedX))
+			{	
+				if(res.NewSpeed.x != ModifiedSpeedX)
+				{
+					res.NewSpeed.x = ModifiedSpeedX;
+					collisioned = true;
+				}
+			}
+
+			float ModifiedSpeedZ;
+			if(ColisionWithWallZ(actorBB, res.NewSpeed, ModifiedSpeedZ))
+			{
+				if(res.NewSpeed.z != ModifiedSpeedZ)
+				{
+					res.NewSpeed.z = ModifiedSpeedZ;			
+					collisioned = true;
+				}
+			}
+		}
+		else
+		{
+			float ModifiedSpeedZ;
+			if(ColisionWithWallZ(actorBB, res.NewSpeed, ModifiedSpeedZ))
+			{
+				if(res.NewSpeed.z != ModifiedSpeedZ)
+				{
+					res.NewSpeed.z = ModifiedSpeedZ;
+					collisioned = true;
+				}
+			}
+
+			float ModifiedSpeedX;
+			if(ColisionWithWallX(actorBB, res.NewSpeed, ModifiedSpeedX))
+			{
+				if(res.NewSpeed.x != ModifiedSpeedX)
+				{
+					res.NewSpeed.x = ModifiedSpeedX;
+					collisioned = true;
+				}
+			}
 		}
 	}
 
@@ -537,7 +583,7 @@ bool PlanesPhysicHandler::ColisionWithFloor(const AABB & actorBB, const VECTOR &
 		{
 			if(it->Layer != lastcheckedLayer)
 			{
-				lastcheckedLayer = it->Layer;
+				lastcheckedLayer = (float)it->Layer;
 				float distance = (lastcheckedLayer-startY) / speedNorm.y;
 
 				float offsetx = speedNorm.x * distance;
@@ -552,7 +598,7 @@ bool PlanesPhysicHandler::ColisionWithFloor(const AABB & actorBB, const VECTOR &
 			if(it->Square.Overlap(memorysquare))
 			{
 				ModifiedSpeedY = (lastcheckedLayer - startY);
-				ModifiedSpeedY += (ModifiedSpeedY > 0) ? -0.0001 : 0.0001;
+				ModifiedSpeedY += (ModifiedSpeedY > 0) ? -0.0001f : 0.0001f;
 				water = it->IsWater;
 				return true;
 			}
@@ -623,7 +669,7 @@ bool PlanesPhysicHandler::PointColisionWithFloor(const AABB & actorBB, const VEC
 		{
 			if(it->Layer != lastcheckedLayer)
 			{
-				lastcheckedLayer = it->Layer;
+				lastcheckedLayer = (float)it->Layer;
 				float distance = (lastcheckedLayer-startY) / speedNorm.y;
 
 				ptx = (actorBB.P.x + actorBB.E.x)/2.0f + (speedNorm.x * distance);
@@ -633,7 +679,7 @@ bool PlanesPhysicHandler::PointColisionWithFloor(const AABB & actorBB, const VEC
 			if(it->Square.Overlap(ptx, ptz))
 			{
 				ModifiedSpeedY = (lastcheckedLayer - startY);
-				ModifiedSpeedY += (ModifiedSpeedY > 0) ? -0.0001 : 0.0001;
+				ModifiedSpeedY += (ModifiedSpeedY > 0) ? -0.0001f : 0.0001f;
 				water = it->IsWater;
 				return true;
 			}
@@ -702,7 +748,7 @@ bool PlanesPhysicHandler::ColisionWithWallX(const AABB & actorBB, const VECTOR &
 		{
 			if(it->Layer != lastcheckedLayer)
 			{
-				lastcheckedLayer = it->Layer;
+				lastcheckedLayer = (float)it->Layer;
 				float distance = (lastcheckedLayer-startX) / speedNorm.x;
 
 				float offsety = speedNorm.y * distance;
@@ -717,7 +763,7 @@ bool PlanesPhysicHandler::ColisionWithWallX(const AABB & actorBB, const VECTOR &
 			if(it->Square.Overlap(memorysquare))
 			{
 				ModifiedSpeedX = (lastcheckedLayer - startX);
-				ModifiedSpeedX += (ModifiedSpeedX > 0) ? -0.0001 : 0.0001;
+				ModifiedSpeedX += (ModifiedSpeedX > 0) ? -0.0001f : 0.0001f;
 				return true;
 			}
 		}
@@ -785,7 +831,7 @@ bool PlanesPhysicHandler::ColisionWithWallZ(const AABB & actorBB, const VECTOR &
 		{
 			if(it->Layer != lastcheckedLayer)
 			{
-				lastcheckedLayer = it->Layer;
+				lastcheckedLayer = (float)it->Layer;
 				float distance = (lastcheckedLayer-startZ) / speedNorm.z;
 
 				float offsetx = speedNorm.x * distance;
@@ -800,7 +846,7 @@ bool PlanesPhysicHandler::ColisionWithWallZ(const AABB & actorBB, const VECTOR &
 			if(it->Square.Overlap(memorysquare))
 			{
 				ModifiedSpeedZ = (lastcheckedLayer - startZ);
-				ModifiedSpeedZ += (ModifiedSpeedZ > 0) ? -0.0001 : 0.0001;
+				ModifiedSpeedZ += (ModifiedSpeedZ > 0) ? -0.0001f : 0.0001f;
 				return true;
 			}
 		}
@@ -826,17 +872,7 @@ bool PlanesPhysicHandler::ColisionWithStair(const AABB & actorBB, const VECTOR &
 	VECTOR speedNorm = Speed.unit();
 
 	float startX = (actorBB.P.x+actorBB.E.x)/2.0f;
-	//if(moveX > 0)
-	//	startX = actorBB.P.x;
-	//else
-	//	startX = actorBB.E.x;
-
 	float startZ = (actorBB.P.z+actorBB.E.z)/2.0f;
-	//if(moveZ > 0)
-	//	startZ = actorBB.P.z;
-	//else
-	//	startZ = actorBB.E.z;
-
 
 	std::vector<StairPlane>::const_iterator it = _stairs.begin();
 	std::vector<StairPlane>::const_iterator end = _stairs.end();
@@ -858,14 +894,6 @@ bool PlanesPhysicHandler::ColisionWithStair(const AABB & actorBB, const VECTOR &
 			{
 				float collionsX = startX + (speedNorm.x * l2);
 				float collionsZ = startZ + (speedNorm.z * l2);
-				float collionsY = actorBB.P.y + (speedNorm.y * l2);
-
-				//if(i==7)
-				//{
-				//	std::cout<<l2<<std::endl;
-				//	std::cout<<collionsX<<std::endl;
-				//	std::cout<<collionsZ<<std::endl;
-				//}
 
 				if((collionsX >= it->minX) && (collionsX <= it->maxX))
 				{
@@ -876,16 +904,61 @@ bool PlanesPhysicHandler::ColisionWithStair(const AABB & actorBB, const VECTOR &
 						VECTOR Vn(spmY - Vt);
 						ModifiedSpeed = Vn;
 						return true;
-
-						//float lefttomoveX = collionsX+(speedNorm.x * (Speed.length()-l2));
-						//float lefttomoveZ = collionsZ+(speedNorm.z * (Speed.length()-l2));
-
-						//float foundY = (it->D - (it->Normal.x * lefttomoveX) - (it->Normal.z * lefttomoveZ)) / it->Normal.y;
-						//ModifiedSpeed.y = (foundY - collionsY);
-
-
-						//std::cout<<"colisionned!"<<std::endl;
 					}
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+- check collision with stairs
+--------------------------------------------------------------------------------------------------
+*/
+bool PlanesPhysicHandler::ColisionWithCornerStair(const AABB & actorBB, const VECTOR &Speed, VECTOR &ModifiedSpeed)
+{
+	float moveX = Speed.x;
+	float moveZ = Speed.z;
+
+	// calculate norm of speed
+	VECTOR speedNorm = Speed.unit();
+
+	float startX = (actorBB.P.x+actorBB.E.x)/2.0f;
+	float startZ = (actorBB.P.z+actorBB.E.z)/2.0f;
+
+	std::vector<CornerStairPlane>::const_iterator it = _corner_stairs.begin();
+	std::vector<CornerStairPlane>::const_iterator end = _corner_stairs.end();
+
+	// for each stairs
+	for(int i=0; it != end; ++it, ++i)
+	{
+		// project point to plane and check if we cross it
+		float DotProduct=speedNorm.dot(it->Normal);
+
+		// Determine If Ray Parallel To Plane
+		if (abs(DotProduct) > 0.000001f)
+		{
+			// Find Distance To Collision Point
+			float l2=(it->Normal.dot(it->C1-VECTOR(startX, actorBB.P.y, startZ)))/DotProduct;	
+
+			// Test If Collision Behind Start or after end
+			if (l2 > 0 && l2 < Speed.length())							
+			{
+				float collionsX = startX + (speedNorm.x * l2);
+				float collionsZ = startZ + (speedNorm.z * l2);
+
+				if(it->tr_wh_y.contains(Point2D(collionsX, collionsZ)))
+				{
+					VECTOR spmY(Speed.x, 0, Speed.z);
+					VECTOR Vt(it->Normal.dot(spmY)*it->Normal);
+					VECTOR Vn(spmY - Vt);
+					ModifiedSpeed = Vn;
+					return true;
 				}
 			}
 		}
