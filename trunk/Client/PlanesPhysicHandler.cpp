@@ -237,22 +237,25 @@ MoveOutput PlanesPhysicHandler::MoveActor(long ActorId, const AABB & actorBB,
 	res.TouchingGround = false;
 
 	float ModifiedSpeedY;
-	// first do a quick check of the actor center with the ground
-	if(PointColisionWithFloor(actorBB, res.NewSpeed, ModifiedSpeedY, res.TouchingWater))
-	{
-		res.TouchingGround = true;
-		res.NewSpeed.y = ModifiedSpeedY;
-	}
 
-	// then check if actor is on stairs
+	// check if actor is on stairs
 	if(ColisionWithStair(actorBB, res.NewSpeed, res.NewSpeed))
 	{
 		res.TouchingGround = true;
 	}
 	
-	// if actor still not touching ground then do a complete check
-	if(!res.TouchingGround)
+	if(res.TouchingGround)
 	{
+		// if already on stairs do a quick check of the actor center with the ground
+		if(PointColisionWithFloor(actorBB, res.NewSpeed, ModifiedSpeedY, res.TouchingWater))
+		{
+			res.TouchingGround = true;
+			res.NewSpeed.y = ModifiedSpeedY;
+		}
+	}
+	else
+	{
+		// if actor still not touching ground then do a complete check
 		if(ColisionWithFloor(actorBB, res.NewSpeed, ModifiedSpeedY, res.TouchingWater))
 		{
 			res.TouchingGround = true;
@@ -425,7 +428,7 @@ void PlanesPhysicHandler::Render()
 	//		NormalPlane pif = itwallsX->second[i];
 	//		glPushMatrix();
 
-	//		glTranslated(pif.Layer, 0, 0);
+	//		glTranslated(pif.Layer, 0.5f, 0);
 	//		glColor4f(1.0f,0.0f,0.0f, 1.f);
 	//		glBegin(GL_LINES);
 	//			glVertex3f(0,pif.Square._minX/2.f,pif.Square._minZ);
@@ -452,7 +455,7 @@ void PlanesPhysicHandler::Render()
 	//		NormalPlane pif = itwallsZ->second[i];
 	//		glPushMatrix();
 
-	//		glTranslated(0, 0, pif.Layer);
+	//		glTranslated(0, 0.5f, pif.Layer);
 	//		glColor4f(1.0f,0.0f,1.0f, 1.f);
 	//		glBegin(GL_LINES);
 	//			glVertex3f(pif.Square._minX,pif.Square._minZ/2.f,0);
