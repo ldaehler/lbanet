@@ -295,44 +295,48 @@ MoveOutput PlanesPhysicHandler::MoveActor(long ActorId, const AABB & actorBB,
 		// shifting check order every frame so that we do not get stuck were we should not
 		if(_shiftcheck)
 		{
-			float ModifiedSpeedX;
-			if(ColisionWithWallX(actorBB, res.NewSpeed, ModifiedSpeedX))
+			float ModifiedSpeedX, ModifiedSpeedY;
+			if(ColisionWithWallX(actorBB, res.NewSpeed, ModifiedSpeedX, ModifiedSpeedY))
 			{	
 				if(res.NewSpeed.x != ModifiedSpeedX)
 				{
 					res.NewSpeed.x = ModifiedSpeedX;
+					res.NewSpeed.y = ModifiedSpeedY;
 					collisioned = true;
 				}
 			}
 
 			float ModifiedSpeedZ;
-			if(ColisionWithWallZ(actorBB, res.NewSpeed, ModifiedSpeedZ))
+			if(ColisionWithWallZ(actorBB, res.NewSpeed, ModifiedSpeedZ, ModifiedSpeedY))
 			{
 				if(res.NewSpeed.z != ModifiedSpeedZ)
 				{
-					res.NewSpeed.z = ModifiedSpeedZ;			
+					res.NewSpeed.z = ModifiedSpeedZ;	
+					res.NewSpeed.y = ModifiedSpeedY;
 					collisioned = true;
 				}
 			}
 		}
 		else
 		{
-			float ModifiedSpeedZ;
-			if(ColisionWithWallZ(actorBB, res.NewSpeed, ModifiedSpeedZ))
+			float ModifiedSpeedZ, ModifiedSpeedY;
+			if(ColisionWithWallZ(actorBB, res.NewSpeed, ModifiedSpeedZ, ModifiedSpeedY))
 			{
 				if(res.NewSpeed.z != ModifiedSpeedZ)
 				{
 					res.NewSpeed.z = ModifiedSpeedZ;
+					res.NewSpeed.y = ModifiedSpeedY;
 					collisioned = true;
 				}
 			}
 
 			float ModifiedSpeedX;
-			if(ColisionWithWallX(actorBB, res.NewSpeed, ModifiedSpeedX))
+			if(ColisionWithWallX(actorBB, res.NewSpeed, ModifiedSpeedX, ModifiedSpeedY))
 			{
 				if(res.NewSpeed.x != ModifiedSpeedX)
 				{
 					res.NewSpeed.x = ModifiedSpeedX;
+					res.NewSpeed.y = ModifiedSpeedY;
 					collisioned = true;
 				}
 			}
@@ -696,7 +700,8 @@ bool PlanesPhysicHandler::PointColisionWithFloor(const AABB & actorBB, const VEC
 - check collision with wall X
 --------------------------------------------------------------------------------------------------
 */
-bool PlanesPhysicHandler::ColisionWithWallX(const AABB & actorBB, const VECTOR &Speed, float &ModifiedSpeedX)
+bool PlanesPhysicHandler::ColisionWithWallX(const AABB & actorBB, const VECTOR &Speed, 
+											float &ModifiedSpeedX, float &ModifiedSpeedY)
 {
 	float moveX = Speed.x;
 	if(moveX == 0)
@@ -742,6 +747,7 @@ bool PlanesPhysicHandler::ColisionWithWallX(const AABB & actorBB, const VECTOR &
 		// keep memory of the last checked layer
 		float lastcheckedLayer = -1;
 		Square2D memorysquare;
+		float distance;
 
 		// check until the planes beeing after the actor move
 		for(; it != end; ++it)
@@ -749,7 +755,7 @@ bool PlanesPhysicHandler::ColisionWithWallX(const AABB & actorBB, const VECTOR &
 			if(it->Layer != lastcheckedLayer)
 			{
 				lastcheckedLayer = (float)it->Layer;
-				float distance = (lastcheckedLayer-startX) / speedNorm.x;
+				distance = (lastcheckedLayer-startX) / speedNorm.x;
 
 				float offsety = speedNorm.y * distance;
 				float offsetz = speedNorm.z * distance;
@@ -764,6 +770,7 @@ bool PlanesPhysicHandler::ColisionWithWallX(const AABB & actorBB, const VECTOR &
 			{
 				ModifiedSpeedX = (lastcheckedLayer - startX);
 				ModifiedSpeedX += (ModifiedSpeedX > 0) ? -0.0001f : 0.0001f;
+				ModifiedSpeedY *= distance;
 				return true;
 			}
 		}
@@ -778,7 +785,8 @@ bool PlanesPhysicHandler::ColisionWithWallX(const AABB & actorBB, const VECTOR &
 - check collision with wall Z
 --------------------------------------------------------------------------------------------------
 */
-bool PlanesPhysicHandler::ColisionWithWallZ(const AABB & actorBB, const VECTOR &Speed, float &ModifiedSpeedZ)
+bool PlanesPhysicHandler::ColisionWithWallZ(const AABB & actorBB, const VECTOR &Speed, 
+											float &ModifiedSpeedZ, float &ModifiedSpeedY)
 {
 	float moveZ = Speed.z;
 	if(moveZ == 0)
@@ -825,6 +833,7 @@ bool PlanesPhysicHandler::ColisionWithWallZ(const AABB & actorBB, const VECTOR &
 		// keep memory of the last checked layer
 		float lastcheckedLayer = -1;
 		Square2D memorysquare;
+		float distance;
 
 		// check until the planes beeing after the actor move
 		for(; it != end; ++it)
@@ -832,7 +841,7 @@ bool PlanesPhysicHandler::ColisionWithWallZ(const AABB & actorBB, const VECTOR &
 			if(it->Layer != lastcheckedLayer)
 			{
 				lastcheckedLayer = (float)it->Layer;
-				float distance = (lastcheckedLayer-startZ) / speedNorm.z;
+				distance = (lastcheckedLayer-startZ) / speedNorm.z;
 
 				float offsetx = speedNorm.x * distance;
 				float offsety = speedNorm.y * distance;
@@ -847,6 +856,7 @@ bool PlanesPhysicHandler::ColisionWithWallZ(const AABB & actorBB, const VECTOR &
 			{
 				ModifiedSpeedZ = (lastcheckedLayer - startZ);
 				ModifiedSpeedZ += (ModifiedSpeedZ > 0) ? -0.0001f : 0.0001f;
+				ModifiedSpeedY *= distance;
 				return true;
 			}
 		}
