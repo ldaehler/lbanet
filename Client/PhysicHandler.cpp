@@ -712,7 +712,7 @@ void PhysicHandler::SearchWallXNormal(int sizeX, int sizeY, int sizeZ)
 			{
 				if((k+1)<sizeY)
 				{
-					if(buffer[((k+1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0)
+					if(buffer[((k+1)*sizeX*sizeZ)+(i*sizeZ)+j] == 1)
 						buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
 
 					if( buffer[(k*sizeX*sizeZ)+((i+1)*sizeZ)+j] > 1)
@@ -767,7 +767,7 @@ void PhysicHandler::SearchWallXHidden(int sizeX, int sizeY, int sizeZ)
 			{
 				if((k-1)>=0)
 				{
-					if(buffer[((k-1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0)
+					if(buffer[((k-1)*sizeX*sizeZ)+(i*sizeZ)+j] == 1)
 						buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
 
 					if( buffer[(k*sizeX*sizeZ)+((i+1)*sizeZ)+j] > 1)
@@ -833,7 +833,7 @@ void PhysicHandler::SearchWallZNormal(int sizeX, int sizeY, int sizeZ)
 			{
 				if((k+1)<sizeY)
 				{
-					if(buffer[((k+1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0)
+					if(buffer[((k+1)*sizeX*sizeZ)+(i*sizeZ)+j] == 1)
 						buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
 
 					if( buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j+1] > 1)
@@ -888,7 +888,7 @@ void PhysicHandler::SearchWallZHidden(int sizeX, int sizeY, int sizeZ)
 			{
 				if((k-1)>=0)
 				{
-					if(buffer[((k-1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0)
+					if(buffer[((k-1)*sizeX*sizeZ)+(i*sizeZ)+j] == 1)
 						buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
 
 					if( buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j+1] > 1)
@@ -3302,11 +3302,15 @@ void PhysicHandler::SavePlanes(const std::string & filename)
 		for(size_t i=0; i<_wallsX.size(); ++i)
 		{
 			_wallsX[i].StartY += 1;
+			_wallsX[i].StartX -= 1;
+			_wallsX[i].EndX -= 1;
 			wallxs.push_back(_wallsX[i]);
 		}
 
 		for(size_t i=0; i<_wallsXhidden.size(); ++i)
 		{
+			_wallsXhidden[i].StartX -= 1;
+			_wallsXhidden[i].EndX -= 1;
 			wallxs.push_back(_wallsXhidden[i]);
 		}
 
@@ -3320,11 +3324,15 @@ void PhysicHandler::SavePlanes(const std::string & filename)
 		for(size_t i=0; i<_wallsZ.size(); ++i)
 		{
 			_wallsZ[i].StartY += 1;
+			_wallsZ[i].StartZ -= 1;
+			_wallsZ[i].EndZ -= 1;
 			wallzs.push_back(_wallsZ[i]);
 		}
 
 		for(size_t i=0; i<_wallsZhidden.size(); ++i)
 		{
+			_wallsZhidden[i].StartZ -= 1;
+			_wallsZhidden[i].EndZ -= 1;
 			wallzs.push_back(_wallsZhidden[i]);
 		}
 
