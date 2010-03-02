@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include "PhysicHandlerBase.h"
+#include "Triangle2D.h"
 
 class LocalActorsHandler;
 class ExternalActorsHandler;
@@ -85,7 +86,11 @@ protected:
 	bool ColisionWithWallX(const AABB & actorBB, const VECTOR &Speed, float &ModifiedSpeedX);
 	bool ColisionWithWallZ(const AABB & actorBB, const VECTOR &Speed, float &ModifiedSpeedZ);
 
+
 	bool ColisionWithStair(const AABB & actorBB, const VECTOR &Speed, VECTOR &ModifiedSpeed);
+	bool ColisionWithCornerStair(const AABB & actorBB, const VECTOR &Speed, VECTOR &ModifiedSpeed);
+
+
 	bool PointColisionWithFloor(const AABB & actorBB, const VECTOR &Speed, 
 											float &ModifiedSpeedY, bool &water);
 
@@ -111,6 +116,8 @@ protected:
 		VECTOR C1;
 		VECTOR C2;
 		VECTOR C3;
+
+		Triangle2D tr_wh_y;
 
 		VECTOR Normal;
 	};

@@ -487,6 +487,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\common\Point2D.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\common\Quest.cpp"
 				>
 			</File>
@@ -512,6 +516,10 @@
 			</File>
 			<File
 				RelativePath="..\common\ScriptedZoneActor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\common\Segment2D.cpp"
 				>
 			</File>
 			<File
@@ -556,6 +564,10 @@
 			</File>
 			<File
 				RelativePath=".\ThreadSafeWorkpile.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\common\Triangle2D.cpp"
 				>
 			</File>
 			<File
@@ -677,11 +689,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\Entities.h"
+				RelativePath=".\Entities.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Entities.h"
+				RelativePath="..\common\Entities.h"
 				>
 			</File>
 			<File
@@ -733,11 +745,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\HQRHandler.h"
+				RelativePath=".\HQRHandler.h"
 				>
 			</File>
 			<File
-				RelativePath=".\HQRHandler.h"
+				RelativePath="..\common\HQRHandler.h"
 				>
 			</File>
 			<File
@@ -909,6 +921,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\common\Point2D.h"
+				>
+			</File>
+			<File
 				RelativePath="..\common\Quest.h"
 				>
 			</File>
@@ -941,6 +957,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\common\Segment2D.h"
+				>
+			</File>
+			<File
 				RelativePath=".\SendingLoop.h"
 				>
 			</File>
@@ -961,11 +981,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\StreamReader.h"
+				RelativePath="..\common\StreamReader.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\StreamReader.h"
+				RelativePath=".\StreamReader.h"
 				>
 			</File>
 			<File
@@ -990,6 +1010,10 @@
 			</File>
 			<File
 				RelativePath=".\ThreadSafeWorkpile.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\Triangle2D.h"
 				>
 			</File>
 			<File
