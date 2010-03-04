@@ -31,7 +31,7 @@ class NxActor;
 class NxControllerManager;
 class NxUserAllocator;
 class NxVec3;
-
+class NxController;
 
 #include <vector>
 
@@ -70,14 +70,20 @@ public:
 	NxActor* CreateBox(const NxVec3 & StartPosition, float dimX, float dimY, float dimZ, float density, bool Pushable);
 	NxActor* CreateSphere(const NxVec3 & StartPosition, float radius, float density, bool Pushable);
 	NxActor* CreateCapsule(const NxVec3 & StartPosition, float radius, float height, float density, bool Pushable);
-	unsigned int CreateCharacter(const NxVec3 & StartPosition, float radius, float height);
+	NxController* CreateCharacter(const NxVec3 & StartPosition, float radius, float height);
+
+	NxActor* CreateTriangleMesh(const NxVec3 & StartPosition, float *Vertexes, 
+										size_t VertexesSize, unsigned int *Indices, size_t IndicesSize);
+
+	void DestroyActor(NxActor* actor);
+	void DestroyCharacter(NxController* character);
 
 
 	//! move character
 	//! returned collision flags, collection of NxControllerFlag
-	unsigned int MoveCharacter(unsigned int characterIndex, const NxVec3& moveVector);
+	unsigned int MoveCharacter(NxController* character, const NxVec3& moveVector);
 
-	void GetCharacterPosition(unsigned int characterIndex, float &posX, float &posY, float &posZ);
+	void GetCharacterPosition(NxController* character, float &posX, float &posY, float &posZ);
 
 
 	//! render actors
@@ -101,7 +107,6 @@ private:
 	NxScene*					gScene;
 	NxControllerManager*		gManager;
 	NxUserAllocator*			gAllocator;
-	unsigned int				_current_controller_idx;
 
 
 	double			_lasttime;

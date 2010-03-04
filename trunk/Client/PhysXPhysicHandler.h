@@ -35,8 +35,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class LocalActorsHandler;
 class ExternalActorsHandler;
-
-
+class NxActor;
+class NxController;
 
 
 //*************************************************************************************************
@@ -130,10 +130,12 @@ private:
 
 	bool											_shiftcheck;
 
-	unsigned int									_controllerid;
 	float											_lastposX;
 	float											_lastposY;
 	float											_lastposZ;
+
+	NxController*									_controller;
+	NxActor*										_map;
 };
 
 #endif
