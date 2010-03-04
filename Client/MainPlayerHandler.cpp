@@ -486,7 +486,7 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 	if(_state != Ac_Jumping && _state != Ac_Flying)
 	{
 		if(_RoomP)
-			_corrected_velocityY = -_RoomP->GetGravitySpeed() * tdiff;
+			_corrected_velocityY = _RoomP->GetGravitySpeed() * tdiff;
 	}
 
 

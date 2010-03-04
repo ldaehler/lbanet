@@ -40,6 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "InventoryHandler.h"
 #include "ExitsHandler.h"
 #include "Player.h"
+#include "PhysXEngine.h"
 
 //TODO - remove this
 #include "MapRenderer.h"
@@ -47,6 +48,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "MapMapRenderer.h"
 #include "PhysicHandler.h"
 #include "PlanesPhysicHandler.h"
+#include "PhysXPhysicHandler.h"
+
 
 #include <windows.h>    // Header File For Windows
 #include <GL/gl.h>      // Header File For The OpenGL32 Library
@@ -260,8 +263,8 @@ void LbaNetModel::Draw()
 	if(_mapRenderer)
 		_mapRenderer->Render();
 
-	//if(_physicHandler)
-	//	_physicHandler->Render();
+	if(_physicHandler)
+		_physicHandler->Render();
 
 	// draw exits
 	_exitsH->Render();
@@ -502,12 +505,15 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float 
 
 			std::string mapN = "Data/" + MI->Files["Maps"];
 
-			PhysicHandler * ph = new PhysicHandler(_localActorsHandler, _externalActorsHandler);
-			_mapRenderer = new MapRenderer(mapN, ph);
-			//_mapRenderer = new ObjMapRenderer("Prison.obj", "Prison.png");
-			//_mapRenderer = new MapMapRenderer("Test.map", "Otringal.png");
+			//PhysicHandler * ph = new PhysicHandler(_localActorsHandler, _externalActorsHandler);
+			//_mapRenderer = new MapRenderer(mapN, ph);
+			//_mapRenderer = new ObjMapRenderer("Twinsenshouse.obj", "Twinsenshouse.png");
+			_mapRenderer = new MapMapRenderer("Twinsenshouse.map", "Twinsenshouse.png");
 
-			_physicHandler = new PlanesPhysicHandler("map3.phy", _localActorsHandler, _externalActorsHandler);
+			//_physicHandler = new PlanesPhysicHandler("map3.phy", _localActorsHandler, _externalActorsHandler);
+			_physicHandler = new PhysXPhysicHandler("map3.phy", _localActorsHandler, _externalActorsHandler,
+													X, Y, Z);
+			
 			_mainPlayerHandler->SetPhysicHandler(_physicHandler);
 
 
