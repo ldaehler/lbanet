@@ -28,7 +28,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class NxPhysicsSDK;
 class NxScene;
 class NxActor;
+class NxControllerManager;
+class NxUserAllocator;
 class NxVec3;
+
+
+#include <vector>
+
 
 /***********************************************************************
  * Module:  PhysXEngine.h
@@ -61,13 +67,24 @@ public:
 
 	//! create actors
 	NxActor* CreatePlane(const NxVec3 & StartPosition, const NxVec3 & PlaneNormal);
-	NxActor* CreateBox(const NxVec3 & StartPosition, float dimX, float dimY, float dimZ, float density);
-	NxActor* CreateSphere(const NxVec3 & StartPosition, float radius, float density);
-	NxActor* CreateCapsule(const NxVec3 & StartPosition, float radius, float height, float density);
+	NxActor* CreateBox(const NxVec3 & StartPosition, float dimX, float dimY, float dimZ, float density, bool Pushable);
+	NxActor* CreateSphere(const NxVec3 & StartPosition, float radius, float density, bool Pushable);
+	NxActor* CreateCapsule(const NxVec3 & StartPosition, float radius, float height, float density, bool Pushable);
+	unsigned int CreateCharacter(const NxVec3 & StartPosition, float radius, float height);
+
+
+	//! move character
+	//! returned collision flags, collection of NxControllerFlag
+	unsigned int MoveCharacter(unsigned int characterIndex, const NxVec3& moveVector);
+
+	void GetCharacterPosition(unsigned int characterIndex, float &posX, float &posY, float &posZ);
 
 
 	//! render actors
 	void RenderActors();
+
+	//! get gravity
+	void GetGravity(NxVec3 & Gravity);
 
 
 protected:
@@ -80,8 +97,12 @@ private:
 	static PhysXEngine * _singletonInstance;
 
 	// physX internal data
-	NxPhysicsSDK*     gPhysicsSDK;
-	NxScene*          gScene;
+	NxPhysicsSDK*				gPhysicsSDK;
+	NxScene*					gScene;
+	NxControllerManager*		gManager;
+	NxUserAllocator*			gAllocator;
+	unsigned int				_current_controller_idx;
+
 
 	double			_lasttime;
 };
