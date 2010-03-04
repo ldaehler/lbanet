@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	#include <SDL/SDL.h>
 #endif
 
+#define NOMINMAX
 #include <windows.h>    // Header File For Windows
 #include <GL/gl.h>      // Header File For The OpenGL32 Library
 #include <GL/glu.h>     // Header File For The GLu32 Library
@@ -36,6 +37,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "SynchronizedTimeHandler.h"
 #include "LbaNetEngine.h"
 #include "PhysXEngine.h"
+#include "PlayerHandler.h"
+#include "NxVec3.h"
 
 #include <iostream>
 
@@ -51,6 +54,9 @@ LbaNetEngine::LbaNetEngine()
 	m_eventHandler(this)
 {
 	Initialize();
+
+	unsigned int controllerid = PhysXEngine::getInstance()->CreateCharacter(NxVec3(20, 10, 20), 1, 3);
+	m_player = new PlayerHandler(10.0f, controllerid);
 }
 
 
@@ -89,6 +95,16 @@ void LbaNetEngine::Initialize(void)
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
 
 
+
+	ilInit();
+
+	// Initialize ILU
+	iluInit();
+
+	// Initialize ILUT with OpenGL support.
+	ilutRenderer(ILUT_OPENGL);
+
+
    /*
      * Initialize the display in 8-bit palettized mode,
      * requesting a software surface
@@ -110,8 +126,8 @@ void LbaNetEngine::Initialize(void)
 	SDL_EnableUNICODE (1);
 	SDL_EnableKeyRepeat (SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 
+
 	m_lbaNetModel.Initialize();
-	m_lbaNetModel.SetScreenSize(m_screen_size_X, m_screen_size_Y);
 
 
 	PhysXEngine::getInstance()->Init();
@@ -133,7 +149,8 @@ void LbaNetEngine::run(void)
 		while( !quit )
 		{
 			double currtime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDouble();
-			m_currframetime.Update( currtime - m_lasttime ) ;
+			double timediff = ( currtime - m_lasttime );
+			m_currframetime.Update( timediff ) ;
 			m_lasttime = currtime;
 
 
@@ -143,6 +160,8 @@ void LbaNetEngine::run(void)
 
 			while( SDL_PollEvent( &even ) )
 				quit = m_eventHandler.Handle(even);
+
+			m_player->Process(currtime, (float)timediff);
 
 
 
@@ -257,7 +276,7 @@ create a new screen surface
 ***********************************************************/
 void LbaNetEngine::PlayerStartMove(int moveDirection)
 {
-
+	m_player->PlayerStartMove(moveDirection);
 }
 
 /***********************************************************
@@ -265,7 +284,7 @@ create a new screen surface
 ***********************************************************/
 void LbaNetEngine::PlayerStopMove(int moveDirection)
 {
-
+	m_player->PlayerStopMove(moveDirection);
 }
 
 /***********************************************************

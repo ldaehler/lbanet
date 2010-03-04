@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "LbaNetModel.h"
 #include "Camera.h"
 #include "PhysXEngine.h"
+#include "MapMapRenderer.h"
 
 #include <windows.h>    // Header File For Windows
 #include <GL/gl.h>      // Header File For The OpenGL32 Library
@@ -68,6 +69,9 @@ void LbaNetModel::Initialize()
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     glShadeModel(GL_SMOOTH);
+
+
+	_map = new MapMapRenderer("Twinsenshouse.map", "Twinsenshouse.png");
 }
 
 
@@ -96,6 +100,11 @@ void LbaNetModel::Draw()
 	glPushMatrix();
     glLoadIdentity();
 
+	float posX, posY, posZ;
+	PhysXEngine::getInstance()->GetCharacterPosition(0, posX, posY, posZ);
+	_camera->SetTarget(	posX, posY, posZ);
+
+
 	if(_camera->IsPerspective())
 	{
 		gluPerspective(_camera->GetFOV(),_windowWidth/(double)_windowHeight,0.01,2000);
@@ -121,6 +130,8 @@ void LbaNetModel::Draw()
     glPushMatrix();
     glTranslated(-_camera->GetTargetX(),-_camera->GetTargetY()/2.0,-_camera->GetTargetZ());
 
+
+	_map->Render();
 
 
 	// render physic actors

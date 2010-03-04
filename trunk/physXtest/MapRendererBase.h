@@ -22,25 +22,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-
-#if defined(NDEBUG)
-	#if defined(_MSC_VER)
-		#include "SDL.h"
-	#else
-		#include "SDL/SDL.h"
-	#endif
-#endif
-
-#include "LbaNetEngine.h"
+#if !defined(__LbaNetModel_1_MapRendererBase_h)
+#define __LbaNetModel_1_MapRendererBase_h
 
 
 
-int main(int argc, char *argv[])
+/***********************************************************************
+ * Module:  MapRendererBase.h
+ * Author:  Vivien
+ * Modified: dimanche 12 juillet 2009 21:09:21
+ * Purpose: Declaration of the class MapRendererBase
+ ***********************************************************************/
+class MapRendererBase
 {
-	LbaNetEngine model;
-	model.run();
-	return 0;
-}
+public:
+	//! constructor
+	MapRendererBase(){}
+
+	//! destructor
+	virtual ~MapRendererBase(){}
 
 
+	//! render
+	virtual void Render() = 0;
 
+	// cut the room at a certain Y to display only bottom
+	virtual void SetMapYLimit(int YLimit) = 0;
+
+	// flush the current map texture
+	virtual void FlushTexture() = 0;
+
+	//reload the current map texture
+	virtual void ReloadTexture() = 0;
+
+};
+
+#endif

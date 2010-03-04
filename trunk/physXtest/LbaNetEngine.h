@@ -28,6 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class ServerConnectionHandler;
 struct SDL_Surface;
+class PlayerHandler;
+
 
 #include "LbaNetModel.h"
 #include "averages.h"
@@ -83,6 +85,7 @@ private:
 
 	LbaNetModel							m_lbaNetModel;				// game model
 	EventHandler						m_eventHandler;
+	PlayerHandler*						m_player;
 
 	SDL_Surface *						m_screen;			// pointer to the screen surface
 

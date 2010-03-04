@@ -24,7 +24,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "PhysXEngine.h"
 #include "SynchronizedTimeHandler.h"
 #include "NxPhysics.h"
-
+#include "NxControllerManager.h"
+#include "NxCapsuleController.h"
+#include "UserAllocator.h"
 
 
 #include <windows.h>    // Header File For Windows
@@ -32,8 +34,66 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <GL/glu.h>     // Header File For The GLu32 Library
 
 
-PhysXEngine* PhysXEngine::_singletonInstance = NULL;
+#define SKINWIDTH	0.2f
 
+
+enum GameGroup
+{
+	GROUP_NON_COLLIDABLE,
+	GROUP_COLLIDABLE_NON_PUSHABLE,
+	GROUP_COLLIDABLE_PUSHABLE,
+};
+
+#define COLLIDABLE_MASK	(1<<GROUP_COLLIDABLE_NON_PUSHABLE) | (1<<GROUP_COLLIDABLE_PUSHABLE)
+
+
+
+
+/***********************************************************************
+ * Declaration of the class ControllerHitReport
+ ***********************************************************************/
+class ControllerHitReport : public NxUserControllerHitReport
+{
+public:
+	virtual NxControllerAction  onShapeHit(const NxControllerShapeHit& hit)
+	{
+		if(1 && hit.shape)
+		{
+			NxCollisionGroup group = hit.shape->getGroup();
+			if(group!=GROUP_COLLIDABLE_NON_PUSHABLE)
+			{
+				NxActor& actor = hit.shape->getActor();
+				if(actor.isDynamic())
+				{
+					// We only allow horizontal pushes. Vertical pushes when we stand on dynamic objects creates
+					// useless stress on the solver. It would be possible to enable/disable vertical pushes on
+					// particular objects, if the gameplay requires it.
+					if(hit.dir.y==0.0f)
+					{
+						NxF32 coeff = actor.getMass() * hit.length * 10.0f;
+						actor.addForceAtLocalPos(hit.dir*coeff, NxVec3(0,0,0), NX_IMPULSE);
+					}
+				}
+			}
+		}
+
+		return NX_ACTION_NONE;
+	}
+
+	virtual NxControllerAction  onControllerHit(const NxControllersHit& hit)
+	{
+		return NX_ACTION_NONE;
+	}
+
+} gControllerHitReport;
+
+
+
+
+
+
+
+PhysXEngine* PhysXEngine::_singletonInstance = NULL;
 
 
 /***********************************************************
@@ -52,8 +112,9 @@ PhysXEngine * PhysXEngine::getInstance()
 	Constructor
 ***********************************************************/
 PhysXEngine::PhysXEngine()
+: _current_controller_idx(0), gAllocator(NULL)
 {
-
+	gAllocator = new UserAllocator();
 }
 
 
@@ -62,7 +123,11 @@ PhysXEngine::PhysXEngine()
 ***********************************************************/
 PhysXEngine::~PhysXEngine()
 {
-
+	if(gAllocator!=NULL)
+	{
+			delete gAllocator;
+			gAllocator=NULL;
+	}
 }
 
 
@@ -76,6 +141,10 @@ void PhysXEngine::Init()
     gPhysicsSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION);
     if (!gPhysicsSDK)  
 		return;
+
+	if (gPhysicsSDK->getFoundationSDK().getRemoteDebugger())
+		gPhysicsSDK->getFoundationSDK().getRemoteDebugger()->connect("localhost", 5425);
+
 
 	// Set the physics parameters
 	gPhysicsSDK->setParameter(NX_SKIN_WIDTH, 0.01f);
@@ -107,17 +176,28 @@ void PhysXEngine::Init()
 
 
 	// add a cube and a plane
-	CreatePlane(NxVec3(0, 0, 0), NxVec3(0, 1, 0));
-	CreatePlane(NxVec3(10, 0, 0), NxVec3(1, 0, 0));
+	//CreatePlane(NxVec3(0, 0, 0), NxVec3(0, 1, 0));
 
-	CreateBox(NxVec3(0, 10, 0), 0.5f, 0.5f, 0.5f, 10);
+	CreateBox(NxVec3(0, 4, 0), 3.0f, 3.0f, 3.0f, 10, false);
+	CreateBox(NxVec3(7, 10, 7), 2.0f, 3.0f, 2.0f, 10, true);
+	CreateBox(NxVec3(20, 1, 20), 30.0f, 1.0f, 30.0f, 10, false);
 
 	// init time
 	_lasttime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDouble();
 
+
+	// init character controllers
+	gManager = NxCreateControllerManager(gAllocator);
+
+
+	//float TimeStep = 1.0f / 60.0f;
+	gScene->setTiming();
+
+
 	// Start the first frame of the simulation
 	if (gScene)  
 		StartPhysics();
+
 }
 
 /***********************************************************
@@ -134,6 +214,11 @@ void PhysXEngine::Quit()
 
 	if (gPhysicsSDK)  
 		gPhysicsSDK->release();
+
+	// clean up character controllers
+	gManager->purgeControllers();
+	_current_controller_idx = 0;
+	NxReleaseControllerManager(gManager);
 }
 
 
@@ -161,6 +246,14 @@ void PhysXEngine::GetPhysicsResults()
 {
 	// Get results from gScene->simulate
 	gScene->fetchResults(NX_RIGID_BODY_FINISHED, true);
+
+	NxReal maxTimestep;
+	NxTimeStepMethod method;
+	NxU32 maxIter;
+	NxU32 numSubSteps;
+	gScene->getTiming(maxTimestep, maxIter, method, &numSubSteps);
+	if(numSubSteps)	
+		gManager->updateControllers();
 }
 
 
@@ -172,6 +265,7 @@ NxActor* PhysXEngine::CreatePlane(const NxVec3 & StartPosition, const NxVec3 & P
     // Create a plane with default descriptor
     NxPlaneShapeDesc planeDesc;
 	planeDesc.normal = PlaneNormal;
+	planeDesc.group = GROUP_COLLIDABLE_NON_PUSHABLE;
 
     NxActorDesc actorDesc;
     actorDesc.shapes.pushBack(&planeDesc);
@@ -185,21 +279,31 @@ NxActor* PhysXEngine::CreatePlane(const NxVec3 & StartPosition, const NxVec3 & P
 	create box actor
 ***********************************************************/
 NxActor* PhysXEngine::CreateBox(const NxVec3 & StartPosition, float dimX, float dimY, float dimZ, 
-								float density)
+								float density, bool Pushable)
 {
 
 	// Add a single-shape actor to the scene
 	NxActorDesc actorDesc;
-	NxBodyDesc bodyDesc;
+
 
 	// The actor has one shape, a box, 1m on a side
 	NxBoxShapeDesc boxDesc;
 	boxDesc.dimensions.set(dimX, dimY, dimZ);
 	boxDesc.localPose.t = NxVec3(0, 0, 0);
+
+	if(Pushable)
+	{
+		NxBodyDesc bodyDesc;
+		actorDesc.body	= &bodyDesc;
+		actorDesc.density = density;
+		boxDesc.group = GROUP_COLLIDABLE_PUSHABLE;
+	}
+	else
+		boxDesc.group = GROUP_COLLIDABLE_NON_PUSHABLE;
+
 	actorDesc.shapes.pushBack(&boxDesc);
 
-	actorDesc.body			= &bodyDesc;
-	actorDesc.density		= density;
+
 	actorDesc.globalPose.t	= StartPosition;	
 	assert(actorDesc.isValid());
 	NxActor *pActor = gScene->createActor(actorDesc);	
@@ -211,20 +315,27 @@ NxActor* PhysXEngine::CreateBox(const NxVec3 & StartPosition, float dimX, float 
 /***********************************************************
 	create sphere actor
 ***********************************************************/
-NxActor* PhysXEngine::CreateSphere(const NxVec3 & StartPosition, float radius, float density)
+NxActor* PhysXEngine::CreateSphere(const NxVec3 & StartPosition, float radius, float density, bool Pushable)
 {
 	// Add a single-shape actor to the scene
 	NxActorDesc actorDesc;
-	NxBodyDesc bodyDesc;
 
 	// The actor has one shape, a sphere, 1m on radius
 	NxSphereShapeDesc sphereDesc;
 	sphereDesc.radius		= radius;
 	sphereDesc.localPose.t	= NxVec3(0, 0, 0);
 
+	if(Pushable)
+	{
+		NxBodyDesc bodyDesc;
+		actorDesc.body	= &bodyDesc;
+		actorDesc.density		= density;
+		sphereDesc.group = GROUP_COLLIDABLE_PUSHABLE;
+	}
+	else
+		sphereDesc.group = GROUP_COLLIDABLE_NON_PUSHABLE;
+
 	actorDesc.shapes.pushBack(&sphereDesc);
-	actorDesc.body			= &bodyDesc;
-	actorDesc.density		= density;
 	actorDesc.globalPose.t	= StartPosition;	
 	return gScene->createActor(actorDesc);
 }
@@ -232,30 +343,95 @@ NxActor* PhysXEngine::CreateSphere(const NxVec3 & StartPosition, float radius, f
 /***********************************************************
 	create capsule actor
 ***********************************************************/
-NxActor* PhysXEngine::CreateCapsule(const NxVec3 & StartPosition, float radius, float height, float density)
+NxActor* PhysXEngine::CreateCapsule(const NxVec3 & StartPosition, float radius, float height, float density, 
+									bool Pushable)
 {
 	// Add a single-shape actor to the scene
 	NxActorDesc actorDesc;
-	NxBodyDesc bodyDesc;
 
 	// The actor has one shape, a sphere, 1m on radius
 	NxCapsuleShapeDesc capsuleDesc;
 	capsuleDesc.radius		= radius;
 	capsuleDesc.height		= height;
 	capsuleDesc.localPose.t = NxVec3(0, 0, 0);
-	
-	//Rotate capsule shape
-	//NxQuat quat(45, NxVec3(0, 0, 1));
-	//NxMat33 m33(quat);
-	//capsuleDesc.localPose.M = m33;
+
+	if(Pushable)
+	{
+		NxBodyDesc bodyDesc;
+		actorDesc.body	= &bodyDesc;
+		actorDesc.density = density;
+		capsuleDesc.group = GROUP_COLLIDABLE_PUSHABLE;
+	}
+	else
+		capsuleDesc.group = GROUP_COLLIDABLE_NON_PUSHABLE;
 
 	actorDesc.shapes.pushBack(&capsuleDesc);
-	actorDesc.body			= &bodyDesc;
-	actorDesc.density		= density;
 	actorDesc.globalPose.t	= StartPosition;
 
 	return gScene->createActor(actorDesc);
 }
+
+
+
+/***********************************************************
+	create character controller
+***********************************************************/
+unsigned int PhysXEngine::CreateCharacter(const NxVec3 & StartPosition, float radius, float height)
+{
+	NxCapsuleControllerDesc desc;
+	desc.position.x		= StartPosition.x;
+	desc.position.y		= StartPosition.y;
+	desc.position.z		= StartPosition.z;
+	desc.radius			= radius;
+	desc.height			= height;
+	desc.upDirection	= NX_Y;
+	desc.slopeLimit		= 0;
+	desc.skinWidth		= SKINWIDTH;
+	desc.stepOffset		= radius * 0.5f;
+	desc.callback		= &gControllerHitReport;
+	gManager->createController(gScene, desc);
+
+	return _current_controller_idx++;
+}
+
+
+
+/***********************************************************
+ move character
+ returned collision flags, collection of NxControllerFlag
+***********************************************************/
+unsigned int PhysXEngine::MoveCharacter(unsigned int characterIndex, const NxVec3& moveVector)
+{
+	NxU32 collisionFlags;
+
+	NxController* ctrl = gManager->getController(characterIndex);
+	if(ctrl)
+		ctrl->move(moveVector, COLLIDABLE_MASK, 0.000001f, collisionFlags);
+
+	return collisionFlags;
+}
+
+
+
+/***********************************************************
+get gravity
+***********************************************************/
+void PhysXEngine::GetGravity(NxVec3 & Gravity)
+{
+	return gScene->getGravity(Gravity);
+}
+
+
+
+void PhysXEngine::GetCharacterPosition(unsigned int characterIndex, float &posX, float &posY, float &posZ)
+{
+	NxExtendedVec3 vec = gManager->getController(characterIndex)->getPosition();
+	posX = (float)vec.x;
+	posY = (float)vec.y;
+	posZ = (float)vec.z;
+}
+
+
 
 
 /***********************************************************
@@ -263,6 +439,11 @@ NxActor* PhysXEngine::CreateCapsule(const NxVec3 & StartPosition, float radius, 
 ***********************************************************/
 void PhysXEngine::RenderActors()
 {
+	glEnable(GL_BLEND);
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_DEPTH_TEST);
+	glLineWidth(2.0f);
+
     // Render all the actors in the scene
     NxU32 nbActors = gScene->getNbActors();
     NxActor** actors = gScene->getActors();
@@ -270,20 +451,11 @@ void PhysXEngine::RenderActors()
     {
         NxActor* actor = *actors++;
 
-		glEnable(GL_BLEND);
-		glDisable(GL_TEXTURE_2D);
-		glDisable(GL_DEPTH_TEST);
-
-		glLineWidth(2.0f);
-
-
 		glPushMatrix();
 
 		glScalef(1, 0.5f, 1);
-
 		NxMat34 pose = actor->getShapes()[0]->getGlobalPose();
 		//glTranslated(pose.t.x, pose.t.y/2. + 0.5, pose.t.z);
-
 
 		float glmat[16];	//4x4 column major matrix for OpenGL.
 		pose.M.getColumnMajorStride4(&(glmat[0]));
@@ -293,15 +465,6 @@ void PhysXEngine::RenderActors()
 		glmat[15] = 1.0f;
 		glMultMatrixf(&(glmat[0]));
 
-
-		//glBegin(GL_LINES);
-		//	glVertex3f(-1,0,0);
-		//	glVertex3f(1,0,0);
-		//	glVertex3f(0,0,-1);
-		//	glVertex3f(0,0,+1);
-		//glEnd();
-
-		
 		NxBoxShape* boxshap = actor->getShapes()[0]->isBox();
 		if(boxshap)
 		{
@@ -348,7 +511,7 @@ void PhysXEngine::RenderActors()
 			for(int i=1; i<100; ++i)
 			{
 				glColor4f(1.0f,0.0f,0.0f, 1.f);
-				float _sizeX = i, _sizeY = 0, _sizeZ = i;
+				float _sizeX = (float)i, _sizeY = 0, _sizeZ = (float)i;
 				glBegin(GL_LINES);
 					glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
 					glVertex3f(_sizeX,-_sizeY,-_sizeZ);
@@ -365,8 +528,57 @@ void PhysXEngine::RenderActors()
 
 		glPopMatrix();
 
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_TEXTURE_2D);
 
     }
+
+	for(unsigned int i=0; i<gManager->getNbControllers(); ++i)
+	{
+		NxController* ctrl = gManager->getController(i);
+		NxExtendedVec3 vec = ctrl->getPosition();
+
+		glPushMatrix();
+		glTranslated(vec.x, vec.y, vec.z);
+		glColor4f(1.0f,1.0f,0.0f, 1.f);
+
+		float _sizeX = 1, _sizeY = 3, _sizeZ = 1;
+		glBegin(GL_LINES);
+			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+			glVertex3f(_sizeX,-_sizeY,_sizeZ);
+			glVertex3f(_sizeX,-_sizeY,_sizeZ);
+			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+
+			glVertex3f(-_sizeX,_sizeY,-_sizeZ);
+			glVertex3f(_sizeX,_sizeY,-_sizeZ);
+			glVertex3f(_sizeX,_sizeY,-_sizeZ);
+			glVertex3f(_sizeX,_sizeY,_sizeZ);
+			glVertex3f(_sizeX,_sizeY,_sizeZ);
+			glVertex3f(-_sizeX,_sizeY,_sizeZ);
+			glVertex3f(-_sizeX,_sizeY,_sizeZ);
+			glVertex3f(-_sizeX,_sizeY,-_sizeZ);
+
+			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+			glVertex3f(-_sizeX,_sizeY,-_sizeZ);
+
+			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+			glVertex3f(_sizeX,_sizeY,-_sizeZ);
+
+			glVertex3f(_sizeX,-_sizeY,_sizeZ);
+			glVertex3f(_sizeX,_sizeY,_sizeZ);
+
+			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+			glVertex3f(-_sizeX,_sizeY,_sizeZ);
+		glEnd();
+
+		glPopMatrix();
+	}
+
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_2D);
 }
+
+

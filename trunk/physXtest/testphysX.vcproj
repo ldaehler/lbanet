@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="TestPhysX"
 	ProjectGUID="{B46236F6-9F3B-4B3A-BD27-13E94D8833F2}"
 	RootNamespace="perspectivemapviewer"
@@ -138,7 +138,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDLmain.lib opengl32.lib glu32.lib ice.lib iceutil.lib glacier2.lib libpng.lib zlib.lib DevIL.lib ILU.lib ILUT.lib tinyxml_STL.lib fmodex_vc.lib libfreetype.lib CEGUIBase.lib CEGUIOpenGLRenderer.lib libircclient-static.lib wsock32.lib libconfig++.lib vfw32.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib"
+				AdditionalDependencies="SDL.lib SDLmain.lib opengl32.lib glu32.lib ice.lib iceutil.lib glacier2.lib libpng.lib zlib.lib DevIL.lib ILU.lib ILUT.lib tinyxml_STL.lib fmodex_vc.lib libfreetype.lib CEGUIBase.lib CEGUIOpenGLRenderer.lib libircclient-static.lib wsock32.lib libconfig++.lib vfw32.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib winmm.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\dependencies\SDL\lib;&quot;c:\Ice-3.3.1-VC90\lib&quot;;..\dependencies\DevIL\lib;..\dependencies\tinyxml\lib;..\dependencies\fmod\lib;..\dependencies\Boost\lib;..\dependencies\CEGUI\lib;..\dependencies\libircclient\lib;..\dependencies\libconfig\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;"
 				GenerateDebugInformation="true"
@@ -199,11 +199,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MapFileLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MapMapRenderer.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\PhysXEngine.cpp"
 				>
 			</File>
 			<File
+				RelativePath=".\PlayerHandler.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SynchronizedTimeHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\UserAllocator.cpp"
 				>
 			</File>
 		</Filter>
@@ -233,11 +249,35 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MapFileLoader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MapMapRenderer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MapRendererBase.h"
+				>
+			</File>
+			<File
 				RelativePath=".\PhysXEngine.h"
 				>
 			</File>
 			<File
+				RelativePath=".\PlayerHandler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SampleMutex_WIN.h"
+				>
+			</File>
+			<File
 				RelativePath=".\SynchronizedTimeHandler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\UserAllocator.h"
 				>
 			</File>
 		</Filter>

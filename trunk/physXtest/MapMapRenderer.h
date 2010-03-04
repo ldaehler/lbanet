@@ -22,51 +22,53 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#if !defined(__LbaNetModel_1_LbaNetModel_h)
-#define __LbaNetModel_1_LbaNetModel_h
-
+#if !defined(__LbaNetModel_1_MapMapRenderer_h)
+#define __LbaNetModel_1_MapMapRenderer_h
 
 #include <string>
-#include <vector>
 #include <map>
+#include "MapRendererBase.h"
+#include "MapFileLoader.h"
 
-class Camera;
-class MapRendererBase;
 
 /***********************************************************************
- * Module:  LbaNetModel.h
- * Author:  vivien
- * Modified: mardi 14 juillet 2009 13:54:52
- * Purpose: Declaration of the class LbaNetModel
+ * Module:  MapRenderer.h
+ * Author:  Vivien
+ * Modified: dimanche 12 juillet 2009 21:09:21
+ * Purpose: Declaration of the class MapRenderer
  ***********************************************************************/
-class LbaNetModel
+class MapMapRenderer : public MapRendererBase
 {
 public:
 	//! constructor
-	LbaNetModel();
+	MapMapRenderer(const std::string &mapfilename, const std::string &texturefilename);
 
 	//! destructor
-	~LbaNetModel();
+	virtual ~MapMapRenderer();
 
-	//! init function
-	void Initialize();
 
-	//! set screen size
-	void SetScreenSize(int screenX, int screenY);
+	//! render
+	virtual void Render();
 
-	//! draw the current state on the screen
-	void Draw();
+	// cut the room at a certain Y to display only bottom
+	virtual void SetMapYLimit(int YLimit);
 
-	// update camera functions
-	void DeltaUpdateZoom(bool ZoomIn);
-	void DeltaUpdateZenit(double zenit);
+	// flush the current map texture
+	virtual void FlushTexture();
+
+	//reload the current map texture
+	virtual void ReloadTexture();
+
 
 private:
-	Camera *				_camera;
-	MapRendererBase*		_map;
+	std::string		_mapfilename;
+	std::string		_texturefilename;
+	
+	int				_YLimit;
+	MapModel*		_objmodel;	
 
-	int						_windowWidth;
-	int						_windowHeight;
+	bool			_textureLoaded;
+	unsigned int	_textureid;
 };
 
 #endif
