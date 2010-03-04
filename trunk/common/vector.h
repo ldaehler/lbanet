@@ -83,6 +83,27 @@ public:
 		return !(v == *this);
 	}
 
+	const bool operator < ( const VECTOR& v ) const
+	{
+		if(v.x < x)
+			return true;
+
+		if(v.x == x)
+		{
+			if(v.y < y)
+				return true;
+
+			if(v.y == y)
+			{
+				if(v.z < z)
+					return true;
+			}
+		}
+
+		return false;
+	}
+
+
 	//negate
 	const VECTOR operator - () const
 	{
