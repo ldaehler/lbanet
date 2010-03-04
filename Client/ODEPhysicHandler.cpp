@@ -73,6 +73,9 @@ ODEPhysicHandler::~ODEPhysicHandler()
 ***********************************************************/
 void ODEPhysicHandler::Init()
 {
+	dInitODE2(0);
+	dAllocateODEDataForThread(dAllocateFlagCollisionData);
+
 	_world = dWorldCreate();
 	_space = dHashSpaceCreate(0);
 
