@@ -44,6 +44,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ConfigurationManager.h"
 #include "DataLoader.h"
 #include "ImageSetHandler.h"
+#include "PhysXEngine.h"
+
 
 #define TICK_INTERVAL    30 //16
 
@@ -76,6 +78,8 @@ LbaNetEngine::LbaNetEngine(ServerConnectionHandler * serverH, const std::string 
 ***********************************************************/
 LbaNetEngine::~LbaNetEngine()
 {
+	PhysXEngine::getInstance()->Quit();
+
 	// free screen
 	SDL_FreeSurface(m_screen);
 
@@ -158,6 +162,8 @@ void LbaNetEngine::Initialize(void)
 	SwitchGuiToLogin();
 
 	LoadHaloTexture();
+
+	PhysXEngine::getInstance()->Init();
 }
 
 
@@ -212,6 +218,8 @@ process function
 ***********************************************************/
 bool LbaNetEngine::Process(void)
 {
+	PhysXEngine::getInstance()->GetPhysicsResults();
+
 	//let the gui process
 	//if(m_currentstate != EGaming)
 	//{
@@ -223,6 +231,9 @@ bool LbaNetEngine::Process(void)
 
 	// process model
 	m_lbaNetModel.Process();
+
+
+	PhysXEngine::getInstance()->StartPhysics();
 
 	return true;
 }
