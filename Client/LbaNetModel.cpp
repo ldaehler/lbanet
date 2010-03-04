@@ -482,6 +482,8 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float 
 {
 	if(NewMap != _current_map)
 	{
+		Y+= 10;
+
 		ThreadSafeWorkpile::getInstance()->OpenCloseContainer(0, true);
 
 		CleanupMap();
@@ -505,10 +507,10 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float 
 
 			std::string mapN = "Data/" + MI->Files["Maps"];
 
-			//PhysicHandler * ph = new PhysicHandler(_localActorsHandler, _externalActorsHandler);
-			//_mapRenderer = new MapRenderer(mapN, ph);
+			PhysicHandler * ph = new PhysicHandler(_localActorsHandler, _externalActorsHandler);
+			_mapRenderer = new MapRenderer(mapN, ph);
 			//_mapRenderer = new ObjMapRenderer("Twinsenshouse.obj", "Twinsenshouse.png");
-			_mapRenderer = new MapMapRenderer("Twinsenshouse.map", "Twinsenshouse.png");
+			//_mapRenderer = new MapMapRenderer("Twinsenshouse.map", "Twinsenshouse.png");
 
 			//_physicHandler = new PlanesPhysicHandler("map3.phy", _localActorsHandler, _externalActorsHandler);
 			_physicHandler = new PhysXPhysicHandler("map3.phy", _localActorsHandler, _externalActorsHandler,

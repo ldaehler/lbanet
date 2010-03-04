@@ -190,7 +190,11 @@ void MainPlayerHandler::Render()
     glEnable(GL_TEXTURE_2D);
 
 	// draw the player
+	glPushMatrix();
+	glTranslated(0, (-2.5 / 2), 0);
 	_player->Render(-1);
+	glPopMatrix();
+
 }
 
 

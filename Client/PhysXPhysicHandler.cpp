@@ -43,6 +43,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <GL/glu.h>     // Header File For The GLu32 Library
 
 
+
+
+NxU32 findvertexinmap(std::map<VECTOR, NxU32> & map, NxU32 & curridx, 
+					  std::vector<float> & vertexes, const VECTOR & vertex)
+{
+	std::map<VECTOR, NxU32>::iterator itm = map.find(vertex);
+	if(itm != map.end())
+		return itm->second;
+
+	map[vertex] = curridx;
+	vertexes.push_back(vertex.x);
+	vertexes.push_back(vertex.y);
+	vertexes.push_back(vertex.z);
+	return curridx++;
+}
+
+
 /*
 --------------------------------------------------------------------------------------------------
 - constructor
@@ -57,6 +74,12 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 	std::ifstream file(filename.c_str());
 	if(!file.is_open())
 		return;
+
+
+	std::map<VECTOR, NxU32> vertexmap;
+	std::vector<float> vertexes;
+	std::vector<NxU32> indices;
+	NxU32 indiceidx = 0;
 
 	int sizePlanes, sizewallX, sizewallZ, sizeStairs, sizecornerStairs;
 	file>>sizePlanes;
@@ -80,6 +103,26 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 		np.Square._minZ = MIN(sz, ez);
 		np.Square._maxZ = MAX(sz, ez);
 
+		VECTOR p1(np.Square._minX, np.Layer, np.Square._minZ);
+		VECTOR p2(np.Square._minX, np.Layer, np.Square._maxZ);
+		VECTOR p3(np.Square._maxX, np.Layer, np.Square._maxZ);
+		VECTOR p4(np.Square._maxX, np.Layer, np.Square._minZ);
+
+		//VECTOR norm1 = ((p2 - p1).cross(p3-p1)).unit();
+		//VECTOR norm2 = ((p1 - p4).cross(p3-p4)).unit();
+
+		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
+		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
+		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+
+		//if(norm1.y < 0.5)
+		//	std::cout<<"oups"<<std::endl;
+		//if(norm2.y < 0.5)
+		//	std::cout<<"oups"<<std::endl;
+
 		file>>np.IsWater;
 		_floors[np.Layer].push_back(np);
 	}
@@ -99,6 +142,29 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 		np.Square._minZ = MIN(sz, ez);
 		np.Square._maxZ = MAX(sz, ez);
 
+
+		VECTOR p1(np.Layer, np.Square._minX, np.Square._minZ);
+		VECTOR p2(np.Layer, np.Square._minX, np.Square._maxZ);
+		VECTOR p3(np.Layer, np.Square._maxX, np.Square._maxZ);
+		VECTOR p4(np.Layer, np.Square._maxX, np.Square._minZ);
+
+		//VECTOR norm1 = ((p3-p1).cross(p2 - p1)).unit();
+		//VECTOR norm2 = ((p3-p4).cross(p1 - p4)).unit();
+
+		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
+		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
+		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+
+
+		//if(norm1.x < 0.5)
+		//	std::cout<<"oups"<<std::endl;
+		//if(norm2.x < 0.5)
+		//	std::cout<<"oups"<<std::endl;
+
+
 		_wallsX[np.Layer].push_back(np);
 	}
 
@@ -116,6 +182,29 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 		np.Square._maxX = MAX(sx, ex);
 		np.Square._minZ = MIN(sz, ez);
 		np.Square._maxZ = MAX(sz, ez);
+
+
+		VECTOR p1(np.Square._minX, np.Square._minZ, np.Layer);
+		VECTOR p2(np.Square._minX, np.Square._maxZ, np.Layer);
+		VECTOR p3(np.Square._maxX, np.Square._maxZ, np.Layer);
+		VECTOR p4(np.Square._maxX, np.Square._minZ, np.Layer);
+
+		//VECTOR norm1 = ((p3-p1).cross(p2 - p1)).unit();
+		//VECTOR norm2 = ((p3-p4).cross(p1 - p4)).unit();
+
+		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
+		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
+		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+
+
+		//if(norm1.z < 0.5)
+		//	std::cout<<"oups"<<std::endl;
+		//if(norm2.z < 0.5)
+		//	std::cout<<"oups"<<std::endl;
+
 
 		_wallsZ[np.Layer].push_back(np);
 	}
@@ -135,6 +224,38 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 		file>>sp.C4.x;
 		file>>sp.C4.y;
 		file>>sp.C4.z;
+
+
+		VECTOR norm1 = ((sp.C3 - sp.C1).cross(sp.C2-sp.C1)).unit();
+		VECTOR norm2 = ((sp.C2 - sp.C4).cross(sp.C3-sp.C4)).unit();
+
+		if(norm1.y < 0.5)
+		{
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C1));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C2));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C3));
+		}
+		else
+		{
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C1));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C3));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C2));
+		}
+
+		if(norm2.y < 0.5)
+		{
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C4));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C3));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C2));
+		}
+		else
+		{
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C4));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C2));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C3));
+		}
+
+
 
 		sp.Normal = ((sp.C2 - sp.C1).cross(sp.C3-sp.C1)).unit();
 	
@@ -162,7 +283,11 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 	_lastposY = posY;
 	_lastposZ = posZ;
 
-	_controllerid = PhysXEngine::getInstance()->CreateCharacter(NxVec3(_lastposX, _lastposY, _lastposZ), 0.4, 2.5);
+	_controller = PhysXEngine::getInstance()->CreateCharacter(NxVec3(_lastposX, _lastposY, _lastposZ), 0.4, 3.8);
+
+	_map = PhysXEngine::getInstance()->CreateTriangleMesh(NxVec3(0,0,0), &vertexes[0], 
+										vertexes.size(), &indices[0], indices.size());
+
 }
 
 /*
@@ -172,7 +297,8 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 */
 PhysXPhysicHandler::~PhysXPhysicHandler()
 {
-
+	PhysXEngine::getInstance()->DestroyActor(_map);
+	PhysXEngine::getInstance()->DestroyCharacter(_controller);
 }
 
 /*
@@ -194,11 +320,11 @@ MoveOutput PhysXPhysicHandler::MoveActor(long ActorId, const AABB & actorBB,
 	res.TouchingGround = false;
 
 
-	unsigned int flags = PhysXEngine::getInstance()->MoveCharacter(_controllerid, 
+	unsigned int flags = PhysXEngine::getInstance()->MoveCharacter(_controller, 
 													NxVec3(Speed.x, Speed.y, Speed.z));
 
 	float posX, posY, posZ;
-	PhysXEngine::getInstance()->GetCharacterPosition(_controllerid, posX, posY, posZ);
+	PhysXEngine::getInstance()->GetCharacterPosition(_controller, posX, posY, posZ);
 
 	res.NewSpeed.x = posX - _lastposX;
 	res.NewSpeed.y = posY - _lastposY;

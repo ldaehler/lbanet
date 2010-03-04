@@ -27,6 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "NxControllerManager.h"
 #include "NxCapsuleController.h"
 #include "UserAllocator.h"
+#include "NxCooking.h"
+#include "Stream.h"
 
 
 #include <windows.h>    // Header File For Windows
@@ -112,7 +114,7 @@ PhysXEngine * PhysXEngine::getInstance()
 	Constructor
 ***********************************************************/
 PhysXEngine::PhysXEngine()
-: _current_controller_idx(0), gAllocator(NULL)
+: gAllocator(NULL)
 {
 	gAllocator = new UserAllocator();
 }
@@ -157,7 +159,7 @@ void PhysXEngine::Init()
     // Create the scene
     NxSceneDesc sceneDesc;
  	sceneDesc.simType				= NX_SIMULATION_SW;
-    sceneDesc.gravity               = NxVec3(0,-9.8f,0);
+    sceneDesc.gravity               = NxVec3(0,-0.2f/*-9.8f*/,0);
     gScene = gPhysicsSDK->createScene(sceneDesc);	
 	if(!gScene)
 	{ 
@@ -209,16 +211,20 @@ void PhysXEngine::Quit()
 	{
 		// Make sure to fetchResults() before shutting down
 		GetPhysicsResults();  
+
+		// clean up character controllers
+		gManager->purgeControllers();
+		NxReleaseControllerManager(gManager);
+		gManager = NULL;
+
 		gPhysicsSDK->releaseScene(*gScene);
+		gScene = NULL;
 	}
 
 	if (gPhysicsSDK)  
 		gPhysicsSDK->release();
 
-	// clean up character controllers
-	gManager->purgeControllers();
-	_current_controller_idx = 0;
-	NxReleaseControllerManager(gManager);
+	gPhysicsSDK = NULL;
 }
 
 
@@ -376,7 +382,7 @@ NxActor* PhysXEngine::CreateCapsule(const NxVec3 & StartPosition, float radius, 
 /***********************************************************
 	create character controller
 ***********************************************************/
-unsigned int PhysXEngine::CreateCharacter(const NxVec3 & StartPosition, float radius, float height)
+NxController* PhysXEngine::CreateCharacter(const NxVec3 & StartPosition, float radius, float height)
 {
 	NxCapsuleControllerDesc desc;
 	desc.position.x		= StartPosition.x;
@@ -389,9 +395,74 @@ unsigned int PhysXEngine::CreateCharacter(const NxVec3 & StartPosition, float ra
 	desc.skinWidth		= SKINWIDTH;
 	desc.stepOffset		= radius * 0.5f;
 	desc.callback		= &gControllerHitReport;
-	gManager->createController(gScene, desc);
+	return gManager->createController(gScene, desc);
+}
 
-	return _current_controller_idx++;
+
+
+/***********************************************************
+	CreateTriangleMesh
+***********************************************************/
+NxActor* PhysXEngine::CreateTriangleMesh(const NxVec3 & StartPosition, float *Vertexes, size_t VertexesSize, 
+										 unsigned int *Indices, size_t IndicesSize)
+{
+	// Create descriptor for triangle mesh
+	NxTriangleMeshDesc triangleMeshDesc;
+	triangleMeshDesc.numVertices = VertexesSize/3;
+	triangleMeshDesc.pointStrideBytes = 3 * sizeof(float);
+	triangleMeshDesc.points	= Vertexes;
+	triangleMeshDesc.numTriangles = IndicesSize/3;
+	triangleMeshDesc.flags = 0;
+	triangleMeshDesc.triangles = Indices;
+	triangleMeshDesc.triangleStrideBytes = 3 * sizeof(unsigned int);
+
+
+	// The actor has one shape, a triangle mesh
+	NxInitCooking();
+	MemoryWriteBuffer buf;
+
+	bool status = NxCookTriangleMesh(triangleMeshDesc, buf);
+	NxTriangleMesh* pMesh;
+	if (status)
+	{
+		pMesh = gPhysicsSDK->createTriangleMesh(MemoryReadBuffer(buf.data));
+	}
+	else
+	{
+		assert(false);
+		pMesh = NULL;
+	}
+	NxCloseCooking();
+
+	// Create TriangleMesh above code segment.
+	NxTriangleMeshShapeDesc tmsd;
+	tmsd.meshData			= pMesh;
+	//tmsd.userData			= triangleMeshDesc;
+	tmsd.localPose.t		= NxVec3(0, 0, 0);
+	tmsd.meshPagingMode 	= NX_MESH_PAGING_AUTO;
+	tmsd.group = GROUP_COLLIDABLE_NON_PUSHABLE;
+
+	NxActorDesc actorDesc;
+	NxBodyDesc  bodyDesc;
+
+	assert(tmsd.isValid());
+	actorDesc.shapes.pushBack(&tmsd);
+	actorDesc.body		= NULL;		
+	actorDesc.globalPose.t	= StartPosition;
+
+	if (pMesh)
+	{
+		// Save mesh in userData for drawing
+		//pMesh->saveToDesc(triangleMeshDesc);
+
+		assert(actorDesc.isValid());
+		NxActor *actor = gScene->createActor(actorDesc);
+		assert(actor);
+
+		return actor;
+	}
+
+	return NULL;
 }
 
 
@@ -400,13 +471,11 @@ unsigned int PhysXEngine::CreateCharacter(const NxVec3 & StartPosition, float ra
  move character
  returned collision flags, collection of NxControllerFlag
 ***********************************************************/
-unsigned int PhysXEngine::MoveCharacter(unsigned int characterIndex, const NxVec3& moveVector)
+unsigned int PhysXEngine::MoveCharacter(NxController* character, const NxVec3& moveVector)
 {
 	NxU32 collisionFlags;
-
-	NxController* ctrl = gManager->getController(characterIndex);
-	if(ctrl)
-		ctrl->move(moveVector, COLLIDABLE_MASK, 0.000001f, collisionFlags);
+	if(character)
+		character->move(moveVector, COLLIDABLE_MASK, 0.000001f, collisionFlags);
 
 	return collisionFlags;
 }
@@ -418,14 +487,37 @@ get gravity
 ***********************************************************/
 void PhysXEngine::GetGravity(NxVec3 & Gravity)
 {
-	return gScene->getGravity(Gravity);
+	if(gScene)
+		gScene->getGravity(Gravity);
+}
+
+/***********************************************************
+DestroyActor
+***********************************************************/
+void PhysXEngine::DestroyActor(NxActor* actor)
+{
+	if(gScene && actor)
+		gScene->releaseActor(*actor);
+}
+
+/***********************************************************
+DestroyCharacter
+***********************************************************/
+void PhysXEngine::DestroyCharacter(NxController* character)
+{
+	if(gManager && character)
+		gManager->releaseController(*character);
 }
 
 
 
-void PhysXEngine::GetCharacterPosition(unsigned int characterIndex, float &posX, float &posY, float &posZ)
+
+/***********************************************************
+GetCharacterPosition
+***********************************************************/
+void PhysXEngine::GetCharacterPosition(NxController* character, float &posX, float &posY, float &posZ)
 {
-	NxExtendedVec3 vec = gManager->getController(characterIndex)->getPosition();
+	NxExtendedVec3 vec = character->getPosition();
 	posX = (float)vec.x;
 	posY = (float)vec.y;
 	posZ = (float)vec.z;
@@ -531,54 +623,53 @@ void PhysXEngine::RenderActors()
 
     }
 
-	for(unsigned int i=0; i<gManager->getNbControllers(); ++i)
-	{
-		NxController* ctrl = gManager->getController(i);
-		NxExtendedVec3 vec = ctrl->getPosition();
+	//for(unsigned int i=0; i<gManager->getNbControllers(); ++i)
+	//{
+	//	NxController* ctrl = gManager->getController(i);
+	//	NxExtendedVec3 vec = ctrl->getPosition();
 
-		glPushMatrix();
-		glTranslated(vec.x, vec.y, vec.z);
-		glColor4f(1.0f,1.0f,0.0f, 1.f);
+	//	glPushMatrix();
+	//	glScalef(1, 0.5f, 1);
+	//	glTranslated(vec.x, vec.y, vec.z);
+	//	glColor4f(1.0f,1.0f,0.0f, 1.f);
 
-		float _sizeX = 0.4f, _sizeY = 2.5f, _sizeZ = 0.4f;
-		glBegin(GL_LINES);
-			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
-			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
-			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
-			glVertex3f(_sizeX,-_sizeY,_sizeZ);
-			glVertex3f(_sizeX,-_sizeY,_sizeZ);
-			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
-			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
-			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+	//	float _sizeX = 0.4f, _sizeY = 2.5f, _sizeZ = 0.4f;
+	//	glBegin(GL_LINES);
+	//		glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+	//		glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+	//		glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+	//		glVertex3f(_sizeX,-_sizeY,_sizeZ);
+	//		glVertex3f(_sizeX,-_sizeY,_sizeZ);
+	//		glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+	//		glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+	//		glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
 
-			glVertex3f(-_sizeX,_sizeY,-_sizeZ);
-			glVertex3f(_sizeX,_sizeY,-_sizeZ);
-			glVertex3f(_sizeX,_sizeY,-_sizeZ);
-			glVertex3f(_sizeX,_sizeY,_sizeZ);
-			glVertex3f(_sizeX,_sizeY,_sizeZ);
-			glVertex3f(-_sizeX,_sizeY,_sizeZ);
-			glVertex3f(-_sizeX,_sizeY,_sizeZ);
-			glVertex3f(-_sizeX,_sizeY,-_sizeZ);
+	//		glVertex3f(-_sizeX,_sizeY,-_sizeZ);
+	//		glVertex3f(_sizeX,_sizeY,-_sizeZ);
+	//		glVertex3f(_sizeX,_sizeY,-_sizeZ);
+	//		glVertex3f(_sizeX,_sizeY,_sizeZ);
+	//		glVertex3f(_sizeX,_sizeY,_sizeZ);
+	//		glVertex3f(-_sizeX,_sizeY,_sizeZ);
+	//		glVertex3f(-_sizeX,_sizeY,_sizeZ);
+	//		glVertex3f(-_sizeX,_sizeY,-_sizeZ);
 
-			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
-			glVertex3f(-_sizeX,_sizeY,-_sizeZ);
+	//		glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+	//		glVertex3f(-_sizeX,_sizeY,-_sizeZ);
 
-			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
-			glVertex3f(_sizeX,_sizeY,-_sizeZ);
+	//		glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+	//		glVertex3f(_sizeX,_sizeY,-_sizeZ);
 
-			glVertex3f(_sizeX,-_sizeY,_sizeZ);
-			glVertex3f(_sizeX,_sizeY,_sizeZ);
+	//		glVertex3f(_sizeX,-_sizeY,_sizeZ);
+	//		glVertex3f(_sizeX,_sizeY,_sizeZ);
 
-			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
-			glVertex3f(-_sizeX,_sizeY,_sizeZ);
-		glEnd();
+	//		glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+	//		glVertex3f(-_sizeX,_sizeY,_sizeZ);
+	//	glEnd();
 
-		glPopMatrix();
-	}
+	//	glPopMatrix();
+	//}
 
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
 }
-
-
