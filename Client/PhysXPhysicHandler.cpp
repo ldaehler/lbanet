@@ -45,21 +45,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 
-NxU32 findvertexinmap(std::map<VECTOR, NxU32> & map, NxU32 & curridx, 
-					  std::vector<float> & vertexes, const VECTOR & vertex)
-{
-	std::map<VECTOR, NxU32>::iterator itm = map.find(vertex);
-	if(itm != map.end())
-		return itm->second;
-
-	map[vertex] = curridx;
-	vertexes.push_back(vertex.x);
-	vertexes.push_back(vertex.y);
-	vertexes.push_back(vertex.z);
-	return curridx++;
-}
-
-
 /*
 --------------------------------------------------------------------------------------------------
 - constructor
@@ -70,214 +55,240 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 										float posX, float posY, float posZ)
 	: _localAH(LAH), _externalAH(EAH)
 {
+	std::ifstream file(filename.c_str(), std::ifstream::binary);
+	unsigned int sizevertex;
+	unsigned int sizeindices;
+	file.read((char*)&sizevertex, sizeof(unsigned int));
+	file.read((char*)&sizeindices, sizeof(unsigned int));
 
-	std::ifstream file(filename.c_str());
-	if(!file.is_open())
-		return;
-
-
-	std::map<VECTOR, NxU32> vertexmap;
-	std::vector<float> vertexes;
-	std::vector<NxU32> indices;
-	NxU32 indiceidx = 0;
-
-	int sizePlanes, sizewallX, sizewallZ, sizeStairs, sizecornerStairs;
-	file>>sizePlanes;
-	file>>sizewallX;
-	file>>sizewallZ;
-	file>>sizeStairs;
-	file>>sizecornerStairs;
-
-	for(int i=0; i<sizePlanes; ++i)
-	{
-		NormalPlane np;
-		file>>np.Layer;
-
-		float sx, sz, ex, ez;
-		file>>sx;
-		file>>sz;
-		file>>ex;
-		file>>ez;
-		np.Square._minX = MIN(sx, ex);
-		np.Square._maxX = MAX(sx, ex);
-		np.Square._minZ = MIN(sz, ez);
-		np.Square._maxZ = MAX(sz, ez);
-
-		VECTOR p1(np.Square._minX, np.Layer, np.Square._minZ);
-		VECTOR p2(np.Square._minX, np.Layer, np.Square._maxZ);
-		VECTOR p3(np.Square._maxX, np.Layer, np.Square._maxZ);
-		VECTOR p4(np.Square._maxX, np.Layer, np.Square._minZ);
-
-		//VECTOR norm1 = ((p2 - p1).cross(p3-p1)).unit();
-		//VECTOR norm2 = ((p1 - p4).cross(p3-p4)).unit();
-
-		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
-		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
-		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
-		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
-		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
-		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
-
-		//if(norm1.y < 0.5)
-		//	std::cout<<"oups"<<std::endl;
-		//if(norm2.y < 0.5)
-		//	std::cout<<"oups"<<std::endl;
-
-		file>>np.IsWater;
-		_floors[np.Layer].push_back(np);
-	}
-
-	for(int i=0; i<sizewallX; ++i)
-	{
-		NormalPlane np;
-		file>>np.Layer;
-
-		float sx, sz, ex, ez;
-		file>>sx;
-		file>>sz;
-		file>>ex;
-		file>>ez;
-		np.Square._minX = MIN(sx, ex);
-		np.Square._maxX = MAX(sx, ex);
-		np.Square._minZ = MIN(sz, ez);
-		np.Square._maxZ = MAX(sz, ez);
+	float *buffervertex = new float[sizevertex];
+	unsigned int *bufferindices = new unsigned int[sizeindices];
+	file.read((char*)buffervertex, sizevertex*sizeof(float));
+	file.read((char*)bufferindices, sizeindices*sizeof(unsigned int));
 
 
-		VECTOR p1(np.Layer, np.Square._minX, np.Square._minZ);
-		VECTOR p2(np.Layer, np.Square._minX, np.Square._maxZ);
-		VECTOR p3(np.Layer, np.Square._maxX, np.Square._maxZ);
-		VECTOR p4(np.Layer, np.Square._maxX, np.Square._minZ);
-
-		//VECTOR norm1 = ((p3-p1).cross(p2 - p1)).unit();
-		//VECTOR norm2 = ((p3-p4).cross(p1 - p4)).unit();
-
-		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
-		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
-		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
-		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
-		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
-		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+	//std::ifstream file(filename.c_str());
+	//if(!file.is_open())
+	//	return;
 
 
-		//if(norm1.x < 0.5)
-		//	std::cout<<"oups"<<std::endl;
-		//if(norm2.x < 0.5)
-		//	std::cout<<"oups"<<std::endl;
+	//std::map<VECTOR, NxU32> vertexmap;
+	//std::vector<float> vertexes;
+	//std::vector<NxU32> indices;
+	//NxU32 indiceidx = 0;
+
+	//int sizePlanes, sizewallX, sizewallZ, sizeStairs, sizecornerStairs;
+	//file>>sizePlanes;
+	//file>>sizewallX;
+	//file>>sizewallZ;
+	//file>>sizeStairs;
+	//file>>sizecornerStairs;
+
+	//for(int i=0; i<sizePlanes; ++i)
+	//{
+	//	NormalPlane np;
+	//	file>>np.Layer;
+
+	//	float sx, sz, ex, ez;
+	//	file>>sx;
+	//	file>>sz;
+	//	file>>ex;
+	//	file>>ez;
+	//	np.Square._minX = MIN(sx, ex);
+	//	np.Square._maxX = MAX(sx, ex);
+	//	np.Square._minZ = MIN(sz, ez);
+	//	np.Square._maxZ = MAX(sz, ez);
+
+	//	VECTOR p1(np.Square._minX, np.Layer, np.Square._minZ);
+	//	VECTOR p2(np.Square._minX, np.Layer, np.Square._maxZ);
+	//	VECTOR p3(np.Square._maxX, np.Layer, np.Square._maxZ);
+	//	VECTOR p4(np.Square._maxX, np.Layer, np.Square._minZ);
+
+	//	//VECTOR norm1 = ((p2 - p1).cross(p3-p1)).unit();
+	//	//VECTOR norm2 = ((p1 - p4).cross(p3-p4)).unit();
+
+	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
+	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
+	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+
+	//	//if(norm1.y < 0.5)
+	//	//	std::cout<<"oups"<<std::endl;
+	//	//if(norm2.y < 0.5)
+	//	//	std::cout<<"oups"<<std::endl;
+
+	//	file>>np.IsWater;
+	//	_floors[np.Layer].push_back(np);
+	//}
+
+	//for(int i=0; i<sizewallX; ++i)
+	//{
+	//	NormalPlane np;
+	//	file>>np.Layer;
+
+	//	float sx, sz, ex, ez;
+	//	file>>sx;
+	//	file>>sz;
+	//	file>>ex;
+	//	file>>ez;
+	//	np.Square._minX = MIN(sx, ex);
+	//	np.Square._maxX = MAX(sx, ex);
+	//	np.Square._minZ = MIN(sz, ez);
+	//	np.Square._maxZ = MAX(sz, ez);
 
 
-		_wallsX[np.Layer].push_back(np);
-	}
+	//	VECTOR p1(np.Layer, np.Square._minX, np.Square._minZ);
+	//	VECTOR p2(np.Layer, np.Square._minX, np.Square._maxZ);
+	//	VECTOR p3(np.Layer, np.Square._maxX, np.Square._maxZ);
+	//	VECTOR p4(np.Layer, np.Square._maxX, np.Square._minZ);
 
-	for(int i=0; i<sizewallZ; ++i)
-	{
-		NormalPlane np;
-		file>>np.Layer;
+	//	//VECTOR norm1 = ((p3-p1).cross(p2 - p1)).unit();
+	//	//VECTOR norm2 = ((p3-p4).cross(p1 - p4)).unit();
 
-		float sx, sz, ex, ez;
-		file>>sx;
-		file>>sz;
-		file>>ex;
-		file>>ez;
-		np.Square._minX = MIN(sx, ex);
-		np.Square._maxX = MAX(sx, ex);
-		np.Square._minZ = MIN(sz, ez);
-		np.Square._maxZ = MAX(sz, ez);
+	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
+	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
+	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
 
 
-		VECTOR p1(np.Square._minX, np.Square._minZ, np.Layer);
-		VECTOR p2(np.Square._minX, np.Square._maxZ, np.Layer);
-		VECTOR p3(np.Square._maxX, np.Square._maxZ, np.Layer);
-		VECTOR p4(np.Square._maxX, np.Square._minZ, np.Layer);
-
-		//VECTOR norm1 = ((p3-p1).cross(p2 - p1)).unit();
-		//VECTOR norm2 = ((p3-p4).cross(p1 - p4)).unit();
-
-		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
-		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
-		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
-		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
-		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
-		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+	//	//if(norm1.x < 0.5)
+	//	//	std::cout<<"oups"<<std::endl;
+	//	//if(norm2.x < 0.5)
+	//	//	std::cout<<"oups"<<std::endl;
 
 
-		//if(norm1.z < 0.5)
-		//	std::cout<<"oups"<<std::endl;
-		//if(norm2.z < 0.5)
-		//	std::cout<<"oups"<<std::endl;
+	//	_wallsX[np.Layer].push_back(np);
+	//}
+
+	//for(int i=0; i<sizewallZ; ++i)
+	//{
+	//	NormalPlane np;
+	//	file>>np.Layer;
+
+	//	float sx, sz, ex, ez;
+	//	file>>sx;
+	//	file>>sz;
+	//	file>>ex;
+	//	file>>ez;
+	//	np.Square._minX = MIN(sx, ex);
+	//	np.Square._maxX = MAX(sx, ex);
+	//	np.Square._minZ = MIN(sz, ez);
+	//	np.Square._maxZ = MAX(sz, ez);
 
 
-		_wallsZ[np.Layer].push_back(np);
-	}
+	//	VECTOR p1(np.Square._minX, np.Square._minZ, np.Layer);
+	//	VECTOR p2(np.Square._minX, np.Square._maxZ, np.Layer);
+	//	VECTOR p3(np.Square._maxX, np.Square._maxZ, np.Layer);
+	//	VECTOR p4(np.Square._maxX, np.Square._minZ, np.Layer);
 
-	for(int i=0; i<sizeStairs; ++i)
-	{
-		StairPlane sp;
-		file>>sp.C1.x;
-		file>>sp.C1.y;
-		file>>sp.C1.z;
-		file>>sp.C2.x;
-		file>>sp.C2.y;
-		file>>sp.C2.z;
-		file>>sp.C3.x;
-		file>>sp.C3.y;
-		file>>sp.C3.z;
-		file>>sp.C4.x;
-		file>>sp.C4.y;
-		file>>sp.C4.z;
+	//	//VECTOR norm1 = ((p3-p1).cross(p2 - p1)).unit();
+	//	//VECTOR norm2 = ((p3-p4).cross(p1 - p4)).unit();
+
+	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
+	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
+	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
 
 
-		VECTOR norm1 = ((sp.C3 - sp.C1).cross(sp.C2-sp.C1)).unit();
-		VECTOR norm2 = ((sp.C2 - sp.C4).cross(sp.C3-sp.C4)).unit();
-
-		if(norm1.y < 0.5)
-		{
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C1));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C2));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C3));
-		}
-		else
-		{
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C1));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C3));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C2));
-		}
-
-		if(norm2.y < 0.5)
-		{
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C4));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C3));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C2));
-		}
-		else
-		{
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C4));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C2));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C3));
-		}
+	//	//if(norm1.z < 0.5)
+	//	//	std::cout<<"oups"<<std::endl;
+	//	//if(norm2.z < 0.5)
+	//	//	std::cout<<"oups"<<std::endl;
 
 
+	//	_wallsZ[np.Layer].push_back(np);
+	//}
 
-		sp.Normal = ((sp.C2 - sp.C1).cross(sp.C3-sp.C1)).unit();
-	
-		_stairs.push_back(sp);
-	}
+	//for(int i=0; i<sizeStairs; ++i)
+	//{
+	//	StairPlane sp;
+	//	file>>sp.C1.x;
+	//	file>>sp.C1.y;
+	//	file>>sp.C1.z;
+	//	file>>sp.C2.x;
+	//	file>>sp.C2.y;
+	//	file>>sp.C2.z;
+	//	file>>sp.C3.x;
+	//	file>>sp.C3.y;
+	//	file>>sp.C3.z;
+	//	file>>sp.C4.x;
+	//	file>>sp.C4.y;
+	//	file>>sp.C4.z;
 
-	for(int i=0; i<sizecornerStairs; ++i)
-	{
-		CornerStairPlane sp;
-		file>>sp.C1.x;
-		file>>sp.C1.y;
-		file>>sp.C1.z;
-		file>>sp.C2.x;
-		file>>sp.C2.y;
-		file>>sp.C2.z;
-		file>>sp.C3.x;
-		file>>sp.C3.y;
-		file>>sp.C3.z;
 
-		sp.Normal = ((sp.C2 - sp.C1).cross(sp.C3-sp.C1)).unit();
-		_corner_stairs.push_back(sp);
-	}
+	//	VECTOR norm1 = ((sp.C3 - sp.C1).cross(sp.C2-sp.C1)).unit();
+	//	VECTOR norm2 = ((sp.C2 - sp.C4).cross(sp.C3-sp.C4)).unit();
+
+	//	if(norm1.y < 0.5)
+	//	{
+	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C1));
+	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C2));
+	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C3));
+	//	}
+	//	else
+	//	{
+	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C1));
+	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C3));
+	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C2));
+	//	}
+
+	//	if(norm2.y < 0.5)
+	//	{
+	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C4));
+	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C3));
+	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C2));
+	//	}
+	//	else
+	//	{
+	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C4));
+	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C2));
+	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C3));
+	//	}
+
+
+
+	//	sp.Normal = ((sp.C2 - sp.C1).cross(sp.C3-sp.C1)).unit();
+	//
+	//	_stairs.push_back(sp);
+	//}
+
+	//for(int i=0; i<sizecornerStairs; ++i)
+	//{
+	//	CornerStairPlane sp;
+	//	file>>sp.C1.x;
+	//	file>>sp.C1.y;
+	//	file>>sp.C1.z;
+	//	file>>sp.C2.x;
+	//	file>>sp.C2.y;
+	//	file>>sp.C2.z;
+	//	file>>sp.C3.x;
+	//	file>>sp.C3.y;
+	//	file>>sp.C3.z;
+
+	//	VECTOR norm1 = ((sp.C3 - sp.C1).cross(sp.C2-sp.C1)).unit();
+	//	if(norm1.y < 0.5)
+	//	{
+	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C1));
+	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C2));
+	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C3));
+	//	}
+	//	else
+	//	{
+	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C1));
+	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C3));
+	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C2));
+	//	}
+
+
+	//	sp.Normal = ((sp.C2 - sp.C1).cross(sp.C3-sp.C1)).unit();
+	//	_corner_stairs.push_back(sp);
+	//}
 
 	_lastposX = posX;
 	_lastposY = posY;
@@ -285,9 +296,11 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 
 	_controller = PhysXEngine::getInstance()->CreateCharacter(NxVec3(_lastposX, _lastposY, _lastposZ), 0.4, 3.8);
 
-	_map = PhysXEngine::getInstance()->CreateTriangleMesh(NxVec3(0,0,0), &vertexes[0], 
-										vertexes.size(), &indices[0], indices.size());
+	_map = PhysXEngine::getInstance()->CreateTriangleMesh(NxVec3(0,0,0), buffervertex, 
+															sizevertex, bufferindices, sizeindices);
 
+	delete buffervertex;
+	delete bufferindices;
 }
 
 /*
@@ -338,6 +351,21 @@ MoveOutput PhysXPhysicHandler::MoveActor(long ActorId, const AABB & actorBB,
 
 	return res;
 }
+
+
+/*
+--------------------------------------------------------------------------------------------------
+// set actor position
+--------------------------------------------------------------------------------------------------
+*/
+void PhysXPhysicHandler::SetActorPos(long ActorId, const VECTOR &NewPos)
+{
+	_lastposX = NewPos.x;
+	_lastposY = NewPos.y;
+	_lastposZ = NewPos.z;
+	PhysXEngine::getInstance()->SetCharacterPos(_controller, NxVec3(NewPos.x, NewPos.y, NewPos.z));
+}
+
 
 /*
 --------------------------------------------------------------------------------------------------

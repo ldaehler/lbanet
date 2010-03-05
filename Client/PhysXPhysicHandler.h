@@ -78,6 +78,8 @@ public:
 	// return a positive number giving the speed of the gravity on the Y axis
 	virtual float GetGravitySpeed();
 
+	//! set actor position
+	virtual void SetActorPos(long ActorId, const VECTOR &NewPos);
 
 	// render physic shapes
 	virtual void Render();

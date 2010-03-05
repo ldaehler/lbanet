@@ -136,6 +136,9 @@ void MainPlayerHandler::SetPosition(float NewX, float NewY, float NewZ)
 {
 	_player->SetPosition(NewX, NewY, NewZ);
 	UpdateFloorY();
+
+	if(_RoomP)
+		_RoomP->SetActorPos(-1, VECTOR(NewX, NewY, NewZ));
 }
 
 /***********************************************************
@@ -490,7 +493,7 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 	if(_state != Ac_Jumping && _state != Ac_Flying)
 	{
 		if(_RoomP)
-			_corrected_velocityY = _RoomP->GetGravitySpeed() * tdiff;
+			_corrected_velocityY = _RoomP->GetGravitySpeed()/10 * tdiff;
 	}
 
 
@@ -548,9 +551,9 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 		_corrected_velocityZ = moveO.NewSpeed.z;	
 
 		// update actor position
-		SetPosition(	_player->GetPosX()+_corrected_velocityX, 
-						_player->GetPosY()+_corrected_velocityY, 
-						_player->GetPosZ()+_corrected_velocityZ);
+		_player->SetPosition(	_player->GetPosX()+_corrected_velocityX, 
+								_player->GetPosY()+_corrected_velocityY, 
+								_player->GetPosZ()+_corrected_velocityZ);
 
 
 		//if not flying or jumping make a few tests

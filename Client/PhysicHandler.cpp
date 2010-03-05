@@ -32,6 +32,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <set>
 #include <algorithm>
 
+#include "vector.h"
+
 #include "LocalActorsHandler.h"
 #include "ExternalActorsHandler.h"
 #include "lba_map_gl.h"
@@ -42,6 +44,26 @@ bool PlaneSortX (const PlaneInfo &i, const PlaneInfo &j) { return (i.StartX<j.St
 bool PlaneSortY (const PlaneInfo &i, const PlaneInfo &j) { return (i.StartY<j.StartY); }
 bool PlaneSortZ (const PlaneInfo &i, const PlaneInfo &j) { return (i.StartZ<j.StartZ); }
 bool StairSortY (const StairInfo &i, const StairInfo &j) { return (i.C4Y<j.C4Y); }
+
+
+
+unsigned int findvertexinmap(std::map<VECTOR, unsigned int> & map, unsigned int & curridx, 
+								  std::vector<float> & vertexes, const VECTOR & vertex)
+{
+	std::map<VECTOR, unsigned int>::iterator itm = map.find(vertex);
+	if(itm != map.end())
+		return itm->second;
+
+	map[vertex] = curridx;
+	vertexes.push_back(vertex.x);
+	vertexes.push_back(vertex.y);
+	vertexes.push_back(vertex.z);
+	return curridx++;
+}
+
+
+
+
 
 /*
 --------------------------------------------------------------------------------------------------
@@ -945,6 +967,7 @@ look for floors  in the map
 void PhysicHandler::SearchFloors()
 {
 	SearchFloorsNormal(_sizeX, _sizeY, _sizeZ);
+	SearchFloorsHidden(_sizeX, _sizeY, _sizeZ);
 	SearchFloorsSee(_sizeX, _sizeY, _sizeZ);
 }
 
@@ -971,8 +994,47 @@ void PhysicHandler::SearchFloorsNormal(int sizeX, int sizeY, int sizeZ)
 		{
 			for(int j=0; j<sizeZ; ++j)
 			{
-				if( _physicCube[((k+1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0
-					&& _physicCube[((k-1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0 )
+				if( _physicCube[((k+1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0 )
+					buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
+			}
+		}
+	}
+
+
+	short * ptr = buffer;
+	for(int i=0; i<sizeY; ++i)
+	{
+		SearchFloors(ptr, i, _planes, sizeX, sizeY, sizeZ);
+		ptr += sizeX*sizeZ;
+	}
+
+
+	delete[] buffer;
+}
+
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+look for floors  in the map
+--------------------------------------------------------------------------------------------------
+*/
+void PhysicHandler::SearchFloorsHidden(int sizeX, int sizeY, int sizeZ)
+{
+	_planeshidden.clear();
+
+	short * buffer = new short[sizeX*sizeY*sizeZ];
+	memcpy ( buffer, _physicCube, sizeX*sizeY*sizeZ*sizeof(short) );
+
+
+	for(int k=1; k<(sizeY-1); ++k)
+	{
+		for(int i=0; i<sizeX; ++i)
+		{
+			for(int j=0; j<sizeZ; ++j)
+			{
+				if(_physicCube[((k-1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0 )
 					buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
 
 				if( _physicCube[((k+1)*sizeX*sizeZ)+(i*sizeZ)+j] > 1)
@@ -985,7 +1047,7 @@ void PhysicHandler::SearchFloorsNormal(int sizeX, int sizeY, int sizeZ)
 	short * ptr = buffer;
 	for(int i=0; i<sizeY; ++i)
 	{
-		SearchFloors(ptr, i, _planes, sizeX, sizeY, sizeZ);
+		SearchFloors(ptr, i, _planeshidden, sizeX, sizeY, sizeZ);
 		ptr += sizeX*sizeZ;
 	}
 
@@ -3286,6 +3348,8 @@ void PhysicHandler::Search13CornerStairs(short * start, int sizeX, int sizeY, in
 
 
 
+
+
 /*
 --------------------------------------------------------------------------------------------------
 SavePlanes
@@ -3293,7 +3357,15 @@ SavePlanes
 */
 void PhysicHandler::SavePlanes(const std::string & filename)
 {
-	std::ofstream file(filename.c_str());
+	std::map<VECTOR, unsigned int> vertexmap;
+	std::vector<float> vertexes;
+	std::vector<unsigned int> indices;
+	unsigned int indiceidx = 0;
+
+
+	std::ofstream filebit(filename.c_str(), std::ofstream::binary);
+
+	std::ofstream file(("old"+filename).c_str());
 	int sizePlanes = _planes.size() + _planessee.size();
 	int sizewallX =_wallsX.size() + _wallsXhidden.size();
 	int sizewallZ =_wallsZ.size() + _wallsZhidden.size();
@@ -3318,9 +3390,54 @@ void PhysicHandler::SavePlanes(const std::string & filename)
 
 
 		std::sort(pv.begin(), pv.end(), PlaneSortY);
+
+		for(size_t i=0; i<pv.size(); ++i)
+		{
+			float _minX = MIN(pv[i].StartX, pv[i].EndX);
+			float _maxX = MAX(pv[i].StartX, pv[i].EndX);
+			float _minZ = MIN(pv[i].StartZ, pv[i].EndZ);
+			float _maxZ = MAX(pv[i].StartZ, pv[i].EndZ);
+
+			VECTOR p1(_minX, pv[i].StartY, _minZ);
+			VECTOR p2(_minX, pv[i].StartY, _maxZ);
+			VECTOR p3(_maxX, pv[i].StartY, _maxZ);
+			VECTOR p4(_maxX, pv[i].StartY, _minZ);
+
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+		}
+
 		for(size_t i=0; i<pv.size(); ++i)
 			file<<pv[i].StartY<<" "<<pv[i].StartX<<" "<<pv[i].StartZ<<" "<<pv[i].EndX<<" "<<pv[i].EndZ<<" "<<pv[i].water<<std::endl;
 	}
+
+
+	{
+		for(size_t i=0; i<_planeshidden.size(); ++i)
+		{
+			float _minX = MIN(_planeshidden[i].StartX, _planeshidden[i].EndX);
+			float _maxX = MAX(_planeshidden[i].StartX, _planeshidden[i].EndX);
+			float _minZ = MIN(_planeshidden[i].StartZ, _planeshidden[i].EndZ);
+			float _maxZ = MAX(_planeshidden[i].StartZ, _planeshidden[i].EndZ);
+
+			VECTOR p1(_minX, _planeshidden[i].StartY, _minZ);
+			VECTOR p2(_minX, _planeshidden[i].StartY, _maxZ);
+			VECTOR p3(_maxX, _planeshidden[i].StartY, _maxZ);
+			VECTOR p4(_maxX, _planeshidden[i].StartY, _minZ);
+
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+		}
+	}
+
 
 	{
 		std::vector<PlaneInfo> wallxs;
@@ -3330,6 +3447,23 @@ void PhysicHandler::SavePlanes(const std::string & filename)
 			_wallsX[i].StartX -= 1;
 			_wallsX[i].EndX -= 1;
 			wallxs.push_back(_wallsX[i]);
+
+			float _minX = MIN(_wallsX[i].StartX, _wallsX[i].EndX);
+			float _maxX = MAX(_wallsX[i].StartX, _wallsX[i].EndX);
+			float _minZ = MIN(_wallsX[i].StartZ, _wallsX[i].EndZ);
+			float _maxZ = MAX(_wallsX[i].StartZ, _wallsX[i].EndZ);
+
+			VECTOR p1(_wallsX[i].StartY, _minX, _minZ);
+			VECTOR p2(_wallsX[i].StartY, _minX, _maxZ);
+			VECTOR p3(_wallsX[i].StartY, _maxX, _maxZ);
+			VECTOR p4(_wallsX[i].StartY, _maxX, _minZ);
+
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
 		}
 
 		for(size_t i=0; i<_wallsXhidden.size(); ++i)
@@ -3337,6 +3471,23 @@ void PhysicHandler::SavePlanes(const std::string & filename)
 			_wallsXhidden[i].StartX -= 1;
 			_wallsXhidden[i].EndX -= 1;
 			wallxs.push_back(_wallsXhidden[i]);
+
+			float _minX = MIN(_wallsXhidden[i].StartX, _wallsXhidden[i].EndX);
+			float _maxX = MAX(_wallsXhidden[i].StartX, _wallsXhidden[i].EndX);
+			float _minZ = MIN(_wallsXhidden[i].StartZ, _wallsXhidden[i].EndZ);
+			float _maxZ = MAX(_wallsXhidden[i].StartZ, _wallsXhidden[i].EndZ);
+
+			VECTOR p1(_wallsXhidden[i].StartY, _minX, _minZ);
+			VECTOR p2(_wallsXhidden[i].StartY, _minX, _maxZ);
+			VECTOR p3(_wallsXhidden[i].StartY, _maxX, _maxZ);
+			VECTOR p4(_wallsXhidden[i].StartY, _maxX, _minZ);
+
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
 		}
 
 		std::sort(wallxs.begin(), wallxs.end(), PlaneSortY);
@@ -3352,6 +3503,23 @@ void PhysicHandler::SavePlanes(const std::string & filename)
 			_wallsZ[i].StartZ -= 1;
 			_wallsZ[i].EndZ -= 1;
 			wallzs.push_back(_wallsZ[i]);
+
+			float _minX = MIN(_wallsZ[i].StartX, _wallsZ[i].EndX);
+			float _maxX = MAX(_wallsZ[i].StartX, _wallsZ[i].EndX);
+			float _minZ = MIN(_wallsZ[i].StartZ, _wallsZ[i].EndZ);
+			float _maxZ = MAX(_wallsZ[i].StartZ, _wallsZ[i].EndZ);
+
+			VECTOR p1(_minX, _minZ, _wallsZ[i].StartY);
+			VECTOR p2(_minX, _maxZ, _wallsZ[i].StartY);
+			VECTOR p3(_maxX, _maxZ, _wallsZ[i].StartY);
+			VECTOR p4(_maxX, _minZ, _wallsZ[i].StartY);
+
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
 		}
 
 		for(size_t i=0; i<_wallsZhidden.size(); ++i)
@@ -3359,6 +3527,23 @@ void PhysicHandler::SavePlanes(const std::string & filename)
 			_wallsZhidden[i].StartZ -= 1;
 			_wallsZhidden[i].EndZ -= 1;
 			wallzs.push_back(_wallsZhidden[i]);
+
+			float _minX = MIN(_wallsZhidden[i].StartX, _wallsZhidden[i].EndX);
+			float _maxX = MAX(_wallsZhidden[i].StartX, _wallsZhidden[i].EndX);
+			float _minZ = MIN(_wallsZhidden[i].StartZ, _wallsZhidden[i].EndZ);
+			float _maxZ = MAX(_wallsZhidden[i].StartZ, _wallsZhidden[i].EndZ);
+
+			VECTOR p1(_minX, _minZ, _wallsZhidden[i].StartY);
+			VECTOR p2(_minX, _maxZ, _wallsZhidden[i].StartY);
+			VECTOR p3(_maxX, _maxZ, _wallsZhidden[i].StartY);
+			VECTOR p4(_maxX, _minZ, _wallsZhidden[i].StartY);
+
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
 		}
 
 		std::sort(wallzs.begin(), wallzs.end(), PlaneSortY);
@@ -3369,11 +3554,75 @@ void PhysicHandler::SavePlanes(const std::string & filename)
 	{
 		std::sort(_stairs.begin(), _stairs.end(), StairSortY);
 		for(size_t i=0; i<_stairs.size(); ++i)
+		{
 			file<<_stairs[i].C1X<<" "<<_stairs[i].C1Y<<" "<<_stairs[i].C1Z<<" "<<_stairs[i].C2X<<" "<<_stairs[i].C2Y<<" "<<_stairs[i].C2Z<<" "<<_stairs[i].C3X<<" "<<_stairs[i].C3Y<<" "<<_stairs[i].C3Z<<" "<<_stairs[i].C4X<<" "<<_stairs[i].C4Y<<" "<<_stairs[i].C4Z<<std::endl;
+		
+			VECTOR C1(_stairs[i].C1X, _stairs[i].C1Y, _stairs[i].C1Z);
+			VECTOR C2(_stairs[i].C2X, _stairs[i].C2Y, _stairs[i].C2Z);
+			VECTOR C3(_stairs[i].C3X, _stairs[i].C3Y, _stairs[i].C3Z);
+			VECTOR C4(_stairs[i].C4X, _stairs[i].C4Y, _stairs[i].C4Z);
+	
+			VECTOR norm1 = ((C3 - C1).cross(C2-C1)).unit();
+			VECTOR norm2 = ((C2 - C4).cross(C3-C4)).unit();
+
+			if(norm1.y < 0.5)
+			{
+				indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, C1));
+				indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, C2));
+				indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, C3));
+			}
+			else
+			{
+				indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, C1));
+				indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, C3));
+				indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, C2));
+			}
+
+			if(norm2.y < 0.5)
+			{
+				indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, C4));
+				indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, C3));
+				indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, C2));
+			}
+			else
+			{
+				indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, C4));
+				indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, C2));
+				indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, C3));
+			}
+		}
 	}
 
 	{
 		for(size_t i=0; i<_cornerstairs.size(); ++i)
+		{
 			file<<_cornerstairs[i].C1X<<" "<<_cornerstairs[i].C1Y<<" "<<_cornerstairs[i].C1Z<<" "<<_cornerstairs[i].C2X<<" "<<_cornerstairs[i].C2Y<<" "<<_cornerstairs[i].C2Z<<" "<<_cornerstairs[i].C3X<<" "<<_cornerstairs[i].C3Y<<" "<<_cornerstairs[i].C3Z<<std::endl;
+		
+			VECTOR C1(_cornerstairs[i].C1X, _cornerstairs[i].C1Y, _cornerstairs[i].C1Z);
+			VECTOR C2(_cornerstairs[i].C2X, _cornerstairs[i].C2Y, _cornerstairs[i].C2Z);
+			VECTOR C3(_cornerstairs[i].C3X, _cornerstairs[i].C3Y, _cornerstairs[i].C3Z);
+
+			VECTOR norm1 = ((C3 - C1).cross(C2-C1)).unit();
+			if(norm1.y < 0.5)
+			{
+				indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, C1));
+				indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, C2));
+				indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, C3));
+			}
+			else
+			{
+				indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, C1));
+				indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, C3));
+				indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, C2));
+			}
+		}
 	}
+
+	unsigned int sizevertex = vertexes.size();
+	unsigned int sizeindices = indices.size();
+
+	filebit.write((char*)&sizevertex, sizeof(unsigned int));
+	filebit.write((char*)&sizeindices, sizeof(unsigned int));
+	filebit.write((char*)&vertexes[0], sizevertex*sizeof(float));
+	filebit.write((char*)&indices[0], sizeindices*sizeof(unsigned int));
 }
