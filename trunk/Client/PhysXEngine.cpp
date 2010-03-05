@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "UserAllocator.h"
 #include "NxCooking.h"
 #include "Stream.h"
+#include <limits>
 
 
 #include <windows.h>    // Header File For Windows
@@ -72,7 +73,7 @@ public:
 					// particular objects, if the gameplay requires it.
 					if(hit.dir.y==0.0f)
 					{
-						NxF32 coeff = actor.getMass() * hit.length * 10.0f;
+						NxF32 coeff = actor.getMass() * hit.length * 2.0f;
 						actor.addForceAtLocalPos(hit.dir*coeff, NxVec3(0,0,0), NX_IMPULSE);
 					}
 				}
@@ -159,7 +160,7 @@ void PhysXEngine::Init()
     // Create the scene
     NxSceneDesc sceneDesc;
  	sceneDesc.simType				= NX_SIMULATION_SW;
-    sceneDesc.gravity               = NxVec3(0,-0.2f/*-9.8f*/,0);
+    sceneDesc.gravity               = NxVec3(0,-0.3f/*-9.8f*/,0);
     gScene = gPhysicsSDK->createScene(sceneDesc);	
 	if(!gScene)
 	{ 
@@ -179,10 +180,13 @@ void PhysXEngine::Init()
 
 	// add a cube and a plane
 	//CreatePlane(NxVec3(0, 0, 0), NxVec3(0, 1, 0));
-
 	//CreateBox(NxVec3(0, 4, 0), 3.0f, 3.0f, 3.0f, 10, false);
-	//CreateBox(NxVec3(7, 10, 7), 2.0f, 3.0f, 2.0f, 10, true);
-	CreateBox(NxVec3(20, -1, 20), 50.0f, 1.0f, 50.0f, 10, false);
+	gplayablebox = CreateBox(NxVec3(30, 5, 30), 1.0f, 1.0f, 1.0f, 10, true);
+	//gplayablebox->setAngularDamping(std::numeric_limits<float>::infinity());
+	gplayablebox->raiseBodyFlag(NX_BF_FROZEN_ROT);
+
+	//CreateBox(NxVec3(20, -1, 20), 50.0f, 1.0f, 50.0f, 10, false);
+
 
 	// init time
 	_lasttime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDouble();
@@ -302,6 +306,7 @@ NxActor* PhysXEngine::CreateBox(const NxVec3 & StartPosition, float dimX, float 
 		NxBodyDesc bodyDesc;
 		actorDesc.body	= &bodyDesc;
 		actorDesc.density = density;
+
 		boxDesc.group = GROUP_COLLIDABLE_PUSHABLE;
 	}
 	else
@@ -481,6 +486,20 @@ unsigned int PhysXEngine::MoveCharacter(NxController* character, const NxVec3& m
 }
 
 
+/***********************************************************
+set actor position (teleport)
+***********************************************************/
+void PhysXEngine::SetCharacterPos(NxController* character, const NxVec3& posVector)
+{
+	NxExtendedVec3 pos;
+	pos.x = posVector.x;
+	pos.y = posVector.y;
+	pos.z = posVector.z;
+	character->setPosition(pos);
+
+	gplayablebox->setLinearVelocity(NxVec3(0,0,0) );
+	gplayablebox->setGlobalPosition(NxVec3(posVector.x, posVector.y+3, posVector.z));
+}
 
 /***********************************************************
 get gravity

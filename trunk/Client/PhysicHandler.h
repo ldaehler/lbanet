@@ -314,6 +314,7 @@ public:
 	//! look for floors  in the map
 	void SearchFloors();
 	void SearchFloorsNormal(int sizeX, int sizeY, int sizeZ);
+	void SearchFloorsHidden(int sizeX, int sizeY, int sizeZ);
 	void SearchFloorsSee(int sizeX, int sizeY, int sizeZ);
 
 	void SearchWallX();
@@ -334,6 +335,9 @@ public:
 
 	std::vector<PlaneInfo> GetPlanes()
 	{ return _planes; }
+
+	std::vector<PlaneInfo> GetPlanesHidden()
+	{ return _planeshidden; }
 
 	std::vector<PlaneInfo> GetPlanesSee()
 	{ return _planessee; }
@@ -454,6 +458,8 @@ private:
 
 	std::vector<PlaneInfo> _planes;
 	std::vector<PlaneInfo> _planessee;
+	std::vector<PlaneInfo> _planeshidden;
+
 
 	std::vector<PlaneInfo> _wallsX;
 	std::vector<PlaneInfo> _wallsXhidden;

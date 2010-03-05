@@ -32,6 +32,7 @@ class NxControllerManager;
 class NxUserAllocator;
 class NxVec3;
 class NxController;
+class NxActor;
 
 #include <vector>
 
@@ -82,6 +83,8 @@ public:
 	//! move character
 	//! returned collision flags, collection of NxControllerFlag
 	unsigned int MoveCharacter(NxController* character, const NxVec3& moveVector);
+	void SetCharacterPos(NxController* character, const NxVec3& posVector);
+
 
 	void GetCharacterPosition(NxController* character, float &posX, float &posY, float &posZ);
 
@@ -107,7 +110,7 @@ private:
 	NxScene*					gScene;
 	NxControllerManager*		gManager;
 	NxUserAllocator*			gAllocator;
-
+	NxActor*					gplayablebox;
 
 	double			_lasttime;
 };
