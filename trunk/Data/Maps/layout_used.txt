@@ -3,3 +3,6 @@ lbae_map0.gr1 : 7-yelow brick
 lbae_map1.gr1 : 0-factory
 lbae_map3.gr1 : 0-factory
 lbae_map4.gr1 : 5-houses
+Tippet_island_water.gr1 : 34-sewers
+Tippett_island_village.gr1 : 34-sewers
+old_burg_house.gr1 : 5-houses
