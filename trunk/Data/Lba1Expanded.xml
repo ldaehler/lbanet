@@ -2869,7 +2869,7 @@
             <files>
                 <file name="ExternalActors" path="ExternalActors/Lba1/ea_map74.xml" />
                 <file name="LocalActors" path="LocalActors/Lba1/la_map74.xml" />
-                <file name="Maps" path="Maps/Lba1/map74.txt" />
+                <file name="Maps" path="Maps/Tippett_island_village.txt" />
                 <file name="Texts" path="Texts/Lba1/text10.xml" />
             </files>
             <!--Describe the lights present in the scene-->
@@ -3693,7 +3693,7 @@
             <files>
                 <file name="ExternalActors" path="ExternalActors/polaris2.xml" />
                 <file name="LocalActors" path="LocalActors/polaris2.xml" />
-                <file name="Maps" path="Maps/polaris2.txt" />
+                <file name="Maps" path="Maps/Tippet_island_water.txt" />
                 <file name="Texts" path="Texts/Lba1/text4.xml" />
             </files>
             <!--Describe the lights present in the scene-->
