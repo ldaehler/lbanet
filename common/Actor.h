@@ -33,7 +33,7 @@ class D3ObjectRenderer;
 #include <sstream>
 #include "SignalerBase.h"
 #include "vector.h"
-
+class ActorPositionHandler;
 
 struct ActorStateInfo
 {
@@ -306,6 +306,11 @@ public:
 	//! give actor position
 	VECTOR GetPosition();
 
+	void SetPhysController(ActorPositionHandler * actph)
+	{_physposhandler = actph;}
+	ActorPositionHandler * GetPhysController()
+	{ return _physposhandler;}
+
 protected:
 	//! refresh bounding box
 	void RefreshBB();
@@ -356,6 +361,8 @@ protected:
    SignalerBase * _signaler;
 
    std::vector<std::pair<long, long> >	_actiontargets;
+
+   ActorPositionHandler *	_physposhandler;
 };
 
 #endif

@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GameEvents.h"
 #include "DataLoader.h"
 #include "MusicHandler.h"
+#include "PhysXPhysicHandler.h"
 
 #include <windows.h>    // Header File For Windows
 #include <GL/gl.h>      // Header File For The OpenGL32 Library
@@ -104,6 +105,9 @@ int DoorActor::Process(double tnow, float tdiff)
 				_posX += (float)stepX;
 				_posY += (float)stepY;
 				_posZ += (float)stepZ;
+
+				if(_physposhandler)
+					_physposhandler->SetPosition(_posX, _posY+(_sizeY/2.0f), _posZ);
 			}
 		}
 
@@ -131,6 +135,9 @@ int DoorActor::Process(double tnow, float tdiff)
 				_posX += (float)stepX;
 				_posY += (float)stepY;
 				_posZ += (float)stepZ;
+
+				if(_physposhandler)
+					_physposhandler->SetPosition(_posX, _posY+(_sizeY/2.0f), _posZ);
 			}
 		}
 	}

@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 #include <algorithm>
+#include "PhysXPhysicHandler.h"
 
 /***********************************************************
 	Constructor
@@ -44,7 +45,7 @@ Actor::Actor()
 	_sizeX(0),_sizeY(0), _sizeZ(0), _visible(true), _outputsignal(-1),
 	_attachedsound(-1), _renderertype(0),
 	_AddedVelocityX(0), _AddedVelocityY(0), _AddedVelocityZ(0), 
-	_signaler(NULL)
+	_signaler(NULL), _physposhandler(NULL)
 {
 
 }
@@ -56,6 +57,9 @@ Actor::~Actor()
 {
 	if(_Renderer)
 		delete _Renderer;
+
+	if(_physposhandler)
+		delete _physposhandler;
 }
 
 /***********************************************************
@@ -341,6 +345,8 @@ void Actor::SetPosition(float  posX, float  posY, float  posZ)
 	if(_posZ < -10)
 		_posZ = -10;
 
+	if(_physposhandler)
+		_physposhandler->SetPosition(_posX, _posY+(_sizeY/2.0f), _posZ);
 	RefreshBB();
 }
 
