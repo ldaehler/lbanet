@@ -39,6 +39,22 @@ class NxActor;
 class NxController;
 
 
+class ActorPositionHandler
+{
+public:
+	//! constructor
+	ActorPositionHandler(NxController* contr, float X, float Y, float Z);
+
+	void SetPosition(float X, float Y, float Z);
+
+private:
+	float lastX;
+	float lastY;
+	float lastZ;
+	NxController* controller;
+};
+
+
 //*************************************************************************************************
 //*                                      class PlanesPhysicHandler
 //*************************************************************************************************
@@ -137,6 +153,7 @@ private:
 	float											_lastposZ;
 
 	NxController*									_controller;
+	std::vector<NxController*>						_actors;
 	NxActor*										_map;
 };
 

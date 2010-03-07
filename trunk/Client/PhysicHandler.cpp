@@ -754,7 +754,7 @@ void PhysicHandler::SearchWallXNormal(int sizeX, int sizeY, int sizeZ)
 	short * ptr = buffer;
 	for(int i=0; i<sizeY; ++i)
 	{
-		SearchFloors(ptr, i, _wallsX, sizeX, sizeY, sizeZ);
+		SearchFloors(ptr, i, _wallsX, sizeX, sizeY, sizeZ, 0);
 		ptr += sizeX*sizeZ;
 	}
 
@@ -815,7 +815,7 @@ void PhysicHandler::SearchWallXHidden(int sizeX, int sizeY, int sizeZ)
 	short * ptr = buffer;
 	for(int i=0; i<sizeY; ++i)
 	{
-		SearchFloors(ptr, i, _wallsXhidden, sizeX, sizeY, sizeZ);
+		SearchFloors(ptr, i, _wallsXhidden, sizeX, sizeY, sizeZ, 0);
 		ptr += sizeX*sizeZ;
 	}
 
@@ -888,7 +888,7 @@ void PhysicHandler::SearchWallZNormal(int sizeX, int sizeY, int sizeZ)
 	short * ptr = buffer;
 	for(int i=0; i<sizeY; ++i)
 	{
-		SearchFloors(ptr, i, _wallsZ, sizeX, sizeY, sizeZ);
+		SearchFloors(ptr, i, _wallsZ, sizeX, sizeY, sizeZ, 0);
 		ptr += sizeX*sizeZ;
 	}
 
@@ -948,7 +948,7 @@ void PhysicHandler::SearchWallZHidden(int sizeX, int sizeY, int sizeZ)
 	short * ptr = buffer;
 	for(int i=0; i<sizeY; ++i)
 	{
-		SearchFloors(ptr, i, _wallsZhidden, sizeX, sizeY, sizeZ);
+		SearchFloors(ptr, i, _wallsZhidden, sizeX, sizeY, sizeZ, 0);
 		ptr += sizeX*sizeZ;
 	}
 
@@ -966,9 +966,14 @@ look for floors  in the map
 */
 void PhysicHandler::SearchFloors()
 {
-	SearchFloorsNormal(_sizeX, _sizeY, _sizeZ);
+	//SearchFloorsNormal(_sizeX, _sizeY, _sizeZ);
+	//SearchFloorsSee(_sizeX, _sizeY, _sizeZ);
+
+	_planes.clear();
+	for(short i=0; i<20; ++i)
+		SearchFloorsWithMaterial(_sizeX, _sizeY, _sizeZ, i);
+
 	SearchFloorsHidden(_sizeX, _sizeY, _sizeZ);
-	SearchFloorsSee(_sizeX, _sizeY, _sizeZ);
 }
 
 
@@ -980,21 +985,75 @@ void PhysicHandler::SearchFloors()
 look for floors  in the map
 --------------------------------------------------------------------------------------------------
 */
-void PhysicHandler::SearchFloorsNormal(int sizeX, int sizeY, int sizeZ)
-{
-	_planes.clear();
+//void PhysicHandler::SearchFloorsNormal(int sizeX, int sizeY, int sizeZ)
+//{
+//	_planes.clear();
+//
+//	short * buffer = new short[sizeX*sizeY*sizeZ];
+//	memcpy ( buffer, _physicCube, sizeX*sizeY*sizeZ*sizeof(short) );
+//
+//
+//	for(int k=1; k<(sizeY-1); ++k)
+//	{
+//		for(int i=0; i<sizeX; ++i)
+//		{
+//			for(int j=0; j<sizeZ; ++j)
+//			{
+//				if( _physicCube[((k+1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0 )
+//					buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
+//			}
+//		}
+//	}
+//
+//
+//	short * ptr = buffer;
+//	for(int i=0; i<sizeY; ++i)
+//	{
+//		SearchFloors(ptr, i, _planes, sizeX, sizeY, sizeZ, 0);
+//		ptr += sizeX*sizeZ;
+//	}
+//
+//
+//	delete[] buffer;
+//}
+//
 
+
+
+/*
+--------------------------------------------------------------------------------------------------
+look for floors  in the map
+--------------------------------------------------------------------------------------------------
+*/
+void PhysicHandler::SearchFloorsWithMaterial(int sizeX, int sizeY, int sizeZ, short Material)
+{
 	short * buffer = new short[sizeX*sizeY*sizeZ];
 	memcpy ( buffer, _physicCube, sizeX*sizeY*sizeZ*sizeof(short) );
 
 
-	for(int k=1; k<(sizeY-1); ++k)
+	for(int k=0; k<sizeY; ++k)
 	{
 		for(int i=0; i<sizeX; ++i)
 		{
 			for(int j=0; j<sizeZ; ++j)
 			{
-				if( _physicCube[((k+1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0 )
+				if((k+1)<sizeY)
+				{
+					if(buffer[((k+1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0)
+						buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
+				}
+			}
+		}
+	}
+
+
+	for(int k=0; k<sizeY; ++k)
+	{
+		for(int i=0; i<sizeX; ++i)
+		{
+			for(int j=0; j<sizeZ; ++j)
+			{
+				if(_materialCube[(k*sizeX*sizeZ)+(i*sizeZ)+j] != Material)
 					buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
 			}
 		}
@@ -1004,15 +1063,13 @@ void PhysicHandler::SearchFloorsNormal(int sizeX, int sizeY, int sizeZ)
 	short * ptr = buffer;
 	for(int i=0; i<sizeY; ++i)
 	{
-		SearchFloors(ptr, i, _planes, sizeX, sizeY, sizeZ);
+		SearchFloors(ptr, i, _planes, sizeX, sizeY, sizeZ, Material);
 		ptr += sizeX*sizeZ;
 	}
 
 
 	delete[] buffer;
 }
-
-
 
 
 /*
@@ -1047,7 +1104,7 @@ void PhysicHandler::SearchFloorsHidden(int sizeX, int sizeY, int sizeZ)
 	short * ptr = buffer;
 	for(int i=0; i<sizeY; ++i)
 	{
-		SearchFloors(ptr, i, _planeshidden, sizeX, sizeY, sizeZ);
+		SearchFloors(ptr, i, _planeshidden, sizeX, sizeY, sizeZ, 0);
 		ptr += sizeX*sizeZ;
 	}
 
@@ -1055,62 +1112,6 @@ void PhysicHandler::SearchFloorsHidden(int sizeX, int sizeY, int sizeZ)
 	delete[] buffer;
 }
 
-
-
-/*
---------------------------------------------------------------------------------------------------
-look for floors  in the map
---------------------------------------------------------------------------------------------------
-*/
-void PhysicHandler::SearchFloorsSee(int sizeX, int sizeY, int sizeZ)
-{
-	_planessee.clear();
-
-	short * buffer = new short[sizeX*sizeY*sizeZ];
-	memcpy ( buffer, _physicCube, sizeX*sizeY*sizeZ*sizeof(short) );
-
-
-	for(int k=0; k<sizeY; ++k)
-	{
-		for(int i=0; i<sizeX; ++i)
-		{
-			for(int j=0; j<sizeZ; ++j)
-			{
-				if((k+1)<sizeY)
-				{
-					if(buffer[((k+1)*sizeX*sizeZ)+(i*sizeZ)+j] != 0)
-						buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
-				}
-			}
-		}
-	}
-
-
-	for(int k=0; k<sizeY; ++k)
-	{
-		for(int i=0; i<sizeX; ++i)
-		{
-			for(int j=0; j<sizeZ; ++j)
-			{
-				if(buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] < 15)
-					buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 0;
-				else
-					buffer[(k*sizeX*sizeZ)+(i*sizeZ)+j] = 1;
-			}
-		}
-	}
-
-
-	short * ptr = buffer;
-	for(int i=0; i<sizeY; ++i)
-	{
-		SearchFloors(ptr, i, _planessee, sizeX, sizeY, sizeZ);
-		ptr += sizeX*sizeZ;
-	}
-
-
-	delete[] buffer;
-}
 
 
 
@@ -1121,7 +1122,7 @@ look for floors  in the map
 --------------------------------------------------------------------------------------------------
 */
 void PhysicHandler::SearchFloors(short * thisY, int Y, std::vector<PlaneInfo> &planes, 
-									int sizeX, int sizeY, int sizeZ)
+									int sizeX, int sizeY, int sizeZ, short material)
 {
 	bool found = true;
 
@@ -1184,6 +1185,7 @@ void PhysicHandler::SearchFloors(short * thisY, int Y, std::vector<PlaneInfo> &p
 			pif.EndX = maxeX;
 			pif.EndY = Y;
 			pif.EndZ = maxeZ;
+			pif.material = material;
 
 			planes.push_back(pif);
 
@@ -1753,23 +1755,20 @@ void PhysicHandler::SearchStairs()
 {
 	_stairs.clear();
 	_cornerstairs.clear();
-	short * buffer = new short[_sizeX*_sizeY*_sizeZ];
-	memcpy ( buffer, _physicCube, _sizeX*_sizeY*_sizeZ*sizeof(short) );
 
-
-
+	short * generalbuffer = new short[_sizeX*_sizeY*_sizeZ];
+	memcpy ( generalbuffer, _physicCube, _sizeX*_sizeY*_sizeZ*sizeof(short) );
 	for(int k=0; k<_sizeY; ++k)
 	{
 		for(int i=0; i<_sizeX; ++i)
 		{
 			for(int j=0; j<_sizeZ; ++j)
 			{
-				if(buffer[(k*_sizeX*_sizeZ)+(i*_sizeZ)+j] == 1)
-					buffer[(k*_sizeX*_sizeZ)+(i*_sizeZ)+j] = 0;
+				if(generalbuffer[(k*_sizeX*_sizeZ)+(i*_sizeZ)+j] == 1)
+					generalbuffer[(k*_sizeX*_sizeZ)+(i*_sizeZ)+j] = 0;
 			}
 		}
 	}
-
 	for(int k=0; k<_sizeY; ++k)
 	{
 		for(int i=0; i<_sizeX; ++i)
@@ -1778,18 +1777,65 @@ void PhysicHandler::SearchStairs()
 			{
 				if((k+1)<_sizeY)
 				{
-					if(buffer[((k+1)*_sizeX*_sizeZ)+(i*_sizeZ)+j] != 0)
-						buffer[(k*_sizeX*_sizeZ)+(i*_sizeZ)+j] = 0;
+					if(generalbuffer[((k+1)*_sizeX*_sizeZ)+(i*_sizeZ)+j] != 0)
+						generalbuffer[(k*_sizeX*_sizeZ)+(i*_sizeZ)+j] = 0;
 				}
 			}
 		}
 	}
 
 
+	for(short i=0; i<20; ++i)
+	{
+		short Material = i;
 
-	SearchCornerStairs(buffer, _sizeX, _sizeY, _sizeZ, _cornerstairs);
-	SearchStairs(buffer, _sizeX, _sizeY, _sizeZ, _stairs);
-	delete[] buffer;
+		short * buffer = new short[_sizeX*_sizeY*_sizeZ];
+		memcpy ( buffer, generalbuffer, _sizeX*_sizeY*_sizeZ*sizeof(short) );
+
+
+		for(int k=0; k<_sizeY; ++k)
+		{
+			for(int i=0; i<_sizeX; ++i)
+			{
+				for(int j=0; j<_sizeZ; ++j)
+				{
+					if(_materialCube[(k*_sizeX*_sizeZ)+(i*_sizeZ)+j] != Material)
+						buffer[(k*_sizeX*_sizeZ)+(i*_sizeZ)+j] = 0;
+				}
+			}
+		}
+
+		SearchCornerStairsWithMaterial(buffer, generalbuffer, _sizeX, _sizeY, _sizeZ, _cornerstairs, Material);
+		delete[] buffer;
+	}
+
+
+	for(short i=0; i<20; ++i)
+	{
+		short Material = i;
+
+		short * buffer = new short[_sizeX*_sizeY*_sizeZ];
+		memcpy ( buffer, generalbuffer, _sizeX*_sizeY*_sizeZ*sizeof(short) );
+
+
+		for(int k=0; k<_sizeY; ++k)
+		{
+			for(int i=0; i<_sizeX; ++i)
+			{
+				for(int j=0; j<_sizeZ; ++j)
+				{
+					if(_materialCube[(k*_sizeX*_sizeZ)+(i*_sizeZ)+j] != Material)
+						buffer[(k*_sizeX*_sizeZ)+(i*_sizeZ)+j] = 0;
+				}
+			}
+		}
+
+		SearchStairsWithMaterial(buffer, _sizeX, _sizeY, _sizeZ, _stairs, Material);
+		delete[] buffer;
+	}
+	
+
+	delete generalbuffer;
 }
 
 
@@ -1798,8 +1844,9 @@ void PhysicHandler::SearchStairs()
 split rectangle into part with same textures
 --------------------------------------------------------------------------------------------------
 */
-void PhysicHandler::SearchCornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
-									   std::vector<CornerStairInfo> & stairs)
+void PhysicHandler::SearchCornerStairsWithMaterial(short * start, short * tomodify, int sizeX, 
+												   int sizeY, int sizeZ, 
+													std::vector<CornerStairInfo> & stairs, short Material)
 {
 	for(int Y=0; Y< sizeY; ++Y)
 	{
@@ -1807,14 +1854,14 @@ void PhysicHandler::SearchCornerStairs(short * start, int sizeX, int sizeY, int 
 		{
 			for(int Z=0; Z< sizeZ; ++Z)
 			{
-				Search6CornerStairs(start, sizeX, sizeY, sizeZ, X, Y, Z, stairs);
-				Search7CornerStairs(start, sizeX, sizeY, sizeZ, X, Y, Z, stairs);
-				Search8CornerStairs(start, sizeX, sizeY, sizeZ, X, Y, Z, stairs);
-				Search9CornerStairs(start, sizeX, sizeY, sizeZ, X, Y, Z, stairs);
-				Search10CornerStairs(start, sizeX, sizeY, sizeZ, X, Y, Z, stairs);
-				Search11CornerStairs(start, sizeX, sizeY, sizeZ, X, Y, Z, stairs);
-				Search12CornerStairs(start, sizeX, sizeY, sizeZ, X, Y, Z, stairs);
-				Search13CornerStairs(start, sizeX, sizeY, sizeZ, X, Y, Z, stairs);
+				Search6CornerStairs(start, tomodify, sizeX, sizeY, sizeZ, X, Y, Z, stairs, Material);
+				Search7CornerStairs(start, tomodify, sizeX, sizeY, sizeZ, X, Y, Z, stairs, Material);
+				Search8CornerStairs(start, tomodify, sizeX, sizeY, sizeZ, X, Y, Z, stairs, Material);
+				Search9CornerStairs(start, tomodify, sizeX, sizeY, sizeZ, X, Y, Z, stairs, Material);
+				Search10CornerStairs(start, tomodify, sizeX, sizeY, sizeZ, X, Y, Z, stairs, Material);
+				Search11CornerStairs(start, tomodify, sizeX, sizeY, sizeZ, X, Y, Z, stairs, Material);
+				Search12CornerStairs(start, tomodify, sizeX, sizeY, sizeZ, X, Y, Z, stairs, Material);
+				Search13CornerStairs(start, tomodify, sizeX, sizeY, sizeZ, X, Y, Z, stairs, Material);
 			}
 		}
 	}
@@ -1827,8 +1874,8 @@ void PhysicHandler::SearchCornerStairs(short * start, int sizeX, int sizeY, int 
 split rectangle into part with same textures
 --------------------------------------------------------------------------------------------------
 */
-void PhysicHandler::SearchStairs(short * start, int sizeX, int sizeY, int sizeZ,
-									std::vector<StairInfo> & stairs)
+void PhysicHandler::SearchStairsWithMaterial(short * start, int sizeX, int sizeY, int sizeZ,
+												std::vector<StairInfo> & stairs, short Material)
 {
 	for(int Y=0; Y< sizeY; ++Y)
 	{
@@ -1837,6 +1884,7 @@ void PhysicHandler::SearchStairs(short * start, int sizeX, int sizeY, int sizeZ,
 			for(int Z=0; Z< sizeZ; ++Z)
 			{
 				StairInfo stri = PhysicHandler::FindStairUp(start, X, Y, Z, sizeX, sizeY, sizeZ, true);
+				
 				if(stri.length > 0)
 				{
 					if(stri.type == 2 || stri.type == 5)
@@ -1882,6 +1930,8 @@ void PhysicHandler::SearchStairs(short * start, int sizeX, int sizeY, int sizeZ,
 								break;
 						}
 					}
+
+					stri.material = Material;
 					stairs.push_back(stri);
 				}
 			}
@@ -2004,12 +2054,13 @@ StairInfo PhysicHandler::FindStairUp(short * start, int idX, int idY, int idZ,
 split rectangle into part with same textures
 --------------------------------------------------------------------------------------------------
 */
-void PhysicHandler::Search6CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+void PhysicHandler::Search6CornerStairs(short * start, short * tomodify, int sizeX, int sizeY, int sizeZ, 
 										int idX, int idY, int idZ,
-									   std::vector<CornerStairInfo> & stairs)
+									   std::vector<CornerStairInfo> & stairs, short Material)
 {
 	if(start[idY*sizeX*sizeZ + idX*sizeZ + idZ] == 6)
 	{
+		tomodify[idY*sizeX*sizeZ + idX*sizeZ + idZ] = 0;
 		start[idY*sizeX*sizeZ + idX*sizeZ + idZ] = 0;
 
 		CornerStairInfo cif;
@@ -2038,6 +2089,8 @@ void PhysicHandler::Search6CornerStairs(short * start, int sizeX, int sizeY, int
 		cif2.C3Y = idY;
 		cif2.C3Z = idZ;
 
+		cif.material = Material;
+		cif2.material = Material;
 
 		int localX=idX;
 		int localY=idY;
@@ -2065,6 +2118,7 @@ void PhysicHandler::Search6CornerStairs(short * start, int sizeX, int sizeY, int
 					{
 						if(start[localY*sizeX*sizeZ + localX*sizeZ + localZ] == 6)
 						{
+							tomodify[localY*sizeX*sizeZ + localX*sizeZ + localZ] = 0;
 							start[localY*sizeX*sizeZ + localX*sizeZ + localZ] = 0;
 
 							//check left triangle side
@@ -2079,7 +2133,10 @@ void PhysicHandler::Search6CornerStairs(short * start, int sizeX, int sizeY, int
 								if(truetriangle)
 								{
 									for(int tmpX=keepX1; tmpX<localX; ++tmpX)
+									{
+										tomodify[localY*sizeX*sizeZ + tmpX*sizeZ + localZ] = 0;
 										start[localY*sizeX*sizeZ + tmpX*sizeZ + localZ] = 0;
+									}
 
 									cif.C2X = localX+1;
 									cif.C2Y = localY;
@@ -2121,7 +2178,10 @@ void PhysicHandler::Search6CornerStairs(short * start, int sizeX, int sizeY, int
 								if(truetriangle)
 								{
 									for(int tmpZ=keepZ2; tmpZ<localZ; ++tmpZ)
+									{
+										tomodify[localY*sizeX*sizeZ + localX*sizeZ + tmpZ] = 0;
 										start[localY*sizeX*sizeZ + localX*sizeZ + tmpZ] = 0;
+									}
 
 									cif2.C2X = localX+1;
 									cif2.C2Y = localY;
@@ -2171,12 +2231,13 @@ void PhysicHandler::Search6CornerStairs(short * start, int sizeX, int sizeY, int
 split rectangle into part with same textures
 --------------------------------------------------------------------------------------------------
 */
-void PhysicHandler::Search7CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+void PhysicHandler::Search7CornerStairs(short * start, short * tomodify, int sizeX, int sizeY, int sizeZ, 
 										int idX, int idY, int idZ,
-									   std::vector<CornerStairInfo> & stairs)
+									   std::vector<CornerStairInfo> & stairs, short Material)
 {
 	if(start[idY*sizeX*sizeZ + idX*sizeZ + idZ] == 7)
 	{
+		tomodify[idY*sizeX*sizeZ + idX*sizeZ + idZ] = 0;
 		start[idY*sizeX*sizeZ + idX*sizeZ + idZ] = 0;
 
 		CornerStairInfo cif;
@@ -2205,6 +2266,9 @@ void PhysicHandler::Search7CornerStairs(short * start, int sizeX, int sizeY, int
 		cif2.C3Y = idY;
 		cif2.C3Z = idZ+1;
 
+		cif.material = Material;
+		cif2.material = Material;
+
 
 		int localX=idX;
 		int localY=idY;
@@ -2232,6 +2296,7 @@ void PhysicHandler::Search7CornerStairs(short * start, int sizeX, int sizeY, int
 					{
 						if(start[localY*sizeX*sizeZ + localX*sizeZ + localZ] == 7)
 						{
+							tomodify[localY*sizeX*sizeZ + localX*sizeZ + localZ] = 0;
 							start[localY*sizeX*sizeZ + localX*sizeZ + localZ] = 0;
 
 							//check left triangle side
@@ -2246,7 +2311,10 @@ void PhysicHandler::Search7CornerStairs(short * start, int sizeX, int sizeY, int
 								if(truetriangle)
 								{
 									for(int tmpX=keepX1; tmpX>localX; --tmpX)
+									{
+										tomodify[localY*sizeX*sizeZ + tmpX*sizeZ + localZ] = 0;
 										start[localY*sizeX*sizeZ + tmpX*sizeZ + localZ] = 0;
+									}
 
 									cif.C2X = localX-1+1;
 									cif.C2Y = localY;
@@ -2288,7 +2356,10 @@ void PhysicHandler::Search7CornerStairs(short * start, int sizeX, int sizeY, int
 								if(truetriangle)
 								{
 									for(int tmpZ=keepZ2; tmpZ>localZ; --tmpZ)
+									{
+										tomodify[localY*sizeX*sizeZ + localX*sizeZ + tmpZ] = 0;
 										start[localY*sizeX*sizeZ + localX*sizeZ + tmpZ] = 0;
+									}
 
 									cif2.C2X = localX-1+1;
 									cif2.C2Y = localY;
@@ -2340,12 +2411,13 @@ void PhysicHandler::Search7CornerStairs(short * start, int sizeX, int sizeY, int
 split rectangle into part with same textures
 --------------------------------------------------------------------------------------------------
 */
-void PhysicHandler::Search8CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+void PhysicHandler::Search8CornerStairs(short * start, short * tomodify, int sizeX, int sizeY, int sizeZ, 
 										int idX, int idY, int idZ,
-									   std::vector<CornerStairInfo> & stairs)
+									   std::vector<CornerStairInfo> & stairs, short Material)
 {
 	if(start[idY*sizeX*sizeZ + idX*sizeZ + idZ] == 8)
 	{
+		tomodify[idY*sizeX*sizeZ + idX*sizeZ + idZ] = 0;
 		start[idY*sizeX*sizeZ + idX*sizeZ + idZ] = 0;
 
 		CornerStairInfo cif;
@@ -2374,6 +2446,9 @@ void PhysicHandler::Search8CornerStairs(short * start, int sizeX, int sizeY, int
 		cif2.C3Y = idY;
 		cif2.C3Z = idZ;
 
+		cif.material = Material;
+		cif2.material = Material;
+
 
 		int localX=idX;
 		int localY=idY;
@@ -2401,6 +2476,7 @@ void PhysicHandler::Search8CornerStairs(short * start, int sizeX, int sizeY, int
 					{
 						if(start[localY*sizeX*sizeZ + localX*sizeZ + localZ] == 8)
 						{
+							tomodify[localY*sizeX*sizeZ + localX*sizeZ + localZ] = 0;
 							start[localY*sizeX*sizeZ + localX*sizeZ + localZ] = 0;
 
 							//check left triangle side
@@ -2415,7 +2491,10 @@ void PhysicHandler::Search8CornerStairs(short * start, int sizeX, int sizeY, int
 								if(truetriangle)
 								{
 									for(int tmpX=keepX1; tmpX<localX; ++tmpX)
+									{
+										tomodify[localY*sizeX*sizeZ + tmpX*sizeZ + localZ] = 0;
 										start[localY*sizeX*sizeZ + tmpX*sizeZ + localZ] = 0;
+									}
 
 									cif2.C2X = localX+1;
 									cif2.C2Y = localY;
@@ -2458,7 +2537,10 @@ void PhysicHandler::Search8CornerStairs(short * start, int sizeX, int sizeY, int
 								if(truetriangle)
 								{
 									for(int tmpZ=keepZ2; tmpZ>localZ; --tmpZ)
+									{
+										tomodify[localY*sizeX*sizeZ + localX*sizeZ + tmpZ] = 0;
 										start[localY*sizeX*sizeZ + localX*sizeZ + tmpZ] = 0;
+									}
 
 									cif.C2X = localX+1;
 									cif.C2Y = localY;
@@ -2508,12 +2590,13 @@ void PhysicHandler::Search8CornerStairs(short * start, int sizeX, int sizeY, int
 split rectangle into part with same textures
 --------------------------------------------------------------------------------------------------
 */
-void PhysicHandler::Search9CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+void PhysicHandler::Search9CornerStairs(short * start, short * tomodify, int sizeX, int sizeY, int sizeZ, 
 										int idX, int idY, int idZ,
-									   std::vector<CornerStairInfo> & stairs)
+									   std::vector<CornerStairInfo> & stairs, short Material)
 {
 	if(start[idY*sizeX*sizeZ + idX*sizeZ + idZ] == 9)
 	{
+		tomodify[idY*sizeX*sizeZ + idX*sizeZ + idZ] = 0;
 		start[idY*sizeX*sizeZ + idX*sizeZ + idZ] = 0;
 
 		CornerStairInfo cif;
@@ -2542,6 +2625,9 @@ void PhysicHandler::Search9CornerStairs(short * start, int sizeX, int sizeY, int
 		cif2.C3Y = idY;
 		cif2.C3Z = idZ;
 
+		cif.material = Material;
+		cif2.material = Material;
+
 
 		int localX=idX;
 		int localY=idY;
@@ -2569,6 +2655,7 @@ void PhysicHandler::Search9CornerStairs(short * start, int sizeX, int sizeY, int
 					{
 						if(start[localY*sizeX*sizeZ + localX*sizeZ + localZ] == 9)
 						{
+							tomodify[localY*sizeX*sizeZ + localX*sizeZ + localZ] = 0;
 							start[localY*sizeX*sizeZ + localX*sizeZ + localZ] = 0;
 
 							//check left triangle side
@@ -2583,7 +2670,10 @@ void PhysicHandler::Search9CornerStairs(short * start, int sizeX, int sizeY, int
 								if(truetriangle)
 								{
 									for(int tmpX=keepX1; tmpX>localX; --tmpX)
+									{
+										tomodify[localY*sizeX*sizeZ + tmpX*sizeZ + localZ] = 0;
 										start[localY*sizeX*sizeZ + tmpX*sizeZ + localZ] = 0;
+									}
 
 									cif.C1X = localX;
 									cif.C1Y = localY;
@@ -2625,7 +2715,10 @@ void PhysicHandler::Search9CornerStairs(short * start, int sizeX, int sizeY, int
 								if(truetriangle)
 								{
 									for(int tmpZ=keepZ2; tmpZ<localZ; ++tmpZ)
+									{
+										tomodify[localY*sizeX*sizeZ + localX*sizeZ + tmpZ] = 0;
 										start[localY*sizeX*sizeZ + localX*sizeZ + tmpZ] = 0;
+									}
 
 									cif2.C1X = localX;
 									cif2.C1Y = localY;
@@ -2677,12 +2770,13 @@ void PhysicHandler::Search9CornerStairs(short * start, int sizeX, int sizeY, int
 split rectangle into part with same textures
 --------------------------------------------------------------------------------------------------
 */
-void PhysicHandler::Search10CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+void PhysicHandler::Search10CornerStairs(short * start, short * tomodify, int sizeX, int sizeY, int sizeZ, 
 										int idX, int idY, int idZ,
-									   std::vector<CornerStairInfo> & stairs)
+									   std::vector<CornerStairInfo> & stairs, short Material)
 {
 	if(start[idY*sizeX*sizeZ + idX*sizeZ + idZ] == 10)
 	{
+		tomodify[idY*sizeX*sizeZ + idX*sizeZ + idZ] = 0;
 		start[idY*sizeX*sizeZ + idX*sizeZ + idZ] = 0;
 
 		CornerStairInfo cif;
@@ -2711,6 +2805,9 @@ void PhysicHandler::Search10CornerStairs(short * start, int sizeX, int sizeY, in
 		cif2.C3Y = idY-1;
 		cif2.C3Z = idZ;
 
+		cif.material = Material;
+		cif2.material = Material;
+
 
 		int localX=idX;
 		int localY=idY;
@@ -2737,6 +2834,7 @@ void PhysicHandler::Search10CornerStairs(short * start, int sizeX, int sizeY, in
 					{
 						if(start[localY*sizeX*sizeZ + localX*sizeZ + localZ] == 10)
 						{
+							tomodify[localY*sizeX*sizeZ + localX*sizeZ + localZ] = 0;
 							start[localY*sizeX*sizeZ + localX*sizeZ + localZ] = 0;
 
 							//check left triangle side
@@ -2753,7 +2851,10 @@ void PhysicHandler::Search10CornerStairs(short * start, int sizeX, int sizeY, in
 								{
 									int tmpY=keepY1;
 									for(int tmpX=keepX1; tmpX<localX; ++tmpX, ++tmpY)
+									{
+										tomodify[tmpY*sizeX*sizeZ + tmpX*sizeZ + localZ] = 0;
 										start[tmpY*sizeX*sizeZ + tmpX*sizeZ + localZ] = 0;
+									}
 
 									cif.C2X = localX+1;
 									cif.C2Y = localY;
@@ -2796,7 +2897,10 @@ void PhysicHandler::Search10CornerStairs(short * start, int sizeX, int sizeY, in
 								{
 									int tmpY=keepY2;
 									for(int tmpZ=keepZ2; tmpZ<localZ; ++tmpZ, ++tmpY)
+									{
+										tomodify[tmpY*sizeX*sizeZ + localX*sizeZ + tmpZ] = 0;
 										start[tmpY*sizeX*sizeZ + localX*sizeZ + tmpZ] = 0;
+									}
 
 									cif2.C2X = localX+1;
 									cif2.C2Y = localY;
@@ -2845,12 +2949,13 @@ void PhysicHandler::Search10CornerStairs(short * start, int sizeX, int sizeY, in
 split rectangle into part with same textures
 --------------------------------------------------------------------------------------------------
 */
-void PhysicHandler::Search11CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+void PhysicHandler::Search11CornerStairs(short * start, short * tomodify, int sizeX, int sizeY, int sizeZ, 
 										int idX, int idY, int idZ,
-									   std::vector<CornerStairInfo> & stairs)
+									   std::vector<CornerStairInfo> & stairs, short Material)
 {
 	if(start[idY*sizeX*sizeZ + idX*sizeZ + idZ] == 11)
 	{
+		tomodify[idY*sizeX*sizeZ + idX*sizeZ + idZ] = 0;
 		start[idY*sizeX*sizeZ + idX*sizeZ + idZ] = 0;
 
 		CornerStairInfo cif;
@@ -2879,6 +2984,8 @@ void PhysicHandler::Search11CornerStairs(short * start, int sizeX, int sizeY, in
 		cif2.C3Y = idY-1;
 		cif2.C3Z = idZ+1;
 
+		cif.material = Material;
+		cif2.material = Material;
 
 		int localX=idX;
 		int localY=idY;
@@ -2905,6 +3012,7 @@ void PhysicHandler::Search11CornerStairs(short * start, int sizeX, int sizeY, in
 					{
 						if(start[localY*sizeX*sizeZ + localX*sizeZ + localZ] == 11)
 						{
+							tomodify[localY*sizeX*sizeZ + localX*sizeZ + localZ] = 0;
 							start[localY*sizeX*sizeZ + localX*sizeZ + localZ] = 0;
 
 							//check left triangle side
@@ -2921,7 +3029,10 @@ void PhysicHandler::Search11CornerStairs(short * start, int sizeX, int sizeY, in
 								{
 									int tmpY=keepY1;
 									for(int tmpX=keepX1; tmpX>localX; --tmpX, ++tmpY)
+									{
+										tomodify[tmpY*sizeX*sizeZ + tmpX*sizeZ + localZ] = 0;
 										start[tmpY*sizeX*sizeZ + tmpX*sizeZ + localZ] = 0;
+									}
 
 									cif.C2X = localX-1+1;
 									cif.C2Y = localY;
@@ -2964,7 +3075,10 @@ void PhysicHandler::Search11CornerStairs(short * start, int sizeX, int sizeY, in
 								{
 									int tmpY=keepY2;
 									for(int tmpZ=keepZ2; tmpZ>localZ; --tmpZ, ++tmpY)
+									{
+										tomodify[tmpY*sizeX*sizeZ + localX*sizeZ + tmpZ] = 0;
 										start[tmpY*sizeX*sizeZ + localX*sizeZ + tmpZ] = 0;
+									}
 
 									cif2.C2X = localX-1+1;
 									cif2.C2Y = localY;
@@ -3013,12 +3127,13 @@ void PhysicHandler::Search11CornerStairs(short * start, int sizeX, int sizeY, in
 split rectangle into part with same textures
 --------------------------------------------------------------------------------------------------
 */
-void PhysicHandler::Search12CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+void PhysicHandler::Search12CornerStairs(short * start, short * tomodify, int sizeX, int sizeY, int sizeZ, 
 										int idX, int idY, int idZ,
-									   std::vector<CornerStairInfo> & stairs)
+									   std::vector<CornerStairInfo> & stairs, short Material)
 {
 	if(start[idY*sizeX*sizeZ + idX*sizeZ + idZ] == 12)
 	{
+		tomodify[idY*sizeX*sizeZ + idX*sizeZ + idZ] = 0;
 		start[idY*sizeX*sizeZ + idX*sizeZ + idZ] = 0;
 
 		CornerStairInfo cif;
@@ -3047,6 +3162,9 @@ void PhysicHandler::Search12CornerStairs(short * start, int sizeX, int sizeY, in
 		cif2.C3Y = idY-1;
 		cif2.C3Z = idZ;
 
+		cif.material = Material;
+		cif2.material = Material;
+
 
 		int localX=idX;
 		int localY=idY;
@@ -3073,6 +3191,7 @@ void PhysicHandler::Search12CornerStairs(short * start, int sizeX, int sizeY, in
 					{
 						if(start[localY*sizeX*sizeZ + localX*sizeZ + localZ] == 12)
 						{
+							tomodify[localY*sizeX*sizeZ + localX*sizeZ + localZ] = 0;
 							start[localY*sizeX*sizeZ + localX*sizeZ + localZ] = 0;
 
 							//check left triangle side
@@ -3087,9 +3206,12 @@ void PhysicHandler::Search12CornerStairs(short * start, int sizeX, int sizeY, in
 
 								if(truetriangle)
 								{
-								int tmpY=keepY1;
-								for(int tmpX=keepX1; tmpX<localX; ++tmpX, ++tmpY)
+									int tmpY=keepY1;
+									for(int tmpX=keepX1; tmpX<localX; ++tmpX, ++tmpY)
+									{
+										tomodify[tmpY*sizeX*sizeZ + tmpX*sizeZ + localZ] = 0;
 										start[tmpY*sizeX*sizeZ + tmpX*sizeZ + localZ] = 0;
+									}
 
 									cif2.C2X = localX+1;
 									cif2.C2Y = localY;
@@ -3132,7 +3254,10 @@ void PhysicHandler::Search12CornerStairs(short * start, int sizeX, int sizeY, in
 								{
 									int tmpY=keepY2;
 									for(int tmpZ=keepZ2; tmpZ>localZ; --tmpZ, ++tmpY)
+									{
+										tomodify[tmpY*sizeX*sizeZ + localX*sizeZ + tmpZ] = 0;
 										start[tmpY*sizeX*sizeZ + localX*sizeZ + tmpZ] = 0;
+									}
 
 									cif.C2X = localX+1;
 									cif.C2Y = localY;
@@ -3182,12 +3307,13 @@ void PhysicHandler::Search12CornerStairs(short * start, int sizeX, int sizeY, in
 split rectangle into part with same textures
 --------------------------------------------------------------------------------------------------
 */
-void PhysicHandler::Search13CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+void PhysicHandler::Search13CornerStairs(short * start, short * tomodify, int sizeX, int sizeY, int sizeZ, 
 										int idX, int idY, int idZ,
-									   std::vector<CornerStairInfo> & stairs)
+									   std::vector<CornerStairInfo> & stairs, short Material)
 {
 	if(start[idY*sizeX*sizeZ + idX*sizeZ + idZ] == 13)
 	{
+		tomodify[idY*sizeX*sizeZ + idX*sizeZ + idZ] = 0;
 		start[idY*sizeX*sizeZ + idX*sizeZ + idZ] = 0;
 
 		CornerStairInfo cif;
@@ -3216,6 +3342,9 @@ void PhysicHandler::Search13CornerStairs(short * start, int sizeX, int sizeY, in
 		cif2.C3Y = idY-1;
 		cif2.C3Z = idZ;
 
+		cif.material = Material;
+		cif2.material = Material;
+
 
 		int localX=idX;
 		int localY=idY;
@@ -3242,6 +3371,7 @@ void PhysicHandler::Search13CornerStairs(short * start, int sizeX, int sizeY, in
 					{
 						if(start[localY*sizeX*sizeZ + localX*sizeZ + localZ] == 13)
 						{
+							tomodify[localY*sizeX*sizeZ + localX*sizeZ + localZ] = 0;
 							start[localY*sizeX*sizeZ + localX*sizeZ + localZ] = 0;
 
 							//check left triangle side
@@ -3258,7 +3388,10 @@ void PhysicHandler::Search13CornerStairs(short * start, int sizeX, int sizeY, in
 								{
 									int tmpY=keepY1;
 									for(int tmpX=keepX1; tmpX>localX; --tmpX, ++tmpY)
+									{
+										tomodify[tmpY*sizeX*sizeZ + tmpX*sizeZ + localZ] = 0;
 										start[tmpY*sizeX*sizeZ + tmpX*sizeZ + localZ] = 0;
+									}
 
 									cif.C1X = localX;
 									cif.C1Y = localY;
@@ -3302,7 +3435,10 @@ void PhysicHandler::Search13CornerStairs(short * start, int sizeX, int sizeY, in
 								{
 									int tmpY=keepY2;
 									for(int tmpZ=keepZ2; tmpZ<localZ; ++tmpZ, ++tmpY)
+									{
+										tomodify[tmpY*sizeX*sizeZ + localX*sizeZ + tmpZ] = 0;
 										start[tmpY*sizeX*sizeZ + localX*sizeZ + tmpZ] = 0;
+									}
 
 									cif2.C1X = localX;
 									cif2.C1Y = localY;
@@ -3360,48 +3496,23 @@ void PhysicHandler::SavePlanes(const std::string & filename)
 	std::map<VECTOR, unsigned int> vertexmap;
 	std::vector<float> vertexes;
 	std::vector<unsigned int> indices;
+	std::vector<short> materials;
 	unsigned int indiceidx = 0;
-
-
 	std::ofstream filebit(filename.c_str(), std::ofstream::binary);
 
-	std::ofstream file(("old"+filename).c_str());
-	int sizePlanes = _planes.size() + _planessee.size();
-	int sizewallX =_wallsX.size() + _wallsXhidden.size();
-	int sizewallZ =_wallsZ.size() + _wallsZhidden.size();
-	int sizeStairs = _stairs.size();
-	int sizecornerStairs = _cornerstairs.size();
-
-	file<<sizePlanes<<" "<<sizewallX<<" "<<sizewallZ<<" "<<sizeStairs<<" "<<sizecornerStairs<<std::endl;
 
 	{
-		std::vector<PlaneInfo> pv;
 		for(size_t i=0; i<_planes.size(); ++i)
 		{
-			_planes[i].water = 0;
-			pv.push_back(_planes[i]);
-		}
+			float _minX = MIN(_planes[i].StartX, _planes[i].EndX);
+			float _maxX = MAX(_planes[i].StartX, _planes[i].EndX);
+			float _minZ = MIN(_planes[i].StartZ, _planes[i].EndZ);
+			float _maxZ = MAX(_planes[i].StartZ, _planes[i].EndZ);
 
-		for(size_t i=0; i<_planessee.size(); ++i)
-		{
-			_planessee[i].water = 1;
-			pv.push_back(_planessee[i]);
-		}
-
-
-		std::sort(pv.begin(), pv.end(), PlaneSortY);
-
-		for(size_t i=0; i<pv.size(); ++i)
-		{
-			float _minX = MIN(pv[i].StartX, pv[i].EndX);
-			float _maxX = MAX(pv[i].StartX, pv[i].EndX);
-			float _minZ = MIN(pv[i].StartZ, pv[i].EndZ);
-			float _maxZ = MAX(pv[i].StartZ, pv[i].EndZ);
-
-			VECTOR p1(_minX, pv[i].StartY, _minZ);
-			VECTOR p2(_minX, pv[i].StartY, _maxZ);
-			VECTOR p3(_maxX, pv[i].StartY, _maxZ);
-			VECTOR p4(_maxX, pv[i].StartY, _minZ);
+			VECTOR p1(_minX, _planes[i].StartY, _minZ);
+			VECTOR p2(_minX, _planes[i].StartY, _maxZ);
+			VECTOR p3(_maxX, _planes[i].StartY, _maxZ);
+			VECTOR p4(_maxX, _planes[i].StartY, _minZ);
 
 			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
 			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
@@ -3409,154 +3520,16 @@ void PhysicHandler::SavePlanes(const std::string & filename)
 			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
 			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
 			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
-		}
 
-		for(size_t i=0; i<pv.size(); ++i)
-			file<<pv[i].StartY<<" "<<pv[i].StartX<<" "<<pv[i].StartZ<<" "<<pv[i].EndX<<" "<<pv[i].EndZ<<" "<<pv[i].water<<std::endl;
-	}
-
-
-	{
-		for(size_t i=0; i<_planeshidden.size(); ++i)
-		{
-			float _minX = MIN(_planeshidden[i].StartX, _planeshidden[i].EndX);
-			float _maxX = MAX(_planeshidden[i].StartX, _planeshidden[i].EndX);
-			float _minZ = MIN(_planeshidden[i].StartZ, _planeshidden[i].EndZ);
-			float _maxZ = MAX(_planeshidden[i].StartZ, _planeshidden[i].EndZ);
-
-			VECTOR p1(_minX, _planeshidden[i].StartY, _minZ);
-			VECTOR p2(_minX, _planeshidden[i].StartY, _maxZ);
-			VECTOR p3(_maxX, _planeshidden[i].StartY, _maxZ);
-			VECTOR p4(_maxX, _planeshidden[i].StartY, _minZ);
-
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+			materials.push_back(_planes[i].material);
+			materials.push_back(_planes[i].material);
 		}
 	}
 
 
 	{
-		std::vector<PlaneInfo> wallxs;
-		for(size_t i=0; i<_wallsX.size(); ++i)
-		{
-			_wallsX[i].StartY += 1;
-			_wallsX[i].StartX -= 1;
-			_wallsX[i].EndX -= 1;
-			wallxs.push_back(_wallsX[i]);
-
-			float _minX = MIN(_wallsX[i].StartX, _wallsX[i].EndX);
-			float _maxX = MAX(_wallsX[i].StartX, _wallsX[i].EndX);
-			float _minZ = MIN(_wallsX[i].StartZ, _wallsX[i].EndZ);
-			float _maxZ = MAX(_wallsX[i].StartZ, _wallsX[i].EndZ);
-
-			VECTOR p1(_wallsX[i].StartY, _minX, _minZ);
-			VECTOR p2(_wallsX[i].StartY, _minX, _maxZ);
-			VECTOR p3(_wallsX[i].StartY, _maxX, _maxZ);
-			VECTOR p4(_wallsX[i].StartY, _maxX, _minZ);
-
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
-		}
-
-		for(size_t i=0; i<_wallsXhidden.size(); ++i)
-		{
-			_wallsXhidden[i].StartX -= 1;
-			_wallsXhidden[i].EndX -= 1;
-			wallxs.push_back(_wallsXhidden[i]);
-
-			float _minX = MIN(_wallsXhidden[i].StartX, _wallsXhidden[i].EndX);
-			float _maxX = MAX(_wallsXhidden[i].StartX, _wallsXhidden[i].EndX);
-			float _minZ = MIN(_wallsXhidden[i].StartZ, _wallsXhidden[i].EndZ);
-			float _maxZ = MAX(_wallsXhidden[i].StartZ, _wallsXhidden[i].EndZ);
-
-			VECTOR p1(_wallsXhidden[i].StartY, _minX, _minZ);
-			VECTOR p2(_wallsXhidden[i].StartY, _minX, _maxZ);
-			VECTOR p3(_wallsXhidden[i].StartY, _maxX, _maxZ);
-			VECTOR p4(_wallsXhidden[i].StartY, _maxX, _minZ);
-
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
-		}
-
-		std::sort(wallxs.begin(), wallxs.end(), PlaneSortY);
-		for(size_t i=0; i<wallxs.size(); ++i)
-			file<<wallxs[i].StartY<<" "<<wallxs[i].StartX<<" "<<wallxs[i].StartZ<<" "<<wallxs[i].EndX<<" "<<wallxs[i].EndZ<<std::endl;
-	}
-
-	{
-		std::vector<PlaneInfo> wallzs;
-		for(size_t i=0; i<_wallsZ.size(); ++i)
-		{
-			_wallsZ[i].StartY += 1;
-			_wallsZ[i].StartZ -= 1;
-			_wallsZ[i].EndZ -= 1;
-			wallzs.push_back(_wallsZ[i]);
-
-			float _minX = MIN(_wallsZ[i].StartX, _wallsZ[i].EndX);
-			float _maxX = MAX(_wallsZ[i].StartX, _wallsZ[i].EndX);
-			float _minZ = MIN(_wallsZ[i].StartZ, _wallsZ[i].EndZ);
-			float _maxZ = MAX(_wallsZ[i].StartZ, _wallsZ[i].EndZ);
-
-			VECTOR p1(_minX, _minZ, _wallsZ[i].StartY);
-			VECTOR p2(_minX, _maxZ, _wallsZ[i].StartY);
-			VECTOR p3(_maxX, _maxZ, _wallsZ[i].StartY);
-			VECTOR p4(_maxX, _minZ, _wallsZ[i].StartY);
-
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
-		}
-
-		for(size_t i=0; i<_wallsZhidden.size(); ++i)
-		{
-			_wallsZhidden[i].StartZ -= 1;
-			_wallsZhidden[i].EndZ -= 1;
-			wallzs.push_back(_wallsZhidden[i]);
-
-			float _minX = MIN(_wallsZhidden[i].StartX, _wallsZhidden[i].EndX);
-			float _maxX = MAX(_wallsZhidden[i].StartX, _wallsZhidden[i].EndX);
-			float _minZ = MIN(_wallsZhidden[i].StartZ, _wallsZhidden[i].EndZ);
-			float _maxZ = MAX(_wallsZhidden[i].StartZ, _wallsZhidden[i].EndZ);
-
-			VECTOR p1(_minX, _minZ, _wallsZhidden[i].StartY);
-			VECTOR p2(_minX, _maxZ, _wallsZhidden[i].StartY);
-			VECTOR p3(_maxX, _maxZ, _wallsZhidden[i].StartY);
-			VECTOR p4(_maxX, _minZ, _wallsZhidden[i].StartY);
-
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
-			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
-		}
-
-		std::sort(wallzs.begin(), wallzs.end(), PlaneSortY);
-		for(size_t i=0; i<wallzs.size(); ++i)
-			file<<wallzs[i].StartY<<" "<<wallzs[i].StartX<<" "<<wallzs[i].StartZ<<" "<<wallzs[i].EndX<<" "<<wallzs[i].EndZ<<std::endl;
-	}
-
-	{
-		std::sort(_stairs.begin(), _stairs.end(), StairSortY);
 		for(size_t i=0; i<_stairs.size(); ++i)
 		{
-			file<<_stairs[i].C1X<<" "<<_stairs[i].C1Y<<" "<<_stairs[i].C1Z<<" "<<_stairs[i].C2X<<" "<<_stairs[i].C2Y<<" "<<_stairs[i].C2Z<<" "<<_stairs[i].C3X<<" "<<_stairs[i].C3Y<<" "<<_stairs[i].C3Z<<" "<<_stairs[i].C4X<<" "<<_stairs[i].C4Y<<" "<<_stairs[i].C4Z<<std::endl;
-		
 			VECTOR C1(_stairs[i].C1X, _stairs[i].C1Y, _stairs[i].C1Z);
 			VECTOR C2(_stairs[i].C2X, _stairs[i].C2Y, _stairs[i].C2Z);
 			VECTOR C3(_stairs[i].C3X, _stairs[i].C3Y, _stairs[i].C3Z);
@@ -3590,14 +3563,15 @@ void PhysicHandler::SavePlanes(const std::string & filename)
 				indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, C2));
 				indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, C3));
 			}
+
+			materials.push_back(_stairs[i].material);
+			materials.push_back(_stairs[i].material);
 		}
 	}
 
 	{
 		for(size_t i=0; i<_cornerstairs.size(); ++i)
 		{
-			file<<_cornerstairs[i].C1X<<" "<<_cornerstairs[i].C1Y<<" "<<_cornerstairs[i].C1Z<<" "<<_cornerstairs[i].C2X<<" "<<_cornerstairs[i].C2Y<<" "<<_cornerstairs[i].C2Z<<" "<<_cornerstairs[i].C3X<<" "<<_cornerstairs[i].C3Y<<" "<<_cornerstairs[i].C3Z<<std::endl;
-		
 			VECTOR C1(_cornerstairs[i].C1X, _cornerstairs[i].C1Y, _cornerstairs[i].C1Z);
 			VECTOR C2(_cornerstairs[i].C2X, _cornerstairs[i].C2Y, _cornerstairs[i].C2Z);
 			VECTOR C3(_cornerstairs[i].C3X, _cornerstairs[i].C3Y, _cornerstairs[i].C3Z);
@@ -3615,14 +3589,141 @@ void PhysicHandler::SavePlanes(const std::string & filename)
 				indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, C3));
 				indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, C2));
 			}
+
+			materials.push_back(_cornerstairs[i].material);
+		}
+	}
+
+
+	{
+		for(size_t i=0; i<_planeshidden.size(); ++i)
+		{
+			float _minX = MIN(_planeshidden[i].StartX, _planeshidden[i].EndX);
+			float _maxX = MAX(_planeshidden[i].StartX, _planeshidden[i].EndX);
+			float _minZ = MIN(_planeshidden[i].StartZ, _planeshidden[i].EndZ);
+			float _maxZ = MAX(_planeshidden[i].StartZ, _planeshidden[i].EndZ);
+
+			VECTOR p1(_minX, _planeshidden[i].StartY, _minZ);
+			VECTOR p2(_minX, _planeshidden[i].StartY, _maxZ);
+			VECTOR p3(_maxX, _planeshidden[i].StartY, _maxZ);
+			VECTOR p4(_maxX, _planeshidden[i].StartY, _minZ);
+
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+		}
+	}
+
+
+	{
+		for(size_t i=0; i<_wallsX.size(); ++i)
+		{
+			_wallsX[i].StartY += 1;
+			_wallsX[i].StartX -= 1;
+			_wallsX[i].EndX -= 1;
+
+			float _minX = MIN(_wallsX[i].StartX, _wallsX[i].EndX);
+			float _maxX = MAX(_wallsX[i].StartX, _wallsX[i].EndX);
+			float _minZ = MIN(_wallsX[i].StartZ, _wallsX[i].EndZ);
+			float _maxZ = MAX(_wallsX[i].StartZ, _wallsX[i].EndZ);
+
+			VECTOR p1(_wallsX[i].StartY, _minX, _minZ);
+			VECTOR p2(_wallsX[i].StartY, _minX, _maxZ);
+			VECTOR p3(_wallsX[i].StartY, _maxX, _maxZ);
+			VECTOR p4(_wallsX[i].StartY, _maxX, _minZ);
+
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+		}
+
+		for(size_t i=0; i<_wallsXhidden.size(); ++i)
+		{
+			_wallsXhidden[i].StartX -= 1;
+			_wallsXhidden[i].EndX -= 1;
+
+			float _minX = MIN(_wallsXhidden[i].StartX, _wallsXhidden[i].EndX);
+			float _maxX = MAX(_wallsXhidden[i].StartX, _wallsXhidden[i].EndX);
+			float _minZ = MIN(_wallsXhidden[i].StartZ, _wallsXhidden[i].EndZ);
+			float _maxZ = MAX(_wallsXhidden[i].StartZ, _wallsXhidden[i].EndZ);
+
+			VECTOR p1(_wallsXhidden[i].StartY, _minX, _minZ);
+			VECTOR p2(_wallsXhidden[i].StartY, _minX, _maxZ);
+			VECTOR p3(_wallsXhidden[i].StartY, _maxX, _maxZ);
+			VECTOR p4(_wallsXhidden[i].StartY, _maxX, _minZ);
+
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+		}
+	}
+
+	{
+		for(size_t i=0; i<_wallsZ.size(); ++i)
+		{
+			_wallsZ[i].StartY += 1;
+			_wallsZ[i].StartZ -= 1;
+			_wallsZ[i].EndZ -= 1;
+
+			float _minX = MIN(_wallsZ[i].StartX, _wallsZ[i].EndX);
+			float _maxX = MAX(_wallsZ[i].StartX, _wallsZ[i].EndX);
+			float _minZ = MIN(_wallsZ[i].StartZ, _wallsZ[i].EndZ);
+			float _maxZ = MAX(_wallsZ[i].StartZ, _wallsZ[i].EndZ);
+
+			VECTOR p1(_minX, _minZ, _wallsZ[i].StartY);
+			VECTOR p2(_minX, _maxZ, _wallsZ[i].StartY);
+			VECTOR p3(_maxX, _maxZ, _wallsZ[i].StartY);
+			VECTOR p4(_maxX, _minZ, _wallsZ[i].StartY);
+
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+		}
+
+		for(size_t i=0; i<_wallsZhidden.size(); ++i)
+		{
+			_wallsZhidden[i].StartZ -= 1;
+			_wallsZhidden[i].EndZ -= 1;
+
+			float _minX = MIN(_wallsZhidden[i].StartX, _wallsZhidden[i].EndX);
+			float _maxX = MAX(_wallsZhidden[i].StartX, _wallsZhidden[i].EndX);
+			float _minZ = MIN(_wallsZhidden[i].StartZ, _wallsZhidden[i].EndZ);
+			float _maxZ = MAX(_wallsZhidden[i].StartZ, _wallsZhidden[i].EndZ);
+
+			VECTOR p1(_minX, _minZ, _wallsZhidden[i].StartY);
+			VECTOR p2(_minX, _maxZ, _wallsZhidden[i].StartY);
+			VECTOR p3(_maxX, _maxZ, _wallsZhidden[i].StartY);
+			VECTOR p4(_maxX, _minZ, _wallsZhidden[i].StartY);
+
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
 		}
 	}
 
 	unsigned int sizevertex = vertexes.size();
 	unsigned int sizeindices = indices.size();
+	unsigned int sizematerials = materials.size();
 
 	filebit.write((char*)&sizevertex, sizeof(unsigned int));
 	filebit.write((char*)&sizeindices, sizeof(unsigned int));
+	filebit.write((char*)&sizematerials, sizeof(unsigned int));
 	filebit.write((char*)&vertexes[0], sizevertex*sizeof(float));
 	filebit.write((char*)&indices[0], sizeindices*sizeof(unsigned int));
+	filebit.write((char*)&materials[0], sizematerials*sizeof(short));
 }

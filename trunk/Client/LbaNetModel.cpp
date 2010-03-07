@@ -482,7 +482,7 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float 
 {
 	if(NewMap != _current_map)
 	{
-		Y+= 3;
+		Y+= 2.6;
 
 		ThreadSafeWorkpile::getInstance()->OpenCloseContainer(0, true);
 
@@ -509,15 +509,10 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float 
 
 			PhysicHandler * ph = new PhysicHandler(_localActorsHandler, _externalActorsHandler);
 			_mapRenderer = new MapRenderer(mapN, ph);
-			//_mapRenderer = new ObjMapRenderer("Twinsenshouse.obj", "Twinsenshouse.png");
-			//_mapRenderer = new MapMapRenderer("Twinsenshouse.map", "Twinsenshouse.png");
+			//_mapRenderer = new ObjMapRenderer("map0.obj", "map0.png");
+			//_mapRenderer = new MapMapRenderer("map0.map", "map0.png");
 
 			//_physicHandler = new PlanesPhysicHandler("map3.phy", _localActorsHandler, _externalActorsHandler);
-			_physicHandler = new PhysXPhysicHandler("map3.phy", _localActorsHandler, _externalActorsHandler,
-													X, Y, Z);
-			
-			_mainPlayerHandler->SetPhysicHandler(_physicHandler);
-
 
 			m_room_y_cut = -1;
 
@@ -538,6 +533,11 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float 
 			_externalActorsHandler->SetActors(vec2);
 
 			_guiH->SetCurrentMap(_current_world.substr(0, _current_world.find(".xml")), _current_map);
+
+			_physicHandler = new PhysXPhysicHandler("map3.phy", _localActorsHandler, _externalActorsHandler,
+													X, Y, Z);
+			
+			_mainPlayerHandler->SetPhysicHandler(_physicHandler);
 
 			Resume(true);
 		}
@@ -708,7 +708,7 @@ int LbaNetModel::Process()
 		break;
 
 		case 1:	// the actor is in water - should drawn
-			if(m_current_main_state == 0)
+			if(m_current_main_state != 1)
 			{
 				m_current_main_state = 1;
 				_mainPlayerHandler->Startdrowning();
@@ -716,7 +716,7 @@ int LbaNetModel::Process()
 		break;
 
 		case 2:	// the actor should die
-			if(m_current_main_state == 0)
+			if(m_current_main_state != 2)
 			{
 				m_current_main_state = 2;
 				_mainPlayerHandler->Startdying();

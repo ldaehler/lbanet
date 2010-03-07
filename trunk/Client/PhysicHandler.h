@@ -52,6 +52,7 @@ struct StairInfo
 
 	int type;
 	int length;
+	short material;
 };
 
 struct CornerStairInfo
@@ -69,7 +70,7 @@ struct CornerStairInfo
 	int C3Z;
 
 	int type;
-
+	short material;
 };
 
 
@@ -83,7 +84,7 @@ struct PlaneInfo
 	int EndY;
 	int EndZ;
 
-	int water;
+	short material;
 };
 
 
@@ -313,9 +314,9 @@ public:
 
 	//! look for floors  in the map
 	void SearchFloors();
-	void SearchFloorsNormal(int sizeX, int sizeY, int sizeZ);
+	//void SearchFloorsNormal(int sizeX, int sizeY, int sizeZ);
 	void SearchFloorsHidden(int sizeX, int sizeY, int sizeZ);
-	void SearchFloorsSee(int sizeX, int sizeY, int sizeZ);
+	void SearchFloorsWithMaterial(int sizeX, int sizeY, int sizeZ, short Material);
 
 	void SearchWallX();
 	void SearchWallXNormal(int sizeX, int sizeY, int sizeZ);
@@ -327,9 +328,12 @@ public:
 
 
 	void SearchStairs();
-	void SearchCornerStairs(short * start, int sizeX, int sizeY, int sizeZ, std::vector<CornerStairInfo> & stairs);
+	void SearchCornerStairsWithMaterial(short * start, short * tomodify, int sizeX, int sizeY, int sizeZ, 
+										std::vector<CornerStairInfo> & stairs, short Material);
 
-	void SearchStairs(short * start, int sizeX, int sizeY, int sizeZ, std::vector<StairInfo> & stairs);
+	void SearchStairsWithMaterial(short * start, int sizeX, int sizeY, int sizeZ, 
+									std::vector<StairInfo> & stairs, short Material);
+
 	StairInfo FindStairUp(short * start, int idX, int idY, int idZ, 
 						int sizeX, int sizeY, int sizeZ, bool overwrite);
 
@@ -338,9 +342,6 @@ public:
 
 	std::vector<PlaneInfo> GetPlanesHidden()
 	{ return _planeshidden; }
-
-	std::vector<PlaneInfo> GetPlanesSee()
-	{ return _planessee; }
 
 	std::vector<PlaneInfo> GetWallsX()
 	{ return _wallsX; }
@@ -386,7 +387,8 @@ protected:
 
 
 	//! look for floors  in the map
-	void SearchFloors(short * thisY, int Y, std::vector<PlaneInfo> &planes, int sizeX, int sizeY, int sizeZ);
+	void SearchFloors(short * thisY, int Y, std::vector<PlaneInfo> &planes, 
+						int sizeX, int sizeY, int sizeZ, short material);
 
 
 	//! look for floors  in the map
@@ -412,37 +414,37 @@ protected:
 
 
 
-	void Search6CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+	void Search6CornerStairs(short * start, short * tomodify, int sizeX, int sizeY, int sizeZ, 
 										int idX, int idY, int idZ,
-									   std::vector<CornerStairInfo> & stairs);
+									   std::vector<CornerStairInfo> & stairs, short Material);
 
-	void Search7CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+	void Search7CornerStairs(short * start, short * tomodify, int sizeX, int sizeY, int sizeZ, 
 										int idX, int idY, int idZ,
-									   std::vector<CornerStairInfo> & stairs);
+									   std::vector<CornerStairInfo> & stairs, short Material);
 
-	void Search8CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+	void Search8CornerStairs(short * start, short * tomodify, int sizeX, int sizeY, int sizeZ, 
 										int idX, int idY, int idZ,
-									   std::vector<CornerStairInfo> & stairs);
+									   std::vector<CornerStairInfo> & stairs, short Material);
 
-	void Search9CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+	void Search9CornerStairs(short * start, short * tomodify, int sizeX, int sizeY, int sizeZ, 
 										int idX, int idY, int idZ,
-									   std::vector<CornerStairInfo> & stairs);
+									   std::vector<CornerStairInfo> & stairs, short Material);
 
-	void Search10CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+	void Search10CornerStairs(short * start, short * tomodify, int sizeX, int sizeY, int sizeZ, 
 										int idX, int idY, int idZ,
-									   std::vector<CornerStairInfo> & stairs);
+									   std::vector<CornerStairInfo> & stairs, short Material);
 
-	void Search11CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+	void Search11CornerStairs(short * start, short * tomodify, int sizeX, int sizeY, int sizeZ, 
 										int idX, int idY, int idZ,
-									   std::vector<CornerStairInfo> & stairs);
+									   std::vector<CornerStairInfo> & stairs, short Material);
 
-	void Search12CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+	void Search12CornerStairs(short * start, short * tomodify, int sizeX, int sizeY, int sizeZ, 
 										int idX, int idY, int idZ,
-									   std::vector<CornerStairInfo> & stairs);
+									   std::vector<CornerStairInfo> & stairs, short Material);
 
-	void Search13CornerStairs(short * start, int sizeX, int sizeY, int sizeZ, 
+	void Search13CornerStairs(short * start, short * tomodify, int sizeX, int sizeY, int sizeZ, 
 										int idX, int idY, int idZ,
-									   std::vector<CornerStairInfo> & stairs);
+									   std::vector<CornerStairInfo> & stairs, short Material);
 private:
 
 	// cube representing the map physic
@@ -457,7 +459,6 @@ private:
 	int			_sizeZ;
 
 	std::vector<PlaneInfo> _planes;
-	std::vector<PlaneInfo> _planessee;
 	std::vector<PlaneInfo> _planeshidden;
 
 
