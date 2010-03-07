@@ -37,6 +37,39 @@ class NxActor;
 #include <vector>
 
 
+class ActorUserData
+{
+public:
+	//! constructor
+	ActorUserData(short ActType)
+	: ActorType(ActType), Materials(NULL), 
+		MaterialsSize(0),
+		HittedFloorMaterial(0)
+	{}
+
+	//! destructor
+	~ActorUserData()
+	{
+		if(Materials)
+			delete Materials;
+	}
+
+
+	// Actor type
+	// 1 = character
+	// 2 = terrain
+	// 3 = other
+	short				ActorType;
+
+	size_t				MaterialsSize;
+	short *				Materials; 
+
+	short				HittedFloorMaterial;
+};
+
+
+
+
 /***********************************************************************
  * Module:  PhysXEngine.h
  * Author:  vivien
@@ -68,13 +101,21 @@ public:
 
 	//! create actors
 	NxActor* CreatePlane(const NxVec3 & StartPosition, const NxVec3 & PlaneNormal);
-	NxActor* CreateBox(const NxVec3 & StartPosition, float dimX, float dimY, float dimZ, float density, bool Pushable);
-	NxActor* CreateSphere(const NxVec3 & StartPosition, float radius, float density, bool Pushable);
-	NxActor* CreateCapsule(const NxVec3 & StartPosition, float radius, float height, float density, bool Pushable);
-	NxController* CreateCharacter(const NxVec3 & StartPosition, float radius, float height);
+	NxActor* CreateBox(const NxVec3 & StartPosition, float dimX, float dimY, float dimZ, 
+						float density, bool Pushable, ActorUserData * adata);
+	NxActor* CreateSphere(const NxVec3 & StartPosition, float radius, float density, 
+							bool Pushable, ActorUserData * adata);
+	NxActor* CreateCapsule(const NxVec3 & StartPosition, float radius, float height, 
+							float density, bool Pushable, ActorUserData * adata);
+	NxController* CreateCharacter(const NxVec3 & StartPosition, float radius, float height,
+									ActorUserData * adata);
+
+	NxController* CreateCharacterBox(const NxVec3 & StartPosition, const NxVec3 & Extents,
+									ActorUserData * adata);
 
 	NxActor* CreateTriangleMesh(const NxVec3 & StartPosition, float *Vertexes, 
-										size_t VertexesSize, unsigned int *Indices, size_t IndicesSize);
+										size_t VertexesSize, unsigned int *Indices, size_t IndicesSize,
+										ActorUserData * adata);
 
 	void DestroyActor(NxActor* actor);
 	void DestroyCharacter(NxController* character);
@@ -82,7 +123,7 @@ public:
 
 	//! move character
 	//! returned collision flags, collection of NxControllerFlag
-	unsigned int MoveCharacter(NxController* character, const NxVec3& moveVector);
+	unsigned int MoveCharacter(NxController* character, const NxVec3& moveVector, bool checkcollision=true);
 	void SetCharacterPos(NxController* character, const NxVec3& posVector);
 
 
@@ -95,6 +136,8 @@ public:
 	//! get gravity
 	void GetGravity(NxVec3 & Gravity);
 
+	bool IsInitialized()
+	{return _isInitialized;}
 
 protected:
 	//! constructor
@@ -111,8 +154,9 @@ private:
 	NxControllerManager*		gManager;
 	NxUserAllocator*			gAllocator;
 	NxActor*					gplayablebox;
-
-	double			_lasttime;
+	
+	bool						_isInitialized;
+	double						_lasttime;
 };
 
 #endif

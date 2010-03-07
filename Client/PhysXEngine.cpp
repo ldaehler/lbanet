@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "NxPhysics.h"
 #include "NxControllerManager.h"
 #include "NxCapsuleController.h"
+#include "NxBoxController.h"
 #include "UserAllocator.h"
 #include "NxCooking.h"
 #include "Stream.h"
@@ -40,6 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SKINWIDTH	0.2f
 
 
+
 enum GameGroup
 {
 	GROUP_NON_COLLIDABLE,
@@ -50,6 +52,57 @@ enum GameGroup
 #define COLLIDABLE_MASK	(1<<GROUP_COLLIDABLE_NON_PUSHABLE) | (1<<GROUP_COLLIDABLE_PUSHABLE)
 
 
+class MyContactReport : public NxUserContactReport    
+{        
+	void onContactNotify(NxContactPair& pair, NxU32 events)        
+	{        
+		//if(events & NX_NOTIFY_ON_START_TOUCH)
+		//{
+		//	NxActor* n1 = pair.actors[0];
+		//	NxActor* n2 = pair.actors[1];
+		//	if(n1 && n2)
+		//	{
+		//		ActorUserData * acd1 = (ActorUserData *) n1->userData;
+		//		ActorUserData * acd2 = (ActorUserData *) n2->userData;
+		//		if(acd1 && acd2)
+		//		{
+		//			if(	(acd1->ActorType == 1 && acd2->ActorType == 2) ||
+		//				(acd2->ActorType == 1 && acd1->ActorType == 2))
+		//			{
+		//				// Iterate through contact points
+		//				NxContactStreamIterator i(pair.stream);
+		//				//user can call getNumPairs() here
+		//				while(i.goNextPair())
+		//				{
+		//					//user can also call getShape() and getNumPatches() here
+		//					while(i.goNextPatch())
+		//					{
+		//						while(i.goNextPoint())
+		//						{
+		//							//user can also call getPoint() and getSeparation() here
+		//							if(i.getSeparation()<0.0f)
+		//							{
+		//								const NxVec3& contactPoint = i.getPoint();
+
+		//								NxU32 faceIndex = i.getFeatureIndex0();
+		//								if(faceIndex==0xffffffff)	
+		//									faceIndex = i.getFeatureIndex1();
+
+		//								if(faceIndex!=0xffffffff)
+		//								{
+		//									std::cout<<faceIndex<<std::endl;
+		//									//gTouchedTris.pushBack(faceIndex);
+		//								}
+		//							}
+		//						}
+		//					}
+		//				}		
+		//			}
+		//		}
+		//	}
+		//} 
+	}    
+} myReport;
 
 
 /***********************************************************************
@@ -62,6 +115,36 @@ public:
 	{
 		if(1 && hit.shape)
 		{
+			// i need to know which triangle of the mesh the controller has hit
+			// i did not find any other way yet...
+			NxTriangleMeshShape* tmesh = hit.shape->isTriangleMesh();
+			if(tmesh)
+			{
+				NxActor& actor = hit.shape->getActor();
+				if(actor.userData)
+				{
+					ActorUserData * mstorage = (ActorUserData *)actor.userData;
+					if(mstorage)
+					{
+						NxRaycastHit hitinfo;
+						NxVec3 pos(hit.worldPos.x,hit.worldPos.y+0.01f,hit.worldPos.z);
+						NxVec3 vec(0, -1,0);
+
+						if(tmesh->raycast(NxRay(pos, vec), 0.02f, 
+													NX_RAYCAST_FACE_INDEX, hitinfo, false))
+						{
+							if(hitinfo.faceID < mstorage->MaterialsSize)
+							{
+								ActorUserData * characterdata = (ActorUserData *)hit.controller->getActor()->userData;
+								if(characterdata)
+									characterdata->HittedFloorMaterial = mstorage->Materials[hitinfo.faceID];
+							}
+						}
+					}
+				}
+			}
+
+
 			NxCollisionGroup group = hit.shape->getGroup();
 			if(group!=GROUP_COLLIDABLE_NON_PUSHABLE)
 			{
@@ -170,6 +253,8 @@ void PhysXEngine::Init()
 			return;
 	}
 
+	gScene->setUserContactReport(&myReport);
+
 
 	// Create the default material
 	NxMaterial* defaultMaterial = gScene->getMaterialFromIndex(0); 
@@ -181,7 +266,7 @@ void PhysXEngine::Init()
 	// add a cube and a plane
 	//CreatePlane(NxVec3(0, 0, 0), NxVec3(0, 1, 0));
 	//CreateBox(NxVec3(0, 4, 0), 3.0f, 3.0f, 3.0f, 10, false);
-	gplayablebox = CreateBox(NxVec3(30, 5, 30), 1.0f, 1.0f, 1.0f, 10, true);
+	gplayablebox = CreateBox(NxVec3(30, 5, 30), 1.0f, 1.0f, 1.0f, 10, true, NULL);
 	//gplayablebox->setAngularDamping(std::numeric_limits<float>::infinity());
 	gplayablebox->raiseBodyFlag(NX_BF_FROZEN_ROT);
 
@@ -204,6 +289,7 @@ void PhysXEngine::Init()
 	if (gScene)  
 		StartPhysics();
 
+	_isInitialized = true;
 }
 
 /***********************************************************
@@ -211,6 +297,8 @@ void PhysXEngine::Init()
 ***********************************************************/
 void PhysXEngine::Quit()
 {
+	_isInitialized = false;
+
     if (gScene)
 	{
 		// Make sure to fetchResults() before shutting down
@@ -289,7 +377,7 @@ NxActor* PhysXEngine::CreatePlane(const NxVec3 & StartPosition, const NxVec3 & P
 	create box actor
 ***********************************************************/
 NxActor* PhysXEngine::CreateBox(const NxVec3 & StartPosition, float dimX, float dimY, float dimZ, 
-								float density, bool Pushable)
+								float density, bool Pushable, ActorUserData * adata)
 {
 
 	// Add a single-shape actor to the scene
@@ -313,7 +401,7 @@ NxActor* PhysXEngine::CreateBox(const NxVec3 & StartPosition, float dimX, float 
 		boxDesc.group = GROUP_COLLIDABLE_NON_PUSHABLE;
 
 	actorDesc.shapes.pushBack(&boxDesc);
-
+	actorDesc.userData = adata;
 
 	actorDesc.globalPose.t	= StartPosition;	
 	assert(actorDesc.isValid());
@@ -326,7 +414,8 @@ NxActor* PhysXEngine::CreateBox(const NxVec3 & StartPosition, float dimX, float 
 /***********************************************************
 	create sphere actor
 ***********************************************************/
-NxActor* PhysXEngine::CreateSphere(const NxVec3 & StartPosition, float radius, float density, bool Pushable)
+NxActor* PhysXEngine::CreateSphere(const NxVec3 & StartPosition, float radius, float density, 
+								   bool Pushable, ActorUserData * adata)
 {
 	// Add a single-shape actor to the scene
 	NxActorDesc actorDesc;
@@ -348,6 +437,8 @@ NxActor* PhysXEngine::CreateSphere(const NxVec3 & StartPosition, float radius, f
 
 	actorDesc.shapes.pushBack(&sphereDesc);
 	actorDesc.globalPose.t	= StartPosition;	
+	actorDesc.userData = adata;
+
 	return gScene->createActor(actorDesc);
 }
 
@@ -355,7 +446,7 @@ NxActor* PhysXEngine::CreateSphere(const NxVec3 & StartPosition, float radius, f
 	create capsule actor
 ***********************************************************/
 NxActor* PhysXEngine::CreateCapsule(const NxVec3 & StartPosition, float radius, float height, float density, 
-									bool Pushable)
+										bool Pushable, ActorUserData * adata)
 {
 	// Add a single-shape actor to the scene
 	NxActorDesc actorDesc;
@@ -378,6 +469,7 @@ NxActor* PhysXEngine::CreateCapsule(const NxVec3 & StartPosition, float radius, 
 
 	actorDesc.shapes.pushBack(&capsuleDesc);
 	actorDesc.globalPose.t	= StartPosition;
+	actorDesc.userData = adata;
 
 	return gScene->createActor(actorDesc);
 }
@@ -387,7 +479,8 @@ NxActor* PhysXEngine::CreateCapsule(const NxVec3 & StartPosition, float radius, 
 /***********************************************************
 	create character controller
 ***********************************************************/
-NxController* PhysXEngine::CreateCharacter(const NxVec3 & StartPosition, float radius, float height)
+NxController* PhysXEngine::CreateCharacter(const NxVec3 & StartPosition, float radius, float height,
+											ActorUserData * adata)
 {
 	NxCapsuleControllerDesc desc;
 	desc.position.x		= StartPosition.x;
@@ -396,20 +489,47 @@ NxController* PhysXEngine::CreateCharacter(const NxVec3 & StartPosition, float r
 	desc.radius			= radius;
 	desc.height			= height;
 	desc.upDirection	= NX_Y;
-	desc.slopeLimit		= 0;
+	desc.slopeLimit		= cosf(NxMath::degToRad(50.0f));
 	desc.skinWidth		= SKINWIDTH;
-	desc.stepOffset		= radius * 0.5f;
+	desc.stepOffset		= 0.5f;
 	desc.callback		= &gControllerHitReport;
-	return gManager->createController(gScene, desc);
+
+	NxController* res = gManager->createController(gScene, desc);
+	res->getActor()->userData = adata;
+
+	return res;
 }
 
 
+/***********************************************************
+	create character controller
+***********************************************************/
+NxController* PhysXEngine::CreateCharacterBox(const NxVec3 & StartPosition, const NxVec3 & Extents,
+								ActorUserData * adata)
+{
+	NxBoxControllerDesc desc;
+	desc.position.x		= StartPosition.x;
+	desc.position.y		= StartPosition.y;
+	desc.position.z		= StartPosition.z;
+	desc.extents		= Extents;
+	desc.upDirection	= NX_Y;
+	desc.slopeLimit		= cosf(NxMath::degToRad(50.0f));
+	desc.skinWidth		= SKINWIDTH;
+	desc.stepOffset		= 0.5f;
+	desc.callback		= &gControllerHitReport;
+
+	NxController* res = gManager->createController(gScene, desc);
+	res->getActor()->userData = adata;
+
+	return res;
+}
 
 /***********************************************************
 	CreateTriangleMesh
 ***********************************************************/
 NxActor* PhysXEngine::CreateTriangleMesh(const NxVec3 & StartPosition, float *Vertexes, size_t VertexesSize, 
-										 unsigned int *Indices, size_t IndicesSize)
+											unsigned int *Indices, size_t IndicesSize,
+											ActorUserData * adata)
 {
 	// Create descriptor for triangle mesh
 	NxTriangleMeshDesc triangleMeshDesc;
@@ -454,6 +574,7 @@ NxActor* PhysXEngine::CreateTriangleMesh(const NxVec3 & StartPosition, float *Ve
 	actorDesc.shapes.pushBack(&tmsd);
 	actorDesc.body		= NULL;		
 	actorDesc.globalPose.t	= StartPosition;
+	actorDesc.userData = adata;
 
 	if (pMesh)
 	{
@@ -476,11 +597,11 @@ NxActor* PhysXEngine::CreateTriangleMesh(const NxVec3 & StartPosition, float *Ve
  move character
  returned collision flags, collection of NxControllerFlag
 ***********************************************************/
-unsigned int PhysXEngine::MoveCharacter(NxController* character, const NxVec3& moveVector)
+unsigned int PhysXEngine::MoveCharacter(NxController* character, const NxVec3& moveVector, bool checkcollision)
 {
 	NxU32 collisionFlags;
 	if(character)
-		character->move(moveVector, COLLIDABLE_MASK, 0.000001f, collisionFlags);
+		character->move(moveVector, (checkcollision?COLLIDABLE_MASK:0), 0.000001f, collisionFlags);
 
 	return collisionFlags;
 }

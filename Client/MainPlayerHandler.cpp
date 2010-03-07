@@ -99,7 +99,8 @@ MainPlayerHandler::MainPlayerHandler(float speedNormal, float speedSport,
 	_speedHorse(speedHorse), _speedDino(speedDino),
 	_speedJump(speedJump), _heightJump(heightJump), _speedHurt(speedHurt),
 	_RoomP(NULL), _currentstance(0), 
-	_isAttached(false), _isDiscrete(false), _needCheck(false), _currentsignal(-1)
+	_isAttached(false), _isDiscrete(false), _needCheck(false), _currentsignal(-1),
+	_touchedground(true)
 {
 	_player = new Player(animationSpeed, true);
 	_player->DisplayName(true);
@@ -194,7 +195,7 @@ void MainPlayerHandler::Render()
 
 	// draw the player
 	glPushMatrix();
-	glTranslated(0, (-2.5 / 2), 0);
+	//glTranslated(0, (-2.5 / 2), 0);
 	_player->Render(-1);
 	glPopMatrix();
 
@@ -559,7 +560,7 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 		//if not flying or jumping make a few tests
 		if(_state != Ac_Jumping && _state != Ac_Flying)
 		{
-			if(_player->GetPosY() < 0) // the actor should die by falling out of the map
+			if(_player->GetPosY() < -0.5) // the actor should die by falling out of the map
 				return 2;
 
 			// if we are on water
@@ -589,14 +590,22 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 					_needCheck = true;
 					float fallsize = _keepYfall - _player->GetPosY();
 
-					if(_keepYfall > 6)
-						ThreadSafeWorkpile::getInstance()->AddPlayerHurtFall(fallsize-6);
-
-					// playing sound
-					bool waitforanim = ChangeAnimToHurt(fallsize > 6);
-					if(waitforanim)
+					if(fallsize > 1.5)
 					{
-						return 4;
+						if(_keepYfall > 6)
+							ThreadSafeWorkpile::getInstance()->AddPlayerHurtFall(fallsize-6);
+
+						// playing sound
+						bool waitforanim = ChangeAnimToHurt(fallsize > 6);
+						if(waitforanim)
+						{
+							return 4;
+						}
+						else
+						{
+							Stopstate();
+							return 0;
+						}
 					}
 					else
 					{
@@ -981,6 +990,7 @@ void MainPlayerHandler::Startdrowning()
 	if(_state != Ac_Drowning)
 	{
 		StopJump();
+		Stopstate();
 		ResetMove();
 
 

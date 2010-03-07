@@ -37,13 +37,45 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "PhysXEngine.h"
 #include "NxVec3.h"
 #include "NxController.h"
+#include "NxActor.h"
+#include "Actor.h"
 
 #include <windows.h>    // Header File For Windows
 #include <GL/gl.h>      // Header File For The OpenGL32 Library
 #include <GL/glu.h>     // Header File For The GLu32 Library
 
 
+/*
+--------------------------------------------------------------------------------------------------
+- constructor
+--------------------------------------------------------------------------------------------------
+*/
+ActorPositionHandler::ActorPositionHandler(NxController* contr, float X, float Y, float Z)
+: controller(contr)
+{
+	if(controller)
+		PhysXEngine::getInstance()->SetCharacterPos(controller, NxVec3(X, Y, Z));
 
+	lastX = X;
+	lastY = Y;
+	lastZ = Z;
+}
+
+
+/*
+--------------------------------------------------------------------------------------------------
+- SetPosition
+--------------------------------------------------------------------------------------------------
+*/
+void ActorPositionHandler::SetPosition(float X, float Y, float Z)
+{
+	if(controller)
+		PhysXEngine::getInstance()->MoveCharacter(controller, NxVec3(X-lastX, Y-lastY, Z-lastZ), false);
+
+	lastX = X;
+	lastY = Y;
+	lastZ = Z;
+}
 
 /*
 --------------------------------------------------------------------------------------------------
@@ -58,249 +90,105 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 	std::ifstream file(filename.c_str(), std::ifstream::binary);
 	unsigned int sizevertex;
 	unsigned int sizeindices;
+	unsigned int sizematerials;
 	file.read((char*)&sizevertex, sizeof(unsigned int));
 	file.read((char*)&sizeindices, sizeof(unsigned int));
+	file.read((char*)&sizematerials, sizeof(unsigned int));
 
 	float *buffervertex = new float[sizevertex];
 	unsigned int *bufferindices = new unsigned int[sizeindices];
+	short *buffermaterials = new short[sizematerials];
+
 	file.read((char*)buffervertex, sizevertex*sizeof(float));
 	file.read((char*)bufferindices, sizeindices*sizeof(unsigned int));
-
-
-	//std::ifstream file(filename.c_str());
-	//if(!file.is_open())
-	//	return;
-
-
-	//std::map<VECTOR, NxU32> vertexmap;
-	//std::vector<float> vertexes;
-	//std::vector<NxU32> indices;
-	//NxU32 indiceidx = 0;
-
-	//int sizePlanes, sizewallX, sizewallZ, sizeStairs, sizecornerStairs;
-	//file>>sizePlanes;
-	//file>>sizewallX;
-	//file>>sizewallZ;
-	//file>>sizeStairs;
-	//file>>sizecornerStairs;
-
-	//for(int i=0; i<sizePlanes; ++i)
-	//{
-	//	NormalPlane np;
-	//	file>>np.Layer;
-
-	//	float sx, sz, ex, ez;
-	//	file>>sx;
-	//	file>>sz;
-	//	file>>ex;
-	//	file>>ez;
-	//	np.Square._minX = MIN(sx, ex);
-	//	np.Square._maxX = MAX(sx, ex);
-	//	np.Square._minZ = MIN(sz, ez);
-	//	np.Square._maxZ = MAX(sz, ez);
-
-	//	VECTOR p1(np.Square._minX, np.Layer, np.Square._minZ);
-	//	VECTOR p2(np.Square._minX, np.Layer, np.Square._maxZ);
-	//	VECTOR p3(np.Square._maxX, np.Layer, np.Square._maxZ);
-	//	VECTOR p4(np.Square._maxX, np.Layer, np.Square._minZ);
-
-	//	//VECTOR norm1 = ((p2 - p1).cross(p3-p1)).unit();
-	//	//VECTOR norm2 = ((p1 - p4).cross(p3-p4)).unit();
-
-	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
-	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
-	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
-	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
-	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
-	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
-
-	//	//if(norm1.y < 0.5)
-	//	//	std::cout<<"oups"<<std::endl;
-	//	//if(norm2.y < 0.5)
-	//	//	std::cout<<"oups"<<std::endl;
-
-	//	file>>np.IsWater;
-	//	_floors[np.Layer].push_back(np);
-	//}
-
-	//for(int i=0; i<sizewallX; ++i)
-	//{
-	//	NormalPlane np;
-	//	file>>np.Layer;
-
-	//	float sx, sz, ex, ez;
-	//	file>>sx;
-	//	file>>sz;
-	//	file>>ex;
-	//	file>>ez;
-	//	np.Square._minX = MIN(sx, ex);
-	//	np.Square._maxX = MAX(sx, ex);
-	//	np.Square._minZ = MIN(sz, ez);
-	//	np.Square._maxZ = MAX(sz, ez);
-
-
-	//	VECTOR p1(np.Layer, np.Square._minX, np.Square._minZ);
-	//	VECTOR p2(np.Layer, np.Square._minX, np.Square._maxZ);
-	//	VECTOR p3(np.Layer, np.Square._maxX, np.Square._maxZ);
-	//	VECTOR p4(np.Layer, np.Square._maxX, np.Square._minZ);
-
-	//	//VECTOR norm1 = ((p3-p1).cross(p2 - p1)).unit();
-	//	//VECTOR norm2 = ((p3-p4).cross(p1 - p4)).unit();
-
-	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
-	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
-	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
-	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
-	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
-	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
-
-
-	//	//if(norm1.x < 0.5)
-	//	//	std::cout<<"oups"<<std::endl;
-	//	//if(norm2.x < 0.5)
-	//	//	std::cout<<"oups"<<std::endl;
-
-
-	//	_wallsX[np.Layer].push_back(np);
-	//}
-
-	//for(int i=0; i<sizewallZ; ++i)
-	//{
-	//	NormalPlane np;
-	//	file>>np.Layer;
-
-	//	float sx, sz, ex, ez;
-	//	file>>sx;
-	//	file>>sz;
-	//	file>>ex;
-	//	file>>ez;
-	//	np.Square._minX = MIN(sx, ex);
-	//	np.Square._maxX = MAX(sx, ex);
-	//	np.Square._minZ = MIN(sz, ez);
-	//	np.Square._maxZ = MAX(sz, ez);
-
-
-	//	VECTOR p1(np.Square._minX, np.Square._minZ, np.Layer);
-	//	VECTOR p2(np.Square._minX, np.Square._maxZ, np.Layer);
-	//	VECTOR p3(np.Square._maxX, np.Square._maxZ, np.Layer);
-	//	VECTOR p4(np.Square._maxX, np.Square._minZ, np.Layer);
-
-	//	//VECTOR norm1 = ((p3-p1).cross(p2 - p1)).unit();
-	//	//VECTOR norm2 = ((p3-p4).cross(p1 - p4)).unit();
-
-	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
-	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
-	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p2));
-	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p4));
-	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p3));
-	//	indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, p1));
-
-
-	//	//if(norm1.z < 0.5)
-	//	//	std::cout<<"oups"<<std::endl;
-	//	//if(norm2.z < 0.5)
-	//	//	std::cout<<"oups"<<std::endl;
-
-
-	//	_wallsZ[np.Layer].push_back(np);
-	//}
-
-	//for(int i=0; i<sizeStairs; ++i)
-	//{
-	//	StairPlane sp;
-	//	file>>sp.C1.x;
-	//	file>>sp.C1.y;
-	//	file>>sp.C1.z;
-	//	file>>sp.C2.x;
-	//	file>>sp.C2.y;
-	//	file>>sp.C2.z;
-	//	file>>sp.C3.x;
-	//	file>>sp.C3.y;
-	//	file>>sp.C3.z;
-	//	file>>sp.C4.x;
-	//	file>>sp.C4.y;
-	//	file>>sp.C4.z;
-
-
-	//	VECTOR norm1 = ((sp.C3 - sp.C1).cross(sp.C2-sp.C1)).unit();
-	//	VECTOR norm2 = ((sp.C2 - sp.C4).cross(sp.C3-sp.C4)).unit();
-
-	//	if(norm1.y < 0.5)
-	//	{
-	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C1));
-	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C2));
-	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C3));
-	//	}
-	//	else
-	//	{
-	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C1));
-	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C3));
-	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C2));
-	//	}
-
-	//	if(norm2.y < 0.5)
-	//	{
-	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C4));
-	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C3));
-	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C2));
-	//	}
-	//	else
-	//	{
-	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C4));
-	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C2));
-	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C3));
-	//	}
-
-
-
-	//	sp.Normal = ((sp.C2 - sp.C1).cross(sp.C3-sp.C1)).unit();
-	//
-	//	_stairs.push_back(sp);
-	//}
-
-	//for(int i=0; i<sizecornerStairs; ++i)
-	//{
-	//	CornerStairPlane sp;
-	//	file>>sp.C1.x;
-	//	file>>sp.C1.y;
-	//	file>>sp.C1.z;
-	//	file>>sp.C2.x;
-	//	file>>sp.C2.y;
-	//	file>>sp.C2.z;
-	//	file>>sp.C3.x;
-	//	file>>sp.C3.y;
-	//	file>>sp.C3.z;
-
-	//	VECTOR norm1 = ((sp.C3 - sp.C1).cross(sp.C2-sp.C1)).unit();
-	//	if(norm1.y < 0.5)
-	//	{
-	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C1));
-	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C2));
-	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C3));
-	//	}
-	//	else
-	//	{
-	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C1));
-	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C3));
-	//		indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, sp.C2));
-	//	}
-
-
-	//	sp.Normal = ((sp.C2 - sp.C1).cross(sp.C3-sp.C1)).unit();
-	//	_corner_stairs.push_back(sp);
-	//}
+	file.read((char*)buffermaterials, sizematerials*sizeof(short));
 
 	_lastposX = posX;
-	_lastposY = posY;
+	_lastposY = posY+2.499f;
 	_lastposZ = posZ;
 
-	_controller = PhysXEngine::getInstance()->CreateCharacter(NxVec3(_lastposX, _lastposY, _lastposZ), 0.4, 3.8);
+
+	ActorUserData * usdata = new ActorUserData(1);
+
+	_controller = PhysXEngine::getInstance()->CreateCharacter(NxVec3(_lastposX, _lastposY, _lastposZ), 
+																0.4, 3.8, usdata);
+
+
+	ActorUserData * mstorage = new ActorUserData(2);
+	mstorage->MaterialsSize = sizematerials;
+	mstorage->Materials =  buffermaterials;
 
 	_map = PhysXEngine::getInstance()->CreateTriangleMesh(NxVec3(0,0,0), buffervertex, 
-															sizevertex, bufferindices, sizeindices);
+															sizevertex, bufferindices, sizeindices,
+															mstorage);
 
 	delete buffervertex;
 	delete bufferindices;
+
+
+	if(LAH)
+	{	 
+		std::map<long, Actor *> * acts = LAH->GetActors();
+		if(acts)
+		{
+			std::map<long, Actor *>::iterator it = acts->begin();
+			std::map<long, Actor *>::iterator end = acts->end();
+			for(;it != end; ++it)
+			{
+				float posx = it->second->GetPosX();
+				float posy = it->second->GetPosY();
+				float posz = it->second->GetPosZ();
+				float sizex = it->second->GetSizeX();
+				float sizey = it->second->GetSizeY();
+				float sizez = it->second->GetSizeZ();
+
+				if(sizex > 0)
+				{
+					sizey /= 2;
+					posy += sizey;
+
+					ActorUserData * usdata = new ActorUserData(1);
+					NxController* cont = PhysXEngine::getInstance()->CreateCharacterBox(NxVec3(posx, posy, posz), 
+																NxVec3(sizex, sizey, sizez), usdata);
+
+					it->second->SetPhysController(new ActorPositionHandler(cont, posx, posy, posz));
+					_actors.push_back(cont);
+				}
+			}
+		}
+	}
+
+	if(EAH)
+	{	 
+		std::map<long, Actor *> * acts = EAH->GetActors();
+		if(acts)
+		{
+			std::map<long, Actor *>::iterator it = acts->begin();
+			std::map<long, Actor *>::iterator end = acts->end();
+			for(;it != end; ++it)
+			{
+				float posx = it->second->GetPosX();
+				float posy = it->second->GetPosY();
+				float posz = it->second->GetPosZ();
+				float sizex = it->second->GetSizeX();
+				float sizey = it->second->GetSizeY();
+				float sizez = it->second->GetSizeZ();
+
+				if(sizex > 0)
+				{
+					sizey /= 2;
+					posy += sizey;
+
+					ActorUserData * usdata = new ActorUserData(1);
+					NxController* cont = PhysXEngine::getInstance()->CreateCharacterBox(NxVec3(posx, posy, posz), 
+																NxVec3(sizex, sizey, sizez), usdata);
+
+					it->second->SetPhysController(new ActorPositionHandler(cont, posx, posy, posz));
+					_actors.push_back(cont);
+				}
+			}
+		}
+	}
 }
 
 /*
@@ -310,6 +198,29 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 */
 PhysXPhysicHandler::~PhysXPhysicHandler()
 {
+	if(PhysXEngine::getInstance()->IsInitialized())
+	{
+		ActorUserData * mstorage = (ActorUserData *)_map->userData;
+		if(mstorage)
+			delete mstorage;
+
+		ActorUserData * characterdata = (ActorUserData *)_controller->getActor()->userData;
+		if(characterdata)
+			delete characterdata;
+
+		std::vector<NxController*>::iterator it = _actors.begin();
+		std::vector<NxController*>::iterator end = _actors.end();
+		for(; it != end; ++it)
+		{
+			ActorUserData * adata = (ActorUserData *)(*it)->getActor()->userData;
+			if(adata)
+				delete adata;
+
+			PhysXEngine::getInstance()->DestroyCharacter(*it);
+		}
+	}
+
+
 	PhysXEngine::getInstance()->DestroyActor(_map);
 	PhysXEngine::getInstance()->DestroyCharacter(_controller);
 }
@@ -344,6 +255,12 @@ MoveOutput PhysXPhysicHandler::MoveActor(long ActorId, const AABB & actorBB,
 	res.NewSpeed.z = posZ - _lastposZ;
 
 	res.TouchingGround = flags & NXCC_COLLISION_DOWN;
+	if(res.TouchingGround)
+	{
+		ActorUserData * characterdata = (ActorUserData *)_controller->getActor()->userData;
+		if(characterdata)
+			res.TouchingWater = (characterdata->HittedFloorMaterial > 16);
+	}
 
 	_lastposX = posX;
 	_lastposY = posY;
@@ -361,9 +278,9 @@ MoveOutput PhysXPhysicHandler::MoveActor(long ActorId, const AABB & actorBB,
 void PhysXPhysicHandler::SetActorPos(long ActorId, const VECTOR &NewPos)
 {
 	_lastposX = NewPos.x;
-	_lastposY = NewPos.y;
+	_lastposY = NewPos.y+2.499f;
 	_lastposZ = NewPos.z;
-	PhysXEngine::getInstance()->SetCharacterPos(_controller, NxVec3(NewPos.x, NewPos.y, NewPos.z));
+	PhysXEngine::getInstance()->SetCharacterPos(_controller, NxVec3(_lastposX, _lastposY, _lastposZ));
 }
 
 
