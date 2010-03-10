@@ -131,6 +131,10 @@ class OSGUTIL_EXPORT SceneView : public osg::Object, public osg::CullSettings
         osg::StateSet* getGlobalStateSet() { return _globalStateSet.get(); }
         const osg::StateSet* getGlobalStateSet() const { return _globalStateSet.get(); }
 
+        void setSecondaryStateSet(osg::StateSet* state) { _secondaryStateSet = state; }
+        osg::StateSet* getSecondaryStateSet() { return _secondaryStateSet.get(); }
+        const osg::StateSet* getSecondaryStateSet() const { return _secondaryStateSet.get(); }
+
         void setLocalStateSet(osg::StateSet* state) { _localStateSet = state; }
         osg::StateSet* getLocalStateSet() { return _localStateSet.get(); }
         const osg::StateSet* getLocalStateSet() const { return _localStateSet.get(); }
@@ -310,6 +314,12 @@ class OSGUTIL_EXPORT SceneView : public osg::Object, public osg::CullSettings
         void setRenderStageRight(osgUtil::RenderStage* rs) { _renderStageRight = rs; }
         osgUtil::RenderStage* getRenderStageRight() { return _renderStageRight.get(); }
         const osgUtil::RenderStage* getRenderStageRight() const { return _renderStageRight.get(); }
+
+        /** search through any pre and post RenderStage that reference a Camera, and take a reference to each of these cameras to prevent them being deleted while they are still be used by the drawing thread.*/
+        void collateReferencesToDependentCameras();
+
+        /** clear the refence to any any dependent cameras.*/
+        void clearReferencesToDependentCameras();
 
 
         /** Set the draw buffer value used at the start of each frame draw.  Note, overridden in quad buffer stereo mode */
@@ -517,6 +527,8 @@ class OSGUTIL_EXPORT SceneView : public osg::Object, public osg::CullSettings
         osg::ref_ptr<osg::Light>                    _light;
         osg::ref_ptr<osg::DisplaySettings>          _displaySettings;
         
+        osg::ref_ptr<osg::StateSet>                 _secondaryStateSet;
+
         FusionDistanceMode                          _fusionDistanceMode;
         float                                       _fusionDistanceValue;
 

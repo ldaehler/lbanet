@@ -30,6 +30,8 @@ class OSGVIEWER_EXPORT Scene : public osg::Referenced
 {
     public:
 
+        virtual const char* className() const { return "Scene"; }
+
         void setSceneData(osg::Node* node);
         osg::Node* getSceneData();
         const osg::Node* getSceneData() const;
@@ -39,10 +41,11 @@ class OSGVIEWER_EXPORT Scene : public osg::Referenced
         osgDB::DatabasePager* getDatabasePager() { return _databasePager.get(); }
         const osgDB::DatabasePager* getDatabasePager() const { return _databasePager.get(); }
 
-
         void setImagePager(osgDB::ImagePager* ip);
         osgDB::ImagePager* getImagePager() { return _imagePager.get(); }
         const osgDB::ImagePager* getImagePager() const { return _imagePager.get(); }
+
+        void updateSceneGraph(osg::NodeVisitor& updateVisitor);
 
 
         /** Get the Scene object that has the specified node assigned to it.
