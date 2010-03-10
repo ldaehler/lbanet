@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "WorldToDisplayObjectSynchronizer.h"
 
-
+#define ABS(X) (((X)<0)?(-(X)):(X))
 
 /***********************************************************
 constructor
@@ -110,7 +110,7 @@ void WorldToDisplayObjectSynchronizer::SyncWithSmoothing()
 		float delta = (posX-_lastDisplayPositionX);
 
 		// if delta is too big set it to correct position otherwise smooth it
-		if(fabs(delta) < _maxPositionDelta)
+		if(ABS(delta) < _maxPositionDelta)
 			_lastDisplayPositionX += delta * _tightnessPosition;
 		else
 			_lastDisplayPositionX = posX;
@@ -122,7 +122,7 @@ void WorldToDisplayObjectSynchronizer::SyncWithSmoothing()
 		float delta = (posY-_lastDisplayPositionY);
 
 		// if delta is too big set it to correct position otherwise smooth it
-		if(fabs(delta) < _maxPositionDelta)
+		if(ABS(delta) < _maxPositionDelta)
 			_lastDisplayPositionY += delta * _tightnessPosition;
 		else
 			_lastDisplayPositionY = posY;
@@ -134,7 +134,7 @@ void WorldToDisplayObjectSynchronizer::SyncWithSmoothing()
 		float delta = (posZ-_lastDisplayPositionZ);
 
 		// if delta is too big set it to correct position otherwise smooth it
-		if(fabs(delta) < _maxPositionDelta)
+		if(ABS(delta) < _maxPositionDelta)
 			_lastDisplayPositionZ += delta * _tightnessPosition;
 		else
 			_lastDisplayPositionZ = posZ;
@@ -153,7 +153,7 @@ void WorldToDisplayObjectSynchronizer::SyncWithSmoothing()
 		float delta = (rotX-_lastDisplayRotationX);
 
 		// if delta is too big set it to correct rotation otherwise smooth it
-		if(fabs(delta) < _maxRotationDelta)
+		if(ABS(delta) < _maxRotationDelta)
 			_lastDisplayRotationX += delta * _tightnessRotation;
 		else
 			_lastDisplayRotationX = rotX;
@@ -166,7 +166,7 @@ void WorldToDisplayObjectSynchronizer::SyncWithSmoothing()
 		float delta = (rotY-_lastDisplayRotationY);
 
 		// if delta is too big set it to correct rotation otherwise smooth it
-		if(fabs(delta) < _maxRotationDelta)
+		if(ABS(delta) < _maxRotationDelta)
 			_lastDisplayRotationY += delta * _tightnessRotation;
 		else
 			_lastDisplayRotationY = rotY;
@@ -179,7 +179,7 @@ void WorldToDisplayObjectSynchronizer::SyncWithSmoothing()
 		float delta = (rotZ-_lastDisplayRotationZ);
 
 		// if delta is too big set it to correct rotation otherwise smooth it
-		if(fabs(delta) < _maxRotationDelta)
+		if(ABS(delta) < _maxRotationDelta)
 			_lastDisplayRotationZ += delta * _tightnessRotation;
 		else
 			_lastDisplayRotationZ = rotZ;
