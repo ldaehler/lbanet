@@ -47,7 +47,7 @@ namespace osgParticle
         void snow(float intensity);
         
         void setMaximumParticleDensity(float density) { if (_maximumParticleDensity==density) return;  _maximumParticleDensity = density; _dirty = true;}
-        float setMaximumParticleDensity() const { return _maximumParticleDensity; }
+        float getMaximumParticleDensity() const { return _maximumParticleDensity; }
 
         void setWind(const osg::Vec3& wind) { _wind = wind; }
         const osg::Vec3& getWind() const { return _wind; }
@@ -255,6 +255,8 @@ namespace osgParticle
         osg::Vec3   _inverse_du;
         osg::Vec3   _inverse_dv;
         osg::Vec3   _inverse_dw;
+
+        double      _previousFrameTime;
 
     };
 

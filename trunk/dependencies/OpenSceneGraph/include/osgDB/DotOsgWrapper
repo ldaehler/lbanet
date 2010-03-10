@@ -26,8 +26,7 @@
 namespace osgDB {
 
 
-/** Wrapper class for specifying read and write functions for extending
-  * the .osg file format. */ 
+/** deprecated. */
 class OSGDB_EXPORT DotOsgWrapper : public osg::Referenced
 {
     public:
@@ -78,6 +77,94 @@ class OSGDB_EXPORT DotOsgWrapper : public osg::Referenced
 
         ReadWriteMode               _readWriteMode;
 };
+
+
+/** deprecated. */
+class OSGDB_EXPORT DeprecatedDotOsgWrapperManager : public osg::Referenced
+{
+    public:
+
+        DeprecatedDotOsgWrapperManager() {}
+
+        void addDotOsgWrapper(DotOsgWrapper* wrapper);
+        void removeDotOsgWrapper(DotOsgWrapper* wrapper);
+
+        osg::Object*         readObjectOfType(const osg::Object& compObj,Input& fr);
+        osg::Object*         readObjectOfType(const basic_type_wrapper &btw, Input& fr);
+
+        osg::Object*         readObject(Input& fr);
+        osg::Image*          readImage(Input& fr);
+        osg::Drawable*       readDrawable(Input& fr);
+        osg::Uniform*        readUniform(Input& fr);
+        osg::StateAttribute* readStateAttribute(Input& fr);
+        osg::Node*           readNode(Input& fr);
+        osg::Shader*         readShader(Input& fr);
+
+        bool                 writeObject(const osg::Object& obj,Output& fw);
+
+        typedef std::list<std::string> FileNames;
+        bool getLibraryFileNamesToTry(const std::string& name, FileNames& fileNames);
+
+    private:
+
+        virtual ~DeprecatedDotOsgWrapperManager() {}
+
+        typedef std::map< std::string, osg::ref_ptr<DotOsgWrapper> >    DotOsgWrapperMap;
+
+        osg::Object*       readObject(DotOsgWrapperMap& dowMap,Input& fr);
+        void eraseWrapper(DotOsgWrapperMap& wrappermap,DotOsgWrapper* wrapper);
+
+        DotOsgWrapperMap   _objectWrapperMap;
+        DotOsgWrapperMap   _imageWrapperMap;
+        DotOsgWrapperMap   _drawableWrapperMap;
+        DotOsgWrapperMap   _stateAttrWrapperMap;
+        DotOsgWrapperMap   _uniformWrapperMap;
+        DotOsgWrapperMap   _nodeWrapperMap;
+        DotOsgWrapperMap   _shaderWrapperMap;
+
+        DotOsgWrapperMap   _classNameWrapperMap;
+
+};
+
+
+/** deprecated. */
+class OSGDB_EXPORT RegisterDotOsgWrapperProxy
+{
+    public:
+
+        RegisterDotOsgWrapperProxy(osg::Object* proto,
+                                   const std::string& name,
+                                   const std::string& associates,
+                                   DotOsgWrapper::ReadFunc readFunc,
+                                   DotOsgWrapper::WriteFunc writeFunc,
+                                   DotOsgWrapper::ReadWriteMode readWriteMode=DotOsgWrapper::READ_AND_WRITE);
+
+        ~RegisterDotOsgWrapperProxy();
+
+    protected:
+        osg::ref_ptr<DotOsgWrapper> _wrapper;
+};
+
+/** deprecated. */
+template<class T>
+class TemplateRegisterDotOsgWrapperProxy : public RegisterDotOsgWrapperProxy, public T
+{
+    public:
+
+        TemplateRegisterDotOsgWrapperProxy(osg::Object* proto,
+                                   const std::string& name,
+                                   const std::string& associates,
+                                   DotOsgWrapper::ReadFunc readFunc,
+                                   DotOsgWrapper::WriteFunc writeFunc,
+                                   DotOsgWrapper::ReadWriteMode readWriteMode=DotOsgWrapper::READ_AND_WRITE):
+            RegisterDotOsgWrapperProxy(proto, name, associates, readFunc, writeFunc, readWriteMode) {}
+
+};
+
+
+#define REGISTER_DOTOSGWRAPPER(classname) \
+    extern "C" void dotosgwrapper_##classname(void) {} \
+    static osgDB::RegisterDotOsgWrapperProxy dotosgwrapper_proxy_##classname
 
 }
 
