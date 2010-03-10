@@ -414,7 +414,7 @@ class LBA_MAP
     LBA_GRID *grid;
     vector<LBA_BRICK> brick;
     int number_brick;
-
+    vector<int> nb_faces;
 
 
     int brick_list[10000];
@@ -539,8 +539,10 @@ class LBA_MAP_GL
     void face(double X,double Y,double Z,double texture_x,double texture_y,double h,int a,int b,int c,bool hidden);
     unsigned char *texture_map;
     vector<LBA_FACE> lba_face;
+    vector<int> nb_faces;
 
 	void ExportMap();
+	void ExportMapOSG();
 
     ~LBA_MAP_GL()
     {

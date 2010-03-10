@@ -1,9 +1,22 @@
 #include "lba_map_gl.h"
 
+
 #include <sstream>
 
 #include <IL/il.h>
 #include <IL/ilu.h>
+
+
+#include <osg/Node>
+#include <osg/Group>
+#include <osg/Geode>
+#include <osg/Geometry>
+#include <osgDB/WriteFile>
+#include <osg/Texture2D>
+#include <osgDB/ReadFile>
+#include <osgDB/FileUtils>
+#include <osgUtil/Optimizer>
+
 
 void LBA_MAP_GL::face(double X,double Y,double Z,double texture_x,double texture_y,double h,int a,int b,int c,bool hidden)
 {
@@ -128,6 +141,8 @@ lba_face.push_back(face);
 
 LBA_MAP_GL::LBA_MAP_GL(int NUM_MAP,int LBA2)
     {
+		nb_faces.clear();
+
 		mapnumber = NUM_MAP;
 		islba2 = LBA2;
 
@@ -287,9 +302,9 @@ if(lba_map->brick_list[lba_map->grid->info_brick[X][Z][Y].index_brick]!=126)//LB
 
 	std::stringstream filename;
 	if(islba2)
-		filename<<"Maps/Lba2/map";
+		filename<<"Data/Lba2/Maps/map";
 	else
-		filename<<"Maps/Lba1/map";
+		filename<<"Data/Lba1/Maps/map";
 
 	filename<<mapnumber<<".png";
 
@@ -348,6 +363,7 @@ if(lba_map->grid->info_brick[X][Z][Y].index_brick!=-1)
             face(X,Y,Z,texture_x,texture_y,h,17,9,15,false);
             face(X,Y,Z,texture_x,texture_y,h,0,2,12,false);
             face(X,Y,Z,texture_x,texture_y,h,13,8,1,false);
+			nb_faces.push_back(6);
             break;
         case 2:
             face(X,Y,Z,texture_x,texture_y,h,11,18,14,false);
@@ -356,6 +372,7 @@ if(lba_map->grid->info_brick[X][Z][Y].index_brick!=-1)
             face(X,Y,Z,texture_x,texture_y,h,19,17,9,false);
             face(X,Y,Z,texture_x,texture_y,h,9,15,19,false);
             face(X,Y,Z,texture_x,texture_y,h,9,16,5,false);
+			nb_faces.push_back(6);
             break;
         case 3:
             face(X,Y,Z,texture_x,texture_y,h,15,19,17,false);
@@ -364,6 +381,7 @@ if(lba_map->grid->info_brick[X][Z][Y].index_brick!=-1)
             face(X,Y,Z,texture_x,texture_y,h,11,18,14,false);
             face(X,Y,Z,texture_x,texture_y,h,14,3,10,false);
             face(X,Y,Z,texture_x,texture_y,h,2,4,10,false);
+			nb_faces.push_back(6);
             break;
         case 4:
             face(X,Y,Z,texture_x,texture_y,h,11,18,8,false);
@@ -372,6 +390,7 @@ if(lba_map->grid->info_brick[X][Z][Y].index_brick!=-1)
             face(X,Y,Z,texture_x,texture_y,h,1,8,16,false);
             face(X,Y,Z,texture_x,texture_y,h,16,5,1,false);
             face(X,Y,Z,texture_x,texture_y,h,0,4,10,false);
+			nb_faces.push_back(6);
             break;
         case 5:
             face(X,Y,Z,texture_x,texture_y,h,19,17,0,false);
@@ -380,6 +399,7 @@ if(lba_map->grid->info_brick[X][Z][Y].index_brick!=-1)
             face(X,Y,Z,texture_x,texture_y,h,1,16,5,false);
             face(X,Y,Z,texture_x,texture_y,h,2,0,4,false);
             face(X,Y,Z,texture_x,texture_y,h,4,10,3,false);
+			nb_faces.push_back(6);
             break;
         case 6:
             face(X,Y,Z,texture_x,texture_y,h,4,2,12,false);
@@ -390,6 +410,7 @@ if(lba_map->grid->info_brick[X][Z][Y].index_brick!=-1)
             face(X,Y,Z,texture_x,texture_y,h,9,15,19,false);
             face(X,Y,Z,texture_x,texture_y,h,5,9,16,false);
             face(X,Y,Z,texture_x,texture_y,h,4,3,10,false);
+			nb_faces.push_back(8);
             break;
         case 7:
             face(X,Y,Z,texture_x,texture_y,h,19,8,1,false);
@@ -400,6 +421,7 @@ if(lba_map->grid->info_brick[X][Z][Y].index_brick!=-1)
             face(X,Y,Z,texture_x,texture_y,h,16,5,1,false);
             face(X,Y,Z,texture_x,texture_y,h,10,2,0,false);
             face(X,Y,Z,texture_x,texture_y,h,0,4,10,false);
+			nb_faces.push_back(8);
             break;
         case 8:
             face(X,Y,Z,texture_x,texture_y,h,0,4,10,false);
@@ -410,6 +432,7 @@ if(lba_map->grid->info_brick[X][Z][Y].index_brick!=-1)
             face(X,Y,Z,texture_x,texture_y,h,17,9,15,false);
             face(X,Y,Z,texture_x,texture_y,h,1,8,16,false);
             face(X,Y,Z,texture_x,texture_y,h,16,5,1,false);
+			nb_faces.push_back(8);
             break;
         case 9:
             face(X,Y,Z,texture_x,texture_y,h,16,0,2,false);
@@ -420,30 +443,35 @@ if(lba_map->grid->info_brick[X][Z][Y].index_brick!=-1)
             face(X,Y,Z,texture_x,texture_y,h,16,5,1,false);
             face(X,Y,Z,texture_x,texture_y,h,10,2,0,false);
             face(X,Y,Z,texture_x,texture_y,h,0,4,10,false);
+			nb_faces.push_back(8);
             break;
         case 10:
             face(X,Y,Z,texture_x,texture_y,h,6,11,12,false);
             face(X,Y,Z,texture_x,texture_y,h,13,17,7,false);
             face(X,Y,Z,texture_x,texture_y,h,11,18,14,false);
             face(X,Y,Z,texture_x,texture_y,h,15,19,17,false);
+			nb_faces.push_back(4);
             break;
         case 11:
             face(X,Y,Z,texture_x,texture_y,h,0,11,18,false);
             face(X,Y,Z,texture_x,texture_y,h,19,17,1,false);
             face(X,Y,Z,texture_x,texture_y,h,0,4,10,false);
             face(X,Y,Z,texture_x,texture_y,h,1,5,16,false);
+			nb_faces.push_back(4);
             break;
         case 12:
             face(X,Y,Z,texture_x,texture_y,h,11,18,9,false);
             face(X,Y,Z,texture_x,texture_y,h,8,4,10,false);
             face(X,Y,Z,texture_x,texture_y,h,19,17,9,false);
             face(X,Y,Z,texture_x,texture_y,h,8,16,5,false);
+			nb_faces.push_back(4);
             break;
         case 13:
             face(X,Y,Z,texture_x,texture_y,h,3,19,17,false);
             face(X,Y,Z,texture_x,texture_y,h,16,5,2,false);
             face(X,Y,Z,texture_x,texture_y,h,2,4,10,false);
             face(X,Y,Z,texture_x,texture_y,h,3,18,11,false);
+			nb_faces.push_back(4);
             break;
 
 
@@ -461,8 +489,130 @@ if(lba_map->grid->info_brick[X][Z][Y].index_brick!=-1)
 
 
 
+
+unsigned int findvertexinmap(std::map<osg::Vec2, unsigned int> & map, unsigned int & curridx, 
+								  osg::Vec3Array* vertexes, const osg::Vec3 & vertex,
+								  osg::Vec2Array* texts, const osg::Vec2 & text)
+{
+	std::map<osg::Vec2, unsigned int>::iterator itm = map.find(text);
+	if(itm != map.end())
+		return itm->second;
+
+	map[text] = curridx;
+	vertexes->push_back(vertex);
+	texts->push_back(text);
+	return curridx++;
+}
+
+
+void LBA_MAP_GL::ExportMapOSG()
+{
+	osgDB::setDataFilePathList("./Data");
+
+	std::stringstream filename;
+	if(islba2)
+		filename<<"Data/Lba2/Maps/map";
+	else
+		filename<<"Data/Lba1/Maps/map";
+
+	filename<<mapnumber<<".osg";
+
+	std::stringstream filename2;
+	if(islba2)
+		filename2<<"Lba2/Maps/map";
+	else
+		filename2<<"Lba1/Maps/map";
+
+	filename2<<mapnumber<<".png";
+
+
+	osg::ref_ptr<osg::Group> root = new osg::Group();
+	osg::ref_ptr<osg::Geode> myGeode = new osg::Geode();
+	root->addChild(myGeode.get());
+
+	int cc=0;
+	vector<int>::iterator itnbfaces =  nb_faces.begin();	
+	vector<int>::iterator endnbfaces =  nb_faces.end();
+	for(;itnbfaces != endnbfaces; ++itnbfaces)
+	{
+
+		osg::ref_ptr<osg::Geometry> myGeometry = new osg::Geometry();
+		myGeode->addDrawable(myGeometry.get());
+
+		//osg::Vec4Array* colors = new osg::Vec4Array;
+		osg::Vec3Array* myVertices = new osg::Vec3Array;
+		osg::Vec3Array* myNormals = new osg::Vec3Array;
+		osg::Vec2Array* myTexts = new osg::Vec2Array;
+		osg::DrawElementsUInt* myprimitive = new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES, 0);
+
+		std::map<osg::Vec2, unsigned int> mapvert;
+		unsigned int curridx=0;
+
+		for(int i=0; i<*itnbfaces; ++i, ++cc)
+		{
+			myprimitive->push_back(findvertexinmap(mapvert, curridx, myVertices, 
+								osg::Vec3(lba_face[cc].v[0], lba_face[cc].v[1]*2, lba_face[cc].v[2]),
+								myTexts, osg::Vec2( lba_face[cc].vt[0], lba_face[cc].vt[1])));
+
+			myprimitive->push_back(findvertexinmap(mapvert, curridx, myVertices, 
+								osg::Vec3(lba_face[cc].v[3], lba_face[cc].v[4]*2, lba_face[cc].v[5]),
+								myTexts, osg::Vec2( lba_face[cc].vt[2], lba_face[cc].vt[3])));
+
+			myprimitive->push_back(findvertexinmap(mapvert, curridx, myVertices, 
+								osg::Vec3(lba_face[cc].v[6], lba_face[cc].v[7]*2, lba_face[cc].v[8]),
+								myTexts, osg::Vec2( lba_face[cc].vt[4], lba_face[cc].vt[5])));
+
+			myNormals->push_back( osg::Vec3( lba_face[cc].vn[0], lba_face[cc].vn[1], lba_face[cc].vn[2]) );
+		}
+
+		myGeometry->addPrimitiveSet(myprimitive);
+		myGeometry->setVertexArray( myVertices ); 
+		myGeometry->setNormalArray( myNormals );
+		myGeometry->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+		myGeometry->setTexCoordArray( 0, myTexts);
+	}
+
+
+	osg::StateSet* stateSet = root->getOrCreateStateSet();
+
+	// Enable blending, select transparent bin.
+	stateSet->setMode( GL_BLEND, osg::StateAttribute::ON );
+	stateSet->setRenderingHint( osg::StateSet::TRANSPARENT_BIN );
+
+
+	osg::ref_ptr<osg::Texture2D> KLN89FaceTexture = new osg::Texture2D;
+
+	// protect from being optimized away as static state:
+	KLN89FaceTexture->setDataVariance(osg::Object::DYNAMIC); 
+
+	// load an image by reading a file: 
+	osg::Image* klnFace = osgDB::readImageFile(filename2.str());
+
+	// Assign the texture to the image we read from file: 
+	KLN89FaceTexture->setImage(klnFace);
+
+	KLN89FaceTexture->setFilter(osg::Texture::FilterParameter::MIN_FILTER, osg::Texture::FilterMode::LINEAR);
+	KLN89FaceTexture->setFilter(osg::Texture::FilterParameter::MAG_FILTER, osg::Texture::FilterMode::LINEAR);
+	KLN89FaceTexture->setUseHardwareMipMapGeneration(false);
+	KLN89FaceTexture->setResizeNonPowerOfTwoHint(false);
+
+	// Assign texture unit 0 of our new StateSet to the texture 
+	// we just created and enable the texture.
+	stateSet->setTextureAttributeAndModes
+	  (0,KLN89FaceTexture,osg::StateAttribute::ON);
+
+	osgUtil::Optimizer optOSGFile;
+	optOSGFile.optimize (root.get());
+
+	osgDB::writeNodeFile(*root.get(), filename.str());
+}
+
+
+
 void LBA_MAP_GL::ExportMap()
 {
+
+
 	std::stringstream filename;
 	if(islba2)
 		filename<<"Maps/Lba2/map";

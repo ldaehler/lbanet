@@ -512,7 +512,10 @@ LBA_MAP::LBA_MAP(bool LBA2, const std::string &grfile, int layoutused)
 				int mat2 = grid->info_brick[i][j][k].material & unsigned char(15);
 
 				if(mat == 15 && mat2 == 1)
-					grid->info_brick[i][j][k].shape = 15;
+				{
+					//grid->info_brick[i][j][k].shape = 15;
+					grid->info_brick[i][j][k].sound = 17;
+				}
 
 				switch(mat)
 				{
@@ -562,12 +565,6 @@ LBA_MAP::LBA_MAP(bool LBA2, const std::string &grfile, int layoutused)
 			{
 				int mat = (grid->info_brick[i][j][k].material >> 4);
 				int mat2 = grid->info_brick[i][j][k].material & unsigned char(15);
-				if(mat == 1 || mat == 15)
-					grid->info_brick[i][j][k].shape = 15; // water
-				if(mat == 9 || mat == 13)
-					grid->info_brick[i][j][k].shape = 16; // lava
-				if( mat == 11 || mat == 14)
-					grid->info_brick[i][j][k].shape = 17; // gas
 
 
 				switch(mat2)
@@ -609,7 +606,7 @@ LBA_MAP::LBA_MAP(bool LBA2, const std::string &grfile, int layoutused)
 						grid->info_brick[i][j][k].sound =11;
 					break;
 					case 12:
-						grid->info_brick[i][j][k].sound =16;
+						grid->info_brick[i][j][k].sound =6;
 					break;
 					case 13:
 						grid->info_brick[i][j][k].sound =13;
@@ -617,6 +614,22 @@ LBA_MAP::LBA_MAP(bool LBA2, const std::string &grfile, int layoutused)
 					case 14:
 						grid->info_brick[i][j][k].sound =1;
 					break;
+				}
+
+				if(mat == 1 || mat == 15)
+				{
+					//grid->info_brick[i][j][k].shape = 15; // water
+					grid->info_brick[i][j][k].sound = 17;
+				}
+				if(mat == 9 || mat == 13)
+				{
+					//grid->info_brick[i][j][k].shape = 16; // lava
+					grid->info_brick[i][j][k].sound = 19;
+				}
+				if( mat == 11 || mat == 14)
+				{
+					//grid->info_brick[i][j][k].shape = 17; // gas
+					grid->info_brick[i][j][k].sound = 18;
 				}
 			}
 		}

@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\dependencies\DevIL\include"
+				AdditionalIncludeDirectories="..\..\dependencies\DevIL\include;..\..\dependencies\OpenSceneGraph\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,9 +61,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="DevIL.lib ILU.lib"
+				AdditionalDependencies="DevIL.lib ILU.lib osgGAd.lib osgDBd.lib osgViewerd.lib osgTextd.lib osgUtild.lib OpenThreadsd.lib osgFXd.lib osgd.lib osgSimd.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\dependencies\DevIL\lib"
+				AdditionalLibraryDirectories="..\..\dependencies\DevIL\lib;..\..\dependencies\OpenSceneGraph\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
