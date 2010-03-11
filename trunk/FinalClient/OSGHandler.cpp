@@ -24,17 +24,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "OSGHandler.h"
 #include "LogHandler.h"
+#include "ConfigurationManager.h"
+
+
+
+#include <osg/PositionAttitudeTransform>
 
 #include <osgViewer/Viewer>
-#include <osg/PositionAttitudeTransform>
+#include <osgViewer/ViewerEventHandlers>
+
 #include <osgDB/ReadFile>
 #include <osgDB/FileUtils>
-#include <osgViewer/ViewerEventHandlers>
-#include <osgGA/TrackballManipulator>
 
 #include <osgShadow/ShadowedScene>
 #include <osgShadow/StandardShadowMap>
 #include <osgShadow/ShadowMap>
+
+#include <osgGA/GUIEventHandler>
+
+
 
 #include <math.h>
 #ifndef M_PI
@@ -49,6 +57,37 @@ OsgHandler* OsgHandler::_singletonInstance = NULL;
 
 
 
+
+
+
+
+
+//*************************************************************************************************
+//*                               class UserInputsHandler
+//*************************************************************************************************
+/**
+* @brief Class taking care of user inputs (mouse and keyboard)
+*
+*/
+// class to handle events with a pick
+class UserInputsHandler : public osgGA::GUIEventHandler
+{
+public:
+	//! constructor
+    UserInputsHandler()
+		: _right_button_pressed(false)
+	{}
+
+	//! destructor
+    ~UserInputsHandler(){}
+
+	//! handle inputs
+    bool handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa);
+
+private:
+	bool	_right_button_pressed;
+	int		_mouse_Y;
+};
 
 
 
@@ -174,6 +213,25 @@ void OsgHandler::Initialize(const std::string &WindowName, const std::string &Da
 	LogHandler::getInstance()->LogToFile("Initializing graphics window...");
 	_viewer = new osgViewer::Viewer();
 
+
+	// get data from configuration file
+	{
+		LogHandler::getInstance()->LogToFile("Initializing camera...");
+		bool perspec;
+		double camdistance, camzenit;
+		ConfigurationManager::GetInstance()->GetDouble("Display.Camera.Distance", camdistance);
+		ConfigurationManager::GetInstance()->GetDouble("Display.Camera.Zenit", camzenit);
+		ConfigurationManager::GetInstance()->GetBool("Display.Camera.Perspective", perspec);
+		SetCameraDistance(camdistance);
+		SetCameraZenit(camzenit);
+		TogglePerspectiveView(perspec);
+
+		ConfigurationManager::GetInstance()->GetInt("Display.Screen.ScreenResolutionX", _resX);
+		ConfigurationManager::GetInstance()->GetInt("Display.Screen.ScreenResolutionY", _resY);
+		ConfigurationManager::GetInstance()->GetBool("Display.Screen.Fullscreen", _isFullscreen);
+	}
+
+
     // create the window to draw to.
     osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
     traits->x = 10;
@@ -207,12 +265,6 @@ void OsgHandler::Initialize(const std::string &WindowName, const std::string &Da
 	_viewer->setSceneData(_rootNode);
 
 	
-
-    // create a tracball manipulator to move the camera around in response to keyboard/mouse events
-	//_camManip = new osgGA::TrackballManipulator();
-	//_camManip->setHomePosition(osg::Vec3d(100, 25, 100), osg::Vec3d(0, 0, 0), osg::Vec3d(0, 1, 0));
-	//_viewer->setCameraManipulator(_camManip);
-
 	_viewer->setCameraManipulator(NULL);
 
 
@@ -228,6 +280,33 @@ void OsgHandler::Initialize(const std::string &WindowName, const std::string &Da
 	ResetScreen();
 	LogHandler::getInstance()->LogToFile("Initializing of graphics window done.");
 }
+
+
+
+/***********************************************************
+finalize function
+***********************************************************/
+void OsgHandler::Finalize()
+{
+	// write data to configuration file
+	{
+		ConfigurationManager::GetInstance()->SetDouble("Display.Camera.Distance", _distance);
+		ConfigurationManager::GetInstance()->SetDouble("Display.Camera.Zenit", _zenit);
+		ConfigurationManager::GetInstance()->SetBool("Display.Camera.Perspective", _isPerspective);
+
+
+		ConfigurationManager::GetInstance()->SetInt("Display.Screen.ScreenResolutionX", _resX);
+		ConfigurationManager::GetInstance()->SetInt("Display.Screen.ScreenResolutionY", _resY);
+		ConfigurationManager::GetInstance()->SetBool("Display.Screen.Fullscreen", _isFullscreen);
+	}
+
+	// clean up everything
+	ResetScreen();
+	_sceneRootNode = NULL;
+	_rootNode = NULL;
+	_viewer = NULL;
+}
+
 
 
 /***********************************************************
@@ -300,6 +379,8 @@ void OsgHandler::ResetScreen()
 		}
 
 		_viewer->getCamera()->setViewport(0,0,_viewportX,_viewportY);
+		window->grabFocus();
+		window->raiseWindow();
     }
 
 	ResetCameraProjectiomMatrix();
@@ -395,7 +476,7 @@ void OsgHandler::SetCameraDistance(double distance)
 	{
 		_distance = distance;
 		int maxdistance = 150;
-		if(_isPerspective)
+		if(!_isPerspective)
 			maxdistance = 1000;
 
 		if(_distance < 10)
@@ -514,4 +595,19 @@ load osg files into a osg node
 osg::ref_ptr<osg::Node> OsgHandler::LoadOSGFile(const std::string & filename)
 {
 	return osgDB::readNodeFile(filename);
+}
+
+
+
+/***********************************************************
+add a actor to the display list - return handler to actor position
+***********************************************************/
+osg::ref_ptr<osg::MatrixTransform> OsgHandler::AddActorNode(osg::ref_ptr<osg::Node> node)
+{
+	osg::ref_ptr<osg::MatrixTransform> transform = new osg::MatrixTransform();
+	transform->addChild(node);
+	_sceneRootNode->addChild(transform);
+
+	_addedNodes.push_back(transform);
+	return transform;
 }

@@ -1,0 +1,103 @@
+/*
+------------------------[ Lbanet Source ]-------------------------
+Copyright (C) 2009
+Author: Vivien Delage [Rincevent_123]
+Email : vdelage@gmail.com
+
+-------------------------------[ GNU License ]-------------------------------
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-----------------------------------------------------------------------------
+*/
+
+#include "OsgObjectHandler.h"
+#include <osg/MatrixTransform>
+
+/***********************************************************
+Constructor
+***********************************************************/
+OsgObjectHandler::OsgObjectHandler(osg::ref_ptr<osg::MatrixTransform> OsgObject)
+: _OsgObject(OsgObject), _posX(0), _posY(0), _posZ(0), _rotX(0), _rotY(0), _rotZ(0)
+{
+	UpdateMatrix();
+}
+
+/***********************************************************
+destructor
+***********************************************************/
+OsgObjectHandler::~OsgObjectHandler()
+{
+
+}
+
+
+/***********************************************************
+set object position in the world
+***********************************************************/
+void OsgObjectHandler::SetPosition(float X, float Y, float Z)
+{
+	_posX = X;
+	_posY = Y; 
+	_posZ = Z;
+	UpdateMatrix();
+}
+
+/***********************************************************
+set object rotation on X axis
+***********************************************************/
+void OsgObjectHandler::SetRotationX(float R)
+{
+	_rotX = R;
+	UpdateMatrix();
+}
+
+/***********************************************************
+set object rotation on X axis
+***********************************************************/
+void OsgObjectHandler::SetRotationY(float R)
+{
+	_rotY = R;
+	UpdateMatrix();
+}
+
+/***********************************************************
+set object rotation on X axis
+***********************************************************/
+void OsgObjectHandler::SetRotationZ(float R)
+{
+	_rotZ = R;
+	UpdateMatrix();
+}
+
+
+/***********************************************************
+update matrix
+***********************************************************/
+void OsgObjectHandler::UpdateMatrix()
+{
+	if(_OsgObject)
+	{
+		osg::Matrixd Trans;
+		osg::Matrixd Rotation;
+
+		Trans.makeTranslate( _posX, _posY, _posZ);
+
+		Rotation.makeRotate(osg::DegreesToRadians(_rotX), osg::Vec3(1,0,0),
+							osg::DegreesToRadians(_rotY), osg::Vec3(0,1,0),
+							osg::DegreesToRadians(_rotZ), osg::Vec3(0,0,1));
+
+		_OsgObject->setMatrix(Trans * Rotation);
+	}
+}
