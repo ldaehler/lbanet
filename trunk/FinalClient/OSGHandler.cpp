@@ -104,7 +104,8 @@ bool UserInputsHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActio
 
 			return true;
 		}
-		 
+		
+		// toggle fullscreen on F12
 		case(osgGA::GUIEventAdapter::KEYDOWN):
 		{
 			if(ea.getKey() == osgGA::GUIEventAdapter::KEY_F12)
