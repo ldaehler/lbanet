@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "PhysicalObjectHandlerBase.h"
 #include "DisplayObjectHandlerBase.h"
+#include "DynamicObject.h"
 
 //*************************************************************************************************
 //*                               class WorldToDisplayObjectSynchronizer
@@ -38,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 * @brief Class used to synchronize an object present in the physical world to the screen display
 *
 */
-class WorldToDisplayObjectSynchronizer
+class WorldToDisplayObjectSynchronizer : public DynamicObject
 {
 public:
 
@@ -47,11 +48,11 @@ public:
 										boost::shared_ptr<DisplayObjectHandlerBase> disH);
 
 	//! destructor
-	~WorldToDisplayObjectSynchronizer();
+	virtual ~WorldToDisplayObjectSynchronizer();
 
 
 	//! synchronization function - will typically be called on every frames
-	void Synchronize();
+	virtual void Process(void);
 
 
 protected:

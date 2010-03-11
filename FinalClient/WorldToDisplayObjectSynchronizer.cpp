@@ -31,14 +31,11 @@ constructor
 ***********************************************************/
 WorldToDisplayObjectSynchronizer::WorldToDisplayObjectSynchronizer(boost::shared_ptr<PhysicalObjectHandlerBase> phH,
 																	boost::shared_ptr<DisplayObjectHandlerBase> disH)
-	: _phH(phH), _disH(disH)
+	: _phH(phH), _disH(disH),
+		_lastDisplayPositionX(0), _lastDisplayPositionY(0), _lastDisplayPositionZ(0),
+		_lastDisplayRotationX(0), _lastDisplayRotationY(0), _lastDisplayRotationZ(0) 
 {
-	_lastDisplayPositionX = -1000000; 
-	_lastDisplayPositionY = -1000000; 
-	_lastDisplayPositionZ = -1000000; 
-	_lastDisplayRotationX = -1000000; 
-	_lastDisplayRotationY = -1000000; 
-	_lastDisplayRotationZ = -1000000; 
+
 }
 
 /***********************************************************
@@ -52,7 +49,7 @@ WorldToDisplayObjectSynchronizer::~WorldToDisplayObjectSynchronizer()
 /***********************************************************
 synchronization function - will typically be called on every frames
 ***********************************************************/
-void WorldToDisplayObjectSynchronizer::Synchronize()
+void WorldToDisplayObjectSynchronizer::Process(void)
 {
 	// if physical object was reseted then we do a straight sync - else do a smoothing sync
 	if(_phH->WasReseted())
@@ -147,7 +144,6 @@ void WorldToDisplayObjectSynchronizer::SyncWithSmoothing()
 
 
 	// check rotations
-
 	if(!equal(rotX, _lastDisplayRotationX))
 	{
 		float delta = (rotX-_lastDisplayRotationX);

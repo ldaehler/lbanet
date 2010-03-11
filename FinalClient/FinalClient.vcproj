@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="FinalClient"
 	ProjectGUID="{E54C942E-2F8B-476C-A453-F2304BAF7F3F}"
 	RootNamespace="FinalClient"
@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\dependencies\Boost\include;..\dependencies\OpenSceneGraph\include;..\dependencies\libconfig\include"
+				AdditionalIncludeDirectories="..\dependencies\Boost\include;..\dependencies\OpenSceneGraph\include;..\dependencies\libconfig\include;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,9 +61,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libconfig++d.lib osgd.lib osgShadowd.lib osgGAd.lib osgViewerd.lib osgDBd.lib"
+				AdditionalDependencies="libconfig++d.lib osgd.lib osgShadowd.lib osgGAd.lib osgViewerd.lib osgDBd.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib winmm.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\dependencies\Boost\lib;..\dependencies\libconfig\lib;..\dependencies\OpenSceneGraph\lib"
+				AdditionalLibraryDirectories="..\dependencies\Boost\lib;..\dependencies\libconfig\lib;..\dependencies\OpenSceneGraph\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -117,7 +117,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\dependencies\Boost\include;..\dependencies\OpenSceneGraph\include;..\dependencies\libconfig\include"
+				AdditionalIncludeDirectories="..\dependencies\Boost\include;..\dependencies\OpenSceneGraph\include;..\dependencies\libconfig\include;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -136,9 +136,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libconfig++.lib osg.lib osgShadow.lib osgGA.lib osgViewer.lib osgDB.lib"
+				AdditionalDependencies="libconfig++.lib osg.lib osgShadow.lib osgGA.lib osgViewer.lib osgDB.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib winmm.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\dependencies\Boost\lib;..\dependencies\libconfig\lib;..\dependencies\OpenSceneGraph\lib"
+				AdditionalLibraryDirectories="..\dependencies\Boost\lib;..\dependencies\libconfig\lib;..\dependencies\OpenSceneGraph\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -181,6 +181,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LbaNetEngine.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LbaNetModel.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LogHandler.cpp"
 				>
 			</File>
@@ -190,6 +198,26 @@
 			</File>
 			<File
 				RelativePath=".\OSGHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OsgObjectHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PhysXEngine.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Stream.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SynchronizedTimeHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\UserAllocator.cpp"
 				>
 			</File>
 			<File
@@ -211,6 +239,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DynamicObject.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LbaNetEngine.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LbaNetModel.h"
+				>
+			</File>
+			<File
 				RelativePath=".\LogHandler.h"
 				>
 			</File>
@@ -219,7 +259,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OsgObjectHandler.h"
+				>
+			</File>
+			<File
 				RelativePath=".\PhysicalObjectHandlerBase.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PhysXEngine.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Stream.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SynchronizedTimeHandler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\UserAllocator.h"
 				>
 			</File>
 			<File

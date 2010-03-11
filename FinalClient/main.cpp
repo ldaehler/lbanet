@@ -1,16 +1,14 @@
-#include "OSGHandler.h"
-#include <osg/Node>
+#include "LbaNetEngine.h"
 
 int main( int argc, char **argv )
 {
-	// init OSG
-	OsgHandler::getInstance()->Initialize("LbaNet", "./Data");
+	LbaNetEngine engine;
+	engine.run();
 
-	//load map
-	OsgHandler::getInstance()->SetMap(OsgHandler::getInstance()->LoadOSGFile("Lba1/Maps/map0.osgt"));
-
-	while(!OsgHandler::getInstance()->Update());
-
-    return 0;
+	return 0;
 }
+
+//#include <osg/Node>
+////load map
+//OsgHandler::getInstance()->SetMap(OsgHandler::getInstance()->LoadOSGFile("Lba1/Maps/map0.osgt"));
 

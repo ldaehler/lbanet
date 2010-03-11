@@ -29,50 +29,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include <string>
 #include <osg/ref_ptr>
-#include <osgGA/GUIEventHandler>
 
 namespace osg
 {
 	class Node;
 	class PositionAttitudeTransform;
 	class Group;
+	class MatrixTransform;
 }
 
 namespace osgViewer
 {
 	class Viewer;
 }
-
-
-
-
-
-//*************************************************************************************************
-//*                               class UserInputsHandler
-//*************************************************************************************************
-/**
-* @brief Class taking care of user inputs (mouse and keyboard)
-*
-*/
-// class to handle events with a pick
-class UserInputsHandler : public osgGA::GUIEventHandler
-{
-public:
-	//! constructor
-    UserInputsHandler()
-		: _right_button_pressed(false)
-	{}
-
-	//! destructor
-    ~UserInputsHandler(){}
-
-	//! handle inputs
-    bool handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa);
-
-private:
-	bool	_right_button_pressed;
-	int		_mouse_Y;
-};
 
 
 
@@ -96,6 +65,10 @@ public:
 
 	//! initialize
 	void Initialize(const std::string &WindowName, const std::string &DataPath);
+
+	//! finalize function
+	void Finalize();
+
 
 	//! change screen resolution
 	void Resize(int resX, int resY);
@@ -133,6 +106,9 @@ public:
 
 	//! load osg files into a osg node
 	osg::ref_ptr<osg::Node> LoadOSGFile(const std::string & filename);
+
+	//! add a actor to the display list - return handler to actor position
+	osg::ref_ptr<osg::MatrixTransform> AddActorNode(osg::ref_ptr<osg::Node> node);
 
 protected:
 	//! constructor
