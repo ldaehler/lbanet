@@ -101,8 +101,18 @@ bool UserInputsHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActio
 
 			if(ea.getScrollingMotion() == osgGA::GUIEventAdapter::SCROLL_UP)
 				OsgHandler::getInstance()->DeltaUpdateCameraDistance(-5);
+
+			return true;
 		}
 		 
+		case(osgGA::GUIEventAdapter::KEYDOWN):
+		{
+			if(ea.getKey() == osgGA::GUIEventAdapter::KEY_F12)
+			{			
+				OsgHandler::getInstance()->ToggleFullScreen();
+				return true;
+			}
+		}
 
 
 		default:
@@ -237,13 +247,10 @@ void OsgHandler::Resize(int resX, int resY)
 /***********************************************************
 toggle fullscreen or windowed mode
 ***********************************************************/
-void OsgHandler::ToggleFullScreen(bool Fullscreen)
+void OsgHandler::ToggleFullScreen()
 {
-	if(_isFullscreen != Fullscreen)
-	{
-		_isFullscreen = Fullscreen;
-		ResetScreen();
-	}
+	_isFullscreen = !_isFullscreen;
+	ResetScreen();
 }
 
 
