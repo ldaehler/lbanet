@@ -26,18 +26,56 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _LBANET_OSG_HANDLER_H_
 #define _LBANET_OSG_HANDLER_H_
 
+#include <vector>
 #include <string>
 #include <osg/ref_ptr>
+#include <osgGA/GUIEventHandler>
 
 namespace osg
 {
 	class Node;
+	class PositionAttitudeTransform;
+	class Group;
 }
 
 namespace osgViewer
 {
 	class Viewer;
 }
+
+
+
+
+
+//*************************************************************************************************
+//*                               class UserInputsHandler
+//*************************************************************************************************
+/**
+* @brief Class taking care of user inputs (mouse and keyboard)
+*
+*/
+// class to handle events with a pick
+class UserInputsHandler : public osgGA::GUIEventHandler
+{
+public:
+	//! constructor
+    UserInputsHandler()
+		: _right_button_pressed(false)
+	{}
+
+	//! destructor
+    ~UserInputsHandler(){}
+
+	//! handle inputs
+    bool handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa);
+
+private:
+	bool	_right_button_pressed;
+	int		_mouse_Y;
+};
+
+
+
 
 //*************************************************************************************************
 //*                               class OsgHandler
@@ -57,7 +95,7 @@ public:
 	~OsgHandler();
 
 	//! initialize
-	void Initialize(const std::string &WindowName);
+	void Initialize(const std::string &WindowName, const std::string &DataPath);
 
 	//! change screen resolution
 	void Resize(int resX, int resY);
@@ -69,13 +107,19 @@ public:
 	void TogglePerspectiveView(bool Perspective);
 
 	//! set camera distance
-	void SetCameraDistance(float distance);
+	void SetCameraDistance(double distance);
+
+	//! delta update camera distance
+	void DeltaUpdateCameraDistance(double delta);
 
 	//! set camera zenit
-	void SetCameraZenit(float zenit);
+	void SetCameraZenit(double zenit);
+
+	//! delta update camera zenit
+	void DeltaUpdateCameraZenit(double delta);
 
 	//! set camera target
-	void SetCameraTarget(float TargetX, float TargetY, float TargetZ);
+	void SetCameraTarget(double TargetX, double TargetY, double TargetZ);
 
 	//! clear all nodes of the display tree
 	//! typically called when changing map
@@ -84,12 +128,26 @@ public:
 	//! set the current map to display
 	void SetMap(osg::ref_ptr<osg::Node> mapnode);
 
+	//! update display - returns true if need to terminate
+	bool Update();
+
+	//! load osg files into a osg node
+	osg::ref_ptr<osg::Node> LoadOSGFile(const std::string & filename);
+
 protected:
 	//! constructor
 	OsgHandler();
 
 	//! set or reset screen
 	void ResetScreen();
+
+	//! set or reset camera projection matrix
+	void ResetCameraProjectiomMatrix();
+
+	//! set or reset camera transform
+	void ResetCameraTransform();
+
+
 
 private:
 	// singleton
@@ -100,6 +158,8 @@ private:
 	bool	_isFullscreen;
 	int		_resX;
 	int		_resY;
+	int		_viewportX;
+	int		_viewportY;
 
 	// camera info
 	bool	_isPerspective;
@@ -112,7 +172,11 @@ private:
 
 
 	// osg handlers
-	osg::ref_ptr<osgViewer::Viewer>	_viewer;
+	osg::ref_ptr<osgViewer::Viewer>					_viewer;
+	osg::ref_ptr<osg::PositionAttitudeTransform>	_rootNode;
+	osg::ref_ptr<osg::Group>						_sceneRootNode;
+	std::vector<osg::ref_ptr<osg::Node> >			_addedNodes;
+	osg::ref_ptr<osg::Node>							_mapNode;
 };
 
 
