@@ -101,7 +101,7 @@ public:
 	void Resize(int resX, int resY);
 
 	//! toggle fullscreen or windowed mode
-	void ToggleFullScreen(bool Fullscreen);
+	void ToggleFullScreen();
 	
 	//! set if the view is perspective or ortho
 	void TogglePerspectiveView(bool Perspective);
