@@ -24,6 +24,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "LbaNetModel.h"
 #include "LogHandler.h"
+#include "PhysXEngine.h"
+#include "OSGHandler.h"
+
 
 /***********************************************************
 	Constructor
@@ -40,7 +43,18 @@ LbaNetModel::LbaNetModel()
 ***********************************************************/
 LbaNetModel::~LbaNetModel()
 {
+	// clear model
+	ClearModel();
+}
 
+
+
+/***********************************************************
+set physic engine
+***********************************************************/
+void LbaNetModel::SetPhysicEngine(boost::shared_ptr<PhysXEngine> & pEngine)
+{
+	_physicEngine = pEngine;
 }
 
 
@@ -56,3 +70,34 @@ void LbaNetModel::Process()
 		(*it)->Process();
 }
 
+
+
+
+
+/***********************************************************
+reset model with a new map
+***********************************************************/
+void LbaNetModel::SetMap(ObjectInfo mapInfo)
+{
+	// clear previous map if there was one
+	ClearModel();
+}
+
+
+/***********************************************************
+clear current model before changing map
+***********************************************************/
+void LbaNetModel::ClearModel()
+{
+	//clear dynamci object of the current scene
+	_dynamicObjects.clear();
+
+
+	// clear physic engine
+	if(_physicEngine)
+		_physicEngine->Clear();
+
+
+	//clear display engine
+	OsgHandler::getInstance()->EmptyDisplayTree();
+}

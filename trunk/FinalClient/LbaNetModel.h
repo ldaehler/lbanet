@@ -29,8 +29,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include <map>
 
+#include "ObjectsDescription.h"
 #include "DynamicObject.h"
 #include <boost/shared_ptr.hpp>
+
+class PhysXEngine;
+
 
 /***********************************************************************
  * Module:  LbaNetModel.h
@@ -47,11 +51,23 @@ public:
 	//! destructor
 	~LbaNetModel();
 
+
+	//! set physic engine
+	void SetPhysicEngine(boost::shared_ptr<PhysXEngine> & pEngine);
+
 	//! do all check to be done when idle
 	void Process();
 
+	//! reset model with a new map
+	void SetMap(ObjectInfo mapInfo);
+
+protected:
+	//! clear current model before changing map
+	void ClearModel();
+
 private:
-	std::vector<boost::shared_ptr<DynamicObject> > _dynamicObjects;
+	std::vector<boost::shared_ptr<DynamicObject> >	_dynamicObjects;
+	boost::shared_ptr<PhysXEngine>					_physicEngine;
 };
 
 #endif

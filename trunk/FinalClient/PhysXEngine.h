@@ -34,8 +34,11 @@ class NxVec3;
 class NxController;
 class NxActor;
 
+
+
 #include <vector>
 #include <boost/shared_ptr.hpp>
+#include "ObjectsDescription.h"
 
 
 class ActorUserData
@@ -65,7 +68,10 @@ public:
 	short *				Materials; 
 
 	short				HittedFloorMaterial;
+	unsigned int		CollisionFlag;
 };
+
+
 
 
 
@@ -95,6 +101,7 @@ public:
 	//! clear the scene of all actors
 	void Clear();
 
+
 	//! create actors
 	// type: 1=static, 2=kinematic, 3=dynamic
 	NxActor* CreateBox(const NxVec3 & StartPosition, float dimX, float dimY, float dimZ, 
@@ -104,15 +111,15 @@ public:
 	NxActor* CreateCapsule(const NxVec3 & StartPosition, float radius, float height, 
 							float density, int Type, ActorUserData * adata);
 
+	NxActor* CreateTriangleMesh(const NxVec3 & StartPosition, float *Vertexes, 
+										size_t VertexesSize, unsigned int *Indices, size_t IndicesSize,
+										ActorUserData * adata);
+
 	NxController* CreateCharacter(const NxVec3 & StartPosition, float radius, float height,
 									ActorUserData * adata);
 
 	NxController* CreateCharacterBox(const NxVec3 & StartPosition, const NxVec3 & Extents,
 									ActorUserData * adata);
-
-	NxActor* CreateTriangleMesh(const NxVec3 & StartPosition, float *Vertexes, 
-										size_t VertexesSize, unsigned int *Indices, size_t IndicesSize,
-										ActorUserData * adata);
 
 	//! destroy actors
 	void DestroyActor(NxActor* actor);
@@ -122,22 +129,28 @@ public:
 	//! move character
 	//! returned collision flags, collection of NxControllerFlag
 	unsigned int MoveCharacter(NxController* character, const NxVec3& moveVector, bool checkcollision=true);
-		
-	//! set character position
-	void SetCharacterPos(NxController* character, const NxVec3& posVector);
 
-	//! get character position
-	void GetCharacterPosition(NxController* character, float &posX, float &posY, float &posZ);
 
 	//! get gravity
 	void GetGravity(NxVec3 & Gravity);
 
-	//! Load map physical shape to the engine
-	//! important: can only load one map at a time
-	void LoadMap(const std::string & filename);
+	
+	//! add an object to the physical world used object description
+	boost::shared_ptr<PhysXObjectHandlerBase> AddObject(
+									boost::shared_ptr<PhysicalDescriptionWithShape> Description);
+
+
 
 protected:
 	
+	//! Load map physical shape to the engine
+	//! important: can only load one map at a time
+	boost::shared_ptr<PhysXObjectHandlerBase> LoadTriangleMeshFile(
+							boost::shared_ptr<PhysicalDescriptionTriangleMesh> Description);
+
+
+
+
 	//! init function
 	void Init();
 
@@ -153,7 +166,6 @@ private:
 	NxControllerManager*		gManager;
 	NxUserAllocator*			gAllocator;
 
-	boost::shared_ptr<ActorUserData> _currmap_userdata;
 
 	double						_lasttime;
 };

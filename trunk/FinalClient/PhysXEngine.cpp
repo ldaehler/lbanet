@@ -544,18 +544,6 @@ unsigned int PhysXEngine::MoveCharacter(NxController* character, const NxVec3& m
 }
 
 
-/***********************************************************
-set actor position (teleport)
-***********************************************************/
-void PhysXEngine::SetCharacterPos(NxController* character, const NxVec3& posVector)
-{
-	NxExtendedVec3 pos;
-	pos.x = posVector.x;
-	pos.y = posVector.y;
-	pos.z = posVector.z;
-	character->setPosition(pos);
-}
-
 
 /***********************************************************
 get gravity
@@ -589,25 +577,13 @@ void PhysXEngine::DestroyCharacter(NxController* character)
 
 
 
-/***********************************************************
-GetCharacterPosition
-***********************************************************/
-void PhysXEngine::GetCharacterPosition(NxController* character, float &posX, float &posY, float &posZ)
-{
-	NxExtendedVec3 vec = character->getPosition();
-	posX = (float)vec.x;
-	posY = (float)vec.y;
-	posZ = (float)vec.z;
-}
-
-
 
 
 /***********************************************************
 Load map physical shape to the engine
 Important: can only load one map at a time
 ***********************************************************/
-void PhysXEngine::LoadMap(const std::string & filename)
+PhysXActorHandler PhysXEngine::LoadTriangleMeshFile(const std::string & filename)
 {
 	// load data from binary file and set it into a triangle mesh
 	std::ifstream file(filename.c_str(), std::ifstream::binary);

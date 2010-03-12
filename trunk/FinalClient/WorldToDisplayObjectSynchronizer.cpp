@@ -66,9 +66,7 @@ void WorldToDisplayObjectSynchronizer::StraightSync()
 {
 	// get value from physic object
 	_phH->GetPosition(_lastDisplayPositionX, _lastDisplayPositionY, _lastDisplayPositionZ);
-	_lastDisplayRotationX = _phH->GetRotationX();
-	_lastDisplayRotationY = _phH->GetRotationY();
-	_lastDisplayRotationZ = _phH->GetRotationZ();
+	_phH->GetRotation(_lastDisplayRotationX, _lastDisplayRotationY, _lastDisplayRotationZ);
 
 	// set it to display object
 	_disH->SetPosition(_lastDisplayPositionX, _lastDisplayPositionY, _lastDisplayPositionZ);
@@ -92,9 +90,7 @@ void WorldToDisplayObjectSynchronizer::SyncWithSmoothing()
 	// get value from physic object
 	float posX, posY, posZ, rotX, rotY, rotZ;
 	_phH->GetPosition(posX, posY, posZ);
-	rotX = _phH->GetRotationX();
-	rotY = _phH->GetRotationY();
-	rotZ = _phH->GetRotationZ();
+	_phH->GetRotation(rotX, rotY, rotZ);
 
 
 	// for each value test if they are equal with display value
