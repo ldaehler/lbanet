@@ -32,7 +32,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	Constructor
 ***********************************************************/
 LbaNetEngine::LbaNetEngine()
-: m_physic_engine(NULL)
 {
 	Initialize();
 }
@@ -51,8 +50,6 @@ LbaNetEngine::~LbaNetEngine()
 
 	// delete physic engine
 	LogHandler::getInstance()->LogToFile("Finalizing physic engine...");
-	if(m_physic_engine)
-		delete m_physic_engine;
 }
 
 
@@ -70,7 +67,7 @@ void LbaNetEngine::Initialize(void)
 
 	//init physic engine
 	LogHandler::getInstance()->LogToFile("Initialize physic engine...");
-	m_physic_engine = new PhysXEngine();
+	m_physic_engine = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
 
 
 	LogHandler::getInstance()->LogToFile("Initializing Completed.");

@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 
+#include <boost/shared_ptr.hpp>
 #include "LbaNetModel.h"
 
 class PhysXEngine;
@@ -61,7 +62,7 @@ protected:
 
 private:
 	LbaNetModel		m_lbaNetModel;		// game model
-	PhysXEngine *	m_physic_engine;	//physic engine
+	boost::shared_ptr<PhysXEngine>	m_physic_engine;	//physic engine
 };
 
 #endif
