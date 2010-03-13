@@ -22,30 +22,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#if !defined(__LbaNetModel_1_DynamicObject_h)
-#define __LbaNetModel_1_DynamicObject_h
+
+#ifndef __LBA_NET_COMMON_TYPES_H__
+#define __LBA_NET_COMMON_TYPES_H__
 
 
-
-
-/***********************************************************************
- * Module:  DynamicObject.h
- * Author:  vivien
- * Modified: mardi 14 juillet 2009 17:41:03
- * Purpose: Base class for any object needed update at each frame
- ***********************************************************************/
-class DynamicObject
+class LbaQuaternion
 {
 public:
 	//!constructor
-	DynamicObject(){}
+	LbaQuaternion()
+		: X(0), Y(0), Z(0), W(0){}
 
-	//!destructor
-   virtual ~DynamicObject(){}
+	//!constructor
+	LbaQuaternion(float x, float y, float z, float w)
+		: X(x), Y(y), Z(z), W(w){}
 
-	//! process function - will be called at each frame
-	virtual void Process(void) = 0;
-
+	float X;
+	float Y;
+	float Z;
+	float W;
 };
 
 #endif

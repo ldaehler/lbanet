@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="FinalClient"
 	ProjectGUID="{E54C942E-2F8B-476C-A453-F2304BAF7F3F}"
 	RootNamespace="FinalClient"
@@ -238,6 +238,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\CommonTypes.h"
+				>
+			</File>
 			<File
 				RelativePath=".\ConfigurationManager.h"
 				>

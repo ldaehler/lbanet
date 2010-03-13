@@ -81,6 +81,8 @@ void LbaNetModel::SetMap(ObjectInfo mapInfo)
 {
 	// clear previous map if there was one
 	ClearModel();
+
+	_currMap = mapInfo.BuildSelf(_physicEngine);
 }
 
 
@@ -89,8 +91,11 @@ clear current model before changing map
 ***********************************************************/
 void LbaNetModel::ClearModel()
 {
-	//clear dynamci object of the current scene
+	//clear dynamic object of the current scene
 	_dynamicObjects.clear();
+
+	// clear current map
+	_currMap.reset();
 
 
 	// clear physic engine

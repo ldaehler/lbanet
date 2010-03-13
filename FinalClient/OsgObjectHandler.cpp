@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Constructor
 ***********************************************************/
 OsgObjectHandler::OsgObjectHandler(osg::ref_ptr<osg::MatrixTransform> OsgObject)
-: _OsgObject(OsgObject), _posX(0), _posY(0), _posZ(0), _rotX(0), _rotY(0), _rotZ(0)
+: _OsgObject(OsgObject), _posX(0), _posY(0), _posZ(0)
 {
 	UpdateMatrix();
 }
@@ -57,30 +57,11 @@ void OsgObjectHandler::SetPosition(float X, float Y, float Z)
 /***********************************************************
 set object rotation on X axis
 ***********************************************************/
-void OsgObjectHandler::SetRotationX(float R)
+void OsgObjectHandler::SetRotation(const LbaQuaternion& Q)
 {
-	_rotX = R;
+	_Q = Q;
 	UpdateMatrix();
 }
-
-/***********************************************************
-set object rotation on X axis
-***********************************************************/
-void OsgObjectHandler::SetRotationY(float R)
-{
-	_rotY = R;
-	UpdateMatrix();
-}
-
-/***********************************************************
-set object rotation on X axis
-***********************************************************/
-void OsgObjectHandler::SetRotationZ(float R)
-{
-	_rotZ = R;
-	UpdateMatrix();
-}
-
 
 /***********************************************************
 update matrix
@@ -92,11 +73,8 @@ void OsgObjectHandler::UpdateMatrix()
 		osg::Matrixd Trans;
 		osg::Matrixd Rotation;
 
-		Trans.makeTranslate( _posX, _posY, _posZ);
-
-		Rotation.makeRotate(osg::DegreesToRadians(_rotX), osg::Vec3(1,0,0),
-							osg::DegreesToRadians(_rotY), osg::Vec3(0,1,0),
-							osg::DegreesToRadians(_rotZ), osg::Vec3(0,0,1));
+		Trans.makeTranslate(_posX, _posY, _posZ);	
+		Rotation.makeRotate(osg::Quat(_Q.X, _Q.Y, _Q.Z, _Q.W));
 
 		_OsgObject->setMatrix(Trans * Rotation);
 	}

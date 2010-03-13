@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "WorldToDisplayObjectSynchronizer.h"
+#include <osg/Quat>
 
 #define ABS(X) (((X)<0)?(-(X)):(X))
 
@@ -32,8 +33,7 @@ constructor
 WorldToDisplayObjectSynchronizer::WorldToDisplayObjectSynchronizer(boost::shared_ptr<PhysicalObjectHandlerBase> phH,
 																	boost::shared_ptr<DisplayObjectHandlerBase> disH)
 	: _phH(phH), _disH(disH),
-		_lastDisplayPositionX(0), _lastDisplayPositionY(0), _lastDisplayPositionZ(0),
-		_lastDisplayRotationX(0), _lastDisplayRotationY(0), _lastDisplayRotationZ(0) 
+		_lastDisplayPositionX(0), _lastDisplayPositionY(0), _lastDisplayPositionZ(0)
 {
 
 }
@@ -66,13 +66,12 @@ void WorldToDisplayObjectSynchronizer::StraightSync()
 {
 	// get value from physic object
 	_phH->GetPosition(_lastDisplayPositionX, _lastDisplayPositionY, _lastDisplayPositionZ);
-	_phH->GetRotation(_lastDisplayRotationX, _lastDisplayRotationY, _lastDisplayRotationZ);
+	_phH->GetRotation(_lastDisplayRotation);
 
 	// set it to display object
 	_disH->SetPosition(_lastDisplayPositionX, _lastDisplayPositionY, _lastDisplayPositionZ);
-	_disH->SetRotationX(_lastDisplayRotationX);
-	_disH->SetRotationY(_lastDisplayRotationY);
-	_disH->SetRotationZ(_lastDisplayRotationZ);
+	_disH->SetRotation(_lastDisplayRotation);
+
 }
 
 /***********************************************************
@@ -88,9 +87,10 @@ void WorldToDisplayObjectSynchronizer::SyncWithSmoothing()
 
 
 	// get value from physic object
-	float posX, posY, posZ, rotX, rotY, rotZ;
+	float posX, posY, posZ;
+	LbaQuaternion Quat;
 	_phH->GetPosition(posX, posY, posZ);
-	_phH->GetRotation(rotX, rotY, rotZ);
+	_phH->GetRotation(Quat);
 
 
 	// for each value test if they are equal with display value
@@ -138,44 +138,22 @@ void WorldToDisplayObjectSynchronizer::SyncWithSmoothing()
 		_disH->SetPosition(_lastDisplayPositionX, _lastDisplayPositionY, _lastDisplayPositionZ);
 
 
-
 	// check rotations
-	if(!equal(rotX, _lastDisplayRotationX))
+	if(		!equal(Quat.X, _lastDisplayRotation.X)
+		||	!equal(Quat.Y, _lastDisplayRotation.Y)
+		||	!equal(Quat.Z, _lastDisplayRotation.Z)
+		||	!equal(Quat.W, _lastDisplayRotation.W))
 	{
-		float delta = (rotX-_lastDisplayRotationX);
 
-		// if delta is too big set it to correct rotation otherwise smooth it
-		if(ABS(delta) < _maxRotationDelta)
-			_lastDisplayRotationX += delta * _tightnessRotation;
-		else
-			_lastDisplayRotationX = rotX;
+		// check if interpolation works well here!
+		osg::Quat quat1(Quat.X, Quat.Y, Quat.Z, Quat.W);
 
-		_disH->SetRotationX(_lastDisplayRotationX);
-	}
+		osg::Quat quat2(_lastDisplayRotation.X, _lastDisplayRotation.Y,
+								_lastDisplayRotation.Z, _lastDisplayRotation.W);
 
-	if(!equal(rotY, _lastDisplayRotationX))
-	{
-		float delta = (rotY-_lastDisplayRotationY);
+		quat2.slerp(_tightnessRotation, quat2, quat1);
 
-		// if delta is too big set it to correct rotation otherwise smooth it
-		if(ABS(delta) < _maxRotationDelta)
-			_lastDisplayRotationY += delta * _tightnessRotation;
-		else
-			_lastDisplayRotationY = rotY;
-
-		_disH->SetRotationY(_lastDisplayRotationY);
-	}
-
-	if(!equal(rotZ, _lastDisplayRotationZ))
-	{
-		float delta = (rotZ-_lastDisplayRotationZ);
-
-		// if delta is too big set it to correct rotation otherwise smooth it
-		if(ABS(delta) < _maxRotationDelta)
-			_lastDisplayRotationZ += delta * _tightnessRotation;
-		else
-			_lastDisplayRotationZ = rotZ;
-
-		_disH->SetRotationZ(_lastDisplayRotationZ);
+		_lastDisplayRotation = LbaQuaternion(quat2.x(), quat2.y(), quat2.z(), quat2.w());
+		_disH->SetRotation(_lastDisplayRotation);
 	}
 }

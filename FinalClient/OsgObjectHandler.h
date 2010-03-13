@@ -55,13 +55,8 @@ public:
 	virtual void SetPosition(float X, float Y, float Z);
 
 	//! set object rotation on X axis
-	virtual void SetRotationX(float R);
+	virtual void SetRotation(const LbaQuaternion& Q);
 
-	//! set object rotation on X axis
-	virtual void SetRotationY(float R);
-
-	//! set object rotation on X axis
-	virtual void SetRotationZ(float R);
 
 protected:
 	// update matrix
@@ -72,9 +67,7 @@ private:
 	float								_posX;
 	float								_posY; 
 	float								_posZ;
-	float								_rotX;
-	float								_rotY; 
-	float								_rotZ;
+	 LbaQuaternion						_Q;
 };
 
 #endif

@@ -26,6 +26,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _LBANET_PHYSICAL_OBJECT_HANDLER_BASE_H_
 #define _LBANET_PHYSICAL_OBJECT_HANDLER_BASE_H_
 
+#include "CommonTypes.h"
+
+
 
 //*************************************************************************************************
 //*                               class PhysicalObjectHandlerBase
@@ -51,25 +54,22 @@ public:
 	virtual void GetPosition(float &X, float &Y, float &Z) = 0;
 
 	//! get object rotation on all axis
-	virtual void GetRotation(float &X, float &Y, float &Z) = 0;
+	virtual void GetRotation(LbaQuaternion &Q) = 0;
 
 	//! set object position in the world
 	virtual void SetPosition(float X, float Y, float Z) = 0;
 
 	//! set object rotation on all axis
-	virtual void SetRotation(float X, float Y, float Z) = 0;
+	virtual void SetRotation(const LbaQuaternion& Q) = 0;
 
 	//! move object in the world
 	virtual void Move(float deltaX, float deltaY, float deltaZ) = 0;
 
-	//! rotate object in the world
-	virtual void Rotate(float deltaX, float deltaY, float deltaZ) = 0;
-
 	//! move object to a position in the world
-	virtual void MoveTo(float X, float Y, float Z);
+	virtual void MoveTo(float X, float Y, float Z) = 0;
 
 	//! rotate object in the world
-	virtual void RotateTo(float X, float Y, float Z) = 0;
+	virtual void RotateTo(const LbaQuaternion& Q) = 0;
 
 	//! call to see if the object was resetted in the physical world
 	//! (e.g. object has been teleported) in this case the synchronization process
@@ -98,50 +98,33 @@ class SimpleRotationHandler
 public:
 
 	//! constructor
-	SimpleRotationHandler(float X, float Y, float Z)
-		: _RotX(X), _RotY(Y), _RotZ(Z)
+	SimpleRotationHandler(const LbaQuaternion& Q)
+		: _Q(Q)
 	{}
 
 	//! destructor
 	~SimpleRotationHandler(){}
 
 	//! get object rotation on all axis
-	void GetRotation(float &X, float &Y, float &Z)
+	void GetRotation(LbaQuaternion& Q)
 	{
-		X = _RotX;
-		Y = _RotY;
-		Z = _RotZ;
+		Q = _Q;
 	}
 
 	//! set object rotation on all axis
-	void SetRotation(float X, float Y, float Z)
+	void SetRotation(const LbaQuaternion& Q)
 	{
-		_RotX = X;
-		_RotY = Y;
-		_RotZ = Z;
-	}
-
-
-	//! move object in the world
-	void Rotate(float deltaX, float deltaY, float deltaZ)
-	{
-		_RotX += deltaX;
-		_RotY += deltaY;
-		_RotZ += deltaZ;
+		_Q = Q;
 	}
 
 	//! rotate object in the world
-	void RotateTo(float X, float Y, float Z)
+	void RotateTo(const LbaQuaternion& Q)
 	{
-		_RotX = X;
-		_RotY = Y;
-		_RotZ = Z;
+		_Q = Q;
 	}
 
 private:
-	float _RotX;
-	float _RotY;
-	float _RotZ;
+	LbaQuaternion _Q;
 };
 
 
@@ -159,9 +142,8 @@ public:
 
 	//! constructor
 	SimplePhysicalObjectHandler(float pX, float pY, float pZ,
-									float rX, float rY, float rZ)
-		: _PosX(pX), _PosY(pY), _PosZ(pZ),
-			_RotX(rX), _RotY(rY), _RotZ(rZ)
+									const LbaQuaternion& Q)
+		: _PosX(pX), _PosY(pY), _PosZ(pZ), _rotH(Q)
 	{}
 
 	//! destructor
@@ -198,29 +180,16 @@ public:
 
 
 	//! get object rotation on all axis
-	virtual void GetRotation(float &X, float &Y, float &Z)
+	virtual void GetRotation(LbaQuaternion& Q)
 	{
-		X = _RotX;
-		Y = _RotY;
-		Z = _RotZ;
+		_rotH.GetRotation(Q);
 	}
 
 	//! set object rotation on all axis
-	virtual void SetRotation(float X, float Y, float Z)
+	virtual void SetRotation(const LbaQuaternion& Q)
 	{
-		_RotX = X;
-		_RotY = Y;
-		_RotZ = Z;
+		_rotH.SetRotation(Q);
 		_resetted = true;
-	}
-
-
-	//! move object in the world
-	virtual void Rotate(float deltaX, float deltaY, float deltaZ)
-	{
-		_RotX += deltaX;
-		_RotY += deltaY;
-		_RotZ += deltaZ;
 	}
 
 	//! move object to a position in the world
@@ -233,11 +202,9 @@ public:
 
 
 	//! rotate object in the world
-	virtual void RotateTo(float X, float Y, float Z)
+	virtual void RotateTo(const LbaQuaternion& Q)
 	{
-		_RotX = X;
-		_RotY = Y;
-		_RotZ = Z;
+		_rotH.RotateTo(Q);
 	}
 
 
@@ -246,9 +213,7 @@ private:
 	float _PosY;
 	float _PosZ;
 
-	float _RotX;
-	float _RotY;
-	float _RotZ;
+	SimpleRotationHandler _rotH;
 };
 
 #endif

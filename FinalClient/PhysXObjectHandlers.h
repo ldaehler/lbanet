@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <boost/shared_ptr.hpp>
 #include "PhysicalObjectHandlerBase.h"
 
+
 class PhysXEngine;
 class ActorUserData;
 class NxActor;
@@ -72,25 +73,22 @@ public:
 	virtual void GetPosition(float &X, float &Y, float &Z);
 
 	//! get object rotation on all axis
-	virtual void GetRotation(float &X, float &Y, float &Z);
+	virtual void GetRotation(LbaQuaternion& Q);
 
 	//! set object position in the world
 	virtual void SetPosition(float X, float Y, float Z);
 
 	//! set object rotation on all axis
-	virtual void SetRotation(float X, float Y, float Z);
+	virtual void SetRotation(const LbaQuaternion& Q);
 
 	//! move object in the world
 	virtual void Move(float deltaX, float deltaY, float deltaZ);
-
-	//! move object in the world
-	virtual void Rotate(float deltaX, float deltaY, float deltaZ);
 
 	//! move object to a position in the world
 	virtual void MoveTo(float X, float Y, float Z);
 
 	//! rotate object in the world
-	virtual void RotateTo(float X, float Y, float Z) = 0;
+	virtual void RotateTo(const LbaQuaternion& Q);
 
 protected:
 	NxActor*									_Actor;
@@ -107,7 +105,7 @@ public:
 	//! constructor
 	PhysXDynamicActorHandler(boost::shared_ptr<PhysXEngine> Pengine,
 						boost::shared_ptr<ActorUserData> UserData,
-						NxActor* Actor);
+						NxActor* Actor, const LbaQuaternion& rotation);
 
 	//! destructor
 	virtual ~PhysXDynamicActorHandler(){}
@@ -116,25 +114,22 @@ public:
 	virtual void GetPosition(float &X, float &Y, float &Z);
 
 	//! get object rotation on all axis
-	virtual void GetRotation(float &X, float &Y, float &Z);
+	virtual void GetRotation(LbaQuaternion& Q);
 
 	//! set object position in the world
 	virtual void SetPosition(float X, float Y, float Z);
 
 	//! set object rotation on all axis
-	virtual void SetRotation(float X, float Y, float Z);
+	virtual void SetRotation(const LbaQuaternion& Q);
 
 	//! move object in the world
 	virtual void Move(float deltaX, float deltaY, float deltaZ);
-
-	//! move object in the world
-	virtual void Rotate(float deltaX, float deltaY, float deltaZ);
 
 	//! move object to a position in the world
 	virtual void MoveTo(float X, float Y, float Z);
 
 	//! rotate object in the world
-	virtual void RotateTo(float X, float Y, float Z) = 0;
+	virtual void RotateTo(const LbaQuaternion& Q);
 
 protected:
 	NxActor*	_Actor;
@@ -160,25 +155,22 @@ public:
 	virtual void GetPosition(float &X, float &Y, float &Z);
 
 	//! get object rotation on all axis
-	virtual void GetRotation(float &X, float &Y, float &Z);
+	virtual void GetRotation(LbaQuaternion& Q);
 
 	//! set object position in the world
 	virtual void SetPosition(float X, float Y, float Z);
 
 	//! set object rotation on all axis
-	virtual void SetRotation(float X, float Y, float Z);
+	virtual void SetRotation(const LbaQuaternion& Q);
 
 	//! move object in the world
 	virtual void Move(float deltaX, float deltaY, float deltaZ);
-
-	//! move object in the world
-	virtual void Rotate(float deltaX, float deltaY, float deltaZ);
 
 	//! move object to a position in the world
 	virtual void MoveTo(float X, float Y, float Z);
 
 	//! rotate object in the world
-	virtual void RotateTo(float X, float Y, float Z) = 0;
+	virtual void RotateTo(const LbaQuaternion& Q);
 
 protected:
 	NxController*								_Controller;

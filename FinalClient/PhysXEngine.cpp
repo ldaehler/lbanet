@@ -580,15 +580,15 @@ void PhysXEngine::DestroyCharacter(NxController* character)
 
 
 /***********************************************************
-Load map physical shape to the engine
-Important: can only load one map at a time
+//! Load triangle mesh shape to the engine
 ***********************************************************/
-PhysXActorHandler PhysXEngine::LoadTriangleMeshFile(const std::string & filename)
+NxActor* PhysXEngine::LoadTriangleMeshFile(const NxVec3 & StartPosition, const std::string Filename,
+											boost::shared_ptr<ActorUserData> userdata)
 {
 	// load data from binary file and set it into a triangle mesh
-	std::ifstream file(filename.c_str(), std::ifstream::binary);
+	std::ifstream file(Filename.c_str(), std::ifstream::binary);
 	if(!file.is_open())
-		return;
+		return NULL;
 
 	unsigned int sizevertex;
 	unsigned int sizeindices;
@@ -606,13 +606,14 @@ PhysXActorHandler PhysXEngine::LoadTriangleMeshFile(const std::string & filename
 	file.read((char*)buffermaterials, sizematerials*sizeof(short));
 
 
-	_currmap_userdata = boost::shared_ptr<ActorUserData>(new ActorUserData(2));
-	_currmap_userdata->MaterialsSize = sizematerials;
-	_currmap_userdata->Materials =  buffermaterials;
+	userdata->MaterialsSize = sizematerials;
+	userdata->Materials =  buffermaterials;
 
-	CreateTriangleMesh(NxVec3(0,0,0), buffervertex, sizevertex, bufferindices, sizeindices, 
-							_currmap_userdata.get());
+	NxActor* act = CreateTriangleMesh(StartPosition, buffervertex, sizevertex, bufferindices, sizeindices, 
+											userdata.get());
 
 	delete[] buffervertex;
 	delete[] bufferindices;
+
+	return act;
 }
