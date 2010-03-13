@@ -69,6 +69,8 @@ void LbaNetEngine::Initialize(void)
 	LogHandler::getInstance()->LogToFile("Initialize physic engine...");
 	m_physic_engine = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
 
+	// set engine to model
+	m_lbaNetModel.SetPhysicEngine(m_physic_engine);
 
 	LogHandler::getInstance()->LogToFile("Initializing Completed.");
 }

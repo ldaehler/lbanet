@@ -68,6 +68,8 @@ protected:
 private:
 	std::vector<boost::shared_ptr<DynamicObject> >	_dynamicObjects;
 	boost::shared_ptr<PhysXEngine>					_physicEngine;
+
+	boost::shared_ptr<DynamicObject>				_currMap;
 };
 
 #endif

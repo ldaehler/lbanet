@@ -38,16 +38,15 @@ class NxActor;
 
 #include <vector>
 #include <boost/shared_ptr.hpp>
-#include "ObjectsDescription.h"
 
 
 class ActorUserData
 {
 public:
 	//! constructor
-	ActorUserData(short ActType)
-	: ActorType(ActType), Materials(NULL), 
-		MaterialsSize(0), HittedFloorMaterial(0)
+	ActorUserData()
+	: Materials(NULL), MaterialsSize(0), HittedFloorMaterial(0),
+		CollisionUpFlag(false), CollisionDownFlag(false), CollisionSideFlag(false)
 	{}
 
 	//! destructor
@@ -57,18 +56,13 @@ public:
 			delete Materials;
 	}
 
-
-	// Actor type
-	// 1 = character
-	// 2 = terrain
-	// 3 = other
-	short				ActorType;
-
 	size_t				MaterialsSize;
 	short *				Materials; 
 
 	short				HittedFloorMaterial;
-	unsigned int		CollisionFlag;
+	bool				CollisionUpFlag;
+	bool				CollisionDownFlag;
+	bool				CollisionSideFlag;
 };
 
 
@@ -134,22 +128,14 @@ public:
 	//! get gravity
 	void GetGravity(NxVec3 & Gravity);
 
-	
-	//! add an object to the physical world used object description
-	boost::shared_ptr<PhysXObjectHandlerBase> AddObject(
-									boost::shared_ptr<PhysicalDescriptionWithShape> Description);
 
+	//! Load triangle mesh shape to the engine from file
+	NxActor* LoadTriangleMeshFile(const NxVec3 & StartPosition, const std::string Filename,
+									boost::shared_ptr<ActorUserData> userdata);
 
 
 protected:
 	
-	//! Load map physical shape to the engine
-	//! important: can only load one map at a time
-	boost::shared_ptr<PhysXObjectHandlerBase> LoadTriangleMeshFile(
-							boost::shared_ptr<PhysicalDescriptionTriangleMesh> Description);
-
-
-
 
 	//! init function
 	void Init();

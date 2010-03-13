@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _LBANET_DISPLAY_OBJECT_HANDLER_BASE_H_
 #define _LBANET_DISPLAY_OBJECT_HANDLER_BASE_H_
 
+#include "CommonTypes.h"
 
 //*************************************************************************************************
 //*                               class DisplayObjectHandlerBase
@@ -49,13 +50,7 @@ public:
 	virtual void SetPosition(float X, float Y, float Z) = 0;
 
 	//! set object rotation on X axis
-	virtual void SetRotationX(float R) = 0;
-
-	//! set object rotation on X axis
-	virtual void SetRotationY(float R) = 0;
-
-	//! set object rotation on X axis
-	virtual void SetRotationZ(float R) = 0;
+	virtual void SetRotation(const LbaQuaternion& Q) = 0;
 
 };
 

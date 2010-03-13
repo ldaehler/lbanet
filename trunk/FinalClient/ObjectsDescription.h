@@ -28,8 +28,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <boost/shared_ptr.hpp>
 #include "PhysicalObjectHandlerBase.h"
+#include "CommonTypes.h"
 
 class PhysXEngine;
+class DynamicObject;
+
 
 /***********************************************************************
 This class describe the tranformation applied by the display object 
@@ -151,14 +154,11 @@ public:
 	//! constructor
 	PhysicalDescriptionWithShape(float posX, float posY, float posZ,
 									int Otype, float Odensity,
-									float rotX, float rotY, float rotZ);
+									const LbaQuaternion &rot);
 
 	//! destructor
 	virtual ~PhysicalDescriptionWithShape();
 
-
-	//! build description into a reald physic object
-	virtual boost::shared_ptr<PhysicalObjectHandlerBase> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine);
 
 public:
 
@@ -174,9 +174,7 @@ public:
 
 
 	// rotation applied to the shape
-	float rotationX;
-	float rotationY;
-	float rotationZ;
+	const LbaQuaternion &rotation;
 };
 
 
@@ -189,7 +187,7 @@ public:
 	//! constructor
 	PhysicalDescriptionBox(float posX, float posY, float posZ,
 									int Otype, float Odensity,
-									float rotX, float rotY, float rotZ,
+									const LbaQuaternion &rot,
 									float sX, float sY, float sZ);
 
 	//! destructor
@@ -216,7 +214,7 @@ public:
 	//! constructor
 	PhysicalDescriptionCapsule(float posX, float posY, float posZ,
 									int Otype, float Odensity,
-									float rotX, float rotY, float rotZ,
+									const LbaQuaternion &rot,
 									float rad, float ht);
 
 	//! destructor
@@ -244,7 +242,7 @@ public:
 	//! constructor
 	PhysicalDescriptionSphere(float posX, float posY, float posZ,
 									int Otype, float Odensity,
-									float rotX, float rotY, float rotZ,
+									const LbaQuaternion &rot,
 									float rad);
 
 	//! destructor
@@ -280,7 +278,7 @@ public:
 
 public:
 	// path of the file describing the mesh
-	std::string MeshInfoDtaFileName;
+	std::string MeshInfoDataFileName;
 };
 
 
@@ -298,6 +296,9 @@ public:
 
 	//! destructor
 	virtual ~ObjectInfo();
+
+	//! build description into dynamic object
+	boost::shared_ptr<DynamicObject> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine);
 
 public:
 	boost::shared_ptr<DisplayInfo>				DisInfo;

@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "PhysicalObjectHandlerBase.h"
 #include "DisplayObjectHandlerBase.h"
 #include "DynamicObject.h"
+#include "CommonTypes.h"
 
 //*************************************************************************************************
 //*                               class WorldToDisplayObjectSynchronizer
@@ -64,7 +65,7 @@ protected:
 
 	
 	//! test for floating point equality within [-epsilon,+epsilon]
-		inline bool equal(float a, float b)
+	inline bool equal(float a, float b)
 	{
 		static const float epsilon = 0.01f;  // we do not need very big precision to display object
 
@@ -83,9 +84,8 @@ private:
 	float	_lastDisplayPositionZ;
 
 	//keep track of the last synchronized rotation
-	float	_lastDisplayRotationX;
-	float	_lastDisplayRotationY;
-	float	_lastDisplayRotationZ;
+	LbaQuaternion	_lastDisplayRotation;
+
 
 	//! handler to physical object
 	boost::shared_ptr<PhysicalObjectHandlerBase> _phH;
