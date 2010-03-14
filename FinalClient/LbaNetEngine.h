@@ -75,6 +75,7 @@ private:
 	LbaNetModel						m_lbaNetModel;		// game model
 	boost::shared_ptr<EventHandler>	m_eventHandler;		// handle input events
 	boost::shared_ptr<PhysXEngine>	m_physic_engine;	//physic engine
+	boost::shared_ptr<PhysXEngine>	m_physic_engine2;	//physic engine
 	boost::shared_ptr<CharacterController>	m_controller;
 
 	double							m_lasttime;

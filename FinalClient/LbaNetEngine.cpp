@@ -72,6 +72,7 @@ void LbaNetEngine::Initialize(void)
 	//init physic engine
 	LogHandler::getInstance()->LogToFile("Initialize physic engine...");
 	m_physic_engine = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
+	m_physic_engine2 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
 
 
 	m_controller = boost::shared_ptr<CharacterController>(new CharacterController(m_physic_engine));
