@@ -81,6 +81,9 @@ public:
 		return res;
 	}
 
+	//! destroy function - clear the object content
+	virtual void Destroy(void) = 0;
+
 protected:
 	bool _resetted;
 };
@@ -207,6 +210,9 @@ public:
 		_rotH.RotateTo(Q);
 	}
 
+
+	//! destroy function - clear the object content
+	virtual void Destroy(void){}
 
 private:
 	float _PosX;

@@ -38,6 +38,7 @@ class NxActor;
 
 #include <vector>
 #include <boost/shared_ptr.hpp>
+#include "CommonTypes.h"
 
 
 class ActorUserData
@@ -126,7 +127,7 @@ public:
 
 
 	//! get gravity
-	void GetGravity(NxVec3 & Gravity);
+	void GetGravity(LbaVec3 & Gravity);
 
 
 	//! Load triangle mesh shape to the engine from file

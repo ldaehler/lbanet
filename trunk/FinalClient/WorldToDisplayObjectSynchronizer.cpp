@@ -31,9 +31,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 constructor
 ***********************************************************/
 WorldToDisplayObjectSynchronizer::WorldToDisplayObjectSynchronizer(boost::shared_ptr<PhysicalObjectHandlerBase> phH,
-																	boost::shared_ptr<DisplayObjectHandlerBase> disH)
-	: _phH(phH), _disH(disH),
-		_lastDisplayPositionX(0), _lastDisplayPositionY(0), _lastDisplayPositionZ(0)
+																	boost::shared_ptr<DisplayObjectHandlerBase> disH,
+																	bool NoSmoothing)
+	: DynamicObject(phH, disH),
+		_lastDisplayPositionX(0), _lastDisplayPositionY(0), _lastDisplayPositionZ(0), _NoSmoothing(NoSmoothing)
 {
 
 }
@@ -52,7 +53,7 @@ synchronization function - will typically be called on every frames
 void WorldToDisplayObjectSynchronizer::Process(void)
 {
 	// if physical object was reseted then we do a straight sync - else do a smoothing sync
-	if(_phH->WasReseted())
+	if(_NoSmoothing || _phH->WasReseted())
 		StraightSync();
 	else
 		SyncWithSmoothing();
@@ -65,13 +66,47 @@ directly synchronize value between physic and display
 void WorldToDisplayObjectSynchronizer::StraightSync()
 {
 	// get value from physic object
-	_phH->GetPosition(_lastDisplayPositionX, _lastDisplayPositionY, _lastDisplayPositionZ);
-	_phH->GetRotation(_lastDisplayRotation);
+	float posX, posY, posZ;
+	LbaQuaternion Quat;
+	_phH->GetPosition(posX, posY, posZ);
+	_phH->GetRotation(Quat);
 
-	// set it to display object
-	_disH->SetPosition(_lastDisplayPositionX, _lastDisplayPositionY, _lastDisplayPositionZ);
-	_disH->SetRotation(_lastDisplayRotation);
 
+	// for each value test if they are equal with display value
+	//if not move display value to the correct value
+	bool positionchanged = false;
+	if(!equal(posX, _lastDisplayPositionX))
+	{
+		positionchanged = true;
+		_lastDisplayPositionX = posX;
+	}
+
+	if(!equal(posY, _lastDisplayPositionY))
+	{
+		positionchanged = true;
+		_lastDisplayPositionY = posY;
+	}
+
+	if(!equal(posZ, _lastDisplayPositionZ))
+	{
+		positionchanged = true;
+		_lastDisplayPositionZ = posZ;
+	}
+
+	// update displayed position if needed
+	if(positionchanged)
+		_disH->SetPosition(_lastDisplayPositionX, _lastDisplayPositionY, _lastDisplayPositionZ);
+
+
+	// check rotations
+	if(		!equal(Quat.X, _lastDisplayRotation.X)
+		||	!equal(Quat.Y, _lastDisplayRotation.Y)
+		||	!equal(Quat.Z, _lastDisplayRotation.Z)
+		||	!equal(Quat.W, _lastDisplayRotation.W))
+	{
+		_lastDisplayRotation = Quat;
+		_disH->SetRotation(_lastDisplayRotation);
+	}
 }
 
 /***********************************************************
@@ -156,4 +191,14 @@ void WorldToDisplayObjectSynchronizer::SyncWithSmoothing()
 		_lastDisplayRotation = LbaQuaternion(quat2.x(), quat2.y(), quat2.z(), quat2.w());
 		_disH->SetRotation(_lastDisplayRotation);
 	}
+}
+
+
+/***********************************************************
+destroy function - clear the object content
+***********************************************************/
+void WorldToDisplayObjectSynchronizer::Destroy(void)
+{
+	_phH->Destroy();
+	_disH->Destroy();
 }

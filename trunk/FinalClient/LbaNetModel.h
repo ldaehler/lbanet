@@ -59,17 +59,26 @@ public:
 	void Process();
 
 	//! reset model with a new map
-	void SetMap(ObjectInfo mapInfo);
+	void SetMap(const ObjectInfo &mapInfo, const LbaMainLightInfo &NewLightningInfo);
+
+	//! add object to the scene
+	void AddObject(long id, const ObjectInfo &desc);
+
+	//! remove object from the scene
+	void RemObject(long id);
+
+	//! get object from the scene
+	boost::shared_ptr<DynamicObject> GetObject(long id);
 
 protected:
 	//! clear current model before changing map
-	void ClearModel();
+	void ClearModel(const LbaMainLightInfo &NewLightningInfo);
 
 private:
-	std::vector<boost::shared_ptr<DynamicObject> >	_dynamicObjects;
-	boost::shared_ptr<PhysXEngine>					_physicEngine;
+	std::map<long, boost::shared_ptr<DynamicObject> >	_dynamicObjects;
+	boost::shared_ptr<PhysXEngine>						_physicEngine;
 
-	boost::shared_ptr<DynamicObject>				_currMap;
+	boost::shared_ptr<DynamicObject>					_currMap;
 };
 
 #endif

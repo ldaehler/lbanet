@@ -30,12 +30,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "UserAllocator.h"
 #include "NxCooking.h"
 #include "Stream.h"
+#include "LogHandler.h"
+
 #include <limits>
 
 #include <fstream>
 
 #define SKINWIDTH	0.2f
-#define GRAVITY		-0.3f
+#define GRAVITY		-9.8f
 
 
 enum GameGroup
@@ -295,7 +297,7 @@ NxActor* PhysXEngine::CreateBox(const NxVec3 & StartPosition, float dimX, float 
 {
 	// Add a single-shape actor to the scene
 	NxActorDesc actorDesc;
-
+	NxBodyDesc bodyDesc;
 
 	// The actor has one shape, a box, 1m on a side
 	NxBoxShapeDesc boxDesc;
@@ -304,7 +306,9 @@ NxActor* PhysXEngine::CreateBox(const NxVec3 & StartPosition, float dimX, float 
 
 	if(Type != 1)
 	{
-		NxBodyDesc bodyDesc;
+		if(Type == 2)
+			bodyDesc.flags |= NX_BF_KINEMATIC;
+
 		actorDesc.body	= &bodyDesc;
 		actorDesc.density = density;
 
@@ -324,9 +328,6 @@ NxActor* PhysXEngine::CreateBox(const NxVec3 & StartPosition, float dimX, float 
 	NxActor *pActor = gScene->createActor(actorDesc);	
 	assert(pActor);
 
-	if(Type == 2)
-		pActor->raiseBodyFlag(NX_BF_KINEMATIC);
-
 	return pActor;
 }
 
@@ -338,6 +339,7 @@ NxActor* PhysXEngine::CreateSphere(const NxVec3 & StartPosition, float radius, f
 {
 	// Add a single-shape actor to the scene
 	NxActorDesc actorDesc;
+	NxBodyDesc bodyDesc;
 
 	// The actor has one shape, a sphere, 1m on radius
 	NxSphereShapeDesc sphereDesc;
@@ -346,7 +348,9 @@ NxActor* PhysXEngine::CreateSphere(const NxVec3 & StartPosition, float radius, f
 
 	if(Type != 1)
 	{
-		NxBodyDesc bodyDesc;
+		if(Type == 2)
+			bodyDesc.flags |= NX_BF_KINEMATIC;
+
 		actorDesc.body	= &bodyDesc;
 		actorDesc.density		= density;
 
@@ -366,9 +370,6 @@ NxActor* PhysXEngine::CreateSphere(const NxVec3 & StartPosition, float radius, f
 	NxActor *pActor = gScene->createActor(actorDesc);	
 	assert(pActor);
 
-	if(Type == 2)
-		pActor->raiseBodyFlag(NX_BF_KINEMATIC);
-
 	return pActor;
 }
 
@@ -380,6 +381,7 @@ NxActor* PhysXEngine::CreateCapsule(const NxVec3 & StartPosition, float radius, 
 {
 	// Add a single-shape actor to the scene
 	NxActorDesc actorDesc;
+	NxBodyDesc bodyDesc;
 
 	// The actor has one shape, a sphere, 1m on radius
 	NxCapsuleShapeDesc capsuleDesc;
@@ -389,7 +391,9 @@ NxActor* PhysXEngine::CreateCapsule(const NxVec3 & StartPosition, float radius, 
 
 	if(Type != 1)
 	{
-		NxBodyDesc bodyDesc;
+		if(Type == 2)
+			bodyDesc.flags |= NX_BF_KINEMATIC;
+
 		actorDesc.body	= &bodyDesc;
 		actorDesc.density = density;
 
@@ -401,16 +405,15 @@ NxActor* PhysXEngine::CreateCapsule(const NxVec3 & StartPosition, float radius, 
 	else
 		capsuleDesc.group = GROUP_COLLIDABLE_NON_PUSHABLE;
 
+
 	actorDesc.shapes.pushBack(&capsuleDesc);
 	actorDesc.userData = adata;
 
 	actorDesc.globalPose.t	= StartPosition;	
 	assert(actorDesc.isValid());
+
 	NxActor *pActor = gScene->createActor(actorDesc);	
 	assert(pActor);
-
-	if(Type == 2)
-		pActor->raiseBodyFlag(NX_BF_KINEMATIC);
 
 	return pActor;
 }
@@ -548,10 +551,16 @@ unsigned int PhysXEngine::MoveCharacter(NxController* character, const NxVec3& m
 /***********************************************************
 get gravity
 ***********************************************************/
-void PhysXEngine::GetGravity(NxVec3 & Gravity)
+void PhysXEngine::GetGravity(LbaVec3 & Gravity)
 {
 	if(gScene)
-		gScene->getGravity(Gravity);
+	{
+		NxVec3 Gr;
+		gScene->getGravity(Gr);
+		Gravity.x = Gr.x;
+		Gravity.y = Gr.y;
+		Gravity.z = Gr.z;
+	}
 }
 
 
@@ -588,7 +597,10 @@ NxActor* PhysXEngine::LoadTriangleMeshFile(const NxVec3 & StartPosition, const s
 	// load data from binary file and set it into a triangle mesh
 	std::ifstream file(Filename.c_str(), std::ifstream::binary);
 	if(!file.is_open())
+	{
+		LogHandler::getInstance()->LogToFile("Can not read file "+Filename, 1);
 		return NULL;
+	}
 
 	unsigned int sizevertex;
 	unsigned int sizeindices;
@@ -614,6 +626,7 @@ NxActor* PhysXEngine::LoadTriangleMeshFile(const NxVec3 & StartPosition, const s
 
 	delete[] buffervertex;
 	delete[] bufferindices;
+
 
 	return act;
 }

@@ -90,6 +90,9 @@ public:
 	//! rotate object in the world
 	virtual void RotateTo(const LbaQuaternion& Q);
 
+	//! destroy function - clear the object content
+	virtual void Destroy(void);
+
 protected:
 	NxActor*									_Actor;
 	boost::shared_ptr<SimpleRotationHandler>	_rotH;
@@ -131,6 +134,9 @@ public:
 	//! rotate object in the world
 	virtual void RotateTo(const LbaQuaternion& Q);
 
+	//! destroy function - clear the object content
+	virtual void Destroy(void);
+
 protected:
 	NxActor*	_Actor;
 };
@@ -171,6 +177,9 @@ public:
 
 	//! rotate object in the world
 	virtual void RotateTo(const LbaQuaternion& Q);
+
+	//! destroy function - clear the object content
+	virtual void Destroy(void);
 
 protected:
 	NxController*								_Controller;

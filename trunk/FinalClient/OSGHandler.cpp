@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "OSGHandler.h"
 #include "LogHandler.h"
 #include "ConfigurationManager.h"
-
+#include "EventHandler.h"
 
 
 #include <osg/PositionAttitudeTransform>
@@ -74,8 +74,8 @@ class UserInputsHandler : public osgGA::GUIEventHandler
 {
 public:
 	//! constructor
-    UserInputsHandler()
-		: _right_button_pressed(false)
+    UserInputsHandler(EventHandler * evH)
+		: _right_button_pressed(false), _evH(evH)
 	{}
 
 	//! destructor
@@ -87,6 +87,7 @@ public:
 private:
 	bool	_right_button_pressed;
 	int		_mouse_Y;
+	EventHandler * _evH;
 };
 
 
@@ -100,6 +101,9 @@ handle inputs
 ***********************************************************/
 bool UserInputsHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
 {
+	if(_evH && _evH->Handle(ea, aa))
+		return true;
+
 	switch(ea.getEventType())
 	{
 		case(osgGA::GUIEventAdapter::PUSH):
@@ -152,6 +156,18 @@ bool UserInputsHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActio
 				OsgHandler::getInstance()->ToggleFullScreen();
 				return true;
 			}
+
+			if(ea.getKey() == osgGA::GUIEventAdapter::KEY_F5)
+			{			
+				OsgHandler::getInstance()->ResetLight(true);
+				return true;
+			}
+
+			if(ea.getKey() == osgGA::GUIEventAdapter::KEY_F6)
+			{			
+				OsgHandler::getInstance()->ResetLight(false);
+				return true;
+			}
 		}
 
 
@@ -184,8 +200,8 @@ constructor
 OsgHandler::OsgHandler()
 : _isFullscreen(false), _resX(800), _resY(600),
 	_isPerspective(false), _targetx(0), _targety(0), _targetz(0),
-	_viewer(NULL), _rootNode(NULL), _sceneRootNode(NULL), _mapNode(NULL),
-	_viewportX(800), _viewportY(600)
+	_viewer(NULL), _rootNode(NULL), _sceneRootNode(NULL),
+	_viewportX(800), _viewportY(600), _displayShadow(true), _movecamera(false)
 {
 	SetCameraDistance(30);
 	SetCameraZenit(30);
@@ -206,7 +222,7 @@ OsgHandler::~OsgHandler()
 /***********************************************************
 initialize
 ***********************************************************/
-void OsgHandler::Initialize(const std::string &WindowName, const std::string &DataPath)
+void OsgHandler::Initialize(const std::string &WindowName, const std::string &DataPath, EventHandler * evH)
 {
 	osgDB::setDataFilePathList(DataPath);
 
@@ -229,6 +245,8 @@ void OsgHandler::Initialize(const std::string &WindowName, const std::string &Da
 		ConfigurationManager::GetInstance()->GetInt("Display.Screen.ScreenResolutionX", _resX);
 		ConfigurationManager::GetInstance()->GetInt("Display.Screen.ScreenResolutionY", _resY);
 		ConfigurationManager::GetInstance()->GetBool("Display.Screen.Fullscreen", _isFullscreen);
+
+		ConfigurationManager::GetInstance()->GetBool("Display.ShadowOn", _displayShadow);
 	}
 
 
@@ -260,17 +278,14 @@ void OsgHandler::Initialize(const std::string &WindowName, const std::string &Da
 	_rootNode->setScale(osg::Vec3d(1, 0.5, 1));
 	_rootNode->setAttitude(osg::Quat(osg::DegreesToRadians(-45.0), osg::Vec3(0,1,0)));
 
-	_sceneRootNode = new osg::Group();
-	_rootNode->addChild(_sceneRootNode);
 	_viewer->setSceneData(_rootNode);
 
-	
 	_viewer->setCameraManipulator(NULL);
 
 
 	// add the stats handler
 	_viewer->addEventHandler( new osgViewer::StatsHandler() );
-	_viewer->addEventHandler( new UserInputsHandler() );
+	_viewer->addEventHandler( new UserInputsHandler(evH) );
 
 	 // create the windows
     _viewer->realize();
@@ -298,6 +313,8 @@ void OsgHandler::Finalize()
 		ConfigurationManager::GetInstance()->SetInt("Display.Screen.ScreenResolutionX", _resX);
 		ConfigurationManager::GetInstance()->SetInt("Display.Screen.ScreenResolutionY", _resY);
 		ConfigurationManager::GetInstance()->SetBool("Display.Screen.Fullscreen", _isFullscreen);
+
+		ConfigurationManager::GetInstance()->SetBool("Display.ShadowOn", _displayShadow);
 	}
 
 	// clean up everything
@@ -426,7 +443,9 @@ void OsgHandler::ResetCameraTransform()
 			osg::Matrixd cameraTrans;
 
 			cameraRotation1.makeRotate(osg::DegreesToRadians(_zenit), osg::Vec3(1,0,0));
-			cameraTrans.makeTranslate( -_targetx,-_targety/2.0,-_targetz-_distance );
+			cameraTrans.makeTranslate( 0,0,-_distance );
+			//cameraTrans.makeTranslate( -_targetx,-_targety/2.0,-_targetz-_distance );
+			//_rootNode->setPosition(osg::Vec3d( -_targetx,-_targety/2.0,-_targetz-_distance ));
 			viewMatrix = cameraRotation1* cameraTrans;
 		}
 		else
@@ -435,7 +454,9 @@ void OsgHandler::ResetCameraTransform()
 			osg::Matrixd cameraTrans;
 
 			cameraRotation1.makeRotate(osg::DegreesToRadians(30.0), osg::Vec3(1,0,0));
-			cameraTrans.makeTranslate( -_targetx,-_targety/2.0,-_targetz-1000 );
+			cameraTrans.makeTranslate( 0,0,-1000 );
+			//cameraTrans.makeTranslate( -_targetx,-_targety/2.0,-_targetz-1000 );
+			//_rootNode->setPosition(osg::Vec3d( -_targetx,-_targety/2.0,-_targetz-1000  ));
 			viewMatrix = cameraRotation1 * cameraTrans;
 		}
 
@@ -527,7 +548,50 @@ void OsgHandler::SetCameraTarget(double TargetX, double TargetY, double TargetZ)
 	_targety = TargetY;
 	_targetz = TargetZ;
 
-	ResetCameraTransform();
+	//ResetCameraTransform();
+	if(_rootNode)
+		_rootNode->setPosition(osg::Vec3d( -_targetx,-_targety,-_targetz ));
+}
+
+
+/***********************************************************
+reset light (can be used to switch light on/off
+***********************************************************/
+void OsgHandler::ResetLight(bool On)
+{
+	if(!_lightNode)
+		return;
+
+
+	if(On)
+	{
+		osg::Light* myLight1 = new osg::Light();
+		myLight1->setLightNum(0);
+
+		osg::Vec4 lightpos;
+		lightpos.set(_currLightInfo.LOnPosX, _currLightInfo.LOnPosY, _currLightInfo.LOnPosZ,0.0f);
+		myLight1->setPosition(lightpos);
+		myLight1->setAmbient(osg::Vec4(_currLightInfo.LOnAmbientR,_currLightInfo.LOnAmbientG,_currLightInfo.LOnAmbientB, 1.0));
+		myLight1->setDiffuse(osg::Vec4(_currLightInfo.LOnDiffuseR,_currLightInfo.LOnDiffuseG,_currLightInfo.LOnDiffuseB, 1.0));
+		_lightNode->setLight(myLight1);
+		_lightNode->setLocalStateSetModes(osg::StateAttribute::ON);
+		_lightNode->setStateSetModes(*_rootNode->getOrCreateStateSet(),osg::StateAttribute::ON);
+	}
+	else
+	{
+		osg::Light* myLight1 = new osg::Light();
+		myLight1->setLightNum(0);
+
+		osg::Vec4 lightpos;
+		lightpos.set(_currLightInfo.LOffPosX, _currLightInfo.LOffPosY, _currLightInfo.LOffPosZ,0.0f);
+		myLight1->setPosition(lightpos);
+		myLight1->setAmbient(osg::Vec4(_currLightInfo.LOffAmbientR,_currLightInfo.LOffAmbientG,_currLightInfo.LOffAmbientB, 1.0));
+		myLight1->setDiffuse(osg::Vec4(_currLightInfo.LOffDiffuseR,_currLightInfo.LOffDiffuseG,_currLightInfo.LOffDiffuseB, 1.0));
+		_lightNode->setLight(myLight1);
+		_lightNode->setLocalStateSetModes(osg::StateAttribute::ON);	
+		_lightNode->setStateSetModes(*_rootNode->getOrCreateStateSet(),osg::StateAttribute::ON);
+	}
+
 }
 
 
@@ -535,41 +599,74 @@ void OsgHandler::SetCameraTarget(double TargetX, double TargetY, double TargetZ)
 clear all nodes of the display tree
 typically called when changing map
 ***********************************************************/
-void OsgHandler::EmptyDisplayTree()
+void OsgHandler::ResetDisplayTree(const LbaMainLightInfo &NewLightningInfo)
 {
-	if(!_sceneRootNode)
+	//reset cmera node
+	_cameraNode = NULL;
+
+
+	if(!_rootNode)
 		return;
 
-	std::vector<osg::ref_ptr<osg::Node> >::iterator itn = _addedNodes.begin();
-	std::vector<osg::ref_ptr<osg::Node> >::iterator endn = _addedNodes.end();
-	for(; itn != endn; ++itn)
-		_sceneRootNode->removeChild(*itn);
+	if(_lightNode)
+		_rootNode->removeChild(_lightNode);
 
-	_addedNodes.clear();
+	_lightNode = new osg::LightSource();
+	_rootNode->addChild(_lightNode);
 
-	if(_mapNode)
+
+
+	// reset light information
+	_currLightInfo = NewLightningInfo;
+	if(_currLightInfo.UseLight)
 	{
-		_sceneRootNode->removeChild(_mapNode);
-		_mapNode = NULL;
+		ResetLight(_currLightInfo.StartOn);
 	}
-}
+	else
+	{
+		_lightNode->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE|osg::StateAttribute::OFF);
+	}
 
 
-/***********************************************************
-set the current map to display
-***********************************************************/
-void OsgHandler::SetMap(osg::ref_ptr<osg::Node> mapnode)
-{
-	if(!_sceneRootNode)
-		return;
+	// check if we use shadow or not
+	if(_currLightInfo.UseLight && _currLightInfo.UseShadow && _displayShadow)
+	{
+		osg::ref_ptr<osgShadow::ShadowedScene> shadowscene = new osgShadow::ShadowedScene();
+		shadowscene->setReceivesShadowTraversalMask(ReceivesShadowTraversalMask);
+		shadowscene->setCastsShadowTraversalMask(CastsShadowTraversalMask);
 
-	if(_mapNode)
-		_sceneRootNode->removeChild(_mapNode);
+		osg::ref_ptr<osgShadow::StandardShadowMap> shmap = new osgShadow::StandardShadowMap();
+		shadowscene->setShadowTechnique(shmap.get());
+		_sceneRootNode = shadowscene;
+	}
+	else
+	{
+		_sceneRootNode = new osg::Group();	
+	}
 
-	_mapNode = mapnode;
-	_sceneRootNode->addChild(_mapNode);
+	_lightNode->addChild(_sceneRootNode);
 
-	//_camManip->setNode(_mapNode);
+
+
+
+	//osg::Light* myLight2 = new osg::Light;
+	//myLight2->setLightNum(1);
+	//osg::Vec4 lightpos;
+	//lightpos.set(10.0f,10.0f,10.0f,1.0f);
+	//osg::ref_ptr<osg::LightSource> ls = new osg::LightSource;
+	//myLight2->setLightNum(1);
+	//myLight2->setPosition(lightpos);
+	//myLight2->setDirection(osg::Vec3(-0.5, -0.5, 0));
+	//myLight2->setAmbient(osg::Vec4(0.8,0.2,0.2,1.0));
+	//myLight2->setDiffuse(osg::Vec4(0.8,0.8,0.8,1.0));
+	//myLight2->setSpotCutoff(20.0f);
+	//myLight2->setSpotExponent(50.0f);
+
+	//ls->setLight(myLight2);
+	//ls->setLocalStateSetModes(osg::StateAttribute::ON); 
+	//ls->setStateSetModes(*_rootNode->getOrCreateStateSet(),osg::StateAttribute::ON);
+
+	//_rootNode->addChild(ls);
 }
 
 
@@ -579,6 +676,8 @@ update display - returns true if need to terminate
 ***********************************************************/
 bool OsgHandler::Update()
 {
+	UpdateCameraPos();
+
 	if(!_viewer->done())
 	{
 		_viewer->frame();
@@ -608,6 +707,97 @@ osg::ref_ptr<osg::MatrixTransform> OsgHandler::AddActorNode(osg::ref_ptr<osg::No
 	transform->addChild(node);
 	_sceneRootNode->addChild(transform);
 
-	_addedNodes.push_back(transform);
 	return transform;
+}
+
+
+/***********************************************************
+remove actor from the graph
+***********************************************************/
+void OsgHandler::RemoveActorNode(osg::ref_ptr<osg::Node> node)
+{
+	_sceneRootNode->removeChild(node);
+}
+
+
+
+/***********************************************************
+set the node the camera needs to follow
+***********************************************************/
+void OsgHandler::SetCameraFollowingNode(osg::ref_ptr<osg::MatrixTransform> node)
+{
+	_cameraNode = node;
+}
+
+
+
+/***********************************************************
+update camera position
+***********************************************************/
+void OsgHandler::UpdateCameraPos()
+{
+	//if(!_cameraNode)
+		return;
+
+	osg::Vec3d apos = _cameraNode->getMatrix().getTrans();
+	double actX = apos.x();
+	double actY = apos.y();
+	double actZ = apos.z();
+
+	// start to move camera only when actor moves a certain distance
+	if(abs(actX - _targetx) > 3 || abs(actY - _targety) > 3 || abs(actZ - _targetz) > 3)
+	{
+		_movecamera = true;
+	}
+
+	if(abs(actX - _targetx) > 5 || abs(actY - _targety) > 5 || abs(actZ - _targetz) > 5)
+	{
+		SetCameraTarget(actX, actY, actZ);
+		_movecamera = false;
+		return;
+	}
+
+
+	if(_movecamera)
+	{
+		double speedX = (actX - _lastactX);
+		double speedY = (actY - _lastactY);
+		double speedZ = (actZ - _lastactZ);
+		SetCameraTarget(_targetx+speedX, _targety+speedY, _targetz+speedZ);
+
+		double deltaX = (actX - _targetx);
+		double deltaY = (actY - _targety);
+		double deltaZ = (actZ - _targetz);
+
+		bool changed = false;
+		if(abs(deltaX) > 0.1)
+		{
+			changed = true;
+			_targetx+=deltaX/100;
+		}
+
+		if(abs(deltaY) > 0.1)
+		{
+			changed = true;
+			_targety+=deltaY/100;
+		}
+		if(abs(deltaZ) > 0.1)
+		{
+			changed = true;
+			_targetz+=deltaZ/100;
+		}
+
+		if(changed)
+			SetCameraTarget(_targetx, _targety, _targetz);
+
+
+		if(actX == _lastactX && actY == _lastactY && actZ == _lastactZ)
+		{
+			_movecamera = false;		
+		}
+	}
+
+	_lastactX = actX;
+	_lastactY = actY;
+	_lastactZ = actZ;
 }

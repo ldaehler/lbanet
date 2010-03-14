@@ -28,8 +28,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <boost/shared_ptr.hpp>
 
-#include "PhysicalObjectHandlerBase.h"
-#include "DisplayObjectHandlerBase.h"
 #include "DynamicObject.h"
 #include "CommonTypes.h"
 
@@ -46,7 +44,8 @@ public:
 
 	//! constructor
 	WorldToDisplayObjectSynchronizer(boost::shared_ptr<PhysicalObjectHandlerBase> phH,
-										boost::shared_ptr<DisplayObjectHandlerBase> disH);
+										boost::shared_ptr<DisplayObjectHandlerBase> disH,
+										bool NoSmoothing);
 
 	//! destructor
 	virtual ~WorldToDisplayObjectSynchronizer();
@@ -55,6 +54,8 @@ public:
 	//! synchronization function - will typically be called on every frames
 	virtual void Process(void);
 
+	//! destroy function - clear the object content
+	virtual void Destroy(void);
 
 protected:
 	//! directly synchronize value between physic and display
@@ -67,7 +68,7 @@ protected:
 	//! test for floating point equality within [-epsilon,+epsilon]
 	inline bool equal(float a, float b)
 	{
-		static const float epsilon = 0.01f;  // we do not need very big precision to display object
+		static const float epsilon = 0.0001f;  // we do not need very big precision to display object
 
 		const float d = a - b;
 		if (d<epsilon && d>-epsilon) 
@@ -86,12 +87,8 @@ private:
 	//keep track of the last synchronized rotation
 	LbaQuaternion	_lastDisplayRotation;
 
-
-	//! handler to physical object
-	boost::shared_ptr<PhysicalObjectHandlerBase> _phH;
-
-	//! handler to display object
-	boost::shared_ptr<DisplayObjectHandlerBase> _disH;
+	// force no smoothing
+	bool			_NoSmoothing;
 };
 
 
