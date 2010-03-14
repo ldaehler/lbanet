@@ -29,6 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include <osg/PositionAttitudeTransform>
+#include <osg/ClipNode>
+
 
 #include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>
@@ -200,8 +202,9 @@ constructor
 OsgHandler::OsgHandler()
 : _isFullscreen(false), _resX(800), _resY(600),
 	_isPerspective(false), _targetx(0), _targety(0), _targetz(0),
-	_viewer(NULL), _rootNode(NULL), _sceneRootNode(NULL),
-	_viewportX(800), _viewportY(600), _displayShadow(true), _movecamera(false)
+	_viewer(NULL), _rootNode(NULL), _sceneRootNode(NULL), _translNode(NULL),
+	_viewportX(800), _viewportY(600), _displayShadow(true), _movecamera(false),
+	_current_clip_layer(-1)
 {
 	SetCameraDistance(30);
 	SetCameraZenit(30);
@@ -277,10 +280,19 @@ void OsgHandler::Initialize(const std::string &WindowName, const std::string &Da
 	_rootNode = new osg::PositionAttitudeTransform();
 	_rootNode->setScale(osg::Vec3d(1, 0.5, 1));
 	_rootNode->setAttitude(osg::Quat(osg::DegreesToRadians(-45.0), osg::Vec3(0,1,0)));
+	_translNode = new osg::PositionAttitudeTransform();
+	_rootNode->addChild(_translNode);
 
 	_viewer->setSceneData(_rootNode);
-
 	_viewer->setCameraManipulator(NULL);
+
+
+
+	_clipNode = new osg::ClipNode();
+	_clipNode->setStateSetModes(*_translNode->getOrCreateStateSet(),osg::StateAttribute::ON|osg::StateAttribute::PROTECTED|osg::StateAttribute::OVERRIDE);
+	_translNode->addChild(_clipNode);
+
+
 
 
 	// add the stats handler
@@ -322,6 +334,7 @@ void OsgHandler::Finalize()
 	_sceneRootNode = NULL;
 	_rootNode = NULL;
 	_viewer = NULL;
+	_translNode =NULL;
 }
 
 
@@ -444,8 +457,6 @@ void OsgHandler::ResetCameraTransform()
 
 			cameraRotation1.makeRotate(osg::DegreesToRadians(_zenit), osg::Vec3(1,0,0));
 			cameraTrans.makeTranslate( 0,0,-_distance );
-			//cameraTrans.makeTranslate( -_targetx,-_targety/2.0,-_targetz-_distance );
-			//_rootNode->setPosition(osg::Vec3d( -_targetx,-_targety/2.0,-_targetz-_distance ));
 			viewMatrix = cameraRotation1* cameraTrans;
 		}
 		else
@@ -455,8 +466,6 @@ void OsgHandler::ResetCameraTransform()
 
 			cameraRotation1.makeRotate(osg::DegreesToRadians(30.0), osg::Vec3(1,0,0));
 			cameraTrans.makeTranslate( 0,0,-1000 );
-			//cameraTrans.makeTranslate( -_targetx,-_targety/2.0,-_targetz-1000 );
-			//_rootNode->setPosition(osg::Vec3d( -_targetx,-_targety/2.0,-_targetz-1000  ));
 			viewMatrix = cameraRotation1 * cameraTrans;
 		}
 
@@ -549,8 +558,8 @@ void OsgHandler::SetCameraTarget(double TargetX, double TargetY, double TargetZ)
 	_targetz = TargetZ;
 
 	//ResetCameraTransform();
-	if(_rootNode)
-		_rootNode->setPosition(osg::Vec3d( -_targetx,-_targety,-_targetz ));
+	if(_translNode)
+		_translNode->setPosition(osg::Vec3d( -_targetx,-_targety,-_targetz ));
 }
 
 
@@ -575,7 +584,7 @@ void OsgHandler::ResetLight(bool On)
 		myLight1->setDiffuse(osg::Vec4(_currLightInfo.LOnDiffuseR,_currLightInfo.LOnDiffuseG,_currLightInfo.LOnDiffuseB, 1.0));
 		_lightNode->setLight(myLight1);
 		_lightNode->setLocalStateSetModes(osg::StateAttribute::ON);
-		_lightNode->setStateSetModes(*_rootNode->getOrCreateStateSet(),osg::StateAttribute::ON);
+		_lightNode->setStateSetModes(*_translNode->getOrCreateStateSet(),osg::StateAttribute::ON);
 	}
 	else
 	{
@@ -589,7 +598,7 @@ void OsgHandler::ResetLight(bool On)
 		myLight1->setDiffuse(osg::Vec4(_currLightInfo.LOffDiffuseR,_currLightInfo.LOffDiffuseG,_currLightInfo.LOffDiffuseB, 1.0));
 		_lightNode->setLight(myLight1);
 		_lightNode->setLocalStateSetModes(osg::StateAttribute::ON);	
-		_lightNode->setStateSetModes(*_rootNode->getOrCreateStateSet(),osg::StateAttribute::ON);
+		_lightNode->setStateSetModes(*_translNode->getOrCreateStateSet(),osg::StateAttribute::ON);
 	}
 
 }
@@ -605,14 +614,14 @@ void OsgHandler::ResetDisplayTree(const LbaMainLightInfo &NewLightningInfo)
 	_cameraNode = NULL;
 
 
-	if(!_rootNode)
+	if(!_translNode)
 		return;
 
 	if(_lightNode)
-		_rootNode->removeChild(_lightNode);
+		_translNode->removeChild(_lightNode);
 
 	_lightNode = new osg::LightSource();
-	_rootNode->addChild(_lightNode);
+	_translNode->addChild(_lightNode);
 
 
 
@@ -649,6 +658,7 @@ void OsgHandler::ResetDisplayTree(const LbaMainLightInfo &NewLightningInfo)
 
 
 
+
 	//osg::Light* myLight2 = new osg::Light;
 	//myLight2->setLightNum(1);
 	//osg::Vec4 lightpos;
@@ -664,7 +674,7 @@ void OsgHandler::ResetDisplayTree(const LbaMainLightInfo &NewLightningInfo)
 
 	//ls->setLight(myLight2);
 	//ls->setLocalStateSetModes(osg::StateAttribute::ON); 
-	//ls->setStateSetModes(*_rootNode->getOrCreateStateSet(),osg::StateAttribute::ON);
+	//ls->setStateSetModes(*_translNode->getOrCreateStateSet(),osg::StateAttribute::ON);
 
 	//_rootNode->addChild(ls);
 }
@@ -703,9 +713,13 @@ add a actor to the display list - return handler to actor position
 ***********************************************************/
 osg::ref_ptr<osg::MatrixTransform> OsgHandler::AddActorNode(osg::ref_ptr<osg::Node> node)
 {
+	node->setNodeMask(ReceivesShadowTraversalMask | CastsShadowTraversalMask);
 	osg::ref_ptr<osg::MatrixTransform> transform = new osg::MatrixTransform();
 	transform->addChild(node);
 	_sceneRootNode->addChild(transform);
+
+
+
 
 	return transform;
 }
@@ -736,7 +750,7 @@ update camera position
 ***********************************************************/
 void OsgHandler::UpdateCameraPos()
 {
-	//if(!_cameraNode)
+	if(!_cameraNode)
 		return;
 
 	osg::Vec3d apos = _cameraNode->getMatrix().getTrans();
@@ -800,4 +814,29 @@ void OsgHandler::UpdateCameraPos()
 	_lastactX = actX;
 	_lastactY = actY;
 	_lastactZ = actZ;
+}
+
+
+
+/***********************************************************
+set clip plane cut layer
+***********************************************************/
+void OsgHandler::SetClipPlane(float layer)
+{
+	if(_current_clip_layer == layer)
+		return;
+
+	_current_clip_layer = layer;
+
+	_clipNode->setStateSetModes(*_translNode->getOrCreateStateSet(),osg::StateAttribute::OFF);
+	_clipNode->removeClipPlane((unsigned int)0);
+
+
+	if(layer > 0)
+	{
+		osg::ref_ptr<osg::ClipPlane> clipplane = new osg::ClipPlane();
+		clipplane->setClipPlane(0, -1, 0, layer+0.01);
+		_clipNode->addClipPlane(clipplane);
+		_clipNode->setStateSetModes(*_translNode->getOrCreateStateSet(),osg::StateAttribute::ON);
+	}
 }

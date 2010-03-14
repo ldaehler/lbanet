@@ -39,6 +39,7 @@ namespace osg
 	class Group;
 	class MatrixTransform;
 	class LightSource;
+	class ClipNode;
 }
 
 namespace osgViewer
@@ -125,6 +126,9 @@ public:
 	//! set the node the camera needs to follow
 	void SetCameraFollowingNode(osg::ref_ptr<osg::MatrixTransform> node);
 
+	//! set clip plane cut layer
+	void SetClipPlane(float layer);
+
 protected:
 	//! constructor
 	OsgHandler();
@@ -164,6 +168,7 @@ private:
 	double	_fov;
 	double	_distance;
 	double	_zenit;
+	float	_current_clip_layer;
 
 	LbaMainLightInfo _currLightInfo;
 
@@ -171,8 +176,10 @@ private:
 	// osg handlers
 	osg::ref_ptr<osgViewer::Viewer>					_viewer;
 	osg::ref_ptr<osg::PositionAttitudeTransform>	_rootNode;
+	osg::ref_ptr<osg::PositionAttitudeTransform>	_translNode;
 	osg::ref_ptr<osg::LightSource>					_lightNode;
 	osg::ref_ptr<osg::Group>						_sceneRootNode;
+	osg::ref_ptr<osg::ClipNode>						_clipNode;
 
 	// camera internal info
 	osg::ref_ptr<osg::MatrixTransform>				_cameraNode;

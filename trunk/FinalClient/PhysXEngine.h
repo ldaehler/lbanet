@@ -33,7 +33,7 @@ class NxUserAllocator;
 class NxVec3;
 class NxController;
 class NxActor;
-
+class NxTriangleMeshShape;
 
 
 #include <vector>
@@ -108,7 +108,7 @@ public:
 
 	NxActor* CreateTriangleMesh(const NxVec3 & StartPosition, float *Vertexes, 
 										size_t VertexesSize, unsigned int *Indices, size_t IndicesSize,
-										ActorUserData * adata);
+										ActorUserData * adata, bool collidablemesh = true);
 
 	NxController* CreateCharacter(const NxVec3 & StartPosition, float radius, float height,
 									ActorUserData * adata);
@@ -135,6 +135,12 @@ public:
 									boost::shared_ptr<ActorUserData> userdata);
 
 
+
+	//! check if there is a roof up the 3d position in parameter
+	//! if there is a roof, return the roof position along the y axis
+	//! else return -1
+	float CheckForRoof(float PositionX, float PositionY, float PositionZ);
+
 protected:
 	
 
@@ -152,6 +158,8 @@ private:
 	NxScene*					gScene;
 	NxControllerManager*		gManager;
 	NxUserAllocator*			gAllocator;
+
+	NxTriangleMeshShape*		_currmap;
 
 
 	double						_lasttime;

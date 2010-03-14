@@ -127,7 +127,7 @@ public:
 	Constructor
 ***********************************************************/
 PhysXEngine::PhysXEngine()
-: gAllocator(NULL), gPhysicsSDK(NULL), gScene(NULL)
+: gAllocator(NULL), gPhysicsSDK(NULL), gScene(NULL), _currmap(NULL)
 {
 	Init();
 }
@@ -286,6 +286,8 @@ void PhysXEngine::Clear()
 	NxActor** actors = gScene->getActors();
 	for(NxU32 i=0; i<gScene->getNbActors(); ++i, ++actors)
 		gScene->releaseActor(**actors);
+
+	_currmap = NULL;
 }
 
 
@@ -473,7 +475,7 @@ NxController* PhysXEngine::CreateCharacterBox(const NxVec3 & StartPosition, cons
 ***********************************************************/
 NxActor* PhysXEngine::CreateTriangleMesh(const NxVec3 & StartPosition, float *Vertexes, size_t VertexesSize, 
 											unsigned int *Indices, size_t IndicesSize,
-											ActorUserData * adata)
+											ActorUserData * adata, bool collidablemesh)
 {
 	// Create descriptor for triangle mesh
 	NxTriangleMeshDesc triangleMeshDesc;
@@ -508,7 +510,11 @@ NxActor* PhysXEngine::CreateTriangleMesh(const NxVec3 & StartPosition, float *Ve
 	tmsd.meshData			= pMesh;
 	tmsd.localPose.t		= NxVec3(0, 0, 0);
 	tmsd.meshPagingMode 	= NX_MESH_PAGING_AUTO;
-	tmsd.group = GROUP_COLLIDABLE_NON_PUSHABLE;
+
+	if(collidablemesh)
+		tmsd.group = GROUP_COLLIDABLE_NON_PUSHABLE;
+	else
+		tmsd.group = GROUP_NON_COLLIDABLE;
 
 	NxActorDesc actorDesc;
 	NxBodyDesc  bodyDesc;
@@ -605,9 +611,14 @@ NxActor* PhysXEngine::LoadTriangleMeshFile(const NxVec3 & StartPosition, const s
 	unsigned int sizevertex;
 	unsigned int sizeindices;
 	unsigned int sizematerials;
+	unsigned int sizevertexroof;
+	unsigned int sizeindicesroof;
+
 	file.read((char*)&sizevertex, sizeof(unsigned int));
 	file.read((char*)&sizeindices, sizeof(unsigned int));
 	file.read((char*)&sizematerials, sizeof(unsigned int));
+	file.read((char*)&sizevertexroof, sizeof(unsigned int));
+	file.read((char*)&sizeindicesroof, sizeof(unsigned int));
 
 	float *buffervertex = new float[sizevertex];
 	unsigned int *bufferindices = new unsigned int[sizeindices];
@@ -623,10 +634,59 @@ NxActor* PhysXEngine::LoadTriangleMeshFile(const NxVec3 & StartPosition, const s
 
 	NxActor* act = CreateTriangleMesh(StartPosition, buffervertex, sizevertex, bufferindices, sizeindices, 
 											userdata.get());
-
+	//NxActor* act = NULL;
 	delete[] buffervertex;
 	delete[] bufferindices;
 
 
+	// create shape for roof if necessary
+	_currmap = NULL;
+	if(sizevertexroof > 0)
+	{
+		float *buffervertexroof = NULL;
+		unsigned int *bufferindicesroof = NULL;
+
+		buffervertexroof = new float[sizevertexroof];
+		bufferindicesroof = new unsigned int[sizeindicesroof];
+		file.read((char*)buffervertexroof, sizevertexroof*sizeof(float));
+		file.read((char*)bufferindicesroof, sizeindicesroof*sizeof(unsigned int));
+
+		NxActor* roofact = CreateTriangleMesh(StartPosition, buffervertexroof, sizevertexroof, 
+												bufferindicesroof, sizeindicesroof, NULL, false);
+
+
+		if(roofact && roofact->getNbShapes() > 0)
+			_currmap = (*roofact->getShapes())->isTriangleMesh();
+
+		if(buffervertexroof)
+			delete buffervertexroof;
+
+		if(bufferindicesroof)
+			delete bufferindicesroof;
+	}
+
+
+
 	return act;
 }
+
+
+
+/***********************************************************
+//! check if there is a roof up the 3d position in parameter
+//! if there is a roof, return the roof position along the y axis
+//! else return -1
+***********************************************************/
+float PhysXEngine::CheckForRoof(float PositionX, float PositionY, float PositionZ)
+{
+	NxRaycastHit hitinfo;
+	NxVec3 vec(0, 1, 0);
+	NxVec3 Position(PositionX, PositionY, PositionZ);
+
+	if(_currmap && _currmap->raycast(NxRay(Position, vec), 100.0f, NX_RAYCAST_DISTANCE, hitinfo, false))
+	{
+		return (Position.y + hitinfo.distance);
+	}
+
+	return -1;
+}	

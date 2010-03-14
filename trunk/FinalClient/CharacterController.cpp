@@ -25,7 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "CharacterController.h"
 #include "DynamicObject.h"
 #include "PhysXEngine.h"
+#include "OSGHandler.h"
 
+#include <iostream>
 
 /***********************************************************
 	Constructor
@@ -177,4 +179,11 @@ void CharacterController::Process(double tnow, float tdiff)
 	LbaVec3 Gravity;
 	_pEngine->GetGravity(Gravity);
 	phys->Move(_current_direction.x*speed* tdiff, Gravity.y/20, _current_direction.z*speed * tdiff);
+
+	float PositionX, PositionY, PositionZ;
+	phys->GetPosition(PositionX, PositionY, PositionZ);
+	float roofcut = _pEngine->CheckForRoof(PositionX, PositionY, PositionZ);
+	OsgHandler::getInstance()->SetClipPlane(roofcut-1);
+
+
 }
