@@ -4,6 +4,15 @@
 
 int main(int argc, char** argv)
 {
+	std::ifstream maptypeslba1("lba1_maps_type.txt");
+	std::vector<bool> _mapType;
+	while(!maptypeslba1.eof())
+	{
+		std::string tmp;
+		getline(maptypeslba1, tmp);
+		_mapType.push_back(tmp=="interior");
+	}
+
 	PhysicHandler phH(NULL, NULL);
 
 	for(int i=0; i<=133; ++i)
@@ -18,6 +27,10 @@ int main(int argc, char** argv)
 		phH.SearchWallX();
 		phH.SearchWallZ();
 		phH.SearchStairs();
+
+		if(_mapType[i])
+			phH.SearchRoof();
+
 		phH.SavePlanes(file2.str());
 	}
 
@@ -33,6 +46,8 @@ int main(int argc, char** argv)
 		phH.SearchWallX();
 		phH.SearchWallZ();
 		phH.SearchStairs();
+		phH.SearchRoof();
+
 		phH.SavePlanes(file2.str());
 	}
 
