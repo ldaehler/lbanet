@@ -177,7 +177,19 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\CharacterController.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CommonTypes.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ConfigurationManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\EventHandler.cpp"
 				>
 			</File>
 			<File
@@ -217,6 +229,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\StaticObject.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Stream.cpp"
 				>
 			</File>
@@ -239,6 +255,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\CharacterController.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CommonTypes.h"
 				>
 			</File>
@@ -252,6 +272,10 @@
 			</File>
 			<File
 				RelativePath=".\DynamicObject.h"
+				>
+			</File>
+			<File
+				RelativePath=".\EventHandler.h"
 				>
 			</File>
 			<File
@@ -288,6 +312,10 @@
 			</File>
 			<File
 				RelativePath=".\PhysXObjectHandlers.h"
+				>
+			</File>
+			<File
+				RelativePath=".\StaticObject.h"
 				>
 			</File>
 			<File

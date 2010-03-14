@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <boost/shared_ptr.hpp>
 #include "PhysicalObjectHandlerBase.h"
+#include "DisplayObjectHandlerBase.h"
 #include "CommonTypes.h"
 
 class PhysXEngine;
@@ -47,6 +48,7 @@ public:
 	//! destructor
 	~DisplayTransformation();
 
+
 public:
 	// translations
 	float translationX;
@@ -54,9 +56,7 @@ public:
 	float translationZ;
 
 	//rotations
-	float rotationX;
-	float rotationY;
-	float rotationZ;
+	LbaQuaternion rotation;
 
 	//scaling
 	float scaleX;
@@ -76,7 +76,75 @@ public:
 
 	//! destructor
 	virtual ~DisplayObjectDescriptionBase(){}
+
+	//! build description into dynamic object
+	virtual boost::shared_ptr<DisplayObjectHandlerBase> BuildSelf(boost::shared_ptr<DisplayTransformation> Tr) const = 0;
+
 };
+
+
+
+
+
+/***********************************************************************
+This is the base class describing a simple OSG object loaded from file
+See definition in OsgObjectHandler.cpp
+ ***********************************************************************/
+class OsgSimpleObjectDescription : public DisplayObjectDescriptionBase
+{
+public:
+	//! constructor
+	OsgSimpleObjectDescription(const std::string & filename)
+		: _filename(filename)
+	{}
+
+	//! destructor
+	virtual ~OsgSimpleObjectDescription(){}
+
+	//! build description into dynamic object
+	virtual boost::shared_ptr<DisplayObjectHandlerBase> BuildSelf(boost::shared_ptr<DisplayTransformation> Tr) const;
+
+
+private:
+	const std::string _filename;
+};
+
+
+
+
+
+/***********************************************************************
+This is the base class describing an Oriented Capsule
+See definition in OsgObjectHandler.cpp
+ ***********************************************************************/
+class OsgOrientedCapsuleDescription : public DisplayObjectDescriptionBase
+{
+public:
+	//! constructor
+	OsgOrientedCapsuleDescription(float height, float radius, 
+									float colorR, float colorG, float colorB, float colorA)
+		: _height(height), _radius(radius), _colorR(colorR), 
+					_colorG(colorG), _colorB(colorB), _colorA(colorA)
+	{}
+
+	//! destructor
+	virtual ~OsgOrientedCapsuleDescription(){}
+
+
+	//! build description into dynamic object
+	virtual boost::shared_ptr<DisplayObjectHandlerBase> BuildSelf(boost::shared_ptr<DisplayTransformation> Tr) const;
+
+
+private:
+	float _height;
+	float _radius;
+
+	float _colorR;
+	float _colorG;
+	float _colorB;
+	float _colorA;
+};
+
 
 
 
@@ -94,6 +162,11 @@ public:
 	//! destructor
 	~DisplayInfo();
 
+
+	//! build description into dynamic object
+	boost::shared_ptr<DisplayObjectHandlerBase> BuildSelf();
+
+
 public:
 	boost::shared_ptr<DisplayTransformation>		Transform;
 	boost::shared_ptr<DisplayObjectDescriptionBase> DisplayDesc;
@@ -110,19 +183,24 @@ class PhysicalDescriptionBase
 {
 public:
 	//! constructor
-	PhysicalDescriptionBase(float posX, float posY, float posZ);
+	PhysicalDescriptionBase(float posX, float posY, float posZ, const LbaQuaternion &rot);
 
 	//! destructor
 	virtual ~PhysicalDescriptionBase();
 
 	//! build description into a reald physic object
-	virtual boost::shared_ptr<PhysicalObjectHandlerBase> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine) = 0;
+	virtual boost::shared_ptr<PhysicalObjectHandlerBase> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine) const = 0;
+
+
 
 public:
 	//position of the object in the world
 	float positionX;
 	float positionY;
 	float positionZ;
+
+	// rotation applied to the shape
+	LbaQuaternion rotation;
 };
 
 
@@ -133,13 +211,13 @@ class PhysicalDescriptionNoShape : public PhysicalDescriptionBase
 {
 public:
 	//! constructor
-	PhysicalDescriptionNoShape(float posX, float posY, float posZ);
+	PhysicalDescriptionNoShape(float posX, float posY, float posZ, const LbaQuaternion &rot);
 
 	//! destructor
 	virtual ~PhysicalDescriptionNoShape();
 
 	//! build description into a reald physic object
-	virtual boost::shared_ptr<PhysicalObjectHandlerBase> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine);
+	virtual boost::shared_ptr<PhysicalObjectHandlerBase> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine) const;
 
 	//nothing more to do here, the only thing we need is a position
 };
@@ -173,13 +251,12 @@ public:
 	float density;
 
 
-	// rotation applied to the shape
-	const LbaQuaternion &rotation;
 };
 
 
 /***********************************************************************
 This class describe a box shape
+See definition in PhysXObjectHandlerBase.cpp
  ***********************************************************************/
 class PhysicalDescriptionBox : public PhysicalDescriptionWithShape
 {
@@ -195,7 +272,7 @@ public:
 
 
 	//! build description into a reald physic object
-	virtual boost::shared_ptr<PhysicalObjectHandlerBase> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine);
+	virtual boost::shared_ptr<PhysicalObjectHandlerBase> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine) const;
 
 public:
 	// size of the box from the box center
@@ -207,6 +284,7 @@ public:
 
 /***********************************************************************
 This class describe a capsule shape
+See definition in PhysXObjectHandlerBase.cpp
  ***********************************************************************/
 class PhysicalDescriptionCapsule : public PhysicalDescriptionWithShape
 {
@@ -222,7 +300,7 @@ public:
 
 
 	//! build description into a reald physic object
-	virtual boost::shared_ptr<PhysicalObjectHandlerBase> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine);
+	virtual boost::shared_ptr<PhysicalObjectHandlerBase> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine) const;
 
 public:
 	// radius of the capsule from capsule center
@@ -235,6 +313,7 @@ public:
 
 /***********************************************************************
 This class describe a sphere shape
+See definition in PhysXObjectHandlerBase.cpp
  ***********************************************************************/
 class PhysicalDescriptionSphere : public PhysicalDescriptionWithShape
 {
@@ -250,7 +329,7 @@ public:
 
 
 	//! build description into a reald physic object
-	virtual boost::shared_ptr<PhysicalObjectHandlerBase> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine);
+	virtual boost::shared_ptr<PhysicalObjectHandlerBase> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine) const;
 
 public:
 	// radius of the sphere from capsule sphere
@@ -261,6 +340,7 @@ public:
 /***********************************************************************
 This class describe a triangle mesh shape
 Only use for static shape object with no rotation
+See definition in PhysXObjectHandlerBase.cpp
  ***********************************************************************/
 class PhysicalDescriptionTriangleMesh : public PhysicalDescriptionWithShape
 {
@@ -274,7 +354,7 @@ public:
 
 
 	//! build description into a reald physic object
-	virtual boost::shared_ptr<PhysicalObjectHandlerBase> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine);
+	virtual boost::shared_ptr<PhysicalObjectHandlerBase> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine) const;
 
 public:
 	// path of the file describing the mesh
@@ -292,17 +372,20 @@ class ObjectInfo
 public:
 	//! constructor
 	ObjectInfo(boost::shared_ptr<DisplayInfo> DInfo,
-				boost::shared_ptr<PhysicalDescriptionBase> PInfo);
+				boost::shared_ptr<PhysicalDescriptionBase> PInfo,
+				bool Static, bool NoSmoothing=false);
 
 	//! destructor
 	virtual ~ObjectInfo();
 
 	//! build description into dynamic object
-	boost::shared_ptr<DynamicObject> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine);
+	boost::shared_ptr<DynamicObject> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine) const;
 
 public:
 	boost::shared_ptr<DisplayInfo>				DisInfo;
 	boost::shared_ptr<PhysicalDescriptionBase>	PhysInfo;
+	bool										ForceNoSmoothing;
+	bool										IsStatic;
 };
 
 

@@ -30,9 +30,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <boost/shared_ptr.hpp>
 #include "LbaNetModel.h"
+#include "CharacterController.h"
 
 class PhysXEngine;
-
+class EventHandler;
 
 /***********************************************************************
  * Module:  LbaNetEngine.h
@@ -53,6 +54,16 @@ public:
 	void run(void);
 
 
+	//! start a move from keyboard input
+	void StartMove(int MoveType);
+
+	//! stop a move from keyboard input
+	void StopMove(int MoveType);
+
+	//! do action from keyboard input
+	void DoAction();
+
+
 protected:
 	//! process function
 	void Process(void);
@@ -61,8 +72,12 @@ protected:
 	void Initialize(void);
 
 private:
-	LbaNetModel		m_lbaNetModel;		// game model
+	LbaNetModel						m_lbaNetModel;		// game model
+	boost::shared_ptr<EventHandler>	m_eventHandler;		// handle input events
 	boost::shared_ptr<PhysXEngine>	m_physic_engine;	//physic engine
+	boost::shared_ptr<CharacterController>	m_controller;
+
+	double							m_lasttime;
 };
 
 #endif

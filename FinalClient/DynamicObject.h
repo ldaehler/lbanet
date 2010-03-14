@@ -26,7 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define __LbaNetModel_1_DynamicObject_h
 
 
-
+#include "PhysicalObjectHandlerBase.h"
+#include "DisplayObjectHandlerBase.h"
 
 /***********************************************************************
  * Module:  DynamicObject.h
@@ -38,7 +39,10 @@ class DynamicObject
 {
 public:
 	//!constructor
-	DynamicObject(){}
+	DynamicObject(boost::shared_ptr<PhysicalObjectHandlerBase> phH,
+					boost::shared_ptr<DisplayObjectHandlerBase> disH)
+		: _phH(phH), _disH(disH)
+	{}
 
 	//!destructor
    virtual ~DynamicObject(){}
@@ -46,6 +50,24 @@ public:
 	//! process function - will be called at each frame
 	virtual void Process(void) = 0;
 
+	//! destroy function - clear the object content
+	virtual void Destroy(void) = 0;
+
+	//! get physical object
+	boost::shared_ptr<PhysicalObjectHandlerBase> GetPhysicalObject()
+	{ return _phH;}
+
+	//! get display object
+	boost::shared_ptr<DisplayObjectHandlerBase> GetDisplayObject()
+	{ return _disH;}
+
+protected:
+	
+	//! handler to physical object
+	boost::shared_ptr<PhysicalObjectHandlerBase> _phH;
+
+	//! handler to display object
+	boost::shared_ptr<DisplayObjectHandlerBase> _disH;
 };
 
 #endif

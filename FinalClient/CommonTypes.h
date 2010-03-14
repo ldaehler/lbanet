@@ -27,21 +27,98 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define __LBA_NET_COMMON_TYPES_H__
 
 
+class LbaVec3
+{
+public:
+	//! constructor
+	LbaVec3()
+		: x(0), y(0), z(0)
+	{}
+
+	//! constructor
+	LbaVec3(float X, float Y, float Z)
+		: x(X), y(Y), z(Z)
+	{}
+
+	float x;
+	float y;
+	float z;
+};
+
+/***********************************************************************
+Internal quaternion class
+ ***********************************************************************/
 class LbaQuaternion
 {
 public:
 	//!constructor
-	LbaQuaternion()
-		: X(0), Y(0), Z(0), W(0){}
+	LbaQuaternion();
 
 	//!constructor
 	LbaQuaternion(float x, float y, float z, float w)
 		: X(x), Y(y), Z(z), W(w){}
 
+
+	//!constructor with angle in degree and axis vec
+	LbaQuaternion(float angle, LbaVec3 vec);
+
+
+	//! add rotation to quaternion
+	void AddRotation(float angle, LbaVec3 vec);
+
+	//! get direction vector
+	LbaVec3 GetDirection(const LbaVec3 &vec);
+
 	float X;
 	float Y;
 	float Z;
 	float W;
+};
+
+
+/***********************************************************************
+This class describe main light information for the scene
+ ***********************************************************************/
+class LbaMainLightInfo
+{
+public:
+
+	//! constructor
+	LbaMainLightInfo()
+		: UseLight(false)
+	{}
+
+
+	//! members
+	bool UseLight;
+	bool UseShadow;
+	bool StartOn;
+
+
+	float LOnPosX;
+	float LOnPosY;
+	float LOnPosZ;
+
+	float LOnAmbientR;
+	float LOnAmbientG;
+	float LOnAmbientB;
+
+	float LOnDiffuseR;
+	float LOnDiffuseG;
+	float LOnDiffuseB;
+
+
+	float LOffPosX;
+	float LOffPosY;
+	float LOffPosZ;
+
+	float LOffAmbientR;
+	float LOffAmbientG;
+	float LOffAmbientB;
+
+	float LOffDiffuseR;
+	float LOffDiffuseG;
+	float LOffDiffuseB;
 };
 
 #endif

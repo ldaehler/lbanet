@@ -22,59 +22,57 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#if !defined(__LbaNetModel_1_OsgObjectHandler_h)
-#define __LbaNetModel_1_OsgObjectHandler_h
+#if !defined(__LbaNetModel_1_CharacterController_h)
+#define __LbaNetModel_1_CharacterController_h
 
+#include <boost/shared_ptr.hpp>
+#include "CommonTypes.h"
 
-#include "DisplayObjectHandlerBase.h"
-#include <osg/ref_ptr>
-
-namespace osg
-{
-	class MatrixTransform;
-}
+class DynamicObject;
+class PhysXEngine;
 
 /***********************************************************************
- * Module:  OsgObjectHandler.h
+ * Module:  CharacterController.h
  * Author:  vivien
- * Modified: mardi 14 juillet 2009 13:54:52
- * Purpose: Declaration of the class OsgObjectHandler
+ * Modified: mardi 14 juillet 2009 17:41:03
+ * Purpose: Declaration of the class CharacterController
  ***********************************************************************/
-class OsgObjectHandler : public DisplayObjectHandlerBase
+class CharacterController
 {
 public:
 	//! constructor
-	OsgObjectHandler(osg::ref_ptr<osg::MatrixTransform> OsgObject);
+	CharacterController(boost::shared_ptr<PhysXEngine> pEngine);
 
 	//! destructor
-	~OsgObjectHandler();
+	~CharacterController();
+
+	//! set character to control
+	void SetCharacter(boost::shared_ptr<DynamicObject> charac);
 
 
-	//! set object position in the world
-	virtual void SetPosition(float X, float Y, float Z);
+	//! start a move from keyboard input
+	void StartMove(int moveDirection);
 
-	//! set object rotation on X axis
-	virtual void SetRotation(const LbaQuaternion& Q);
+	//! stop a move from keyboard input
+	void StopMove(int moveDirection);
 
-	//! destroy function - clear the object content
-	virtual void Destroy(void);
+	//! do action from keyboard input
+	void DoAction();
 
-	//! set the object to be followed by the camera
-	virtual void SetCameraFollow(void);
-
-protected:
-	// update matrix
-	void UpdateMatrix();
+	//! process function
+	void Process(double tnow, float tdiff);
 
 private:
-	osg::ref_ptr<osg::MatrixTransform>	_OsgObject;
-	float								_posX;
-	float								_posY; 
-	float								_posZ;
-	LbaQuaternion						_Q;
+	boost::shared_ptr<DynamicObject> _character;
+	boost::shared_ptr<PhysXEngine>	_pEngine;
+
+	//! key pressed
+	bool			_up_key_pressed;
+	bool			_down_key_pressed;
+	bool			_right_key_pressed;
+	bool			_left_key_pressed;
+
+	LbaVec3			_current_direction;
 };
-
-
-
 
 #endif

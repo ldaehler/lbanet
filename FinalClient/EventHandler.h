@@ -22,59 +22,42 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#if !defined(__LbaNetModel_1_OsgObjectHandler_h)
-#define __LbaNetModel_1_OsgObjectHandler_h
+#if !defined(__LbaNetModel_1_EventHandler_h)
+#define __LbaNetModel_1_EventHandler_h
+
+class LbaNetEngine;
 
 
-#include "DisplayObjectHandlerBase.h"
-#include <osg/ref_ptr>
-
-namespace osg
+namespace osgGA
 {
-	class MatrixTransform;
+	class GUIEventAdapter;
+	class GUIActionAdapter;
 }
 
+
+
 /***********************************************************************
- * Module:  OsgObjectHandler.h
+ * Module:  EventHandler.h
  * Author:  vivien
- * Modified: mardi 14 juillet 2009 13:54:52
- * Purpose: Declaration of the class OsgObjectHandler
+ * Modified: mardi 14 juillet 2009 17:41:03
+ * Purpose: Declaration of the class EventHandler
  ***********************************************************************/
-class OsgObjectHandler : public DisplayObjectHandlerBase
+class EventHandler
 {
 public:
 	//! constructor
-	OsgObjectHandler(osg::ref_ptr<osg::MatrixTransform> OsgObject);
+	EventHandler(LbaNetEngine* engine);
 
 	//! destructor
-	~OsgObjectHandler();
+	~EventHandler();
 
 
-	//! set object position in the world
-	virtual void SetPosition(float X, float Y, float Z);
+	// handle function
+	bool Handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa);
 
-	//! set object rotation on X axis
-	virtual void SetRotation(const LbaQuaternion& Q);
-
-	//! destroy function - clear the object content
-	virtual void Destroy(void);
-
-	//! set the object to be followed by the camera
-	virtual void SetCameraFollow(void);
-
-protected:
-	// update matrix
-	void UpdateMatrix();
 
 private:
-	osg::ref_ptr<osg::MatrixTransform>	_OsgObject;
-	float								_posX;
-	float								_posY; 
-	float								_posZ;
-	LbaQuaternion						_Q;
+	LbaNetEngine*		_lbaNetEngine;
 };
-
-
-
 
 #endif

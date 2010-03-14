@@ -44,7 +44,7 @@ LbaNetModel::LbaNetModel()
 LbaNetModel::~LbaNetModel()
 {
 	// clear model
-	ClearModel();
+	ClearModel(LbaMainLightInfo());
 }
 
 
@@ -64,10 +64,10 @@ do all check to be done when idle
 void LbaNetModel::Process()
 {
 	// process all dynamic objects
-	std::vector<boost::shared_ptr<DynamicObject> >::iterator it = _dynamicObjects.begin();
-	std::vector<boost::shared_ptr<DynamicObject> >::iterator end = _dynamicObjects.end();
+	std::map<long, boost::shared_ptr<DynamicObject> >::iterator it = _dynamicObjects.begin();
+	std::map<long, boost::shared_ptr<DynamicObject> >::iterator end = _dynamicObjects.end();
 	for(; it != end; ++it)
-		(*it)->Process();
+		it->second->Process();
 }
 
 
@@ -77,10 +77,10 @@ void LbaNetModel::Process()
 /***********************************************************
 reset model with a new map
 ***********************************************************/
-void LbaNetModel::SetMap(ObjectInfo mapInfo)
+void LbaNetModel::SetMap(const ObjectInfo &mapInfo, const LbaMainLightInfo &NewLightningInfo)
 {
 	// clear previous map if there was one
-	ClearModel();
+	ClearModel(NewLightningInfo);
 
 	_currMap = mapInfo.BuildSelf(_physicEngine);
 }
@@ -89,7 +89,7 @@ void LbaNetModel::SetMap(ObjectInfo mapInfo)
 /***********************************************************
 clear current model before changing map
 ***********************************************************/
-void LbaNetModel::ClearModel()
+void LbaNetModel::ClearModel(const LbaMainLightInfo &NewLightningInfo)
 {
 	//clear dynamic object of the current scene
 	_dynamicObjects.clear();
@@ -104,5 +104,49 @@ void LbaNetModel::ClearModel()
 
 
 	//clear display engine
-	OsgHandler::getInstance()->EmptyDisplayTree();
+	OsgHandler::getInstance()->ResetDisplayTree(NewLightningInfo);
+}
+
+
+
+/***********************************************************
+add object to the scene
+***********************************************************/
+void LbaNetModel::AddObject(long id, const ObjectInfo &desc)
+{
+	// remove object of same id if already there
+	std::map<long, boost::shared_ptr<DynamicObject> >::iterator it = _dynamicObjects.find(id);
+	if(it != _dynamicObjects.end())
+		RemObject(id);
+
+	_dynamicObjects[id] = desc.BuildSelf(_physicEngine);
+}
+
+/***********************************************************
+remove object from the scene
+***********************************************************/
+void LbaNetModel::RemObject(long id)
+{
+	std::map<long, boost::shared_ptr<DynamicObject> >::iterator it = _dynamicObjects.find(id);
+	if(it != _dynamicObjects.end())
+	{
+		it->second->Destroy();
+		_dynamicObjects.erase(it);
+	}
+}
+
+
+
+/***********************************************************
+remove object from the scene
+***********************************************************/
+boost::shared_ptr<DynamicObject> LbaNetModel::GetObject(long id)
+{
+	std::map<long, boost::shared_ptr<DynamicObject> >::iterator it = _dynamicObjects.find(id);
+	if(it != _dynamicObjects.end())
+	{
+		return it->second;
+	}
+
+	return boost::shared_ptr<DynamicObject>();
 }

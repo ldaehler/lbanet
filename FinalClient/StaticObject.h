@@ -23,40 +23,50 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#ifndef _LBANET_DISPLAY_OBJECT_HANDLER_BASE_H_
-#define _LBANET_DISPLAY_OBJECT_HANDLER_BASE_H_
+#ifndef _LBANET_STATIC_OBJECT__H_
+#define _LBANET_STATIC_OBJECT__H_
 
+#include <boost/shared_ptr.hpp>
+
+#include "DynamicObject.h"
 #include "CommonTypes.h"
 
 //*************************************************************************************************
-//*                               class DisplayObjectHandlerBase
+//*                               class WorldToDisplayObjectSynchronizer
 //*************************************************************************************************
 /**
-* @brief Pure virtual class for handling the transformation of an object before displaying it
-* (e.g. translation, rotation, etc.)
+* @brief Static object will never synchronize - use it in case of static object
+*			or if you have an object with no display
+*
 *
 */
-class DisplayObjectHandlerBase
+class StaticObject : public DynamicObject
 {
 public:
 
 	//! constructor
-	DisplayObjectHandlerBase(){}
+	StaticObject(boost::shared_ptr<PhysicalObjectHandlerBase> phH,
+										boost::shared_ptr<DisplayObjectHandlerBase> disH);
 
 	//! destructor
-	virtual ~DisplayObjectHandlerBase(){}
+	virtual ~StaticObject();
 
-	//! set object position in the world
-	virtual void SetPosition(float X, float Y, float Z) = 0;
 
-	//! set object rotation on X axis
-	virtual void SetRotation(const LbaQuaternion& Q) = 0;
+	//! synchronization function - will typically be called on every frames
+	virtual void Process(void){}
+
 
 	//! destroy function - clear the object content
-	virtual void Destroy(void) = 0;
+	virtual void Destroy(void)
+	{
+		if(_phH)_phH->Destroy();
+		if(_disH)_disH->Destroy();
+	}
 
-	//! set the object to be followed by the camera
-	virtual void SetCameraFollow(void) = 0;
+protected:
+	//! directly synchronize value between physic and display
+	void StraightSync();
+
 };
 
 
