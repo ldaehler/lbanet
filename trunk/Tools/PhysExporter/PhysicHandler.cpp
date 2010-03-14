@@ -550,7 +550,12 @@ int PhysicHandler::IsUnderRoof(int X, int Y, int Z)
 					if(!IsEmpty(X+1, i, Z+1) || !IsEmpty(X+1, i+1, Z+1) || !IsEmpty(X+1, i-1, Z+1))
 						if(!IsEmpty(X-1, i, Z+1) || !IsEmpty(X-1, i+1, Z+1) || !IsEmpty(X-1, i-1, Z+1))
 							if(!IsEmpty(X+1, i, Z-1) || !IsEmpty(X+1, i+1, Z-1) || !IsEmpty(X+1, i-1, Z-1))
-								return i;
+							{
+								if(i < 18 && i > 13)
+									return 13;
+								else
+									return i;
+							}
 		}
 	}
 
@@ -1124,7 +1129,7 @@ look for floors  in the map
 --------------------------------------------------------------------------------------------------
 */
 void PhysicHandler::SearchFloors(short * thisY, int Y, std::vector<PlaneInfo> &planes, 
-									int sizeX, int sizeY, int sizeZ, short material)
+									int sizeX, int sizeY, int sizeZ, short material, int minareasize)
 {
 	bool found = true;
 
@@ -1189,7 +1194,8 @@ void PhysicHandler::SearchFloors(short * thisY, int Y, std::vector<PlaneInfo> &p
 			pif.EndZ = maxeZ;
 			pif.material = material;
 
-			planes.push_back(pif);
+			if(maxsize >= minareasize)
+				planes.push_back(pif);
 
 			for(int i=maxsX; i<maxeX; ++i)
 			{
@@ -3500,7 +3506,39 @@ void PhysicHandler::SavePlanes(const std::string & filename)
 	std::vector<unsigned int> indices;
 	std::vector<short> materials;
 	unsigned int indiceidx = 0;
+
+
+	std::vector<float> vertexesroof;
+	std::vector<unsigned int> indicesroof;
+	std::map<VECTOR, unsigned int> vertexmaproof;
+	unsigned int indiceroofidx = 0;
+
+
+
 	std::ofstream filebit(filename.c_str(), std::ofstream::binary);
+
+	{
+		for(size_t i=0; i<_planesRoof.size(); ++i)
+		{
+			float _minX = MIN(_planesRoof[i].StartX, _planesRoof[i].EndX);
+			float _maxX = MAX(_planesRoof[i].StartX, _planesRoof[i].EndX);
+			float _minZ = MIN(_planesRoof[i].StartZ, _planesRoof[i].EndZ);
+			float _maxZ = MAX(_planesRoof[i].StartZ, _planesRoof[i].EndZ);
+
+			VECTOR p1(_minX, _planesRoof[i].StartY, _minZ);
+			VECTOR p2(_minX, _planesRoof[i].StartY, _maxZ);
+			VECTOR p3(_maxX, _planesRoof[i].StartY, _maxZ);
+			VECTOR p4(_maxX, _planesRoof[i].StartY, _minZ);
+
+			indicesroof.push_back(findvertexinmap(vertexmaproof, indiceroofidx, vertexesroof, p1));
+			indicesroof.push_back(findvertexinmap(vertexmaproof, indiceroofidx, vertexesroof, p3));
+			indicesroof.push_back(findvertexinmap(vertexmaproof, indiceroofidx, vertexesroof, p2));
+			indicesroof.push_back(findvertexinmap(vertexmaproof, indiceroofidx, vertexesroof, p4));
+			indicesroof.push_back(findvertexinmap(vertexmaproof, indiceroofidx, vertexesroof, p3));
+			indicesroof.push_back(findvertexinmap(vertexmaproof, indiceroofidx, vertexesroof, p1));
+		}
+	}
+
 
 
 	{
@@ -3722,10 +3760,60 @@ void PhysicHandler::SavePlanes(const std::string & filename)
 	unsigned int sizeindices = indices.size();
 	unsigned int sizematerials = materials.size();
 
+	unsigned int sizevertexroof = vertexesroof.size();
+	unsigned int sizeindicesroof = indicesroof.size();
+
+
+
 	filebit.write((char*)&sizevertex, sizeof(unsigned int));
 	filebit.write((char*)&sizeindices, sizeof(unsigned int));
 	filebit.write((char*)&sizematerials, sizeof(unsigned int));
+	filebit.write((char*)&sizevertexroof, sizeof(unsigned int));
+	filebit.write((char*)&sizeindicesroof, sizeof(unsigned int));
+
 	filebit.write((char*)&vertexes[0], sizevertex*sizeof(float));
 	filebit.write((char*)&indices[0], sizeindices*sizeof(unsigned int));
-	filebit.write((char*)&materials[0], sizematerials*sizeof(short));
+
+	if(sizematerials > 0)
+		filebit.write((char*)&materials[0], sizematerials*sizeof(short));
+
+	if(sizevertexroof > 0)
+	{
+		filebit.write((char*)&vertexesroof[0], sizevertexroof*sizeof(float));
+		filebit.write((char*)&indicesroof[0], sizeindicesroof*sizeof(unsigned int));
+	}
+}
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+search roof in the scene
+--------------------------------------------------------------------------------------------------
+*/
+void PhysicHandler::SearchRoof()
+{
+	short * buffer = new short[_sizeX*_sizeY*_sizeZ];
+	memset ( buffer, 0, _sizeX*_sizeY*_sizeZ*sizeof(short) );
+
+	for(int i=0; i< _sizeX; ++i)
+	{
+		for(int j=0; j< _sizeZ; ++j)
+		{
+			int v = IsUnderRoof(i, 6, j);
+			if(v > 0)
+				buffer[v*_sizeX*_sizeZ+i*_sizeZ+j] = 1;
+		}	
+	}
+
+
+	short * ptr = buffer;
+	for(int i=0; i<_sizeY; ++i)
+	{
+		SearchFloors(ptr, i, _planesRoof, _sizeX, _sizeY, _sizeZ, 1, 5);
+		ptr += _sizeX*_sizeZ;
+	}
+
+
+	delete[] buffer;
 }
