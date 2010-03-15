@@ -72,7 +72,26 @@ void LbaNetEngine::Initialize(void)
 	//init physic engine
 	LogHandler::getInstance()->LogToFile("Initialize physic engine...");
 	m_physic_engine = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
+
 	m_physic_engine2 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
+	m_physic_engine3 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
+	m_physic_engine4 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
+	m_physic_engine5 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
+	m_physic_engine6 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
+	m_physic_engine7 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
+	m_physic_engine8 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
+	m_physic_engine9 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
+	m_physic_engine10 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
+	m_physic_engine11 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
+	m_physic_engine12 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
+	m_physic_engine13 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
+	m_physic_engine14 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
+	m_physic_engine15 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
+	m_physic_engine16 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
+	m_physic_engine17 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
+	m_physic_engine18 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
+	m_physic_engine19 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
+	m_physic_engine20 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
 
 
 	m_controller = boost::shared_ptr<CharacterController>(new CharacterController(m_physic_engine));

@@ -141,9 +141,9 @@ public:
 	//! else return -1
 	float CheckForRoof(float PositionX, float PositionY, float PositionZ);
 
+
 protected:
 	
-
 	//! init function
 	void Init();
 
@@ -157,7 +157,7 @@ private:
 	NxPhysicsSDK*				gPhysicsSDK;
 	NxScene*					gScene;
 	NxControllerManager*		gManager;
-	NxUserAllocator*			gAllocator;
+	
 
 	NxTriangleMeshShape*		_currmap;
 
