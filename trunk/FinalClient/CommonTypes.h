@@ -121,4 +121,29 @@ public:
 	float LOffDiffuseB;
 };
 
+
+class KeyPressed
+{
+public:
+
+	//! constructor
+	KeyPressed()
+		: Up(false), Down(false), Left(false), Right(false), Action(false)
+	{}
+
+
+	//! return true if no key pressed
+	bool NoKeyPressed()
+	{
+		return (!Up && &Down && !Left && !Right && !Action);
+	}
+
+	bool Up;
+	bool Down;
+	bool Left;
+	bool Right;
+	bool Action;
+};
+
+
 #endif
