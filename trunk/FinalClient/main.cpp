@@ -1,7 +1,12 @@
 #include "LbaNetEngine.h"
+#include "UserAllocatorHandler.h"
+
 
 int main( int argc, char **argv )
 {
+	// init memory allocator
+	UserAllocatorHandler::getInstance()->Initialize();
+
 	LbaNetEngine engine;
 	engine.run();
 

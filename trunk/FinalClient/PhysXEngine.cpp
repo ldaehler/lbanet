@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 #include "PhysXEngine.h"
+#include "UserAllocatorHandler.h"
 #include "SynchronizedTimeHandler.h"
 #include "NxPhysics.h"
 #include "NxControllerManager.h"
@@ -127,7 +128,7 @@ public:
 	Constructor
 ***********************************************************/
 PhysXEngine::PhysXEngine()
-: gAllocator(NULL), gPhysicsSDK(NULL), gScene(NULL), _currmap(NULL)
+: gPhysicsSDK(NULL), gScene(NULL), _currmap(NULL)
 {
 	Init();
 }
@@ -148,11 +149,8 @@ PhysXEngine::~PhysXEngine()
 ***********************************************************/
 void PhysXEngine::Init()
 {
-	// init allocator
-	gAllocator = new UserAllocator();
-
 	// Create the physics SDK
-    gPhysicsSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION);
+    gPhysicsSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION, UserAllocatorHandler::getInstance()->GetAllocator());
     if (!gPhysicsSDK)  
 		return;
 
@@ -194,7 +192,7 @@ void PhysXEngine::Init()
 
 
 	// init character controllers
-	gManager = NxCreateControllerManager(gAllocator);
+	gManager = NxCreateControllerManager(UserAllocatorHandler::getInstance()->GetAllocator());
 
 
 	// set timing to 30 timestep per second
@@ -211,12 +209,10 @@ void PhysXEngine::Init()
 ***********************************************************/
 void PhysXEngine::Quit()
 {
-	Clear();
-
     if (gScene)
 	{
-		// Make sure to fetchResults() before shutting down
-		GetPhysicsResults();  
+		//clear physic scene
+		Clear();
 
 		// clean up character controllers
 		NxReleaseControllerManager(gManager);
@@ -231,14 +227,6 @@ void PhysXEngine::Quit()
 		gPhysicsSDK->release();
 
 	gPhysicsSDK = NULL;
-
-
-	// delete allocator
-	if(gAllocator!=NULL)
-	{
-		delete gAllocator;
-		gAllocator=NULL;
-	}
 }
 
 
@@ -279,13 +267,24 @@ void PhysXEngine::GetPhysicsResults()
 ***********************************************************/
 void PhysXEngine::Clear()
 {
-	// clean up character controllers
-	gManager->purgeControllers();
 
-	// clean up other actors
-	NxActor** actors = gScene->getActors();
-	for(NxU32 i=0; i<gScene->getNbActors(); ++i, ++actors)
-		gScene->releaseActor(**actors);
+	if(gScene)
+	{
+
+		// Make sure to fetchResults() before shutting down
+		GetPhysicsResults();  
+
+
+		// clean up character controllers
+		if(gManager)
+			gManager->purgeControllers();
+
+
+		// clean up other actors
+		NxActor** actors = gScene->getActors();
+		for(NxU32 i=0; i<gScene->getNbActors(); ++i, ++actors)
+			gScene->releaseActor(**actors);
+	}
 
 	_currmap = NULL;
 }

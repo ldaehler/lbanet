@@ -75,10 +75,32 @@ private:
 	LbaNetModel						m_lbaNetModel;		// game model
 	boost::shared_ptr<EventHandler>	m_eventHandler;		// handle input events
 	boost::shared_ptr<PhysXEngine>	m_physic_engine;	//physic engine
-	boost::shared_ptr<PhysXEngine>	m_physic_engine2;	//physic engine
+
 	boost::shared_ptr<CharacterController>	m_controller;
 
 	double							m_lasttime;
+
+
+	boost::shared_ptr<PhysXEngine>	m_physic_engine2;	//physic engine
+	boost::shared_ptr<PhysXEngine>	m_physic_engine3;	//physic engine
+	boost::shared_ptr<PhysXEngine>	m_physic_engine4;	//physic engine
+	boost::shared_ptr<PhysXEngine>	m_physic_engine5;	//physic engine
+	boost::shared_ptr<PhysXEngine>	m_physic_engine6;	//physic engine
+	boost::shared_ptr<PhysXEngine>	m_physic_engine7;	//physic engine
+	boost::shared_ptr<PhysXEngine>	m_physic_engine8;	//physic engine
+	boost::shared_ptr<PhysXEngine>	m_physic_engine9;	//physic engine
+	boost::shared_ptr<PhysXEngine>	m_physic_engine10;	//physic engine
+	boost::shared_ptr<PhysXEngine>	m_physic_engine11;	//physic engine
+	boost::shared_ptr<PhysXEngine>	m_physic_engine12;	//physic engine
+	boost::shared_ptr<PhysXEngine>	m_physic_engine13;	//physic engine
+	boost::shared_ptr<PhysXEngine>	m_physic_engine14;	//physic engine
+	boost::shared_ptr<PhysXEngine>	m_physic_engine15;	//physic engine
+	boost::shared_ptr<PhysXEngine>	m_physic_engine16;	//physic engine
+	boost::shared_ptr<PhysXEngine>	m_physic_engine17;	//physic engine
+	boost::shared_ptr<PhysXEngine>	m_physic_engine18;	//physic engine
+	boost::shared_ptr<PhysXEngine>	m_physic_engine19;	//physic engine
+	boost::shared_ptr<PhysXEngine>	m_physic_engine20;	//physic engine
+
 };
 
 #endif

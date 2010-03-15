@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define _LBANET_USERALLOCATOR_H
 
 #include <boost/thread/mutex.hpp>
+#include "NxUserAllocator.h"
 
 /***********************************************************************
  * Module:  UserAllocator.h
