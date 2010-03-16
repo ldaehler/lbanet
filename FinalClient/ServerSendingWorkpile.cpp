@@ -22,28 +22,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
+#include "ServerSendingWorkpile.h"
+#include <boost/thread/locks.hpp>
 
-#ifndef _LBANET_SENDING_BASE_
-#define _LBANET_SENDING_BASE_
 
-#include "CommonTypes.h"
 
-/***********************************
-*	Base class for sending information to the server
-*************************************/
-class SenderBase
+
+/***********************************************************
+set actor info
+***********************************************************/
+void ServerSendingWorkpile::NewActorInfo(const ActorInfo & ainfo)
 {
-public:
-	//! constructor
-	SenderBase(){}
+	boost::mutex::scoped_lock lock(m_mutex);
+	m_ActorInfos.push_back(ainfo);
+}
 
-	//! destructor
-	~SenderBase(){}
-
-	//! send keys to server
-	virtual void SendKey(long Time, const KeyPressed & kp) = 0;
-
-
-};
-
-#endif
+/***********************************************************
+get actor info
+***********************************************************/
+void ServerSendingWorkpile::GetNewInfo(std::vector<ActorInfo> & ActorInfos)
+{
+	boost::mutex::scoped_lock lock(m_mutex);
+	ActorInfos.clear();
+	ActorInfos.swap(m_ActorInfos);
+}

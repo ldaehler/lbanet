@@ -122,6 +122,9 @@ public:
 };
 
 
+/***********************************************************************
+USed to know which key is pressed by the user
+ ***********************************************************************/
 class KeyPressed
 {
 public:
@@ -151,6 +154,25 @@ struct Sendedinfo
 	long Time;
 	long ClientId;
 	KeyPressed Keys;
+};
+
+
+
+
+struct ActorInfo
+{
+	long Time;
+	long ActorId;
+	
+	float PosX;
+	float PosY;
+	float PosZ;
+	
+	float Rotation;
+
+	int Model;
+	int Body;
+	int Animation;
 };
 
 #endif

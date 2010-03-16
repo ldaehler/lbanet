@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "EventHandler.h"
 #include "LbaNetEngine.h"
 #include "LogHandler.h"
+#include "SendingWorkpile.h"
 
 #include <osgGA/GUIEventHandler>
 
@@ -68,31 +69,36 @@ bool EventHandler::Handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdap
 			{
 				case(osgGA::GUIEventAdapter::KEY_Up):
 				{
-					_lbaNetEngine->StartMove(1);
+					//_lbaNetEngine->StartMove(1);
+					SendingWorkpile::getInstance()->StartMove(1);
 					return true;
 				}
 
 				case(osgGA::GUIEventAdapter::KEY_Down):
 				{
-					_lbaNetEngine->StartMove(2);
+					//_lbaNetEngine->StartMove(2);
+					SendingWorkpile::getInstance()->StartMove(2);
 					return true;
 				}
 
 				case(osgGA::GUIEventAdapter::KEY_Left):
 				{
-					_lbaNetEngine->StartMove(3);
+					//_lbaNetEngine->StartMove(3);
+					SendingWorkpile::getInstance()->StartMove(3);
 					return true;
 				}
 
 				case(osgGA::GUIEventAdapter::KEY_Right):
 				{
-					_lbaNetEngine->StartMove(4);
+					//_lbaNetEngine->StartMove(4);
+					SendingWorkpile::getInstance()->StartMove(4);
 					return true;
 				}
 
 				case(osgGA::GUIEventAdapter::KEY_Space):
 				{
-					_lbaNetEngine->DoAction();
+					//_lbaNetEngine->DoAction();
+					SendingWorkpile::getInstance()->PressActionKey();
 					return true;
 				}
 			}
@@ -107,30 +113,35 @@ bool EventHandler::Handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdap
 			{
 				case(osgGA::GUIEventAdapter::KEY_Up):
 				{
-					_lbaNetEngine->StopMove(1);
+					//_lbaNetEngine->StopMove(1);
+					SendingWorkpile::getInstance()->StopMove(1);
 					return true;
 				}
 
 				case(osgGA::GUIEventAdapter::KEY_Down):
 				{
-					_lbaNetEngine->StopMove(2);
+					//_lbaNetEngine->StopMove(2);
+					SendingWorkpile::getInstance()->StopMove(2);
 					return true;
 				}
 
 				case(osgGA::GUIEventAdapter::KEY_Left):
 				{
-					_lbaNetEngine->StopMove(3);
+					//_lbaNetEngine->StopMove(3);
+					SendingWorkpile::getInstance()->StopMove(3);
 					return true;
 				}
 
 				case(osgGA::GUIEventAdapter::KEY_Right):
 				{
-					_lbaNetEngine->StopMove(4);
+					//_lbaNetEngine->StopMove(4);
+					SendingWorkpile::getInstance()->StopMove(4);
 					return true;
 				}
 
 				case(osgGA::GUIEventAdapter::KEY_Space):
 				{
+					SendingWorkpile::getInstance()->ReleaseActionKey();
 					return true;
 				}
 			}

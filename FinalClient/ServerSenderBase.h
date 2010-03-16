@@ -23,25 +23,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#ifndef _LBANET_SENDING_BASE_
-#define _LBANET_SENDING_BASE_
+#ifndef _LBANET_SERVER_SENDING_BASE_
+#define _LBANET_SERVER_SENDING_BASE_
 
 #include "CommonTypes.h"
 
 /***********************************
 *	Base class for sending information to the server
 *************************************/
-class SenderBase
+class ServerSenderBase
 {
 public:
 	//! constructor
-	SenderBase(){}
+	ServerSenderBase(){}
 
 	//! destructor
-	~SenderBase(){}
+	~ServerSenderBase(){}
 
-	//! send keys to server
-	virtual void SendKey(long Time, const KeyPressed & kp) = 0;
+	//! send actor info
+	virtual void SendActorInfo(const ActorInfo & ai) = 0;
 
 
 };
