@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="FinalClient"
 	ProjectGUID="{E54C942E-2F8B-476C-A453-F2304BAF7F3F}"
 	RootNamespace="FinalClient"
@@ -201,6 +201,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LocalSender.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LogHandler.cpp"
 				>
 			</File>
@@ -234,6 +238,14 @@
 			</File>
 			<File
 				RelativePath=".\SendingWorkpile.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ServerReceiveingWorkpile.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ServerThread.cpp"
 				>
 			</File>
 			<File
@@ -299,6 +311,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LocalSender.h"
+				>
+			</File>
+			<File
 				RelativePath=".\LogHandler.h"
 				>
 			</File>
@@ -336,6 +352,14 @@
 			</File>
 			<File
 				RelativePath=".\SendingWorkpile.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ServerReceiveingWorkpile.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ServerThread.h"
 				>
 			</File>
 			<File

@@ -146,4 +146,11 @@ public:
 };
 
 
+struct Sendedinfo
+{
+	long Time;
+	long ClientId;
+	KeyPressed Keys;
+};
+
 #endif
