@@ -23,27 +23,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#ifndef _LBANET_SENDING_BASE_
-#define _LBANET_SENDING_BASE_
+#ifndef _LBANET_SERVER_SENDING_LOOP_
+#define _LBANET_SERVER_SENDING_LOOP_
 
-#include "CommonTypes.h"
+#include "ServerSenderBase.h"
+#include "ServerSendingWorkpile.h"
+
+#include <IceUtil/Thread.h>
+#include <IceUtil/Monitor.h>
+
+#include <boost/shared_ptr.hpp>
 
 /***********************************
-*	Base class for sending information to the server
+*	Thread used to send information to the server
 *************************************/
-class SenderBase
+class ServerSendingLoopThread : public IceUtil::Thread
 {
 public:
 	//! constructor
-	SenderBase(){}
+	ServerSendingLoopThread(long cycle_time, boost::shared_ptr<ServerSenderBase> sender,
+								boost::shared_ptr<ServerSendingWorkpile> workpile);
 
-	//! destructor
-	~SenderBase(){}
+	// running function of the thread
+	virtual void run();
 
-	//! send keys to server
-	virtual void SendKey(long Time, const KeyPressed & kp) = 0;
+	//! stop the thread
+	void Stop();
 
+private:
+	IceUtil::Monitor<IceUtil::Mutex>			m_monitor;
+	bool										m_stopped;
+	long										m_cycle_time;
 
+	boost::shared_ptr<ServerSenderBase>			m_sender;
+	boost::shared_ptr<ServerSendingWorkpile>	m_workpile;
 };
 
 #endif

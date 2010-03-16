@@ -39,7 +39,7 @@ LocalSender::LocalSender(boost::shared_ptr<ServerReceivingWorkpile> buffer)
 /***********************************************************
 send keys to server
 ***********************************************************/
-void LocalSender::SendKey(const KeyPressed & kp)
+void LocalSender::SendKey(long Time, const KeyPressed & kp)
 {
 
 }

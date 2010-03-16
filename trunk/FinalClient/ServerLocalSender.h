@@ -23,27 +23,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#ifndef _LBANET_SENDING_BASE_
-#define _LBANET_SENDING_BASE_
+#ifndef _LBANET_SERVER_LOCAL_SENDER_
+#define _LBANET_SERVER_LOCAL_SENDER_
 
 #include "CommonTypes.h"
+#include "ServerSenderBase.h"
+
+class ReceivingWorkpile;
+
+#include <boost/shared_ptr.hpp>
 
 /***********************************
-*	Base class for sending information to the server
+*	Class used to locally simulate sending data through the network
 *************************************/
-class SenderBase
+class ServerLocalSender : public ServerSenderBase
 {
 public:
 	//! constructor
-	SenderBase(){}
+	ServerLocalSender(boost::shared_ptr<ReceivingWorkpile> buffer);
 
 	//! destructor
-	~SenderBase(){}
+	~ServerLocalSender(){}
 
 	//! send keys to server
-	virtual void SendKey(long Time, const KeyPressed & kp) = 0;
+	virtual void SendActorInfo(const ActorInfo & ai);
 
 
+private:
+	boost::shared_ptr<ReceivingWorkpile> _senderbuffer;
 };
 
 #endif

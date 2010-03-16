@@ -22,28 +22,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
+#include "ServerLocalSender.h"
+#include "ReceiveingWorkpile.h"
 
-#ifndef _LBANET_SENDING_BASE_
-#define _LBANET_SENDING_BASE_
 
-#include "CommonTypes.h"
-
-/***********************************
-*	Base class for sending information to the server
-*************************************/
-class SenderBase
+/***********************************************************
+constructor
+***********************************************************/
+ServerLocalSender::ServerLocalSender(boost::shared_ptr<ReceivingWorkpile> buffer)
+: _senderbuffer(buffer)
 {
-public:
-	//! constructor
-	SenderBase(){}
 
-	//! destructor
-	~SenderBase(){}
-
-	//! send keys to server
-	virtual void SendKey(long Time, const KeyPressed & kp) = 0;
+}
 
 
-};
+/***********************************************************
+send keys to server
+***********************************************************/
+void ServerLocalSender::SendActorInfo(const ActorInfo & ai)
+{
 
-#endif
+}
+
+

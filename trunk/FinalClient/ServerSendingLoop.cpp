@@ -22,14 +22,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#include "SendingLoop.h"
+#include "ServerSendingLoop.h"
 #include "SendingWorkpile.h"
 
 /***********************************************************
 constructor
 ***********************************************************/
-SendingLoopThread::SendingLoopThread(long cycle_time, boost::shared_ptr<SenderBase> sender)
-: m_stopped(false), m_cycle_time(cycle_time), m_sender(sender)
+ServerSendingLoopThread::ServerSendingLoopThread(long cycle_time, boost::shared_ptr<ServerSenderBase> sender,
+										boost::shared_ptr<ServerSendingWorkpile> workpile)
+: m_stopped(false), m_cycle_time(cycle_time), m_sender(sender), m_workpile(workpile)
 {
 
 }
@@ -37,7 +38,7 @@ SendingLoopThread::SendingLoopThread(long cycle_time, boost::shared_ptr<SenderBa
 /***********************************************************
 stop the thread
 ***********************************************************/
-void SendingLoopThread::Stop()
+void ServerSendingLoopThread::Stop()
 {	
 	IceUtil::Monitor<IceUtil::Mutex>::Lock lock(m_monitor);
 	m_stopped = true;
@@ -47,7 +48,7 @@ void SendingLoopThread::Stop()
 /***********************************************************
 running function of the thread
 ***********************************************************/
-void SendingLoopThread::run()
+void ServerSendingLoopThread::run()
 {
 	while(true)
 	{
@@ -68,9 +69,8 @@ void SendingLoopThread::run()
 		}
 
 
+
 		//do the work here
-		KeyPressed pressed;
-		SendingWorkpile::getInstance()->GetKeyPressed(pressed);
-		m_sender->SendKey(pressed);
+
 	}
 }

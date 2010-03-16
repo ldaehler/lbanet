@@ -23,25 +23,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#ifndef _LBANET_SENDING_BASE_
-#define _LBANET_SENDING_BASE_
+#if !defined(__LbaNetModel_1_ReceivingWorkpile_h)
+#define __LbaNetModel_1_ReceivingWorkpile_h
 
 #include "CommonTypes.h"
+#include <boost/thread/mutex.hpp>
+#include <vector>
 
-/***********************************
-*	Base class for sending information to the server
-*************************************/
-class SenderBase
+/***********************************************************************
+ * Module:  ReceivingWorkpile.h
+ * Author:  vivien
+ * Modified: lundi 27 juillet 2009 14:59:17
+ * Purpose: Declaration of the class ReceivingWorkpile
+ ***********************************************************************/
+class ReceivingWorkpile
 {
 public:
-	//! constructor
-	SenderBase(){}
+	//! construtor
+	ReceivingWorkpile(){}
 
 	//! destructor
-	~SenderBase(){}
+	~ReceivingWorkpile(){}
 
-	//! send keys to server
-	virtual void SendKey(long Time, const KeyPressed & kp) = 0;
+
+	//! set actor info
+	void NewActorInfo(const ActorInfo & ainfo);
+
+	//! get actor info
+	void GetNewInfo(std::vector<ActorInfo> & ActorInfos);
+
+private:
+	boost::mutex				m_mutex;
+	std::vector<ActorInfo>		m_ActorInfos;
 
 
 };

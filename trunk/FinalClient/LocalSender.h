@@ -46,7 +46,7 @@ public:
 	~LocalSender(){}
 
 	//! send keys to server
-	virtual void SendKey(const KeyPressed & kp);
+	virtual void SendKey(long Time, const KeyPressed & kp);
 
 
 private:
