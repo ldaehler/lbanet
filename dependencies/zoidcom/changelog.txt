@@ -1,0 +1,426 @@
+=============
+Zoidcom 0.7.0
+=============
+
+Features:
+---------
+- connections:
+  ° new connection protocol, being more robust, more flexible and
+    allowing for higher packet rates
+  ° packets from unknown sources don't trigger the setup of complete 
+    connections anymore
+  ° add handshake to connection setup to avoid abusing zoidcom hosts
+    for DDoS attacks with spoofed connection request packets
+    
+- replaced zoidlevel concept with object subscription channels.
+  now a connection can subscribe to as many channels as it likes,
+  and nodes can be registered to any amount of channels, too.
+- the max number of subscriptions groups is now 2^32 instead of 127
+- faster event sending when many events get queued
+- memory optimizations: use more efficient data structures and
+  cut down the number of allocations (more to come)
+- more flexible class handling: client doesn't need to know all of
+  the server's classes in order to connect. classes the client doesn't
+  know are not replicated.
+
+Changes:
+--------
+- registerNode() functions moved from ZCom_Node to ZCom_Control
+
+Bugfix:
+-------
+- setOwner() update will be received by node on client, even if the
+  node doesn't have anything else to send
+  
+==============
+Zoidcom 0.6.11
+==============
+
+Features:
+---------
+- add ZCom_Control::ZCom_getClassName() to get a classname by classid
+
+
+Changes:
+--------
+- add assert when registering node with unknown class
+- add warning in debug build when sending node event but no recipients are available
+- add a warning when setting connection specific node relevance for unknown connection
+- node init event also generated for client nodes (if enabled)
+- ZCom_Node::sendEvent() now also sends to targets that are relevant but not fully connected yet
+
+Bugfix:
+---------
+- fix "You tried to delete a ZCom_BitStream object owned by Zoidcom, please check your code!" assert when 
+  sending unreliable data through ZCom_Control in debug mode.
+- fix ZCom_Control::ZCom_cbConnectResult() not getting called when hostname resolution fails
+- fix ZCom_BitStream()::addBuffer and getBuffer() not working properly under certain circumstances
+- fix startup delay
+
+
+==============
+Zoidcom 0.6.10
+==============
+
+Features:
+---------
+- ZCom_Address::getAddressIP() now has a parameter to get the address without the :port
+- ZCom_Address::setAddress() now returns bool and performs better checking for valid input
+
+Changes:
+--------
+- add assert when proxy node tries to make itself owner
+
+Bugfix:
+---------
+- fix owner->auth replication in interpolator
+- fix math error in float interpolator (all values 0.5 too high)
+- fix runtime error (pure virtual function call) if active node is 
+  deleted together with it's node replication interceptor and 
+  ZCOM_REPFLAG_INTERCEPT was used
+- fix total_out not being set in connection stats
+- fix problem where no packets were received if zoidcom was initialized from a different
+  thread than from where ZCom_initSockets() was called
+
+=============
+Zoidcom 0.6.9
+=============
+
+Features:
+---------
+- added possibility to remove dependencies again with dependsOn()
+
+Changes:
+--------
+- added constness to a lot of methods
+- added asserts to prevent registering nodes twice
+
+Bugfix:
+---------
+- fix crash that occurs when having more than one node dependencies
+  with dependsOn()
+- fix problem where dependent nodes would sometimes be replicated in
+  the wrong order
+- build linux version with different compiler as the 0.6.8 build had
+  some strange timing issues
+- fix 64bit linux builds not working correctly on some systems
+- implement missing ZCom_Node::isPrivate()
+
+=============
+Zoidcom 0.6.8
+=============
+
+Features:
+---------
+- add 64bit builds for windows and linux
+
+Bugfix:
+---------
+- implement missing ZCom_ReplicatorAdvanced::getNode()
+- fix assertion in move replicator
+- fix crash that occurs after invalid incoming connection
+- fix msvc 8 builds pulling in debug crt and thus not working on 
+  systems without msvc
+
+
+=============
+Zoidcom 0.6.7
+=============
+
+Features:
+---------
+- added ZCom_Node::setDefaultRelevance()
+
+
+=============
+Zoidcom 0.6.6
+=============
+
+Features:
+---------
+- added ZCom_Control::ZCom_sendDataRaw() to send raw UDP data to any destination
+- added ZCOM_CONNGROUP_ALL as automatic group that contains all connections,
+  which can be for example used with ZCom_sendDataToGroup()
+- added ZCom_Node::getZoidLevelCount() and ZCom_Node::getZoidLevel() to find
+  out to which ZoidLevels a node is registered
+- zoidlevels can now be forced from server using ZCom_requestZoidMode() on server
+- added ZCom_Node::dependsOn(ZCom_Node*) to force order of replication
+- support for wchar_t* in Zcom_BitStream, ZCom_Node and new class ZCom_Replicate_StringWp
+- add packet loss statistics to connection stats
+- optimized bandwidth usage of ZCom_Replicate_Movement and example 7 (search for
+    'CHANGED' in nodeobj.cpp)
+- added lag, packetloss and a few other options to example 7 (the movement example)
+- better ping averaging algorithm
+- added libs for msvc 8
+- added documentation for replicating non-player movement
+
+Changes:
+--------
+- ZCom_Node::unregisterNode() now completely resets the node, all replicators and settings are
+  gone
+- above change makes ZCom_Replicator::Duplicate() unnecessary, so it has been removed from the API.
+  Custom replicators do not need to implement this anymore.
+- ZCom_MoveUpdateListener::inputUpdated() has a new parameter
+
+Bugfixes:
+---------
+- fix unresolved external ZCom_ReplicatorValue::getData()
+- also broadcast to 127.0.0.1 (make sure localhost servers are found)
+- added implementation for ZCom_Node::getClassID()
+- fix problem in ZCom_BitStream::skipBits()
+- fixes to the movement replicator and to ex07_movement (thanks to Átila Neves for reporting
+  the problems in the first place)
+  ° ZCom_Replicate_Movement()::getNextHistoryEntry() didn't return all relevant history entries
+  ° ex07_movement exchanged order of updatePhysics() and moverep->updateInput(). Now server and client
+    are in sync even with an error threshold of 0. If you are using code from ex07, you should adjust
+    your code accordingly.
+  ° ex07 changed implementation of NodeObject::updatePhysics(), more details in the source (search for
+    'CHANGED')
+
+=============
+Zoidcom 0.6.5
+=============
+
+Features:
+---------
+- intermediary node deannouncements and reannouncements
+  ° when a connection specific relevance is set to 0 on a node, the node will be deannounced from the client,
+    when the relevance raises again, the node gets reannounced
+  ° when a node is set to private mode all non-owner clients will have the node removed
+  ° when a connection looses owner role to a node and the node is private, it will be deannounced from this connection
+  ° when a connections gains owner role to a node and the node is private, the node will be announced to the connection
+  ° when private node is made public again, it will be reannounced to all connections
+
+Bugfixes:
+---------
+- fix zoidlevel transition getting stuck when changing from one level to another
+- fix ZCom_Control::sendData() data send stalling when lots of data gets queued
+
+=============
+Zoidcom 0.6.4
+=============
+
+Bugfixes:
+---------
+- fix possible heap corruption when a previously active ZCom_Replicate_Movement object was deleted
+- make sure corrections to the movement replicator are not delivered out of order
+- fix scaling of values in ZCom_MoveUpdateListener::correctionReceived()
+- fix data type check failing in debug build when using ZCom_BitStream::getStringSize()
+- fix data type check failing in debug build when stream was nearly full
+- fix bool replicator registration through ZCom_Node::addReplicationBool()
+- fix string replicator sometimes replicating twice in the beginning, although there were no changes in the string
+- fix ip addresses returned in reverse order by ZCom_Address::getIP() on little endian systems
+
+=============
+Zoidcom 0.6.3
+=============
+
+Bugfixes:
+---------
+- fix ZCom_Node::sendEventToGroup() not working
+
+
+=============
+Zoidcom 0.6.2
+=============
+
+Features:
+---------
+- ZCom_ReplicateMovement now supports teleporting (position update without interpolation)
+- added filetransfer example
+
+Bugfixes:
+---------
+- filetransfer code generated unsendable large packets sometimes
+- finetuned ZCom_ReplicateMovement, updated docs and example
+- ZCom_ReplicateMovement interpolation time is now adjustable
+- ZCom_ReplicateMovement doesn't interpolate to the first position update now (it teleports)
+
+=============
+Zoidcom 0.6.1
+=============
+
+Bugfixes:
+---------
+- better bandwidth utilization for filetransfers 
+- fixed filetransfer not starting under linux
+- fixed various double-file-closes when doing filetransfer
+- application provided allocator function wasn't being called in some cases
+
+===========
+Zoidcom 0.6
+===========
+
+Features:
+---------
+- new versioning scheme (instead of beta 6 it is now 0.6.0)
+- optimized the network protocol: 
+   ° initial node replication takes up to 9 bits less per node now. depending on the number of classes
+   ° node updates take up to 10 bits less now per node, depending on the number of nodes
+   ° bitstream serialization header reduced from 4 bytes to 1-2 bytes, depending on the amount of data
+     in the stream
+- added a debug library that encodes type information into the datastream and does additional API checking
+- added completely new replicator system, making it possible to implement replicators for own data types
+- added replicators for arrays/vectors of values
+- added replicators for replication and interpolation of arrays/vectors of values 
+- added a movement and playerinput replicator
+- added a memblock replicator
+- completely rewritten and much enhanced documentation
+- more and simpler example programs
+- added possibility to send along custom data with each object's replication (see ZCom_Node::setAnnounceData())
+- removed the default value handling from replicators and replaced it with the flag ZCOM_REPFLAG_STARTCLEAN
+- added ZoidCom::setLogLevel()
+- added ZoidCom::getTime() for determining Zoidcom's local time
+- added ZoidCom::Sleep() for sending the current process to sleep
+- added ZCom_BitStream::skipBits() and more functions for skipping data
+- ZCom_BitStream::getStringStatic() is now threadsafe
+- added copy constructor to ZCom_BitStream
+- added assignment operator to ZCom_BitStream
+- added ZCom_Node::getCurrentUpdateRate()
+- added ZCom_Node::getEstimatedTimeUntilPossibleUpdate()
+- (memory) optimized replicator management in ZCom_Node
+- ZCom_Node::getNextEvent() and ZCom_NodeEventInterceptor::recUserEvent() now provide info when the 
+  event was sent. Together with ZoidCom::getTime() it is possible to find out how long an event has 
+  travelled until actual application processing occurs.
+- added per connection or global lag simulation
+- added per connection or global packet loss simulation
+- added safety checks to API functions taking ZCom_BitStream pointers, an assert will throw if the same
+  bitstream is used more than once
+- added ZCom_Address::toString()
+
+API changes:
+------------
+- ZCom_Node::beginReplicationSetup() now takes a parameter
+- ZCom_Node::getNextEvent() now provides estimated time of event send
+- ZCom_NodeEventInterceptor::recUserEvent() now provides estimated time of event send
+- ZCom_NodeReplicationInterceptor::inPreUpdateItem() now provides estimated time of event send
+- the ZCom_NodeReplicationInterceptor::RepInfo structure is no more, inPreUpdateItem() and
+  inPostUpdateItem() now provide a pointer to the ZCom_Replicator instead
+- ZCom_Node::registerRequestedNode() has been deprecated. Use ZCom_Node::registerNodeDynamic() instead.
+- ZCom_Control::ZCom_createBitStream() and ZCom_deleteBitStream() have been deprecated and will be
+  removed with the next release. Just use ordinary 'new' and 'delete' instead.
+- ZCom_Node::eEventMode is now eZCom_SendMode where
+     ZCom_Node::eEventMode_Unreliable => eZCom_Unreliable
+     ZCom_Node::eEventMode_ReliableOrdered => eZCom_ReliableOrdered
+     ZCom_Node::eEventMode_ReliableUnordered => eZCom_ReliableUnordered
+- ZCom_Node::eEvent is now eZCom_Event
+- eZCom_ReliableMode is now eZCom_SendMode
+- ZCom_Control::ZCom_cbConnectionClosed() now has an additional parameter stating the close reason
+  (timeout, reconnect or disconnect)
+- ZCom_Control::ZCom_cbNodeRequest_Dynamic() and *_Tag() have an additional parameter containing
+  additional replication information added by the server application
+  
+Bugfixes:
+---------
+- when client starts a new connect from an already connected socket, server will close the old
+  connection and accept the new one
+- fixed rare crash when connecting to a server by hostname
+- recreate logfile instead of always appending to it
+- #include <cstddef> in zoidcom_prereq.h for size_t
+- add some pointer checks
+- fixed ZCom_BitStream::getBuffer() not doing anything when trying to read more than available
+- fixed possible crash when trying to call event interceptor for an already deleted node
+- fixed a bug where maxdelay would override replication rules forcing the node to replicate regardless of role
+- fixed possible calling of ZCom_Control::ZCom_cbDataReceived() when unconnected client sent bogus data
+
+
+====================
+Zoidcom 1.0 beta 5
+====================
+
+Bugfixes:
+---------
+
+- fix invalid assert about illegal deletion of a bitstream object
+- fix crash when processing incoming packet with broken header
+  (thanks to Luigi Auriemma for pointing that out)
+- implemented missing ZCom_Node::setInterceptID() method
+- enabled RTTI so Zoidcom can be used with Boost
+
+
+==================  
+Zoidcom 1.0 beta 4
+==================
+
+Features:
+---------
+- enhanced the broadcasting API to allow sending requests along with the broadcast and also
+  allow the receiver to send a custom response
+- added connection groups and the ability to send data and events to groups of connections at once  
+- added debugname to all error messages coming from ZCom_Control
+- ZCom_cbConnectionClosed() now called on serverside, when an incoming, but not yet spawned connection,
+  times out
+- added NodeEventInterceptor interface for catching node events or 
+  handle events through callbacks instead of polling
+- added NodeReplicationInterceptor interface for catching updates of data items
+  
+API changes:
+------------
+- ZCom_Discover() and ZCom_cbDiscovered() have new parameters for the broadcasting enhancement
+- added ZCom_cbDiscoverRequest()
+- made all callbacks in ZCom_Control pure virtual, to avoid any further problems created by
+  wrong method signatures in derived classes
+
+Bugfixes:
+---------
+
+- don't generate ZCom_cbConnectResult() on serverside of connection when incoming connection times out
+  before it is fully established
+- don't generate ZCom_cbConnectionSpawned() when an incoming, but not fully established connection,
+  is deleted
+- fix control id not getting initialized in ZCom_Control() causing connection problems when the application
+  didn't initialize the id either
+- fix ZCom_cbNodeRequest_Tag() not getting called under certain conditions
+- fix misleading "socket not found" warning when exiting Zoidcom
+- fix remoteRole and connection ID not being set in eEvent_Init, eEvent_Remove and eEvent_AuthorityRemoved
+- fix wrong assignment of ID 0 to first filetransfer (0 == ZCom_Invalid_ID)
+- fix disabling upstream limit
+- fix filetransfer ID not being set in ZCom_FileTransInfo
+- fixed some errors and astonishing long and broken sentences in the docs
+
+
+==================
+Zoidcom 1.0 beta 3
+==================
+
+Bugfixes:
+---------
+
+- fix crash with ZCom_sendData() and no recipients available
+- fix rounding error in interpolation code
+
+
+==================
+Zoidcom 1.0 beta 2
+==================
+
+Features:
+---------
+
+- added LAN broadcasting
+- added API abuse checks in quite a few places
+- made connection and packet timeout values configurable
+- added default constructor for Zoidcom class
+- added (a)synchronous hostname resolution 
+- added text sending to ex02
+- added pause function to ex02
+- allow specifying 0 as local UDP port and let the OS choose it then
+  (added a parameter to ZCom_Control::initSockets() for that)
+  
+API changes:
+------------
+
+- removed packet and socket headers from public api
+- swapped the last two parameters of ZCom_Node::sendEventDirect() to ensure compiler generates an error message
+  if accidently ZCom_Node::sendEvent() is used
+- defined zoidcom specific data types and changed API to use them
+  (you have to adjust your overridden callbacks to the new API, otherwise they won't get called;
+   the compiler won't give any error!)
+   affected callbacks are: ZCom_cbZoidRequest(), ZCom_cbZoidResult(), ZCom_cbNodeRequest_Tag())
+
+Bugfixes:
+---------
+
+- fixed a problem with node event sending that led to random stream extraction errors
+- fixed problems related to usage of control ids
+
