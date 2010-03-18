@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "LoginGUI.h"
 #include <CEGUI.h>
 #include "LogHandler.h"
+#include "InternalWorkpile.h"
+//#include "GameEvents.h"
 #include "ConfigurationManager.h"
 
 /***********************************************************
@@ -164,6 +166,7 @@ bool LoginGUI::HandleConnect(const CEGUI::EventArgs& e)
 			{
 				ConfigurationManager::GetInstance()->SetString("Player.Name", txtl);
 				pt->setText("");
+				//InternalWorkpile::getInstance()->AddEvent(new LoginEvent(txtl, txtt, seleplaylo));
 			}
 		}
 	}
@@ -182,6 +185,7 @@ handle cancel button event
 ***********************************************************/
 bool LoginGUI::HandleCancel (const CEGUI::EventArgs& e)
 {
+	//InternalWorkpile::getInstance()->QuitGame();
 	return true;
 }
 
@@ -192,6 +196,7 @@ handle cancel button event
 ***********************************************************/
 bool LoginGUI::Handlebplus(const CEGUI::EventArgs& e)
 {
+	//InternalWorkpile::getInstance()->AddEvent(new ChangeMainBodyEvent(true));
 	return true;
 }
 
@@ -201,6 +206,7 @@ handle cancel button event
 ***********************************************************/
 bool LoginGUI::Handlebminus (const CEGUI::EventArgs& e)
 {
+	//InternalWorkpile::getInstance()->AddEvent(new ChangeMainBodyEvent(false));
 	return true;
 }
 
@@ -212,6 +218,7 @@ handle cancel button event
 ***********************************************************/
 bool LoginGUI::Handlecplus(const CEGUI::EventArgs& e)
 {
+	//InternalWorkpile::getInstance()->AddEvent(new ChangeMainBodyColorEvent(true));
 	return true;
 }
 
@@ -221,6 +228,7 @@ handle cancel button event
 ***********************************************************/
 bool LoginGUI::Handlecminus (const CEGUI::EventArgs& e)
 {
+	//InternalWorkpile::getInstance()->AddEvent(new ChangeMainBodyColorEvent(false));
 	return true;
 }
 

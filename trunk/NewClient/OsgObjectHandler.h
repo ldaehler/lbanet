@@ -22,37 +22,59 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#if !defined(__LbaNetModel_1_EventHandler_h)
-#define __LbaNetModel_1_EventHandler_h
-
-class LbaNetEngine;
-union SDL_Event;
+#if !defined(__LbaNetModel_1_OsgObjectHandler_h)
+#define __LbaNetModel_1_OsgObjectHandler_h
 
 
+#include "DisplayObjectHandlerBase.h"
+#include <osg/ref_ptr>
 
+namespace osg
+{
+	class MatrixTransform;
+}
 
 /***********************************************************************
- * Module:  EventHandler.h
+ * Module:  OsgObjectHandler.h
  * Author:  vivien
- * Modified: mardi 14 juillet 2009 17:41:03
- * Purpose: Declaration of the class EventHandler
+ * Modified: mardi 14 juillet 2009 13:54:52
+ * Purpose: Declaration of the class OsgObjectHandler
  ***********************************************************************/
-class EventHandler
+class OsgObjectHandler : public DisplayObjectHandlerBase
 {
 public:
 	//! constructor
-	EventHandler(LbaNetEngine* engine);
+	OsgObjectHandler(osg::ref_ptr<osg::MatrixTransform> OsgObject);
 
 	//! destructor
-	~EventHandler();
+	~OsgObjectHandler();
 
 
-	// handle function
-	bool EventHandler::Handle(SDL_Event flevent);
+	//! set object position in the world
+	virtual void SetPosition(float X, float Y, float Z);
 
+	//! set object rotation on X axis
+	virtual void SetRotation(const LbaQuaternion& Q);
+
+	//! destroy function - clear the object content
+	virtual void Destroy(void);
+
+	//! set the object to be followed by the camera
+	virtual void SetCameraFollow(void);
+
+protected:
+	// update matrix
+	void UpdateMatrix();
 
 private:
-	LbaNetEngine*		_lbaNetEngine;
+	osg::ref_ptr<osg::MatrixTransform>	_OsgObject;
+	float								_posX;
+	float								_posY; 
+	float								_posZ;
+	LbaQuaternion						_Q;
 };
+
+
+
 
 #endif

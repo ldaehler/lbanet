@@ -22,27 +22,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#if defined(NDEBUG)
-	#if defined(_MSC_VER)
-		#include "SDL.h"
-	#else
-		#include "SDL/SDL.h"
-	#endif
-#endif
-
-#include "LbaNetEngine.h"
 #include "UserAllocatorHandler.h"
+#include "UserAllocator.h"
 
 
-int main( int argc, char **argv )
+UserAllocatorHandler* UserAllocatorHandler::_singletonInstance = NULL;
+
+
+
+// singleton pattern
+UserAllocatorHandler * UserAllocatorHandler::getInstance()
 {
-	// init memory allocator
-	UserAllocatorHandler::getInstance()->Initialize();
+    if(!_singletonInstance)
+    {
+        _singletonInstance = new UserAllocatorHandler();
+		return _singletonInstance;
+    }
+    else
+    {
+		return _singletonInstance;
+    }
 
-	// start main thread engine
-	LbaNetEngine engine;
-	engine.run();
-
-	return 0;
 }
 
+
+//! initialize the class
+//! Important: this is not thread safe and should be called only once on the main thread
+//! before the first call of the get allocator function
+void UserAllocatorHandler::Initialize()
+{
+	_allocatorPtr = new UserAllocator();
+}

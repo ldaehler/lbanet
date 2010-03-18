@@ -22,15 +22,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#include "LbaNetEngine.h"
 #include "EventHandler.h"
+#include "LbaNetEngine.h"
 #include "LogHandler.h"
+#include "OSGHandler.h"
 
 #ifdef _WIN32
 	#include "SDL.h"
 #else
 	#include <SDL/SDL.h>
 #endif
+
 
 #include <CEGUI.h>
 
@@ -204,11 +206,12 @@ bool handle_mouse_up(Uint8 button)
 
 
 
+
 /***********************************************************
 	Constructor
 ***********************************************************/
 EventHandler::EventHandler(LbaNetEngine* engine)
-: _lbaNetEngine(engine), _button_1_pressed(false), _button_2_pressed(false)
+: _lbaNetEngine(engine)
 {
 
 }
@@ -229,60 +232,154 @@ handle function
 ***********************************************************/
 bool EventHandler::Handle(SDL_Event flevent)
 {
-	//int anim = 0;
 	CEGUI::uint kc;
-
 
 	switch( flevent.type )
 	{
 		//***** mouse events
         case SDL_MOUSEBUTTONDOWN:	// a mouse button has been pushed
+		{
 			if(handle_mouse_down(flevent.button.button))
-				return false;
-
+				return true;
+		}
 		break;
 
-		case SDL_MOUSEBUTTONUP:	// a mouse button has been pushed
-			if(handle_mouse_up(flevent.button.button))
-				return false;
 
+		case SDL_MOUSEBUTTONUP:	// a mouse button has been pushed
+		{
+			if(handle_mouse_up(flevent.button.button))
+				return true;
+		}
 		break;
 
 		case SDL_MOUSEMOTION:	// the user move the mouse with a button activated
+		{
 			if(CEGUI::System::getSingleton().injectMousePosition(static_cast<float>(flevent.motion.x),static_cast<float>(flevent.motion.y)))
-				return false;
-
+				return true;
+		}
 		break;
 
 
 		//***** keyboard events
 		case SDL_KEYDOWN:	// in case of keyboard key down
-
+		{
 			/* to tell CEGUI that a key was pressed, we inject the scancode. */
 			kc = SDLKeyToCEGUIKey(flevent.key.keysym.sym);
 			if(CEGUI::System::getSingleton().injectKeyDown(kc))
-				return false;
+				return true;
 			if(CEGUI::System::getSingleton().injectChar(flevent.key.keysym.unicode))
-				return false;
+				return true;
 
 
+			switch (flevent.key.keysym.sym)
+			{
+				case SDLK_UP:
+				{
+					_lbaNetEngine->StartMove(1);
+					return true;
+				}
+
+				case SDLK_DOWN:
+				{
+					_lbaNetEngine->StartMove(2);
+					return true;
+				}
+
+				case SDLK_LEFT:
+				{
+					_lbaNetEngine->StartMove(3);
+					return true;
+				}
+
+				case SDLK_RIGHT:
+				{
+					_lbaNetEngine->StartMove(4);
+					return true;
+				}
+
+				case SDLK_SPACE:
+				{
+					_lbaNetEngine->DoAction();
+					return true;
+				}
+
+				case SDLK_F12:
+				{			
+					OsgHandler::getInstance()->ToggleFullScreen();
+					return true;
+				}
+
+				case SDLK_F5:
+				{			
+					OsgHandler::getInstance()->ResetLight(true);
+					return true;
+				}
+
+				case SDLK_F6:
+				{			
+					OsgHandler::getInstance()->ResetLight(false);
+					return true;
+				}
+
+				case SDLK_F1:
+				{			
+					OsgHandler::getInstance()->SetScreenAttributes(800, 600, false);
+					return true;
+				}
+
+				case SDLK_F2:
+				{			
+					OsgHandler::getInstance()->SetScreenAttributes(1024, 768, false);
+					return true;
+				}
+			}
+
+		}
 		break;
 
 
-		case SDL_KEYUP:	// in case of keyboard key down
+		case SDL_KEYUP:
+		{
 			 kc = SDLKeyToCEGUIKey(flevent.key.keysym.sym);
 			 if(CEGUI::System::getSingleton().injectKeyUp(kc))
-				 return false;
+				 return true;
 
+			switch (flevent.key.keysym.sym)
+			{
+				case SDLK_UP:
+				{
+					_lbaNetEngine->StopMove(1);
+					return true;
+				}
+
+				case SDLK_DOWN:
+				{
+					_lbaNetEngine->StopMove(2);
+					return true;
+				}
+
+				case SDLK_LEFT:
+				{
+					_lbaNetEngine->StopMove(3);
+					return true;
+				}
+
+				case SDLK_RIGHT:
+				{
+					_lbaNetEngine->StopMove(4);
+					return true;
+				}
+
+				case SDLK_SPACE:
+				{
+					//SendingWorkpile::getInstance()->ReleaseActionKey();
+					return true;
+				}
+			}
+
+		}
 		break;
 
-
-		// SDL_QUIT event (window close)
-		case SDL_QUIT:
-		{
-			LogHandler::getInstance()->LogToFile("Windows closed.");
-			return true;
-		}
 	}
 
 	return false;

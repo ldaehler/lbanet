@@ -45,6 +45,7 @@ namespace CEGUI
 #include <vector>
 #include <list>
 #include <map>
+//#include "WorldInfo.h"
 struct TPInfo;
 
 /***********************************************************************
@@ -63,11 +64,10 @@ public:
 	~GuiHandler();
 
 	//! initialize function
-	void Initialize(int screen_size_X, int screen_size_Y, bool ServerOn,
-						const std::string &clientversion, LbaNetEngine * engine);
+	void Initialize(bool ServerOn, const std::string &clientversion, LbaNetEngine * engine);
 
 	// process function
-	void process(void);
+	void Process(void);
 
 	//! switch from current gui to another one
 	void SwitchGUI(int GuiNumber);
@@ -80,12 +80,45 @@ public:
 	void grabTextures();
 	void restoreTextures();
 
+	//! set the current map of the game
+	void SetCurrentMap(const std::string & WorldName, const std::string & MapName);
 
+	// focus the chatbox
+	void FocusChatbox(bool focus);
+
+	//! set irc thread
+	void SetIrcThread(IrcThread * IT);
 
 	//! called when font size changed
 	void ReloadFontSize();
 
+	//! set the list of teleport places
+	void SetTeleportList(const std::map<std::string, TPInfo> &_lists);
 
+	//! display game text
+	bool DisplayGameText(long textid, bool show = true);
+
+	//! inform the user the login failed
+	void InformNotLoggedIn(int problem, const std::string & reason);
+
+	//! set actors
+	void SetActors(std::map<long, Actor *> * Lactors, std::map<long, Actor *> * Eactors);
+
+	//! set player name
+	void SetPlayerName(const std::string & name);
+
+	//! handle overlay
+	bool overlayHandler(const CEGUI::EventArgs& args);
+
+	// display inventory
+	void ShowInventory();
+
+	// refresh options
+	void RefreshOption();
+
+	// show dialog with NPC
+	//void ShowDialog(long ActorId, const std::string &ActorName, DialogHandlerPtr Dialog,
+	//					bool Show,	const std::map<long, TraderItem> &inventory);
 
 protected:
 	//! inject time to the GUI

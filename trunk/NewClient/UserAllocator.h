@@ -22,37 +22,49 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#if !defined(__LbaNetModel_1_EventHandler_h)
-#define __LbaNetModel_1_EventHandler_h
+#ifndef _LBANET_USERALLOCATOR_H
+#define _LBANET_USERALLOCATOR_H
 
-class LbaNetEngine;
-union SDL_Event;
-
-
-
+#include <boost/thread/mutex.hpp>
+#include "NxUserAllocator.h"
 
 /***********************************************************************
- * Module:  EventHandler.h
+ * Module:  UserAllocator.h
  * Author:  vivien
- * Modified: mardi 14 juillet 2009 17:41:03
- * Purpose: Declaration of the class EventHandler
+ * Modified: lundi 27 juillet 2009 14:59:34
+ * Purpose: Memory allocator for physix engine
  ***********************************************************************/
-class EventHandler
+class UserAllocator : public NxUserAllocator
 {
 public:
 	//! constructor
-	EventHandler(LbaNetEngine* engine);
+	UserAllocator();
 
 	//! destructor
-	~EventHandler();
+	virtual	~UserAllocator();
 
+	void		reset();
 
-	// handle function
-	bool EventHandler::Handle(SDL_Event flevent);
+	void*		malloc(size_t size);
+	void*		malloc(size_t size, NxMemoryType type);
+	void*		mallocDEBUG(size_t size, const char* file, int line);
+	void*		mallocDEBUG(size_t size, const char* file, int line, const char* className, NxMemoryType type);
+	void*		realloc(void* memory, size_t size);
+	void		free(void* memory);
 
+	size_t*		mMemBlockList;
+	NxU32		mMemBlockListSize;
+	NxU32		mMemBlockFirstFree;
+	NxU32		mMemBlockUsed;
 
-private:
-	LbaNetEngine*		_lbaNetEngine;
+	NxI32		mNbAllocatedBytes;
+	NxI32		mHighWaterMark;
+	NxI32		mTotalNbAllocs;
+	NxI32		mNbAllocs;
+	NxI32		mNbReallocs;
+
+	boost::mutex mAllocatorLock;
+
 };
 
 #endif
