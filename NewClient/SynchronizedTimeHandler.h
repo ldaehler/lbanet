@@ -22,37 +22,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#if !defined(__LbaNetModel_1_EventHandler_h)
-#define __LbaNetModel_1_EventHandler_h
 
-class LbaNetEngine;
-union SDL_Event;
+#ifndef _LBANET_SYNCHRONIZED_TIME_HANDLER_H_
+#define _LBANET_SYNCHRONIZED_TIME_HANDLER_H_
 
 
+//*************************************************************************************************
+//*                               class SynchronizedTimeHandler
+//*************************************************************************************************
+/**
+* @brief Used to synchronize time with server
+*
+*/
 
-
-/***********************************************************************
- * Module:  EventHandler.h
- * Author:  vivien
- * Modified: mardi 14 juillet 2009 17:41:03
- * Purpose: Declaration of the class EventHandler
- ***********************************************************************/
-class EventHandler
+class SynchronizedTimeHandler
 {
+
 public:
-	//! constructor
-	EventHandler(LbaNetEngine* engine);
 
-	//! destructor
-	~EventHandler();
+	// singleton pattern
+   static SynchronizedTimeHandler * getInstance();
 
+	//! get synchronized current time
+	unsigned long GetCurrentTimeSync();
 
-	// handle function
-	bool EventHandler::Handle(SDL_Event flevent);
+	//! get synchronized current time
+	double GetCurrentTimeDoubleSync();
+
+protected:
+
+	//! construtor
+	SynchronizedTimeHandler(){}
+	SynchronizedTimeHandler(const SynchronizedTimeHandler &);
+	const SynchronizedTimeHandler & operator=(const SynchronizedTimeHandler &);
 
 
 private:
-	LbaNetEngine*		_lbaNetEngine;
+	static SynchronizedTimeHandler *		_singletonInstance;
 };
+
 
 #endif

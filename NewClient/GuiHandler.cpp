@@ -26,14 +26,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GuiHandler.h"
 #include "LoginGUI.h"
 #include "LogHandler.h"
+//#include "ChooseWorldGUI.h"
+//#include "GameGUI.h"
+//#include "MenuGUI.h"
+//#include "MenuGUI.h"
+//#include "OptionsGUI.h"
 #include "ConfigurationManager.h"
 #include "LbaNetEngine.h"
+#include "SynchronizedTimeHandler.h"
 
-#ifdef _WIN32
-	#include "SDL.h"
-#else
-	#include <SDL/SDL.h>
-#endif
+//#include "DataLoader.h"
+
 
 #include <CEGUI.h>
 #include <RendererModules/OpenGL/CEGUIOpenGLRenderer.h>
@@ -72,7 +75,7 @@ GuiHandler::~GuiHandler()
 /***********************************************************
 initialize function
 ***********************************************************/
-void GuiHandler::Initialize(int screen_size_X, int screen_size_Y, bool ServerOn,
+void GuiHandler::Initialize(bool ServerOn,
 							const std::string &clientversion,
 							LbaNetEngine * engine)
 {
@@ -295,6 +298,25 @@ void GuiHandler::Initialize(int screen_size_X, int screen_size_Y, bool ServerOn,
 	_login_gui->SetServrOn(ServerOn);
 	_guis.push_back(_login_gui);
 
+	//ChooseWorldGUI * cwG = new ChooseWorldGUI();
+	//cwG->Initialize();
+	//_guis.push_back(cwG);
+
+	//std::vector<WorldDesc> list;
+	//DataLoader::getInstance()->GetAvailableWorlds(list);
+	//cwG->SetWorldList(list);
+
+	//_game_gui = new GameGUI();
+	//_game_gui->Initialize();
+	//_guis.push_back(_game_gui);
+
+	//MenuGUI * menuG = new MenuGUI();
+	//menuG->Initialize();
+	//_guis.push_back(menuG);
+
+	//_option_gui = new OptionsGUI();
+	//_option_gui->Initialize();
+	//_guis.push_back(_option_gui);
 
 
 	SwitchGUI(0);
@@ -316,7 +338,7 @@ inject time to the GUI
 void GuiHandler::inject_time_pulse()
 {
 	/* get current "run-time" in seconds */
-	double t = 0.001*SDL_GetTicks();
+	double t = 0.001*SynchronizedTimeHandler::getInstance()->GetCurrentTimeDoubleSync();
 	/* inject the time that passed since the last call */
 	CEGUI::System::getSingleton().injectTimePulse( float(t-m_last_time_pulse) );
 	/* store the new time as the last time */
@@ -327,7 +349,7 @@ void GuiHandler::inject_time_pulse()
 /***********************************************************
 process function
 ***********************************************************/
-void GuiHandler::process(void)
+void GuiHandler::Process(void)
 {
    inject_time_pulse();
 
@@ -381,6 +403,8 @@ void GuiHandler::Resize(int screen_size_X, int screen_size_Y)
 {
     CEGUI::System::getSingleton().
         notifyDisplaySizeChanged(CEGUI::Size((float)screen_size_X,(float)screen_size_Y));
+
+	//_game_gui->Refresh();
 }
 
 /***********************************************************
@@ -400,6 +424,36 @@ void GuiHandler::restoreTextures()
 }
 
 
+/***********************************************************
+set the current map of the game
+***********************************************************/
+void GuiHandler::SetCurrentMap(const std::string & WorldName, const std::string & MapName)
+{
+	//if(_game_gui)
+	//	_game_gui->SetCurrentMap(WorldName, MapName);
+}
+
+
+
+/***********************************************************
+focus the chatbox
+***********************************************************/
+void GuiHandler::FocusChatbox(bool focus)
+{
+	//if(_game_gui)
+	//	_game_gui->FocusChatbox(focus);
+}
+
+
+/***********************************************************
+set irc thread
+***********************************************************/
+void GuiHandler::SetIrcThread(IrcThread * IT)
+{
+	//if(_game_gui)
+	//	_game_gui->SetIrcThread(IT);
+}
+
 
 /***********************************************************
 called when font size changed
@@ -418,3 +472,95 @@ void GuiHandler::ReloadFontSize()
 	CEGUI::System::getSingleton().setDefaultFont( strs.str() );
 }
 
+
+/***********************************************************
+set the list of teleport places
+***********************************************************/
+void GuiHandler::SetTeleportList(const std::map<std::string, TPInfo> &_lists)
+{
+	//if(_game_gui)
+	//	_game_gui->SetTeleportList(_lists);
+}
+
+/***********************************************************
+display game text
+***********************************************************/
+bool GuiHandler::DisplayGameText(long textid, bool show)
+{
+	//if(_game_gui)
+	//	return _game_gui->DisplayGameText(textid, show);
+
+	return true;
+}
+
+
+/***********************************************************
+inform the user the login failed
+***********************************************************/
+void GuiHandler::InformNotLoggedIn(int problem, const std::string & reason)
+{
+	if(_login_gui)
+		_login_gui->InformNotLoggedIn(problem, reason);
+}
+
+
+
+/***********************************************************
+set actors
+***********************************************************/
+//void GuiHandler::SetActors(std::map<long, Actor *> * Lactors, std::map<long, Actor *> * Eactors)
+//{
+//	if(_game_gui)_game_gui->SetActors(Lactors, Eactors);
+//}
+
+
+/***********************************************************
+set player name
+***********************************************************/
+void GuiHandler::SetPlayerName(const std::string & name)
+{
+	//if(_game_gui)
+	//	_game_gui->SetPlayerName(name);
+}
+
+
+/***********************************************************
+handle overlay
+***********************************************************/
+bool GuiHandler::overlayHandler(const CEGUI::EventArgs& args)
+{
+    if (static_cast<const CEGUI::RenderQueueEventArgs&>(args).queueID != CEGUI::RQ_OVERLAY)
+        return false;
+
+	//_engine->DrawOverlay();
+
+	return true;
+}
+
+
+/***********************************************************
+display inventory
+***********************************************************/
+void GuiHandler::ShowInventory()
+{
+	//if(_game_gui)_game_gui->ShowInventory();
+}
+
+
+/***********************************************************
+display inventory
+***********************************************************/
+void GuiHandler::RefreshOption()
+{
+	//if(_option_gui)_option_gui->SendNameColor();
+}
+
+
+/***********************************************************
+show dialog with NPC
+***********************************************************/
+//void GuiHandler::ShowDialog(long ActorId, const std::string &ActorName, DialogHandlerPtr Dialog, 
+//								bool Show, const std::map<long, TraderItem> &inventory)
+//{
+//	if(_game_gui)_game_gui->ShowDialog(ActorId, ActorName, Dialog, Show, inventory);
+//}

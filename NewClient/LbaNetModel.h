@@ -22,67 +22,63 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#if !defined(__LbaNetModel_1_LbaNetEngine_h)
-#define __LbaNetModel_1_LbaNetEngine_h
-
+#if !defined(__LbaNetModel_1_LbaNetModel_h)
+#define __LbaNetModel_1_LbaNetModel_h
 
 #include <string>
+#include <vector>
+#include <map>
 
+#include "ObjectsDescription.h"
+#include "DynamicObject.h"
 #include <boost/shared_ptr.hpp>
-#include "LbaNetModel.h"
-#include "CharacterController.h"
-#include "GuiHandler.h"
 
 class PhysXEngine;
-class EventHandler;
+
 
 /***********************************************************************
- * Module:  LbaNetEngine.h
+ * Module:  LbaNetModel.h
  * Author:  vivien
- * Modified: mardi 14 juillet 2009 17:41:03
- * Purpose: Declaration of the class LbaNetEngine
+ * Modified: mardi 14 juillet 2009 13:54:52
+ * Purpose: Declaration of the class LbaNetModel
  ***********************************************************************/
-class LbaNetEngine
+class LbaNetModel
 {
 public:
-	//!constructor
-	LbaNetEngine();
+	//! constructor
+	LbaNetModel();
 
-	//!destructor
-   ~LbaNetEngine();
-
-	//! entry point of the engine
-	void run(void);
+	//! destructor
+	~LbaNetModel();
 
 
-	//! start a move from keyboard input
-	void StartMove(int MoveType);
+	//! set physic engine
+	void SetPhysicEngine(boost::shared_ptr<PhysXEngine> & pEngine);
 
-	//! stop a move from keyboard input
-	void StopMove(int MoveType);
+	//! do all check to be done when idle
+	void Process();
 
-	//! do action from keyboard input
-	void DoAction();
+	//! reset model with a new map
+	void SetMap(const ObjectInfo &mapInfo, const LbaMainLightInfo &NewLightningInfo);
 
+	//! add object to the scene
+	void AddObject(long id, const ObjectInfo &desc);
+
+	//! remove object from the scene
+	void RemObject(long id);
+
+	//! get object from the scene
+	boost::shared_ptr<DynamicObject> GetObject(long id);
 
 protected:
-	//! process function
-	void Process(void);
-
-	//! initialize the class
-	void Initialize(void);
+	//! clear current model before changing map
+	void ClearModel(const LbaMainLightInfo &NewLightningInfo);
 
 private:
-	GuiHandler						m_gui_handler;
-	LbaNetModel						m_lbaNetModel;		// game model
-	boost::shared_ptr<EventHandler>	m_eventHandler;		// handle input events
-	boost::shared_ptr<PhysXEngine>	m_physic_engine;	//physic engine
+	std::map<long, boost::shared_ptr<DynamicObject> >	_dynamicObjects;
+	boost::shared_ptr<PhysXEngine>						_physicEngine;
 
-	boost::shared_ptr<CharacterController>	m_controller;
-
-	double							m_lasttime;
-
-
+	boost::shared_ptr<DynamicObject>					_currMap;
 };
 
 #endif

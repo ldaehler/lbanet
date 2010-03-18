@@ -22,37 +22,52 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#if !defined(__LbaNetModel_1_EventHandler_h)
-#define __LbaNetModel_1_EventHandler_h
-
-class LbaNetEngine;
-union SDL_Event;
+#if !defined(__LbaNetModel_1_DynamicObject_h)
+#define __LbaNetModel_1_DynamicObject_h
 
 
-
+#include "PhysicalObjectHandlerBase.h"
+#include "DisplayObjectHandlerBase.h"
 
 /***********************************************************************
- * Module:  EventHandler.h
+ * Module:  DynamicObject.h
  * Author:  vivien
  * Modified: mardi 14 juillet 2009 17:41:03
- * Purpose: Declaration of the class EventHandler
+ * Purpose: Base class for any object needed update at each frame
  ***********************************************************************/
-class EventHandler
+class DynamicObject
 {
 public:
-	//! constructor
-	EventHandler(LbaNetEngine* engine);
+	//!constructor
+	DynamicObject(boost::shared_ptr<PhysicalObjectHandlerBase> phH,
+					boost::shared_ptr<DisplayObjectHandlerBase> disH)
+		: _phH(phH), _disH(disH)
+	{}
 
-	//! destructor
-	~EventHandler();
+	//!destructor
+   virtual ~DynamicObject(){}
 
+	//! process function - will be called at each frame
+	virtual void Process(void) = 0;
 
-	// handle function
-	bool EventHandler::Handle(SDL_Event flevent);
+	//! destroy function - clear the object content
+	virtual void Destroy(void) = 0;
 
+	//! get physical object
+	boost::shared_ptr<PhysicalObjectHandlerBase> GetPhysicalObject()
+	{ return _phH;}
 
-private:
-	LbaNetEngine*		_lbaNetEngine;
+	//! get display object
+	boost::shared_ptr<DisplayObjectHandlerBase> GetDisplayObject()
+	{ return _disH;}
+
+protected:
+	
+	//! handler to physical object
+	boost::shared_ptr<PhysicalObjectHandlerBase> _phH;
+
+	//! handler to display object
+	boost::shared_ptr<DisplayObjectHandlerBase> _disH;
 };
 
 #endif

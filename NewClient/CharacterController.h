@@ -22,37 +22,57 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#if !defined(__LbaNetModel_1_EventHandler_h)
-#define __LbaNetModel_1_EventHandler_h
+#if !defined(__LbaNetModel_1_CharacterController_h)
+#define __LbaNetModel_1_CharacterController_h
 
-class LbaNetEngine;
-union SDL_Event;
+#include <boost/shared_ptr.hpp>
+#include "CommonTypes.h"
 
-
-
+class DynamicObject;
+class PhysXEngine;
 
 /***********************************************************************
- * Module:  EventHandler.h
+ * Module:  CharacterController.h
  * Author:  vivien
  * Modified: mardi 14 juillet 2009 17:41:03
- * Purpose: Declaration of the class EventHandler
+ * Purpose: Declaration of the class CharacterController
  ***********************************************************************/
-class EventHandler
+class CharacterController
 {
 public:
 	//! constructor
-	EventHandler(LbaNetEngine* engine);
+	CharacterController(boost::shared_ptr<PhysXEngine> pEngine);
 
 	//! destructor
-	~EventHandler();
+	~CharacterController();
+
+	//! set character to control
+	void SetCharacter(boost::shared_ptr<DynamicObject> charac);
 
 
-	// handle function
-	bool EventHandler::Handle(SDL_Event flevent);
+	//! start a move from keyboard input
+	void StartMove(int moveDirection);
 
+	//! stop a move from keyboard input
+	void StopMove(int moveDirection);
+
+	//! do action from keyboard input
+	void DoAction();
+
+	//! process function
+	void Process(double tnow, float tdiff);
 
 private:
-	LbaNetEngine*		_lbaNetEngine;
+	boost::shared_ptr<DynamicObject> _character;
+	boost::shared_ptr<PhysXEngine>	_pEngine;
+
+	//! key pressed
+	bool			_up_key_pressed;
+	bool			_down_key_pressed;
+	bool			_right_key_pressed;
+	bool			_left_key_pressed;
+
+	LbaVec3			_current_direction;
 };
 
 #endif
