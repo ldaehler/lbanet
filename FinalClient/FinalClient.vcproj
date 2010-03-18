@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="FinalClient"
 	ProjectGUID="{E54C942E-2F8B-476C-A453-F2304BAF7F3F}"
 	RootNamespace="FinalClient"
@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\dependencies\Boost\include;..\dependencies\OpenSceneGraph\include;..\dependencies\libconfig\include;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;;&quot;c:\Ice-3.3.1-VC90\include&quot;"
+				AdditionalIncludeDirectories="..\dependencies\Boost\include;..\dependencies\OpenSceneGraph\include;..\dependencies\libconfig\include;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;;..\dependencies\CEGUI\cegui\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,9 +61,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libconfig++d.lib osgd.lib osgShadowd.lib osgGAd.lib osgViewerd.lib osgDBd.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib winmm.lib iced.lib iceutild.lib"
+				AdditionalDependencies="libconfig++d.lib osgd.lib osgShadowd.lib osgGAd.lib osgViewerd.lib osgDBd.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib winmm.lib CEGUIBase.lib CEGUIOpenGLRenderer.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\dependencies\Boost\lib;..\dependencies\libconfig\lib;..\dependencies\OpenSceneGraph\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;;&quot;c:\Ice-3.3.1-VC90\lib&quot;"
+				AdditionalLibraryDirectories="..\dependencies\Boost\lib;..\dependencies\libconfig\lib;..\dependencies\OpenSceneGraph\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;;..\dependencies\CEGUI\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -117,7 +117,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\dependencies\Boost\include;..\dependencies\OpenSceneGraph\include;..\dependencies\libconfig\include;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;;&quot;c:\Ice-3.3.1-VC90\include&quot;"
+				AdditionalIncludeDirectories="..\dependencies\Boost\include;..\dependencies\OpenSceneGraph\include;..\dependencies\libconfig\include;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;;..\dependencies\CEGUI\cegui\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -136,9 +136,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libconfig++.lib osg.lib osgShadow.lib osgGA.lib osgViewer.lib osgDB.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib winmm.lib ice.lib iceutil.lib"
+				AdditionalDependencies="libconfig++.lib osg.lib osgShadow.lib osgGA.lib osgViewer.lib osgDB.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib winmm.lib CEGUIBase.lib CEGUIOpenGLRenderer.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\dependencies\Boost\lib;..\dependencies\libconfig\lib;..\dependencies\OpenSceneGraph\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;;&quot;c:\Ice-3.3.1-VC90\lib&quot;"
+				AdditionalLibraryDirectories="..\dependencies\Boost\lib;..\dependencies\libconfig\lib;..\dependencies\OpenSceneGraph\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;;..\dependencies\CEGUI\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -181,7 +181,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ChatBox.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ChooseNumberBox.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ChooseWorldGUI.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CommonTypes.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CommunityBox.cpp"
 				>
 			</File>
 			<File
@@ -189,7 +205,43 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ContainerBox.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DialogBox.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\EventHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GameGUI.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GUI.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GuiHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ImageSetHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\InternalWorkpile.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\InventoryBox.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\JournalBox.cpp"
 				>
 			</File>
 			<File
@@ -201,6 +253,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LetterEditorBox.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LetterViewerBox.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LocalSender.cpp"
 				>
 			</File>
@@ -209,11 +269,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LoginGUI.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\main.cpp"
 				>
 			</File>
 			<File
+				RelativePath=".\MenuGUI.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MessageBox.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ObjectsDescription.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OptionsGUI.cpp"
 				>
 			</File>
 			<File
@@ -237,10 +313,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SendingLoop.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\SendingWorkpile.cpp"
 				>
 			</File>
@@ -253,15 +325,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ServerSendingLoop.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\ServerSendingWorkpile.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ServerThread.cpp"
+				RelativePath=".\ShortcutBox.cpp"
 				>
 			</File>
 			<File
@@ -274,6 +342,10 @@
 			</File>
 			<File
 				RelativePath=".\SynchronizedTimeHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TeleportBox.cpp"
 				>
 			</File>
 			<File
@@ -299,11 +371,35 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ChatBox.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ChooseNumberBox.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ChooseWorldGUI.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CommonTypes.h"
 				>
 			</File>
 			<File
+				RelativePath=".\CommunityBox.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ConfigurationManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ContainerBox.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DialogBox.h"
 				>
 			</File>
 			<File
@@ -319,11 +415,51 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GameEvents.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GameGUI.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GUI.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GuiHandler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ImageSetHandler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\InternalWorkpile.h"
+				>
+			</File>
+			<File
+				RelativePath=".\InventoryBox.h"
+				>
+			</File>
+			<File
+				RelativePath=".\JournalBox.h"
+				>
+			</File>
+			<File
 				RelativePath=".\LbaNetEngine.h"
 				>
 			</File>
 			<File
 				RelativePath=".\LbaNetModel.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LetterEditorBox.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LetterViewerBox.h"
 				>
 			</File>
 			<File
@@ -335,7 +471,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LoginGUI.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MenuGUI.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MessageBox.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ObjectsDescription.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OptionsGUI.h"
 				>
 			</File>
 			<File
@@ -399,6 +551,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ShortcutBox.h"
+				>
+			</File>
+			<File
 				RelativePath=".\StaticObject.h"
 				>
 			</File>
@@ -408,6 +564,10 @@
 			</File>
 			<File
 				RelativePath=".\SynchronizedTimeHandler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TeleportBox.h"
 				>
 			</File>
 			<File

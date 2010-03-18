@@ -22,66 +22,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#if !defined(__LbaNetModel_1_LbaNetEngine_h)
-#define __LbaNetModel_1_LbaNetEngine_h
+#if !defined(__LbaNetModel_1_GUI_h)
+#define __LbaNetModel_1_GUI_h
 
-
-#include <string>
-
-#include <boost/shared_ptr.hpp>
-#include "LbaNetModel.h"
-#include "CharacterController.h"
-#include "GuiHandler.h"
-
-class PhysXEngine;
-class EventHandler;
+namespace CEGUI
+{
+	class Window;
+}
 
 /***********************************************************************
- * Module:  LbaNetEngine.h
- * Author:  vivien
- * Modified: mardi 14 juillet 2009 17:41:03
- * Purpose: Declaration of the class LbaNetEngine
+ * Module:  GUI.h
+ * Author:  Vivien
+ * Modified: lundi 27 juillet 2009 19:42:09
+ * Purpose: Declaration of the class GUI
  ***********************************************************************/
-class LbaNetEngine
+class GUI
 {
 public:
-	//!constructor
-	LbaNetEngine();
+	//! constructor
+	GUI();
 
-	//!destructor
-   ~LbaNetEngine();
+	//! destructor
+	virtual ~GUI();
 
-	//! entry point of the engine
-	void run(void);
+	//! return the current gui root
+	CEGUI::Window * GetRoot(void);
 
+	//! process function
+	virtual void Process(){}
 
-	//! start a move from keyboard input
-	void StartMove(int MoveType);
+	//! refresh the gui
+	void Refresh();
 
-	//! stop a move from keyboard input
-	void StopMove(int MoveType);
-
-	//! do action from keyboard input
-	void DoAction();
-
+	//! called to infrom the gui that it is displayed
+	virtual void Displayed() = 0;
 
 protected:
-	//! process function
-	void Process(void);
-
-	//! initialize the class
-	void Initialize(void);
-
-private:
-	GuiHandler						m_gui_handler;
-	LbaNetModel						m_lbaNetModel;		// game model
-	boost::shared_ptr<EventHandler>	m_eventHandler;		// handle input events
-	boost::shared_ptr<PhysXEngine>	m_physic_engine;	//physic engine
-
-	boost::shared_ptr<CharacterController>	m_controller;
-
-	double							m_lasttime;
-
+	// root window
+	CEGUI::Window * _root;
 
 };
 
