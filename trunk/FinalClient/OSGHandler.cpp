@@ -300,7 +300,11 @@ void OsgHandler::Initialize(const std::string &WindowName, const std::string &Da
 	_viewer->addEventHandler( new UserInputsHandler(evH) );
 
 	 // create the windows
+	_viewer->setUpViewOnSingleScreen(0);
+
     _viewer->realize();
+	_viewer->renderingTraversals();
+
 
 
 	// put everything in the right place
@@ -839,4 +843,28 @@ void OsgHandler::SetClipPlane(float layer)
 		_clipNode->addClipPlane(clipplane);
 		_clipNode->setStateSetModes(*_translNode->getOrCreateStateSet(),osg::StateAttribute::ON);
 	}
+}
+
+
+/***********************************************************
+set screen attributes
+***********************************************************/
+void OsgHandler::SetScreenAttributes(int resX, int resY, bool fullscreen)
+{
+	_isFullscreen = fullscreen;
+	_resX = resX;
+	_resY = resY;
+	ResetScreen();
+}
+
+
+
+/***********************************************************
+set screen attributes
+***********************************************************/
+void OsgHandler::GetScreenAttributes(int &resX, int &resY, bool &fullscreen)
+{
+	fullscreen = _isFullscreen;
+	resX = _resX;
+	resY = _resY;
 }

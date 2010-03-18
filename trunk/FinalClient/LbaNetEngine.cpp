@@ -73,25 +73,10 @@ void LbaNetEngine::Initialize(void)
 	LogHandler::getInstance()->LogToFile("Initialize physic engine...");
 	m_physic_engine = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
 
-	m_physic_engine2 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
-	m_physic_engine3 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
-	m_physic_engine4 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
-	m_physic_engine5 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
-	m_physic_engine6 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
-	m_physic_engine7 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
-	m_physic_engine8 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
-	m_physic_engine9 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
-	m_physic_engine10 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
-	m_physic_engine11 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
-	m_physic_engine12 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
-	m_physic_engine13 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
-	m_physic_engine14 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
-	m_physic_engine15 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
-	m_physic_engine16 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
-	m_physic_engine17 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
-	m_physic_engine18 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
-	m_physic_engine19 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
-	m_physic_engine20 = boost::shared_ptr<PhysXEngine>(new PhysXEngine());
+
+
+	// init GUI
+	m_gui_handler.Initialize(false, "0.8", this);
 
 
 	m_controller = boost::shared_ptr<CharacterController>(new CharacterController(m_physic_engine));
@@ -204,10 +189,15 @@ void LbaNetEngine::Process(void)
 	// process model (update display stuff)
 	m_lbaNetModel.Process();
 
+	// process GUI
+	m_gui_handler.Process();
+
+
 	double currtime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDoubleSync();
 	float diff = (float)(currtime-m_lasttime);
 	m_lasttime = currtime;
 	m_controller->Process(currtime, diff);
+
 
 }
 
