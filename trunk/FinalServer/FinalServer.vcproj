@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\dependencies\zoidcom\include;..\dependencies\Boost\include"
+				AdditionalIncludeDirectories="..\dependencies\zoidcom\include;..\dependencies\Boost\include;..\shared"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -117,7 +117,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\dependencies\zoidcom\include;..\dependencies\Boost\include"
+				AdditionalIncludeDirectories="..\dependencies\zoidcom\include;..\dependencies\Boost\include;..\shared"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -181,6 +181,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\LogHandler.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\main.cpp"
 				>
 			</File>
@@ -196,6 +200,10 @@
 			>
 			<File
 				RelativePath=".\ConnectionHandler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\LogHandler.h"
 				>
 			</File>
 			<File
