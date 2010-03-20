@@ -33,7 +33,7 @@ Server::Server( int _internalport, int _udpport )
 : m_conncount(0)
 {
 	// this will allocate the sockets and create local bindings
-	if ( !ZCom_initSockets( eZCom_EnableUDP, _udpport, _internalport, 0 ) )
+	if ( !ZCom_initSockets( true, _udpport, _internalport, 0 ) )
 	{
 		LogHandler::getInstance()->LogToFile("Zoid: Failed to initialize sockets!", 2);
 	}
@@ -64,7 +64,7 @@ Server::~Server()
 /***********************************************************
 called on incoming connections
 ***********************************************************/
-eZCom_RequestResult Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request, ZCom_BitStream &_reply )
+bool Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request, ZCom_BitStream &_reply )
 {
 	// retrieve request for login and password
 	const char * login = _request.getStringStatic();
@@ -83,8 +83,8 @@ eZCom_RequestResult Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitS
 		else if ( addr->getType() == eZCom_AddressUDP )
 		{
 			std::stringstream strs;
-			strs<<"Server: Incoming connection from UDP: "<<addr->getIP( 0 )<<"."<<addr->getIP( 1 )
-				<<"."<<addr->getIP( 2 )<<"."<<addr->getIP( 3 )<<":"<<addr->getPort();
+			strs<<"Server: Incoming connection from UDP: "<<(int)addr->getIP( 0 )<<"."<<(int)addr->getIP( 1 )
+				<<"."<<(int)addr->getIP( 2 )<<"."<<(int)addr->getIP( 3 )<<":"<<(int)addr->getPort();
 			LogHandler::getInstance()->LogToFile(strs.str(), 2);    
 		}
 	}
@@ -96,7 +96,7 @@ eZCom_RequestResult Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitS
 		strs<<"Server: Incoming connection with ID: "<<_id<<" accepted";
 		LogHandler::getInstance()->LogToFile(strs.str(), 2);    
 
-		return eZCom_AcceptRequest;
+		return true;
 	}
 	else
 	{
@@ -106,7 +106,7 @@ eZCom_RequestResult Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitS
 
 		// deny connection request and send reason back to requester
 		_reply.addString( "Incorrect usernam or password" );
-		return eZCom_DenyRequest;
+		return false;
 	}
 }
 
@@ -142,32 +142,29 @@ void Server::ZCom_cbConnectionClosed( ZCom_ConnID _id, eZCom_CloseReason _reason
 
 
 
-
 /***********************************************************
 called when a connection wants to enter a channel
 ***********************************************************/
-eZCom_RequestResult Server::ZCom_cbChannelSubscriptionChangeRequest( ZCom_ConnID _id, zU32 _requested_channel, 
-																		ZCom_BitStream &_reason )
+bool Server::ZCom_cbZoidRequest( ZCom_ConnID _id, zU8 _requested_level, ZCom_BitStream &_reason)
 {
 	std::stringstream strs;
-	strs<<"Server: Incoming connection with ID: "<<_id<<" wants to enter the channel "<<_requested_channel;
+	strs<<"Server: Incoming connection with ID: "<<_id<<" wants to enter the channel "<<(int)_requested_level;
 	LogHandler::getInstance()->LogToFile(strs.str(), 2);
 
-	return eZCom_AcceptRequest;
+	return true;
 }
 
 
 /***********************************************************
 called when a connection enters a channel
 ***********************************************************/
-void Server::ZCom_cbChannelSubscriptionChangeResult( ZCom_ConnID _id, eZCom_SubscriptionResult _result, 
-														zU32 _new_channel, ZCom_BitStream &_reason )
+void Server::ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _new_level, ZCom_BitStream &_reason)
 {
 	//channel connection accepted
-	if(_result == eZCom_RequestedChannelSubscribed)
+	if(_result == eZCom_ZoidEnabled)
 	{
 		std::stringstream strs;
-		strs<<"Server: Incoming connection with ID: "<<_id<<" entered the channel "<<_new_channel;
+		strs<<"Server: Incoming connection with ID: "<<_id<<" entered the channel "<<_new_level;
 		LogHandler::getInstance()->LogToFile(strs.str(), 2);
 	}
 }
