@@ -1,187 +1,175 @@
-/****************************************
-* server.cpp
-* part of example source code
-*
-* This file is part of the "Zoidcom Automated Networking System" application library.
-* Copyright (C)2002-2006 by Joerg Rueppel. See documentation for copyright and licensing details.
-*****************************************/
+/*
+------------------------[ Lbanet Source ]-------------------------
+Copyright (C) 2009
+Author: Vivien Delage [Rincevent_123]
+Email : vdelage@gmail.com
 
-#include "common.h"
+-------------------------------[ GNU License ]-------------------------------
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-----------------------------------------------------------------------------
+*/
+
 #include "server.h"
+#include "LogHandler.h"
 
+
+/***********************************************************
+Constructor
+***********************************************************/
 Server::Server( int _internalport, int _udpport )
+: m_conncount(0)
 {
 	// this will allocate the sockets and create local bindings
-	if ( !ZCom_initSockets( true, _udpport, _internalport, CONTROL_ID_SIZE ) )
+	if ( !ZCom_initSockets( eZCom_EnableUDP, _udpport, _internalport, 0 ) )
 	{
-	sys_print( "Server: unable to initialize the sockets" );
-	is_ok = false;
+		LogHandler::getInstance()->LogToFile("Zoid: Failed to initialize sockets!", 2);
 	}
-	else
-	is_ok = true;
 
-	ZCom_setControlID(CONTROL_ID);
-
-	// string shown in zcoms debug output
+	// string shown in log output
 	ZCom_setDebugName("ZCOM_SRV");
-
-
-	// register the only object class we are going to use
-	ZCom_registerClass("NObject", ZCOM_CLASSFLAG_ANNOUNCEDATA);
-
 
 	// maximum 8k/sec upstream and 2k/sec/connection
 	ZCom_setUpstreamLimit(8000, 2000);
 
+	std::stringstream strs;
+	strs<<"Server running and listening on udp port: "<<_udpport;
+	LogHandler::getInstance()->LogToFile(strs.str(), 2);    
 }
 
+
+/***********************************************************
+Destructor
+***********************************************************/
 Server::~Server()
 {
 
 }
 
-// update the four random moving objects
-void Server::UpdateInput(unsigned int elpasedTime)
+
+
+
+/***********************************************************
+called on incoming connections
+***********************************************************/
+eZCom_RequestResult Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request, ZCom_BitStream &_reply )
 {
+	// retrieve request for login and password
+	const char * login = _request.getStringStatic();
+	const char * password = _request.getStringStatic();
 
-	// all callbacks are generated from within the processInput calls
-	ZCom_processInput( eZCom_NoBlock );
+	// address information
+	const ZCom_Address* addr = ZCom_getPeer( _id );
+	if ( addr )
+	{
+		if ( addr->getType() == eZCom_AddressLocal )
+		{
+			std::stringstream strs;
+			strs<<"Server: Incoming connection from localport: "<<addr->getPort();
+			LogHandler::getInstance()->LogToFile(strs.str(), 2);    
+		}
+		else if ( addr->getType() == eZCom_AddressUDP )
+		{
+			std::stringstream strs;
+			strs<<"Server: Incoming connection from UDP: "<<addr->getIP( 0 )<<"."<<addr->getIP( 1 )
+				<<"."<<addr->getIP( 2 )<<"."<<addr->getIP( 3 )<<":"<<addr->getPort();
+			LogHandler::getInstance()->LogToFile(strs.str(), 2);    
+		}
+	}
 
+	// check what the client is requesting
+	if ( login && password && strlen( password ) > 0 && strcmp( password, "letmein2" ) == 0 )
+	{
+		std::stringstream strs;
+		strs<<"Server: Incoming connection with ID: "<<_id<<" accepted";
+		LogHandler::getInstance()->LogToFile(strs.str(), 2);    
 
-	// update replicators and tell zoidcom how much ingame time has passed since the last
-	// time this was called
-	ZCom_processReplicators(elpasedTime);
+		return eZCom_AcceptRequest;
+	}
+	else
+	{
+		std::stringstream strs;
+		strs<<"Server: Incoming connection with ID: "<<_id<<" denied";
+		LogHandler::getInstance()->LogToFile(strs.str(), 2);    
 
-
-	// process client inputs
-
-	// update the objects and their physics
+		// deny connection request and send reason back to requester
+		_reply.addString( "Incorrect usernam or password" );
+		return eZCom_DenyRequest;
+	}
 }
 
 
-
-//! update network output
-void UpdateOutput()
-{
-	// outstanding data will be packed up and sent from here
-	Server::ZCom_processOutput();
-}
-
-
-
-
-// called on incoming connections
-bool Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request, ZCom_BitStream &_reply )
-{
-  // retrieve request, we work with strings now, could as well be anything else the ZCom_BitStream class can handle
-  const char * req = _request.getStringStatic();
-
-  // address information
-  const ZCom_Address* addr = ZCom_getPeer( _id );
-  if ( addr )
-  {
-    if ( addr->getType() == eZCom_AddressLocal )
-      sys_print( "Server: Incoming connection from localport: %d", addr->getPort() );
-    else if ( addr->getType() == eZCom_AddressUDP )
-      sys_print( "Server: Incoming connection from UDP: %d.%d.%d.%d:%d", addr->getIP( 0 ), addr->getIP( 1 ), addr->getIP( 2 ), addr->getIP( 3 ), addr->getPort() );
-  }
-
-  // check what the client is requesting
-  if ( req && strlen( req ) > 0 && strcmp( req, "letmein2" ) == 0 )
-  {
-    sys_print( "Server: Incoming connection with ID: %d requesting: '%s'... accepted", _id, req );
-    // accept the connection request
-    _reply.addString("come_in");
-    return true;
-  }
-  else
-  {
-    sys_print( "Server: Incoming connection with ID: %d requesting: '%s'... denied", _id, req );
-    // deny connection request and send reason back to requester
-    _reply.addString( "invalid request" );
-    return false;
-  }
-}
-
-// called when incoming connection has been established
+/***********************************************************
+called when incoming connection has been established
+***********************************************************/
 void Server::ZCom_cbConnectionSpawned( ZCom_ConnID _id )
 {
-  sys_print( "Server: Incoming connection with ID: %d has been established.", _id );
+	std::stringstream strs;
+	strs<<"Server: Incoming connection with ID: "<<_id<<" has been established.";
+	LogHandler::getInstance()->LogToFile(strs.str(), 2);    
 
-  // request 20 packets/second and 200 bytes per packet from client (maximum values of course)
-  ZCom_requestDownstreamLimit(_id, 20, 200);
 
-  // initialize userdata to -1, otherwise we delete object 0 when connection closes again
-  // and the connection has not entered zoidmode before
-  ZCom_setUserData(_id, (void*) -1);
+	// request 20 packets/second and 200 bytes per packet from client (maximum values of course)
+	ZCom_requestDownstreamLimit(_id, 20, 200);
 
-  conncount++;
+	++m_conncount;
 }
 
-// called when a connection closed
+
+/***********************************************************
+called when a connection closed
+***********************************************************/
 void Server::ZCom_cbConnectionClosed( ZCom_ConnID _id, eZCom_CloseReason _reason, ZCom_BitStream &_reasondata )
 {
-  sys_print( "Server: Connection with ID: %d has been closed", _id);
+	std::stringstream strs;
+	strs<<"Server: Incoming connection with ID: "<<_id<<" has been closed.";
+	LogHandler::getInstance()->LogToFile(strs.str(), 2);  
 
-  // retrieve object belonging to client
-  int slot = (int) ZCom_getUserData(_id);
-  if (slot >= 0 && slot < OBJ_MAX)
-  {
-    // and delete the object
-    if (objs[slot]) delete objs[slot];
-    objs[slot] = NULL;
-  }
-
-  conncount--;
+	--m_conncount;
 }
 
-// a client wants to enter a zoidlevel
-bool Server::ZCom_cbZoidRequest( ZCom_ConnID _id, zU8 _requested_level, ZCom_BitStream &_reason)
+
+
+
+/***********************************************************
+called when a connection wants to enter a channel
+***********************************************************/
+eZCom_RequestResult Server::ZCom_cbChannelSubscriptionChangeRequest( ZCom_ConnID _id, zU32 _requested_channel, 
+																		ZCom_BitStream &_reason )
 {
-  // check level and accept
-  if (_requested_level == 2)
-  {
-    sys_print("Server: accepted Zoidrequest for level [%d] from %d", _requested_level, _id);
-    return true;
-  }
-  // or deny
-  else
-    return false;
+	std::stringstream strs;
+	strs<<"Server: Incoming connection with ID: "<<_id<<" wants to enter the channel "<<_requested_channel;
+	LogHandler::getInstance()->LogToFile(strs.str(), 2);
+
+	return eZCom_AcceptRequest;
 }
 
-// client entered a zoidlevel or failed
-void Server::ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _new_level, ZCom_BitStream &_reason)
+
+/***********************************************************
+called when a connection enters a channel
+***********************************************************/
+void Server::ZCom_cbChannelSubscriptionChangeResult( ZCom_ConnID _id, eZCom_SubscriptionResult _result, 
+														zU32 _new_channel, ZCom_BitStream &_reason )
 {
-  // failed
-  if (_result != eZCom_ZoidEnabled)
-  {
-    sys_print("Server: %d failed to enter zoidmode", _id);
-    return;
-  }
-
-  sys_print("Server: Zoidlevel transition successful for level [%d] from connection %d", _new_level, _id);
-  sys_print("Server: Creating node for client to play with now...", _new_level, _id);
-
-  // spawn new playerobject
-  NObject *no = new NObject;
-
-  // this will create the ZCom_Node and register it with us (we are a ZCom_Control)
-  no->init(this);
-  // make connection owner of object so connection may change x and y of object (see NObject::init())
-  no->node->setOwner(_id, true);
-
-  // search free slot
-  for (int i = 0; i < OBJ_MAX; i++)
-  {
-    if (objs[i] == NULL)
-    {
-      no->data.slot = i;
-      objs[i] = no;
-      // remember slot in connection userdata
-      ZCom_setUserData(_id, (void*) no->data.slot);
-      sys_print("Server: inserted node in slot: %d", i);
-      break;
-    }
-  }
+	//channel connection accepted
+	if(_result == eZCom_RequestedChannelSubscribed)
+	{
+		std::stringstream strs;
+		strs<<"Server: Incoming connection with ID: "<<_id<<" entered the channel "<<_new_channel;
+		LogHandler::getInstance()->LogToFile(strs.str(), 2);
+	}
 }
+
 
