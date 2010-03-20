@@ -40,7 +40,7 @@ public:
 
 protected:
 	// called on incoming connections
-	eZCom_RequestResult ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request, 
+	bool ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request, 
 																		ZCom_BitStream &_reply );
 
 	// called when incoming connection has been established
@@ -50,21 +50,20 @@ protected:
 	void ZCom_cbConnectionClosed( ZCom_ConnID _id, eZCom_CloseReason _reason, ZCom_BitStream &_reasondata );
 
 	// called when a connection wants to enter a channel
-	eZCom_RequestResult ZCom_cbChannelSubscriptionChangeRequest( ZCom_ConnID _id, zU32 _requested_channel, 
-																	ZCom_BitStream &_reason );
-
+	bool ZCom_cbZoidRequest( ZCom_ConnID _id, zU8 _requested_level, ZCom_BitStream &_reason);
+	
 	// called when a connection enters a channel
-	void ZCom_cbChannelSubscriptionChangeResult( ZCom_ConnID _id, eZCom_SubscriptionResult _result, 
-													zU32 _new_channel, ZCom_BitStream &_reason );
+	void ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _new_level, ZCom_BitStream &_reason);
 
 
 
 	// called when broadcast has been received
-	eZCom_RequestResult ZCom_cbDiscoverRequest(const ZCom_Address &_addr, ZCom_BitStream &_request, 
-												ZCom_BitStream &_reply) {return eZCom_DenyRequest;}
+	bool ZCom_cbDiscoverRequest(const ZCom_Address &_addr, ZCom_BitStream &_request, 
+												ZCom_BitStream &_reply) {return false;}
 
-
+	//data received from the clients
 	virtual void ZCom_cbDataReceived( ZCom_ConnID _id, ZCom_BitStream &_data ) {}
+
 
 	// client stuff
 	virtual void ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result, ZCom_BitStream &_reply ) {}
