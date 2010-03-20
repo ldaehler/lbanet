@@ -32,6 +32,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "LbaNetEngine.h"
 #include "UserAllocatorHandler.h"
+#include "ConnectionHandler.h"
+#include "chatclient.h"
 
 
 int main( int argc, char **argv )
@@ -39,8 +41,15 @@ int main( int argc, char **argv )
 	// init memory allocator
 	UserAllocatorHandler::getInstance()->Initialize();
 
+	// set up connection class
+	boost::shared_ptr<ConnectionHandler> ConH = boost::shared_ptr<ConnectionHandler>(new ConnectionHandler());
+
+	// set up chat client
+	boost::shared_ptr<ChatClient> Chatcl = boost::shared_ptr<ChatClient>(new ChatClient());
+
+
 	// start main thread engine
-	LbaNetEngine engine;
+	LbaNetEngine engine(Chatcl);
 	engine.run();
 
 	return 0;
