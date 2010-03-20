@@ -28,11 +28,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "PhysXEngine.h"
 #include "EventHandler.h"
 #include "SynchronizedTimeHandler.h"
+#include "chatclient.h"
+
 
 /***********************************************************
 	Constructor
 ***********************************************************/
-LbaNetEngine::LbaNetEngine()
+LbaNetEngine::LbaNetEngine(boost::shared_ptr<ChatClient> Chatcl)
+: m_Chatcl(Chatcl)
 {
 	Initialize();
 }
@@ -143,6 +146,9 @@ void LbaNetEngine::Initialize(void)
 
 		m_lbaNetModel.GetObject(1)->GetDisplayObject()->SetCameraFollow();
 	}
+
+	// connect chat client to server
+	m_Chatcl->ConnectToServer("127.0.0.1:8899", "cmoi", "letmein2");
 }
 
 
@@ -162,6 +168,13 @@ void LbaNetEngine::run(void)
 			//get physic results
 			m_physic_engine->GetPhysicsResults();
 
+
+			// processes incoming packets
+			// all callbacks are generated from within the processInput calls
+			m_Chatcl->ZCom_processInput( eZCom_NoBlock );
+
+			// outstanding data will be packed up and sent from here
+			m_Chatcl->ZCom_processOutput();
 
 			// process stuff between frame
 			Process();

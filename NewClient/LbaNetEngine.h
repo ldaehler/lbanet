@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class PhysXEngine;
 class EventHandler;
+class ChatClient;
 
 /***********************************************************************
  * Module:  LbaNetEngine.h
@@ -46,7 +47,7 @@ class LbaNetEngine
 {
 public:
 	//!constructor
-	LbaNetEngine();
+	LbaNetEngine(boost::shared_ptr<ChatClient> Chatcl);
 
 	//!destructor
    ~LbaNetEngine();
@@ -77,6 +78,7 @@ private:
 	LbaNetModel						m_lbaNetModel;		// game model
 	boost::shared_ptr<EventHandler>	m_eventHandler;		// handle input events
 	boost::shared_ptr<PhysXEngine>	m_physic_engine;	//physic engine
+	boost::shared_ptr<ChatClient>	m_Chatcl;			//chat client
 
 	boost::shared_ptr<CharacterController>	m_controller;
 
