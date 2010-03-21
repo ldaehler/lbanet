@@ -24,16 +24,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "server.h"
 #include "LogHandler.h"
-
+#include "ChatChannelManager.h"
+#include "ChatChannel.h"
 
 /***********************************************************
 Constructor
 ***********************************************************/
-Server::Server( int _internalport, int _udpport )
-: m_conncount(0)
+Server::Server( int _internalport, int _udpport, 
+				unsigned int uplimittotal, unsigned int uplimitperconnection,
+				unsigned short downpacketpersecond, unsigned short downbyteperpacket)
+: m_conncount(0), m_uplimittotal(uplimittotal), m_uplimitperconnection(uplimitperconnection), 
+	m_downpacketpersecond(downpacketpersecond), m_downbyteperpacket(downbyteperpacket),
+	m_chatM(NULL)
 {
 	// this will allocate the sockets and create local bindings
-	if ( !ZCom_initSockets( true, _udpport, _internalport, 0 ) )
+	if ( !ZCom_initSockets( eZCom_EnableUDP, _udpport, _internalport, 0 ) )
 	{
 		LogHandler::getInstance()->LogToFile("Zoid: Failed to initialize sockets!", 2);
 	}
@@ -42,11 +47,19 @@ Server::Server( int _internalport, int _udpport )
 	ZCom_setDebugName("ZCOM_SRV");
 
 	// maximum 8k/sec upstream and 2k/sec/connection
-	ZCom_setUpstreamLimit(8000, 2000);
+	ZCom_setUpstreamLimit(m_uplimittotal, m_uplimitperconnection);
 
 	std::stringstream strs;
 	strs<<"Server running and listening on udp port: "<<_udpport;
-	LogHandler::getInstance()->LogToFile(strs.str(), 2);    
+	LogHandler::getInstance()->LogToFile(strs.str(), 2);
+
+	// register classes
+	ChatChannelManager::registerClass(this);
+	ChatChannel::registerClass(this);
+
+	//create chat manager
+	m_chatM = new ChatChannelManager(this);
+
 }
 
 
@@ -55,7 +68,8 @@ Destructor
 ***********************************************************/
 Server::~Server()
 {
-
+	if(m_chatM)
+		delete m_chatM;
 }
 
 
@@ -64,7 +78,7 @@ Server::~Server()
 /***********************************************************
 called on incoming connections
 ***********************************************************/
-bool Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request, ZCom_BitStream &_reply )
+eZCom_RequestResult Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request, ZCom_BitStream &_reply )
 {
 	// retrieve request for login and password
 	const char * login = _request.getStringStatic();
@@ -96,7 +110,7 @@ bool Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request
 		strs<<"Server: Incoming connection with ID: "<<_id<<" accepted";
 		LogHandler::getInstance()->LogToFile(strs.str(), 2);    
 
-		return true;
+		return eZCom_AcceptRequest;
 	}
 	else
 	{
@@ -106,7 +120,7 @@ bool Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request
 
 		// deny connection request and send reason back to requester
 		_reply.addString( "Incorrect usernam or password" );
-		return false;
+		return eZCom_DenyRequest;
 	}
 }
 
@@ -118,11 +132,14 @@ void Server::ZCom_cbConnectionSpawned( ZCom_ConnID _id )
 {
 	std::stringstream strs;
 	strs<<"Server: Incoming connection with ID: "<<_id<<" has been established.";
-	LogHandler::getInstance()->LogToFile(strs.str(), 2);    
+	LogHandler::getInstance()->LogToFile(strs.str(), 2);
+
+	//set as owner of chat manager
+	m_chatM->GetNode()->setOwner(_id, true);
 
 
 	// request 20 packets/second and 200 bytes per packet from client (maximum values of course)
-	ZCom_requestDownstreamLimit(_id, 20, 200);
+	ZCom_requestDownstreamLimit(_id, m_downpacketpersecond, m_downbyteperpacket);
 
 	++m_conncount;
 }
@@ -137,6 +154,10 @@ void Server::ZCom_cbConnectionClosed( ZCom_ConnID _id, eZCom_CloseReason _reason
 	strs<<"Server: Incoming connection with ID: "<<_id<<" has been closed.";
 	LogHandler::getInstance()->LogToFile(strs.str(), 2);  
 
+	//clear client from channels
+	if(m_chatM)
+		m_chatM->ClientDisconnected(_id);
+
 	--m_conncount;
 }
 
@@ -145,28 +166,40 @@ void Server::ZCom_cbConnectionClosed( ZCom_ConnID _id, eZCom_CloseReason _reason
 /***********************************************************
 called when a connection wants to enter a channel
 ***********************************************************/
-bool Server::ZCom_cbZoidRequest( ZCom_ConnID _id, zU8 _requested_level, ZCom_BitStream &_reason)
+eZCom_RequestResult Server::ZCom_cbChannelSubscriptionChangeRequest( ZCom_ConnID _id, 
+											zU32 _requested_channel, ZCom_BitStream &_reason )
 {
 	std::stringstream strs;
-	strs<<"Server: Incoming connection with ID: "<<_id<<" wants to enter the channel "<<(int)_requested_level;
+	strs<<"Server: Incoming connection with ID: "<<_id<<" wants to enter the channel "<<_requested_channel;
 	LogHandler::getInstance()->LogToFile(strs.str(), 2);
 
-	return true;
+	return eZCom_AcceptRequest;
 }
 
 
 /***********************************************************
 called when a connection enters a channel
 ***********************************************************/
-void Server::ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _new_level, ZCom_BitStream &_reason)
+void Server::ZCom_cbChannelSubscriptionChangeResult( ZCom_ConnID _id, eZCom_SubscriptionResult _result, 
+													zU32 _new_channel, ZCom_BitStream &_reason )
 {
 	//channel connection accepted
-	if(_result == eZCom_ZoidEnabled)
+	if(_result == eZCom_RequestedChannelSubscribed || _result == eZCom_AutomaticChannelSubscribed)
 	{
 		std::stringstream strs;
-		strs<<"Server: Incoming connection with ID: "<<_id<<" entered the channel "<<_new_level;
+		strs<<"Server: Incoming connection with ID: "<<_id<<" entered the channel "<<_new_channel;
 		LogHandler::getInstance()->LogToFile(strs.str(), 2);
 	}
 }
 
 
+
+
+/***********************************************************
+process server internal stuff
+***********************************************************/
+void Server::Process()
+{
+	if(m_chatM)
+		m_chatM->Process();
+}

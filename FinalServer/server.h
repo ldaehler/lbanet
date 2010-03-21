@@ -27,20 +27,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <zoidcom.h>
 
+class ChatChannelManager;
+
 
 class Server : public ZCom_Control
 {
 public:
 	//! constructor
-	Server( int _internalport, int _udpport );
+	Server( int _internalport, int _udpport, 
+			unsigned int uplimittotal, unsigned int uplimitperconnection,
+			unsigned short downpacketpersecond, unsigned short downbyteperpacket);
 
 	//! destructor
 	~Server();
 
+	//! process server internal stuff
+	void Process();
 
 protected:
 	// called on incoming connections
-	bool ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request, 
+	eZCom_RequestResult ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request, 
 																		ZCom_BitStream &_reply );
 
 	// called when incoming connection has been established
@@ -50,16 +56,17 @@ protected:
 	void ZCom_cbConnectionClosed( ZCom_ConnID _id, eZCom_CloseReason _reason, ZCom_BitStream &_reasondata );
 
 	// called when a connection wants to enter a channel
-	bool ZCom_cbZoidRequest( ZCom_ConnID _id, zU8 _requested_level, ZCom_BitStream &_reason);
-	
-	// called when a connection enters a channel
-	void ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _new_level, ZCom_BitStream &_reason);
+	eZCom_RequestResult ZCom_cbChannelSubscriptionChangeRequest( ZCom_ConnID _id, 
+											zU32 _requested_channel, ZCom_BitStream &_reason );
 
+	// called when a connection enters a channel
+	void ZCom_cbChannelSubscriptionChangeResult( ZCom_ConnID _id, eZCom_SubscriptionResult _result, 
+													zU32 _new_channel, ZCom_BitStream &_reason );
 
 
 	// called when broadcast has been received
-	bool ZCom_cbDiscoverRequest(const ZCom_Address &_addr, ZCom_BitStream &_request, 
-												ZCom_BitStream &_reply) {return false;}
+	eZCom_RequestResult ZCom_cbDiscoverRequest(const ZCom_Address &_addr, ZCom_BitStream &_request, 
+													ZCom_BitStream &_reply) {return eZCom_DenyRequest;}
 
 	//data received from the clients
 	virtual void ZCom_cbDataReceived( ZCom_ConnID _id, ZCom_BitStream &_data ) {}
@@ -76,6 +83,13 @@ protected:
 
 private:
 	int m_conncount;
+	unsigned int m_uplimittotal;
+	unsigned int m_uplimitperconnection;
+	unsigned short m_downpacketpersecond;
+	unsigned short m_downbyteperpacket;
+
+	//chat manager
+	ChatChannelManager*	m_chatM;
 };
 
 

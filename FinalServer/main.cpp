@@ -30,10 +30,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 int main(int argc, char *argv[])
 {
 	// set up connection class
-	boost::shared_ptr<ConnectionHandler> ConH = boost::shared_ptr<ConnectionHandler>(new ConnectionHandler());
+	boost::shared_ptr<ConnectionHandler> ConH = boost::shared_ptr<ConnectionHandler>(new ConnectionHandler("Zoidcom.log"));
 
 	// server operates on internal port 1 and UDP port 8899
-	boost::shared_ptr<Server> Serv = boost::shared_ptr<Server>(new Server(1, 8899));
+	boost::shared_ptr<Server> Serv = boost::shared_ptr<Server>(new Server(1, 8899, 8000, 2000, 20, 200));
 
 
 	// zoidcom needs to get called regularly to get anything done so we enter the mainloop now
@@ -42,6 +42,9 @@ int main(int argc, char *argv[])
 		// processes incoming packets
 		// all callbacks are generated from within the processInput calls
 		Serv->ZCom_processInput( eZCom_NoBlock );
+
+		// process internal stuff
+		Serv->Process();
 
 		// outstanding data will be packed up and sent from here
 		Serv->ZCom_processOutput();
