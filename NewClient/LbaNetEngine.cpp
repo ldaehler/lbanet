@@ -173,6 +173,9 @@ void LbaNetEngine::run(void)
 			// all callbacks are generated from within the processInput calls
 			m_Chatcl->ZCom_processInput( eZCom_NoBlock );
 
+			//process internal stuff
+			m_Chatcl->Process();
+
 			// outstanding data will be packed up and sent from here
 			m_Chatcl->ZCom_processOutput();
 

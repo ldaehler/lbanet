@@ -34,7 +34,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "UserAllocatorHandler.h"
 #include "ConnectionHandler.h"
 #include "chatclient.h"
+#include "ChatSubscriberBase.h"
 
+#include <iostream>
+
+class ChatSubscriberSimple : public ChatSubscriberBase
+{
+
+public:
+	// constructor
+	ChatSubscriberSimple(){}
+
+	// destructor
+	virtual ~ChatSubscriberSimple(){}
+
+	// received text message
+	virtual void ReceivedText(const std::string & SenderName, const std::string & Text)
+	{
+		std::cout<<SenderName<<": "<<Text<<std::endl;
+	}
+};
 
 int main( int argc, char **argv )
 {
@@ -42,16 +61,22 @@ int main( int argc, char **argv )
 	UserAllocatorHandler::getInstance()->Initialize();
 
 	// set up connection class
-	boost::shared_ptr<ConnectionHandler> ConH = boost::shared_ptr<ConnectionHandler>(new ConnectionHandler());
+	boost::shared_ptr<ConnectionHandler> ConH = boost::shared_ptr<ConnectionHandler>(new ConnectionHandler("Zoidcom.log"));
+
+	boost::shared_ptr<ChatSubscriberSimple> simpleSub(new ChatSubscriberSimple());
 
 	// set up chat client
-	boost::shared_ptr<ChatClient> Chatcl = boost::shared_ptr<ChatClient>(new ChatClient());
+	boost::shared_ptr<ChatClient> Chatcl = boost::shared_ptr<ChatClient>(new ChatClient(simpleSub));
 
 
 	// start main thread engine
 	LbaNetEngine engine(Chatcl);
 	engine.run();
 
+	Chatcl->CloseConnection();
+
+	Chatcl.reset();
+	ConH.reset();
 	return 0;
 }
 

@@ -24,21 +24,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "chatclient.h"
 #include "LogHandler.h"
+#include "ChatChannelManager.h"
+#include "ChatChannel.h"
 
 /***********************************************************************
  * Constructor
  ***********************************************************************/
-ChatClient::ChatClient()
-: m_id(ZCom_Invalid_ID), m_connected(false)
+ChatClient::ChatClient(boost::shared_ptr<ChatSubscriberBase> WorldSubscriber)
+: m_id(ZCom_Invalid_ID), m_connected(false), m_WorldSubscriber(WorldSubscriber),
+	m_subscribed_world(false)
 {
 	// this will allocate the sockets and create local bindings
-    if ( !ZCom_initSockets( true, 0, 0, 0 ) )
+    if ( !ZCom_initSockets( eZCom_EnableUDP, 0, 0, 0 ) )
     {
 		LogHandler::getInstance()->LogToFile("Zoid: Failed to initialize sockets!", 2);
     }
 
     // string shown in log output
     ZCom_setDebugName("ZCOM_CLI");
+
+
+	//register classes
+	ChatChannelManager::registerClass(this);
+	ChatChannel::registerClass(this);
 }
 
 
@@ -80,6 +88,8 @@ void ChatClient::ConnectToServer(const std::string & address, const std::string 
 	{
 		LogHandler::getInstance()->LogToFile("Chat client: unable to start connecting!", 2);
 	}
+
+	m_playername = login;
 }
 
 /***********************************************************************
@@ -98,7 +108,7 @@ void ChatClient::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _res
 	{
 		m_connected = true;
 		ZCom_requestDownstreamLimit(_id, 30, 200);
-		ZCom_requestZoidMode(_id, 2);
+		ZCom_changeObjectChannelSubscription( _id, 1, eZCom_Subscribe );
 		m_id = _id;
 	}
 }
@@ -121,15 +131,15 @@ void ChatClient::ZCom_cbConnectionClosed( ZCom_ConnID _id, eZCom_CloseReason _re
 /***********************************************************************
  * zoidlevel transition finished
  ***********************************************************************/
-void ChatClient::ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _new_level, 
-								   ZCom_BitStream &_reason)
+void ChatClient::ZCom_cbChannelSubscriptionChangeResult( ZCom_ConnID _id, eZCom_SubscriptionResult _result, 
+													zU32 _new_channel, ZCom_BitStream &_reason )
 {
 	// disconnect on failure
-	if (_result != eZCom_ZoidEnabled)
+	if (_result == eZCom_ChannelSubscriptionDenied || _result == eZCom_ChannelSubscriptionFailed_Node)
 	{
 		std::stringstream strs;
 		strs<<"Client: Connection with ID: "<<_id<<" channel subscription failed: "
-				<<(int)_new_level<<" - disconnecting";
+				<<_new_channel<<" - disconnecting";
 		LogHandler::getInstance()->LogToFile(strs.str(), 2);   
 
 		ZCom_Disconnect(_id, NULL);
@@ -137,7 +147,7 @@ void ChatClient::ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU
 	else
 	{
 		std::stringstream strs;
-		strs<<"Client: Connection with ID: "<<_id<<" channel subscription successfull: "<<(int)_new_level;
+		strs<<"Client: Connection with ID: "<<_id<<" channel subscription successfull: "<<_new_channel;
 		LogHandler::getInstance()->LogToFile(strs.str(), 2);   
 	}
 }
@@ -150,48 +160,120 @@ void ChatClient::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _reque
 											ZCom_BitStream *_announcedata, eZCom_NodeRole _role, 
 											ZCom_NodeID _net_id)
 {
-  //// check the requested class
-  //if (_requested_class == ZCom_getClassID("NObject"))
-  //{
-  //  sys_print("Client: Server requested creation of a new 'NObject' node. Network ID is: [%d].", _net_id);
-  //  sys_print("Client: Role for requested node will be %s", (_role == eZCom_RoleProxy) ? "'eZCom_RoleProxy'" : "'eZCom_RoleOwner' <- This is the node we can control now!");
+	// if this is the channel handler
+	if(_requested_class == ChatChannelManager::getClassID())
+	{
+		m_channelM = boost::shared_ptr<ChatChannelManager>(new ChatChannelManager(this));
+	}
 
-  //  // create the object
-  //  NObject *no = new NObject();
 
-  //  // this will create the object's node and register it with us
-  //  no->init(this);
+	// if this is the channel 
+	if(_requested_class == ChatChannel::getClassID())
+	{
+		if(m_channelM)
+		{
+			// get channel name and create the channel
+			char _buf[255];
+			_announcedata->getString( _buf, 255 );
+			ChatChannel * chn = m_channelM->GetOrAddChannel(_buf);
 
-  //  no->data.slot = -1;
+			// attach the subscriber
+			std::map<std::string, boost::shared_ptr<ChatSubscriberBase> >::iterator it = m_waitingsubs.find(_buf);
+			if(it != m_waitingsubs.end())
+			{
+				chn->AttachSubscriber(it->second);
+				m_waitingsubs.erase(it);
+			}
+		}
+	}
+}
 
-  //  // search for a free slot
-  //  for (int i = 0; i < OBJ_MAX; i++)
-  //  {
-  //    if (objs[i] == NULL)
-  //    {
-  //      no->data.slot = i;
-  //      objs[i] = no;
-  //      ZCom_setUserData(_id, (void*) no->data.slot);
 
-  //      // check if object is 'our' object
-  //      if (_role == eZCom_RoleOwner)
-  //      {
-  //        no->data.local = true;
-  //        m_localnode = i;
-  //      }
 
-  //      break;
-  //    }
-  //  }
 
-  //  // if no free slot was found disconnect
-  //  if (no->data.slot == -1)
-  //  {
-  //    delete no;
-  //    sys_print("Client: unable to handle more objects - diconnecting");
-  //    ZCom_Disconnect(m_id, NULL);
-  //  }
-  //}
-  //else
-  //  sys_print("Client: invalid class requested");
+/***********************************************************************
+ * subscribe to channel 'name'
+ ***********************************************************************/
+void ChatClient::SubscribeChannel(const std::string & channelname, 
+								  boost::shared_ptr<ChatSubscriberBase> Subscriber)
+{
+	if(m_channelM)
+	{
+		// do nothing if already subscribed
+		if(m_channelM->GetChannel(channelname) != NULL)
+			return;
+
+		m_channelM->SubscribeChannelToServer(channelname, m_playername);
+		m_waitingsubs[channelname] = Subscriber;
+	}
+}
+
+/***********************************************************************
+ * unsubscribe to channel 'name'
+ ***********************************************************************/
+void ChatClient::UnsubscribeChannel(const std::string & channelname)
+{
+	if(m_channelM)
+	{
+		// do nothing if not already subscribed
+		if(m_channelM->GetChannel(channelname) == NULL)
+			return;
+
+		m_channelM->UnsubscribeChannelToServer(channelname);
+	}
+}
+
+/***********************************************************************
+ * send text to a specific channel
+ ***********************************************************************/
+void ChatClient::SendText(const std::string & channelname, const std::string & text)
+{
+	if(m_channelM)
+	{
+		// do nothing if not already subscribed to this channel
+		if(m_channelM->GetChannel(channelname) == NULL)
+			return;
+	}
+}
+
+
+
+/***********************************************************
+process server internal stuff
+***********************************************************/
+void ChatClient::Process()
+{
+	if(m_channelM)
+	{
+		m_channelM->Process();
+
+		if(!m_subscribed_world)
+		{
+			if(m_channelM->IsInitialized())
+			{
+				SubscribeChannel("World", m_WorldSubscriber);
+				m_subscribed_world = true;
+			}
+		}
+	}
+}
+
+
+/***********************************************************
+close connection
+***********************************************************/
+void ChatClient::CloseConnection()
+{
+	if(!m_connected)
+		return;
+
+	ZCom_Disconnect( m_id, NULL );
+
+	// process until everything has been sent
+	while(m_connected)
+	{
+		ZCom_processInput( eZCom_NoBlock );
+		ZCom_processOutput();
+		ZoidCom::Sleep(10);
+	}
 }
