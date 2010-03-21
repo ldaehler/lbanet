@@ -183,6 +183,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\ChatChannel.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\ChatChannelManager.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\chatclient.cpp"
 				>
 			</File>
@@ -200,6 +208,10 @@
 			</File>
 			<File
 				RelativePath=".\EventHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\GameObject.cpp"
 				>
 			</File>
 			<File
@@ -289,7 +301,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\ChatChannel.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\ChatChannelManager.h"
+				>
+			</File>
+			<File
 				RelativePath=".\chatclient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\ChatSubscriberBase.h"
 				>
 			</File>
 			<File
@@ -314,6 +338,10 @@
 			</File>
 			<File
 				RelativePath=".\EventHandler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\GameObject.h"
 				>
 			</File>
 			<File

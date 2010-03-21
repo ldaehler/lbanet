@@ -28,18 +28,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <zoidcom.h>
 #include <string>
+#include <map>
+#include <boost/shared_ptr.hpp>
+
+#include "ChatSubscriberBase.h"
+
+class ChatChannelManager;
+
+
+
 
 class ChatClient : public ZCom_Control
 {
-protected:
-	// id given by the server
-	ZCom_ConnID		m_id;
-	bool			m_connected;
-
 public:
 
 	//! constructor
-	ChatClient();
+	ChatClient(boost::shared_ptr<ChatSubscriberBase> WorldSubscriber);
 
 	//!destructor
 	~ChatClient();
@@ -50,6 +54,25 @@ public:
 	//! check if client is connected
 	bool IsConnected() {return m_connected;}
 
+	//! check if client is connected
+	bool HasChannelManager() {return (m_channelM != NULL);}
+
+
+
+	//! subscribe to channel 'name'
+	void SubscribeChannel(const std::string & channelname, boost::shared_ptr<ChatSubscriberBase> Subscriber);
+
+	//! unsubscribe to channel 'name'
+	void UnsubscribeChannel(const std::string & channelname);
+
+	//! send text to a specific channel
+	void SendText(const std::string & channelname, const std::string & text);
+
+	//! process server internal stuff
+	void Process();
+
+	// close connection
+	void CloseConnection();
 
 protected:
 	// called when initiated connection process yields a result
@@ -60,8 +83,9 @@ protected:
 
 
 	// called when a connection enters a channel
-	void ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _new_level, ZCom_BitStream &_reason);
-
+	void ZCom_cbChannelSubscriptionChangeResult( ZCom_ConnID _id, eZCom_SubscriptionResult _result, 
+													zU32 _new_channel, ZCom_BitStream &_reason );
+	
 	// server wants to tell us about new node
 	void ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _requested_class, 
 								ZCom_BitStream *_announcedata, eZCom_NodeRole _role, ZCom_NodeID _net_id);
@@ -72,12 +96,25 @@ protected:
 
 
 	// server stuff
-	virtual bool ZCom_cbConnectionRequest( ZCom_ConnID  _id, ZCom_BitStream &_request, ZCom_BitStream &_reply ) {return false;}
+	virtual eZCom_RequestResult ZCom_cbConnectionRequest( ZCom_ConnID  _id, ZCom_BitStream &_request, ZCom_BitStream &_reply ) {return eZCom_AcceptRequest;}
 	virtual void ZCom_cbConnectionSpawned( ZCom_ConnID _id ) {}
-	virtual bool ZCom_cbZoidRequest( ZCom_ConnID _id, zU8 _requested_level, ZCom_BitStream &_reason ) {return false;}
+	virtual eZCom_RequestResult ZCom_cbChannelSubscriptionChangeRequest( ZCom_ConnID _id, zU32 _requested_channel, ZCom_BitStream &_reason ) {return eZCom_AcceptRequest;}
 	virtual void ZCom_cbNodeRequest_Tag( ZCom_ConnID _id, ZCom_ClassID _requested_class, ZCom_BitStream *_announcedata, eZCom_NodeRole _role, zU32 _tag ) {}
-	virtual bool ZCom_cbDiscoverRequest( const ZCom_Address &_addr, ZCom_BitStream &_request, ZCom_BitStream &_reply ) {return false;}
+	virtual eZCom_RequestResult ZCom_cbDiscoverRequest( const ZCom_Address &_addr, ZCom_BitStream &_request, ZCom_BitStream &_reply ) {return eZCom_AcceptRequest;}
 	virtual void ZCom_cbDiscovered( const ZCom_Address & _addr, ZCom_BitStream &_reply )  {}
+
+
+private:
+	// id given by the server
+	ZCom_ConnID		m_id;
+	bool			m_connected;
+	std::string		m_playername;
+	bool			m_subscribed_world;
+
+	boost::shared_ptr<ChatChannelManager> m_channelM;
+	boost::shared_ptr<ChatSubscriberBase> m_WorldSubscriber;
+
+	std::map<std::string, boost::shared_ptr<ChatSubscriberBase> >	m_waitingsubs;
 };
 
 #endif
