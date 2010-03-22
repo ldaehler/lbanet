@@ -45,7 +45,8 @@ public:
 	virtual ~ChatSubscriberBase(){}
 
 	// received text message
-	virtual void ReceivedText(const std::string & SenderName, const std::string & Text) = 0;
+	virtual void ReceivedText(const std::string & Channel, const std::string & SenderName, 
+																	const std::string & Text) = 0;
 };
 
 #endif
