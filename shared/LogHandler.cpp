@@ -47,10 +47,8 @@ LogHandler * LogHandler::getInstance()
 Constructor
 ***********************************************************/
 LogHandler::LogHandler()
-: _logfile("LBAClient.log", std::ios::app)
 {
-	_logfile<<std::endl<<std::endl<<"**********************************"<<std::endl;
-	_logfile<<boost::posix_time::second_clock::local_time()<<" - Starting..."<<std::endl;
+
 }
 
 
@@ -60,6 +58,18 @@ Destructor
 LogHandler::~LogHandler()
 {
 
+}
+
+
+
+/***********************************************************
+Destructor
+***********************************************************/
+void LogHandler::Init(const std::string filename)
+{
+	_logfile.open(filename.c_str(), std::ios::app);
+	_logfile<<std::endl<<std::endl<<"**********************************"<<std::endl;
+	_logfile<<boost::posix_time::second_clock::local_time()<<" - Starting..."<<std::endl;
 }
 
 
