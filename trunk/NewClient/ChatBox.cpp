@@ -118,7 +118,6 @@ ChatBox::ChatBox()
 {
 	_channels.push_back("World");
 	_channels.push_back("Map");
-	_channels.push_back("IRC");
 
 	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":)", "[colour='FFFFFFFF'][image='set:sm_smilie image:full_image']"));
 	_replace_string_map.push_back(std::make_pair<std::string, std::string>(":-)", "[colour='FFFFFFFF'][image='set:sm_smilie image:full_image']"));
@@ -207,7 +206,7 @@ void ChatBox::Initialize(CEGUI::Window* Root)
 		AddTab("All");
 		AddTab("World");
 		AddTab("Map");
-		AddTab("IRC");
+
 
 		static_cast<CEGUI::PushButton *> (
 			CEGUI::WindowManager::getSingleton().getWindow("Chat/bChannel"))->subscribeEvent (
@@ -399,13 +398,6 @@ void ChatBox::AddTab(const std::string & tabName)
 	txt->setProperty("UnifiedAreaRect", "{{0,0},{0,1},{1,0},{1,0}}");
 	txt->setProperty("ForceVertScrollbar", "True");
 	fWnd->addChildWindow(txt);
-
-	//CEGUI::MultiLineEditbox* txt = static_cast<CEGUI::MultiLineEditbox *>(CEGUI::WindowManager::getSingleton().createWindow( "TaharezLook/MultiLineEditbox", "Chat/Tab_"+tabName+"/editMulti" ));
-	//txt->setProperty("MaxTextLength", "1073741823");
-	//txt->setProperty("UnifiedMaxSize", "{{1,0},{1,0}}");
-	//txt->setProperty("UnifiedAreaRect", "{{0,0},{0,0},{1,0},{1,0}}");
-	//txt->setReadOnly(true);
-	//fWnd->addChildWindow(txt);
 	tc->addTab (fWnd);
 
    //txt->subscribeEvent(CEGUI::Editbox::EventKeyDown, CEGUI::Event::Subscriber (&ChatBox::HandleEnterKey, this));
@@ -485,40 +477,32 @@ void ChatBox::SendText(const std::string & channel, const std::string & Text)
 	if(Text == "")
 		return;
 
-	//if(channel == "IRC")
-	//{
-	//	if(_IRC)
-	//		_IRC->sendMessage(Text);
-	//}
-	//else
-	//{
-	//	if(Text[0] == '/')
-	//		ThreadSafeWorkpile::getInstance()->AddChatText(Text);
-	//	else
-	//	{
-	//		if(channel.size() > 2 && channel[0] == 'w' && channel[1] == ':') // in case of whisper
-	//		{
-	//			std::string tosend("/w ");
-	//			tosend += channel.substr(2);
-	//			tosend += " ";
-	//			tosend += Text;
-	//			ThreadSafeWorkpile::getInstance()->AddChatText(tosend);
-	//		}
-	//		else
-	//		{
-	//			std::string tosend("/");
-	//			if(channel == "Map")
-	//				tosend += _currentWorld + "_" + _currentMap;
-	//			else
-	//				tosend +=channel;
+	if(Text[0] == '/')
+		InternalWorkpile::getInstance()->AddChatText(Text);
+	else
+	{
+		if(channel.size() > 2 && channel[0] == 'w' && channel[1] == ':') // in case of whisper
+		{
+			std::string tosend("/w ");
+			tosend += channel.substr(2);
+			tosend += " ";
+			tosend += Text;
+			InternalWorkpile::getInstance()->AddChatText(tosend);
+		}
+		else
+		{
+			std::string tosend("/");
+			if(channel == "Map")
+				tosend += _currentWorld + "_" + _currentMap;
+			else
+				tosend +=channel;
 
-	//			tosend += " ";
-	//			tosend += Text;
+			tosend += " ";
+			tosend += Text;
 
-	//			ThreadSafeWorkpile::getInstance()->AddChatText(tosend);
-	//		}
-	//	}
-	//}
+			InternalWorkpile::getInstance()->AddChatText(tosend);
+		}
+	}
 }
 
 
@@ -598,22 +582,6 @@ bool ChatBox::HandleEnterKey (const CEGUI::EventArgs& e)
 			}
 			catch(...){}
 
-			//++_currSelectedch;
-			//if(_currSelectedch >= (int)_channels.size())
-			//	--_currSelectedch;
-			//else
-			//{
-			//	std::list<std::string>::const_iterator it = _channels.begin();
-			//	std::list<std::string>::const_iterator end = _channels.end();
-			//	for(int cc=0; cc<_currSelectedch && it != end; ++it, ++cc);
-
-			//	CEGUI::PushButton * bch = static_cast<CEGUI::PushButton *>
-			//		(CEGUI::WindowManager::getSingleton().getWindow("Chat/bChannel"));
-			//	bch->setProperty("Text", *it);
-			//}
-
-
-
 			return true;
 		}
 		if(we.scancode == CEGUI::Key::ArrowDown)
@@ -635,21 +603,6 @@ bool ChatBox::HandleEnterKey (const CEGUI::EventArgs& e)
 			{
 				CEGUI::WindowManager::getSingleton().getWindow("Chat/edit")->setText("");
 			}
-
-
-			//--_currSelectedch;
-			//if(_currSelectedch < 0)
-			//	++_currSelectedch;
-			//else
-			//{
-			//	std::list<std::string>::const_iterator it = _channels.begin();
-			//	std::list<std::string>::const_iterator end = _channels.end();
-			//	for(int cc=0; cc<_currSelectedch && it != end; ++it, ++cc);
-
-			//	CEGUI::PushButton * bch = static_cast<CEGUI::PushButton *>
-			//		(CEGUI::WindowManager::getSingleton().getWindow("Chat/bChannel"));
-			//	bch->setProperty("Text", *it);
-			//}
 
 			return true;
 		}
@@ -777,20 +730,20 @@ add a channel to the chat
 ***********************************************************/
 void ChatBox::AddChannel(const std::string & channel)
 {
-	//std::list<std::string>::iterator it = std::find(_channels.begin(), _channels.end(), channel);
-	//if(it != _channels.end())
-	//	return;
+	std::list<std::string>::iterator it = std::find(_channels.begin(), _channels.end(), channel);
+	if(it != _channels.end())
+		return;
 
-	//_channels.push_back(channel);
-	//AddTab(channel);
+	_channels.push_back(channel);
+	AddTab(channel);
 
-	//CEGUI::PushButton * bch = static_cast<CEGUI::PushButton *>
-	//	(CEGUI::WindowManager::getSingleton().getWindow("Chat/bChannel"));
-	//bch->setProperty("Text", (const unsigned char *)channel.c_str());
+	CEGUI::PushButton * bch = static_cast<CEGUI::PushButton *>
+		(CEGUI::WindowManager::getSingleton().getWindow("Chat/bChannel"));
+	bch->setProperty("Text", (const unsigned char *)channel.c_str());
 
-	//std::string tosend("/join ");
-	//tosend +=channel;
-	//ThreadSafeWorkpile::getInstance()->AddChatText(tosend);
+	std::string tosend("/join ");
+	tosend +=channel;
+	InternalWorkpile::getInstance()->AddChatText(tosend);
 }
 
 
@@ -903,7 +856,6 @@ handle event when the channel window is closed
 bool ChatBox::HandleCloseChatbox (const CEGUI::EventArgs& e)
 {
 	_myChat->hide();
-	//_gamgui->ShowChatIcon();
 	return true;
 }
 
@@ -929,26 +881,26 @@ used to process text to add
 ***********************************************************/
 void ChatBox::Process()
 {
-	//std::vector<std::pair<std::string, std::string> > colors;
-	//ThreadSafeWorkpile::getInstance()->GetColorChanges(colors);
-	//for(size_t i=0; i<colors.size(); ++i)
-	//	_name_colors[colors[i].first] = colors[i].second;
+	std::vector<std::pair<std::string, std::string> > colors;
+	InternalWorkpile::getInstance()->GetColorChanges(colors);
+	for(size_t i=0; i<colors.size(); ++i)
+		_name_colors[colors[i].first] = colors[i].second;
 
 
-	//std::vector<ThreadSafeWorkpile::ChatTextData> data;
-	//ThreadSafeWorkpile::getInstance()->GetChatData(data);
+	std::vector<InternalWorkpile::ChatTextData> data;
+	InternalWorkpile::getInstance()->GetChatData(data);
 
-	//std::vector<ThreadSafeWorkpile::ChatTextData>::const_iterator it = data.begin();
-	//std::vector<ThreadSafeWorkpile::ChatTextData>::const_iterator end = data.end();
+	std::vector<InternalWorkpile::ChatTextData>::const_iterator it = data.begin();
+	std::vector<InternalWorkpile::ChatTextData>::const_iterator end = data.end();
 
-	//for(; it != end; ++it)
-	//	AddText(it->Channel, it->Sender, it->Text);
+	for(; it != end; ++it)
+		AddText(it->Channel, it->Sender, it->Text);
 
-	//// add whisper channels
-	//std::vector<std::string> scvechan;
-	//ThreadSafeWorkpile::getInstance()->GetWhisperChannelQueries(scvechan);
-	//for(size_t i=0; i<scvechan.size(); ++i)
-	//	AddWhisperChanel(scvechan[i]);
+	// add whisper channels
+	std::vector<std::string> scvechan;
+	InternalWorkpile::getInstance()->GetWhisperChannelQueries(scvechan);
+	for(size_t i=0; i<scvechan.size(); ++i)
+		AddWhisperChanel(scvechan[i]);
 }
 
 

@@ -71,10 +71,10 @@ public:
 	void ConnectionCallback(int SuccessFlag, const std::string & reason);
 
 	//! test create channel
-	void TestCreateChannel();
-	void TestDeleteChannel();
-	void TestSpeakWorldChannel();
-	void TestSpeakOtherChannel();
+	//void TestCreateChannel();
+	//void TestDeleteChannel();
+	//void TestSpeakWorldChannel();
+	//void TestSpeakOtherChannel();
 
 protected:
 	//! process function

@@ -34,27 +34,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "UserAllocatorHandler.h"
 #include "ConnectionHandler.h"
 #include "chatclient.h"
-#include "ChatSubscriberBase.h"
 #include "LogHandler.h"
+#include "InternalWorkpile.h"
 
 #include <iostream>
-
-class ChatSubscriberSimple : public ChatSubscriberBase
-{
-
-public:
-	// constructor
-	ChatSubscriberSimple(){}
-
-	// destructor
-	virtual ~ChatSubscriberSimple(){}
-
-	// received text message
-	virtual void ReceivedText(const std::string & SenderName, const std::string & Text)
-	{
-		std::cout<<SenderName<<": "<<Text<<std::endl;
-	}
-};
 
 
 
@@ -117,7 +100,7 @@ int main( int argc, char **argv )
 	// set up connection class
 	ConnectionHandler* ConH = new ConnectionHandler("Zoidcom.log");
 
-	boost::shared_ptr<ChatSubscriberSimple> simpleSub(new ChatSubscriberSimple());
+	boost::shared_ptr<ChatSubscriberBase> simpleSub(InternalWorkpile::getInstance());
 	boost::shared_ptr<SimpleClientListHandler> clListH = boost::shared_ptr<SimpleClientListHandler>(new SimpleClientListHandler());
 
 	// set up chat client

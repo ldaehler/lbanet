@@ -98,9 +98,14 @@ void InternalWorkpile::GetPendingEvents(std::vector<GameEvent *> & events)
 /***********************************************************
 add chat text
 ***********************************************************/
-void InternalWorkpile::AddChatData(const ChatTextData & Data)
+void InternalWorkpile::ReceivedText(const std::string & Channel, const std::string & SenderName, 
+																	const std::string & Text)
 {
-	m_chat_data.push_back(Data);
+	ChatTextData cd;
+	cd.Channel = Channel;
+	cd.Sender = SenderName;
+	cd.Text = Text;
+	m_chat_data.push_back(cd);
 }
 
 /***********************************************************
@@ -129,6 +134,97 @@ void InternalWorkpile::GetJoinEventData(std::vector<JoinEvent> & data)
 	data.clear();
 	m_join_event.swap(data);
 }
+
+
+/***********************************************************
+add chat text to be send to server
+***********************************************************/
+void InternalWorkpile::AddChatText(const std::string & text)
+{
+	//IceUtil::Mutex::Lock lock(m_mutex_chat_send);
+	m_chat_texts.push_back(text);
+}
+
+
+/***********************************************************
+get the text to be sent
+***********************************************************/
+void InternalWorkpile::GetChatText(std::vector<std::string> & texts)
+{
+	//IceUtil::Mutex::Lock lock(m_mutex_chat_send);
+	texts.clear();
+	m_chat_texts.swap(texts);
+}
+
+
+/***********************************************************
+add a whisper channel
+***********************************************************/
+void InternalWorkpile::AddWhisperChannel(const std::string & name)
+{
+	//IceUtil::Mutex::Lock lock(m_mutex_whisper_chanel);
+	m_asked_whispers.push_back(name);
+}
+
+
+/***********************************************************
+get all queries for whisper channel
+***********************************************************/
+void InternalWorkpile::GetWhisperChannelQueries(std::vector<std::string> &scvec)
+{
+	//IceUtil::Mutex::Lock lock(m_mutex_whisper_chanel);
+	scvec.clear();
+	m_asked_whispers.swap(scvec);
+}
+
+
+/***********************************************************
+called when someone joined or left list
+***********************************************************/
+void InternalWorkpile::ChatColorChanged(const std::string & nickname, const std::string & color)
+{
+	//IceUtil::Mutex::Lock lock(m_mutex_color_changed);
+	m_colors_changed.push_back(std::make_pair<std::string, std::string>(nickname, color));
+}
+
+/***********************************************************
+return the color changed since last time
+***********************************************************/
+void InternalWorkpile::GetColorChanges(std::vector<std::pair<std::string, std::string> > & vec)
+{
+	//IceUtil::Mutex::Lock lock(m_mutex_color_changed);
+	vec.clear();
+	m_colors_changed.swap(vec);
+}
+
+
+
+///***********************************************************
+//changed the display color for char name
+//***********************************************************/
+//void InternalWorkpile::ChangeNameColor(std::string color)
+//{
+//	//IceUtil::Mutex::Lock lock(m_mutex_name_color);
+//	m_name_color_changed = true;
+//	m_name_color = color;
+//}
+//
+///***********************************************************
+//return true if the color has changed
+//***********************************************************/
+//bool InternalWorkpile::NameColorChanged(std::string &color)
+//{
+//	//IceUtil::Mutex::Lock lock(m_mutex_name_color);
+//	if(m_name_color_changed)
+//	{
+//		m_name_color_changed = false;
+//		color = m_name_color;
+//		return true;
+//	}
+//
+//	return false;
+//}
+
 
 
 /***********************************************************
@@ -162,28 +258,6 @@ inform irc thread to quit
 //	}
 //	return true;
 //}
-
-
-
-/***********************************************************
-add chat text to be send to server
-***********************************************************/
-void InternalWorkpile::AddChatText(const std::string & text)
-{
-	//IceUtil::Mutex::Lock lock(m_mutex_chat_send);
-	m_chat_texts.push_back(text);
-}
-
-
-/***********************************************************
-get the text to be sent
-***********************************************************/
-void InternalWorkpile::GetChatText(std::vector<std::string> & texts)
-{
-	//IceUtil::Mutex::Lock lock(m_mutex_chat_send);
-	texts.clear();
-	m_chat_texts.swap(texts);
-}
 
 
 
@@ -544,53 +618,11 @@ inform irc thread to quit
 //
 //
 //
-///***********************************************************
-//changed the display color for char name
-//***********************************************************/
-//void ThreadSafeWorkpile::ChangeNameColor(std::string color)
-//{
-//	IceUtil::Mutex::Lock lock(m_mutex_name_color);
-//	m_name_color_changed = true;
-//	m_name_color = color;
-//}
-//
-///***********************************************************
-//return true if the color has changed
-//***********************************************************/
-//bool ThreadSafeWorkpile::NameColorChanged(std::string &color)
-//{
-//	IceUtil::Mutex::Lock lock(m_mutex_name_color);
-//	if(m_name_color_changed)
-//	{
-//		m_name_color_changed = false;
-//		color = m_name_color;
-//		return true;
-//	}
-//
-//	return false;
-//}
+
 //
 //
 //
-///***********************************************************
-//called when someone joined or left list
-//***********************************************************/
-//void ThreadSafeWorkpile::ChatColorChanged(const std::string & nickname, const std::string & color)
-//{
-//	IceUtil::Mutex::Lock lock(m_mutex_color_changed);
-//	m_colors_changed.push_back(std::make_pair<std::string, std::string>(nickname, color));
-//}
-//
-///***********************************************************
-//return the color changed since last time
-//***********************************************************/
-//void ThreadSafeWorkpile::GetColorChanges(std::vector<std::pair<std::string, std::string> > & vec)
-//{
-//	IceUtil::Mutex::Lock lock(m_mutex_color_changed);
-//	vec.clear();
-//	m_colors_changed.swap(vec);
-//}
-//
+
 //
 //
 //
@@ -797,26 +829,7 @@ inform irc thread to quit
 //}
 //
 //
-///***********************************************************
-//add a whisper channel
-//***********************************************************/
-//void ThreadSafeWorkpile::AddWhisperChannel(const std::string & name)
-//{
-//	IceUtil::Mutex::Lock lock(m_mutex_whisper_chanel);
-//	m_asked_whispers.push_back(name);
-//}
-//
-//
-///***********************************************************
-//get all queries for whisper channel
-//***********************************************************/
-//void ThreadSafeWorkpile::GetWhisperChannelQueries(std::vector<std::string> &scvec)
-//{
-//	scvec.clear();
-//	IceUtil::Mutex::Lock lock(m_mutex_whisper_chanel);
-//	m_asked_whispers.swap(scvec);
-//}
-//
+
 //
 //
 ///***********************************************************

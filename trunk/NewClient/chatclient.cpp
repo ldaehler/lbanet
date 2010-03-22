@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ChatChannel.h"
 #include "ClientObject.h"
 #include "LbaNetEngine.h"
+#include "InternalWorkpile.h"
 
 /***********************************************************************
  * Constructor
@@ -38,7 +39,7 @@ ChatClient::ChatClient(boost::shared_ptr<ChatSubscriberBase> WorldSubscriber,
 : m_id(ZCom_Invalid_ID), m_connected(false), m_WorldSubscriber(WorldSubscriber),
 	m_subscribed_world(false), m_clH(clH), 
 	m_downpacketpersecond(downpacketpersecond), m_downbyteperpacket(downbyteperpacket),
-	_engine(NULL)
+	_engine(NULL), _afked(false), _refresh_counter(0), _afk_counter(0)
 {
 	// this will allocate the sockets and create local bindings
     if ( !ZCom_initSockets( eZCom_EnableUDP, 0, 0, 0 ) )
@@ -277,6 +278,10 @@ process server internal stuff
 ***********************************************************/
 void ChatClient::Process()
 {
+	//process text to send
+	HandleChatText();
+
+
 	//process chat
 	if(m_channelM)
 	{
@@ -316,3 +321,148 @@ void ChatClient::CloseConnection()
 		ZoidCom::Sleep(10);
 	}
 }
+
+
+
+/***********************************************************
+SendText
+***********************************************************/
+void ChatClient::HandleChatText()
+{
+	std::vector<std::string> texts;
+	InternalWorkpile::getInstance()->GetChatText(texts);
+
+	try
+	{
+		if(texts.size() > 0)
+		{
+			_refresh_counter = 0;
+			_afk_counter = 0;
+			if(_afked)
+			{
+				_afked = false;
+				//_connectionMananger.ChangeStatus("");
+			}
+		}
+
+		std::vector<std::string>::const_iterator it = texts.begin();
+		std::vector<std::string>::const_iterator end = texts.end();
+		for(;it != end; ++it)
+		{
+			ProcessText(*it);
+		}
+	}
+	catch(...)
+	{
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception sending text to chat"));
+	}
+}
+
+
+/***********************************************************
+process a line of text
+***********************************************************/
+void ChatClient::ProcessText(const std::string & Text)
+{
+	// return if text is empty
+	if(Text == "")
+		return;
+
+	// if it is a command - preproccess it
+	if(Text[0] == '/')
+	{
+		std::vector<std::string> tok;
+		std::stringstream ss(Text);
+		std::string buf;
+		while(ss >> buf)
+		{
+			tok.push_back(buf);
+		}
+
+		if(tok.size() > 0)
+		{
+			if(tok[0] == "/join")
+			{
+				if(tok.size() != 2)
+				{
+					InternalWorkpile::getInstance()->ReceivedText("All", "info", "You need to specify a room to join.");
+					return;
+				}
+
+				std::string roomName = tok[1];
+				if(m_channelM->GetChannel(roomName) != NULL)
+				{
+					InternalWorkpile::getInstance()->ReceivedText("All", "info", "You already joined channel "+roomName);
+					return;
+				}
+
+				SubscribeChannel(roomName, m_WorldSubscriber);
+				return;
+			}
+
+			if(tok[0] == "/leave")
+			{
+				if(tok.size() != 2)
+				{
+					InternalWorkpile::getInstance()->ReceivedText("All", "info", "You need to specify a room to leave.");
+					return;
+				}
+
+				std::string roomName = tok[1];
+				UnsubscribeChannel(roomName);
+				return;
+			}
+
+			if(tok[0] == "/w")
+			{
+				if(tok.size() < 3)
+				{
+					InternalWorkpile::getInstance()->ReceivedText("All", "info", "Incorrect command.");
+					return;
+				}
+
+				std::string playername = tok[1];
+				std::string message;
+				for(size_t i=2; i<tok.size(); ++i)
+					message += tok[i] + " ";
+
+				//if(!_connectionMananger.Whisper(playername, message))
+				//{
+				//	InternalWorkpile::getInstance()->ReceivedText("All", "info", "The player " + playername + " is not available.");
+				//}
+				//else
+				//{
+				//	InternalWorkpile::getInstance()->ReceivedText("All", "to " + playername, message);
+				//	InternalWorkpile::getInstance()->AddWhisperChannel(playername);
+				//}
+				return;
+			}
+
+			if(tok[0] == "/afk")
+			{
+				//_connectionMananger.ChangeStatus("away");
+				return;
+			}
+
+			if(tok[0] == "/back")
+			{
+				//_connectionMananger.ChangeStatus("");
+				return;
+			}
+
+			// send text to a specific channel
+			std::string roomName = tok[0].substr(1);
+			if(m_channelM->GetChannel(roomName))
+			{
+				SendText(roomName, Text.substr(Text.find_first_of(' ')+1));
+				return;
+			}
+			else
+			{
+				InternalWorkpile::getInstance()->ReceivedText("All", "info", "Invalid command: " + tok[0]);
+				return;
+			}
+		}
+	}
+}
+
