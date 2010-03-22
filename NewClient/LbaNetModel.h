@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <boost/shared_ptr.hpp>
 
 class PhysXEngine;
-
+class CharacterController;
 
 /***********************************************************************
  * Module:  LbaNetModel.h
@@ -70,6 +70,25 @@ public:
 	//! get object from the scene
 	boost::shared_ptr<DynamicObject> GetObject(long id);
 
+	//! clean up everything
+	void CleanupWorld();
+
+	//! pause the game
+	void Pause();
+
+	//! resume the game
+	void Resume(bool reinit);
+
+
+	//! start a move from keyboard input
+	void StartMove(int MoveType);
+
+	//! stop a move from keyboard input
+	void StopMove(int MoveType);
+
+	//! do action from keyboard input
+	void DoAction();
+
 protected:
 	//! clear current model before changing map
 	void ClearModel(const LbaMainLightInfo &NewLightningInfo);
@@ -79,6 +98,12 @@ private:
 	boost::shared_ptr<PhysXEngine>						_physicEngine;
 
 	boost::shared_ptr<DynamicObject>					_currMap;
+
+	// last cycle time
+	double												m_lasttime;
+
+	// player controller
+	boost::shared_ptr<CharacterController>				m_controller;
 };
 
 #endif

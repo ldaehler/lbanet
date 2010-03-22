@@ -59,26 +59,11 @@ public:
 	//! handle cancel button event
 	bool HandleCancel (const CEGUI::EventArgs& e);
 
-	//! handle connect button event
-	bool Handlebplus(const CEGUI::EventArgs& e);
-
-	//! handle cancel button event
-	bool Handlebminus (const CEGUI::EventArgs& e);
-
-	//! handle connect button event
-	bool Handlecplus(const CEGUI::EventArgs& e);
-
-	//! handle cancel button event
-	bool Handlecminus (const CEGUI::EventArgs& e);
-
 	//! handle cancel button event
 	bool HandleCloseTextClicked (const CEGUI::EventArgs& e);
 
 	//! called to infrom the gui that it is displayed
 	void Displayed();
-
-	//! set if the server is on or not
-	void SetServrOn(bool ServerOn);
 
 	//! inform the user the login failed
 	void InformNotLoggedIn(int problem, const std::string & reason);

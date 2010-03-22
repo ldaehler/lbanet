@@ -29,15 +29,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "EventHandler.h"
 #include "SynchronizedTimeHandler.h"
 #include "chatclient.h"
+#include "GameEvents.h"
+#include "InternalWorkpile.h"
+#include "MusicHandler.h"
+#include "ConfigurationManager.h"
+
+#define	_CUR_LBANET_VERSION_ "v0.8"
+#define	_CUR_LBANET_SERVER_VERSION_ "v0.8"
 
 
 /***********************************************************
 	Constructor
 ***********************************************************/
 LbaNetEngine::LbaNetEngine(ChatClient* Chatcl)
-: m_Chatcl(Chatcl)
+: m_Chatcl(Chatcl),
+	m_currentstate(EGaming), m_oldstate(ELogin)
 {
 	Initialize();
+	SwitchGuiToLogin();
 }
 
 
@@ -47,6 +56,11 @@ LbaNetEngine::LbaNetEngine(ChatClient* Chatcl)
 LbaNetEngine::~LbaNetEngine()
 {	
 	LogHandler::getInstance()->LogToFile("Finalizing Game...");
+
+
+	// finalize music handler
+	LogHandler::getInstance()->LogToFile("Finalizing sound engine...");
+	MusicHandler::getInstance()->Initialize();
 
 	// finalize OSG
 	LogHandler::getInstance()->LogToFile("Finalizing Display engine...");
@@ -65,10 +79,15 @@ void LbaNetEngine::Initialize(void)
 {
 	LogHandler::getInstance()->LogToFile("Initializing Game...");
 
+	// init music handler
+	LogHandler::getInstance()->LogToFile("Initializing sound engine...");
+	MusicHandler::getInstance()->Initialize();
+
 	// init event handler
 	m_eventHandler = boost::shared_ptr<EventHandler>(new EventHandler(this));
 
 	// init OSG
+	LogHandler::getInstance()->LogToFile("Initializing display engine...");
 	OsgHandler::getInstance()->Initialize("LbaNet", "./Data", m_eventHandler, &m_gui_handler);
 
 
@@ -78,77 +97,19 @@ void LbaNetEngine::Initialize(void)
 
 
 	// init GUI
-	m_gui_handler.Initialize(false, "0.8", this);
+	m_gui_handler.Initialize(_CUR_LBANET_VERSION_, this);
 
 
 	// set engine to model
 	m_lbaNetModel.SetPhysicEngine(m_physic_engine);
 
 
-
-	m_controller = boost::shared_ptr<CharacterController>(new CharacterController(m_physic_engine));
-
-
 	LogHandler::getInstance()->LogToFile("Initializing Completed.");
 
-	{
-		boost::shared_ptr<DisplayObjectDescriptionBase> Ds(new OsgSimpleObjectDescription("Lba1/Maps/map0.osgb"));
-		// maps are always 1Y too much up, remove that
-		boost::shared_ptr<DisplayTransformation> Tr(new DisplayTransformation());
-		Tr->translationY = -1;
-		boost::shared_ptr<DisplayInfo> DInfo(new DisplayInfo(Tr, Ds));
 
-		boost::shared_ptr<PhysicalDescriptionBase> Pyd(new PhysicalDescriptionTriangleMesh(0, 0, 0, "Data/Lba1/Maps/map0.phy"));
-
-		ObjectInfo mapinfo(DInfo, Pyd, true);
-
-		LbaMainLightInfo linfo;
-		linfo.UseLight = true;
-		linfo.UseShadow = true;
-		linfo.StartOn = false;
-
-		linfo.LOnPosX=50.f;
-		linfo.LOnPosY=100.f;
-		linfo.LOnPosZ=50.f;
-		linfo.LOnAmbientR=0.6f;
-		linfo.LOnAmbientG=0.6f;
-		linfo.LOnAmbientB=0.6f;
-		linfo.LOnDiffuseR=0.8f;
-		linfo.LOnDiffuseG=0.8f;
-		linfo.LOnDiffuseB=0.8f;
-
-		linfo.LOffPosX=100.f;
-		linfo.LOffPosY=50.f;
-		linfo.LOffPosZ=100.f;
-		linfo.LOffAmbientR=0.0f;
-		linfo.LOffAmbientG=0.0f;
-		linfo.LOffAmbientB=0.0f;
-		linfo.LOffDiffuseR=0.5f;
-		linfo.LOffDiffuseG=0.5f;
-		linfo.LOffDiffuseB=0.5f;
-
-		m_lbaNetModel.SetMap(mapinfo, linfo);
-	}
-
-	{
-		boost::shared_ptr<DisplayObjectDescriptionBase> Ds(new OsgOrientedCapsuleDescription(4, 0.5, 0.5, 0, 0, 1));
-		boost::shared_ptr<DisplayTransformation> Tr(new DisplayTransformation());
-		Tr->rotation = LbaQuaternion(90, LbaVec3(1, 0, 0));
-
-		boost::shared_ptr<DisplayInfo> DInfo(new DisplayInfo(Tr, Ds));
-
-		boost::shared_ptr<PhysicalDescriptionBase> Pyd(new PhysicalDescriptionCapsule(20, 30, 40, 4, 1, LbaQuaternion(), 0.5, 4));
-
-		ObjectInfo objinfo(DInfo, Pyd, false, true);
-		m_lbaNetModel.AddObject(1, objinfo);
-
-		m_controller->SetCharacter(m_lbaNetModel.GetObject(1));
-
-		m_lbaNetModel.GetObject(1)->GetDisplayObject()->SetCameraFollow();
-	}
 
 	// connect chat client to server
-	m_Chatcl->ConnectToServer("127.0.0.1:8899", "cmoi", "letmein2");
+	//m_Chatcl->ConnectToServer("127.0.0.1:8899", "cmoi", "letmein2");
 }
 
 
@@ -163,7 +124,7 @@ void LbaNetEngine::run(void)
 	try
 	{
 		// Loop until a quit event is found
-		while(!OsgHandler::getInstance()->Update())
+		while(!OsgHandler::getInstance()->Update() && !InternalWorkpile::getInstance()->GameQuitted())
 		{
 			//get physic results
 			m_physic_engine->GetPhysicsResults();
@@ -204,19 +165,17 @@ process function
 ***********************************************************/
 void LbaNetEngine::Process(void)
 {
+	//handle game events
+	HandleGameEvents();
+
 	// process model (update display stuff)
 	m_lbaNetModel.Process();
 
 	// process GUI
 	m_gui_handler.Process();
 
-
-	double currtime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDoubleSync();
-	float diff = (float)(currtime-m_lasttime);
-	m_lasttime = currtime;
-	m_controller->Process(currtime, diff);
-
-
+	//process sound
+	MusicHandler::getInstance()->Update();
 }
 
 
@@ -226,7 +185,7 @@ start a move from keyboard input
 ***********************************************************/
 void LbaNetEngine::StartMove(int MoveType)
 {
-	m_controller->StartMove(MoveType);
+	m_lbaNetModel.StartMove(MoveType);
 }
 
 
@@ -235,7 +194,7 @@ stop a move from keyboard input
 ***********************************************************/
 void LbaNetEngine::StopMove(int MoveType)
 {
-	m_controller->StopMove(MoveType);
+	m_lbaNetModel.StopMove(MoveType);
 }
 
 /***********************************************************
@@ -243,7 +202,7 @@ do action from keyboard input
 ***********************************************************/
 void LbaNetEngine::DoAction()
 {
-	m_controller->DoAction();
+	m_lbaNetModel.DoAction();
 }
 
 
@@ -289,6 +248,429 @@ void LbaNetEngine::TestSpeakOtherChannel()
 
 
 
+
+
+
+
+/***********************************************************
+called to check for game events and handle them
+***********************************************************/
+void LbaNetEngine::HandleGameEvents()
+{
+	std::vector<GameEvent *> events;
+	InternalWorkpile::getInstance()->GetPendingEvents(events);
+	std::vector<GameEvent *>::iterator it = events.begin();
+	std::vector<GameEvent *>::iterator end = events.end();
+	for(;it != end; ++it)
+	{
+		switch((*it)->GetType())
+		{
+			case 1: // login event
+				if(m_currentstate == ELogin)
+				{
+					//SaveCharToFile();
+					LoginEvent * ev = static_cast<LoginEvent *> (*it);
+					TryLogin(ev->_Name, ev->_Password);
+					m_gui_handler.SetPlayerName(ev->_Name);
+				}
+			break;
+
+			case 2: // gui exit event
+				ExitGui();
+			break;
+
+			case 3: // change world event
+				{
+					ChangeWorldEvent * evcw = static_cast<ChangeWorldEvent *> (*it);
+					ChangeWorld(evcw->_NewWorld);
+				}
+			break;
+
+			case 4: // display gui event
+				{
+					DisplayGUIEvent * evdg = static_cast<DisplayGUIEvent *> (*it);
+					DisplayGUI(evdg->_GuiNumber);
+				}
+			break;
+
+
+			case 8: // new font size event
+				{
+					m_gui_handler.ReloadFontSize();
+				}
+			break;
+
+			//case 9: // teleport event
+			//	{
+			//		TeleportEvent * evcbe = static_cast<TeleportEvent *> (*it);
+			//		m_lbaNetModel.ChangeMap(evcbe->_NewMap, evcbe->_Spawning);
+			//	}
+			//break;
+
+			//case 10: // teleport event
+			//	{
+			//		ChangeMainBodyColorEvent * evcbe = static_cast<ChangeMainBodyColorEvent *> (*it);
+			//		if(evcbe->_plus)
+			//			m_lbaNetModel.IncreasePlayerBodyColor();
+			//		else
+			//			m_lbaNetModel.DecreasePlayerBodyColor();
+			//	}
+			//break;
+
+			case 11: // display text event
+				{
+					if(m_currentstate == EGaming)
+					{
+						DisplayGameTextEvent * evcbe = static_cast<DisplayGameTextEvent *> (*it);
+						m_gui_handler.DisplayGameText(evcbe->_textid);
+					}
+				}
+			break;
+
+			//case 12: // player scripted event
+			//	{
+			//		if(m_currentstate == EGaming)
+			//		{
+			//			MainPlayerScriptedEvent * evcbe = static_cast<MainPlayerScriptedEvent *> (*it);
+			//			m_lbaNetModel.DoPlayerScriptedEvent(evcbe->_script);
+			//		}
+			//	}
+			//break;
+
+			//case 13: // game signal event
+			//	{
+			//		if(m_currentstate == EGaming)
+			//		{
+			//			GameSignalvent * evcbe = static_cast<GameSignalvent *> (*it);
+			//			m_lbaNetModel.SignalEvent(evcbe->_signal, evcbe->_targets);
+			//		}
+			//	}
+			//break;
+
+			//case 14: // teleport anywere event
+			//	{
+			//		if(m_currentstate == EGaming)
+			//		{
+			//			TeleportAnyEvent * evcbe = static_cast<TeleportAnyEvent *> (*it);
+			//			m_lbaNetModel.ChangeMap(evcbe->_NewMap, evcbe->_X, evcbe->_Y, evcbe->_Z, 0);
+			//		}
+			//	}
+			//break;
+
+			//case 15: // change perspective event
+			//	{
+			//		ChangePerspectiveEvent * evcs = static_cast<ChangePerspectiveEvent *> (*it);
+			//		m_lbaNetModel.ChangePespective(evcs->_perspective);
+			//	}
+			//break;
+
+			//case 16: // display exits event
+			//	{
+			//		DisplayExitsEvent * evcs = static_cast<DisplayExitsEvent *> (*it);
+			//		m_lbaNetModel.DisplayExits(evcs->_display);
+			//	}
+			//break;
+
+			//case 17: // playerhurt
+			//	{
+			//		PlayerHurtEvent * evcs = static_cast<PlayerHurtEvent *> (*it);
+			//		m_lbaNetModel.PlayerHurt(evcs->_fromactorid);
+			//	}
+			//break;
+
+			//case 18: // do full check
+			//	{
+			//		m_lbaNetModel.DoFullCheckEvent();
+			//	}
+			//break;
+
+			//case 19: // player life changed
+			//	{
+			//		PlayerLifeChangedEvent * evcs = static_cast<PlayerLifeChangedEvent *> (*it);
+			//		m_lbaNetModel.PlayerLifeChanged(evcs->_CurLife, evcs->_MaxLife, 
+			//											evcs->_CurMana, evcs->_MaxMana);
+
+			//		_MaxLife = evcs->_MaxLife;
+			//		_MaxMana = evcs->_MaxMana;
+			//		_CurrentLife = evcs->_CurLife;
+			//		if(_CurrentLife < 0)
+			//			_CurrentLife = 0;
+			//		_CurrentMana = evcs->_CurMana;
+			//		if(_CurrentMana < 0)
+			//			_CurrentMana = 0;
+			//	}
+			//break;
+
+			//case 20: // player name color changed
+			//	{
+			//		PlayerNameColorChangedEvent * evcs = 
+			//			static_cast<PlayerNameColorChangedEvent *> (*it);
+			//		m_lbaNetModel.SetPlayerNameColor(evcs->_R, evcs->_G, evcs->_B);
+			//	}
+			//break;
+
+			//case 21: // change stance event
+			//	{
+			//		ChangeStanceEvent * evcs = 
+			//			static_cast<ChangeStanceEvent *> (*it);
+			//		PlayerChangeStance(evcs->_stance);
+			//	}
+			//break;
+
+			//case 22: // inventory used event
+			//	{
+			//		InventoryObjectUsedEvent * evcs = 
+			//			static_cast<InventoryObjectUsedEvent *> (*it);
+			//		m_lbaNetModel.InventoryUsed(evcs->_ObjectId, _CurrentLife==_MaxLife, _CurrentMana==_MaxMana);
+			//	}
+			//break;
+
+			//case 23: // focus chatbox event
+			//	FocusChatbox(true);
+			//break;
+
+			//case 24: // display NPC dialog
+			//	{
+			//		DisplayDialogEvent * evcs = 
+			//			static_cast<DisplayDialogEvent *> (*it);
+			//		m_guiHandler.ShowDialog(evcs->_ActorId, evcs->_ActorName, evcs->_Dialog,
+			//									evcs->_Show, evcs->_inventory);
+			//	}
+			//break;
+
+
+			//case 25: // object update event
+			//	{
+			//		ObjectUpdateEvent * evcs = 
+			//			static_cast<ObjectUpdateEvent *> (*it);
+
+			//		if(!evcs->_Received)
+			//		{
+			//			std::stringstream strs;
+			//			strs<<"You used "<<evcs->_Number<<" [colour='FFFFFFFF'][image='set:"<<ImageSetHandler::GetInstance()->GetInventoryMiniImage(evcs->_ObjectId)<<"   image:full_image']"; 
+			//			ThreadSafeWorkpile::ChatTextData cdata;
+			//			cdata.Channel = "All";
+			//			cdata.Sender = "info";
+			//			cdata.Text = strs.str();
+			//			ThreadSafeWorkpile::getInstance()->AddChatData(cdata);
+			//		}
+			//		else
+			//		{
+			//			std::stringstream strs;
+			//			strs<<"You received "<<evcs->_Number<<" [colour='FFFFFFFF'][image='set:"<<ImageSetHandler::GetInstance()->GetInventoryMiniImage(evcs->_ObjectId)<<"   image:full_image']"; 
+			//			ThreadSafeWorkpile::ChatTextData cdata;
+			//			cdata.Channel = "All";
+			//			cdata.Sender = "info";
+			//			cdata.Text = strs.str();
+			//			ThreadSafeWorkpile::getInstance()->AddChatData(cdata);
+			//		}
+			//	}
+			//break;
+		}
+
+		delete *it;
+	}
+}
+
+
+/***********************************************************
+switch gui helpers
+***********************************************************/
+void LbaNetEngine::SwitchGuiToLogin()
+{
+	if(m_currentstate == ELogin)
+		return;
+
+	m_lbaNetModel.CleanupWorld();
+
+	//m_lbaNetModel.ZoomInPlayerForLogin();
+	//m_serverConnectionHandler->Disconnect();
+	m_Chatcl->CloseConnection();
+
+	PlayMenuMusic();
+
+	m_gui_handler.SwitchGUI(0);
+	m_oldstate = m_currentstate;
+	m_currentstate = ELogin;
+}
+
+/***********************************************************
+switch gui helpers
+***********************************************************/
+void LbaNetEngine::SwitchGuiToChooseWorld()
+{
+	if(m_currentstate == EChoosingWorld)
+		return;
+
+	m_lbaNetModel.Pause();
+	//m_lbaNetModel.ResetZoom();
+
+	PlayMenuMusic();
+	m_gui_handler.SwitchGUI(1);
+	m_oldstate = m_currentstate;
+	m_currentstate = EChoosingWorld;
+}
+
+/***********************************************************
+switch gui helpers
+***********************************************************/
+void LbaNetEngine::SwitchGuiToGame()
+{
+	if(m_currentstate == EGaming)
+		return;
+
+	if(m_lastmusic != "")
+		MusicHandler::getInstance()->PlayMusic(m_lastmusic, 0);
+
+	m_lbaNetModel.Resume(false);
+	m_gui_handler.SwitchGUI(2);
+	m_oldstate = m_currentstate;
+	m_currentstate = EGaming;
+}
+
+/***********************************************************
+switch gui helpers
+***********************************************************/
+void LbaNetEngine::SwitchGuiToMenu()
+{
+	if(m_currentstate == EMenu)
+	{
+		SwitchGuiToGame();
+		return;
+	}
+
+	if(m_currentstate == EGaming)
+	{
+		m_lbaNetModel.Pause();
+		m_gui_handler.SwitchGUI(3);
+		m_oldstate = m_currentstate;
+		m_currentstate = EMenu;
+	}
+}
+
+/***********************************************************
+switch gui helpers
+***********************************************************/
+void LbaNetEngine::SwitchGuiToOption()
+{
+	if(m_currentstate == EOption)
+		return;
+
+	m_lbaNetModel.Pause();
+	m_gui_handler.SwitchGUI(4);
+	m_oldstate = m_currentstate;
+	m_currentstate = EOption;
+}
+
+
+
+/***********************************************************
+try to login to the server
+***********************************************************/
+void LbaNetEngine::TryLogin(const std::string &Name, const std::string &Password)
+{
+	std::string ip;
+	ConfigurationManager::GetInstance()->GetString("Network.IpAddress", ip);
+	m_Chatcl->ConnectToServer(ip, Name, Password, _CUR_LBANET_SERVER_VERSION_, this);
+}
+
+
+/***********************************************************
+connection callback
+***********************************************************/
+void LbaNetEngine::ConnectionCallback(int SuccessFlag, const std::string & reason)
+{
+	// if connection not successful
+	if(SuccessFlag < 1)
+	{
+		m_gui_handler.InformNotLoggedIn(SuccessFlag, reason);
+		return;
+	}
+
+	//else
+	//m_gui_handler.RefreshOption();
+	//m_lbaNetModel.SetPlayerName(Name);
+	SwitchGuiToChooseWorld();
+}
+
+
+/***********************************************************
+exit current active gui
+***********************************************************/
+void LbaNetEngine::ExitGui()
+{
+	switch(m_oldstate)
+	{
+		case ELogin:
+			SwitchGuiToLogin();
+		break;
+		case EChoosingWorld:
+			SwitchGuiToChooseWorld();
+		break;
+		case EGaming: case EMenu: case EOption:
+			SwitchGuiToGame();
+		break;
+	}
+}
+
+
+/***********************************************************
+change the world
+***********************************************************/
+void LbaNetEngine::ChangeWorld(const std::string & NewWorld)
+{
+	//m_lbaNetModel.ChangeWorld(NewWorld);
+	SwitchGuiToGame();
+}
+
+/***********************************************************
+display a specific gui
+***********************************************************/
+void LbaNetEngine::DisplayGUI(int guinumber)
+{
+	switch(guinumber)
+	{
+		case -1: // got disconnected from server
+			SwitchGuiToLogin();
+			m_gui_handler.InformNotLoggedIn(-2, "");
+		break;
+		case 0:
+			SwitchGuiToLogin();
+		break;
+		case 1:
+			SwitchGuiToChooseWorld();
+		break;
+		case 2:
+			SwitchGuiToGame();
+		break;
+		case 3:
+			SwitchGuiToMenu();
+		break;
+		case 4:
+			SwitchGuiToOption();
+		break;
+		case 5: // inventory
+			SwitchGuiToGame();
+			m_gui_handler.ShowInventory();
+		break;
+	}
+}
+
+
+/***********************************************************
+called to play the assigned music when menu
+***********************************************************/
+void LbaNetEngine::PlayMenuMusic()
+{
+	std::string mmusic = "Data/Lba1/Music/LBA1-Track9.mp3";
+
+	std::string tmp = MusicHandler::getInstance()->GetCurrentMusic();
+	if(tmp != mmusic)
+	{
+		m_lastmusic = tmp;
+		MusicHandler::getInstance()->PlayMusic(mmusic, -1);
+	}
+}
 
 
 

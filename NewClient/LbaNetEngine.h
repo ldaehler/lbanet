@@ -30,7 +30,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <boost/shared_ptr.hpp>
 #include "LbaNetModel.h"
-#include "CharacterController.h"
 #include "GuiHandler.h"
 
 class PhysXEngine;
@@ -65,7 +64,11 @@ public:
 	//! do action from keyboard input
 	void DoAction();
 
+	// display a specific gui
+	void DisplayGUI(int guinumber);
 
+	//connection callback
+	void ConnectionCallback(int SuccessFlag, const std::string & reason);
 
 	//! test create channel
 	void TestCreateChannel();
@@ -80,18 +83,46 @@ protected:
 	//! initialize the class
 	void Initialize(void);
 
+	//! called to check for game events and handle them
+	void HandleGameEvents();
+
+	//! try to login to the server
+	void TryLogin(const std::string &Name, const std::string &Passwordl);
+
+	//! switch gui helpers
+	void SwitchGuiToLogin();
+	void SwitchGuiToChooseWorld();
+	void SwitchGuiToGame();
+	void SwitchGuiToMenu();
+	void SwitchGuiToOption();
+
+	// exit current active gui
+	void ExitGui();
+
+	// change the world
+	void ChangeWorld(const std::string & NewWorld);
+
+	// called to play the assigned music when menu
+	void PlayMenuMusic();
+
+
 private:
-	GuiHandler						m_gui_handler;
+	GuiHandler						m_gui_handler;		// pointer on gui class
 	LbaNetModel						m_lbaNetModel;		// game model
 	boost::shared_ptr<EventHandler>	m_eventHandler;		// handle input events
 	boost::shared_ptr<PhysXEngine>	m_physic_engine;	//physic engine
 	ChatClient*						m_Chatcl;			//chat client
 
-	boost::shared_ptr<CharacterController>	m_controller;
-
+	// last cycle time
 	double							m_lasttime;
 
+	// game states
+	enum EngineState {ELogin=0, EChoosingWorld, EGaming, EMenu, EOption };
+	EngineState							m_currentstate;
+	EngineState							m_oldstate;
 
+	// last music played
+	std::string							m_lastmusic;
 };
 
 #endif
