@@ -25,7 +25,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _LBANET_server_h_
 #define _LBANET_server_h_
 
+#include <boost/shared_ptr.hpp>
 #include <zoidcom.h>
+#include "ClientObjectHandler.h"
+#include "ClientListHandlerBase.h"
 
 class ChatChannelManager;
 
@@ -36,7 +39,8 @@ public:
 	//! constructor
 	Server( int _internalport, int _udpport, 
 			unsigned int uplimittotal, unsigned int uplimitperconnection,
-			unsigned short downpacketpersecond, unsigned short downbyteperpacket);
+			unsigned short downpacketpersecond, unsigned short downbyteperpacket,
+			boost::shared_ptr<ClientListHandlerBase> clH);
 
 	//! destructor
 	~Server();
@@ -88,8 +92,14 @@ private:
 	unsigned short m_downpacketpersecond;
 	unsigned short m_downbyteperpacket;
 
+	//client list handler
+	boost::shared_ptr<ClientListHandlerBase> m_clH;
+
 	//chat manager
 	ChatChannelManager*	m_chatM;
+
+	//client manager
+	ClientObjectHandler m_clientH;
 };
 
 
