@@ -45,8 +45,9 @@ void ChatChannelManager::registerClass(ZCom_Control *_control)
 /************************************************************************/
 /* constructor                                        
 /************************************************************************/
-ChatChannelManager::ChatChannelManager(ZCom_Control *_control)
-: _controler(_control), _intialized(false)
+ChatChannelManager::ChatChannelManager(ZCom_Control *_control,
+										boost::shared_ptr<ClientListHandlerBase> clH)
+: _controler(_control), _intialized(false), _clH(clH)
 {
 	_control->ZCom_registerDynamicNode( m_node, m_classid );
 	#ifdef _DEBUG
@@ -57,6 +58,17 @@ ChatChannelManager::ChatChannelManager(ZCom_Control *_control)
 	m_node->setEventNotification( true, true );
 }
 
+
+
+/************************************************************************/
+/* destructor                                      
+/************************************************************************/
+ChatChannelManager::~ChatChannelManager()
+{
+	std::map<std::string, ChatChannel *>::iterator it = _channels.begin();
+	for(;it != _channels.end();++it)
+		delete it->second;
+}
 
 
 /************************************************************************/
@@ -89,7 +101,7 @@ void ChatChannelManager::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole r
 		return;
 
 	// type of custom event is in the first 2 bits of the event
-	int etype = (int) data->getInt(2);
+	unsigned int etype = data->getInt(2);
 	switch(etype)
 	{
 		//subscribe event
@@ -99,19 +111,15 @@ void ChatChannelManager::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole r
 			char buf[255];
 			data->getString(buf, 255);
 
-			// get sender name
-			char name[255];
-			data->getString(name, 255);
-
 			#ifdef _DEBUG
 				std::stringstream strs;
-				strs<<"Client "<<eventconnid<<" with name "<<name<<" subscribing to "<<buf;
+				strs<<"Client "<<eventconnid<<" subscribing to "<<buf;
 				LogHandler::getInstance()->LogToFile(strs.str());
 			#endif
 
 			//subscribe
 			ChatChannel *  channel = GetOrAddChannel(buf);
-			channel->Subscribe(eventconnid, name);
+			channel->Subscribe(eventconnid);
 		}
 		break;
 
@@ -166,7 +174,7 @@ ChatChannel * ChatChannelManager::GetOrAddChannel(const std::string &name)
 	if(it != _channels.end())
 		return it->second;
 
-	ChatChannel * res = new ChatChannel(_controler, name);
+	ChatChannel * res = new ChatChannel(_controler, name, _clH);
 	_channels[name] = res;
 	return res;
 }
@@ -215,12 +223,11 @@ void ChatChannelManager::CustomProcess()
 /************************************************************************/
 /* used by client to subscribe channel          
 /************************************************************************/
-void ChatChannelManager::SubscribeChannelToServer(const std::string &name, const std::string &sendername)
+void ChatChannelManager::SubscribeChannelToServer(const std::string &name)
 {
 	ZCom_BitStream *evt = new ZCom_BitStream();
 	evt->addInt(0, 2);
 	evt->addString(name.c_str());
-	evt->addString(sendername.c_str());
 	m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_OWNER_2_AUTH, evt);
 }
 

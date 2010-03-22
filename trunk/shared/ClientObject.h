@@ -22,58 +22,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _LBA_NET_CHAT_CHANNEL_H_
-#define _LBA_NET_CHAT_CHANNEL_H_
+#ifndef _LBA_NET_CLIENT_OBJECT_H_
+#define _LBA_NET_CLIENT_OBJECT_H_
 
 #include "GameObject.h"
-#include "ChatSubscriberBase.h"
 #include "ClientListHandlerBase.h"
 
-#include <map>
-#include <vector>
 #include <boost/shared_ptr.hpp>
 
+class ZCom_Control;
 
 
 /***********************************************************************
- * Module:  ChatChannel.h
+ * Module:  ClientObject.h
  * Author:  vivien
  * Modified: mardi 14 juillet 2009 17:41:03
- * Purpose: Class ChatChannel
+ * Purpose: Class representing a connecting client
  ***********************************************************************/
-class ChatChannel : public GameObject
+class ClientObject : public GameObject
 {
 
 public:
 	// constructor
-	ChatChannel(ZCom_Control *_control, const std::string & name,
-				boost::shared_ptr<ClientListHandlerBase> clH);
+	ClientObject(ZCom_Control *_control, unsigned int id, const std::string & name,
+					boost::shared_ptr<ClientListHandlerBase> clH);
 
 	// destructor
-	virtual ~ChatChannel();
+	virtual ~ClientObject();
 
 
 	// class registration
 	static void registerClass(ZCom_Control *_control);
-	static ZCom_ClassID getClassID() { return m_classid; }
+	static unsigned int getClassID() { return m_classid; }
 
-
-	//subscribe a specific client
-	void Subscribe(unsigned int clientId);
-
-	//unsubscribe a specific client
-	void Unsubscribe(unsigned int clientId);
-
-	// attach a subscriber
-	void AttachSubscriber(boost::shared_ptr<ChatSubscriberBase> sub);
-
-	// called when client want to send text
-	void SendText(std::string Text);
 
 protected:
 	// return the object name
 	virtual std::string GetObjectName()
-	{return "ChatChannel";}
+	{return "ClientObject";}
 
 	// handle init event
 	virtual void HandleInitEvent(ZCom_BitStream * data, eZCom_NodeRole remoterole, unsigned int eventconnid){}
@@ -82,25 +68,20 @@ protected:
 	virtual void HandleQuitEvent(ZCom_BitStream * data, eZCom_NodeRole remoterole, unsigned int eventconnid){}
 
 	// handle user event
-	virtual void HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoterole, unsigned int eventconnid);
+	virtual void HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoterole, unsigned int eventconnid){}
 
 	// do a custom process step if required
 	virtual void CustomProcess(){}
 
 private:
 	// the class id for zoidcom
-	static ZCom_ClassID  m_classid;
+	static unsigned int		m_classid;
 
-	// list of subscribed clients
-	std::map<unsigned int, std::string> _subscribedclients;
+	unsigned int			m_id;
+	std::string				m_name;
 
-	// channel name
-	std::string _name;
-
-	std::map<unsigned int, std::string>					_tmpstring;
-	std::vector<boost::shared_ptr<ChatSubscriberBase> > _subscribers;
-
-	boost::shared_ptr<ClientListHandlerBase>			_clH;
+	// client list handler
+	boost::shared_ptr<ClientListHandlerBase> m_clH;
 };
 
 

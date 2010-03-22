@@ -26,7 +26,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define _LBA_NET_CHAT_CHANNEL_MGT_H_
 
 #include "GameObject.h"
+#include "ClientListHandlerBase.h"
+
 #include <map>
+#include <boost/shared_ptr.hpp>
 
 class ChatChannel;
 
@@ -41,10 +44,11 @@ class ChatChannelManager : public GameObject
 
 public:
 	// constructor
-	ChatChannelManager(ZCom_Control *_control);
+	ChatChannelManager(ZCom_Control *_control,
+						boost::shared_ptr<ClientListHandlerBase> clH);
 
 	// destructor
-	virtual ~ChatChannelManager(){}
+	virtual ~ChatChannelManager();
 
 
 	// class registration
@@ -64,7 +68,7 @@ public:
 	void RemoveChannel(const std::string &name);
 
 	// used by client to subscribe channel
-	void SubscribeChannelToServer(const std::string &name, const std::string &sendername);
+	void SubscribeChannelToServer(const std::string &name);
 
 	// used by client to unsubscribe channel
 	void UnsubscribeChannelToServer(const std::string &name);
@@ -104,8 +108,11 @@ private:
 	// channel map
 	std::map<std::string, ChatChannel *> _channels;
 
-
+	// init flag
 	bool	_intialized;
+
+	// client list handler
+	boost::shared_ptr<ClientListHandlerBase> _clH;
 };
 
 #endif
