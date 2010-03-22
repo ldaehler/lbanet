@@ -26,13 +26,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "LogHandler.h"
 #include "ChatChannelManager.h"
 #include "ChatChannel.h"
+#include "ClientObject.h"
 
 /***********************************************************************
  * Constructor
  ***********************************************************************/
-ChatClient::ChatClient(boost::shared_ptr<ChatSubscriberBase> WorldSubscriber)
+ChatClient::ChatClient(boost::shared_ptr<ChatSubscriberBase> WorldSubscriber,
+							boost::shared_ptr<ClientListHandlerBase> clH)
 : m_id(ZCom_Invalid_ID), m_connected(false), m_WorldSubscriber(WorldSubscriber),
-	m_subscribed_world(false)
+	m_subscribed_world(false), m_clH(clH)
 {
 	// this will allocate the sockets and create local bindings
     if ( !ZCom_initSockets( eZCom_EnableUDP, 0, 0, 0 ) )
@@ -47,6 +49,7 @@ ChatClient::ChatClient(boost::shared_ptr<ChatSubscriberBase> WorldSubscriber)
 	//register classes
 	ChatChannelManager::registerClass(this);
 	ChatChannel::registerClass(this);
+	ClientObject::registerClass(this);
 }
 
 
@@ -68,7 +71,7 @@ void ChatClient::ConnectToServer(const std::string & address, const std::string 
 {
 	if(m_connected)
 	{
-		LogHandler::getInstance()->LogToFile("Zoid: ALready connected to chat server - skipping connection", 2);
+		LogHandler::getInstance()->LogToFile("Zoid: Already connected to chat server - skipping connection", 2);
 		return;
 	}
 
@@ -88,8 +91,6 @@ void ChatClient::ConnectToServer(const std::string & address, const std::string 
 	{
 		LogHandler::getInstance()->LogToFile("Chat client: unable to start connecting!", 2);
 	}
-
-	m_playername = login;
 }
 
 /***********************************************************************
@@ -107,7 +108,7 @@ void ChatClient::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _res
 	else
 	{
 		m_connected = true;
-		ZCom_requestDownstreamLimit(_id, 30, 200);
+		//ZCom_requestDownstreamLimit(_id, 30, 200);
 		ZCom_changeObjectChannelSubscription( _id, 1, eZCom_Subscribe );
 		m_id = _id;
 	}
@@ -163,7 +164,7 @@ void ChatClient::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _reque
 	// if this is the channel handler
 	if(_requested_class == ChatChannelManager::getClassID())
 	{
-		m_channelM = boost::shared_ptr<ChatChannelManager>(new ChatChannelManager(this));
+		m_channelM = boost::shared_ptr<ChatChannelManager>(new ChatChannelManager(this, m_clH));
 	}
 
 
@@ -186,6 +187,18 @@ void ChatClient::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _reque
 			}
 		}
 	}
+
+
+	// if this is the client 
+	if(_requested_class == ClientObject::getClassID())
+	{
+		unsigned int clid = _announcedata->getInt( 32 );
+		char _buf[255];
+		_announcedata->getString( _buf, 255 );
+
+		m_clientHandler.Addclient(clid, new ClientObject(this, clid, _buf, m_clH));
+	}
+	
 }
 
 
@@ -203,7 +216,7 @@ void ChatClient::SubscribeChannel(const std::string & channelname,
 		if(m_channelM->GetChannel(channelname) != NULL)
 			return;
 
-		m_channelM->SubscribeChannelToServer(channelname, m_playername);
+		m_channelM->SubscribeChannelToServer(channelname);
 		m_waitingsubs[channelname] = Subscriber;
 	}
 }
@@ -230,9 +243,13 @@ void ChatClient::SendText(const std::string & channelname, const std::string & t
 {
 	if(m_channelM)
 	{
+		ChatChannel * chan = m_channelM->GetChannel(channelname);
+
 		// do nothing if not already subscribed to this channel
-		if(m_channelM->GetChannel(channelname) == NULL)
+		if(chan == NULL)
 			return;
+
+		chan->SendText(text);
 	}
 }
 
@@ -243,10 +260,12 @@ process server internal stuff
 ***********************************************************/
 void ChatClient::Process()
 {
+	//process chat
 	if(m_channelM)
 	{
 		m_channelM->Process();
 
+		// subscribe to world channel at startup
 		if(!m_subscribed_world)
 		{
 			if(m_channelM->IsInitialized())
@@ -256,6 +275,9 @@ void ChatClient::Process()
 			}
 		}
 	}
+
+	//process client objects
+	m_clientHandler.Process();
 }
 
 

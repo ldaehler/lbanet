@@ -332,6 +332,31 @@ bool EventHandler::Handle(SDL_Event flevent)
 					OsgHandler::getInstance()->SetScreenAttributes(1024, 768, false);
 					return true;
 				}
+
+
+				case SDLK_KP0:
+				{			
+					_lbaNetEngine->TestCreateChannel();
+					return true;
+				}
+
+				case SDLK_KP1:
+				{			
+					_lbaNetEngine->TestDeleteChannel();
+					return true;
+				}
+
+				case SDLK_KP2:
+				{			
+					_lbaNetEngine->TestSpeakWorldChannel();
+					return true;
+				}
+
+				case SDLK_KP3:
+				{			
+					_lbaNetEngine->TestSpeakOtherChannel();
+					return true;
+				}
 			}
 
 		}

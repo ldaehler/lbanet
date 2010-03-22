@@ -32,6 +32,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <boost/shared_ptr.hpp>
 
 #include "ChatSubscriberBase.h"
+#include "ClientObjectHandler.h"
+#include "ClientListHandlerBase.h"
 
 class ChatChannelManager;
 
@@ -43,7 +45,8 @@ class ChatClient : public ZCom_Control
 public:
 
 	//! constructor
-	ChatClient(boost::shared_ptr<ChatSubscriberBase> WorldSubscriber);
+	ChatClient(boost::shared_ptr<ChatSubscriberBase> WorldSubscriber,
+					boost::shared_ptr<ClientListHandlerBase> clH);
 
 	//!destructor
 	~ChatClient();
@@ -108,13 +111,17 @@ private:
 	// id given by the server
 	ZCom_ConnID		m_id;
 	bool			m_connected;
-	std::string		m_playername;
 	bool			m_subscribed_world;
 
 	boost::shared_ptr<ChatChannelManager> m_channelM;
 	boost::shared_ptr<ChatSubscriberBase> m_WorldSubscriber;
 
 	std::map<std::string, boost::shared_ptr<ChatSubscriberBase> >	m_waitingsubs;
+
+	ClientObjectHandler m_clientHandler;
+
+	//client list handler
+	boost::shared_ptr<ClientListHandlerBase> m_clH;
 };
 
 #endif

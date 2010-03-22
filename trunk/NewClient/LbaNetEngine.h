@@ -47,7 +47,7 @@ class LbaNetEngine
 {
 public:
 	//!constructor
-	LbaNetEngine(boost::shared_ptr<ChatClient> Chatcl);
+	LbaNetEngine(ChatClient* Chatcl);
 
 	//!destructor
    ~LbaNetEngine();
@@ -66,6 +66,13 @@ public:
 	void DoAction();
 
 
+
+	//! test create channel
+	void TestCreateChannel();
+	void TestDeleteChannel();
+	void TestSpeakWorldChannel();
+	void TestSpeakOtherChannel();
+
 protected:
 	//! process function
 	void Process(void);
@@ -78,7 +85,7 @@ private:
 	LbaNetModel						m_lbaNetModel;		// game model
 	boost::shared_ptr<EventHandler>	m_eventHandler;		// handle input events
 	boost::shared_ptr<PhysXEngine>	m_physic_engine;	//physic engine
-	boost::shared_ptr<ChatClient>	m_Chatcl;			//chat client
+	ChatClient*						m_Chatcl;			//chat client
 
 	boost::shared_ptr<CharacterController>	m_controller;
 
