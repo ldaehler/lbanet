@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/D _CRT_SECURE_NO_WARNINGS /D MP3_MUSIC"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\dependencies\SDL\include;..\dependencies\Boost\include;..\dependencies\CEGUI\cegui\include;..\dependencies\libconfig\include;..\dependencies\OpenSceneGraph\include;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;;..\shared;..\dependencies\zoidcom\include;..\dependencies\fmod\include"
+				AdditionalIncludeDirectories="..\dependencies\SDL\include;..\dependencies\Boost\include;..\dependencies\CEGUI\cegui\include;..\dependencies\libconfig\include;..\dependencies\OpenSceneGraph\include;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;;..\shared;..\dependencies\zoidcom\include;..\dependencies\fmod\include;..\dependencies\tinyxml\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;TIXML_USE_STL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -62,9 +62,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDLd.lib SDLmaind.lib opengl32.lib glu32.lib CEGUIBase_d.lib CEGUIOpenGLRenderer_d.lib libconfig++d.lib osgd.lib osgShadowd.lib osgGAd.lib osgViewerd.lib osgDBd.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib winmm.lib zoidcom_vcd.lib fmodex_vc.lib"
+				AdditionalDependencies="SDLd.lib SDLmaind.lib opengl32.lib glu32.lib CEGUIBase_d.lib CEGUIOpenGLRenderer_d.lib libconfig++d.lib osgd.lib osgShadowd.lib osgGAd.lib osgViewerd.lib osgDBd.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib winmm.lib zoidcom_vcd.lib fmodex_vc.lib tinyxmld_STL.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\dependencies\SDL\lib;..\dependencies\Boost\lib;..\dependencies\CEGUI\lib;..\dependencies\libconfig\lib;..\dependencies\OpenSceneGraph\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;;..\dependencies\zoidcom\lib\msvc8;..\dependencies\fmod\lib"
+				AdditionalLibraryDirectories="..\dependencies\SDL\lib;..\dependencies\Boost\lib;..\dependencies\CEGUI\lib;..\dependencies\libconfig\lib;..\dependencies\OpenSceneGraph\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;;..\dependencies\zoidcom\lib\msvc8;..\dependencies\fmod\lib;..\dependencies\tinyxml\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -119,7 +119,7 @@
 				AdditionalOptions="/D _CRT_SECURE_NO_WARNINGS /D MP3_MUSIC"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\dependencies\SDL\include;..\dependencies\Boost\include;..\dependencies\CEGUI\cegui\include;..\dependencies\libconfig\include;..\dependencies\OpenSceneGraph\include;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;;..\shared;..\dependencies\zoidcom\include;..\dependencies\fmod\include"
+				AdditionalIncludeDirectories="..\dependencies\SDL\include;..\dependencies\Boost\include;..\dependencies\CEGUI\cegui\include;..\dependencies\libconfig\include;..\dependencies\OpenSceneGraph\include;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;;..\shared;..\dependencies\zoidcom\include;..\dependencies\fmod\include;..\dependencies\tinyxml\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;TIXML_USE_STL"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -138,9 +138,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDLmain.lib opengl32.lib glu32.lib CEGUIBase.lib CEGUIOpenGLRenderer.lib libconfig++.lib osg.lib osgShadow.lib osgGA.lib osgViewer.lib osgDB.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib winmm.lib zoidcom_vc.lib fmodex_vc.lib"
+				AdditionalDependencies="SDL.lib SDLmain.lib opengl32.lib glu32.lib CEGUIBase.lib CEGUIOpenGLRenderer.lib libconfig++.lib osg.lib osgShadow.lib osgGA.lib osgViewer.lib osgDB.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib winmm.lib zoidcom_vc.lib fmodex_vc.lib tinyxml_STL.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\dependencies\SDL\lib;..\dependencies\Boost\lib;..\dependencies\CEGUI\lib;..\dependencies\libconfig\lib;..\dependencies\OpenSceneGraph\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;;..\dependencies\zoidcom\lib\msvc8;..\dependencies\fmod\lib"
+				AdditionalLibraryDirectories="..\dependencies\SDL\lib;..\dependencies\Boost\lib;..\dependencies\CEGUI\lib;..\dependencies\libconfig\lib;..\dependencies\OpenSceneGraph\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;;..\dependencies\zoidcom\lib\msvc8;..\dependencies\fmod\lib;..\dependencies\tinyxml\lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -183,6 +183,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ChatBox.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\shared\ChatChannel.cpp"
 				>
 			</File>
@@ -192,6 +196,14 @@
 			</File>
 			<File
 				RelativePath=".\chatclient.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ChooseNumberBox.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ChooseWorldGUI.cpp"
 				>
 			</File>
 			<File
@@ -207,6 +219,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CommunityBox.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ConfigurationManager.cpp"
 				>
 			</File>
@@ -215,7 +231,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ContainerBox.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DataLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DialogBox.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\EventHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GameGUI.cpp"
 				>
 			</File>
 			<File
@@ -231,7 +263,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ImageSetHandler.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\InternalWorkpile.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\InventoryBox.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\JournalBox.cpp"
 				>
 			</File>
 			<File
@@ -240,6 +284,14 @@
 			</File>
 			<File
 				RelativePath=".\LbaNetModel.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LetterEditorBox.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LetterViewerBox.cpp"
 				>
 			</File>
 			<File
@@ -255,11 +307,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\MapInfoXmlReader.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MenuGUI.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MessageBox.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\MusicHandler.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\ObjectsDescription.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OptionsGUI.cpp"
 				>
 			</File>
 			<File
@@ -279,6 +347,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ShortcutBox.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\StaticObject.cpp"
 				>
 			</File>
@@ -288,6 +360,10 @@
 			</File>
 			<File
 				RelativePath=".\SynchronizedTimeHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TeleportBox.cpp"
 				>
 			</File>
 			<File
@@ -313,6 +389,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ChatBox.h"
+				>
+			</File>
+			<File
 				RelativePath="..\shared\ChatChannel.h"
 				>
 			</File>
@@ -329,6 +409,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ChooseNumberBox.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ChooseWorldGUI.h"
+				>
+			</File>
+			<File
 				RelativePath="..\shared\ClientObject.h"
 				>
 			</File>
@@ -341,11 +429,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CommunityBox.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ConfigurationManager.h"
 				>
 			</File>
 			<File
 				RelativePath="..\shared\ConnectionHandler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ContainerBox.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DataLoader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DialogBox.h"
 				>
 			</File>
 			<File
@@ -361,6 +465,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GameEvents.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GameGUI.h"
+				>
+			</File>
+			<File
 				RelativePath="..\shared\GameObject.h"
 				>
 			</File>
@@ -369,11 +481,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GuiCallbackableBase.h"
+				>
+			</File>
+			<File
 				RelativePath=".\GuiHandler.h"
 				>
 			</File>
 			<File
+				RelativePath=".\ImageSetHandler.h"
+				>
+			</File>
+			<File
 				RelativePath=".\InternalWorkpile.h"
+				>
+			</File>
+			<File
+				RelativePath=".\InventoryBox.h"
+				>
+			</File>
+			<File
+				RelativePath=".\JournalBox.h"
 				>
 			</File>
 			<File
@@ -385,6 +513,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LetterEditorBox.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LetterViewerBox.h"
+				>
+			</File>
+			<File
 				RelativePath="..\shared\LogHandler.h"
 				>
 			</File>
@@ -393,11 +529,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\MapInfoXmlReader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MenuGUI.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MessageBox.h"
+				>
+			</File>
+			<File
 				RelativePath=".\MusicHandler.h"
 				>
 			</File>
 			<File
 				RelativePath=".\ObjectsDescription.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OptionsGUI.h"
 				>
 			</File>
 			<File
@@ -425,6 +577,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ShortcutBox.h"
+				>
+			</File>
+			<File
 				RelativePath=".\StaticObject.h"
 				>
 			</File>
@@ -434,6 +590,10 @@
 			</File>
 			<File
 				RelativePath=".\SynchronizedTimeHandler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TeleportBox.h"
 				>
 			</File>
 			<File

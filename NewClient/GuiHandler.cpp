@@ -26,16 +26,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GuiHandler.h"
 #include "LoginGUI.h"
 #include "LogHandler.h"
-//#include "ChooseWorldGUI.h"
-//#include "GameGUI.h"
-//#include "MenuGUI.h"
-//#include "MenuGUI.h"
-//#include "OptionsGUI.h"
+#include "ChooseWorldGUI.h"
+#include "GameGUI.h"
+#include "MenuGUI.h"
+#include "OptionsGUI.h"
+#include "DataLoader.h"
 #include "ConfigurationManager.h"
 #include "LbaNetEngine.h"
 #include "SynchronizedTimeHandler.h"
 
-//#include "DataLoader.h"
 
 
 #include <CEGUI.h>
@@ -84,11 +83,8 @@ void GuiHandler::Initialize(const std::string &clientversion,
 	{
 		_gui_renderer =  &CEGUI::OpenGLRenderer::create();
 		_gui_renderer->enableExtraStateSettings(true);
-
-		//new CEGUI::OpenGLRenderer (0, screen_size_X, screen_size_Y);
-
 		CEGUI::System::create( *_gui_renderer );
-		//new CEGUI::System (_gui_renderer);
+
 
 		// initialise the required dirs for the DefaultResourceProvider
 		CEGUI::DefaultResourceProvider* rp = static_cast<CEGUI::DefaultResourceProvider*>
@@ -296,25 +292,25 @@ void GuiHandler::Initialize(const std::string &clientversion,
 	_login_gui->Initialize(clientversion);
 	_guis.push_back(_login_gui);
 
-	//ChooseWorldGUI * cwG = new ChooseWorldGUI();
-	//cwG->Initialize();
-	//_guis.push_back(cwG);
+	ChooseWorldGUI * cwG = new ChooseWorldGUI();
+	cwG->Initialize();
+	_guis.push_back(cwG);
 
-	//std::vector<WorldDesc> list;
-	//DataLoader::getInstance()->GetAvailableWorlds(list);
-	//cwG->SetWorldList(list);
+	std::vector<WorldDesc> list;
+	DataLoader::getInstance()->GetAvailableWorlds(list);
+	cwG->SetWorldList(list);
 
-	//_game_gui = new GameGUI();
-	//_game_gui->Initialize();
-	//_guis.push_back(_game_gui);
+	_game_gui = new GameGUI();
+	_game_gui->Initialize();
+	_guis.push_back(_game_gui);
 
-	//MenuGUI * menuG = new MenuGUI();
-	//menuG->Initialize();
-	//_guis.push_back(menuG);
+	MenuGUI * menuG = new MenuGUI();
+	menuG->Initialize();
+	_guis.push_back(menuG);
 
-	//_option_gui = new OptionsGUI();
-	//_option_gui->Initialize();
-	//_guis.push_back(_option_gui);
+	_option_gui = new OptionsGUI();
+	_option_gui->Initialize();
+	_guis.push_back(_option_gui);
 
 
 	SwitchGUI(0);
@@ -402,7 +398,7 @@ void GuiHandler::Resize(int screen_size_X, int screen_size_Y)
     CEGUI::System::getSingleton().
         notifyDisplaySizeChanged(CEGUI::Size((float)screen_size_X,(float)screen_size_Y));
 
-	//_game_gui->Refresh();
+	_game_gui->Refresh();
 }
 
 /***********************************************************
@@ -427,8 +423,8 @@ set the current map of the game
 ***********************************************************/
 void GuiHandler::SetCurrentMap(const std::string & WorldName, const std::string & MapName)
 {
-	//if(_game_gui)
-	//	_game_gui->SetCurrentMap(WorldName, MapName);
+	if(_game_gui)
+		_game_gui->SetCurrentMap(WorldName, MapName);
 }
 
 
@@ -438,18 +434,8 @@ focus the chatbox
 ***********************************************************/
 void GuiHandler::FocusChatbox(bool focus)
 {
-	//if(_game_gui)
-	//	_game_gui->FocusChatbox(focus);
-}
-
-
-/***********************************************************
-set irc thread
-***********************************************************/
-void GuiHandler::SetIrcThread(IrcThread * IT)
-{
-	//if(_game_gui)
-	//	_game_gui->SetIrcThread(IT);
+	if(_game_gui)
+		_game_gui->FocusChatbox(focus);
 }
 
 
@@ -476,8 +462,8 @@ set the list of teleport places
 ***********************************************************/
 void GuiHandler::SetTeleportList(const std::map<std::string, TPInfo> &_lists)
 {
-	//if(_game_gui)
-	//	_game_gui->SetTeleportList(_lists);
+	if(_game_gui)
+		_game_gui->SetTeleportList(_lists);
 }
 
 /***********************************************************
@@ -485,8 +471,8 @@ display game text
 ***********************************************************/
 bool GuiHandler::DisplayGameText(long textid, bool show)
 {
-	//if(_game_gui)
-	//	return _game_gui->DisplayGameText(textid, show);
+	if(_game_gui)
+		return _game_gui->DisplayGameText(textid, show);
 
 	return true;
 }
@@ -508,7 +494,8 @@ set actors
 ***********************************************************/
 //void GuiHandler::SetActors(std::map<long, Actor *> * Lactors, std::map<long, Actor *> * Eactors)
 //{
-//	if(_game_gui)_game_gui->SetActors(Lactors, Eactors);
+//	if(_game_gui)
+//		_game_gui->SetActors(Lactors, Eactors);
 //}
 
 
@@ -517,8 +504,8 @@ set player name
 ***********************************************************/
 void GuiHandler::SetPlayerName(const std::string & name)
 {
-	//if(_game_gui)
-	//	_game_gui->SetPlayerName(name);
+	if(_game_gui)
+		_game_gui->SetPlayerName(name);
 }
 
 
@@ -541,7 +528,8 @@ display inventory
 ***********************************************************/
 void GuiHandler::ShowInventory()
 {
-	//if(_game_gui)_game_gui->ShowInventory();
+	if(_game_gui)
+		_game_gui->ShowInventory();
 }
 
 
@@ -550,7 +538,8 @@ display inventory
 ***********************************************************/
 void GuiHandler::RefreshOption()
 {
-	//if(_option_gui)_option_gui->SendNameColor();
+	if(_option_gui)
+		_option_gui->SendNameColor();
 }
 
 
