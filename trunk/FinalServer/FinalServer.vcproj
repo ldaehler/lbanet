@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="FinalServer"
 	ProjectGUID="{A7412096-86CB-4EBC-A1D4-0DD2582765A9}"
 	RootNamespace="FinalServer"
@@ -40,6 +40,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/D _CRT_SECURE_NO_WARNINGS"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\dependencies\zoidcom\include;..\dependencies\Boost\include;..\shared"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
@@ -115,6 +116,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/D _CRT_SECURE_NO_WARNINGS"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="..\dependencies\zoidcom\include;..\dependencies\Boost\include;..\shared"
@@ -185,6 +187,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\ClientObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\ClientObjectHandler.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\shared\ConnectionHandler.cpp"
 				>
 			</File>
@@ -216,6 +226,18 @@
 			</File>
 			<File
 				RelativePath="..\shared\ChatChannelManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\ClientListHandlerBase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\ClientObject.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\ClientObjectHandler.h"
 				>
 			</File>
 			<File

@@ -25,6 +25,56 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ConnectionHandler.h"
 #include "server.h"
+#include "LogHandler.h"
+
+class SimpleClientListHandler : public ClientListHandlerBase
+{
+
+public:
+	// constructor
+	SimpleClientListHandler(){}
+
+	// destructor
+	virtual ~SimpleClientListHandler(){}
+
+	// new client connected
+	virtual void Connected(unsigned int id, const std::string & Name)
+	{
+		#ifdef _DEBUG
+			std::stringstream strs;
+			strs<<"Client "<<id<<" with name "<<Name<<" connected ";
+			LogHandler::getInstance()->LogToFile(strs.str());
+		#endif
+
+		_clientmap[id] = Name;
+	}
+
+	// client disconnected
+	virtual void Disconnected(unsigned int id)
+	{
+		#ifdef _DEBUG
+			std::stringstream strs;
+			strs<<"Client "<<id<<" with name "<<_clientmap[id]<<" disconnected ";
+			LogHandler::getInstance()->LogToFile(strs.str());
+		#endif
+
+		std::map<unsigned int, std::string>::iterator it = _clientmap.find(id);
+		if(it != _clientmap.end())
+			_clientmap.erase(it);
+	}
+
+	// return the name given a client id
+	virtual std::string GetName(unsigned int id)
+	{
+		return _clientmap[id];
+	}
+
+private:
+	std::map<unsigned int, std::string> _clientmap;
+
+};
+
+
 
 
 int main(int argc, char *argv[])
@@ -33,7 +83,9 @@ int main(int argc, char *argv[])
 	boost::shared_ptr<ConnectionHandler> ConH = boost::shared_ptr<ConnectionHandler>(new ConnectionHandler("Zoidcom.log"));
 
 	// server operates on internal port 1 and UDP port 8899
-	boost::shared_ptr<Server> Serv = boost::shared_ptr<Server>(new Server(1, 8899, 8000, 2000, 20, 200));
+	boost::shared_ptr<SimpleClientListHandler> clListH = boost::shared_ptr<SimpleClientListHandler>(new SimpleClientListHandler());
+	boost::shared_ptr<Server> Serv = boost::shared_ptr<Server>(new Server(1, 8899, 8000, 2000, 20, 200, clListH));
+
 
 
 	// zoidcom needs to get called regularly to get anything done so we enter the mainloop now
