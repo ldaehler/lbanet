@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // declare static member
 ZCom_ClassID ChatChannel::m_classid = ZCom_Invalid_ID;
 
+#define _MAX_CHAR_SIZE_ 50
 
 
 /************************************************************************/
@@ -44,8 +45,9 @@ void ChatChannel::registerClass(ZCom_Control *_control)
 /************************************************************************/
 /* constructor                                        
 /************************************************************************/
-ChatChannel::ChatChannel(ZCom_Control *_control, const std::string & name)
-: _name(name)
+ChatChannel::ChatChannel(ZCom_Control *_control, const std::string & name,
+							boost::shared_ptr<ClientListHandlerBase> clH)
+: _name(name), _clH(clH)
 {
 	_control->ZCom_registerDynamicNode( m_node, m_classid );
 	#ifdef _DEBUG
@@ -77,14 +79,18 @@ void ChatChannel::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remotero
 										 unsigned int eventconnid)
 {
 	// type of custom event is in the first 2 bits of the event
-	int etype = (int) data->getInt(2);
+	unsigned int etype = data->getInt(2);
+
+	// 0 if text is complete - 1 if we expect more
+	unsigned int textform = data->getInt(1);
+
 	switch(etype)
 	{
 		//text event from client
 		case 0:
 		{
 			// get text
-			unsigned short sizes = data->getStringLength();
+			unsigned short sizes = data->getStringLength()+1;
 			char *buf = new char[sizes];
 			data->getString(buf, sizes);
 
@@ -100,14 +106,12 @@ void ChatChannel::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remotero
 				//broadcast the text to all connected client
 				ZCom_BitStream *evt = new ZCom_BitStream();
 				evt->addInt(1, 2);
+				evt->addInt(textform, 1);
+				evt->addInt(eventconnid, 32);
 
 				// add text
 				evt->addString(buf);
-
-				// add sender name
-				evt->addString(_subscribedclients[eventconnid].c_str());
-
-				m_node->sendEvent(eZCom_ReliableUnordered, ZCOM_REPRULE_AUTH_2_OWNER, evt);
+				m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_AUTH_2_OWNER, evt);
 			}
 
 			delete buf;
@@ -117,34 +121,42 @@ void ChatChannel::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remotero
 		//text event from server
 		case 1:
 		{
+			//get sender id
+			unsigned int senderid = data->getInt(32);
+
 			// get text
-			unsigned short sizes = data->getStringLength();
+			unsigned short sizes = data->getStringLength()+1;
 			char *buf = new char[sizes];
 			data->getString(buf, sizes);
-
-			// get client name
-			unsigned short sizen = data->getStringLength();
-			char *bufname = new char[sizen];
-			data->getString(bufname, sizen);
-
-			#ifdef _DEBUG
-				std::stringstream strs;
-				strs<<"Server "<<eventconnid<<" sent "<<buf<<" from "<<bufname;
-				LogHandler::getInstance()->LogToFile(strs.str());
-			#endif
-			
+		
 			// only care if event comes from the server
 			if(remoterole == eZCom_RoleAuthority)
 			{
-				//publish text to all subscribers
-				std::vector<boost::shared_ptr<ChatSubscriberBase> >::iterator it = _subscribers.begin();
-				std::vector<boost::shared_ptr<ChatSubscriberBase> >::iterator end = _subscribers.end();
-				for(; it != end; ++it)
-					(*it)->ReceivedText(bufname, buf);
+				// addtextpart
+				_tmpstring[senderid].append(buf);
+
+				#ifdef _DEBUG
+					std::stringstream strs;
+					strs<<"Server "<<eventconnid<<" sent "<<buf;
+					LogHandler::getInstance()->LogToFile(strs.str());
+				#endif
+
+				// if end of text
+				if(textform == 0)
+				{
+					//publish text to all subscribers
+					std::vector<boost::shared_ptr<ChatSubscriberBase> >::iterator it = _subscribers.begin();
+					std::vector<boost::shared_ptr<ChatSubscriberBase> >::iterator end = _subscribers.end();
+					for(; it != end; ++it)
+						(*it)->ReceivedText(""/*_clH->GetName(senderid)*/, _tmpstring[senderid]);
+
+					//clear the string
+					_tmpstring[senderid].clear();
+				}
 			}
 
 			delete buf;
-			delete bufname;
+
 		}
 		break;
 	}
@@ -155,9 +167,9 @@ void ChatChannel::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remotero
 /************************************************************************/
 /* subscribe a specific client                                         
 /************************************************************************/
-void ChatChannel::Subscribe(unsigned int clientId, const std::string &clientName)
+void ChatChannel::Subscribe(unsigned int clientId)
 {
-	_subscribedclients[clientId] = clientName;
+	_subscribedclients[clientId] = "";
 	m_node->setOwner(clientId, true);
 
 
@@ -196,10 +208,25 @@ void ChatChannel::AttachSubscriber(boost::shared_ptr<ChatSubscriberBase> sub)
 /************************************************************************/
 /* called when client want to send text                         
 /************************************************************************/
-void ChatChannel::SendText(const std::string Text)
+void ChatChannel::SendText(std::string Text)
 {
+	//send part of the string text
+	while(Text.length() > _MAX_CHAR_SIZE_)
+	{
+		std::string Textpart = 	Text.substr(0, _MAX_CHAR_SIZE_);
+		Text = Text.substr(_MAX_CHAR_SIZE_);
+
+		ZCom_BitStream *evt = new ZCom_BitStream();
+		evt->addInt(0, 2);
+		evt->addInt(1, 1);
+		evt->addString(Textpart.c_str());
+		m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_OWNER_2_AUTH, evt);	
+	}
+	
+	// send last part of the text
 	ZCom_BitStream *evt = new ZCom_BitStream();
 	evt->addInt(0, 2);
+	evt->addInt(0, 1);
 	evt->addString(Text.c_str());
-	m_node->sendEvent(eZCom_ReliableUnordered, ZCOM_REPRULE_OWNER_2_AUTH, evt);
+	m_node->sendEvent(eZCom_ReliableOrdered, ZCOM_REPRULE_OWNER_2_AUTH, evt);
 }
