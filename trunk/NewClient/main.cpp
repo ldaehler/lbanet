@@ -108,6 +108,9 @@ private:
 
 int main( int argc, char **argv )
 {
+	LogHandler::getInstance()->Init("LBAClient.log");
+
+
 	// init memory allocator
 	UserAllocatorHandler::getInstance()->Initialize();
 

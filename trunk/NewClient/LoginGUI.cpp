@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <CEGUI.h>
 #include "LogHandler.h"
 #include "InternalWorkpile.h"
-//#include "GameEvents.h"
+#include "GameEvents.h"
 #include "ConfigurationManager.h"
 
 /***********************************************************
@@ -65,28 +65,9 @@ void LoginGUI::Initialize(const std::string &clientversion)
 			CEGUI::PushButton::EventClicked,
 			CEGUI::Event::Subscriber (&LoginGUI::HandleCancel, this));
 
-		static_cast<CEGUI::PushButton *> (
-			CEGUI::WindowManager::getSingleton().getWindow("LoginWindowPlayerFrame/plus"))->subscribeEvent (
-			CEGUI::PushButton::EventClicked,
-			CEGUI::Event::Subscriber (&LoginGUI::Handlebplus, this));
 
-		static_cast<CEGUI::PushButton *> (
-			CEGUI::WindowManager::getSingleton().getWindow("LoginWindowPlayerFrame/minus"))->subscribeEvent (
-			CEGUI::PushButton::EventClicked,
-			CEGUI::Event::Subscriber (&LoginGUI::Handlebminus, this));
-
-		static_cast<CEGUI::PushButton *> (
-			CEGUI::WindowManager::getSingleton().getWindow("LoginWindowPlayerFrame/cplus"))->subscribeEvent (
-			CEGUI::PushButton::EventClicked,
-			CEGUI::Event::Subscriber (&LoginGUI::Handlecplus, this));
-
-		static_cast<CEGUI::PushButton *> (
-			CEGUI::WindowManager::getSingleton().getWindow("LoginWindowPlayerFrame/cminus"))->subscribeEvent (
-			CEGUI::PushButton::EventClicked,
-			CEGUI::Event::Subscriber (&LoginGUI::Handlecminus, this));
-
-		//CEGUI::WindowManager::getSingleton().getWindow("LBaNetLogo")->disable();
-		//CEGUI::WindowManager::getSingleton().getWindow("LBaNetLogoCenter")->disable();
+		CEGUI::WindowManager::getSingleton().getWindow("LBaNetLogo")->disable();
+		CEGUI::WindowManager::getSingleton().getWindow("LBaNetLogoCenter")->disable();
 
 		CEGUI::Editbox * pt = static_cast<CEGUI::Editbox *> (
 				CEGUI::WindowManager::getSingleton().getWindow("PasswordText"));
@@ -100,12 +81,6 @@ void LoginGUI::Initialize(const std::string &clientversion)
 		lt->setText(name);
 
 		CEGUI::WindowManager::getSingleton().getWindow("DisplayLoginErrorFrame")->hide();
-
-		static_cast<CEGUI::FrameWindow *>(
-			CEGUI::WindowManager::getSingleton().getWindow("LoginWindowPlayerFrame"))->setDragMovingEnabled(false);
-
-		static_cast<CEGUI::FrameWindow *>(
-			CEGUI::WindowManager::getSingleton().getWindow("LoginWindowPlayerFrame"))->setRollupEnabled(false);
 
 		static_cast<CEGUI::FrameWindow *>(
 			CEGUI::WindowManager::getSingleton().getWindow("LoginWIndowFrame"))->setDragMovingEnabled(false);
@@ -153,20 +128,16 @@ bool LoginGUI::HandleConnect(const CEGUI::EventArgs& e)
 		CEGUI::Editbox * pt = static_cast<CEGUI::Editbox *> (
 				CEGUI::WindowManager::getSingleton().getWindow("PasswordText"));
 
-		CEGUI::Checkbox * cbl = static_cast<CEGUI::Checkbox *> (
-				CEGUI::WindowManager::getSingleton().getWindow("LoginPlayLocalCb"));
 
-
-		if(lt && pt && cbl)
+		if(lt && pt)
 		{
-			bool seleplaylo = cbl->isSelected();
 			std::string txtl = lt->getText().c_str();
 			std::string txtt = pt->getText().c_str();
 			if((txtl != "") && (txtl.size() <= 20) && (txtt.size() <= 20))
 			{
 				ConfigurationManager::GetInstance()->SetString("Player.Name", txtl);
 				pt->setText("");
-				//InternalWorkpile::getInstance()->AddEvent(new LoginEvent(txtl, txtt, seleplaylo));
+				InternalWorkpile::getInstance()->AddEvent(new LoginEvent(txtl, txtt));
 			}
 		}
 	}
@@ -185,77 +156,8 @@ handle cancel button event
 ***********************************************************/
 bool LoginGUI::HandleCancel (const CEGUI::EventArgs& e)
 {
-	//InternalWorkpile::getInstance()->QuitGame();
+	InternalWorkpile::getInstance()->QuitGame();
 	return true;
-}
-
-
-
-/***********************************************************
-handle cancel button event
-***********************************************************/
-bool LoginGUI::Handlebplus(const CEGUI::EventArgs& e)
-{
-	//InternalWorkpile::getInstance()->AddEvent(new ChangeMainBodyEvent(true));
-	return true;
-}
-
-
-/***********************************************************
-handle cancel button event
-***********************************************************/
-bool LoginGUI::Handlebminus (const CEGUI::EventArgs& e)
-{
-	//InternalWorkpile::getInstance()->AddEvent(new ChangeMainBodyEvent(false));
-	return true;
-}
-
-
-
-
-/***********************************************************
-handle cancel button event
-***********************************************************/
-bool LoginGUI::Handlecplus(const CEGUI::EventArgs& e)
-{
-	//InternalWorkpile::getInstance()->AddEvent(new ChangeMainBodyColorEvent(true));
-	return true;
-}
-
-
-/***********************************************************
-handle cancel button event
-***********************************************************/
-bool LoginGUI::Handlecminus (const CEGUI::EventArgs& e)
-{
-	//InternalWorkpile::getInstance()->AddEvent(new ChangeMainBodyColorEvent(false));
-	return true;
-}
-
-
-/***********************************************************
-set if the server is on or not
-***********************************************************/
-void LoginGUI::SetServrOn(bool ServerOn)
-{
-	try
-	{
-		CEGUI::Window * lt = static_cast<CEGUI::Window *> (
-				CEGUI::WindowManager::getSingleton().getWindow("ServerOnLabel"));
-
-		lt->setText((ServerOn ? "Server: ON" : "Server: OFF"));
-
-		if(!ServerOn)
-		{
-			CEGUI::Checkbox* cb = static_cast<CEGUI::Checkbox *> (
-					CEGUI::WindowManager::getSingleton().getWindow("LoginPlayLocalCb"));
-			cb->setSelected(true);
-		}
-	}
-	catch(CEGUI::Exception &ex)
-	{
-		LogHandler::getInstance()->LogToFile(std::string("Exception trying to set server state from the gui: ") + ex.getMessage().c_str());
-	}
 }
 
 

@@ -29,9 +29,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
-//#include <ActorInfo.h>
-//#include <LbaTypes.h>
-//#include "Actor.h"
 
 class GameEvent;
 class MainPlayerHandler;
@@ -421,7 +418,7 @@ protected:
 
 	//! construtor
 	InternalWorkpile()
-		//: m_game_quitted(false), m_irc_quitted(false), m_sending_quitted(false),
+		: m_game_quitted(false)//, m_irc_quitted(false), m_sending_quitted(false),
 		//	m_send_cycle_time(20), m_is_updated(false), m_map_changed(false), m_server_on(false),
 		//	m_player_id(-1), m_new_actor_state(false), m_name_color_changed(false),
 		//	m_world_changed(false), m_player_pos_info_updated(false), m_waiting_container_info(false),

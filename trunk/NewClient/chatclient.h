@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ClientListHandlerBase.h"
 
 class ChatChannelManager;
-
+class LbaNetEngine;
 
 
 
@@ -53,7 +53,9 @@ public:
 	~ChatClient();
 
 	//! connect to a server given an address + port
-	void ConnectToServer(const std::string & address, const std::string & login, const std::string & password);
+	void ConnectToServer(const std::string & address, const std::string & login, 
+							const std::string & password, const std::string & excpectedversion,
+							LbaNetEngine * engine);
 
 	//! check if client is connected
 	bool IsConnected() {return m_connected;}
@@ -126,6 +128,9 @@ private:
 
 	//client list handler
 	boost::shared_ptr<ClientListHandlerBase> m_clH;
+
+	//used for callback
+	LbaNetEngine * _engine;
 };
 
 #endif

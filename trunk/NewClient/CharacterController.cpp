@@ -184,6 +184,4 @@ void CharacterController::Process(double tnow, float tdiff)
 	phys->GetPosition(PositionX, PositionY, PositionZ);
 	float roofcut = _pEngine->CheckForRoof(PositionX, PositionY, PositionZ);
 	OsgHandler::getInstance()->SetClipPlane(roofcut-1);
-
-
 }

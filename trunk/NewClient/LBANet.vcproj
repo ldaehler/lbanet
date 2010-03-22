@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="LBANet"
 	ProjectGUID="{B46236F6-9F3B-4B3A-BD27-13E94D8833F2}"
 	RootNamespace="perspectivemapviewer"
@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/D _CRT_SECURE_NO_WARNINGS /D MP3_MUSIC"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\dependencies\SDL\include;..\dependencies\Boost\include;..\dependencies\CEGUI\cegui\include;..\dependencies\libconfig\include;..\dependencies\OpenSceneGraph\include;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;;..\shared;..\dependencies\zoidcom\include"
+				AdditionalIncludeDirectories="..\dependencies\SDL\include;..\dependencies\Boost\include;..\dependencies\CEGUI\cegui\include;..\dependencies\libconfig\include;..\dependencies\OpenSceneGraph\include;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;;..\shared;..\dependencies\zoidcom\include;..\dependencies\fmod\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;TIXML_USE_STL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -62,9 +62,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDLd.lib SDLmaind.lib opengl32.lib glu32.lib CEGUIBase_d.lib CEGUIOpenGLRenderer_d.lib libconfig++d.lib osgd.lib osgShadowd.lib osgGAd.lib osgViewerd.lib osgDBd.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib winmm.lib zoidcom_vcd.lib"
+				AdditionalDependencies="SDLd.lib SDLmaind.lib opengl32.lib glu32.lib CEGUIBase_d.lib CEGUIOpenGLRenderer_d.lib libconfig++d.lib osgd.lib osgShadowd.lib osgGAd.lib osgViewerd.lib osgDBd.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib winmm.lib zoidcom_vcd.lib fmodex_vc.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\dependencies\SDL\lib;..\dependencies\Boost\lib;..\dependencies\CEGUI\lib;..\dependencies\libconfig\lib;..\dependencies\OpenSceneGraph\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;;..\dependencies\zoidcom\lib\msvc8"
+				AdditionalLibraryDirectories="..\dependencies\SDL\lib;..\dependencies\Boost\lib;..\dependencies\CEGUI\lib;..\dependencies\libconfig\lib;..\dependencies\OpenSceneGraph\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;;..\dependencies\zoidcom\lib\msvc8;..\dependencies\fmod\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -119,7 +119,7 @@
 				AdditionalOptions="/D _CRT_SECURE_NO_WARNINGS /D MP3_MUSIC"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\dependencies\SDL\include;..\dependencies\Boost\include;..\dependencies\CEGUI\cegui\include;..\dependencies\libconfig\include;..\dependencies\OpenSceneGraph\include;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;;..\shared;..\dependencies\zoidcom\include"
+				AdditionalIncludeDirectories="..\dependencies\SDL\include;..\dependencies\Boost\include;..\dependencies\CEGUI\cegui\include;..\dependencies\libconfig\include;..\dependencies\OpenSceneGraph\include;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;;..\shared;..\dependencies\zoidcom\include;..\dependencies\fmod\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;TIXML_USE_STL"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -138,9 +138,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDLmain.lib opengl32.lib glu32.lib CEGUIBase.lib CEGUIOpenGLRenderer.lib libconfig++.lib osg.lib osgShadow.lib osgGA.lib osgViewer.lib osgDB.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib winmm.lib zoidcom_vc.lib"
+				AdditionalDependencies="SDL.lib SDLmain.lib opengl32.lib glu32.lib CEGUIBase.lib CEGUIOpenGLRenderer.lib libconfig++.lib osg.lib osgShadow.lib osgGA.lib osgViewer.lib osgDB.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib winmm.lib zoidcom_vc.lib fmodex_vc.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\dependencies\SDL\lib;..\dependencies\Boost\lib;..\dependencies\CEGUI\lib;..\dependencies\libconfig\lib;..\dependencies\OpenSceneGraph\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;;..\dependencies\zoidcom\lib\msvc8"
+				AdditionalLibraryDirectories="..\dependencies\SDL\lib;..\dependencies\Boost\lib;..\dependencies\CEGUI\lib;..\dependencies\libconfig\lib;..\dependencies\OpenSceneGraph\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;;..\dependencies\zoidcom\lib\msvc8;..\dependencies\fmod\lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -252,6 +252,10 @@
 			</File>
 			<File
 				RelativePath=".\main.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MusicHandler.cpp"
 				>
 			</File>
 			<File
@@ -386,6 +390,10 @@
 			</File>
 			<File
 				RelativePath=".\LoginGUI.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MusicHandler.h"
 				>
 			</File>
 			<File

@@ -64,7 +64,7 @@ public:
 	~GuiHandler();
 
 	//! initialize function
-	void Initialize(bool ServerOn, const std::string &clientversion, LbaNetEngine * engine);
+	void Initialize(const std::string &clientversion, LbaNetEngine * engine);
 
 	// process function
 	void Process(void);

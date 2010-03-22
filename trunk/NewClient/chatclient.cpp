@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ChatChannelManager.h"
 #include "ChatChannel.h"
 #include "ClientObject.h"
+#include "LbaNetEngine.h"
 
 /***********************************************************************
  * Constructor
@@ -36,7 +37,8 @@ ChatClient::ChatClient(boost::shared_ptr<ChatSubscriberBase> WorldSubscriber,
 							unsigned short downpacketpersecond, unsigned short downbyteperpacket)
 : m_id(ZCom_Invalid_ID), m_connected(false), m_WorldSubscriber(WorldSubscriber),
 	m_subscribed_world(false), m_clH(clH), 
-	m_downpacketpersecond(downpacketpersecond), m_downbyteperpacket(downbyteperpacket)
+	m_downpacketpersecond(downpacketpersecond), m_downbyteperpacket(downbyteperpacket),
+	_engine(NULL)
 {
 	// this will allocate the sockets and create local bindings
     if ( !ZCom_initSockets( eZCom_EnableUDP, 0, 0, 0 ) )
@@ -69,8 +71,11 @@ ChatClient::~ChatClient()
  * connect to a server given an address + port
  ***********************************************************************/
 void ChatClient::ConnectToServer(const std::string & address, const std::string & login, 
-								 const std::string & password)
+								 const std::string & password, const std::string & excpectedversion,
+								 LbaNetEngine * engine)
 {
+	_engine = engine;
+
 	if(m_connected)
 	{
 		LogHandler::getInstance()->LogToFile("Zoid: Already connected to chat server - skipping connection", 2);
@@ -86,6 +91,7 @@ void ChatClient::ConnectToServer(const std::string & address, const std::string 
     ZCom_BitStream *req = new ZCom_BitStream();
 	req->addString( login.c_str() );
 	req->addString( password.c_str() );
+	req->addString( excpectedversion.c_str() );
 
 	// connect to server
 	LogHandler::getInstance()->LogToFile("Chat client connecting to "+address, 2);
@@ -100,19 +106,27 @@ void ChatClient::ConnectToServer(const std::string & address, const std::string 
  ***********************************************************************/
 void ChatClient::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result, ZCom_BitStream &_reply )
 {
+	std::string reason(_reply.getStringStatic());
+
 	std::stringstream strs;
-	strs<<"Client: The connection process for: "<<_id<<" returned with resultcode "
-		<<_result<<", the reply was "<<_reply.getStringStatic();
+	strs<<"Client: The connection process for: "<<_id<<" returned with resultcode "<<_result<<", the reply was "<<reason;
 	LogHandler::getInstance()->LogToFile(strs.str(), 2);   
 
 	if ( _result != eZCom_ConnAccepted )
+	{
 		m_connected = false;
+		int errorcode = -1;
+		if(_result == eZCom_ConnTimeout)
+			errorcode = 0;
+		_engine->ConnectionCallback(errorcode, reason);
+	}
 	else
 	{
 		m_connected = true;
 		ZCom_requestDownstreamLimit(_id, m_downpacketpersecond, m_downbyteperpacket);
 		ZCom_changeObjectChannelSubscription( _id, 1, eZCom_Subscribe );
 		m_id = _id;
+		_engine->ConnectionCallback(1, "");
 	}
 }
 
@@ -128,6 +142,7 @@ void ChatClient::ZCom_cbConnectionClosed( ZCom_ConnID _id, eZCom_CloseReason _re
 	LogHandler::getInstance()->LogToFile(strs.str(), 2);   
 
 	m_connected = false;
+	_engine->ConnectionCallback(-2, "");
 }
 
 

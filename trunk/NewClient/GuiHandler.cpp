@@ -75,8 +75,7 @@ GuiHandler::~GuiHandler()
 /***********************************************************
 initialize function
 ***********************************************************/
-void GuiHandler::Initialize(bool ServerOn,
-							const std::string &clientversion,
+void GuiHandler::Initialize(const std::string &clientversion,
 							LbaNetEngine * engine)
 {
 	_engine = engine;
@@ -295,7 +294,6 @@ void GuiHandler::Initialize(bool ServerOn,
 	//initialize the login gui
 	_login_gui = new LoginGUI();
 	_login_gui->Initialize(clientversion);
-	_login_gui->SetServrOn(ServerOn);
 	_guis.push_back(_login_gui);
 
 	//ChooseWorldGUI * cwG = new ChooseWorldGUI();
