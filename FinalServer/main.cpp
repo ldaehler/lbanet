@@ -79,6 +79,8 @@ private:
 
 int main(int argc, char *argv[])
 {
+	LogHandler::getInstance()->Init("ChatServer.log");
+
 	// set up connection class
 	boost::shared_ptr<ConnectionHandler> ConH = boost::shared_ptr<ConnectionHandler>(new ConnectionHandler("Zoidcom.log"));
 
