@@ -41,17 +41,20 @@ public:
 	LogHandler();
 
 	// destructor
-    ~LogHandler();
+	~LogHandler();
 
 	// singleton pattern
-   static LogHandler * getInstance();
+	static LogHandler * getInstance();
+
+	// initialize with filename
+	void Init(const std::string filename);
 
 	// log a text into file
-   void LogToFile(const std::string text, int category = 0);
+	void LogToFile(const std::string text, int category = 0);
 
 
 	// inform the user of something
-   void InformUser(const std::string text);
+	void InformUser(const std::string text);
 
 
 private:
