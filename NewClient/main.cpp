@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ConnectionHandler.h"
 #include "chatclient.h"
 #include "ChatSubscriberBase.h"
+#include "LogHandler.h"
 
 #include <iostream>
 
@@ -55,18 +56,69 @@ public:
 	}
 };
 
+
+
+class SimpleClientListHandler : public ClientListHandlerBase
+{
+
+public:
+	// constructor
+	SimpleClientListHandler(){}
+
+	// destructor
+	virtual ~SimpleClientListHandler(){}
+
+	// new client connected
+	virtual void Connected(unsigned int id, const std::string & Name)
+	{
+		#ifdef _DEBUG
+			std::stringstream strs;
+			strs<<"Client "<<id<<" with name "<<Name<<" connected ";
+			LogHandler::getInstance()->LogToFile(strs.str());
+		#endif
+
+		_clientmap[id] = Name;
+	}
+
+	// client disconnected
+	virtual void Disconnected(unsigned int id)
+	{
+		#ifdef _DEBUG
+			std::stringstream strs;
+			strs<<"Client "<<id<<" with name "<<_clientmap[id]<<" disconnected ";
+			LogHandler::getInstance()->LogToFile(strs.str());
+		#endif
+
+		std::map<unsigned int, std::string>::iterator it = _clientmap.find(id);
+		if(it != _clientmap.end())
+			_clientmap.erase(it);
+	}
+
+	// return the name given a client id
+	virtual std::string GetName(unsigned int id)
+	{
+		return _clientmap[id];
+	}
+
+private:
+	std::map<unsigned int, std::string> _clientmap;
+
+};
+
+
 int main( int argc, char **argv )
 {
 	// init memory allocator
 	UserAllocatorHandler::getInstance()->Initialize();
 
 	// set up connection class
-	boost::shared_ptr<ConnectionHandler> ConH = boost::shared_ptr<ConnectionHandler>(new ConnectionHandler("Zoidcom.log"));
+	ConnectionHandler* ConH = new ConnectionHandler("Zoidcom.log");
 
 	boost::shared_ptr<ChatSubscriberSimple> simpleSub(new ChatSubscriberSimple());
+	boost::shared_ptr<SimpleClientListHandler> clListH = boost::shared_ptr<SimpleClientListHandler>(new SimpleClientListHandler());
 
 	// set up chat client
-	boost::shared_ptr<ChatClient> Chatcl = boost::shared_ptr<ChatClient>(new ChatClient(simpleSub));
+	ChatClient* Chatcl = new ChatClient(simpleSub, clListH);
 
 
 	// start main thread engine
@@ -75,8 +127,8 @@ int main( int argc, char **argv )
 
 	Chatcl->CloseConnection();
 
-	Chatcl.reset();
-	ConH.reset();
+	delete Chatcl;
+	delete ConH;
 	return 0;
 }
 

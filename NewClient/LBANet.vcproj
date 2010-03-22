@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="LBANet"
 	ProjectGUID="{B46236F6-9F3B-4B3A-BD27-13E94D8833F2}"
 	RootNamespace="perspectivemapviewer"
@@ -195,6 +195,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\ClientObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\ClientObjectHandler.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CommonTypes.cpp"
 				>
 			</File>
@@ -314,6 +322,14 @@
 			</File>
 			<File
 				RelativePath="..\shared\ChatSubscriberBase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\ClientObject.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\ClientObjectHandler.h"
 				>
 			</File>
 			<File
