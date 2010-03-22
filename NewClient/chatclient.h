@@ -110,6 +110,12 @@ protected:
 	virtual void ZCom_cbDiscovered( const ZCom_Address & _addr, ZCom_BitStream &_reply )  {}
 
 
+	// when a text has been written on the chat
+	void HandleChatText();
+
+	// process a line of text
+	void ProcessText(const std::string & Text);
+
 private:
 	// id given by the server
 	ZCom_ConnID		m_id;
@@ -131,6 +137,11 @@ private:
 
 	//used for callback
 	LbaNetEngine * _engine;
+
+	// afk counters
+	long					_refresh_counter;
+	long					_afk_counter;
+	bool					_afked;
 };
 
 #endif

@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
+#include "ChatSubscriberBase.h"
 
 class GameEvent;
 class MainPlayerHandler;
@@ -42,7 +43,7 @@ class Player;
  * Purpose: Declaration of the class InternalWorkpile
  * Be carefull - this is not thread safe!!
  ***********************************************************************/
-class InternalWorkpile
+class InternalWorkpile : public ChatSubscriberBase
 {
 public:
 
@@ -121,10 +122,11 @@ public:
 	void GetPendingEvents(std::vector<GameEvent *> & events);
 
 
-	//! add chat text
-	void AddChatData(const ChatTextData & Data);
+	//! add chat text coming from the server
+	void ReceivedText(const std::string & Channel, const std::string & SenderName, 
+																const std::string & Text);
 
-	//! get all chat texts
+	//! get all chat texts to be displayed on the GUI
 	void GetChatData(std::vector<ChatTextData> & data);
 
 
@@ -141,6 +143,20 @@ public:
 	//! return the color changed since last time
 	void GetColorChanges(std::vector<std::pair<std::string, std::string> > & vec);
 
+	// add chat text to be send to server
+	void AddChatText(const std::string & text);
+
+	// get the text to be sent
+	void GetChatText(std::vector<std::string> & texts);
+
+
+	// add a whisper channel
+	void AddWhisperChannel(const std::string & name);
+
+	// cget all queries for whisper channel
+	void GetWhisperChannelQueries(std::vector<std::string> &scvec);
+
+
 
 	////! inform irc thread to quit
 	//void QuitIrc();
@@ -149,18 +165,11 @@ public:
 	//bool WaitOneIrcCycle(long milliseconds);
 
 
-	// add chat text to be send to server
-	void AddChatText(const std::string & text);
-
-	// get the text to be sent
-	void GetChatText(std::vector<std::string> & texts);
-
 	////! inform irc thread to quit
 	//void QuitSending();
 
 	////! wait one cycle before reconencting to irc
 	//bool WaitOneSendingCycle();
-
 
 
 	////! update info
@@ -321,12 +330,6 @@ public:
 
 
 
-	//// add a whisper channel
-	//void AddWhisperChannel(const std::string & name);
-
-	//// cget all queries for whisper channel
-	//void GetWhisperChannelQueries(std::vector<std::string> &scvec);
-
 
 	//// add a whisper channel
 	//void AddFriend(const std::string & name);
@@ -433,14 +436,18 @@ protected:
 
 private:
 	bool										m_game_quitted;
-	bool										m_irc_quitted;
-	bool										m_sending_quitted;
-	long										m_send_cycle_time;
 
 	std::vector<GameEvent *>					m_events;
 	std::vector<ChatTextData>					m_chat_data;
 	std::vector<JoinEvent>						m_join_event;
 	std::vector<std::string>					m_chat_texts;
+	std::vector<std::string>					m_asked_whispers;
+	std::vector<std::pair<std::string, std::string> >	m_colors_changed;
+
+
+	//bool										m_irc_quitted;
+	//bool										m_sending_quitted;
+	//long										m_send_cycle_time;
 
 	//std::vector<LbaNet::ActorActivationInfo>	m_activation_events;
 	//std::vector<LbaNet::ActorActivationInfo>	m_ext_activations;
@@ -470,7 +477,6 @@ private:
 	//std::string									m_name_color;
 	//bool										m_name_color_changed;
 
-	//std::vector<std::pair<std::string, std::string> >	m_colors_changed;
 
 	//bool										m_world_changed;
 	//std::string									m_new_world_name;
@@ -497,7 +503,6 @@ private:
 	//bool										m_cont_ForceClose;
 
 
-	//std::vector<std::string>					m_asked_whispers;
 
 	//std::vector<std::string>					m_added_friends;
 	//std::vector<std::string>					m_removed_friends;
