@@ -149,7 +149,7 @@ void ChatChannel::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remotero
 					std::vector<boost::shared_ptr<ChatSubscriberBase> >::iterator it = _subscribers.begin();
 					std::vector<boost::shared_ptr<ChatSubscriberBase> >::iterator end = _subscribers.end();
 					for(; it != end; ++it)
-						(*it)->ReceivedText(_clH->GetName(senderid), _tmpstring[senderid]);
+						(*it)->ReceivedText(_name, _clH->GetName(senderid), _tmpstring[senderid]);
 
 					//clear the string
 					_tmpstring[senderid].clear();
