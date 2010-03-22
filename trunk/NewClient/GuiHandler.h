@@ -86,8 +86,6 @@ public:
 	// focus the chatbox
 	void FocusChatbox(bool focus);
 
-	//! set irc thread
-	void SetIrcThread(IrcThread * IT);
 
 	//! called when font size changed
 	void ReloadFontSize();
