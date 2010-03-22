@@ -28,6 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ChatChannel.h"
 #include "ClientObject.h"
 
+#define	_CUR_LBANET_SERVER_VERSION_ "v0.8"
+
 /***********************************************************
 Constructor
 ***********************************************************/
@@ -89,7 +91,12 @@ eZCom_RequestResult Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitS
 	_request.getString(login, 20);
 	char password[20];
 	_request.getString(password, 20);
+	char version[20];
+	_request.getString(version, 20);
 
+	std::string loginS(login);
+	std::string passwordS(password);
+	std::string versionS(version);
 
 	// address information
 	const ZCom_Address* addr = ZCom_getPeer( _id );
@@ -111,16 +118,42 @@ eZCom_RequestResult Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitS
 	}
 
 	// check what the client is requesting
-	if ( login && password && strlen( password ) > 0 && strcmp( password, "letmein2" ) == 0 )
+	if ( login && password && version)
 	{
-		std::stringstream strs;
-		strs<<"Server: Incoming connection with ID: "<<_id<<" accepted";
-		LogHandler::getInstance()->LogToFile(strs.str(), 2);    
+		if(versionS == _CUR_LBANET_SERVER_VERSION_)
+		{
+			if(passwordS == "letmein2")
+			{
+				std::stringstream strs;
+				strs<<"Server: Incoming connection with ID: "<<_id<<" accepted";
+				LogHandler::getInstance()->LogToFile(strs.str(), 2);    
 
-		//add to client list
-		m_clientH.Addclient(_id, new ClientObject(this, _id, login, m_clH));
+				//add to client list
+				m_clientH.Addclient(_id, new ClientObject(this, _id, login, m_clH));
 
-		return eZCom_AcceptRequest;
+				return eZCom_AcceptRequest;
+			}
+			else
+			{
+				std::stringstream strs;
+				strs<<"Server: Incoming connection with ID: "<<_id<<" denied";
+				LogHandler::getInstance()->LogToFile(strs.str(), 2);    
+
+				// deny connection request and send reason back to requester
+				_reply.addString( "Incorrect username or password" );
+				return eZCom_DenyRequest;
+			}
+		}
+		else
+		{
+			std::stringstream strs;
+			strs<<"Server: Incoming connection with ID: "<<_id<<" denied";
+			LogHandler::getInstance()->LogToFile(strs.str(), 2);    
+
+			// deny connection request and send reason back to requester
+			_reply.addString( "Server version mismatch - please update your game." );
+			return eZCom_DenyRequest;
+		}
 	}
 	else
 	{
@@ -129,7 +162,7 @@ eZCom_RequestResult Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitS
 		LogHandler::getInstance()->LogToFile(strs.str(), 2);    
 
 		// deny connection request and send reason back to requester
-		_reply.addString( "Incorrect username or password" );
+		_reply.addString( "Empty username or password" );
 		return eZCom_DenyRequest;
 	}
 }
