@@ -76,6 +76,8 @@ void ClientObjectHandler::Addclient(unsigned int id, ClientObject * cl)
 	if(it != _clients.end())
 		return;
 
+
+	_clients[id] = cl;
 }
 
 /************************************************************************/
