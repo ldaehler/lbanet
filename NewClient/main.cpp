@@ -118,7 +118,7 @@ int main( int argc, char **argv )
 	boost::shared_ptr<SimpleClientListHandler> clListH = boost::shared_ptr<SimpleClientListHandler>(new SimpleClientListHandler());
 
 	// set up chat client
-	ChatClient* Chatcl = new ChatClient(simpleSub, clListH);
+	ChatClient* Chatcl = new ChatClient(simpleSub, clListH, 30, 200);
 
 
 	// start main thread engine
