@@ -32,9 +32,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * Constructor
  ***********************************************************************/
 ChatClient::ChatClient(boost::shared_ptr<ChatSubscriberBase> WorldSubscriber,
-							boost::shared_ptr<ClientListHandlerBase> clH)
+							boost::shared_ptr<ClientListHandlerBase> clH,
+							unsigned short downpacketpersecond, unsigned short downbyteperpacket)
 : m_id(ZCom_Invalid_ID), m_connected(false), m_WorldSubscriber(WorldSubscriber),
-	m_subscribed_world(false), m_clH(clH)
+	m_subscribed_world(false), m_clH(clH), 
+	m_downpacketpersecond(downpacketpersecond), m_downbyteperpacket(downbyteperpacket)
 {
 	// this will allocate the sockets and create local bindings
     if ( !ZCom_initSockets( eZCom_EnableUDP, 0, 0, 0 ) )
@@ -108,7 +110,7 @@ void ChatClient::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _res
 	else
 	{
 		m_connected = true;
-		//ZCom_requestDownstreamLimit(_id, 30, 200);
+		ZCom_requestDownstreamLimit(_id, m_downpacketpersecond, m_downbyteperpacket);
 		ZCom_changeObjectChannelSubscription( _id, 1, eZCom_Subscribe );
 		m_id = _id;
 	}

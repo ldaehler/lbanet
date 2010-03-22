@@ -46,7 +46,8 @@ public:
 
 	//! constructor
 	ChatClient(boost::shared_ptr<ChatSubscriberBase> WorldSubscriber,
-					boost::shared_ptr<ClientListHandlerBase> clH);
+					boost::shared_ptr<ClientListHandlerBase> clH,
+					unsigned short downpacketpersecond, unsigned short downbyteperpacket);
 
 	//!destructor
 	~ChatClient();
@@ -112,6 +113,9 @@ private:
 	ZCom_ConnID		m_id;
 	bool			m_connected;
 	bool			m_subscribed_world;
+
+	unsigned short m_downpacketpersecond;
+	unsigned short m_downbyteperpacket;
 
 	boost::shared_ptr<ChatChannelManager> m_channelM;
 	boost::shared_ptr<ChatSubscriberBase> m_WorldSubscriber;
