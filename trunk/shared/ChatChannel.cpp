@@ -177,8 +177,8 @@ void ChatChannel::Unsubscribe(unsigned int clientId)
 		m_node->setOwner(clientId, false);
 
 		// if no client connected then delete the channel
-		//if(_subscribedclients.size() == 0)
-		//	m_deleteme = true;
+		if(_subscribedclients.size() == 0)
+			m_deleteme = true;
 	}
 }
 
