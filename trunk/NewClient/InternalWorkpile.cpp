@@ -322,6 +322,24 @@ std::string InternalWorkpile::GetName(unsigned int id)
 
 
 /***********************************************************
+return the name given a client id
+***********************************************************/
+unsigned int InternalWorkpile::GetId(std::string Name)
+{
+	std::map<unsigned int, std::string>::iterator it =	m_clientmap.begin();
+	std::map<unsigned int, std::string>::iterator end =	m_clientmap.end();
+	for(; it != end; ++it)
+	{
+		if(it->second == Name)
+			return it->first;
+	}
+
+	//not found
+	return 0;
+}
+
+
+/***********************************************************
 client changed status
 ***********************************************************/
 void InternalWorkpile::ChangedStatus(unsigned int id, const std::string & Status, const std::string & Color)
@@ -359,31 +377,31 @@ bool InternalWorkpile::HasPlayerMoved()
 	return res;
 }
 
-///***********************************************************
-//changed the display color for char name
-//***********************************************************/
-//void InternalWorkpile::ChangeNameColor(std::string color)
-//{
-//	//IceUtil::Mutex::Lock lock(m_mutex_name_color);
-//	m_name_color_changed = true;
-//	m_name_color = color;
-//}
-//
-///***********************************************************
-//return true if the color has changed
-//***********************************************************/
-//bool InternalWorkpile::NameColorChanged(std::string &color)
-//{
-//	//IceUtil::Mutex::Lock lock(m_mutex_name_color);
-//	if(m_name_color_changed)
-//	{
-//		m_name_color_changed = false;
-//		color = m_name_color;
-//		return true;
-//	}
-//
-//	return false;
-//}
+/***********************************************************
+changed the display color for char name
+***********************************************************/
+void InternalWorkpile::ChangeNameColor(std::string color)
+{
+	//IceUtil::Mutex::Lock lock(m_mutex_name_color);
+	m_name_color_changed = true;
+	m_name_color = color;
+}
+
+/***********************************************************
+return true if the color has changed
+***********************************************************/
+bool InternalWorkpile::NameColorChanged(std::string &color)
+{
+	//IceUtil::Mutex::Lock lock(m_mutex_name_color);
+	if(m_name_color_changed)
+	{
+		m_name_color_changed = false;
+		color = m_name_color;
+		return true;
+	}
+
+	return false;
+}
 
 
 

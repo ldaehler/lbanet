@@ -188,11 +188,15 @@ public:
 	// client disconnected
 	virtual void Disconnected(unsigned int id);
 
+	// client changed status
+	virtual void ChangedStatus(unsigned int id, const std::string & Status, const std::string & Color);
+
 	// return the name given a client id
 	virtual std::string GetName(unsigned int id);
 
-	// client changed status
-	virtual void ChangedStatus(unsigned int id, const std::string & Status, const std::string & Color);
+	// return the name given a client id
+	virtual unsigned int GetId(std::string Name);
+
 
 
 
@@ -201,6 +205,14 @@ public:
 
 	//! return true if player has moved
 	bool HasPlayerMoved();
+
+
+	// changed the display color for char name
+	void ChangeNameColor(std::string color);
+
+	// return true if the color has changed
+	bool NameColorChanged(std::string &color);
+
 
 	////! inform irc thread to quit
 	//void QuitIrc();
@@ -313,11 +325,6 @@ public:
 	//// return true if there was a raised event
 	//bool IsRaised();
 
-	//// changed the display color for char name
-	//void ChangeNameColor(std::string color);
-
-	//// return true if the color has changed
-	//bool NameColorChanged(std::string &color);
 
 
 	//// inform server of change world
@@ -478,6 +485,10 @@ private:
 
 	bool										m_player_moved;
 
+	std::string									m_name_color;
+	bool										m_name_color_changed;
+
+
 	//bool										m_irc_quitted;
 	//bool										m_sending_quitted;
 	//long										m_send_cycle_time;
@@ -507,8 +518,7 @@ private:
 
 	//bool										m_player_raised;
 
-	//std::string									m_name_color;
-	//bool										m_name_color_changed;
+
 
 
 	//bool										m_world_changed;

@@ -86,7 +86,7 @@ public:
 	void ChangeColor(const std::string & color);
 
 	//! whisper to someone 
-	void Whisper(const std::string & playername, const std::string & text);
+	bool Whisper(const std::string & playername, const std::string & text);
 
 
 protected:

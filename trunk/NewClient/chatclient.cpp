@@ -225,7 +225,7 @@ void ChatClient::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _reque
 		char _color[255];
 		_announcedata->getString( _color, 255 );
 
-		m_clientHandler.Addclient(clid, new ClientObject(this, clid, _buf, _status, _color, m_clH));
+		m_clientHandler.Addclient(clid, new ClientObject(this, clid, _buf, _status, _color, m_clH, m_WorldSubscriber));
 	}
 	
 }
@@ -313,6 +313,13 @@ void ChatClient::Process()
 
 	//check for afk
 	CheckAfk();
+
+	//check if name color changed
+	{
+		std::string ncolor;
+		if(InternalWorkpile::getInstance()->NameColorChanged(ncolor))
+			ChangeColor(ncolor);
+	}
 }
 
 
@@ -438,15 +445,15 @@ void ChatClient::ProcessText(const std::string & Text)
 				for(size_t i=2; i<tok.size(); ++i)
 					message += tok[i] + " ";
 
-				//if(!_connectionMananger.Whisper(playername, message))
-				//{
-				//	InternalWorkpile::getInstance()->ReceivedText("All", "info", "The player " + playername + " is not available.");
-				//}
-				//else
-				//{
-				//	InternalWorkpile::getInstance()->ReceivedText("All", "to " + playername, message);
-				//	InternalWorkpile::getInstance()->AddWhisperChannel(playername);
-				//}
+				if(!Whisper(playername, message))
+				{
+					InternalWorkpile::getInstance()->ReceivedText("All", "info", "The player " + playername + " is not available.");
+				}
+				else
+				{
+					InternalWorkpile::getInstance()->ReceivedText("All", "to " + playername, message);
+					InternalWorkpile::getInstance()->AddWhisperChannel(playername);
+				}
 				return;
 			}
 
@@ -502,11 +509,13 @@ void ChatClient::ChangeColor(const std::string & color)
 /***********************************************************
 whisper to someone 
 ***********************************************************/
-void ChatClient::Whisper(const std::string & playername, const std::string & text)
+bool ChatClient::Whisper(const std::string & playername, const std::string & text)
 {
 	ClientObject * cl = m_clientHandler.Getclient(m_id);
 	if(cl)
-		cl->Whisper(playername, text);
+		return cl->Whisper(playername, text);
+
+	return false;
 }
 
 
