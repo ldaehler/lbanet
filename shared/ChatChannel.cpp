@@ -30,7 +30,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // declare static member
 ZCom_ClassID ChatChannel::m_classid = ZCom_Invalid_ID;
 
-#define _MAX_CHAR_SIZE_ 50
 
 
 /************************************************************************/

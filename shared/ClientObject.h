@@ -27,8 +27,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "GameObject.h"
 #include "ClientListHandlerBase.h"
+#include "ChatSubscriberBase.h"
 
 #include <boost/shared_ptr.hpp>
+#include <map>
 
 class ZCom_Control;
 
@@ -46,7 +48,7 @@ public:
 	// constructor
 	ClientObject(ZCom_Control *_control, unsigned int id, const std::string & name,
 					const std::string & status, const std::string & namecolor,
-					ClientListHandlerBase* clH);
+					ClientListHandlerBase* clH, ChatSubscriberBase* WorldSubscriber);
 
 	// destructor
 	virtual ~ClientObject();
@@ -64,7 +66,7 @@ public:
 	void ChangeColor(const std::string & color);
 
 	//! whisper to someone 
-	void Whisper(const std::string & playername, const std::string & text);
+	bool Whisper(const std::string & playername, std::string text);
 
 
 protected:
@@ -93,8 +95,11 @@ private:
 	std::string				m_status;
 	std::string				m_namecolor;
 
+	std::map<unsigned int, std::string>	_tmpstring;
+
 	// client list handler
 	ClientListHandlerBase* m_clH;
+	ChatSubscriberBase* m_WorldSubscriber;
 };
 
 

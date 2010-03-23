@@ -30,6 +30,9 @@ class ZCom_Node;
 class ZCom_BitStream;
 enum eZCom_NodeRole;
 
+
+#define _MAX_CHAR_SIZE_ 50
+
 #include <string>
 
 /***********************************************************************
