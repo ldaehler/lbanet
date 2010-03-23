@@ -164,7 +164,60 @@ public:
   */
 
   //@{
-  /** @brief Deregister the node from ZCom_Control.
+
+  /** @brief Register a unique node.
+      @param _classid This node's class.
+      @param _role The role the node should have here.
+      @param _control The ZCom_Control you want the node to register with.
+      @returns 'true' if everything went fine.
+  */
+  bool
+    registerNodeUnique( ZCom_ClassID _classid, eZCom_NodeRole _role, ZCom_Control *_control );
+
+  /** @brief Register a tagnode, initially or on request.
+      @param _classid This node's class.
+      @param _tag The tag you designated for this node.
+      @param _role The role the node should have here.
+      @param _control The ZCom_Control you want the node to register with.
+      @returns 'true' if everything went fine.
+
+      If, for some reason, the server registers a tagnode and cannot find it on the client, the callback
+      ZCom_Control::ZCom_cbNodeRequest_Tag() will be called on client. From within this callback, the corresponding
+      tagnode has to be created and registered with registerNodeByTag().
+  */
+  bool
+    registerNodeByTag( ZCom_ClassID _classid, zU32 _tag, eZCom_NodeRole _role, ZCom_Control *_control );
+
+  /** @brief Register an authoritative dynamic node.
+      @param _classid This node's class.
+      @param _control The ZCom_Control you want the node to register with.
+      @returns 'true' if everything went fine.
+
+      The node's role will be \ref eZCom_RoleProxy if the node is created inside ZCom_Control::ZCom_cbNodeRequest_Dynamic(),
+      \ref eZCom_RoleAuthority otherwise.
+  */
+  bool
+    registerNodeDynamic( ZCom_ClassID _classid, ZCom_Control *_control );
+
+  /** @brief Register a requested dynamic node.
+      @param _classid This node's class.
+      @param _control The ZCom_Control you want the node to register with.
+      @returns 'true' if everything went fine.
+
+      The callback ZCom_Control::ZCom_cbNodeRequest_Dynamic() has been called and now a dynamic node
+      is expected to be created on the client. Once the new node is created and setup, it has to be
+      registered with this call from within the callback.
+
+      The node's role will be \ref eZCom_RoleProxy if the node is created inside ZCom_Control::ZCom_cbNodeRequest_Dynamic(),
+      \ref eZCom_RoleAuthority otherwise.
+
+      @deprecated Use registerNodeDynamic() instead.
+  */
+
+  bool
+    registerRequestedNode( ZCom_ClassID _classid, ZCom_Control *_control );
+
+  /** @brief Unregister the node from ZCom_Control.
       @returns 'true' if no errors occurred.
 
       This will free all links of this node into the zoidcom library, you can delete it, copy it, or
@@ -176,12 +229,12 @@ public:
       Calls disconnectAll().
   */
   bool
-    deregisterNode();
+    unregisterNode();
 
   /** @brief Unlink nodes from all peers.
 
       Use this if the node is going to be deleted soon, the earlier this is called, the earlier peers will get
-      notified about the removal and can react accordingly. You can also just delete the node instead, if you don't
+      notified about the removal and can react accordingly. You can also just delete this instead, if you don't
       need it any longer.
   */
   void
@@ -257,58 +310,56 @@ public:
 
       This will force _othernode to be replicated before this node whenever both nodes need to be replicated 
       to a connection. It will show no effect if one of the nodes can't be replicated (because it is private or 
-      the relevance is 0) or if one of the nodes is replicated already while the other is not.
+      the relevance is 0) or if one of the nodes is replicated while the other is not.
 
-      Don't construct cyclic dependencies. Don't add the same dependency multiple times. (The debug version of Zoidcom will
+      Don't make cyclic dependencies. Don't add the same dependency multiple times. (The debug version of Zoidcom will
       check for latter case).
   */
   void
     dependsOn( ZCom_Node *_othernode, eZCom_DependencyOpt _opt = eZCom_AddDependency );
 
-  /** @brief Register node with subscription channel. (Allowed on: Authority)
-      @param _level The channel.
+  /** @brief Add node to Zoidlevel. (Allowed on: Authority)
+      @param _level The level.
 
       This method should be called on authority nodes only.
 
-      The node will only be replicated to a connection, if this connection has subscribed to one
-      of the replication channels the node is registered with. All nodes get registered with channel
-      1 by default.
+      You can manually switch connections to different Zoidlevels, only nodes which
+      have applied for a specific level will be synced while the connection is in this
+      level. All nodes are in ZoidLevel 1 by default.
   */
   void
-    publishOnChannel( zU32 _channel );
+    applyForZoidLevel( zU8 _level );
 
-  /** @brief Remove node from channel. (Allowed on: Authority)
-      @param _level The channel.
+  /** @brief Remove node from Zoidlevel. (Allowed on: Authority)
+      @param _level The level.
 
       This method should be called on authority nodes only.
 
-  See also: publishOnChannel().
+      See also: applyForZoidlevel().
   */
   void
-    removeFromChannel( zU32 _channel );
+    removeFromZoidLevel( zU8 _level );
 
-  /** @brief Get amount of channels this node is registered with.
-      @returns Amount of channels.
+  /** @brief Get amount of Zoidlevels this node is registered in.
+      @returns Amount of Zoidlevels.
 
       Only relevant on authority nodes.
   */
   zU32
-    getPublishChannelCount( );
+    getZoidLevelCount( ) const;
 
-  /** @brief Get one of the nodes channels.
-      @param _index Must be in range 0 <= _index < getPublishChannelCount()
-      @returns One of the node's channel. 0 = invalid.
+  /** @brief Get one of the nodes Zoidlevels.
+      @param _index Must be in range 0 <= _index < getZoidLevelCount()
+      @returns One of the node's levels. 0 = invalid.
 
-      Use this in conjunction with getPublishChannelCount to enumerate the node's channels.
+      Use this in conjunction with getZoidLevelCount to enumerate the node's levels.
   */
-  zU32
-    getPublishChannel( zU32 _index );
+  zU8
+    getZoidLevel( zU32 _index ) const;
 
   /** @brief Force this node to successfully sync during Zoidlevel transition. (Allowed on: Authority)
       @param _enabled 'true' if node must sync, 'false' otherwise.
       @param _order sync order relative to other mustsync nodes.
-   * 
-   * TODO: change terminology and make it more easy to understand. maybe setReplicationTrigger()
 
       When a connection starts the transition to a Zoidlevel, the first thing it does is replicate
       and connect all nodes in the new Zoidlevel, which have the mustsync flag set. They are processed
@@ -352,7 +403,7 @@ public:
 
       This must be called when mustsync is true, when either the node synced successfully on the connection or not.
       If the sync failed for the connection, you can provide a ZCom_BitStream which will be sent to the client, and given
-      to the callback ZCom_Control::ZCom_cbChannelSubscriptionChangeResult().
+      to the callback ZCom_Control::ZCom_cbZoidResult().
 
       @attention If you have a mustsync node, and forget to call this method for this node, the Zoidmode transition will last
                  forever!
