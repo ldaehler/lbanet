@@ -196,6 +196,12 @@ public:
 
 
 
+	//! set if player moved
+	void PlayerMoved();
+
+	//! return true if player has moved
+	bool HasPlayerMoved();
+
 	////! inform irc thread to quit
 	//void QuitIrc();
 
@@ -469,6 +475,8 @@ private:
 	std::vector<std::string>					m_removed_friends;
 	std::vector<std::string>					m_friend_list;
 	std::map<unsigned int, std::string>			m_clientmap;
+
+	bool										m_player_moved;
 
 	//bool										m_irc_quitted;
 	//bool										m_sending_quitted;

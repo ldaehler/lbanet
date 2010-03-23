@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ClientObject.h"
 #include "LbaNetEngine.h"
 #include "InternalWorkpile.h"
+#include "SynchronizedTimeHandler.h"
 
 /***********************************************************************
  * Constructor
@@ -38,7 +39,7 @@ ChatClient::ChatClient(ChatSubscriberBase* WorldSubscriber, ClientListHandlerBas
 : m_id(ZCom_Invalid_ID), m_connected(false), m_WorldSubscriber(WorldSubscriber),
 	m_subscribed_world(false), m_clH(clH), 
 	m_downpacketpersecond(downpacketpersecond), m_downbyteperpacket(downbyteperpacket),
-	_engine(NULL), _afked(false), _refresh_counter(0), _afk_counter(0)
+	_engine(NULL), _afked(false), _afk_counter(SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync())
 {
 	// this will allocate the sockets and create local bindings
     if ( !ZCom_initSockets( eZCom_EnableUDP, 0, 0, 0 ) )
@@ -309,6 +310,9 @@ void ChatClient::Process()
 
 	//process client objects
 	m_clientHandler.Process();
+
+	//check for afk
+	CheckAfk();
 }
 
 
@@ -345,8 +349,7 @@ void ChatClient::HandleChatText()
 	{
 		if(texts.size() > 0)
 		{
-			_refresh_counter = 0;
-			_afk_counter = 0;
+			_afk_counter = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
 			if(_afked)
 			{
 				_afked = false;
@@ -504,4 +507,30 @@ void ChatClient::Whisper(const std::string & playername, const std::string & tex
 	ClientObject * cl = m_clientHandler.Getclient(m_id);
 	if(cl)
 		cl->Whisper(playername, text);
+}
+
+
+/***********************************************************
+check if player is afk
+***********************************************************/
+void ChatClient::CheckAfk()
+{
+	if(InternalWorkpile::getInstance()->HasPlayerMoved())
+	{
+		_afk_counter = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
+		if(_afked)
+		{
+			_afked = false;
+			ChangeStatus("");
+		}
+	}
+	else if(!_afked)
+	{
+		unsigned int currenttime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
+		if((currenttime-_afk_counter) > 300000) // 5 min
+		{
+			_afked = true;
+			ChangeStatus("away");	
+		}
+	}
 }

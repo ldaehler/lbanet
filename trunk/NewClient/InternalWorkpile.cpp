@@ -338,6 +338,27 @@ void InternalWorkpile::ChangedStatus(unsigned int id, const std::string & Status
 }
 
 
+
+
+/***********************************************************
+set if player moved
+***********************************************************/
+void InternalWorkpile::PlayerMoved()
+{
+	m_player_moved = true;
+}
+
+
+/***********************************************************
+return true if player has moved
+***********************************************************/
+bool InternalWorkpile::HasPlayerMoved()
+{
+	bool res = m_player_moved;
+	m_player_moved = false;
+	return res;
+}
+
 ///***********************************************************
 //changed the display color for char name
 //***********************************************************/

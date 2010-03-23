@@ -125,6 +125,9 @@ protected:
 	// process a line of text
 	void ProcessText(const std::string & Text);
 
+	// check if player is afk
+	void CheckAfk();
+
 private:
 	// id given by the server
 	ZCom_ConnID		m_id;
@@ -150,8 +153,7 @@ private:
 	LbaNetEngine * _engine;
 
 	// afk counters
-	long					_refresh_counter;
-	long					_afk_counter;
+	unsigned long			_afk_counter;
 	bool					_afked;
 };
 
