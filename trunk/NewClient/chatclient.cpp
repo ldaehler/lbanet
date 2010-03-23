@@ -36,8 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ***********************************************************************/
 ChatClient::ChatClient(ChatSubscriberBase* WorldSubscriber, ClientListHandlerBase* clH,
 							unsigned short downpacketpersecond, unsigned short downbyteperpacket)
-: m_id(ZCom_Invalid_ID), m_connected(false), m_WorldSubscriber(WorldSubscriber),
-	m_subscribed_world(false), m_clH(clH), 
+: m_id(ZCom_Invalid_ID), m_zoi_id(ZCom_Invalid_ID), m_connected(false), m_WorldSubscriber(WorldSubscriber), m_clH(clH), 
 	m_downpacketpersecond(downpacketpersecond), m_downbyteperpacket(downbyteperpacket),
 	_engine(NULL), _afked(false), _afk_counter(SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync())
 {
@@ -103,10 +102,9 @@ void ChatClient::ConnectToServer(const std::string & address, const std::string 
 
 	// connect to server
 	LogHandler::getInstance()->LogToFile("Chat client connecting to "+address, 2);
+	//m_id = ZCom_Connect( dst_udp, req);
 	if (!ZCom_Connect( dst_udp, req))
-	{
 		LogHandler::getInstance()->LogToFile("Chat client: unable to start connecting!", 2);
-	}
 }
 
 /***********************************************************************
@@ -114,10 +112,12 @@ void ChatClient::ConnectToServer(const std::string & address, const std::string 
  ***********************************************************************/
 void ChatClient::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result, ZCom_BitStream &_reply )
 {
+	m_zoi_id = _id;
+	m_id = _reply.getInt(32);
 	std::string reason(_reply.getStringStatic());
 
 	std::stringstream strs;
-	strs<<"Client: The connection process for: "<<_id<<" returned with resultcode "<<_result<<", the reply was "<<reason;
+	strs<<"Client: The connection process for: "<<m_zoi_id<<" returned with resultcode "<<_result<<", the reply was "<<reason;
 	LogHandler::getInstance()->LogToFile(strs.str(), 2);   
 
 	if ( _result != eZCom_ConnAccepted )
@@ -131,9 +131,14 @@ void ChatClient::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _res
 	else
 	{
 		m_connected = true;
-		ZCom_requestDownstreamLimit(_id, m_downpacketpersecond, m_downbyteperpacket);
-		ZCom_changeObjectChannelSubscription( _id, 1, eZCom_Subscribe );
-		m_id = _id;
+		ZCom_requestDownstreamLimit(m_zoi_id, m_downpacketpersecond, m_downbyteperpacket);
+
+		#ifndef _ZOID_USED_NEW_VERSION_
+		ZCom_requestZoidMode( m_zoi_id, 1 );
+		#else
+		ZCom_changeObjectChannelSubscription( m_zoi_id, 1, eZCom_Subscribe );
+		#endif
+
 		_engine->ConnectionCallback(1, "");
 	}
 }
@@ -157,8 +162,12 @@ void ChatClient::ZCom_cbConnectionClosed( ZCom_ConnID _id, eZCom_CloseReason _re
 /***********************************************************************
  * zoidlevel transition finished
  ***********************************************************************/
+#ifndef _ZOID_USED_NEW_VERSION_
+void ChatClient::ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _new_channel, ZCom_BitStream &_reason)
+#else
 void ChatClient::ZCom_cbChannelSubscriptionChangeResult( ZCom_ConnID _id, eZCom_SubscriptionResult _result, 
 													zU32 _new_channel, ZCom_BitStream &_reason )
+#endif
 {
 	// disconnect on failure
 	if (_result == eZCom_ChannelSubscriptionDenied || _result == eZCom_ChannelSubscriptionFailed_Node)
@@ -297,15 +306,6 @@ void ChatClient::Process()
 	{
 		m_channelM->Process();
 
-		// subscribe to world channel at startup
-		if(!m_subscribed_world)
-		{
-			if(m_channelM->IsInitialized())
-			{
-				SubscribeChannel("World", m_WorldSubscriber);
-				m_subscribed_world = true;
-			}
-		}
 	}
 
 	//process client objects
@@ -323,6 +323,16 @@ void ChatClient::Process()
 }
 
 
+
+/***********************************************************
+subscribe to world channel
+***********************************************************/
+void ChatClient::SubscribeWorld()
+{
+	SubscribeChannel("World", m_WorldSubscriber);
+}
+
+
 /***********************************************************
 close connection
 ***********************************************************/
@@ -331,7 +341,7 @@ void ChatClient::CloseConnection()
 	if(!m_connected)
 		return;
 
-	ZCom_Disconnect( m_id, NULL );
+	ZCom_Disconnect( m_zoi_id, NULL );
 
 	// process until everything has been sent
 	while(m_connected)
@@ -340,6 +350,12 @@ void ChatClient::CloseConnection()
 		ZCom_processOutput();
 		ZoidCom::Sleep(10);
 	}
+
+
+	//clean up everything
+	m_channelM.reset();
+	m_waitingsubs.clear();
+	m_clientHandler.Clear();
 }
 
 

@@ -284,6 +284,7 @@ void InternalWorkpile::Connected(unsigned int id, const std::string & Name,
 	evt.Status = Status;
 	evt.Color = Color;
 	HappenedJoinEvent(evt);
+	ChatColorChanged(Name, Color);
 }
 
 

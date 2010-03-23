@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ChatSubscriberBase.h"
 #include "ClientObjectHandler.h"
 #include "ClientListHandlerBase.h"
+#include "GameObject.h"
 
 class ChatChannelManager;
 class LbaNetEngine;
@@ -61,6 +62,10 @@ public:
 
 	//! check if client is connected
 	bool HasChannelManager() {return (m_channelM != NULL);}
+
+
+	//! subscribe to world channel
+	void SubscribeWorld();
 
 
 
@@ -96,10 +101,6 @@ protected:
 	// connection has closed
 	void ZCom_cbConnectionClosed( ZCom_ConnID _id, eZCom_CloseReason _reason, ZCom_BitStream &_reasondata );
 
-
-	// called when a connection enters a channel
-	void ZCom_cbChannelSubscriptionChangeResult( ZCom_ConnID _id, eZCom_SubscriptionResult _result, 
-													zU32 _new_channel, ZCom_BitStream &_reason );
 	
 	// server wants to tell us about new node
 	void ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _requested_class, 
@@ -109,13 +110,28 @@ protected:
 	virtual void ZCom_cbDataReceived( ZCom_ConnID _id, ZCom_BitStream &_data ) {}
 
 
+#ifndef _ZOID_USED_NEW_VERSION_
+	// called when a connection wants to enter a channel
+	bool ZCom_cbZoidRequest( ZCom_ConnID _id, zU8 _requested_channel, ZCom_BitStream &_reason){return false;}
+
+	// called when a connection enters a channel
+	void ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _new_channel, ZCom_BitStream &_reason);
+#else
+	// called when a connection wants to enter a channel
+	eZCom_RequestResult ZCom_cbChannelSubscriptionChangeRequest( ZCom_ConnID _id, 
+											zU32 _requested_channel, ZCom_BitStream &_reason ) {return eZCom_DenyRequest;}
+
+	// called when a connection enters a channel
+	void ZCom_cbChannelSubscriptionChangeResult( ZCom_ConnID _id, eZCom_SubscriptionResult _result, 
+													zU32 _new_channel, ZCom_BitStream &_reason );
+#endif
+
 
 	// server stuff
-	virtual eZCom_RequestResult ZCom_cbConnectionRequest( ZCom_ConnID  _id, ZCom_BitStream &_request, ZCom_BitStream &_reply ) {return eZCom_AcceptRequest;}
+	virtual eZCom_RequestResult ZCom_cbConnectionRequest( ZCom_ConnID  _id, ZCom_BitStream &_request, ZCom_BitStream &_reply ) {return eZCom_DenyRequest;}
 	virtual void ZCom_cbConnectionSpawned( ZCom_ConnID _id ) {}
-	virtual eZCom_RequestResult ZCom_cbChannelSubscriptionChangeRequest( ZCom_ConnID _id, zU32 _requested_channel, ZCom_BitStream &_reason ) {return eZCom_AcceptRequest;}
 	virtual void ZCom_cbNodeRequest_Tag( ZCom_ConnID _id, ZCom_ClassID _requested_class, ZCom_BitStream *_announcedata, eZCom_NodeRole _role, zU32 _tag ) {}
-	virtual eZCom_RequestResult ZCom_cbDiscoverRequest( const ZCom_Address &_addr, ZCom_BitStream &_request, ZCom_BitStream &_reply ) {return eZCom_AcceptRequest;}
+	virtual eZCom_RequestResult ZCom_cbDiscoverRequest( const ZCom_Address &_addr, ZCom_BitStream &_request, ZCom_BitStream &_reply ) {return eZCom_DenyRequest;}
 	virtual void ZCom_cbDiscovered( const ZCom_Address & _addr, ZCom_BitStream &_reply )  {}
 
 
@@ -130,9 +146,9 @@ protected:
 
 private:
 	// id given by the server
+	ZCom_ConnID		m_zoi_id;
 	ZCom_ConnID		m_id;
 	bool			m_connected;
-	bool			m_subscribed_world;
 
 	unsigned short m_downpacketpersecond;
 	unsigned short m_downbyteperpacket;
