@@ -86,6 +86,9 @@ protected:
 	// do a custom process step if required
 	virtual void CustomProcess(){}
 
+	//used to reset announcement data
+	void ResetAnnouncement();
+
 private:
 	// the class id for zoidcom
 	static unsigned int		m_classid;

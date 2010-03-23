@@ -21,8 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -----------------------------------------------------------------------------
 */
-
-
 #ifndef _LBA_NET_GAME_OBJECT_H_
 #define _LBA_NET_GAME_OBJECT_H_
 
@@ -32,6 +30,21 @@ enum eZCom_NodeRole;
 
 
 #define _MAX_CHAR_SIZE_ 50
+
+//#define _ZOID_USED_NEW_VERSION_
+
+
+#ifndef _ZOID_USED_NEW_VERSION_
+#define eZCom_RequestResult bool
+#define eZCom_AcceptRequest true
+#define eZCom_DenyRequest false
+#define eZCom_EnableUDP true
+#define eZCom_RequestedChannelSubscribed eZCom_ZoidEnabled
+#define eZCom_AutomaticChannelSubscribed eZCom_ZoidEnabled
+#define eZCom_ChannelSubscriptionDenied eZCom_ZoidDenied
+#define eZCom_ChannelSubscriptionFailed_Node eZCom_ZoidFailed_Node
+#endif _ZOID_USED_NEW_VERSION_
+
 
 #include <string>
 

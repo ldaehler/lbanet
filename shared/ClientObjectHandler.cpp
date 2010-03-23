@@ -40,11 +40,22 @@ ClientObjectHandler::ClientObjectHandler()
 /************************************************************************/
 ClientObjectHandler::~ClientObjectHandler()
 {
+	Clear();
+}
+
+
+
+/************************************************************************/
+/* clear everything                                
+/************************************************************************/
+void ClientObjectHandler::Clear()
+{
 	std::map<unsigned int, ClientObject *>::iterator it = _clients.begin();
 	for(;it != _clients.end();++it)
 		delete it->second;
-}
 
+	_clients.clear();
+}
 
 /************************************************************************/
 /* do a process step                                  
