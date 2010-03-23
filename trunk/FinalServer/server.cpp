@@ -36,7 +36,7 @@ Constructor
 Server::Server( int _internalport, int _udpport, 
 				unsigned int uplimittotal, unsigned int uplimitperconnection,
 				unsigned short downpacketpersecond, unsigned short downbyteperpacket,
-				boost::shared_ptr<ClientListHandlerBase> clH)
+				ClientListHandlerBase* clH)
 : m_conncount(0), m_uplimittotal(uplimittotal), m_uplimitperconnection(uplimitperconnection), 
 	m_downpacketpersecond(downpacketpersecond), m_downbyteperpacket(downbyteperpacket),
 	m_chatM(NULL), m_clH(clH)
@@ -129,7 +129,9 @@ eZCom_RequestResult Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitS
 				LogHandler::getInstance()->LogToFile(strs.str(), 2);    
 
 				//add to client list
-				m_clientH.Addclient(_id, new ClientObject(this, _id, login, m_clH));
+				ClientObject * cl = new ClientObject(this, _id, login, "", "", m_clH);
+				cl->GetNode()->setOwner(_id, true);
+				m_clientH.Addclient(_id, cl);
 
 				return eZCom_AcceptRequest;
 			}

@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
 
 	// server operates on internal port 1 and UDP port 8899
 	boost::shared_ptr<SimpleClientListHandler> clListH = boost::shared_ptr<SimpleClientListHandler>(new SimpleClientListHandler());
-	boost::shared_ptr<Server> Serv = boost::shared_ptr<Server>(new Server(1, 8899, 8000, 2000, 20, 200, clListH));
+	boost::shared_ptr<Server> Serv = boost::shared_ptr<Server>(new Server(1, 8899, 8000, 2000, 20, 200, clListH.get()));
 
 
 

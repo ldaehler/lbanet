@@ -40,7 +40,7 @@ public:
 	Server( int _internalport, int _udpport, 
 			unsigned int uplimittotal, unsigned int uplimitperconnection,
 			unsigned short downpacketpersecond, unsigned short downbyteperpacket,
-			boost::shared_ptr<ClientListHandlerBase> clH);
+			ClientListHandlerBase* clH);
 
 	//! destructor
 	~Server();
@@ -93,7 +93,7 @@ private:
 	unsigned short m_downbyteperpacket;
 
 	//client list handler
-	boost::shared_ptr<ClientListHandlerBase> m_clH;
+	ClientListHandlerBase* m_clH;
 
 	//chat manager
 	ChatChannelManager*	m_chatM;
