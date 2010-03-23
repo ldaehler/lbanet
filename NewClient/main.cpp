@@ -22,6 +22,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
+TODO: resubscribe channels agter disconnect and reconnect!
+
+
 #if defined(NDEBUG)
 	#if defined(_MSC_VER)
 		#include "SDL.h"
