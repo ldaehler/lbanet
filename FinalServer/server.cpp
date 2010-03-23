@@ -132,7 +132,8 @@ eZCom_RequestResult Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitS
 				ClientObject * cl = new ClientObject(this, _id, login, "", "", m_clH, NULL);
 				cl->GetNode()->setOwner(_id, true);
 				m_clientH.Addclient(_id, cl);
-
+				_reply.addInt(_id, 32);
+				_reply.addString( "Good" );
 				return eZCom_AcceptRequest;
 			}
 			else
@@ -142,6 +143,7 @@ eZCom_RequestResult Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitS
 				LogHandler::getInstance()->LogToFile(strs.str(), 2);    
 
 				// deny connection request and send reason back to requester
+				_reply.addInt(_id, 32);
 				_reply.addString( "Incorrect username or password" );
 				return eZCom_DenyRequest;
 			}
@@ -215,8 +217,12 @@ void Server::ZCom_cbConnectionClosed( ZCom_ConnID _id, eZCom_CloseReason _reason
 /***********************************************************
 called when a connection wants to enter a channel
 ***********************************************************/
+#ifdef _ZOID_USED_NEW_VERSION_
 eZCom_RequestResult Server::ZCom_cbChannelSubscriptionChangeRequest( ZCom_ConnID _id, 
 											zU32 _requested_channel, ZCom_BitStream &_reason )
+#else
+bool Server::ZCom_cbZoidRequest( ZCom_ConnID _id, zU8 _requested_channel, ZCom_BitStream &_reason)
+#endif
 {
 	std::stringstream strs;
 	strs<<"Server: Incoming connection with ID: "<<_id<<" wants to enter the channel "<<_requested_channel;
@@ -229,8 +235,12 @@ eZCom_RequestResult Server::ZCom_cbChannelSubscriptionChangeRequest( ZCom_ConnID
 /***********************************************************
 called when a connection enters a channel
 ***********************************************************/
+#ifdef _ZOID_USED_NEW_VERSION_
 void Server::ZCom_cbChannelSubscriptionChangeResult( ZCom_ConnID _id, eZCom_SubscriptionResult _result, 
 													zU32 _new_channel, ZCom_BitStream &_reason )
+#else
+void Server::ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _new_channel, ZCom_BitStream &_reason)
+#endif
 {
 	//channel connection accepted
 	if(_result == eZCom_RequestedChannelSubscribed || _result == eZCom_AutomaticChannelSubscribed)

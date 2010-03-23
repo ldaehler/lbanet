@@ -29,8 +29,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <zoidcom.h>
 #include "ClientObjectHandler.h"
 #include "ClientListHandlerBase.h"
+#include "GameObject.h"
 
 class ChatChannelManager;
+
 
 
 class Server : public ZCom_Control
@@ -49,6 +51,8 @@ public:
 	void Process();
 
 protected:
+
+
 	// called on incoming connections
 	eZCom_RequestResult ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request, 
 																		ZCom_BitStream &_reply );
@@ -59,6 +63,13 @@ protected:
 	// called when a connection closed
 	void ZCom_cbConnectionClosed( ZCom_ConnID _id, eZCom_CloseReason _reason, ZCom_BitStream &_reasondata );
 
+#ifndef _ZOID_USED_NEW_VERSION_
+	// called when a connection wants to enter a channel
+	bool ZCom_cbZoidRequest( ZCom_ConnID _id, zU8 _requested_channel, ZCom_BitStream &_reason);
+
+	// called when a connection enters a channel
+	void ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _new_channel, ZCom_BitStream &_reason);
+#else
 	// called when a connection wants to enter a channel
 	eZCom_RequestResult ZCom_cbChannelSubscriptionChangeRequest( ZCom_ConnID _id, 
 											zU32 _requested_channel, ZCom_BitStream &_reason );
@@ -66,6 +77,7 @@ protected:
 	// called when a connection enters a channel
 	void ZCom_cbChannelSubscriptionChangeResult( ZCom_ConnID _id, eZCom_SubscriptionResult _result, 
 													zU32 _new_channel, ZCom_BitStream &_reason );
+#endif
 
 
 	// called when broadcast has been received
