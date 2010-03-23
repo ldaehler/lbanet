@@ -45,8 +45,7 @@ class ChatClient : public ZCom_Control
 public:
 
 	//! constructor
-	ChatClient(boost::shared_ptr<ChatSubscriberBase> WorldSubscriber,
-					boost::shared_ptr<ClientListHandlerBase> clH,
+	ChatClient(ChatSubscriberBase* WorldSubscriber,	ClientListHandlerBase* clH,
 					unsigned short downpacketpersecond, unsigned short downbyteperpacket);
 
 	//!destructor
@@ -66,7 +65,7 @@ public:
 
 
 	//! subscribe to channel 'name'
-	void SubscribeChannel(const std::string & channelname, boost::shared_ptr<ChatSubscriberBase> Subscriber);
+	void SubscribeChannel(const std::string & channelname, ChatSubscriberBase* Subscriber);
 
 	//! unsubscribe to channel 'name'
 	void UnsubscribeChannel(const std::string & channelname);
@@ -126,14 +125,16 @@ private:
 	unsigned short m_downbyteperpacket;
 
 	boost::shared_ptr<ChatChannelManager> m_channelM;
-	boost::shared_ptr<ChatSubscriberBase> m_WorldSubscriber;
 
-	std::map<std::string, boost::shared_ptr<ChatSubscriberBase> >	m_waitingsubs;
+
+	std::map<std::string, ChatSubscriberBase* >	m_waitingsubs;
 
 	ClientObjectHandler m_clientHandler;
 
 	//client list handler
-	boost::shared_ptr<ClientListHandlerBase> m_clH;
+	ClientListHandlerBase* m_clH;
+	ChatSubscriberBase* m_WorldSubscriber;
+
 
 	//used for callback
 	LbaNetEngine * _engine;

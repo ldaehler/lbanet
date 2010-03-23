@@ -70,11 +70,9 @@ public:
 	//connection callback
 	void ConnectionCallback(int SuccessFlag, const std::string & reason);
 
-	//! test create channel
-	//void TestCreateChannel();
-	//void TestDeleteChannel();
-	//void TestSpeakWorldChannel();
-	//void TestSpeakOtherChannel();
+	// focus the chatbox
+	void FocusChatbox(bool focus);
+
 
 protected:
 	//! process function

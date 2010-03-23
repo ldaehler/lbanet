@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "InternalWorkpile.h"
+#include "LogHandler.h"
+
 //#include "MainPlayerHandler.h"
 //#include "ExternalPlayersHandler.h"
 //#include "Player.h"
@@ -196,6 +198,125 @@ void InternalWorkpile::GetColorChanges(std::vector<std::pair<std::string, std::s
 	vec.clear();
 	m_colors_changed.swap(vec);
 }
+
+
+
+
+
+/***********************************************************
+add a whisper channel
+***********************************************************/
+void InternalWorkpile::AddFriend(const std::string & name)
+{
+	//IceUtil::Mutex::Lock lock(m_mutex_added_friend);
+	m_added_friends.push_back(name);
+}
+
+/***********************************************************
+get all queries for whisper channel
+***********************************************************/
+void InternalWorkpile::GetAddedFriend(std::vector<std::string> &scvec)
+{
+	scvec.clear();
+	//IceUtil::Mutex::Lock lock(m_mutex_added_friend);
+	m_added_friends.swap(scvec);
+}
+
+/***********************************************************
+add a whisper channel
+***********************************************************/
+void InternalWorkpile::RemoveFriend(const std::string & name)
+{
+	//IceUtil::Mutex::Lock lock(m_mutex_removed_friend);
+	m_removed_friends.push_back(name);
+}
+
+/***********************************************************
+get all queries for whisper channel
+***********************************************************/
+void InternalWorkpile::GetRemovedFriend(std::vector<std::string> &scvec)
+{
+	scvec.clear();
+	//IceUtil::Mutex::Lock lock(m_mutex_removed_friend);
+	m_removed_friends.swap(scvec);
+}
+
+
+/***********************************************************
+set friend list
+***********************************************************/
+void InternalWorkpile::SetFriends(const std::vector<std::string> & friends)
+{
+	//IceUtil::Mutex::Lock lock(m_mutex_friend);
+	m_friend_list = friends;
+}
+
+/***********************************************************
+get friend list
+***********************************************************/
+void InternalWorkpile::GetFriends(std::vector<std::string> & friends)
+{
+	//IceUtil::Mutex::Lock lock(m_mutex_friend);
+	friends.swap(m_friend_list);
+}
+
+
+
+/***********************************************************
+new client connected
+***********************************************************/
+void InternalWorkpile::Connected(unsigned int id, const std::string & Name)
+{
+	#ifdef _DEBUG
+		std::stringstream strs;
+		strs<<"Client "<<id<<" with name "<<Name<<" connected ";
+		LogHandler::getInstance()->LogToFile(strs.str());
+	#endif
+
+	m_clientmap[id] = Name;
+
+	JoinEvent evt;
+	evt.ListName = "online";
+	evt.Joined = true;
+	evt.Nickname = Name;
+	evt.Clear = false;
+	HappenedJoinEvent(evt);
+}
+
+
+/***********************************************************
+client disconnected
+***********************************************************/
+void InternalWorkpile::Disconnected(unsigned int id)
+{
+	#ifdef _DEBUG
+		std::stringstream strs;
+		strs<<"Client "<<id<<" with name "<<m_clientmap[id]<<" disconnected ";
+		LogHandler::getInstance()->LogToFile(strs.str());
+	#endif
+
+	std::map<unsigned int, std::string>::iterator it = m_clientmap.find(id);
+	if(it != m_clientmap.end())
+	{
+		JoinEvent evt;
+		evt.ListName = "online";
+		evt.Joined = false;
+		evt.Nickname = it->second;
+		evt.Clear = false;
+		HappenedJoinEvent(evt);
+
+		m_clientmap.erase(it);
+	}
+}
+
+/***********************************************************
+return the name given a client id
+***********************************************************/
+std::string InternalWorkpile::GetName(unsigned int id)
+{
+	return m_clientmap[id];
+}
+
 
 
 
@@ -830,65 +951,7 @@ inform irc thread to quit
 //
 //
 
-//
-//
-///***********************************************************
-//add a whisper channel
-//***********************************************************/
-//void ThreadSafeWorkpile::AddFriend(const std::string & name)
-//{
-//	IceUtil::Mutex::Lock lock(m_mutex_added_friend);
-//	m_added_friends.push_back(name);
-//}
-//
-///***********************************************************
-//get all queries for whisper channel
-//***********************************************************/
-//void ThreadSafeWorkpile::GetAddedFriend(std::vector<std::string> &scvec)
-//{
-//	scvec.clear();
-//	IceUtil::Mutex::Lock lock(m_mutex_added_friend);
-//	m_added_friends.swap(scvec);
-//}
-//
-///***********************************************************
-//add a whisper channel
-//***********************************************************/
-//void ThreadSafeWorkpile::RemoveFriend(const std::string & name)
-//{
-//	IceUtil::Mutex::Lock lock(m_mutex_removed_friend);
-//	m_removed_friends.push_back(name);
-//}
-//
-///***********************************************************
-//get all queries for whisper channel
-//***********************************************************/
-//void ThreadSafeWorkpile::GetRemovedFriend(std::vector<std::string> &scvec)
-//{
-//	scvec.clear();
-//	IceUtil::Mutex::Lock lock(m_mutex_removed_friend);
-//	m_removed_friends.swap(scvec);
-//}
-//
-//
-///***********************************************************
-//set friend list
-//***********************************************************/
-//void ThreadSafeWorkpile::SetFriends(const std::vector<std::string> & friends)
-//{
-//	IceUtil::Mutex::Lock lock(m_mutex_friend);
-//	m_friend_list = friends;
-//}
-//
-///***********************************************************
-//get friend list
-//***********************************************************/
-//void ThreadSafeWorkpile::GetFriends(std::vector<std::string> & friends)
-//{
-//	IceUtil::Mutex::Lock lock(m_mutex_friend);
-//	friends.swap(m_friend_list);
-//}
-//
+
 //
 ///***********************************************************
 //add written letter to the server

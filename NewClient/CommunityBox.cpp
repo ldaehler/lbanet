@@ -176,7 +176,6 @@ handle event when the channel window is closed
 bool CommunityBox::HandleClose (const CEGUI::EventArgs& e)
 {
 	_myBox->hide();
-	//_gamgui->ShowComIcon();
 	return true;
 }
 
@@ -209,7 +208,9 @@ void CommunityBox::AddOnline(const std::string & listname, const std::string &_o
 		CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
 			CEGUI::WindowManager::getSingleton().getWindow("Community/onlinelist"));
 
-		std::string dis = "[colour='" + color + "']" + _online;
+		std::string dis = _online;
+		if(color != "")
+			dis = "[colour='" + color + "']" + _online;
 		if(_status != "")
 			dis += " (" + _status + ")";
 
@@ -229,16 +230,6 @@ void CommunityBox::AddOnline(const std::string & listname, const std::string &_o
 
 		if(IsFriend(_online))
 			UpdateFriend(_online);
-	}
-
-	if(listname == "IRC")
-	{
-		CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
-			CEGUI::WindowManager::getSingleton().getWindow("Community/IRClist"));
-
-		CEGUI::ListboxItem *it = lb->findItemWithText(_online, NULL);
-		if(it == NULL)
-			lb->addItem(new MyComListItem(_online));
 	}
 }
 
@@ -281,31 +272,31 @@ used to process text to add
 ***********************************************************/
 void CommunityBox::Process()
 {
-	//std::vector<InternalWorkpile::JoinEvent> data;
-	//InternalWorkpile::getInstance()->GetJoinEventData(data);
+	std::vector<InternalWorkpile::JoinEvent> data;
+	InternalWorkpile::getInstance()->GetJoinEventData(data);
 
-	//std::vector<InternalWorkpile::JoinEvent>::const_iterator it = data.begin();
-	//std::vector<InternalWorkpile::JoinEvent>::const_iterator end = data.end();
-	//for(; it != end; ++it)
-	//{
-	//	if(it->Clear)
-	//	{
-	//		ClearList(it->ListName);
-	//	}
-	//	else
-	//	{
-	//		if(it->Joined)
-	//			AddOnline(it->ListName, it->Nickname, it->Status, it->Color);
-	//		else
-	//			RemoveOnline(it->ListName, it->Nickname);
-	//	}
-	//}
+	std::vector<InternalWorkpile::JoinEvent>::const_iterator it = data.begin();
+	std::vector<InternalWorkpile::JoinEvent>::const_iterator end = data.end();
+	for(; it != end; ++it)
+	{
+		if(it->Clear)
+		{
+			ClearList(it->ListName);
+		}
+		else
+		{
+			if(it->Joined)
+				AddOnline(it->ListName, it->Nickname, it->Status, it->Color);
+			else
+				RemoveOnline(it->ListName, it->Nickname);
+		}
+	}
 
 
-	//std::vector<std::string> friends;
-	//InternalWorkpile::getInstance()->GetFriends(friends);
-	//for(size_t i=0; i<friends.size(); ++i)
-	//	UpdateFriend(friends[i]);
+	std::vector<std::string> friends;
+	InternalWorkpile::getInstance()->GetFriends(friends);
+	for(size_t i=0; i<friends.size(); ++i)
+		UpdateFriend(friends[i]);
 }
 
 
@@ -351,17 +342,17 @@ handle event when remove friend clicked
 ***********************************************************/
 bool CommunityBox::HandleRemoveFriend(const CEGUI::EventArgs& e)
 {
-	//CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
-	//	CEGUI::WindowManager::getSingleton().getWindow("Community/friendlist"));
+	CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
+		CEGUI::WindowManager::getSingleton().getWindow("Community/friendlist"));
 
-	//const CEGUI::ListboxTextItem * it = static_cast<const CEGUI::ListboxTextItem *>(lb->getFirstSelectedItem());
-	//if(it)
-	//{
-	//	std::string name = it->getText().c_str();
-	//	name = name.substr(name.find("]")+1);
-	//	RemoveFriend(name);
-	//	ThreadSafeWorkpile::getInstance()->RemoveFriend(name);
-	//}
+	const CEGUI::ListboxTextItem * it = static_cast<const CEGUI::ListboxTextItem *>(lb->getFirstSelectedItem());
+	if(it)
+	{
+		std::string name = it->getText().c_str();
+		name = name.substr(name.find("]")+1);
+		RemoveFriend(name);
+		InternalWorkpile::getInstance()->RemoveFriend(name);
+	}
 
 	return true;
 }
@@ -373,36 +364,36 @@ add people friend
 ***********************************************************/
 void CommunityBox::UpdateFriend(const std::string & name)
 {
-	//RemoveFriend(name);
+	RemoveFriend(name);
 
-	//CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
-	//	CEGUI::WindowManager::getSingleton().getWindow("Community/friendlist"));
+	CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
+		CEGUI::WindowManager::getSingleton().getWindow("Community/friendlist"));
 
 
-	//bool connected = false;
-	//std::string color = "FF777777";
-	//std::map<std::string, CEGUI::ListboxItem *>::iterator iton = _onlines.find(name);
-	//if(iton != _onlines.end())
-	//{
-	//	connected = true;
-	//	color = "FF33FF33";
-	//}
+	bool connected = false;
+	std::string color = "FF777777";
+	std::map<std::string, CEGUI::ListboxItem *>::iterator iton = _onlines.find(name);
+	if(iton != _onlines.end())
+	{
+		connected = true;
+		color = "FF33FF33";
+	}
 
-	//std::string dis = "[colour='" + color + "']" + name;
-	//CEGUI::ListboxItem *item = new MyComListItem(dis);
-	//_friends[name] = item;
+	std::string dis = "[colour='" + color + "']" + name;
+	CEGUI::ListboxItem *item = new MyComListItem(dis);
+	_friends[name] = item;
 
-	//if(connected)
-	//{
-	//	if(lb->getItemCount() > 0)
-	//		lb->insertItem(item, lb->getListboxItemFromIndex(0));
-	//	else
-	//		lb->addItem(item);
-	//}
-	//else
-	//{
-	//	lb->addItem(item);
-	//}
+	if(connected)
+	{
+		if(lb->getItemCount() > 0)
+			lb->insertItem(item, lb->getListboxItemFromIndex(0));
+		else
+			lb->addItem(item);
+	}
+	else
+	{
+		lb->addItem(item);
+	}
 }
 
 /***********************************************************
@@ -410,16 +401,16 @@ remove people friend
 ***********************************************************/
 void CommunityBox::RemoveFriend(const std::string & name)
 {
-	//std::map<std::string, CEGUI::ListboxItem *>::iterator it = _friends.find(name);
-	//if(it == _friends.end()) // does not exist
-	//	return;
+	std::map<std::string, CEGUI::ListboxItem *>::iterator it = _friends.find(name);
+	if(it == _friends.end()) // does not exist
+		return;
 
 
-	//CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
-	//	CEGUI::WindowManager::getSingleton().getWindow("Community/friendlist"));
+	CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
+		CEGUI::WindowManager::getSingleton().getWindow("Community/friendlist"));
 
-	//lb->removeItem(it->second);
-	//_friends.erase(it);
+	lb->removeItem(it->second);
+	_friends.erase(it);
 }
 
 /***********************************************************
@@ -444,23 +435,23 @@ handle event when list is selected
 ***********************************************************/
 bool CommunityBox::HandleCPOk (const CEGUI::EventArgs& e)
 {
-	//CEGUI::Editbox * bed = static_cast<CEGUI::Editbox *>
-	//(CEGUI::WindowManager::getSingleton().getWindow("Chat/AddFriendName/edit"));
+	CEGUI::Editbox * bed = static_cast<CEGUI::Editbox *>
+	(CEGUI::WindowManager::getSingleton().getWindow("Chat/AddFriendName/edit"));
 
-	//std::string strc = bed->getProperty("Text").c_str();
+	std::string strc = bed->getProperty("Text").c_str();
 
-	//if(strc != "")
-	//{
-	//	UpdateFriend(strc);
-	//	ThreadSafeWorkpile::getInstance()->AddFriend(strc);
+	if(strc != "")
+	{
+		UpdateFriend(strc);
+		InternalWorkpile::getInstance()->AddFriend(strc);
 
-	//	bed->setProperty("Text", "");
-	//	_myChooseName->hide();
-	//}
-	//else
-	//{
-	//	bed->activate();
-	//}
+		bed->setProperty("Text", "");
+		_myChooseName->hide();
+	}
+	else
+	{
+		bed->activate();
+	}
 
 	return true;
 }
@@ -470,11 +461,11 @@ handle event when list is selected
 ***********************************************************/
 bool CommunityBox::HandleCPCancel (const CEGUI::EventArgs& e)
 {
-	//CEGUI::Editbox * bed = static_cast<CEGUI::Editbox *>
-	//(CEGUI::WindowManager::getSingleton().getWindow("Chat/AddFriendName/edit"));
+	CEGUI::Editbox * bed = static_cast<CEGUI::Editbox *>
+	(CEGUI::WindowManager::getSingleton().getWindow("Chat/AddFriendName/edit"));
 
-	//bed->setProperty("Text", "");
-	//_myChooseName->hide();
+	bed->setProperty("Text", "");
+	_myChooseName->hide();
 	return true;
 }
 
@@ -485,22 +476,22 @@ handle event when list is double clicked
 ***********************************************************/
 bool CommunityBox::HandleListdblClick (const CEGUI::EventArgs& e)
 {
-	//CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
-	//	CEGUI::WindowManager::getSingleton().getWindow("Community/friendlist"));
+	CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
+		CEGUI::WindowManager::getSingleton().getWindow("Community/friendlist"));
 
-	//const CEGUI::ListboxTextItem * it = static_cast<const CEGUI::ListboxTextItem *>(lb->getFirstSelectedItem());
-	//if(it)
-	//{
-	//	std::string name = it->getText().c_str();
-	//	name = name.substr(name.find("]")+1);
-	//
-	//	std::map<std::string, CEGUI::ListboxItem *>::iterator iton = _onlines.find(name);
-	//	if(iton != _onlines.end())
-	//	{
-	//		ThreadSafeWorkpile::getInstance()->AddWhisperChannel(name);
-	//		ThreadSafeWorkpile::getInstance()->AddEvent(new FocusChatEvent());
-	//	}
-	//}
+	const CEGUI::ListboxTextItem * it = static_cast<const CEGUI::ListboxTextItem *>(lb->getFirstSelectedItem());
+	if(it)
+	{
+		std::string name = it->getText().c_str();
+		name = name.substr(name.find("]")+1);
+	
+		std::map<std::string, CEGUI::ListboxItem *>::iterator iton = _onlines.find(name);
+		if(iton != _onlines.end())
+		{
+			InternalWorkpile::getInstance()->AddWhisperChannel(name);
+			InternalWorkpile::getInstance()->AddEvent(new FocusChatEvent());
+		}
+	}
 
 	return true;
 }
@@ -512,19 +503,19 @@ handle event when list is double clicked
 ***********************************************************/
 bool CommunityBox::HandleConnecteddblClick (const CEGUI::EventArgs& e)
 {
-	//CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
-	//	CEGUI::WindowManager::getSingleton().getWindow("Community/onlinelist"));
+	CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
+		CEGUI::WindowManager::getSingleton().getWindow("Community/onlinelist"));
 
-	//const CEGUI::ListboxTextItem * it = static_cast<const CEGUI::ListboxTextItem *>(lb->getFirstSelectedItem());
-	//if(it)
-	//{
-	//	std::string name = it->getText().c_str();
-	//	name = name.substr(name.find("]")+1);
-	//	name = name.substr(0, name.find_last_of("(")-1);
+	const CEGUI::ListboxTextItem * it = static_cast<const CEGUI::ListboxTextItem *>(lb->getFirstSelectedItem());
+	if(it)
+	{
+		std::string name = it->getText().c_str();
+		name = name.substr(name.find("]")+1);
+		name = name.substr(0, name.find_last_of("(")-1);
 
-	//	ThreadSafeWorkpile::getInstance()->AddWhisperChannel(name);
-	//	ThreadSafeWorkpile::getInstance()->AddEvent(new FocusChatEvent());
-	//}
+		InternalWorkpile::getInstance()->AddWhisperChannel(name);
+		InternalWorkpile::getInstance()->AddEvent(new FocusChatEvent());
+	}
 
 	return true;
 }

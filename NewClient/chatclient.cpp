@@ -33,8 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /***********************************************************************
  * Constructor
  ***********************************************************************/
-ChatClient::ChatClient(boost::shared_ptr<ChatSubscriberBase> WorldSubscriber,
-							boost::shared_ptr<ClientListHandlerBase> clH,
+ChatClient::ChatClient(ChatSubscriberBase* WorldSubscriber, ClientListHandlerBase* clH,
 							unsigned short downpacketpersecond, unsigned short downbyteperpacket)
 : m_id(ZCom_Invalid_ID), m_connected(false), m_WorldSubscriber(WorldSubscriber),
 	m_subscribed_world(false), m_clH(clH), 
@@ -82,6 +81,13 @@ void ChatClient::ConnectToServer(const std::string & address, const std::string 
 		LogHandler::getInstance()->LogToFile("Zoid: Already connected to chat server - skipping connection", 2);
 		return;
 	}
+
+
+	// clear the online list
+	InternalWorkpile::JoinEvent evcl;
+	evcl.ListName = "online";
+	evcl.Clear = true;
+	InternalWorkpile::getInstance()->HappenedJoinEvent(evcl);
 
 
 	// create target address 
@@ -197,7 +203,7 @@ void ChatClient::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _reque
 			ChatChannel * chn = m_channelM->GetOrAddChannel(_buf);
 
 			// attach the subscriber
-			std::map<std::string, boost::shared_ptr<ChatSubscriberBase> >::iterator it = m_waitingsubs.find(_buf);
+			std::map<std::string, ChatSubscriberBase* >::iterator it = m_waitingsubs.find(_buf);
 			if(it != m_waitingsubs.end())
 			{
 				chn->AttachSubscriber(it->second);
@@ -213,8 +219,12 @@ void ChatClient::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _reque
 		unsigned int clid = _announcedata->getInt( 32 );
 		char _buf[255];
 		_announcedata->getString( _buf, 255 );
+		char _status[255];
+		_announcedata->getString( _status, 255 );
+		char _color[255];
+		_announcedata->getString( _color, 255 );
 
-		m_clientHandler.Addclient(clid, new ClientObject(this, clid, _buf, m_clH));
+		m_clientHandler.Addclient(clid, new ClientObject(this, clid, _buf, _status, _color, m_clH));
 	}
 	
 }
@@ -225,8 +235,7 @@ void ChatClient::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _reque
 /***********************************************************************
  * subscribe to channel 'name'
  ***********************************************************************/
-void ChatClient::SubscribeChannel(const std::string & channelname, 
-								  boost::shared_ptr<ChatSubscriberBase> Subscriber)
+void ChatClient::SubscribeChannel(const std::string & channelname, ChatSubscriberBase* Subscriber)
 {
 	if(m_channelM)
 	{
