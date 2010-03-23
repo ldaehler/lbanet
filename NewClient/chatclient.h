@@ -79,6 +79,16 @@ public:
 	// close connection
 	void CloseConnection();
 
+	//! change player status
+	void ChangeStatus(const std::string & status);
+
+	//! change player color
+	void ChangeColor(const std::string & color);
+
+	//! whisper to someone 
+	void Whisper(const std::string & playername, const std::string & text);
+
+
 protected:
 	// called when initiated connection process yields a result
 	void ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result, ZCom_BitStream &_reply );

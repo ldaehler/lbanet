@@ -182,13 +182,17 @@ public:
 
 
 	// new client connected
-	virtual void Connected(unsigned int id, const std::string & Name);
+	virtual void Connected(unsigned int id, const std::string & Name, 
+							const std::string & Status, const std::string & Color);
 
 	// client disconnected
 	virtual void Disconnected(unsigned int id);
 
 	// return the name given a client id
 	virtual std::string GetName(unsigned int id);
+
+	// client changed status
+	virtual void ChangedStatus(unsigned int id, const std::string & Status, const std::string & Color);
 
 
 

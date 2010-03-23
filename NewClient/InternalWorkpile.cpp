@@ -265,7 +265,8 @@ void InternalWorkpile::GetFriends(std::vector<std::string> & friends)
 /***********************************************************
 new client connected
 ***********************************************************/
-void InternalWorkpile::Connected(unsigned int id, const std::string & Name)
+void InternalWorkpile::Connected(unsigned int id, const std::string & Name, 
+								 const std::string & Status, const std::string & Color)
 {
 	#ifdef _DEBUG
 		std::stringstream strs;
@@ -280,6 +281,8 @@ void InternalWorkpile::Connected(unsigned int id, const std::string & Name)
 	evt.Joined = true;
 	evt.Nickname = Name;
 	evt.Clear = false;
+	evt.Status = Status;
+	evt.Color = Color;
 	HappenedJoinEvent(evt);
 }
 
@@ -318,6 +321,21 @@ std::string InternalWorkpile::GetName(unsigned int id)
 }
 
 
+/***********************************************************
+client changed status
+***********************************************************/
+void InternalWorkpile::ChangedStatus(unsigned int id, const std::string & Status, const std::string & Color)
+{
+	JoinEvent evt;
+	evt.ListName = "online";
+	evt.Joined = true;
+	evt.Nickname = m_clientmap[id];
+	evt.Clear = false;
+	evt.Status = Status;
+	evt.Color = Color;
+	HappenedJoinEvent(evt);
+	ChatColorChanged(m_clientmap[id], Color);
+}
 
 
 ///***********************************************************
