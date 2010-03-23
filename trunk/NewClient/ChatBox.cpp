@@ -113,8 +113,7 @@ constructor
 ***********************************************************/
 ChatBox::ChatBox()
 : _control_key_on(false), _shift_key_on(false),
-	_IRC(NULL), _currSelectedch(0), 
-	_itltext(_lasttexts.end()), mHistorySize(50)
+	_currSelectedch(0), _itltext(_lasttexts.end()), mHistorySize(50)
 {
 	_channels.push_back("World");
 	_channels.push_back("Map");
@@ -744,7 +743,23 @@ void ChatBox::AddChannel(const std::string & channel)
 	std::string tosend("/join ");
 	tosend +=channel;
 	InternalWorkpile::getInstance()->AddChatText(tosend);
+	_addedChannels.push_back(channel);
 }
+
+
+/***********************************************************
+refresh channel on server after disconnection
+***********************************************************/
+void ChatBox::RefreshChannels()
+{
+	for(size_t i=0; i<_addedChannels.size(); ++i)
+	{
+		std::string tosend("/join ");
+		tosend +=_addedChannels[i];
+		InternalWorkpile::getInstance()->AddChatText(tosend);
+	}
+}
+
 
 
 /***********************************************************

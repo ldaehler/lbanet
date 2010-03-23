@@ -440,6 +440,16 @@ void GuiHandler::FocusChatbox(bool focus)
 
 
 /***********************************************************
+focus the chatbox
+***********************************************************/
+void GuiHandler::RefreshChannels()
+{
+	if(_game_gui)
+		_game_gui->RefreshChannels();
+}
+
+
+/***********************************************************
 called when font size changed
 ***********************************************************/
 void GuiHandler::ReloadFontSize()

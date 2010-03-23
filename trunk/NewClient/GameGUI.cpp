@@ -310,15 +310,13 @@ void GameGUI::FocusChatbox(bool focus)
 	_cb.Focus(focus);
 }
 
-
 /***********************************************************
-set irc thread
+refresh channel on server after disconnection
 ***********************************************************/
-void GameGUI::SetIrcThread(IrcThread * IT)
+void GameGUI::RefreshChannels()
 {
-	_cb.SetIrc(IT);
+	_cb.RefreshChannels();
 }
-
 
 
 /***********************************************************

@@ -114,6 +114,10 @@ public:
 	// refresh options
 	void RefreshOption();
 
+
+	//! refresh channel on server after disconnection
+	void RefreshChannels();
+
 	// show dialog with NPC
 	//void ShowDialog(long ActorId, const std::string &ActorName, DialogHandlerPtr Dialog,
 	//					bool Show,	const std::map<long, TraderItem> &inventory);

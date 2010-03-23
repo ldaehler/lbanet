@@ -126,9 +126,6 @@ public:
 	// focus the chatbox
 	void FocusChatbox(bool focus);
 
-	//! set irc thread
-	void SetIrcThread(IrcThread * IT);
-
 	//! display game text
 	bool DisplayGameText(long textid, bool show);
 
@@ -144,6 +141,10 @@ public:
 
 	// display inventory
 	void ShowInventory();
+
+
+	//! refresh channel on server after disconnection
+	void RefreshChannels();
 
 	// show dialog with NPC
 	//void ShowDialog(long ActorId, const std::string &ActorName, DialogHandlerPtr Dialog, 
