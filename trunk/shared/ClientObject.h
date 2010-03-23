@@ -57,6 +57,16 @@ public:
 	static unsigned int getClassID() { return m_classid; }
 
 
+	//! change player status
+	void ChangeStatus(const std::string & status);
+
+	//! change player color
+	void ChangeColor(const std::string & color);
+
+	//! whisper to someone 
+	void Whisper(const std::string & playername, const std::string & text);
+
+
 protected:
 	// return the object name
 	virtual std::string GetObjectName()
@@ -69,7 +79,7 @@ protected:
 	virtual void HandleQuitEvent(ZCom_BitStream * data, eZCom_NodeRole remoterole, unsigned int eventconnid){}
 
 	// handle user event
-	virtual void HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoterole, unsigned int eventconnid){}
+	virtual void HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoterole, unsigned int eventconnid);
 
 	// do a custom process step if required
 	virtual void CustomProcess(){}

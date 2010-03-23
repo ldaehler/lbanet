@@ -45,10 +45,15 @@ public:
 	virtual ~ClientListHandlerBase(){}
 
 	// new client connected
-	virtual void Connected(unsigned int id, const std::string & Name) = 0;
+	virtual void Connected(unsigned int id, const std::string & Name, 
+							const std::string & Status, const std::string & Color) = 0;
 
 	// client disconnected
 	virtual void Disconnected(unsigned int id) = 0;
+
+	// client changed status
+	virtual void ChangedStatus(unsigned int id, const std::string & Status, const std::string & Color) = 0;
+
 
 	// return the name given a client id
 	virtual std::string GetName(unsigned int id) = 0;
