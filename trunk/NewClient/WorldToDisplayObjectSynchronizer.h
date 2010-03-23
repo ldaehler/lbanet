@@ -45,7 +45,7 @@ public:
 	//! constructor
 	WorldToDisplayObjectSynchronizer(boost::shared_ptr<PhysicalObjectHandlerBase> phH,
 										boost::shared_ptr<DisplayObjectHandlerBase> disH,
-										bool NoSmoothing);
+										unsigned int id, bool NoSmoothing);
 
 	//! destructor
 	virtual ~WorldToDisplayObjectSynchronizer();
@@ -54,8 +54,7 @@ public:
 	//! synchronization function - will typically be called on every frames
 	virtual void Process(void);
 
-	//! destroy function - clear the object content
-	virtual void Destroy(void);
+
 
 protected:
 	//! directly synchronize value between physic and display

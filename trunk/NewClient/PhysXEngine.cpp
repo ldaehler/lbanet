@@ -128,7 +128,7 @@ public:
 	Constructor
 ***********************************************************/
 PhysXEngine::PhysXEngine()
-: gPhysicsSDK(NULL), gScene(NULL), _currmap(NULL)
+: gPhysicsSDK(NULL), gScene(NULL)
 {
 	Init();
 }
@@ -188,7 +188,7 @@ void PhysXEngine::Init()
 
 
 	// init time
-	_lasttime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDoubleSync();
+	_lasttime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync()*0.001;
 
 
 	// init character controllers
@@ -236,8 +236,8 @@ void PhysXEngine::Quit()
 void PhysXEngine::StartPhysics()
 {
 	// Update the time step
-	double currentime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDoubleSync();
-	float tdiff = (float)(currentime - _lasttime);
+	double currentime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync()*0.001;
+	float tdiff = (float)(currentime - _lasttime); // time in seconds
 
 	// Start collision and dynamics for delta time since the last frame
     gScene->simulate(tdiff);
@@ -286,7 +286,7 @@ void PhysXEngine::Clear()
 			gScene->releaseActor(**actors);
 	}
 
-	_currmap = NULL;
+	_roofactors.clear();
 }
 
 
@@ -329,6 +329,10 @@ NxActor* PhysXEngine::CreateBox(const NxVec3 & StartPosition, float dimX, float 
 	NxActor *pActor = gScene->createActor(actorDesc);	
 	assert(pActor);
 
+	#ifdef _DEBUG
+		LogHandler::getInstance()->LogToFile("Added box actor to physic engine");
+	#endif
+
 	return pActor;
 }
 
@@ -370,6 +374,10 @@ NxActor* PhysXEngine::CreateSphere(const NxVec3 & StartPosition, float radius, f
 	assert(actorDesc.isValid());
 	NxActor *pActor = gScene->createActor(actorDesc);	
 	assert(pActor);
+
+	#ifdef _DEBUG
+		LogHandler::getInstance()->LogToFile("Added sphere actor to physic engine");
+	#endif
 
 	return pActor;
 }
@@ -416,6 +424,10 @@ NxActor* PhysXEngine::CreateCapsule(const NxVec3 & StartPosition, float radius, 
 	NxActor *pActor = gScene->createActor(actorDesc);	
 	assert(pActor);
 
+	#ifdef _DEBUG
+		LogHandler::getInstance()->LogToFile("Added capsule actor to physic engine");
+	#endif
+
 	return pActor;
 }
 
@@ -442,6 +454,10 @@ NxController* PhysXEngine::CreateCharacter(const NxVec3 & StartPosition, float r
 	NxController* res = gManager->createController(gScene, desc);
 	res->getActor()->userData = adata;
 
+	#ifdef _DEBUG
+		LogHandler::getInstance()->LogToFile("Added character to physic engine");
+	#endif
+
 	return res;
 }
 
@@ -466,6 +482,10 @@ NxController* PhysXEngine::CreateCharacterBox(const NxVec3 & StartPosition, cons
 	NxController* res = gManager->createController(gScene, desc);
 	res->getActor()->userData = adata;
 
+	#ifdef _DEBUG
+		LogHandler::getInstance()->LogToFile("Added character box to physic engine");
+	#endif
+
 	return res;
 }
 
@@ -476,6 +496,10 @@ NxActor* PhysXEngine::CreateTriangleMesh(const NxVec3 & StartPosition, float *Ve
 											unsigned int *Indices, size_t IndicesSize,
 											ActorUserData * adata, bool collidablemesh)
 {
+	#ifdef _DEBUG
+		LogHandler::getInstance()->LogToFile("Added triangle mesh actor to physic engine");
+	#endif
+
 	// Create descriptor for triangle mesh
 	NxTriangleMeshDesc triangleMeshDesc;
 	triangleMeshDesc.numVertices = VertexesSize/3;
@@ -574,6 +598,23 @@ DestroyActor
 ***********************************************************/
 void PhysXEngine::DestroyActor(NxActor* actor)
 {
+	#ifdef _DEBUG
+		LogHandler::getInstance()->LogToFile("Remove Actor from physic engine");
+	#endif
+
+	//destroy internal actor if there is one
+	ActorUserData * udata = (ActorUserData *)actor->userData;
+	if(udata)
+	{
+		if(udata->InternalActor)
+		{
+			DestroyActor(udata->InternalActor);
+			std::set<NxActor*>::iterator it = _roofactors.find(udata->InternalActor);
+			if(it != _roofactors.end())
+				_roofactors.erase(it);
+		}
+	}
+
 	if(gScene && actor)
 		gScene->releaseActor(*actor);
 }
@@ -584,6 +625,10 @@ DestroyCharacter
 ***********************************************************/
 void PhysXEngine::DestroyCharacter(NxController* character)
 {
+	#ifdef _DEBUG
+		LogHandler::getInstance()->LogToFile("Remove Character from physic engine");
+	#endif
+
 	if(gManager && character)
 		gManager->releaseController(*character);
 }
@@ -639,7 +684,6 @@ NxActor* PhysXEngine::LoadTriangleMeshFile(const NxVec3 & StartPosition, const s
 
 
 	// create shape for roof if necessary
-	_currmap = NULL;
 	if(sizevertexroof > 0)
 	{
 		float *buffervertexroof = NULL;
@@ -653,9 +697,8 @@ NxActor* PhysXEngine::LoadTriangleMeshFile(const NxVec3 & StartPosition, const s
 		NxActor* roofact = CreateTriangleMesh(StartPosition, buffervertexroof, sizevertexroof, 
 												bufferindicesroof, sizeindicesroof, NULL, false);
 
-
-		if(roofact && roofact->getNbShapes() > 0)
-			_currmap = (*roofact->getShapes())->isTriangleMesh();
+		_roofactors.insert(roofact);
+		userdata->InternalActor = roofact;
 
 		if(buffervertexroof)
 			delete buffervertexroof;
@@ -678,13 +721,23 @@ NxActor* PhysXEngine::LoadTriangleMeshFile(const NxVec3 & StartPosition, const s
 ***********************************************************/
 float PhysXEngine::CheckForRoof(float PositionX, float PositionY, float PositionZ)
 {
-	NxRaycastHit hitinfo;
-	NxVec3 vec(0, 1, 0);
-	NxVec3 Position(PositionX, PositionY, PositionZ);
-
-	if(_currmap && _currmap->raycast(NxRay(Position, vec), 100.0f, NX_RAYCAST_DISTANCE, hitinfo, false))
+	std::set<NxActor*>::iterator it = _roofactors.begin();
+	std::set<NxActor*>::iterator end = _roofactors.end();
+	for(;it != end; ++it)
 	{
-		return (Position.y + hitinfo.distance);
+		if((*it)->getNbShapes() > 0)
+		{
+			NxTriangleMeshShape* _currmap = (*(*it)->getShapes())->isTriangleMesh();
+
+			NxRaycastHit hitinfo;
+			NxVec3 vec(0, 1, 0);
+			NxVec3 Position(PositionX, PositionY, PositionZ);
+
+			if(_currmap && _currmap->raycast(NxRay(Position, vec), 100.0f, NX_RAYCAST_DISTANCE, hitinfo, false))
+			{
+				return (Position.y + hitinfo.distance);
+			}
+		}
 	}
 
 	return -1;

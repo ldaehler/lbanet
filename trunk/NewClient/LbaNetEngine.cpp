@@ -113,9 +113,6 @@ entry point of the engine
 ***********************************************************/
 void LbaNetEngine::run(void)
 {
-	// init time variable
-	m_lasttime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDoubleSync();
-
 	try
 	{
 		// Loop until a quit event is found
@@ -431,10 +428,10 @@ void LbaNetEngine::SwitchGuiToLogin()
 	if(m_currentstate == ELogin)
 		return;
 
+	// clean up the world on disconnect
 	m_lbaNetModel.CleanupWorld();
 
 	//m_lbaNetModel.ZoomInPlayerForLogin();
-	//m_serverConnectionHandler->Disconnect();
 	m_Chatcl->CloseConnection();
 
 	PlayMenuMusic();

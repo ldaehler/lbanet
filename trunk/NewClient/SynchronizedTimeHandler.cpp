@@ -23,8 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "SynchronizedTimeHandler.h"
-#include <windows.h>
-
+#include <zoidcom.h>
 
 SynchronizedTimeHandler* SynchronizedTimeHandler::_singletonInstance = NULL;
 
@@ -46,15 +45,8 @@ SynchronizedTimeHandler * SynchronizedTimeHandler::getInstance()
 }
 
 //! get synchronized current time
-unsigned long SynchronizedTimeHandler::GetCurrentTimeSync()
+unsigned int  SynchronizedTimeHandler::GetCurrentTimeSync()
 {
-	return timeGetTime();
+	return ZoidCom::getTime();
 }
 
-
-//! get synchronized current time
-double SynchronizedTimeHandler::GetCurrentTimeDoubleSync()
-{
-	unsigned int currentTime = timeGetTime();
-	return (double)(currentTime)*0.001;
-}

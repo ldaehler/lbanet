@@ -67,7 +67,7 @@ public:
 						boost::shared_ptr<SimpleRotationHandler> rotH);
 
 	//! destructor
-	virtual ~PhysXActorHandler(){}
+	virtual ~PhysXActorHandler();
 
 	//! get object position in the world
 	virtual void GetPosition(float &X, float &Y, float &Z);
@@ -90,8 +90,6 @@ public:
 	//! rotate object in the world
 	virtual void RotateTo(const LbaQuaternion& Q);
 
-	//! destroy function - clear the object content
-	virtual void Destroy(void);
 
 protected:
 	NxActor*									_Actor;
@@ -111,7 +109,7 @@ public:
 						NxActor* Actor, const LbaQuaternion& rotation);
 
 	//! destructor
-	virtual ~PhysXDynamicActorHandler(){}
+	virtual ~PhysXDynamicActorHandler();
 
 	//! get object position in the world
 	virtual void GetPosition(float &X, float &Y, float &Z);
@@ -133,9 +131,6 @@ public:
 
 	//! rotate object in the world
 	virtual void RotateTo(const LbaQuaternion& Q);
-
-	//! destroy function - clear the object content
-	virtual void Destroy(void);
 
 protected:
 	NxActor*	_Actor;
@@ -155,7 +150,7 @@ public:
 								boost::shared_ptr<SimpleRotationHandler> rotH);
 
 	//! destructor
-	virtual ~PhysXControllerHandler(){}
+	virtual ~PhysXControllerHandler();
 
 	//! get object position in the world
 	virtual void GetPosition(float &X, float &Y, float &Z);
@@ -178,8 +173,6 @@ public:
 	//! rotate object in the world
 	virtual void RotateTo(const LbaQuaternion& Q);
 
-	//! destroy function - clear the object content
-	virtual void Destroy(void);
 
 protected:
 	NxController*								_Controller;

@@ -111,8 +111,6 @@ private:
 	boost::shared_ptr<PhysXEngine>	m_physic_engine;	//physic engine
 	ChatClient*						m_Chatcl;			//chat client
 
-	// last cycle time
-	double							m_lasttime;
 
 	// game states
 	enum EngineState {ELogin=0, EChoosingWorld, EGaming, EMenu, EOption };

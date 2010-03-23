@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "PhysXEngine.h"
 #include "NxVec3.h"
 #include "ObjectsDescription.h"
-
+#include "LogHandler.h"
 
 /***********************************************************
 	Constructor
@@ -49,8 +49,24 @@ PhysXActorHandler::PhysXActorHandler(boost::shared_ptr<PhysXEngine> Pengine,
 						NxActor* Actor,
 						boost::shared_ptr<SimpleRotationHandler> rotH)
 		: PhysXObjectHandlerBase(Pengine, UserData), _Actor(Actor), _rotH(rotH)
-{}
+{
+	#ifdef _DEBUG
+		LogHandler::getInstance()->LogToFile("Created new PhysXActor.");
+	#endif
+}
 
+
+/***********************************************************
+	destructor
+***********************************************************/
+PhysXActorHandler::~PhysXActorHandler()
+{
+	#ifdef _DEBUG
+		LogHandler::getInstance()->LogToFile("Destroyed PhysXActor.");
+	#endif
+
+	_Pengine->DestroyActor(_Actor);
+}
 
 
 /***********************************************************
@@ -124,15 +140,6 @@ void PhysXActorHandler::RotateTo(const LbaQuaternion& Q)
 }
 
 
-/***********************************************************
-rotate object in the world
-***********************************************************/
-void PhysXActorHandler::Destroy()
-{
-	_Pengine->DestroyActor(_Actor);
-}
-
-
 
 /***********************************************************
 	Constructor
@@ -143,8 +150,25 @@ PhysXDynamicActorHandler::PhysXDynamicActorHandler(boost::shared_ptr<PhysXEngine
 		: PhysXObjectHandlerBase(Pengine, UserData), _Actor(Actor)
 {
 	SetRotation(rotation);
+
+	#ifdef _DEBUG
+		LogHandler::getInstance()->LogToFile("Created new PhysXDynamicActor.");
+	#endif
 }
 
+
+/***********************************************************
+	destructor
+***********************************************************/
+PhysXDynamicActorHandler::~PhysXDynamicActorHandler()
+{
+
+	#ifdef _DEBUG
+		LogHandler::getInstance()->LogToFile("Destroyed PhysXDynamicActor.");
+	#endif
+
+	_Pengine->DestroyActor(_Actor);
+}
 
 /***********************************************************
 get object position in the world
@@ -227,14 +251,6 @@ void PhysXDynamicActorHandler::RotateTo(const LbaQuaternion& Q)
 }
 
 
-/***********************************************************
-rotate object in the world
-***********************************************************/
-void PhysXDynamicActorHandler::Destroy()
-{
-	_Pengine->DestroyActor(_Actor);
-}
-
 
 /***********************************************************
 	Constructor
@@ -244,8 +260,25 @@ PhysXControllerHandler::PhysXControllerHandler(boost::shared_ptr<PhysXEngine> Pe
 												NxController* Controller,
 												boost::shared_ptr<SimpleRotationHandler> rotH)
 		: PhysXObjectHandlerBase(Pengine, UserData), _Controller(Controller), _rotH(rotH)
-{}
+{
+	#ifdef _DEBUG
+		LogHandler::getInstance()->LogToFile("Created new PhysXController.");
+	#endif
+}
 
+
+
+/***********************************************************
+	destructor
+***********************************************************/
+PhysXControllerHandler::~PhysXControllerHandler()
+{
+	#ifdef _DEBUG
+		LogHandler::getInstance()->LogToFile("Destroyed PhysXController.");
+	#endif
+
+	_Pengine->DestroyCharacter(_Controller);
+}
 
 
 /***********************************************************
@@ -324,14 +357,6 @@ void PhysXControllerHandler::RotateTo(const LbaQuaternion& Q)
 	_rotH->RotateTo(Q);
 }
 
-
-/***********************************************************
-rotate object in the world
-***********************************************************/
-void PhysXControllerHandler::Destroy()
-{
-	_Pengine->DestroyCharacter(_Controller);
-}
 
 
 

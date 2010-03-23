@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "WorldToDisplayObjectSynchronizer.h"
+#include "LogHandler.h"
 #include <osg/Quat>
 
 #define ABS(X) (((X)<0)?(-(X)):(X))
@@ -32,11 +33,15 @@ constructor
 ***********************************************************/
 WorldToDisplayObjectSynchronizer::WorldToDisplayObjectSynchronizer(boost::shared_ptr<PhysicalObjectHandlerBase> phH,
 																	boost::shared_ptr<DisplayObjectHandlerBase> disH,
-																	bool NoSmoothing)
-	: DynamicObject(phH, disH),
+																	unsigned int id, bool NoSmoothing)
+	: DynamicObject(phH, disH, id),
 		_lastDisplayPositionX(0), _lastDisplayPositionY(0), _lastDisplayPositionZ(0), _NoSmoothing(NoSmoothing)
 {
-
+	#ifdef _DEBUG
+		std::stringstream strs;
+		strs<<"Created new WorldToDisplayObjectSynchronizer of id "<<_id;
+		LogHandler::getInstance()->LogToFile(strs.str());   
+	#endif
 }
 
 /***********************************************************
@@ -44,6 +49,11 @@ destructor
 ***********************************************************/
 WorldToDisplayObjectSynchronizer::~WorldToDisplayObjectSynchronizer()
 {
+	#ifdef _DEBUG
+		std::stringstream strs;
+		strs<<"Destroyed new WorldToDisplayObjectSynchronizer of id "<<_id;
+		LogHandler::getInstance()->LogToFile(strs.str());   
+	#endif
 }
 
 
@@ -193,12 +203,3 @@ void WorldToDisplayObjectSynchronizer::SyncWithSmoothing()
 	}
 }
 
-
-/***********************************************************
-destroy function - clear the object content
-***********************************************************/
-void WorldToDisplayObjectSynchronizer::Destroy(void)
-{
-	_phH->Destroy();
-	_disH->Destroy();
-}

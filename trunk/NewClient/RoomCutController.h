@@ -22,47 +22,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-
-#ifndef _LBANET_STATIC_OBJECT__H_
-#define _LBANET_STATIC_OBJECT__H_
+#if !defined(__LbaNetModel_1_RoomCutController_h)
+#define __LbaNetModel_1_RoomCutController_h
 
 #include <boost/shared_ptr.hpp>
-
-#include "DynamicObject.h"
 #include "CommonTypes.h"
 
-//*************************************************************************************************
-//*                               class WorldToDisplayObjectSynchronizer
-//*************************************************************************************************
-/**
-* @brief Static object will never synchronize - use it in case of static object
-*			or if you have an object with no display
-*
-*
-*/
-class StaticObject : public DynamicObject
+class DynamicObject;
+class PhysXEngine;
+
+/***********************************************************************
+ * Module:  RoomCutController.h
+ * Author:  vivien
+ * Modified: mardi 14 juillet 2009 17:41:03
+ * Purpose: Declaration of the class RoomCutController
+ ***********************************************************************/
+class RoomCutController
 {
 public:
-
 	//! constructor
-	StaticObject(boost::shared_ptr<PhysicalObjectHandlerBase> phH,
-								boost::shared_ptr<DisplayObjectHandlerBase> disH,
-								unsigned int id);
+	RoomCutController(boost::shared_ptr<PhysXEngine> pEngine);
 
 	//! destructor
-	virtual ~StaticObject();
+	~RoomCutController();
 
+	//! set character to control
+	void SetCharacter(boost::shared_ptr<DynamicObject> charac, bool AsGhost=false);
 
-	//! synchronization function - will typically be called on every frames
-	virtual void Process(void){}
+	//! process function
+	void Process(double tnow, float tdiff);
 
+private:
+	boost::shared_ptr<DynamicObject> _character;
+	boost::shared_ptr<PhysXEngine>	_pEngine;
 
-
-protected:
-	//! directly synchronize value between physic and display
-	void StraightSync();
-
+	bool			_isGhost;
 };
-
 
 #endif

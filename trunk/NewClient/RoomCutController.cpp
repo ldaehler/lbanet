@@ -22,54 +22,60 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#include "StaticObject.h"
-#include "LogHandler.h"
+#include "RoomCutController.h"
+#include "DynamicObject.h"
+#include "PhysXEngine.h"
+#include "OSGHandler.h"
+
+#include <iostream>
 
 /***********************************************************
-constructor
+	Constructor
 ***********************************************************/
-StaticObject::StaticObject(boost::shared_ptr<PhysicalObjectHandlerBase> phH,
-							boost::shared_ptr<DisplayObjectHandlerBase> disH,
-							unsigned int id)
-	: DynamicObject(phH, disH, id)
+RoomCutController::RoomCutController(boost::shared_ptr<PhysXEngine> pEngine)
+:	_pEngine(pEngine)
 {
-	#ifdef _DEBUG
-		std::stringstream strs;
-		strs<<"Created new StaticObject of id "<<id;
-		LogHandler::getInstance()->LogToFile(strs.str());   
-	#endif
 
-	if(_phH && _disH)
-		StraightSync();
-}
-
-/***********************************************************
-destructor
-***********************************************************/
-StaticObject::~StaticObject()
-{
-	#ifdef _DEBUG
-		std::stringstream strs;
-		strs<<"Destroyed new StaticObject of id "<<_id;
-		LogHandler::getInstance()->LogToFile(strs.str());   
-	#endif
 }
 
 
 /***********************************************************
-directly synchronize value between physic and display
+	Destructor
 ***********************************************************/
-void StaticObject::StraightSync()
+RoomCutController::~RoomCutController()
 {
-	float posX, posY, posZ;
-	LbaQuaternion Q;
 
-	// get value from physic object
-	_phH->GetPosition(posX, posY, posZ);
-	_phH->GetRotation(Q);
+}
 
-	// set it to display object
-	_disH->SetPosition(posX, posY, posZ);
-	_disH->SetRotation(Q);
 
+/***********************************************************
+	Set character to control
+***********************************************************/
+void RoomCutController::SetCharacter(boost::shared_ptr<DynamicObject> charac, bool AsGhost)
+{
+	_character = charac;
+	_isGhost = AsGhost;
+}
+
+
+
+/***********************************************************
+process function
+***********************************************************/
+void RoomCutController::Process(double tnow, float tdiff)
+{
+	if(_isGhost)
+		return;
+
+	if(!_character)
+		return;
+
+	boost::shared_ptr<PhysicalObjectHandlerBase> phys = _character->GetPhysicalObject();
+	if(!phys)
+		return;
+
+	float PositionX, PositionY, PositionZ;
+	phys->GetPosition(PositionX, PositionY, PositionZ);
+	float roofcut = _pEngine->CheckForRoof(PositionX, PositionY, PositionZ);
+	OsgHandler::getInstance()->SetClipPlane(roofcut-1);
 }

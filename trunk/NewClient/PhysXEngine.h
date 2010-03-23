@@ -35,7 +35,7 @@ class NxController;
 class NxActor;
 class NxTriangleMeshShape;
 
-
+#include <set>
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include "CommonTypes.h"
@@ -47,7 +47,8 @@ public:
 	//! constructor
 	ActorUserData()
 	: Materials(NULL), MaterialsSize(0), HittedFloorMaterial(0),
-		CollisionUpFlag(false), CollisionDownFlag(false), CollisionSideFlag(false)
+		CollisionUpFlag(false), CollisionDownFlag(false), CollisionSideFlag(false),
+		InternalActor(NULL)
 	{}
 
 	//! destructor
@@ -58,7 +59,9 @@ public:
 	}
 
 	size_t				MaterialsSize;
-	short *				Materials; 
+	short *				Materials;
+	NxActor *			InternalActor;
+
 
 	short				HittedFloorMaterial;
 	bool				CollisionUpFlag;
@@ -159,7 +162,7 @@ private:
 	NxControllerManager*		gManager;
 	
 
-	NxTriangleMeshShape*		_currmap;
+	std::set<NxActor*>			_roofactors;
 
 
 	double						_lasttime;

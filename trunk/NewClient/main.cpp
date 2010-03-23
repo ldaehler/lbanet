@@ -70,3 +70,11 @@ int main( int argc, char **argv )
 	return 0;
 }
 
+
+
+//TODO
+
+// integrate with database
+// add friend stuff
+// add + for chatbox
+// remove channel button

@@ -47,8 +47,7 @@ public:
 	~CharacterController();
 
 	//! set character to control
-	void SetCharacter(boost::shared_ptr<DynamicObject> charac);
-
+	void SetCharacter(boost::shared_ptr<DynamicObject> charac, bool AsGhost=false);
 
 	//! start a move from keyboard input
 	void StartMove(int moveDirection);
@@ -62,9 +61,12 @@ public:
 	//! process function
 	void Process(double tnow, float tdiff);
 
+
 private:
 	boost::shared_ptr<DynamicObject> _character;
 	boost::shared_ptr<PhysXEngine>	_pEngine;
+
+	bool			_isGhost;
 
 	//! key pressed
 	bool			_up_key_pressed;

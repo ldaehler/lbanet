@@ -27,16 +27,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "PhysXEngine.h"
 #include "OSGHandler.h"
 #include "CharacterController.h"
+#include "RoomCutController.h"
+#include "CameraController.h"
 #include "SynchronizedTimeHandler.h"
-
+#include "StaticObject.h"
 
 /***********************************************************
 	Constructor
 ***********************************************************/
 LbaNetModel::LbaNetModel()
+: m_playerObjectId(0)
 {
 	LogHandler::getInstance()->LogToFile("Initializing model class...");
-
+	m_lasttime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync()*0.001;
 }
 
 
@@ -45,8 +48,6 @@ LbaNetModel::LbaNetModel()
 ***********************************************************/
 LbaNetModel::~LbaNetModel()
 {
-	// clear model
-	ClearModel(LbaMainLightInfo());
 }
 
 
@@ -57,6 +58,11 @@ set physic engine
 void LbaNetModel::SetPhysicEngine(boost::shared_ptr<PhysXEngine> & pEngine)
 {
 	_physicEngine = pEngine;
+
+	//initialize controllers
+	m_controllerChar = boost::shared_ptr<CharacterController>(new CharacterController(_physicEngine));
+	m_controllerRC = boost::shared_ptr<RoomCutController>(new RoomCutController(_physicEngine));
+	m_controllerCam = boost::shared_ptr<CameraController>(new CameraController());
 }
 
 
@@ -65,96 +71,83 @@ do all check to be done when idle
 ***********************************************************/
 void LbaNetModel::Process()
 {
-	double currtime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDoubleSync();
+	double currtime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync()*0.001;
 	float diff = (float)(currtime-m_lasttime);
 	m_lasttime = currtime;
 
 
 	// process all dynamic objects
-	std::map<long, boost::shared_ptr<DynamicObject> >::iterator it = _dynamicObjects.begin();
-	std::map<long, boost::shared_ptr<DynamicObject> >::iterator end = _dynamicObjects.end();
+	std::map<unsigned int, boost::shared_ptr<DynamicObject> >::iterator it = _dynamicObjects.begin();
+	std::map<unsigned int, boost::shared_ptr<DynamicObject> >::iterator end = _dynamicObjects.end();
 	for(; it != end; ++it)
 		it->second->Process();
 
-	// process player controller
-	if(m_controller)
-		m_controller->Process(currtime, diff);
+	//process player object
+	if(m_playerObject)
+		m_playerObject->Process();
 
+	// process controllers
+	if(m_controllerChar)
+		m_controllerChar->Process(currtime, diff);
+	if(m_controllerRC)
+		m_controllerRC->Process(currtime, diff);
+	if(m_controllerCam)
+		m_controllerCam->Process(currtime, diff);
 }
 
-
-
-
-
-/***********************************************************
-reset model with a new map
-***********************************************************/
-void LbaNetModel::SetMap(const ObjectInfo &mapInfo, const LbaMainLightInfo &NewLightningInfo)
-{
-	// clear previous map if there was one
-	ClearModel(NewLightningInfo);
-
-	_currMap = mapInfo.BuildSelf(_physicEngine);
-}
-
-
-/***********************************************************
-clear current model before changing map
-***********************************************************/
-void LbaNetModel::ClearModel(const LbaMainLightInfo &NewLightningInfo)
-{
-	//clear dynamic object of the current scene
-	_dynamicObjects.clear();
-
-	// clear current map
-	_currMap.reset();
-
-
-	// clear physic engine
-	if(_physicEngine)
-		_physicEngine->Clear();
-
-
-	//clear display engine
-	OsgHandler::getInstance()->ResetDisplayTree(NewLightningInfo);
-}
 
 
 
 /***********************************************************
 add object to the scene
 ***********************************************************/
-void LbaNetModel::AddObject(long id, const ObjectInfo &desc)
+void LbaNetModel::AddObject(unsigned int id, const ObjectInfo &desc, bool IsMainPlayer)
 {
-	// remove object of same id if already there
-	std::map<long, boost::shared_ptr<DynamicObject> >::iterator it = _dynamicObjects.find(id);
-	if(it != _dynamicObjects.end())
-		RemObject(id);
-
-	_dynamicObjects[id] = desc.BuildSelf(_physicEngine);
-}
-
-/***********************************************************
-remove object from the scene
-***********************************************************/
-void LbaNetModel::RemObject(long id)
-{
-	std::map<long, boost::shared_ptr<DynamicObject> >::iterator it = _dynamicObjects.find(id);
-	if(it != _dynamicObjects.end())
+	//special treatment if main object
+	if(IsMainPlayer)
 	{
-		it->second->Destroy();
-		_dynamicObjects.erase(it);
+		m_playerObjectId = id;
+		m_playerObject = desc.BuildSelf(_physicEngine, id);
+
+		if(m_controllerChar)
+			m_controllerChar->SetCharacter(m_playerObject);
+		if(m_controllerRC)
+			m_controllerRC->SetCharacter(m_playerObject);
+		if(m_controllerCam)
+			m_controllerCam->SetCharacter(m_playerObject);
+	}
+	else
+	{
+		_dynamicObjects[id] = desc.BuildSelf(_physicEngine, id);
 	}
 }
 
 
+/***********************************************************
+remove object from the scene
+***********************************************************/
+void LbaNetModel::RemObject(unsigned int id)
+{
+	//special treatment if main object
+	if(id == m_playerObjectId)
+	{
+		ResetPlayerObject();
+	}
+	else
+	{
+		std::map<unsigned int, boost::shared_ptr<DynamicObject> >::iterator it = _dynamicObjects.find(id);
+		if(it != _dynamicObjects.end())
+			_dynamicObjects.erase(it);
+	}
+}
+
 
 /***********************************************************
 remove object from the scene
 ***********************************************************/
-boost::shared_ptr<DynamicObject> LbaNetModel::GetObject(long id)
+boost::shared_ptr<DynamicObject> LbaNetModel::GetObject(unsigned int id)
 {
-	std::map<long, boost::shared_ptr<DynamicObject> >::iterator it = _dynamicObjects.find(id);
+	std::map<unsigned int, boost::shared_ptr<DynamicObject> >::iterator it = _dynamicObjects.find(id);
 	if(it != _dynamicObjects.end())
 	{
 		return it->second;
@@ -170,11 +163,31 @@ clean up everything
 ***********************************************************/
 void LbaNetModel::CleanupWorld()
 {
-	LbaMainLightInfo linfo;
-	linfo.UseLight = false;
-	linfo.UseShadow = false;
-	linfo.StartOn = true;
-	ClearModel(linfo);
+	//clear dynamic object of the current scene
+	_dynamicObjects.clear();
+
+	//clean up player
+	ResetPlayerObject();
+
+
+	//TODO - only for testing
+	boost::shared_ptr<DisplayObjectDescriptionBase> Ds(new OsgSimpleObjectDescription("Lba1/Maps/map0.osgb"));
+	// maps are always 1Y too much up, remove that
+	boost::shared_ptr<DisplayTransformation> Tr(new DisplayTransformation());
+	Tr->translationY = -1;
+	boost::shared_ptr<DisplayInfo> DInfo(new DisplayInfo(Tr, Ds));
+	boost::shared_ptr<PhysicalDescriptionBase> Pyd(new PhysicalDescriptionTriangleMesh(0, 0, 0, "Data/Lba1/Maps/map0.phy"));
+	ObjectInfo mapinfo(DInfo, Pyd, true);
+	AddObject(1, mapinfo, false);
+
+
+	// clear physic engine
+	//if(_physicEngine)
+	//	_physicEngine->Clear();
+
+
+	//clear display engine
+	//OsgHandler::getInstance()->ResetDisplayTree();
 }
 
 
@@ -183,7 +196,7 @@ pause the game
 ***********************************************************/
 void LbaNetModel::Pause()
 {
-	m_lasttime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDoubleSync();
+	m_lasttime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync()*0.001;
 }
 
 /***********************************************************
@@ -191,7 +204,7 @@ resume the game
 ***********************************************************/
 void LbaNetModel::Resume(bool reinit)
 {
-	m_lasttime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDoubleSync();
+	m_lasttime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync()*0.001;
 }
 
 
@@ -200,8 +213,8 @@ start a move from keyboard input
 ***********************************************************/
 void LbaNetModel::StartMove(int MoveType)
 {
-	if(m_controller)
-		m_controller->StartMove(MoveType);
+	if(m_controllerChar)
+		m_controllerChar->StartMove(MoveType);
 }
 
 
@@ -210,8 +223,8 @@ stop a move from keyboard input
 ***********************************************************/
 void LbaNetModel::StopMove(int MoveType)
 {
-	if(m_controller)
-		m_controller->StopMove(MoveType);
+	if(m_controllerChar)
+		m_controllerChar->StopMove(MoveType);
 }
 
 /***********************************************************
@@ -219,12 +232,32 @@ do action from keyboard input
 ***********************************************************/
 void LbaNetModel::DoAction()
 {
-	if(m_controller)
-		m_controller->DoAction();
+	if(m_controllerChar)
+		m_controllerChar->DoAction();
 }
 
 
-	//m_controller = boost::shared_ptr<CharacterController>(new CharacterController(m_physic_engine));
+
+/***********************************************************
+reset player object
+***********************************************************/
+void LbaNetModel::ResetPlayerObject()
+{
+	m_playerObjectId = 0;
+
+	boost::shared_ptr<PhysicalObjectHandlerBase> physo(new SimplePhysicalObjectHandler(0, 0, 0, LbaQuaternion()));
+	m_playerObject = boost::shared_ptr<DynamicObject>(new StaticObject(physo, boost::shared_ptr<DisplayObjectHandlerBase>(), m_playerObjectId));
+
+	if(m_controllerChar)
+		m_controllerChar->SetCharacter(m_playerObject, true);
+	if(m_controllerRC)
+		m_controllerRC->SetCharacter(m_playerObject, true);
+	if(m_controllerCam)
+		m_controllerCam->SetCharacter(m_playerObject, true);
+}
+
+
+	//
 
 	//{
 	//	boost::shared_ptr<DisplayObjectDescriptionBase> Ds(new OsgSimpleObjectDescription("Lba1/Maps/map0.osgb"));

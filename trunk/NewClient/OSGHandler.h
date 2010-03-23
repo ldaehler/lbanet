@@ -107,11 +107,12 @@ public:
 
 	//! set camera target
 	void SetCameraTarget(double TargetX, double TargetY, double TargetZ);
+	void GetCameraTarget(double &TargetX, double &TargetY, double &TargetZ);
 
 	//! clear all nodes of the display tree
 	//! typically called when changing map
 	//! set if new map uses lighning or not
-	void ResetDisplayTree(const LbaMainLightInfo &NewLightningInfo);
+	void ResetDisplayTree();
 
 	//! update display - returns true if need to terminate
 	bool Update();
@@ -125,11 +126,9 @@ public:
 	//! remove actor from the graph
 	void RemoveActorNode(osg::ref_ptr<osg::Node> node);
 
-	//! reset light (can be used to switch light on/off
-	void ResetLight(bool On);
+	//! set light
+	void SetLight(const LbaMainLightInfo &LightInfo);
 
-	//! set the node the camera needs to follow
-	void SetCameraFollowingNode(osg::ref_ptr<osg::MatrixTransform> node);
 
 	//! set clip plane cut layer
 	void SetClipPlane(float layer);
@@ -157,9 +156,6 @@ protected:
 
 	//! set or reset camera transform
 	void ResetCameraTransform();
-
-	//! update camera position
-	void UpdateCameraPos();
 
 private:
 	// singleton
@@ -191,8 +187,6 @@ private:
 	double	_zenit;
 	float	_current_clip_layer;
 
-	LbaMainLightInfo _currLightInfo;
-
 
 	// osg handlers
 	osg::ref_ptr<osgViewer::Viewer>					_viewer;
@@ -202,12 +196,6 @@ private:
 	osg::ref_ptr<osg::Group>						_sceneRootNode;
 	osg::ref_ptr<osg::ClipNode>						_clipNode;
 
-	// camera internal info
-	osg::ref_ptr<osg::MatrixTransform>				_cameraNode;
-	double											_lastactX;
-	double											_lastactY;
-	double											_lastactZ;
-	bool											_movecamera;
 };
 
 

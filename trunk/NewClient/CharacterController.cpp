@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "CharacterController.h"
 #include "DynamicObject.h"
 #include "PhysXEngine.h"
-#include "OSGHandler.h"
+
 
 #include <iostream>
 
@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 CharacterController::CharacterController(boost::shared_ptr<PhysXEngine> pEngine)
 :	_up_key_pressed(false),_down_key_pressed(false),
 	_right_key_pressed(false),_left_key_pressed(false),
-	_current_direction(0, 0, 1), _pEngine(pEngine)
+	_current_direction(0, 0, 1), _pEngine(pEngine), _isGhost(false)
 {
 
 }
@@ -53,9 +53,10 @@ CharacterController::~CharacterController()
 /***********************************************************
 	Set character to control
 ***********************************************************/
-void CharacterController::SetCharacter(boost::shared_ptr<DynamicObject> charac)
+void CharacterController::SetCharacter(boost::shared_ptr<DynamicObject> charac, bool AsGhost)
 {
 	_character = charac;
+	_isGhost = AsGhost;
 }
 
 
@@ -146,42 +147,64 @@ void CharacterController::Process(double tnow, float tdiff)
 	if(!phys)
 		return;
 
-	//if right key pressed
-	if(_right_key_pressed)
+	if(_isGhost)
 	{
-		LbaQuaternion rot;
-		phys->GetRotation(rot);
-		rot.AddRotation(- tdiff*100.0f, LbaVec3(0, 1, 0));
-		phys->RotateTo(rot);
+		float speedX = 0.0f;
+		float speedY = 0.0f;
+		float speedZ = 0.0f;
 
-		_current_direction = rot.GetDirection(LbaVec3(0, 0, 1));
+		//if right key pressed
+		if(_right_key_pressed)
+			speedX = 10.0f;
+
+		//if left key pressed
+		if(_left_key_pressed)
+			speedX = -10.0f;
+
+		//if up key pressed
+		if(_up_key_pressed)
+			speedZ = -10.0f;
+
+		//if down key pressed
+		if(_down_key_pressed)
+			speedZ = 10.0f;
+
+		phys->Move(speedX*tdiff, speedY*tdiff, speedZ*tdiff);
 	}
-
-	//if left key pressed
-	if(_left_key_pressed)
+	else
 	{
-		LbaQuaternion rot;
-		phys->GetRotation(rot);
-		rot.AddRotation(tdiff*100.0f, LbaVec3(0, 1, 0));
-		phys->RotateTo(rot);
+		//if right key pressed
+		if(_right_key_pressed)
+		{
+			LbaQuaternion rot;
+			phys->GetRotation(rot);
+			rot.AddRotation(- tdiff*100.0f, LbaVec3(0, 1, 0));
+			phys->RotateTo(rot);
 
-		_current_direction = rot.GetDirection(LbaVec3(0, 0, 1));
+			_current_direction = rot.GetDirection(LbaVec3(0, 0, 1));
+		}
+
+		//if left key pressed
+		if(_left_key_pressed)
+		{
+			LbaQuaternion rot;
+			phys->GetRotation(rot);
+			rot.AddRotation(tdiff*100.0f, LbaVec3(0, 1, 0));
+			phys->RotateTo(rot);
+
+			_current_direction = rot.GetDirection(LbaVec3(0, 0, 1));
+		}
+
+		//if up/down key
+		float speed = 0.0f;
+		if(_up_key_pressed)
+			speed = 5.0f;
+
+		if(_down_key_pressed)
+			speed = -5.0f;
+
+		LbaVec3 Gravity;
+		_pEngine->GetGravity(Gravity);
+		phys->Move(_current_direction.x*speed* tdiff, Gravity.y/20, _current_direction.z*speed * tdiff);
 	}
-
-	//if up/down key
-	float speed = 0.0f;
-	if(_up_key_pressed)
-		speed = 5.0f;
-
-	if(_down_key_pressed)
-		speed = -5.0f;
-
-	LbaVec3 Gravity;
-	_pEngine->GetGravity(Gravity);
-	phys->Move(_current_direction.x*speed* tdiff, Gravity.y/20, _current_direction.z*speed * tdiff);
-
-	float PositionX, PositionY, PositionZ;
-	phys->GetPosition(PositionX, PositionY, PositionZ);
-	float roofcut = _pEngine->CheckForRoof(PositionX, PositionY, PositionZ);
-	OsgHandler::getInstance()->SetClipPlane(roofcut-1);
 }
