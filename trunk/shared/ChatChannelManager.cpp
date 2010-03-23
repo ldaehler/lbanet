@@ -48,7 +48,12 @@ void ChatChannelManager::registerClass(ZCom_Control *_control)
 ChatChannelManager::ChatChannelManager(ZCom_Control *_control, ClientListHandlerBase* clH)
 : _controler(_control), _intialized(false), _clH(clH)
 {
-	_control->ZCom_registerDynamicNode( m_node, m_classid );
+	#ifndef _ZOID_USED_NEW_VERSION_
+		m_node->registerNodeDynamic(m_classid, _control);
+	#else
+		_control->ZCom_registerDynamicNode( m_node, m_classid );
+	#endif
+
 	#ifdef _DEBUG
 		LogHandler::getInstance()->LogToFile("New Node " + GetObjectName());
 	#endif

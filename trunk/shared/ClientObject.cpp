@@ -51,23 +51,40 @@ ClientObject::ClientObject(ZCom_Control *_control, unsigned int id, const std::s
 : m_id(id), m_name(name), m_status(status), m_namecolor(namecolor), m_clH(clH),
 	m_WorldSubscriber(WorldSubscriber)
 {
-	_control->ZCom_registerDynamicNode( m_node, m_classid );
+	#ifndef _ZOID_USED_NEW_VERSION_
+		m_node->registerNodeDynamic(m_classid, _control);
+	#else
+		_control->ZCom_registerDynamicNode( m_node, m_classid );
+	#endif
+
 	#ifdef _DEBUG
 			std::stringstream strs;
 			strs<<"New Node "<<GetObjectName()<<" of id "<<m_id;
 			LogHandler::getInstance()->LogToFile(strs.str(), 2);    
 	#endif
 
+	//reset announcement data
+	ResetAnnouncement();
 
+
+	if(m_clH)
+		m_clH->Connected(m_id, m_name, m_status, m_namecolor);
+}
+
+
+
+
+/************************************************************************/
+/* used to reset announcement data                                    
+/************************************************************************/
+void ClientObject::ResetAnnouncement()
+{
 	ZCom_BitStream *adata = new ZCom_BitStream();
 	adata->addInt(m_id, 32);
 	adata->addString(m_name.c_str());
 	adata->addString(m_status.c_str());
 	adata->addString(m_namecolor.c_str());
 	m_node->setAnnounceData(adata);
-
-	if(m_clH)
-		m_clH->Connected(m_id, m_name, m_status, m_namecolor);
 }
 
 
@@ -109,6 +126,9 @@ void ClientObject::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoter
 				data->getString(buf, 255);
 				m_status = buf;
 
+				//reset announcement data
+				ResetAnnouncement();
+
 				//send to all
 				ZCom_BitStream *evt = new ZCom_BitStream();
 				evt->addInt(0, 2);
@@ -138,6 +158,9 @@ void ClientObject::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoter
 				char buf[255];
 				data->getString(buf, 255);
 				m_namecolor = buf;
+
+				//reset announcement data
+				ResetAnnouncement();
 
 				//send to all
 				ZCom_BitStream *evt = new ZCom_BitStream();

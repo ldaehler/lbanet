@@ -48,7 +48,12 @@ ChatChannel::ChatChannel(ZCom_Control *_control, const std::string & name,
 							ClientListHandlerBase* clH)
 : _name(name), _clH(clH)
 {
-	_control->ZCom_registerDynamicNode( m_node, m_classid );
+	#ifndef _ZOID_USED_NEW_VERSION_
+		m_node->registerNodeDynamic(m_classid, _control);
+	#else
+		_control->ZCom_registerDynamicNode( m_node, m_classid );
+	#endif
+
 	#ifdef _DEBUG
 		LogHandler::getInstance()->LogToFile("New Node " + GetObjectName() + " of name " + _name);
 	#endif

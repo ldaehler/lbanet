@@ -60,6 +60,9 @@ public:
 	 // return NULL if does not exist
 	 ClientObject * Getclient(unsigned int id);
 
+	 //! clear everything
+	 void Clear();
+
 private:
 
 	// channel map
