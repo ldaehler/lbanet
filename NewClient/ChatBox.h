@@ -27,7 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define _LBA_NET_CHAT_BOX_
 
 class AgentSharedData;
-class IrcThread;
 
 namespace CEGUI
 {
@@ -108,9 +107,9 @@ class ChatBox
 	//! used to give focus to the chatbox
 	void Focus(bool focus);
 
-	// set irc handler
-	void SetIrc(IrcThread * IRC)
-	{_IRC = IRC;}
+	//! refresh channel on server after disconnection
+	void RefreshChannels();
+
 
 protected:
 	// add a channel to the chat
@@ -150,12 +149,12 @@ private:
 	std::list<std::string>	_lasttexts;
 	std::list<std::string>::iterator	_itltext;
 
-	IrcThread *				_IRC;
-
 	std::string				_text_copyed;
 	bool					_control_key_on;
 	bool					_shift_key_on;
 	int						_currSelectedch;
+
+	std::vector<std::string>	_addedChannels;
 
 
 

@@ -478,6 +478,7 @@ void LbaNetEngine::SwitchGuiToGame()
 
 	//subscribe to world channel
 	m_Chatcl->SubscribeWorld();
+	m_gui_handler.RefreshChannels();
 
 	m_oldstate = m_currentstate;
 	m_currentstate = EGaming;
