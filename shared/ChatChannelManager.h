@@ -44,8 +44,7 @@ class ChatChannelManager : public GameObject
 
 public:
 	// constructor
-	ChatChannelManager(ZCom_Control *_control,
-						boost::shared_ptr<ClientListHandlerBase> clH);
+	ChatChannelManager(ZCom_Control *_control,ClientListHandlerBase* clH);
 
 	// destructor
 	virtual ~ChatChannelManager();
@@ -112,7 +111,7 @@ private:
 	bool	_intialized;
 
 	// client list handler
-	boost::shared_ptr<ClientListHandlerBase> _clH;
+	ClientListHandlerBase* _clH;
 };
 
 #endif

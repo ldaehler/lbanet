@@ -47,7 +47,7 @@ class ChatChannel : public GameObject
 public:
 	// constructor
 	ChatChannel(ZCom_Control *_control, const std::string & name,
-				boost::shared_ptr<ClientListHandlerBase> clH);
+				ClientListHandlerBase* clH);
 
 	// destructor
 	virtual ~ChatChannel();
@@ -65,7 +65,7 @@ public:
 	void Unsubscribe(unsigned int clientId);
 
 	// attach a subscriber
-	void AttachSubscriber(boost::shared_ptr<ChatSubscriberBase> sub);
+	void AttachSubscriber(ChatSubscriberBase* sub);
 
 	// called when client want to send text
 	void SendText(std::string Text);
@@ -97,10 +97,10 @@ private:
 	// channel name
 	std::string _name;
 
-	std::map<unsigned int, std::string>					_tmpstring;
-	std::vector<boost::shared_ptr<ChatSubscriberBase> > _subscribers;
+	std::map<unsigned int, std::string>			_tmpstring;
+	std::vector<ChatSubscriberBase*>			_subscribers;
 
-	boost::shared_ptr<ClientListHandlerBase>			_clH;
+	ClientListHandlerBase*						_clH;
 };
 
 

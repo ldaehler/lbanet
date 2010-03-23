@@ -45,8 +45,7 @@ void ChatChannelManager::registerClass(ZCom_Control *_control)
 /************************************************************************/
 /* constructor                                        
 /************************************************************************/
-ChatChannelManager::ChatChannelManager(ZCom_Control *_control,
-										boost::shared_ptr<ClientListHandlerBase> clH)
+ChatChannelManager::ChatChannelManager(ZCom_Control *_control, ClientListHandlerBase* clH)
 : _controler(_control), _intialized(false), _clH(clH)
 {
 	_control->ZCom_registerDynamicNode( m_node, m_classid );

@@ -46,8 +46,9 @@ void ClientObject::registerClass(ZCom_Control *_control)
 /* constructor                                        
 /************************************************************************/
 ClientObject::ClientObject(ZCom_Control *_control, unsigned int id, const std::string & name,
-								boost::shared_ptr<ClientListHandlerBase> clH)
-: m_id(id), m_name(name), m_clH(clH)
+								const std::string & status, const std::string & namecolor,
+								ClientListHandlerBase* clH)
+: m_id(id), m_name(name), m_status(status), m_namecolor(namecolor), m_clH(clH)
 {
 	_control->ZCom_registerDynamicNode( m_node, m_classid );
 	#ifdef _DEBUG
@@ -60,6 +61,8 @@ ClientObject::ClientObject(ZCom_Control *_control, unsigned int id, const std::s
 	ZCom_BitStream *adata = new ZCom_BitStream();
 	adata->addInt(m_id, 32);
 	adata->addString(m_name.c_str());
+	adata->addString(m_status.c_str());
+	adata->addString(m_namecolor.c_str());
 	m_node->setAnnounceData(adata);
 
 	if(m_clH)
