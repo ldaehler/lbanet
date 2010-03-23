@@ -332,7 +332,7 @@ void ChatBox::AddText(std::string channel, std::string Sender, std::string Text)
 
 	std::string namecol = "[colour='";
 	std::map<std::string, std::string>::iterator itcolor = _name_colors.find(Sender);
-	if(itcolor != _name_colors.end())
+	if((itcolor != _name_colors.end()) && (itcolor->second != ""))
 		namecol += itcolor->second;
 	else
 		namecol += "FFFFFFFF";

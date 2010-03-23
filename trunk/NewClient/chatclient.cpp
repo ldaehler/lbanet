@@ -350,7 +350,7 @@ void ChatClient::HandleChatText()
 			if(_afked)
 			{
 				_afked = false;
-				//_connectionMananger.ChangeStatus("");
+				ChangeStatus("");
 			}
 		}
 
@@ -449,13 +449,13 @@ void ChatClient::ProcessText(const std::string & Text)
 
 			if(tok[0] == "/afk")
 			{
-				//_connectionMananger.ChangeStatus("away");
+				ChangeStatus("away");
 				return;
 			}
 
 			if(tok[0] == "/back")
 			{
-				//_connectionMananger.ChangeStatus("");
+				ChangeStatus("");
 				return;
 			}
 
@@ -475,3 +475,33 @@ void ChatClient::ProcessText(const std::string & Text)
 	}
 }
 
+
+/***********************************************************
+change player status
+***********************************************************/
+void ChatClient::ChangeStatus(const std::string & status)
+{
+	ClientObject * cl = m_clientHandler.Getclient(m_id);
+	if(cl)
+		cl->ChangeStatus(status);
+}
+
+/***********************************************************
+change player color
+***********************************************************/
+void ChatClient::ChangeColor(const std::string & color)
+{
+	ClientObject * cl = m_clientHandler.Getclient(m_id);
+	if(cl)
+		cl->ChangeColor(color);
+}
+
+/***********************************************************
+whisper to someone 
+***********************************************************/
+void ChatClient::Whisper(const std::string & playername, const std::string & text)
+{
+	ClientObject * cl = m_clientHandler.Getclient(m_id);
+	if(cl)
+		cl->Whisper(playername, text);
+}
