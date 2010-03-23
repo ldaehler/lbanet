@@ -332,7 +332,7 @@ inject time to the GUI
 void GuiHandler::inject_time_pulse()
 {
 	/* get current "run-time" in seconds */
-	double t = 0.001*SynchronizedTimeHandler::getInstance()->GetCurrentTimeDoubleSync();
+	double t = 0.001*SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
 	/* inject the time that passed since the last call */
 	CEGUI::System::getSingleton().injectTimePulse( float(t-m_last_time_pulse) );
 	/* store the new time as the last time */

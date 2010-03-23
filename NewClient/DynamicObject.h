@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "PhysicalObjectHandlerBase.h"
 #include "DisplayObjectHandlerBase.h"
 
+
 /***********************************************************************
  * Module:  DynamicObject.h
  * Author:  vivien
@@ -40,8 +41,9 @@ class DynamicObject
 public:
 	//!constructor
 	DynamicObject(boost::shared_ptr<PhysicalObjectHandlerBase> phH,
-					boost::shared_ptr<DisplayObjectHandlerBase> disH)
-		: _phH(phH), _disH(disH)
+					boost::shared_ptr<DisplayObjectHandlerBase> disH,
+					unsigned int id)
+		: _phH(phH), _disH(disH), _id(id)
 	{}
 
 	//!destructor
@@ -50,8 +52,6 @@ public:
 	//! process function - will be called at each frame
 	virtual void Process(void) = 0;
 
-	//! destroy function - clear the object content
-	virtual void Destroy(void) = 0;
 
 	//! get physical object
 	boost::shared_ptr<PhysicalObjectHandlerBase> GetPhysicalObject()
@@ -61,6 +61,7 @@ public:
 	boost::shared_ptr<DisplayObjectHandlerBase> GetDisplayObject()
 	{ return _disH;}
 
+
 protected:
 	
 	//! handler to physical object
@@ -68,6 +69,9 @@ protected:
 
 	//! handler to display object
 	boost::shared_ptr<DisplayObjectHandlerBase> _disH;
+
+	//! object id
+	unsigned int								_id;
 };
 
 #endif

@@ -51,12 +51,6 @@ public:
 
 	//! set object rotation on X axis
 	virtual void SetRotation(const LbaQuaternion& Q) = 0;
-
-	//! destroy function - clear the object content
-	virtual void Destroy(void) = 0;
-
-	//! set the object to be followed by the camera
-	virtual void SetCameraFollow(void) = 0;
 };
 
 

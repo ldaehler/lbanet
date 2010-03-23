@@ -379,7 +379,7 @@ public:
 	virtual ~ObjectInfo();
 
 	//! build description into dynamic object
-	boost::shared_ptr<DynamicObject> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine) const;
+	boost::shared_ptr<DynamicObject> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine, int id) const;
 
 public:
 	boost::shared_ptr<DisplayInfo>				DisInfo;

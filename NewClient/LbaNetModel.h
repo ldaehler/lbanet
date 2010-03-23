@@ -35,6 +35,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class PhysXEngine;
 class CharacterController;
+class RoomCutController;
+class CameraController;
+
 
 /***********************************************************************
  * Module:  LbaNetModel.h
@@ -58,17 +61,15 @@ public:
 	//! do all check to be done when idle
 	void Process();
 
-	//! reset model with a new map
-	void SetMap(const ObjectInfo &mapInfo, const LbaMainLightInfo &NewLightningInfo);
-
 	//! add object to the scene
-	void AddObject(long id, const ObjectInfo &desc);
+	//! if IsMainPlayer then treat this object as the player object
+	void AddObject(unsigned int id, const ObjectInfo &desc, bool IsMainPlayer);
 
 	//! remove object from the scene
-	void RemObject(long id);
+	void RemObject(unsigned int id);
 
 	//! get object from the scene
-	boost::shared_ptr<DynamicObject> GetObject(long id);
+	boost::shared_ptr<DynamicObject> GetObject(unsigned int id);
 
 	//! clean up everything
 	void CleanupWorld();
@@ -90,20 +91,28 @@ public:
 	void DoAction();
 
 protected:
-	//! clear current model before changing map
-	void ClearModel(const LbaMainLightInfo &NewLightningInfo);
+
+	//! reset player object
+	void ResetPlayerObject();
 
 private:
-	std::map<long, boost::shared_ptr<DynamicObject> >	_dynamicObjects;
+	//physic engine
 	boost::shared_ptr<PhysXEngine>						_physicEngine;
 
-	boost::shared_ptr<DynamicObject>					_currMap;
+	// list of object populating the scene
+	std::map<unsigned int, boost::shared_ptr<DynamicObject> >	_dynamicObjects;
 
 	// last cycle time
 	double												m_lasttime;
 
-	// player controller
-	boost::shared_ptr<CharacterController>				m_controller;
+	// controllers
+	boost::shared_ptr<CharacterController>				m_controllerChar;
+	boost::shared_ptr<RoomCutController>				m_controllerRC;
+	boost::shared_ptr<CameraController>					m_controllerCam;
+
+	// player object
+	unsigned int										m_playerObjectId;
+	boost::shared_ptr<DynamicObject>					m_playerObject;
 };
 
 #endif

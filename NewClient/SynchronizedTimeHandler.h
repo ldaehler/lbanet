@@ -44,10 +44,8 @@ public:
    static SynchronizedTimeHandler * getInstance();
 
 	//! get synchronized current time
-	unsigned long GetCurrentTimeSync();
+	unsigned int GetCurrentTimeSync();
 
-	//! get synchronized current time
-	double GetCurrentTimeDoubleSync();
 
 protected:
 

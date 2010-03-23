@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDLd.lib SDLmaind.lib opengl32.lib glu32.lib CEGUIBase_d.lib CEGUIOpenGLRenderer_d.lib libconfig++d.lib osgd.lib osgShadowd.lib osgGAd.lib osgViewerd.lib osgDBd.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib winmm.lib zoidcom_vcd.lib fmodex_vc.lib tinyxmld_STL.lib"
+				AdditionalDependencies="SDLd.lib SDLmaind.lib opengl32.lib glu32.lib CEGUIBase_d.lib CEGUIOpenGLRenderer_d.lib libconfig++d.lib osgd.lib osgShadowd.lib osgGAd.lib osgViewerd.lib osgDBd.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib zoidcom_vcd.lib fmodex_vc.lib tinyxmld_STL.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\dependencies\SDL\lib;..\dependencies\Boost\lib;..\dependencies\CEGUI\lib;..\dependencies\libconfig\lib;..\dependencies\OpenSceneGraph\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;;..\dependencies\zoidcom\lib\msvc8;..\dependencies\fmod\lib;..\dependencies\tinyxml\lib"
 				GenerateDebugInformation="true"
@@ -138,7 +138,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDLmain.lib opengl32.lib glu32.lib CEGUIBase.lib CEGUIOpenGLRenderer.lib libconfig++.lib osg.lib osgShadow.lib osgGA.lib osgViewer.lib osgDB.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib winmm.lib zoidcom_vc.lib fmodex_vc.lib tinyxml_STL.lib"
+				AdditionalDependencies="SDL.lib SDLmain.lib opengl32.lib glu32.lib CEGUIBase.lib CEGUIOpenGLRenderer.lib libconfig++.lib osg.lib osgShadow.lib osgGA.lib osgViewer.lib osgDB.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib zoidcom_vc.lib fmodex_vc.lib tinyxml_STL.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\dependencies\SDL\lib;..\dependencies\Boost\lib;..\dependencies\CEGUI\lib;..\dependencies\libconfig\lib;..\dependencies\OpenSceneGraph\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;;..\dependencies\zoidcom\lib\msvc8;..\dependencies\fmod\lib;..\dependencies\tinyxml\lib"
 				GenerateDebugInformation="true"
@@ -178,6 +178,10 @@
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
+			<File
+				RelativePath=".\CameraController.cpp"
+				>
+			</File>
 			<File
 				RelativePath=".\CharacterController.cpp"
 				>
@@ -252,6 +256,10 @@
 			</File>
 			<File
 				RelativePath="..\shared\GameObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\GameServerHandler.cpp"
 				>
 			</File>
 			<File
@@ -347,6 +355,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RoomCutController.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ShortcutBox.cpp"
 				>
 			</File>
@@ -384,6 +396,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\CameraController.h"
+				>
+			</File>
 			<File
 				RelativePath=".\CharacterController.h"
 				>
@@ -474,6 +490,10 @@
 			</File>
 			<File
 				RelativePath="..\shared\GameObject.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\GameServerHandler.h"
 				>
 			</File>
 			<File
@@ -574,6 +594,10 @@
 			</File>
 			<File
 				RelativePath=".\resource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\RoomCutController.h"
 				>
 			</File>
 			<File

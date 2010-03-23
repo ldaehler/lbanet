@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "OsgObjectHandler.h"
 #include "ObjectsDescription.h"
 #include "OSGHandler.h"
+#include "LogHandler.h"
 
 #include <osg/Geode>
 #include <osg/Geometry>
@@ -40,6 +41,10 @@ Constructor
 OsgObjectHandler::OsgObjectHandler(osg::ref_ptr<osg::MatrixTransform> OsgObject)
 : _OsgObject(OsgObject), _posX(0), _posY(0), _posZ(0)
 {
+	#ifdef _DEBUG
+		LogHandler::getInstance()->LogToFile("Created new Osg object.");
+	#endif
+
 	UpdateMatrix();
 }
 
@@ -48,7 +53,11 @@ destructor
 ***********************************************************/
 OsgObjectHandler::~OsgObjectHandler()
 {
+	#ifdef _DEBUG
+		LogHandler::getInstance()->LogToFile("Destroyed Osg object.");
+	#endif
 
+	OsgHandler::getInstance()->RemoveActorNode(_OsgObject);
 }
 
 
@@ -87,25 +96,6 @@ void OsgObjectHandler::UpdateMatrix()
 
 		_OsgObject->setMatrix(Rotation * Trans);
 	}
-}
-
-
-/***********************************************************
-destroy function - clear the object content
-***********************************************************/
-void OsgObjectHandler::Destroy(void)
-{
-	OsgHandler::getInstance()->RemoveActorNode(_OsgObject);
-}
-
-
-
-/***********************************************************
-set the object to be followed by the camera
-***********************************************************/
-void OsgObjectHandler::SetCameraFollow(void)
-{
-	OsgHandler::getInstance()->SetCameraFollowingNode(_OsgObject);
 }
 
 

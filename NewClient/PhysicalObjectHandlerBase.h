@@ -81,9 +81,6 @@ public:
 		return res;
 	}
 
-	//! destroy function - clear the object content
-	virtual void Destroy(void) = 0;
-
 protected:
 	bool _resetted;
 };

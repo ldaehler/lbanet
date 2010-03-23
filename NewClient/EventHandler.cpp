@@ -319,18 +319,6 @@ bool EventHandler::Handle(SDL_Event flevent)
 					return true;
 				}
 
-				case SDLK_F5:
-				{			
-					OsgHandler::getInstance()->ResetLight(true);
-					return true;
-				}
-
-				case SDLK_F6:
-				{			
-					OsgHandler::getInstance()->ResetLight(false);
-					return true;
-				}
-
 				case SDLK_F1:
 				{			
 					OsgHandler::getInstance()->SetScreenAttributes(800, 600, false);
@@ -342,33 +330,6 @@ bool EventHandler::Handle(SDL_Event flevent)
 					OsgHandler::getInstance()->SetScreenAttributes(1024, 768, false);
 					return true;
 				}
-
-
-
-
-				//case SDLK_KP0:
-				//{			
-				//	_lbaNetEngine->TestCreateChannel();
-				//	return true;
-				//}
-
-				//case SDLK_KP1:
-				//{			
-				//	_lbaNetEngine->TestDeleteChannel();
-				//	return true;
-				//}
-
-				//case SDLK_KP2:
-				//{			
-				//	_lbaNetEngine->TestSpeakWorldChannel();
-				//	return true;
-				//}
-
-				//case SDLK_KP3:
-				//{			
-				//	_lbaNetEngine->TestSpeakOtherChannel();
-				//	return true;
-				//}
 			}
 
 		}
@@ -404,12 +365,6 @@ bool EventHandler::Handle(SDL_Event flevent)
 				case SDLK_RIGHT:
 				{
 					_lbaNetEngine->StopMove(4);
-					return true;
-				}
-
-				case SDLK_SPACE:
-				{
-					//SendingWorkpile::getInstance()->ReleaseActionKey();
 					return true;
 				}
 			}
