@@ -45,7 +45,8 @@ class ClientObject : public GameObject
 public:
 	// constructor
 	ClientObject(ZCom_Control *_control, unsigned int id, const std::string & name,
-					boost::shared_ptr<ClientListHandlerBase> clH);
+					const std::string & status, const std::string & namecolor,
+					ClientListHandlerBase* clH);
 
 	// destructor
 	virtual ~ClientObject();
@@ -79,9 +80,11 @@ private:
 
 	unsigned int			m_id;
 	std::string				m_name;
+	std::string				m_status;
+	std::string				m_namecolor;
 
 	// client list handler
-	boost::shared_ptr<ClientListHandlerBase> m_clH;
+	ClientListHandlerBase* m_clH;
 };
 
 

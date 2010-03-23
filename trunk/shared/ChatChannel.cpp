@@ -46,7 +46,7 @@ void ChatChannel::registerClass(ZCom_Control *_control)
 /* constructor                                        
 /************************************************************************/
 ChatChannel::ChatChannel(ZCom_Control *_control, const std::string & name,
-							boost::shared_ptr<ClientListHandlerBase> clH)
+							ClientListHandlerBase* clH)
 : _name(name), _clH(clH)
 {
 	_control->ZCom_registerDynamicNode( m_node, m_classid );
@@ -146,8 +146,8 @@ void ChatChannel::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remotero
 				if(textform == 0)
 				{
 					//publish text to all subscribers
-					std::vector<boost::shared_ptr<ChatSubscriberBase> >::iterator it = _subscribers.begin();
-					std::vector<boost::shared_ptr<ChatSubscriberBase> >::iterator end = _subscribers.end();
+					std::vector<ChatSubscriberBase*>::iterator it = _subscribers.begin();
+					std::vector<ChatSubscriberBase*>::iterator end = _subscribers.end();
 					for(; it != end; ++it)
 						(*it)->ReceivedText(_name, _clH->GetName(senderid), _tmpstring[senderid]);
 
@@ -200,7 +200,7 @@ void ChatChannel::Unsubscribe(unsigned int clientId)
 /************************************************************************/
 /* attach a subscriber                                  
 /************************************************************************/
-void ChatChannel::AttachSubscriber(boost::shared_ptr<ChatSubscriberBase> sub)
+void ChatChannel::AttachSubscriber(ChatSubscriberBase* sub)
 {
 	_subscribers.push_back(sub);
 }
