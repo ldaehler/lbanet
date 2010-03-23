@@ -58,6 +58,8 @@ public:
 	// return the name given a client id
 	virtual std::string GetName(unsigned int id) = 0;
 
+	// return the name given a client id
+	virtual unsigned int GetId(std::string Name) = 0;
 };
 
 #endif
