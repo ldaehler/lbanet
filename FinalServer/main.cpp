@@ -70,6 +70,22 @@ public:
 		return _clientmap[id];
 	}
 
+
+	//return the name given a client id
+	unsigned int GetId(std::string Name)
+	{
+		std::map<unsigned int, std::string>::iterator it =	_clientmap.begin();
+		std::map<unsigned int, std::string>::iterator end =	_clientmap.end();
+		for(; it != end; ++it)
+		{
+			if(it->second == Name)
+				return it->first;
+		}
+
+		//not found
+		return 0;
+	}
+
 	// client changed status
 	virtual void ChangedStatus(unsigned int id, const std::string & Status, 
 													const std::string & Color){}

@@ -129,7 +129,7 @@ eZCom_RequestResult Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitS
 				LogHandler::getInstance()->LogToFile(strs.str(), 2);    
 
 				//add to client list
-				ClientObject * cl = new ClientObject(this, _id, login, "", "", m_clH);
+				ClientObject * cl = new ClientObject(this, _id, login, "", "", m_clH, NULL);
 				cl->GetNode()->setOwner(_id, true);
 				m_clientH.Addclient(_id, cl);
 
