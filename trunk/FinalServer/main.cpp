@@ -38,7 +38,8 @@ public:
 	virtual ~SimpleClientListHandler(){}
 
 	// new client connected
-	virtual void Connected(unsigned int id, const std::string & Name)
+	virtual void Connected(unsigned int id, const std::string & Name, 
+								const std::string & Status, const std::string & Color)
 	{
 		#ifdef _DEBUG
 			std::stringstream strs;
@@ -68,6 +69,9 @@ public:
 	{
 		return _clientmap[id];
 	}
+
+	// client changed status
+	virtual void ChangedStatus(unsigned int id, const std::string & Status, const std::string & Color){}
 
 private:
 	std::map<unsigned int, std::string> _clientmap;
