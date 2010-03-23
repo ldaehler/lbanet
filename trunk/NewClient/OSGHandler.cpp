@@ -78,7 +78,12 @@ bool convertEvent(SDL_Event& event, osgGA::EventQueue& eventQueue)
             return true;
 
         case SDL_MOUSEBUTTONDOWN:
-            eventQueue.mouseButtonPress(event.button.x, event.button.y, event.button.button);
+			if(event.button.button == 4)
+				eventQueue.mouseScroll(osgGA::GUIEventAdapter::SCROLL_UP);
+			else if(event.button.button == 5)
+				eventQueue.mouseScroll(osgGA::GUIEventAdapter::SCROLL_DOWN);
+			else
+				eventQueue.mouseButtonPress(event.button.x, event.button.y, event.button.button);
             return true;
 
         case SDL_MOUSEBUTTONUP:
