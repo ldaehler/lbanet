@@ -92,9 +92,6 @@ public:
 
 	//! members
 	bool UseLight;
-	bool UseShadow;
-	bool StartOn;
-
 
 	float LOnPosX;
 	float LOnPosY;
@@ -107,19 +104,6 @@ public:
 	float LOnDiffuseR;
 	float LOnDiffuseG;
 	float LOnDiffuseB;
-
-
-	float LOffPosX;
-	float LOffPosY;
-	float LOffPosZ;
-
-	float LOffAmbientR;
-	float LOffAmbientG;
-	float LOffAmbientB;
-
-	float LOffDiffuseR;
-	float LOffDiffuseG;
-	float LOffDiffuseB;
 };
 
 
