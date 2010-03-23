@@ -30,8 +30,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GameEvents.h"
 #include "MessageBox.h"
 #include "ChooseNumberBox.h"
+#include "MusicHandler.h"
 
-//#include "MusicHandler.h"
+
 //#include "DataLoader.h"
 
 //#ifndef _LBANET_SET_EDITOR_
@@ -197,7 +198,7 @@ handle send button event
 ***********************************************************/
 bool GameGUI::HandleSoundIconClicked (const CEGUI::EventArgs& e)
 {
-	//MusicHandler::getInstance()->EnableDisableSound();
+	MusicHandler::getInstance()->EnableDisableSound();
 	RefreshSOundButton();
 	return true;
 }
@@ -284,20 +285,20 @@ refresh sound button
 ***********************************************************/
 void GameGUI::RefreshSOundButton()
 {
-	//try
-	//{
-	//	if(!MusicHandler::getInstance()->IsSoundEnabled())
-	//		static_cast<CEGUI::PushButton *> (CEGUI::WindowManager::getSingleton().getWindow("btnsound"))->
-	//											setProperty("NormalImage", "set:soundbutton image:disabled");
-	//	else
-	//		static_cast<CEGUI::PushButton *> (CEGUI::WindowManager::getSingleton().getWindow("btnsound"))->
-	//											setProperty("NormalImage", "set:soundbutton image:normal");
-	//}
-	//catch(CEGUI::Exception &ex)
-	//{
-	//	LogHandler::getInstance()->LogToFile(std::string("Exception refreshing the sound button: ") + ex.getMessage().c_str());
-	//	_root = NULL;
-	//}
+	try
+	{
+		if(!MusicHandler::getInstance()->IsSoundEnabled())
+			static_cast<CEGUI::PushButton *> (CEGUI::WindowManager::getSingleton().getWindow("btnsound"))->
+												setProperty("NormalImage", "set:soundbutton image:disabled");
+		else
+			static_cast<CEGUI::PushButton *> (CEGUI::WindowManager::getSingleton().getWindow("btnsound"))->
+												setProperty("NormalImage", "set:soundbutton image:normal");
+	}
+	catch(CEGUI::Exception &ex)
+	{
+		LogHandler::getInstance()->LogToFile(std::string("Exception refreshing the sound button: ") + ex.getMessage().c_str());
+		_root = NULL;
+	}
 }
 
 

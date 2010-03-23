@@ -105,11 +105,6 @@ void LbaNetEngine::Initialize(void)
 
 
 	LogHandler::getInstance()->LogToFile("Initializing Completed.");
-
-
-
-	// connect chat client to server
-	//m_Chatcl->ConnectToServer("127.0.0.1:8899", "cmoi", "letmein2");
 }
 
 
@@ -479,6 +474,7 @@ void LbaNetEngine::SwitchGuiToGame()
 
 	m_lbaNetModel.Resume(false);
 	m_gui_handler.SwitchGUI(2);
+	m_gui_handler.RefreshOption();
 	m_oldstate = m_currentstate;
 	m_currentstate = EGaming;
 }
@@ -543,7 +539,6 @@ void LbaNetEngine::ConnectionCallback(int SuccessFlag, const std::string & reaso
 	}
 
 	//else
-	//m_gui_handler.RefreshOption();
 	//m_lbaNetModel.SetPlayerName(Name);
 	SwitchGuiToChooseWorld();
 }

@@ -273,6 +273,12 @@ bool EventHandler::Handle(SDL_Event flevent)
 
 			switch (flevent.key.keysym.sym)
 			{
+
+				case SDLK_ESCAPE:
+					_lbaNetEngine->DisplayGUI(3);
+					break;
+
+
 				case SDLK_RETURN:
 					_lbaNetEngine->FocusChatbox(true);
 					break;

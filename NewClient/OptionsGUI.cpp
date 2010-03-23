@@ -32,10 +32,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "LogHandler.h"
 #include "OSGHandler.h"
+#include "MusicHandler.h"
 
-//#include "ThreadSafeWorkpile.h"
-//#include "GameEvents.h"
-//#include "MusicHandler.h"
+#include "InternalWorkpile.h"
+#include "GameEvents.h"
+//
 //#include "TextWritter.h"
 //#include "DataLoader.h"
 
@@ -184,50 +185,6 @@ void OptionsGUI::Apply()
 		//------------- handle general tab
 		{
 
-			//{
-			//	//handle text R
-			//	CEGUI::Spinner *sbgs = static_cast<CEGUI::Spinner *> (
-			//	CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/General/lbltextRv"));
-			//	if(sbgs)
-			//	{
-			//		int sp = (int)sbgs->getCurrentValue();
-			//		if(_textR != sp)
-			//		{
-			//			_textR = sp;
-			//			TextWritter::getInstance()->SetTextColor(_textR, _textG, _textB);
-			//			ConfigurationManager::GetInstance()->SetInt("Options.General.TextR", _textR);
-			//		}
-			//	}
-
-			//	//handle text G
-			//	CEGUI::Spinner *sbgsG = static_cast<CEGUI::Spinner *> (
-			//	CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/General/lbltextGv"));
-			//	if(sbgsG)
-			//	{
-			//		int sp = (int)sbgsG->getCurrentValue();
-			//		if(_textG != sp)
-			//		{
-			//			_textG = sp;
-			//			TextWritter::getInstance()->SetTextColor(_textR, _textG, _textB);
-			//			ConfigurationManager::GetInstance()->SetInt("Options.General.TextG", _textG);
-			//		}
-			//	}
-
-			//	//handle text B
-			//	CEGUI::Spinner *sbgsB = static_cast<CEGUI::Spinner *> (
-			//	CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/General/lbltextBv"));
-			//	if(sbgsB)
-			//	{
-			//		int sp = (int)sbgsB->getCurrentValue();
-			//		if(_textB != sp)
-			//		{
-			//			_textB = sp;
-			//			TextWritter::getInstance()->SetTextColor(_textR, _textG, _textB);
-			//			ConfigurationManager::GetInstance()->SetInt("Options.General.TextB", _textB);
-			//		}
-			//	}
-			//}
-
 			//CEGUI::Combobox * cbatype = static_cast<CEGUI::Combobox *> (
 			//	CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/General/lbltxtLangcb"));
 			//if(cbatype)
@@ -241,54 +198,54 @@ void OptionsGUI::Apply()
 			//	}
 			//}
 
-			//{
-			//	bool nchanged = false;
+			{
+				bool nchanged = false;
 
-			//	//handle name R
-			//	CEGUI::Spinner *sbgs = static_cast<CEGUI::Spinner *> (
-			//	CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/General/lbltextRv_name"));
-			//	if(sbgs)
-			//	{
-			//		int sp = (int)sbgs->getCurrentValue();
-			//		if(_nameR != sp)
-			//		{
-			//			nchanged = true;
-			//			_nameR = sp;
-			//			ConfigurationManager::GetInstance()->SetInt("Options.General.NameR", _nameR);
-			//		}
-			//	}
+				//handle name R
+				CEGUI::Spinner *sbgs = static_cast<CEGUI::Spinner *> (
+				CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/General/lbltextRv_name"));
+				if(sbgs)
+				{
+					int sp = (int)sbgs->getCurrentValue();
+					if(_nameR != sp)
+					{
+						nchanged = true;
+						_nameR = sp;
+						ConfigurationManager::GetInstance()->SetInt("Options.General.NameR", _nameR);
+					}
+				}
 
-			//	//handle name G
-			//	CEGUI::Spinner *sbgsG = static_cast<CEGUI::Spinner *> (
-			//	CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/General/lbltextGv_name"));
-			//	if(sbgsG)
-			//	{
-			//		int sp = (int)sbgsG->getCurrentValue();
-			//		if(_nameG != sp)
-			//		{
-			//			nchanged = true;
-			//			_nameG = sp;
-			//			ConfigurationManager::GetInstance()->SetInt("Options.General.NameG", _nameG);
-			//		}
-			//	}
+				//handle name G
+				CEGUI::Spinner *sbgsG = static_cast<CEGUI::Spinner *> (
+				CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/General/lbltextGv_name"));
+				if(sbgsG)
+				{
+					int sp = (int)sbgsG->getCurrentValue();
+					if(_nameG != sp)
+					{
+						nchanged = true;
+						_nameG = sp;
+						ConfigurationManager::GetInstance()->SetInt("Options.General.NameG", _nameG);
+					}
+				}
 
-			//	//handle name B
-			//	CEGUI::Spinner *sbgsB = static_cast<CEGUI::Spinner *> (
-			//	CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/General/lbltextBv_name"));
-			//	if(sbgsB)
-			//	{
-			//		int sp = (int)sbgsB->getCurrentValue();
-			//		if(_nameB != sp)
-			//		{
-			//			nchanged = true;
-			//			_nameB = sp;
-			//			ConfigurationManager::GetInstance()->SetInt("Options.General.NameB", _nameB);
-			//		}
-			//	}
+				//handle name B
+				CEGUI::Spinner *sbgsB = static_cast<CEGUI::Spinner *> (
+				CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/General/lbltextBv_name"));
+				if(sbgsB)
+				{
+					int sp = (int)sbgsB->getCurrentValue();
+					if(_nameB != sp)
+					{
+						nchanged = true;
+						_nameB = sp;
+						ConfigurationManager::GetInstance()->SetInt("Options.General.NameB", _nameB);
+					}
+				}
 
-			//	if(nchanged)
-			//		SendNameColor();
-			//}
+				if(nchanged)
+					SendNameColor();
+			}
 		}
 
 
@@ -368,55 +325,55 @@ void OptionsGUI::Apply()
 
 
 		//------------- handle sound tab
-		//{
-		//	//handle general sound
-		//	CEGUI::Scrollbar *sbgs = static_cast<CEGUI::Scrollbar *> (
-		//	CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/Sound/sbgeneralvolume"));
-		//	if(sbgs)
-		//	{
-		//		int sp = (int)sbgs->getScrollPosition ();
-		//		if(_currGenVolume != sp)
-		//		{
-		//			_currGenVolume = sp;
-		//			MusicHandler::getInstance()->SetGeneralVolume(_currGenVolume);
-		//			ConfigurationManager::GetInstance()->SetInt("Options.Sound.GeneralVolume", _currGenVolume);
-		//		}
-		//	}
+		{
+			//handle general sound
+			CEGUI::Scrollbar *sbgs = static_cast<CEGUI::Scrollbar *> (
+			CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/Sound/sbgeneralvolume"));
+			if(sbgs)
+			{
+				int sp = (int)sbgs->getScrollPosition ();
+				if(_currGenVolume != sp)
+				{
+					_currGenVolume = sp;
+					MusicHandler::getInstance()->SetGeneralVolume(_currGenVolume);
+					ConfigurationManager::GetInstance()->SetInt("Options.Sound.GeneralVolume", _currGenVolume);
+				}
+			}
 
 
 
-		//	//handle music sound
-		//	CEGUI::Scrollbar *sbms = static_cast<CEGUI::Scrollbar *> (
-		//	CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/Sound/sbMusicVolume"));
-		//	if(sbms)
-		//	{
-		//		int sp = (int)sbms->getScrollPosition ();
-		//		if(_currMusicVolume != sp)
-		//		{
-		//			_currMusicVolume = sp;
-		//			MusicHandler::getInstance()->SetMusicVolume(_currMusicVolume);
-		//			ConfigurationManager::GetInstance()->SetInt("Options.Sound.MusicVolume", _currMusicVolume);
-		//		}
-		//	}
-		//}
+			//handle music sound
+			CEGUI::Scrollbar *sbms = static_cast<CEGUI::Scrollbar *> (
+			CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/Sound/sbMusicVolume"));
+			if(sbms)
+			{
+				int sp = (int)sbms->getScrollPosition ();
+				if(_currMusicVolume != sp)
+				{
+					_currMusicVolume = sp;
+					MusicHandler::getInstance()->SetMusicVolume(_currMusicVolume);
+					ConfigurationManager::GetInstance()->SetInt("Options.Sound.MusicVolume", _currMusicVolume);
+				}
+			}
+		}
 
 
 		//------------- handle gui tab
-		//{
-		//	//handle font size
-		//	CEGUI::Spinner *sbgs = static_cast<CEGUI::Spinner *> (
-		//	CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/Gui/fontsize"));
-		//	if(sbgs)
-		//	{
-		//		int sp = (int)sbgs->getCurrentValue();
-		//		if(_fontSize != sp)
-		//		{
-		//			_fontSize = sp;
-		//			ConfigurationManager::GetInstance()->SetInt("Options.Gui.FontSize", _fontSize);
-		//			ThreadSafeWorkpile::getInstance()->AddEvent(new NewFontSizeEvent());
-		//		}
-		//	}
-		//}
+		{
+			//handle font size
+			CEGUI::Spinner *sbgs = static_cast<CEGUI::Spinner *> (
+			CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/Gui/fontsize"));
+			if(sbgs)
+			{
+				int sp = (int)sbgs->getCurrentValue();
+				if(_fontSize != sp)
+				{
+					_fontSize = sp;
+					ConfigurationManager::GetInstance()->SetInt("Options.Gui.FontSize", _fontSize);
+					InternalWorkpile::getInstance()->AddEvent(new NewFontSizeEvent());
+				}
+			}
+		}
 	}
 	catch(CEGUI::Exception &ex)
 	{
@@ -434,74 +391,42 @@ void OptionsGUI::Cancel()
 	{
 		//------------- handle general tab
 		{
-			//{
-			//	//handle text R
-			//	CEGUI::Spinner *sbgs = static_cast<CEGUI::Spinner *> (
-			//	CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/General/lbltextRv"));
-			//	if(sbgs)
-			//	{
-			//		std::stringstream strs;
-			//		strs<<_textR;
-			//		sbgs->setText(strs.str());
-			//	}
-
-			//	//handle text G
-			//	CEGUI::Spinner *sbgsG = static_cast<CEGUI::Spinner *> (
-			//	CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/General/lbltextGv"));
-			//	if(sbgsG)
-			//	{
-			//		std::stringstream strs;
-			//		strs<<_textG;
-			//		sbgsG->setText(strs.str());
-			//	}
-
-			//	//handle text B
-			//	CEGUI::Spinner *sbgsB = static_cast<CEGUI::Spinner *> (
-			//	CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/General/lbltextBv"));
-			//	if(sbgsB)
-			//	{
-			//		std::stringstream strs;
-			//		strs<<_textB;
-			//		sbgsB->setText(strs.str());
-			//	}
-			//}
-
 			//CEGUI::Combobox * cbatype = static_cast<CEGUI::Combobox *> (
 			//	CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/General/lbltxtLangcb"));
 			//if(cbatype)
 			//	cbatype->setText(_lang);
 
-			//{
-			//	//handle name R
-			//	CEGUI::Spinner *sbgs = static_cast<CEGUI::Spinner *> (
-			//	CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/General/lbltextRv_name"));
-			//	if(sbgs)
-			//	{
-			//		std::stringstream strs;
-			//		strs<<_nameR;
-			//		sbgs->setText(strs.str());
-			//	}
+			{
+				//handle name R
+				CEGUI::Spinner *sbgs = static_cast<CEGUI::Spinner *> (
+				CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/General/lbltextRv_name"));
+				if(sbgs)
+				{
+					std::stringstream strs;
+					strs<<_nameR;
+					sbgs->setText(strs.str());
+				}
 
-			//	//handle name G
-			//	CEGUI::Spinner *sbgsG = static_cast<CEGUI::Spinner *> (
-			//	CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/General/lbltextGv_name"));
-			//	if(sbgsG)
-			//	{
-			//		std::stringstream strs;
-			//		strs<<_nameG;
-			//		sbgsG->setText(strs.str());
-			//	}
+				//handle name G
+				CEGUI::Spinner *sbgsG = static_cast<CEGUI::Spinner *> (
+				CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/General/lbltextGv_name"));
+				if(sbgsG)
+				{
+					std::stringstream strs;
+					strs<<_nameG;
+					sbgsG->setText(strs.str());
+				}
 
-			//	//handle name B
-			//	CEGUI::Spinner *sbgsB = static_cast<CEGUI::Spinner *> (
-			//	CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/General/lbltextBv_name"));
-			//	if(sbgsB)
-			//	{
-			//		std::stringstream strs;
-			//		strs<<_nameB;
-			//		sbgsB->setText(strs.str());
-			//	}
-			//}
+				//handle name B
+				CEGUI::Spinner *sbgsB = static_cast<CEGUI::Spinner *> (
+				CEGUI::WindowManager::getSingleton().getWindow("OptionsTab/General/lbltextBv_name"));
+				if(sbgsB)
+				{
+					std::stringstream strs;
+					strs<<_nameB;
+					sbgsB->setText(strs.str());
+				}
+			}
 
 		}
 
@@ -597,25 +522,15 @@ void OptionsGUI::Quit()
 void OptionsGUI::Displayed()
 {
 	//init the values from file
-	//ConfigurationManager::GetInstance()->GetInt("Options.General.TextR", _textR);
-	//ConfigurationManager::GetInstance()->GetInt("Options.General.TextG", _textG);
-	//ConfigurationManager::GetInstance()->GetInt("Options.General.TextB", _textB);
+	ConfigurationManager::GetInstance()->GetInt("Options.General.NameR", _nameR);
+	ConfigurationManager::GetInstance()->GetInt("Options.General.NameG", _nameG);
+	ConfigurationManager::GetInstance()->GetInt("Options.General.NameB", _nameB);
 
-	//ConfigurationManager::GetInstance()->GetInt("Options.General.NameR", _nameR);
-	//ConfigurationManager::GetInstance()->GetInt("Options.General.NameG", _nameG);
-	//ConfigurationManager::GetInstance()->GetInt("Options.General.NameB", _nameB);
-
-	//ConfigurationManager::GetInstance()->GetInt("Options.Video.ScreenResolutionX", _currScreenX);
-	//ConfigurationManager::GetInstance()->GetInt("Options.Video.ScreenResolutionY", _currScreenY);
-	//ConfigurationManager::GetInstance()->GetBool("Options.Video.Fullscreen", _currFullscreen);
-	//ConfigurationManager::GetInstance()->GetBool("Options.Video.DisplayFPS", _currDisplayFPS);
-	//ConfigurationManager::GetInstance()->GetBool("Camera.Perspective", _currPerspective);
 	//ConfigurationManager::GetInstance()->GetBool("Options.Video.DisplayExits", _currDisplayExit);
 
-	//ConfigurationManager::GetInstance()->GetInt("Options.Sound.GeneralVolume", _currGenVolume);
-	//ConfigurationManager::GetInstance()->GetInt("Options.Sound.MusicVolume", _currMusicVolume);
-
-	//ConfigurationManager::GetInstance()->GetInt("Options.Gui.FontSize", _fontSize);
+	ConfigurationManager::GetInstance()->GetInt("Options.Sound.GeneralVolume", _currGenVolume);
+	ConfigurationManager::GetInstance()->GetInt("Options.Sound.MusicVolume", _currMusicVolume);
+	ConfigurationManager::GetInstance()->GetInt("Options.Gui.FontSize", _fontSize);
 
 	OsgHandler::getInstance()->GetScreenAttributes(_currScreenX, _currScreenY, _currFullscreen);
 	_currPerspective = OsgHandler::getInstance()->IsPerspectiveView();
@@ -630,13 +545,10 @@ send name color
 ***********************************************************/
 void OptionsGUI::SendNameColor()
 {
-	//std::stringstream colorstr;
-	//colorstr << "FF" ;
-	//colorstr <<((_nameR < 16)?"0":"") << std::uppercase <<std::hex << _nameR; 
-	//colorstr <<((_nameG < 16)?"0":"") << std::uppercase << std::hex << _nameG;
-	//colorstr <<((_nameB < 16)?"0":"") << std::uppercase << std::hex << _nameB;
-	//ThreadSafeWorkpile::getInstance()->ChangeNameColor(colorstr.str());
-
-	//ThreadSafeWorkpile::getInstance()->AddEvent(new PlayerNameColorChangedEvent(_nameR,
-	//													_nameG, _nameB));
+	std::stringstream colorstr;
+	colorstr << "FF" ;
+	colorstr <<((_nameR < 16)?"0":"") << std::uppercase <<std::hex << _nameR; 
+	colorstr <<((_nameG < 16)?"0":"") << std::uppercase << std::hex << _nameG;
+	colorstr <<((_nameB < 16)?"0":"") << std::uppercase << std::hex << _nameB;
+	InternalWorkpile::getInstance()->ChangeNameColor(colorstr.str());
 }
