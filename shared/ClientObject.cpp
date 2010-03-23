@@ -66,7 +66,7 @@ ClientObject::ClientObject(ZCom_Control *_control, unsigned int id, const std::s
 	m_node->setAnnounceData(adata);
 
 	if(m_clH)
-		m_clH->Connected(id, name);
+		m_clH->Connected(m_id, m_name, m_status, m_namecolor);
 }
 
 
@@ -84,4 +84,110 @@ ClientObject::~ClientObject()
 
 	if(m_clH)
 		m_clH->Disconnected(m_id);
+}
+
+
+/************************************************************************/
+/* handle user event                                     
+/************************************************************************/
+void ClientObject::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoterole, unsigned int eventconnid)
+{
+
+	// type of custom event is in the first 2 bits of the event
+	unsigned int etype = data->getInt(2);
+	switch(etype)
+	{
+		//subscribe event
+		case 0:
+		{
+			// if coming from owner to server
+			if(remoterole == eZCom_RoleOwner)
+			{
+				// get status
+				char buf[255];
+				data->getString(buf, 255);
+				m_status = buf;
+
+				//send to all
+				ZCom_BitStream *evt = new ZCom_BitStream();
+				evt->addInt(0, 2);
+				evt->addString(m_status.c_str());
+				m_node->sendEvent(eZCom_ReliableUnordered, ZCOM_REPRULE_AUTH_2_ALL, evt);
+			}
+
+			// if coming from server to all
+			if(remoterole == eZCom_RoleAuthority)
+			{
+				// get status
+				char buf[255];
+				data->getString(buf, 255);
+				m_status = buf;
+				m_clH->ChangedStatus(m_id, m_status, m_namecolor);
+			}
+		}
+		break;
+
+		//unsubscribe event
+		case 1:
+		{
+		// if coming from owner to server
+			if(remoterole == eZCom_RoleOwner)
+			{
+				// get color
+				char buf[255];
+				data->getString(buf, 255);
+				m_namecolor = buf;
+
+				//send to all
+				ZCom_BitStream *evt = new ZCom_BitStream();
+				evt->addInt(1, 2);
+				evt->addString(m_namecolor.c_str());
+				m_node->sendEvent(eZCom_ReliableUnordered, ZCOM_REPRULE_AUTH_2_ALL, evt);
+			}
+
+			// if coming from server to all
+			if(remoterole == eZCom_RoleAuthority)
+			{
+				// get color
+				char buf[255];
+				data->getString(buf, 255);
+				m_namecolor = buf;
+				m_clH->ChangedStatus(m_id, m_status, m_namecolor);
+			}
+		}
+		break;
+	}
+}
+
+
+/************************************************************************/
+/* change player status                                     
+/************************************************************************/
+void ClientObject::ChangeStatus(const std::string & status)
+{
+	ZCom_BitStream *evt = new ZCom_BitStream();
+	evt->addInt(0, 2);
+	evt->addString(status.c_str());
+	m_node->sendEvent(eZCom_ReliableUnordered, ZCOM_REPRULE_OWNER_2_AUTH, evt);
+}
+
+
+/************************************************************************/
+/* change player color                               
+/************************************************************************/
+void ClientObject::ChangeColor(const std::string & color)
+{
+	ZCom_BitStream *evt = new ZCom_BitStream();
+	evt->addInt(1, 2);
+	evt->addString(color.c_str());
+	m_node->sendEvent(eZCom_ReliableUnordered, ZCOM_REPRULE_OWNER_2_AUTH, evt);
+}
+
+
+/************************************************************************/
+/* whisper to someone                                         
+/************************************************************************/
+void ClientObject::Whisper(const std::string & playername, const std::string & text)
+{
+
 }
