@@ -28,8 +28,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 #include <vector>
+#include <map>
 
 #include "ChatSubscriberBase.h"
+#include "ClientListHandlerBase.h"
 
 class GameEvent;
 class MainPlayerHandler;
@@ -43,7 +45,7 @@ class Player;
  * Purpose: Declaration of the class InternalWorkpile
  * Be carefull - this is not thread safe!!
  ***********************************************************************/
-class InternalWorkpile : public ChatSubscriberBase
+class InternalWorkpile : public ChatSubscriberBase, public ClientListHandlerBase
 {
 public:
 
@@ -155,6 +157,38 @@ public:
 
 	// cget all queries for whisper channel
 	void GetWhisperChannelQueries(std::vector<std::string> &scvec);
+
+
+
+
+	// add a whisper channel
+	void AddFriend(const std::string & name);
+
+	// cget all queries for whisper channel
+	void GetAddedFriend(std::vector<std::string> &scvec);
+
+	// add a whisper channel
+	void RemoveFriend(const std::string & name);
+
+	// cget all queries for whisper channel
+	void GetRemovedFriend(std::vector<std::string> &scvec);
+
+	//! set friend list
+	void SetFriends(const std::vector<std::string> & friends);
+
+	//! get friend list
+	void GetFriends(std::vector<std::string> & friends);
+
+
+
+	// new client connected
+	virtual void Connected(unsigned int id, const std::string & Name);
+
+	// client disconnected
+	virtual void Disconnected(unsigned int id);
+
+	// return the name given a client id
+	virtual std::string GetName(unsigned int id);
 
 
 
@@ -331,24 +365,6 @@ public:
 
 
 
-	//// add a whisper channel
-	//void AddFriend(const std::string & name);
-
-	//// cget all queries for whisper channel
-	//void GetAddedFriend(std::vector<std::string> &scvec);
-
-	//// add a whisper channel
-	//void RemoveFriend(const std::string & name);
-
-	//// cget all queries for whisper channel
-	//void GetRemovedFriend(std::vector<std::string> &scvec);
-
-	////! set friend list
-	//void SetFriends(const std::vector<std::string> & friends);
-
-	////! get friend list
-	//void GetFriends(std::vector<std::string> & friends);
-
 	////! add written letter to the server
 	//void AddWrittenLetter(const WrittenLetter & letter);
 
@@ -445,6 +461,11 @@ private:
 	std::vector<std::pair<std::string, std::string> >	m_colors_changed;
 
 
+	std::vector<std::string>					m_added_friends;
+	std::vector<std::string>					m_removed_friends;
+	std::vector<std::string>					m_friend_list;
+	std::map<unsigned int, std::string>			m_clientmap;
+
 	//bool										m_irc_quitted;
 	//bool										m_sending_quitted;
 	//long										m_send_cycle_time;
@@ -504,9 +525,6 @@ private:
 
 
 
-	//std::vector<std::string>					m_added_friends;
-	//std::vector<std::string>					m_removed_friends;
-	//std::vector<std::string>					m_friend_list;
 
 	//std::vector<WrittenLetter>					m_letters;
 

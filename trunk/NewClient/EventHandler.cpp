@@ -273,6 +273,10 @@ bool EventHandler::Handle(SDL_Event flevent)
 
 			switch (flevent.key.keysym.sym)
 			{
+				case SDLK_RETURN:
+					_lbaNetEngine->FocusChatbox(true);
+					break;
+
 				case SDLK_UP:
 				{
 					_lbaNetEngine->StartMove(1);
@@ -332,6 +336,8 @@ bool EventHandler::Handle(SDL_Event flevent)
 					OsgHandler::getInstance()->SetScreenAttributes(1024, 768, false);
 					return true;
 				}
+
+
 
 
 				//case SDLK_KP0:
