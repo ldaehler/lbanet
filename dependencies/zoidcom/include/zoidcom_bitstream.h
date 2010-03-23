@@ -29,7 +29,7 @@ public:
   };
 protected:
   // array holding the data
-  zU8*   m_ar;
+  char*   m_ar;
   // fill counter in bits
   zU32    m_fill;
   BitPos  m_fillpos, m_readpos;
@@ -39,7 +39,6 @@ protected:
   zU16    m_maxfill;
 
   zU8     m_flags;
-  
 public:
   /// @brief Constructor.
   /// @param _maxfill Expected amount of bytes the stream will hold.
@@ -119,9 +118,8 @@ public:
   /// @param _ptr Store target.
   /// @param _size Pointer to an int where the stored amount of bytes will be written.
   /// @param _max_size Size of the storage array.
-  /// @param _write_version If true, bitstream will add a version header.
   /// @returns 'true' on success.
-  bool Serialize( char *_ptr, zU16 *_size, zU16 _max_size, bool _write_version );
+  bool Serialize( char *_ptr, zU16 *_size, zU16 _max_size );
 
   /// @brief Deserialize array to stream.
   /// @param _ptr Pointer to the serialized array.
@@ -172,27 +170,6 @@ public:
   /// @brief Skip a signed int.
   /// @param _bits Amount of bits used to store the signed int.
   void skipSignedInt( zU8 _bits );
-
-  /// @brief Adds low value ints as series of true/false values.
-  /// @param _data The interger.
-  /// @returns True on success.
-  /// 
-  /// To store a 5, it writes 5 0-bits and 1 1-bit, needing exactly as
-  /// many bits as the value of the data + 1.
-  /// This is useful for enum transmission, where enums with lower values
-  /// are transmitted very often and others rarely. So for transmitting a 0
-  /// this uses 1 bit, for transmitting a 1 it uses two bits, for transmitting
-  /// a 5 it uses 6 bits and so on. So it really makes only sense when you 
-  /// transmit 0 and maybe 1 most of the time.
-  bool addSerializedInt( zU32 _data );
-
-  /// @brief Reads a serialized int.
-  /// @returns The int.
-  /// For explanation, see @ref addSerializedInt()
-  zU32 getSerializedInt();
-
-  /// @brief Skips a serialized int.
-  void skipSerializedInt();
 
   /// @brief Add a bool to the stream.
   /// @param _b Input data.

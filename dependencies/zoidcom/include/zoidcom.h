@@ -97,10 +97,7 @@ enum eZCom_ConnectResult
   /// name resolution failed
   eZCom_ConnHostnameFailed,
   /// destination uses different Zoidcom version
-  eZCom_ConnWrongVersion,
-  /// problem mapping registered classes between local and peer
-  eZCom_ConnClassMapError
-  
+  eZCom_ConnWrongVersion
 };
 
 /** @brief Reason value for ZCom_Control::ZCom_cbConnectionClosed */
@@ -114,21 +111,19 @@ enum eZCom_CloseReason
   eZCom_ClosedReconnect
 };
 
-/** @brief Result values for ZCom_Control::ZCom_cbChannelSubscriptionChangeResult() */
-enum eZCom_SubscriptionResult
+/** @brief Result values for ZCom_Control::ZCom_cbZoidResult() */
+enum eZCom_ZoidResult
 {
-  /// requested channel successfully subscribed
-  eZCom_RequestedChannelSubscribed,
-  /// peer subscribed this channel for us
-  eZCom_AutomaticChannelSubscribed,
-  /// requested channel successfully unsubscribed
-  eZCom_RequestedChannelUnsubscribed,
-  /// peer unsubscribed this channel for us
-  eZCom_AutomaticChannelUnsubscribed,
-  /// peer denied request
-  eZCom_ChannelSubscriptionDenied,
+  /// requested zoidmode successfully set up
+  eZCom_ZoidEnabled,
+  /// server denied request
+  eZCom_ZoidDenied,
+  /// zoidmode failed on system level
+  eZCom_ZoidFailed_System,
   /// a node with setNodeMustSync(true) failed to sync
-  eZCom_ChannelSubscriptionFailed_Node
+  eZCom_ZoidFailed_Node,
+  /// left zoidmode
+  eZCom_ZoidDisabled
 };
 
 /** @brief Result values for ZCom_Address::checkHostname() */
@@ -142,41 +137,6 @@ enum eZCom_HostnameResult
   eZCom_HostnameSuccess,
   /// still in progress
   eZCom_HostnameInProgress
-};
-
-/** @brief Channel Subscription Options */
-enum eZCom_ObjChannelSubscription
-{
-  /// subscribe to channel
-  eZCom_Subscribe,
-  /// unsubscribe from channel
-  eZCom_Unsubscribe
-};
-
-/** @brief API operation mode */
-enum eZCom_OperationMode
-{
-  /// perform the operation and return with the result
-  eZCom_Synchronous,
-  /// start the operation and return immediately. the result comes through
-  /// a callback or need to be polled
-  eZCom_Asynchronous
-};
-
-/** @brief UDP toggle */
-enum eZCom_UDPOption
-{
-  /// enable UDP socket
-  eZCom_EnableUDP,
-  /// disable udp socket
-  eZCom_DisableUDP
-};
-
-/** @brief Accept or deny a request. */
-enum eZCom_RequestResult
-{
-   eZCom_AcceptRequest,
-   eZCom_DenyRequest
 };
 
 /** @brief Node Roles

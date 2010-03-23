@@ -89,13 +89,14 @@ public:
    *
    * In order to handle the event, overload ZCom_ReplicatorAdvanced::onDataReceived().
    *
+   * Replicator events are sent reliable unordered or unreliable.
+   *
    * @attention Make sure that onDataReceived() reads the same amount of bits sendEvent() has written,
    *            otherwise the stream can't be extracted any further.
    *
    * @attention Please note that calling sendData() won't ensure the data is sent immediately. The data
    *            will be sent as soon as the owning node's priority allows the node to send. If you want
-   *            to generate data which is sent immediately, wait for the onPreSendData() callback. For
-   *            reliable ordered data, make sure to call hasReliableSendSlot() first.
+   *            to generate data which is sent immediately, wait for the onPreSendData() callback.
    */        
   void sendData(eZCom_SendMode _mode, ZCom_BitStream *_stream, zU32 _reference_id = 0);
 
@@ -109,26 +110,16 @@ public:
    *
    * In order to handle the event, overload ZCom_ReplicatorAdvanced::onDataReceived().
    *
+   * Replicator events are sent reliable unordered or unreliable.
+   *
    * @attention Make sure that onDataReceived() reads the same amount of bits sendEvent() has written,
    *            otherwise the stream can't be extracted any further.
    *
    * @attention Please note that calling sendData() won't ensure the data is sent immediately. The data
    *            will be sent as soon as the owning node's priority allows the node to send. If you want
-   *            to generate data which is sent immediately, wait for the onPreSendData() callback. For
-   *            reliable ordered data, make sure to call hasReliableSendSlot() first.
+   *            to generate data which is sent immediately, wait for the onPreSendData() callback.
    */
   void sendDataDirect(eZCom_SendMode _mode, ZCom_ConnID _dest, ZCom_BitStream *_stream, zU32 _reference_id = 0);
-
-  /**
-   * @brief Checks if a reliable ordered send slot is available. If not, sending data with eZCom_ReliableOrdered
-   *        will be delayed until previously sent reliable ordered data has been acked by the receiver.
-   * @param _connid The destination connection's id to which the data is going to be sent.
-   *
-   * If you are in onPreSendData() and want to send reliable ordered data that gets sent immediately,
-   * first use this function to check if a send slot is available. If not, the data will be queued until
-   * such a slot becomes available.
-   */
-  bool hasReliableSendSlot(ZCom_ConnID _connid);
 
   /**
    * @brief Zoidcom is about to transmit data to the given client.

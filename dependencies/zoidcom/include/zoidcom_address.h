@@ -129,7 +129,7 @@ public:
 
       If _async is true, the application has to poll regularly until the result is available.
   */
-  bool resolveHostname(zU32 _timeout, eZCom_OperationMode _async = eZCom_Synchronous);
+  bool resolveHostname(bool _async, zU32 _timeout);
 
   /** @brief Check if async hostname resolution finished.
       @returns eZCom_HostnameResult

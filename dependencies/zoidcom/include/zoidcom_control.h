@@ -125,17 +125,17 @@ public:
                               See also: \ref socketsharing
       @returns 'true' on success, 'false' otherwise
 
-      This method initializes the sockets that will be used by this ZCom_Control.
+      This method initialises the sockets that will be used by this ZCom_Control.
       ZCom_Controls can communicate via UDP if located on different machines or in
       different processes, and they can communicate via internal sockets if they are
       in the same process. (i.e. Two ZCom_Control instances created in one application).
   */
 
   bool
-    ZCom_initSockets( eZCom_UDPOption _useudp, zU16 _udpport, zU16 _localport, zU8 _control_id_size = 0);
+    ZCom_initSockets( bool _useudp, zU16 _udpport, zU16 _localport, zU8 _control_id_size = 0);
 
   /** @brief Set how control reacts to discover requests.
-      @param _opt The new behavior to apply.
+      @param _opt The new behaviour to apply.
       @param _discoverport UDP port to listen for discover requests on. Can be the same as the
                            control's UDP port initialised by ZCom_initSockets(). The port
                            parameter is only used for eZCom_DiscoverEnable.
@@ -206,13 +206,6 @@ public:
   */
   ZCom_ClassID
     ZCom_getClassID( const char *_name ) const;
-
-  /** @brief Retrieve class name of registered class.
-      @param _id The id of the class.
-      @return The name of the class or NULL. Don't delete the returned string.
-    */
-  const char*
-    ZCom_getClassName( ZCom_ClassID _cid ) const;
 
   /** @brief Process incoming data.
       @param _block If set to eZCom_Block, this method will block until data arrives.
@@ -414,13 +407,12 @@ public:
 
   /** @brief Bring connection into Zoidmode.
       @param _id The connection's ID.
-      @param _level The Zoidlevel you want the connection to enter (1-maxint) or 0 to leave Zoidmode.
+      @param _level The Zoidlevel you want the connection to enter (1-127) or 0 to leave Zoidmode.
       @returns 'true' if the migration process could be started.
-      TODO: fix doc
 
       After a connection has been successfully set up, you can upgrade it to a fully integrated
       and automated Zoidcom connection. When this process finishes, the callback method
-      ZCom_cbChannelSubscriptionChangeResult() will be called.
+      ZCom_cbZoidResult() will be called.
 
       Furthermore it is possible to have different levels in Zoidmode. You can create ZCom_Nodes
       and tell them only to be active in specific levels. This is essentially a filter for ZCom_Nodes.
@@ -429,60 +421,16 @@ public:
       One connection can be in only one Zoidlevel, but one ZCom_Node can be registered for more
       than one.
 
-      This works on client and server. When called from server, the ZCom_cbChannelSubscriptionChangeRequest() callback
+      This works on client and server. When called from server, the ZCom_cbZoidRequest() callback
       won't be called.
   */
 
   bool
-    ZCom_changeObjectChannelSubscription( const ZCom_ConnID _id, zU32 _channel, eZCom_ObjChannelSubscription _option );
+    ZCom_requestZoidMode( const ZCom_ConnID _id, zU8 _level );
 
   //@}
 
   /* ----- */
-
-  /** \name Node handling.
-  */
-  //@{
-
-  /** @brief Register a unique node.
-      @param _node The node to register.
-      @param _classid This node's class.
-      @param _role The role the node should have here.
-      @returns 'true' if everything went fine.
-
-      // TODO: explain or link to different node types and update params
-  */
-  bool
-    ZCom_registerUniqueNode( ZCom_Node *_node, ZCom_ClassID _classid, eZCom_NodeRole _role );
-
-  /** @brief Register a tagnode, initially or on request.
-      @param _node The node to register.
-      @param _classid This node's class.
-      @param _tag The tag you designated for this node.
-      @param _role The role the node should have here.
-      @returns 'true' if everything went fine.
-
-      If, for some reason, the server registers a tagnode and cannot find it on the client, the callback
-      ZCom_Control::ZCom_cbNodeRequest_Tag() will be called on client. From within this callback, the corresponding
-      tagnode has to be created and registered with registerNodeByTag().
-  */
-  bool
-    ZCom_registerTagNode( ZCom_Node *_node, ZCom_ClassID _classid, zU32 _tag, eZCom_NodeRole _role );
-
-  /** @brief Register an authoritative dynamic node.
-      @param _node The node to register.
-      @param _classid This node's class.
-      @returns 'true' if everything went fine.
-
-      The node's role will be @ref eZCom_RoleProxy if the node is created inside ZCom_Control::ZCom_cbNodeRequest_Dynamic(),
-      @ref eZCom_RoleAuthority otherwise.
-  */
-  bool
-    ZCom_registerDynamicNode( ZCom_Node *_node, ZCom_ClassID _classid );
-
-
-  bool
-    ZCom_deregisterNode( ZCom_Node *_node );
 
   /** @brief Retrieve node by unique net id.
       @param _nid The ID.
@@ -490,8 +438,6 @@ public:
   */
   ZCom_Node*
     ZCom_getNode( ZCom_NodeID _nid ) const;
-
-  //@}
 
   /** @brief Get remoteaddress of connection.
       @param _id The connection's ID.
@@ -589,64 +535,53 @@ public:
 
       Overload this to get notified about finished connection processes you have initiated.
   */
-  virtual void 
-    ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result, ZCom_BitStream &_reply ) = 0;
+  virtual void ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result, ZCom_BitStream &_reply ) = 0;
 
   /** @brief Callback: incoming connection. (appears on: Server)
+      @param _id The connection's ID
       @param _request What the requester has given as _request parameter to ZCom_Connect()
       @param _reply Data you want to transmit to the requester additionally to the yes/no reply.
       @returns The callback should return 'true' if you want to accept the connection, 'false' to deny it.
-
-      @note If the connection times out after accepting it, ZCom_cbConnectionClosed() will be called with timeout
-            reason.
   */
-  virtual eZCom_RequestResult
-    ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request, ZCom_BitStream &_reply ) = 0;
+  virtual bool ZCom_cbConnectionRequest( ZCom_ConnID  _id, ZCom_BitStream &_request, ZCom_BitStream &_reply ) = 0;
 
   /** @brief Callback: a granted, incoming connection has been fully set up. (appears on: Server)
       @param _id The connection's ID.
   */
-  virtual void 
-    ZCom_cbConnectionSpawned( ZCom_ConnID _id ) = 0;
+  virtual void ZCom_cbConnectionSpawned( ZCom_ConnID _id ) = 0;
 
   /** @brief Callback: connection has been closed and is about to be deleted (appears on: Server, Client)
       @param _id The connection's ID.
       @param _reason Reason code. If reason is \ref eZCom_ClosedDisconnect, then _reasondata might contain more info.
       @param _reasondata What the disconnecter gave as _reason parameter to ZCom_Disconnect() or ZCom_disconnectAll()
   */
-  virtual void 
-    ZCom_cbConnectionClosed( ZCom_ConnID _id, eZCom_CloseReason _reason, ZCom_BitStream &_reasondata ) = 0;
+  virtual void ZCom_cbConnectionClosed( ZCom_ConnID _id, eZCom_CloseReason _reason, ZCom_BitStream &_reasondata ) = 0;
 
-  /** @brief Callback: a client requests to subscribe a specified channel. (appears on: Server)
+  /** @brief Callback: a client requests to enter a specified ZoidLevel. (appears on: Server)
       @param _id The connection's ID.
-      @param _requested_channel Channel the client wants to enter.
+      @param _requested_level Level the client wants to enter.
       @param _reason Fill this with additional data you want to transmit to the client. _reason is
                      only transmitted when 'false' it returned.
       @returns The method should return 'true' if you want to accept the request and 'false' otherwise.
 
-      Both client(requester) and server(this) will get their ZCom_cbChannelSubscriptionChangeResult() callbacks called after
-      this callback here is finished. They will both receive the data you write to the _reason bitstream.
+      Both client(requester) and server(this) will get their ZCom_cbZoidResult() callbacks called, including the data
+      you filled into the _reason bitstream.
   */
 
-  virtual eZCom_RequestResult 
-    ZCom_cbChannelSubscriptionChangeRequest( ZCom_ConnID _id, zU32 _requested_channel, ZCom_BitStream &_reason ) = 0;
+  virtual bool ZCom_cbZoidRequest( ZCom_ConnID _id, zU8 _requested_level, ZCom_BitStream &_reason ) = 0;
 
-  /** @brief Callback: Channel subscription process finished (appears on: Server, Client)
+  /** @brief Callback: Zoidlevel migration process finished (appears on: Server, Client)
       @param _id The connection's ID.
       @param _result Result of the migration process.
-      @param _new_channel The channel in question.
-      @param _reason Bitstream containing additional data passed by the server in ZCom_cbChannelSubscriptionChangeRequest() or, if the
-                     server accepted the new channel but the migration process failed while syncing a ZCom_Node,
+      @param _new_level New Zoidlevel of the connection (on failure, the previous Zoidlevel is passed here)
+      @param _reason Bitstream containing additional data passed by the server in ZCom_cbZoidRequest() or, if the
+                     server accepted the new Zoidlevel, but the migration process failed while syncing a ZCom_Node,
                      _reason contains the data passed by that node in ZCom_Node::setSyncResult().
 
-      Called when a connection (un)subscribed a (new) channel or failed to do so.
-      Called both, on server and client.
-
-      TODO: update copy block
+      Called when a connection changed zoidmode or failed to do so.
+      Called both, on server and client. The client is the one, who requested the Zoidlevel.
   */
-  virtual void 
-    ZCom_cbChannelSubscriptionChangeResult( ZCom_ConnID _id, eZCom_SubscriptionResult _result, 
-                                            zU32 _new_channel, ZCom_BitStream &_reason ) = 0;
+  virtual void ZCom_cbZoidResult( ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _new_level, ZCom_BitStream &_reason ) = 0;
 
   /** @brief Callback: server requests us to create a new node for a new dynamic object/node. (appears on: Client)
       @param _id The connection's ID.
@@ -666,9 +601,8 @@ public:
        The _net_id parameter tells us the id which is later been returned by ZCom_Node::getNetworkID().
   */
 
-  virtual void 
-    ZCom_cbNodeRequest_Dynamic( ZCom_ConnID _id, ZCom_ClassID _requested_class, ZCom_BitStream *_announcedata,
-                                eZCom_NodeRole _role, ZCom_NodeID _net_id ) = 0;
+  virtual void ZCom_cbNodeRequest_Dynamic( ZCom_ConnID _id, ZCom_ClassID _requested_class, ZCom_BitStream *_announcedata,
+                                           eZCom_NodeRole _role, ZCom_NodeID _net_id ) = 0;
 
   /** @brief Callback: server requests us to create a new local node for a remote tagnode (appears on: Client)
       @param _id The connection's ID.
@@ -683,9 +617,8 @@ public:
       that node here and register it with ZCom_Node::registerNodeByTag(). If you don't, Zoidcom will disconnect.
   */
 
-  virtual void 
-    ZCom_cbNodeRequest_Tag( ZCom_ConnID _id, ZCom_ClassID _requested_class, ZCom_BitStream *_announcedata,
-                            eZCom_NodeRole _role, zU32 _tag ) = 0;
+  virtual void ZCom_cbNodeRequest_Tag( ZCom_ConnID _id, ZCom_ClassID _requested_class, ZCom_BitStream *_announcedata,
+                                       eZCom_NodeRole _role, zU32 _tag ) = 0;
 
   /** @brief Callback: direct data has been received. (appears on: Server, Client)
       @param _id The connection's ID.
@@ -693,8 +626,7 @@ public:
 
       Called when data has been received ( sent by ZCom_sendData() )
   */
-  virtual void 
-    ZCom_cbDataReceived( ZCom_ConnID _id, ZCom_BitStream &_data ) = 0;
+  virtual void ZCom_cbDataReceived( ZCom_ConnID _id, ZCom_BitStream &_data ) = 0;
 
   /** @brief Callback: another ZCom_Control has sent a discover request. (appears on: Server, Client)
       @param _addr The address where the request came from.
@@ -705,9 +637,7 @@ public:
       For more information see ZCom_Discover().
   */
 
-  virtual eZCom_RequestResult 
-    ZCom_cbDiscoverRequest( const ZCom_Address &_addr, ZCom_BitStream &_request, 
-                            ZCom_BitStream &_reply) = 0;
+  virtual bool ZCom_cbDiscoverRequest( const ZCom_Address &_addr, ZCom_BitStream &_request, ZCom_BitStream &_reply) = 0;
 
   /** @brief Callback: another ZCom_Control responded to our ZCom_Discover(). (appears on: Server, Client)
       @param _addr The address where the discovered ZCom_Control is reachable.
@@ -715,22 +645,21 @@ public:
 
       For more information see ZCom_Discover().
   */
-  virtual void 
-    ZCom_cbDiscovered( const ZCom_Address & _addr, ZCom_BitStream &_reply ) = 0;
+  virtual void ZCom_cbDiscovered( const ZCom_Address & _addr, ZCom_BitStream &_reply ) = 0;
 //@}
 
 /* ****** callbacks for copy&pasting into your derived classes ******
 
   void ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result, ZCom_BitStream &_reply ) {}
-  eZCom_RequestResult ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitStream &_request, ZCom_BitStream &_reply ){return eZCom_AcceptRequest;}
+  bool ZCom_cbConnectionRequest( ZCom_ConnID  _id, ZCom_BitStream &_request, ZCom_BitStream &_reply ){return false;}
   void ZCom_cbConnectionSpawned( ZCom_ConnID _id ) {}
   void ZCom_cbConnectionClosed( ZCom_ConnID _id, eZCom_CloseReason _reason, ZCom_BitStream &_reasondata ) {}
-  eZCom_RequestResult ZCom_cbChannelSubscriptionChangeRequest( ZCom_ConnID _id, zU8 _requested_level, ZCom_BitStream &_reason ) {return eZCom_AcceptRequest;}
-  void ZCom_cbChannelSubscriptionChangeResult( ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _new_level, ZCom_BitStream &_reason ) {}
+  bool ZCom_cbZoidRequest( ZCom_ConnID _id, zU8 _requested_level, ZCom_BitStream &_reason ) {return false;}
+  void ZCom_cbZoidResult( ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _new_level, ZCom_BitStream &_reason ) {}
   void ZCom_cbNodeRequest_Dynamic( ZCom_ConnID _id, ZCom_ClassID _requested_class, ZCom_BitStream *_announcedata, eZCom_NodeRole _role, ZCom_NodeID _net_id ) {}
   void ZCom_cbNodeRequest_Tag( ZCom_ConnID _id, ZCom_ClassID _requested_class, ZCom_BitStream *_announcedata, eZCom_NodeRole _role, zU32 _tag ) {}
   void ZCom_cbDataReceived( ZCom_ConnID _id, ZCom_BitStream &_data ) {}
-  eZCom_RequestResult ZCom_cbDiscoverRequest( const ZCom_Address &_addr, ZCom_BitStream &_request, ZCom_BitStream &_reply ) {return eZCom_AcceptRequest;}
+  bool ZCom_cbDiscoverRequest( const ZCom_Address &_addr, ZCom_BitStream &_request, ZCom_BitStream &_reply ) {return false;}
   void ZCom_cbDiscovered( const ZCom_Address & _addr, ZCom_BitStream &_reply )  {}
 */
 };
