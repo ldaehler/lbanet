@@ -125,6 +125,6 @@ int main(int argc, char *argv[])
 		Serv->ZCom_processOutput();
 
 		// pause the program for a few milliseconds
-		ZoidCom::Sleep(10);
+		ZoidCom::Sleep(50);
 	}
 }
