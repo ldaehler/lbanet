@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="GameServer"
 	ProjectGUID="{A7412096-86CB-4EBC-A1D4-0DD2582765A9}"
 	RootNamespace="FinalServer"
@@ -42,8 +42,8 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/D _CRT_SECURE_NO_WARNINGS"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\dependencies\zoidcom\include;..\dependencies\Boost\include;..\shared"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				AdditionalIncludeDirectories="..\dependencies\zoidcom\include;..\dependencies\Boost\include;..\shared;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;;..\dependencies\tinyxml\include"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;TIXML_USE_STL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -62,9 +62,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="zoidcom_vcd.lib"
+				AdditionalDependencies="zoidcom_vcd.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib tinyxmld_STL.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\dependencies\zoidcom\lib\msvc8;..\dependencies\Boost\lib"
+				AdditionalLibraryDirectories="..\dependencies\zoidcom\lib\msvc8;..\dependencies\Boost\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;;..\dependencies\tinyxml\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -119,8 +119,8 @@
 				AdditionalOptions="/D _CRT_SECURE_NO_WARNINGS"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\dependencies\zoidcom\include;..\dependencies\Boost\include;..\shared"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				AdditionalIncludeDirectories="..\dependencies\zoidcom\include;..\dependencies\Boost\include;..\shared;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;;..\dependencies\tinyxml\include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;TIXML_USE_STL"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -138,9 +138,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="zoidcom_vc.lib"
+				AdditionalDependencies="zoidcom_vc.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib tinyxml_STL.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\dependencies\zoidcom\lib\msvc8;..\dependencies\Boost\lib"
+				AdditionalLibraryDirectories="..\dependencies\zoidcom\lib\msvc8;..\dependencies\Boost\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;;..\dependencies\tinyxml\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -179,11 +179,35 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\shared\ChatChannel.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\ChatChannelManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\ClientObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\ClientObjectHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\CommonTypes.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\shared\ConnectionHandler.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\shared\GameObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\GameServerHandler.cpp"
 				>
 			</File>
 			<File
@@ -195,6 +219,30 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MainClientThread.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MainServerclient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\MapInfoXmlReader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\ObjectsDescription.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\PhysXEngine.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\PhysXObjectHandlers.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\PlayerInfoHandler.cpp"
 				>
 			</File>
@@ -203,7 +251,35 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ServerDataHandler.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ServerMapManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\StaticObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\Stream.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\SynchronizedTimeHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\UserAllocator.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\UserAllocatorHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\WorldToDisplayObjectSynchronizer.cpp"
 				>
 			</File>
 		</Filter>
@@ -213,7 +289,43 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\shared\ChatChannel.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\ChatChannelManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\ChatSubscriberBase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\ClientListHandlerBase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\ClientObject.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\ClientObjectHandler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\CommonTypes.h"
+				>
+			</File>
+			<File
 				RelativePath="..\shared\ConnectionHandler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\DisplayObjectHandlerBase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\DynamicObject.h"
 				>
 			</File>
 			<File
@@ -221,11 +333,47 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\GameServerCallbackBase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\GameServerHandler.h"
+				>
+			</File>
+			<File
 				RelativePath="..\shared\LogHandler.h"
 				>
 			</File>
 			<File
+				RelativePath=".\MainClientThread.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MainServerclient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\shared\MapInfo.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\MapInfoXmlReader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\ObjectsDescription.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\PhysicalObjectHandlerBase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\PhysXEngine.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\PhysXObjectHandlers.h"
 				>
 			</File>
 			<File
@@ -237,7 +385,35 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ServerDataHandler.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ServerMapManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\StaticObject.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\Stream.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\SynchronizedTimeHandler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\UserAllocator.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\UserAllocatorHandler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\WorldToDisplayObjectSynchronizer.h"
 				>
 			</File>
 		</Filter>

@@ -28,6 +28,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ServerMapManager.h"
 #include "PlayerInfoHandler.h"
 #include "GameObject.h"
+#include "ServerDataHandler.h"
+
+
 
 #include <boost/shared_ptr.hpp>
 #include <zoidcom.h>
@@ -37,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <list>
 #include <vector>
 
-
+class PhysXEngine;
 
 /***********************************************************************
  * Module:  Server.h
@@ -87,7 +90,9 @@ public:
 	//! constructor
 	Server( int _internalport, int _udpport, 
 			unsigned int uplimittotal, unsigned int uplimitperconnection,
-			unsigned short downpacketpersecond, unsigned short downbyteperpacket);
+			unsigned short downpacketpersecond, unsigned short downbyteperpacket, 
+			boost::shared_ptr<ServerDataHandler> dataH, const std::string & MainServerAddress,
+			const std::string & MyAddress);
 
 	//! destructor
 	~Server();
@@ -159,11 +164,17 @@ protected:
 	// process player connection queue
 	void ProcessPlayerQueue();
 
-
 	// try to create a new map
 	// return map handler if created
 	// else return NULL
 	boost::shared_ptr<ServerMapManager> TryCreateMap(const std::string & MapName);
+
+
+	//advertize game server to main server when arriving
+	void AdvertizeToMainServer();
+
+	//deadvertize game server to main server when quitting
+	void DeadvertizeToMainServer();
 
 private:
 	int m_conncount;
@@ -172,8 +183,13 @@ private:
 	unsigned short m_downpacketpersecond;
 	unsigned short m_downbyteperpacket;
 
+	//main server address
+	std::string m_MainServerAddress;
+	std::string m_MyAddress;
+
 	//keep list of free slot for map
 	std::list<unsigned int>	m_free_map_slots;
+	std::list<boost::shared_ptr<PhysXEngine> > m_free_phys_slots;
 
 
 	// keep all opened maps
@@ -187,6 +203,9 @@ private:
 
 	//queue of player waiting to access a map
 	std::list<WaitingPlayer>	m_player_queue;
+
+	// data handler
+	boost::shared_ptr<ServerDataHandler> _dataH;
 };
 
 
