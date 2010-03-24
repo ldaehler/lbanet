@@ -22,74 +22,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _LBA_NET_SERVER_MAP_MGT_H_
-#define _LBA_NET_SERVER_MAP_MGT_H_
-
-#include <map>
-#include <boost/shared_ptr.hpp>
+#ifndef _LBA_NET_SERVER_DATA_HANDLER_H_
+#define _LBA_NET_SERVER_DATA_HANDLER_H_
 
 #include "MapInfo.h"
-#include "PlayerInfoHandler.h"
-
-class ZCom_Control;
-class PhysXEngine;
 
 /***********************************************************************
- * Module:  ServerMapManager.h
+ * Module:  ServerDataHandler.h
  * Author:  vivien
  * Modified: mardi 14 juillet 2009 17:41:03
- * Purpose: Class ServerMapManager
+ * Purpose: Read data from file
  ***********************************************************************/
-class ServerMapManager
+class ServerDataHandler
 {
 
 public:
 	// constructor
-	ServerMapManager(ZCom_Control *_control, unsigned int ZoidLevel, const MapInfo & MapInfo,
-						boost::shared_ptr<PhysXEngine> pengine);
+	ServerDataHandler(const std::string & RootFileName);
 
 
 	// destructor
-	~ServerMapManager();
+	~ServerDataHandler();
 
 
-	//! process server internal stuff
-	void Process();
+	//get world name
+	std::string GetWorlName();
 
-
-	//! return true if need to be deleted
-	bool DeleteMe()
-	{return _needdelete;}
-
-
-	//! called when player enter the map
-	void PlayerEnter(unsigned int PlayerId, boost::shared_ptr<PlayerInfoHandler> pinfo);
-
-	//! called when player leave the map
-	void PlayerLeave(unsigned int PlayerId);
-
-
-	// get back the zoid level used
-	unsigned int GetZoidLevel()
-	{return _zoidlevel;}
-
-
-	//get back physic engine
-	boost::shared_ptr<PhysXEngine> GetPhysicEngine()
-	{return _pengine;}
-
-	//! return true if server is full
-	bool IsFull();
+	//get map info
+	MapInfo GetMapInfo(const std::string & Mapname);
 
 
 private:
-	// controller
-	ZCom_Control *	_controler;
-	unsigned int	_zoidlevel;
-	boost::shared_ptr<PhysXEngine> _pengine;
-
-	bool			_needdelete;
-
+	std::string _RootFileName;
 };
 
 #endif

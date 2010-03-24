@@ -24,6 +24,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "server.h"
 #include "LogHandler.h"
+#include "PhysXEngine.h"
+#include "MainClientThread.h"
+#include <boost/thread/thread.hpp>
 
 #define	_CUR_LBANET_SERVER_VERSION_ "v0.8"
 
@@ -33,9 +36,12 @@ Constructor
 ***********************************************************/
 Server::Server( int _internalport, int _udpport, 
 				unsigned int uplimittotal, unsigned int uplimitperconnection,
-				unsigned short downpacketpersecond, unsigned short downbyteperpacket)
+				unsigned short downpacketpersecond, unsigned short downbyteperpacket, 
+				boost::shared_ptr<ServerDataHandler> dataH, const std::string & MainServerAddress,
+				const std::string & MyAddress)
 : m_conncount(0), m_uplimittotal(uplimittotal), m_uplimitperconnection(uplimitperconnection), 
-	m_downpacketpersecond(downpacketpersecond), m_downbyteperpacket(downbyteperpacket)
+	m_downpacketpersecond(downpacketpersecond), m_downbyteperpacket(downbyteperpacket),
+	_dataH(dataH), m_MainServerAddress(MainServerAddress), m_MyAddress(MyAddress)
 {
 	// this will allocate the sockets and create local bindings
 	if ( !ZCom_initSockets( eZCom_EnableUDP, _udpport, _internalport, 0 ) )
@@ -53,6 +59,9 @@ Server::Server( int _internalport, int _udpport,
 	strs<<"Server running and listening on udp port: "<<_udpport;
 	LogHandler::getInstance()->LogToFile(strs.str(), 2);
 
+	//send advertisement to main server
+	AdvertizeToMainServer();
+
 	// register classes
 
 
@@ -60,6 +69,12 @@ Server::Server( int _internalport, int _udpport,
 	// from 10 to 70
 	for(int i=10; i<71; ++i)
 		m_free_map_slots.push_back(i);
+
+	//populate physic engines
+	//todo - reset to 60
+	for(int i=0; i<3/*60*/; ++i)
+		m_free_phys_slots.push_back(boost::shared_ptr<PhysXEngine>(new PhysXEngine()));
+	
 
 }
 
@@ -69,7 +84,7 @@ Destructor
 ***********************************************************/
 Server::~Server()
 {
-
+	DeadvertizeToMainServer();
 }
 
 
@@ -197,7 +212,7 @@ void Server::ZCom_cbConnectionClosed( ZCom_ConnID _id, eZCom_CloseReason _reason
 
 
 	//finalize player status
-	std::map<unsigned int, boost::shared_ptr<PlayerInfoHandler> >:;iterator itm = m_players_infos.find(_id);
+	std::map<unsigned int, boost::shared_ptr<PlayerInfoHandler> >::iterator itm = m_players_infos.find(_id);
 	if(itm != m_players_infos.end())
 	{
 		//do last save to DB
@@ -274,6 +289,9 @@ void Server::Process()
 			{
 				// add slot back to the free slot list
 				m_free_map_slots.push_back((*itvec)->GetZoidLevel());
+
+				//add physic slot back
+				m_free_phys_slots.push_back((*itvec)->GetPhysicEngine());
 
 				// delete map
 				itvec = tmpvec.erase(itvec);
@@ -411,7 +429,10 @@ void Server::ProcessPlayerQueue()
 		else // else skip for next time
 		{
 			//if player waiting for long then inform the client
-			TODO
+			ZCom_BitStream *stre = new ZCom_BitStream();
+			//send event 0
+			stre->addInt(0, 4);
+			ZCom_sendData(itp->Id, stre);
 
 			++itp;
 		}
@@ -428,8 +449,46 @@ void Server::ProcessPlayerQueue()
 ***********************************************************/
 boost::shared_ptr<ServerMapManager> Server::TryCreateMap(const std::string & MapName)
 {
-	TODO
+	//check if we still have free slots
+	if(m_free_map_slots.size() > 0 && m_free_phys_slots.size() > 0)
+	{
+		//get map info
+		MapInfo MI = _dataH->GetMapInfo(MapName);
+
+		// get slots and remove them from list
+		unsigned int lvl = m_free_map_slots.front();
+		boost::shared_ptr<PhysXEngine> phys = m_free_phys_slots.front();
+		m_free_map_slots.pop_front();
+		m_free_phys_slots.pop_front();
+
+		return boost::shared_ptr<ServerMapManager>(new ServerMapManager(this, lvl, MI, phys));
+	}
 
 	//if can not create then return NULL
 	return boost::shared_ptr<ServerMapManager>();
+}
+
+
+
+/***********************************************************
+advertize game server to main server when arriving
+***********************************************************/
+void Server::AdvertizeToMainServer()
+{
+	//be carefull - delete will never be called
+	// should only be called once at the beginning of the program
+	MainClientThread *mtt = new MainClientThread(m_MainServerAddress, _dataH->GetWorlName(), m_MyAddress, true);
+	boost::thread thr( boost::bind( &MainClientThread::Run, mtt ));
+}
+
+
+/***********************************************************
+deadvertize game server to main server when quitting
+***********************************************************/
+void Server::DeadvertizeToMainServer()
+{
+	// be carefull - delete will never be called
+	// should only be called once at the end of the program
+	MainClientThread *mtt = new MainClientThread(m_MainServerAddress, _dataH->GetWorlName(), m_MyAddress, false);
+	boost::thread thr( boost::bind( &MainClientThread::Run, mtt ));
 }

@@ -22,37 +22,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#include <zoidcom.h>
-
-#include "ServerMapManager.h"
-#include "LogHandler.h"
-#include "PhysXEngine.h"
+#include "ServerDataHandler.h"
 
 
 /************************************************************************/
 /* constructor                                        
 /************************************************************************/
-ServerMapManager::ServerMapManager(ZCom_Control *_control, unsigned int ZoidLevel, const MapInfo & MapInfo,
-										boost::shared_ptr<PhysXEngine> pengine)
-: _controler(_control), _zoidlevel(ZoidLevel), _needdelete(false), _pengine(pengine)
-{
-}
-
-
-
-/************************************************************************/
-/* destructor                                      
-/************************************************************************/
-ServerMapManager::~ServerMapManager()
+ServerDataHandler::ServerDataHandler(const std::string & RootFileName)
 {
 
 }
 
 
 /************************************************************************/
-/* process server internal stuff                                  
+/* destructor                                        
 /************************************************************************/
-void ServerMapManager::Process()
+ServerDataHandler::~ServerDataHandler()
 {
 
 }
@@ -60,28 +45,18 @@ void ServerMapManager::Process()
 
 
 /************************************************************************/
-/* called when player enter the map                             
+/*get world name                                  
 /************************************************************************/
-void ServerMapManager::PlayerEnter(unsigned int PlayerId, boost::shared_ptr<PlayerInfoHandler> pinfo)
+std::string ServerDataHandler::GetWorlName()
 {
-
-}
-
-/************************************************************************/
-/* called when player leave the map                         
-/************************************************************************/
-void ServerMapManager::PlayerLeave(unsigned int PlayerId)
-{
-
+	return "";
 }
 
 
-
-
 /************************************************************************/
-/* return true if server is full                        
+/* get map info                                      
 /************************************************************************/
-bool ServerMapManager::IsFull()
+MapInfo ServerDataHandler::GetMapInfo(const std::string & Mapname)
 {
-	return false;
+	return MapInfo();
 }

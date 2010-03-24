@@ -26,24 +26,53 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ConnectionHandler.h"
 #include "server.h"
 #include "LogHandler.h"
+#include "UserAllocatorHandler.h"
 
+#include <signal.h>
+
+
+bool global_continue = true;
+
+
+//used to catch quit signal
+void catch_quit_signal(int sig) 
+{
+	global_continue = false;
+	(void) signal(SIGINT, SIG_DFL);
+}
 
 
 
 int main(int argc, char *argv[])
 {
-	LogHandler::getInstance()->Init("GameServer.log");
+	//set up signal catcher
+	(void) signal(SIGINT, catch_quit_signal);
+	(void) signal(SIGTERM, catch_quit_signal);
+	(void) signal(SIGBREAK, catch_quit_signal);
+
+	
+	// init memory allocator
+	UserAllocatorHandler::getInstance()->Initialize();
+
+
+	// set up data handler
+	boost::shared_ptr<ServerDataHandler> dataH = boost::shared_ptr<ServerDataHandler>(new ServerDataHandler(""));
+	std::string worldN = dataH->GetWorlName();
+
+	LogHandler::getInstance()->Init(worldN+"-GameServer.log");
 
 	// set up connection class
-	boost::shared_ptr<ConnectionHandler> ConH = boost::shared_ptr<ConnectionHandler>(new ConnectionHandler("GameServer-Zoidcom.log"));
+	boost::shared_ptr<ConnectionHandler> ConH = 
+		boost::shared_ptr<ConnectionHandler>(new ConnectionHandler(worldN+"-GameServer-Zoidcom.log"));
+
 
 	// server operates on internal port 1 and UDP port 8899
-	boost::shared_ptr<Server> Serv = boost::shared_ptr<Server>(new Server(1, 8900, 8000, 2000, 20, 200));
-
-
+	boost::shared_ptr<Server> Serv = boost::shared_ptr<Server>(new Server(1, 8900, 8000, 2000, 20, 200, 
+																				dataH, "127.0.0.1:8899",
+																				"127.0.0.1:8900"));
 
 	// zoidcom needs to get called regularly to get anything done so we enter the mainloop now
-	while (1)
+	while(global_continue)
 	{
 		// processes incoming packets
 		// all callbacks are generated from within the processInput calls
@@ -58,4 +87,14 @@ int main(int argc, char *argv[])
 		// pause the program for a few milliseconds
 		ZoidCom::Sleep(50);
 	}
+
+	// important to reset server before connection
+	Serv.reset();
+
+	// wait 10sec for server to deadvertize
+	ZoidCom::Sleep(10000);
+
+	ConH.reset();
+
+	return 0;
 }
