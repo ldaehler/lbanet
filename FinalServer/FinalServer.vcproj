@@ -203,6 +203,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\GameServerHandler.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\shared\LogHandler.cpp"
 				>
 			</File>
@@ -246,6 +250,14 @@
 			</File>
 			<File
 				RelativePath="..\shared\GameObject.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\GameServerCallbackBase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\GameServerHandler.h"
 				>
 			</File>
 			<File

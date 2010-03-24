@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GameObject.h"
 
 class ChatChannelManager;
-
+class GameServerHandler;
 
 
 class Server : public ZCom_Control
@@ -112,6 +112,8 @@ private:
 
 	//client manager
 	ClientObjectHandler m_clientH;
+
+	GameServerHandler * m_gamesH;
 };
 
 
