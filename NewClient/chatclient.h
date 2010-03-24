@@ -41,6 +41,12 @@ class LbaNetEngine;
 class GameServerHandler;
 class GameServerCallbackBase;
 
+/***********************************************************************
+ * Module:  ChatClient.h
+ * Author:  vivien
+ * Modified: mardi 14 juillet 2009 17:41:03
+ * Purpose: client used to connect to chat server
+ ***********************************************************************/
 class ChatClient : public ZCom_Control
 {
 public:

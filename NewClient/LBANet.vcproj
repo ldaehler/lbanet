@@ -219,7 +219,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CommonTypes.cpp"
+				RelativePath="..\shared\CommonTypes.cpp"
 				>
 			</File>
 			<File
@@ -331,7 +331,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ObjectsDescription.cpp"
+				RelativePath="..\shared\ObjectsDescription.cpp"
 				>
 			</File>
 			<File
@@ -347,11 +347,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\PhysXEngine.cpp"
+				RelativePath="..\shared\PhysXEngine.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\PhysXObjectHandlers.cpp"
+				RelativePath="..\shared\PhysXObjectHandlers.cpp"
 				>
 			</File>
 			<File
@@ -363,15 +363,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\StaticObject.cpp"
+				RelativePath="..\shared\StaticObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Stream.cpp"
+				RelativePath="..\shared\Stream.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\SynchronizedTimeHandler.cpp"
+				RelativePath="..\shared\SynchronizedTimeHandler.cpp"
 				>
 			</File>
 			<File
@@ -379,15 +379,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\UserAllocator.cpp"
+				RelativePath="..\shared\UserAllocator.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\UserAllocatorHandler.cpp"
+				RelativePath="..\shared\UserAllocatorHandler.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\WorldToDisplayObjectSynchronizer.cpp"
+				RelativePath="..\shared\WorldToDisplayObjectSynchronizer.cpp"
 				>
 			</File>
 		</Filter>
@@ -433,6 +433,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\ClientListHandlerBase.h"
+				>
+			</File>
+			<File
 				RelativePath="..\shared\ClientObject.h"
 				>
 			</File>
@@ -441,7 +445,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CommonTypes.h"
+				RelativePath="..\shared\CommonTypes.h"
 				>
 			</File>
 			<File
@@ -469,11 +473,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DisplayObjectHandlerBase.h"
+				RelativePath="..\shared\DisplayObjectHandlerBase.h"
 				>
 			</File>
 			<File
-				RelativePath=".\DynamicObject.h"
+				RelativePath="..\shared\DynamicObject.h"
 				>
 			</File>
 			<File
@@ -490,6 +494,10 @@
 			</File>
 			<File
 				RelativePath="..\shared\GameObject.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\GameServerCallbackBase.h"
 				>
 			</File>
 			<File
@@ -549,6 +557,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\MapInfo.h"
+				>
+			</File>
+			<File
 				RelativePath="..\shared\MapInfoXmlReader.h"
 				>
 			</File>
@@ -565,7 +577,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ObjectsDescription.h"
+				RelativePath="..\shared\ObjectsDescription.h"
 				>
 			</File>
 			<File
@@ -581,15 +593,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\PhysicalObjectHandlerBase.h"
+				RelativePath="..\shared\PhysicalObjectHandlerBase.h"
 				>
 			</File>
 			<File
-				RelativePath=".\PhysXEngine.h"
+				RelativePath="..\shared\PhysXEngine.h"
 				>
 			</File>
 			<File
-				RelativePath=".\PhysXObjectHandlers.h"
+				RelativePath="..\shared\PhysXObjectHandlers.h"
 				>
 			</File>
 			<File
@@ -605,15 +617,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\StaticObject.h"
+				>
+			</File>
+			<File
 				RelativePath=".\StaticObject.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Stream.h"
+				RelativePath="..\shared\Stream.h"
 				>
 			</File>
 			<File
-				RelativePath=".\SynchronizedTimeHandler.h"
+				RelativePath="..\shared\SynchronizedTimeHandler.h"
 				>
 			</File>
 			<File
@@ -621,15 +637,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\UserAllocator.h"
+				RelativePath="..\shared\UserAllocator.h"
 				>
 			</File>
 			<File
-				RelativePath=".\UserAllocatorHandler.h"
+				RelativePath="..\shared\UserAllocatorHandler.h"
 				>
 			</File>
 			<File
-				RelativePath=".\WorldToDisplayObjectSynchronizer.h"
+				RelativePath="..\shared\WorldToDisplayObjectSynchronizer.h"
 				>
 			</File>
 		</Filter>
