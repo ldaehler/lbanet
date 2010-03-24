@@ -421,10 +421,19 @@ void GuiHandler::restoreTextures()
 /***********************************************************
 set the current map of the game
 ***********************************************************/
-void GuiHandler::SetCurrentMap(const std::string & WorldName, const std::string & MapName)
+void GuiHandler::SetCurrentWorld(const std::string & WorldName)
 {
 	if(_game_gui)
-		_game_gui->SetCurrentMap(WorldName, MapName);
+		_game_gui->SetCurrentWorld(WorldName);
+}
+
+/***********************************************************
+set the current map of the game
+***********************************************************/
+void GuiHandler::SetCurrentMap(const std::string & MapName)
+{
+	if(_game_gui)
+		_game_gui->SetCurrentMap(MapName);
 }
 
 

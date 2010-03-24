@@ -80,8 +80,11 @@ public:
 	void grabTextures();
 	void restoreTextures();
 
-	//! set the current map of the game
-	void SetCurrentMap(const std::string & WorldName, const std::string & MapName);
+	//! set the current world
+	void SetCurrentWorld(const std::string & WorldName);
+
+	//! set current map
+	void SetCurrentMap(const std::string & MapName);
 
 	// focus the chatbox
 	void FocusChatbox(bool focus);

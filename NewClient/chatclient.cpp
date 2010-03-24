@@ -30,15 +30,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "LbaNetEngine.h"
 #include "InternalWorkpile.h"
 #include "SynchronizedTimeHandler.h"
+#include "GameServerHandler.h"
 
 /***********************************************************************
  * Constructor
  ***********************************************************************/
 ChatClient::ChatClient(ChatSubscriberBase* WorldSubscriber, ClientListHandlerBase* clH,
-							unsigned short downpacketpersecond, unsigned short downbyteperpacket)
+							unsigned short downpacketpersecond, unsigned short downbyteperpacket, 
+							GameServerCallbackBase* callbH)
 : m_id(ZCom_Invalid_ID), m_zoi_id(ZCom_Invalid_ID), m_connected(false), m_WorldSubscriber(WorldSubscriber), m_clH(clH), 
 	m_downpacketpersecond(downpacketpersecond), m_downbyteperpacket(downbyteperpacket),
-	_engine(NULL), _afked(false), _afk_counter(SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync())
+	_engine(NULL), _afked(false), _afk_counter(SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync()),
+	_callbH(callbH)
 {
 	// this will allocate the sockets and create local bindings
     if ( !ZCom_initSockets( eZCom_EnableUDP, 0, 0, 0 ) )
@@ -54,6 +57,7 @@ ChatClient::ChatClient(ChatSubscriberBase* WorldSubscriber, ClientListHandlerBas
 	ChatChannelManager::registerClass(this);
 	ChatChannel::registerClass(this);
 	ClientObject::registerClass(this);
+	GameServerHandler::registerClass(this);
 }
 
 
@@ -202,6 +206,13 @@ void ChatClient::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _reque
 	}
 
 
+	// if this is the channel handler
+	if(_requested_class == GameServerHandler::getClassID())
+	{
+		m_gameSM = boost::shared_ptr<GameServerHandler>(new GameServerHandler(this, _callbH));
+	}
+
+
 	// if this is the channel 
 	if(_requested_class == ChatChannel::getClassID())
 	{
@@ -303,10 +314,12 @@ void ChatClient::Process()
 
 	//process chat
 	if(m_channelM)
-	{
 		m_channelM->Process();
 
-	}
+	//process game server M
+	if(m_gameSM)
+		m_gameSM->Process();
+
 
 	//process client objects
 	m_clientHandler.Process();
@@ -558,4 +571,15 @@ void ChatClient::CheckAfk()
 			ChangeStatus("away");	
 		}
 	}
+}
+
+
+
+/***********************************************************
+called by client to get game server address
+***********************************************************/
+void ChatClient::GetGameServerAddress(const std::string &Name)
+{
+	if(m_gameSM)
+		m_gameSM->GetGameServerAddress(Name);
 }

@@ -103,6 +103,12 @@ protected:
 	// called to play the assigned music when menu
 	void PlayMenuMusic();
 
+	// called when need to connect to game server
+	void ConnectToGameServer(const std::string &ServerName, const std::string &ServerAddress);
+
+	// called when game server unreachable
+	void GameServerUnreachable(const std::string &ServerName);
+
 
 private:
 	GuiHandler						m_gui_handler;		// pointer on gui class

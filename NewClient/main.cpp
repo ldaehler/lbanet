@@ -56,7 +56,8 @@ int main( int argc, char **argv )
 
 	// set up chat client
 	ChatClient* Chatcl = new ChatClient(InternalWorkpile::getInstance(), 
-											InternalWorkpile::getInstance(), 30, 200);
+											InternalWorkpile::getInstance(), 30, 200,
+											InternalWorkpile::getInstance());
 
 
 	// start main thread engine
