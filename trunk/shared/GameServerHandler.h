@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define _LBA_NET_GAME_SERVER_HANDLER_H_
 
 #include "GameObject.h"
-
+#include "GameServerCallbackBase.h"
 #include <map>
 
 class ZCom_Control;
@@ -43,7 +43,7 @@ class GameServerHandler : public GameObject
 
 public:
 	// constructor
-	GameServerHandler(ZCom_Control *_control);
+	GameServerHandler(ZCom_Control *_control, GameServerCallbackBase* callbH);
 
 	// destructor
 	virtual ~GameServerHandler();
@@ -89,6 +89,9 @@ private:
 	static unsigned int		m_classid;
 
 	std::map<std::string, std::string>	m_servers;
+
+	//for callbacks
+	GameServerCallbackBase* m_callbH;
 };
 
 
