@@ -411,6 +411,7 @@ void Server::ProcessPlayerQueue()
 		else // else skip for next time
 		{
 			//if player waiting for long then inform the client
+			TODO
 
 			++itp;
 		}
@@ -427,7 +428,7 @@ void Server::ProcessPlayerQueue()
 ***********************************************************/
 boost::shared_ptr<ServerMapManager> Server::TryCreateMap(const std::string & MapName)
 {
-
+	TODO
 
 	//if can not create then return NULL
 	return boost::shared_ptr<ServerMapManager>();
