@@ -115,12 +115,16 @@ public:
 	//! refresh sound button
 	void RefreshSOundButton();
 
-	//! set the current map of the game
-	void SetCurrentMap(const std::string & WorldName, const std::string & MapName)
+	//! set the current world
+	void SetCurrentWorld(const std::string & WorldName)
 	{
-		_cb.SetCurrentMap(WorldName, MapName);
-		//if(_editb)
-		//	_editb->ChangeMap(WorldName, MapName);
+		_cb.SetCurrentWorld(WorldName);
+	}
+
+	//! set current map
+	void SetCurrentMap(const std::string & MapName)
+	{
+		_cb.SetCurrentMap(MapName);
 	}
 
 	// focus the chatbox

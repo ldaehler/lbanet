@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "InternalWorkpile.h"
 #include "LogHandler.h"
+#include "GameEvents.h"
 
 //#include "MainPlayerHandler.h"
 //#include "ExternalPlayersHandler.h"
@@ -404,6 +405,18 @@ bool InternalWorkpile::NameColorChanged(std::string &color)
 	return false;
 }
 
+
+
+/***********************************************************
+received server address
+***********************************************************/
+void InternalWorkpile::ReceivedAddress(const std::string & Server, const std::string & Address)
+{
+	if(Address != "")
+		AddEvent(new GameServerAddressEvent(Server, Address));
+	else
+		AddEvent(new GameServerUnreachableEvent(Server));
+}
 
 
 /***********************************************************

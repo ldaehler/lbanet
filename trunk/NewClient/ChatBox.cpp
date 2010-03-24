@@ -508,13 +508,22 @@ void ChatBox::SendText(const std::string & channel, const std::string & Text)
 /***********************************************************
 set the current map of the game
 ***********************************************************/
-void ChatBox::SetCurrentMap(const std::string & WorldName, const std::string & MapName)
+void ChatBox::SetCurrentWorld(const std::string & WorldName)
 {
 	_currentWorld = WorldName;
+
+	CEGUI::WindowManager::getSingleton().getWindow("ChatFrame")->setProperty("Text", "Chat - " + _currentWorld + "/" + _currentMap);
+}
+
+
+/***********************************************************
+set the current map of the game
+***********************************************************/
+void ChatBox::SetCurrentMap(const std::string & MapName)
+{
 	_currentMap = MapName;
 
 	CEGUI::WindowManager::getSingleton().getWindow("ChatFrame")->setProperty("Text", "Chat - " + _currentWorld + "/" + _currentMap);
-
 }
 
 

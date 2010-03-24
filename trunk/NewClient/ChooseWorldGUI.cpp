@@ -178,7 +178,7 @@ bool ChooseWorldGUI::HandleWorldSelected (const CEGUI::EventArgs& e)
 					eb->setText(_wlist[idx].Description);
 				}
 
-				_selectedworld = _wlist[idx].FileName;
+				_selectedworld = _wlist[idx].WorldName;
 			}
 		}
 	}

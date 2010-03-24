@@ -128,68 +128,111 @@ public:
 	int _GuiNumber;
 };
 
-/*
-************************************************************************************************************************
-*                                                  class ScreenResEvent
+
+/************************************************************************************************************************
+*                                                  class GameServerAddressEvent
 *
-*	used when the user is changing screen resolution
+*	used when we receive game server address from main server
 ************************************************************************************************************************
 */
-class ScreenResEvent : public GameEvent
+class GameServerAddressEvent : public GameEvent
 {
 public:
 	//! constructor
-	ScreenResEvent(int screenX, int screenY, bool fullscreen)
-		: _screenX(screenX), _screenY(screenY), _fullscreen(fullscreen)
+	GameServerAddressEvent(const std::string &ServerName, const std::string &ServerAddress)
+		: _ServerName(ServerName), _ServerAddress(ServerAddress)
 	{
 		_type = 5;
 	}
 
-	int _screenX;
-	int _screenY;
-	bool _fullscreen;
+	std::string _ServerName;
+	std::string _ServerAddress;
+
 };
 
-/*
-************************************************************************************************************************
-*                                                  class DisplayFPSEvent
+
+/************************************************************************************************************************
+*                                                  class GameServerUnreachableEvent
 *
-*	used when the user is changing screen resolution
+*	used when we receive game server unreachable from main server
 ************************************************************************************************************************
 */
-class DisplayFPSEvent : public GameEvent
+class GameServerUnreachableEvent : public GameEvent
 {
 public:
 	//! constructor
-	DisplayFPSEvent(bool display)
-		: _display(display)
+	GameServerUnreachableEvent(const std::string &ServerName)
+		: _ServerName(ServerName)
 	{
 		_type = 6;
 	}
 
-	bool _display;
+	std::string _ServerName;
 };
 
 
-/*
-************************************************************************************************************************
-*                                                  class ChangeMainBodyEvent
-*
-*	used when the user is changing screen resolution
-************************************************************************************************************************
-*/
-class ChangeMainBodyEvent : public GameEvent
-{
-public:
-	//! constructor
-	ChangeMainBodyEvent(bool plus)
-		: _plus(plus)
-	{
-		_type = 7;
-	}
-
-	bool _plus;
-};
+///*
+//************************************************************************************************************************
+//*                                                  class ScreenResEvent
+//*
+//*	used when the user is changing screen resolution
+//************************************************************************************************************************
+//*/
+//class ScreenResEvent : public GameEvent
+//{
+//public:
+//	//! constructor
+//	ScreenResEvent(int screenX, int screenY, bool fullscreen)
+//		: _screenX(screenX), _screenY(screenY), _fullscreen(fullscreen)
+//	{
+//		_type = 5;
+//	}
+//
+//	int _screenX;
+//	int _screenY;
+//	bool _fullscreen;
+//};
+//
+///*
+//************************************************************************************************************************
+//*                                                  class DisplayFPSEvent
+//*
+//*	used when the user is changing screen resolution
+//************************************************************************************************************************
+//*/
+//class DisplayFPSEvent : public GameEvent
+//{
+//public:
+//	//! constructor
+//	DisplayFPSEvent(bool display)
+//		: _display(display)
+//	{
+//		_type = 6;
+//	}
+//
+//	bool _display;
+//};
+//
+//
+///*
+//************************************************************************************************************************
+//*                                                  class ChangeMainBodyEvent
+//*
+//*	used when the user is changing screen resolution
+//************************************************************************************************************************
+//*/
+//class ChangeMainBodyEvent : public GameEvent
+//{
+//public:
+//	//! constructor
+//	ChangeMainBodyEvent(bool plus)
+//		: _plus(plus)
+//	{
+//		_type = 7;
+//	}
+//
+//	bool _plus;
+//};
 
 /*
 ************************************************************************************************************************

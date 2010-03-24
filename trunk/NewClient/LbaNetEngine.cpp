@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "InternalWorkpile.h"
 #include "MusicHandler.h"
 #include "ConfigurationManager.h"
+#include "MessageBox.h"
 
 #define	_CUR_LBANET_VERSION_ "v0.8"
 #define	_CUR_LBANET_SERVER_VERSION_ "v0.8"
@@ -239,6 +240,22 @@ void LbaNetEngine::HandleGameEvents()
 					DisplayGUI(evdg->_GuiNumber);
 				}
 			break;
+
+			case 5: // GameServerAddressEvent
+				{
+					GameServerAddressEvent * evdg = static_cast<GameServerAddressEvent *> (*it);
+					ConnectToGameServer(evdg->_ServerName, evdg->_ServerAddress);
+				}
+			break;
+
+			case 6: // GameServerUnreachableEvent
+				{
+					GameServerUnreachableEvent * evdg = static_cast<GameServerUnreachableEvent *> (*it);
+					GameServerUnreachable(evdg->_ServerName);
+				}
+			break;
+
+
 
 
 			case 8: // new font size event
@@ -541,7 +558,6 @@ void LbaNetEngine::ConnectionCallback(int SuccessFlag, const std::string & reaso
 	}
 
 	//else
-	//m_lbaNetModel.SetPlayerName(Name);
 	SwitchGuiToChooseWorld();
 }
 
@@ -571,7 +587,16 @@ change the world
 ***********************************************************/
 void LbaNetEngine::ChangeWorld(const std::string & NewWorld)
 {
-	//m_lbaNetModel.ChangeWorld(NewWorld);
+	//clean up old world
+	m_lbaNetModel.CleanupWorld();
+
+	//set chat world name
+	m_gui_handler.SetCurrentWorld(NewWorld);
+
+	//ask server to switch world
+	m_Chatcl->GetGameServerAddress(NewWorld);
+
+	//change gui to game gui
 	SwitchGuiToGame();
 }
 
@@ -637,3 +662,18 @@ void LbaNetEngine::FocusChatbox(bool focus)
 
 
 
+/***********************************************************
+called when need to connect to game server
+***********************************************************/
+void LbaNetEngine::ConnectToGameServer(const std::string &ServerName, const std::string &ServerAddress)
+{
+
+}
+
+/***********************************************************
+called when game server unreachable
+***********************************************************/
+void LbaNetEngine::GameServerUnreachable(const std::string &ServerName)
+{
+	CGMessageBox::getInstance()->Show("Game Server Unreachable", "Can not connect to the game server for world " + ServerName);
+}

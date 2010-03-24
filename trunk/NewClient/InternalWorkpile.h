@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ChatSubscriberBase.h"
 #include "ClientListHandlerBase.h"
-
+#include "GameServerCallbackBase.h"
 class GameEvent;
 class MainPlayerHandler;
 class ExternalPlayersHandler;
@@ -45,7 +45,7 @@ class Player;
  * Purpose: Declaration of the class InternalWorkpile
  * Be carefull - this is not thread safe!!
  ***********************************************************************/
-class InternalWorkpile : public ChatSubscriberBase, public ClientListHandlerBase
+class InternalWorkpile : public ChatSubscriberBase, public ClientListHandlerBase, public GameServerCallbackBase
 {
 public:
 
@@ -212,6 +212,13 @@ public:
 
 	// return true if the color has changed
 	bool NameColorChanged(std::string &color);
+
+
+	// received server address
+	virtual void ReceivedAddress(const std::string & Server, const std::string & Address);
+
+	// received aknowledgement
+	virtual void Aknowldeged(bool Ok){}
 
 
 	////! inform irc thread to quit

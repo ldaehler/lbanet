@@ -38,8 +38,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class ChatChannelManager;
 class LbaNetEngine;
-
-
+class GameServerHandler;
+class GameServerCallbackBase;
 
 class ChatClient : public ZCom_Control
 {
@@ -47,7 +47,8 @@ public:
 
 	//! constructor
 	ChatClient(ChatSubscriberBase* WorldSubscriber,	ClientListHandlerBase* clH,
-					unsigned short downpacketpersecond, unsigned short downbyteperpacket);
+					unsigned short downpacketpersecond, unsigned short downbyteperpacket, 
+					GameServerCallbackBase* callbH);
 
 	//!destructor
 	~ChatClient();
@@ -93,6 +94,8 @@ public:
 	//! whisper to someone 
 	bool Whisper(const std::string & playername, const std::string & text);
 
+	// called by client to get game server address
+	void GetGameServerAddress(const std::string &Name);
 
 protected:
 	// called when initiated connection process yields a result
@@ -154,7 +157,7 @@ private:
 	unsigned short m_downbyteperpacket;
 
 	boost::shared_ptr<ChatChannelManager> m_channelM;
-
+	boost::shared_ptr<GameServerHandler>	m_gameSM;
 
 	std::map<std::string, ChatSubscriberBase* >	m_waitingsubs;
 
@@ -163,6 +166,9 @@ private:
 	//client list handler
 	ClientListHandlerBase* m_clH;
 	ChatSubscriberBase* m_WorldSubscriber;
+
+	//game server callback
+	GameServerCallbackBase* _callbH;
 
 
 	//used for callback
