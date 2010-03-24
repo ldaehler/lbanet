@@ -45,7 +45,8 @@ void GameServerHandler::registerClass(ZCom_Control *_control)
 /************************************************************************/
 /* constructor                                        
 /************************************************************************/
-GameServerHandler::GameServerHandler(ZCom_Control *_control)
+GameServerHandler::GameServerHandler(ZCom_Control *_control, GameServerCallbackBase* callbH)
+: m_callbH(callbH)
 {
 	#ifndef _ZOID_USED_NEW_VERSION_
 		m_node->registerNodeDynamic(m_classid, _control);
@@ -83,8 +84,8 @@ GameServerHandler::~GameServerHandler()
 void GameServerHandler::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoterole, unsigned int eventconnid)
 {
 
-	// type of custom event is in the first 2 bits of the event
-	unsigned int etype = data->getInt(2);
+	// type of custom event is in the first 3 bits of the event
+	unsigned int etype = data->getInt(3);
 	switch(etype)
 	{
 		//game server register
@@ -100,6 +101,12 @@ void GameServerHandler::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole re
 
 			// add it to the list
 			m_servers[buf] = bufad;
+
+			//send acknowledgment
+			ZCom_BitStream *evt = new ZCom_BitStream();
+			evt->addInt(4, 3);
+			evt->addBool(true);
+			m_node->sendEventDirect(eZCom_ReliableUnordered, evt, eventconnid);
 		}
 		break;
 
@@ -114,6 +121,12 @@ void GameServerHandler::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole re
 			std::map<std::string, std::string>::iterator it = m_servers.find(buf);
 			if(it != m_servers.end())
 				m_servers.erase(it);
+
+			//send acknowledgment
+			ZCom_BitStream *evt = new ZCom_BitStream();
+			evt->addInt(4, 3);
+			evt->addBool(true);
+			m_node->sendEventDirect(eZCom_ReliableUnordered, evt, eventconnid);
 		}
 		break;
 
@@ -131,7 +144,7 @@ void GameServerHandler::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole re
 
 			//send address to client
 			ZCom_BitStream *evt = new ZCom_BitStream();
-			evt->addInt(3, 2);
+			evt->addInt(3, 3);
 			evt->addString(buf);
 			evt->addString(reply.c_str());
 			m_node->sendEventDirect(eZCom_ReliableUnordered, evt, eventconnid);
@@ -149,8 +162,20 @@ void GameServerHandler::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole re
 			// get server address
 			char bufad[255];
 			data->getString(bufad, 255);
-			
 
+			//forward reply to the client
+			m_callbH->ReceivedAddress(buf, bufad);
+		}
+		break;
+
+
+		//acknowledgment from the server after reg/dereg
+		case 4:
+		{
+			bool ok = data->getBool();
+
+			//forward aknowledgment to the server
+			m_callbH->Aknowldeged(ok);
 		}
 		break;
 	}
@@ -164,7 +189,7 @@ void GameServerHandler::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole re
 void GameServerHandler::RegisterGameServer(const std::string &Name, const std::string &Adress)
 {
 	ZCom_BitStream *evt = new ZCom_BitStream();
-	evt->addInt(0, 2);
+	evt->addInt(0, 3);
 	evt->addString(Name.c_str());
 	evt->addString(Adress.c_str());
 	m_node->sendEvent(eZCom_ReliableUnordered, ZCOM_REPRULE_OWNER_2_AUTH, evt);
@@ -177,7 +202,7 @@ void GameServerHandler::RegisterGameServer(const std::string &Name, const std::s
 void GameServerHandler::UnregisterGameServer(const std::string &Name)
 {
 	ZCom_BitStream *evt = new ZCom_BitStream();
-	evt->addInt(1, 2);
+	evt->addInt(1, 3);
 	evt->addString(Name.c_str());
 	m_node->sendEvent(eZCom_ReliableUnordered, ZCOM_REPRULE_OWNER_2_AUTH, evt);
 }
@@ -189,7 +214,7 @@ void GameServerHandler::UnregisterGameServer(const std::string &Name)
 void GameServerHandler::GetGameServerAddress(const std::string &Name)
 {
 	ZCom_BitStream *evt = new ZCom_BitStream();
-	evt->addInt(2, 2);
+	evt->addInt(2, 3);
 	evt->addString(Name.c_str());
 	m_node->sendEvent(eZCom_ReliableUnordered, ZCOM_REPRULE_OWNER_2_AUTH, evt);
 }
