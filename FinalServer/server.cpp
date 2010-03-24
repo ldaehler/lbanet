@@ -129,31 +129,44 @@ eZCom_RequestResult Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitS
 	{
 		if(versionS == _CUR_LBANET_SERVER_VERSION_)
 		{
-			if(passwordS == "letmein2")
+			// check if it is a game server contacting us
+			if(loginS == "GameServer" && passwordS == "GM2SVL2x")
 			{
 				std::stringstream strs;
-				strs<<"Server: Incoming connection with ID: "<<_id<<" accepted";
+				strs<<"Server: Incoming game server connection with ID: "<<_id<<" accepted";
 				LogHandler::getInstance()->LogToFile(strs.str(), 2);    
-
-				//add to client list
-				ClientObject * cl = new ClientObject(this, _id, login, "", "", m_clH, NULL);
-				cl->GetNode()->setOwner(_id, true);
-				m_clientH.Addclient(_id, cl);
-				_reply.addInt(_id, 32);
-				_reply.addString( "Good" );
 				return eZCom_AcceptRequest;
 			}
 			else
 			{
-				std::stringstream strs;
-				strs<<"Server: Incoming connection with ID: "<<_id<<" denied";
-				LogHandler::getInstance()->LogToFile(strs.str(), 2);    
+				if(passwordS == "letmein2")
+				{
+					std::stringstream strs;
+					strs<<"Server: Incoming connection with ID: "<<_id<<" accepted";
+					LogHandler::getInstance()->LogToFile(strs.str(), 2);    
 
-				// deny connection request and send reason back to requester
-				_reply.addInt(_id, 32);
-				_reply.addString( "Incorrect username or password" );
-				return eZCom_DenyRequest;
+					//add to client list
+					ClientObject * cl = new ClientObject(this, _id, login, "", "", m_clH, NULL);
+					cl->GetNode()->setOwner(_id, true);
+					m_clientH.Addclient(_id, cl);
+					_reply.addInt(_id, 32);
+					_reply.addString( "Good" );
+					return eZCom_AcceptRequest;
+				}
+				else
+				{
+					std::stringstream strs;
+					strs<<"Server: Incoming connection with ID: "<<_id<<" denied";
+					LogHandler::getInstance()->LogToFile(strs.str(), 2);    
+
+					// deny connection request and send reason back to requester
+					_reply.addInt(_id, 32);
+					_reply.addString( "Incorrect username or password" );
+					return eZCom_DenyRequest;
+				}
 			}
+
+
 		}
 		else
 		{
