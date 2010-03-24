@@ -153,7 +153,12 @@ void ChatChannel::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remotero
 					std::vector<ChatSubscriberBase*>::iterator it = _subscribers.begin();
 					std::vector<ChatSubscriberBase*>::iterator end = _subscribers.end();
 					for(; it != end; ++it)
-						(*it)->ReceivedText(_name, _clH->GetName(senderid), _tmpstring[senderid]);
+					{
+						std::string name;
+						if(_clH)
+							name = _clH->GetName(senderid);
+						(*it)->ReceivedText(_name, name, _tmpstring[senderid]);
+					}
 
 					//clear the string
 					_tmpstring[senderid].clear();
