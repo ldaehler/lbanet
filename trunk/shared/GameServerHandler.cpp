@@ -102,6 +102,10 @@ void GameServerHandler::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole re
 			// add it to the list
 			m_servers[buf] = bufad;
 
+			std::stringstream strs;
+			strs<<"New game server "<<buf<<" at address "<<bufad;
+			LogHandler::getInstance()->LogToFile(strs.str(), 2);   
+
 			//send acknowledgment
 			ZCom_BitStream *evt = new ZCom_BitStream();
 			evt->addInt(4, 3);
@@ -121,6 +125,11 @@ void GameServerHandler::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole re
 			std::map<std::string, std::string>::iterator it = m_servers.find(buf);
 			if(it != m_servers.end())
 				m_servers.erase(it);
+
+
+			std::stringstream strs;
+			strs<<"Game server "<<buf<<" quitted";
+			LogHandler::getInstance()->LogToFile(strs.str(), 2);   
 
 			//send acknowledgment
 			ZCom_BitStream *evt = new ZCom_BitStream();
