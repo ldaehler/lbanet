@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ChatChannelManager.h"
 #include "ChatChannel.h"
 #include "ClientObject.h"
+#include "GameServerHandler.h"
 
 #define	_CUR_LBANET_SERVER_VERSION_ "v0.8"
 
@@ -61,10 +62,13 @@ Server::Server( int _internalport, int _udpport,
 	ChatChannelManager::registerClass(this);
 	ChatChannel::registerClass(this);
 	ClientObject::registerClass(this);
-
+	GameServerHandler::registerClass(this);
 
 	//create chat manager
 	m_chatM = new ChatChannelManager(this, clH);
+
+	//create game server manager
+	m_gamesH = new GameServerHandler(this, NULL);
 
 }
 
@@ -76,6 +80,9 @@ Server::~Server()
 {
 	if(m_chatM)
 		delete m_chatM;
+
+	if(m_gamesH)
+		delete m_gamesH;
 }
 
 
@@ -181,8 +188,9 @@ void Server::ZCom_cbConnectionSpawned( ZCom_ConnID _id )
 	strs<<"Server: Incoming connection with ID: "<<_id<<" has been established.";
 	LogHandler::getInstance()->LogToFile(strs.str(), 2);
 
-	//set as owner of chat manager
+	//set as owner of chat manager and gameserverM
 	m_chatM->GetNode()->setOwner(_id, true);
+	m_gamesH->GetNode()->setOwner(_id, true);
 
 
 
@@ -265,4 +273,9 @@ void Server::Process()
 
 	//process client handler
 	m_clientH.Process();
+
+	//process game server manager
+	if(m_gamesH)
+		m_gamesH->Process();
+	
 }
