@@ -103,6 +103,17 @@ public:
 	// called by client to get game server address
 	void GetGameServerAddress(const std::string &Name);
 
+
+	//! add friend to friend list
+	void AddFriend(const std::string & name);
+
+	//! remove friend from friend list
+	void RemoveFriend(const std::string & name);
+
+	//! ask server for friend list
+	void GetFriendList();
+
+
 protected:
 	// called when initiated connection process yields a result
 	void ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result, ZCom_BitStream &_reply );

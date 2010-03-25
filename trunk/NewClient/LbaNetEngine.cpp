@@ -490,10 +490,6 @@ void LbaNetEngine::SwitchGuiToGame()
 	m_gui_handler.SwitchGUI(2);
 	m_gui_handler.RefreshOption();
 
-	//subscribe to world channel
-	m_Chatcl->SubscribeWorld();
-	m_gui_handler.RefreshChannels();
-
 	m_oldstate = m_currentstate;
 	m_currentstate = EGaming;
 }
@@ -587,6 +583,13 @@ change the world
 ***********************************************************/
 void LbaNetEngine::ChangeWorld(const std::string & NewWorld)
 {
+	//reset friend list
+	m_Chatcl->GetFriendList();
+
+	//subscribe to world channel
+	m_Chatcl->SubscribeWorld();
+	m_gui_handler.RefreshChannels();
+
 	//clean up old world
 	m_lbaNetModel.CleanupWorld();
 

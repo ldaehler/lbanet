@@ -293,6 +293,7 @@ void CommunityBox::Process()
 	}
 
 
+	//get new friends
 	std::vector<std::string> friends;
 	InternalWorkpile::getInstance()->GetFriends(friends);
 	for(size_t i=0; i<friends.size(); ++i)

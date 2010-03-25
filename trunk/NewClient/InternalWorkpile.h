@@ -173,8 +173,6 @@ public:
 	// cget all queries for whisper channel
 	void GetRemovedFriend(std::vector<std::string> &scvec);
 
-	//! set friend list
-	void SetFriends(const std::vector<std::string> & friends);
 
 	//! get friend list
 	void GetFriends(std::vector<std::string> & friends);
@@ -195,8 +193,10 @@ public:
 	virtual std::string GetName(unsigned int id);
 
 	// return the name given a client id
-	virtual unsigned int GetId(std::string Name);
+	virtual unsigned int GetId(const std::string &Name);
 
+	// called when we get new friend in list
+	virtual void NewFriend(const std::string &Name);
 
 
 
