@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ClientObjectHandler.h"
 #include "ClientListHandlerBase.h"
 #include "GameObject.h"
+#include "DatabaseHandlerBase.h"
 
 class ChatChannelManager;
 class GameServerHandler;
@@ -42,7 +43,7 @@ public:
 	Server( int _internalport, int _udpport, 
 			unsigned int uplimittotal, unsigned int uplimitperconnection,
 			unsigned short downpacketpersecond, unsigned short downbyteperpacket,
-			ClientListHandlerBase* clH);
+			ClientListHandlerBase* clH, DatabaseHandlerBase * dbH);
 
 	//! destructor
 	~Server();
@@ -114,6 +115,13 @@ private:
 	ClientObjectHandler m_clientH;
 
 	GameServerHandler * m_gamesH;
+
+
+	// database handler
+	DatabaseHandlerBase *_dbh;
+
+	//map connection id to player db id
+	std::map<unsigned int, std::pair<long, std::string> > _playerDbMap;
 };
 
 
