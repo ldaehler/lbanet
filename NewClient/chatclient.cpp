@@ -245,7 +245,7 @@ void ChatClient::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _reque
 		char _color[255];
 		_announcedata->getString( _color, 255 );
 
-		m_clientHandler.Addclient(clid, new ClientObject(this, clid, _buf, _status, _color, m_clH, m_WorldSubscriber));
+		m_clientHandler.Addclient(clid, new ClientObject(this, clid, _buf, _status, _color, m_clH, m_WorldSubscriber, NULL, 0));
 	}
 	
 }
@@ -333,6 +333,18 @@ void ChatClient::Process()
 		if(InternalWorkpile::getInstance()->NameColorChanged(ncolor))
 			ChangeColor(ncolor);
 	}
+
+	//process friend stuff
+	std::vector<std::string> afriends, rfriends;
+	InternalWorkpile::getInstance()->GetAddedFriend(afriends);
+	InternalWorkpile::getInstance()->GetRemovedFriend(rfriends);
+
+	for(size_t i=0; i<afriends.size(); ++i)
+		AddFriend(afriends[i]);
+
+	for(size_t i=0; i<rfriends.size(); ++i)
+		RemoveFriend(rfriends[i]);
+
 }
 
 
@@ -582,4 +594,36 @@ void ChatClient::GetGameServerAddress(const std::string &Name)
 {
 	if(m_gameSM)
 		m_gameSM->GetGameServerAddress(Name);
+}
+
+
+
+/************************************************************************/
+/* add friend to friend list                                      
+/************************************************************************/
+void ChatClient::AddFriend(const std::string & name)
+{
+	ClientObject * cl = m_clientHandler.Getclient(m_id);
+	if(cl)
+		cl->AddFriend(name);
+}
+
+/************************************************************************/
+/* remove friend from friend list                                    
+/************************************************************************/
+void ChatClient::RemoveFriend(const std::string & name)
+{
+	ClientObject * cl = m_clientHandler.Getclient(m_id);
+	if(cl)
+		cl->RemoveFriend(name);
+}
+
+/************************************************************************/
+/* ask server for friend list                                  
+/************************************************************************/
+void ChatClient::GetFriendList()
+{
+	ClientObject * cl = m_clientHandler.Getclient(m_id);
+	if(cl)
+		cl->GetFriendList();
 }

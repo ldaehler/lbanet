@@ -244,23 +244,14 @@ void InternalWorkpile::GetRemovedFriend(std::vector<std::string> &scvec)
 
 
 /***********************************************************
-set friend list
-***********************************************************/
-void InternalWorkpile::SetFriends(const std::vector<std::string> & friends)
-{
-	//IceUtil::Mutex::Lock lock(m_mutex_friend);
-	m_friend_list = friends;
-}
-
-/***********************************************************
 get friend list
 ***********************************************************/
 void InternalWorkpile::GetFriends(std::vector<std::string> & friends)
 {
 	//IceUtil::Mutex::Lock lock(m_mutex_friend);
+	friends.clear();
 	friends.swap(m_friend_list);
 }
-
 
 
 /***********************************************************
@@ -326,7 +317,7 @@ std::string InternalWorkpile::GetName(unsigned int id)
 /***********************************************************
 return the name given a client id
 ***********************************************************/
-unsigned int InternalWorkpile::GetId(std::string Name)
+unsigned int InternalWorkpile::GetId(const std::string &Name)
 {
 	std::map<unsigned int, std::string>::iterator it =	m_clientmap.begin();
 	std::map<unsigned int, std::string>::iterator end =	m_clientmap.end();
@@ -357,6 +348,15 @@ void InternalWorkpile::ChangedStatus(unsigned int id, const std::string & Status
 	ChatColorChanged(m_clientmap[id], Color);
 }
 
+
+
+/***********************************************************
+called when we get new friend in list
+***********************************************************/
+void InternalWorkpile::NewFriend(const std::string &Name)
+{
+	m_friend_list.push_back(Name);
+}
 
 
 
