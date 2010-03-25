@@ -25,6 +25,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _LBA_NET_PLAYER_INFO_HANDLER_H_
 #define _LBA_NET_PLAYER_INFO_HANDLER_H_
 
+class DatabaseHandlerBase;
+class WorldStartingInfo;
+
+#include <string>
 
 /***********************************************************************
  * Module:  PlayerInfoHandler.h
@@ -37,7 +41,7 @@ class PlayerInfoHandler
 
 public:
 	// constructor
-	PlayerInfoHandler();
+	PlayerInfoHandler(long PlayerDbId, DatabaseHandlerBase *DbH, const WorldStartingInfo & WorldSI);
 
 
 	// destructor
@@ -47,12 +51,17 @@ public:
 	//! save info to database
 	void SaveToDatabase();
 
-
 	//! load info from database
 	void LoadFromDatabase();
 
-private:
 
+	//! return the map the player should be connected to
+	std::string GetNextMap();
+
+
+private:
+	long				_PlayerDbId;
+	DatabaseHandlerBase *	_DbH;
 };
 
 #endif

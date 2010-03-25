@@ -25,13 +25,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "PlayerInfoHandler.h"
 #include "LogHandler.h"
-
+#include "DatabaseHandlerBase.h"
 
 
 /************************************************************************/
 /* constructor                                        
 /************************************************************************/
-PlayerInfoHandler::PlayerInfoHandler()
+PlayerInfoHandler::PlayerInfoHandler(long PlayerDbId, DatabaseHandlerBase *DbH, const WorldStartingInfo & WorldSI)
+: _PlayerDbId(PlayerDbId), _DbH(DbH)
 {
 
 }
@@ -62,4 +63,14 @@ void PlayerInfoHandler::SaveToDatabase()
 void PlayerInfoHandler::LoadFromDatabase()
 {
 
+}
+
+
+
+/************************************************************************/
+/* return the map the player should be connected to                              
+/************************************************************************/
+std::string PlayerInfoHandler::GetNextMap()
+{
+	return "";
 }

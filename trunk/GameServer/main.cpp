@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "server.h"
 #include "LogHandler.h"
 #include "UserAllocatorHandler.h"
+#include "MySQLDatabaseHandler.h"
 
 #include <signal.h>
 
@@ -54,6 +55,9 @@ int main(int argc, char *argv[])
 	// init memory allocator
 	UserAllocatorHandler::getInstance()->Initialize();
 
+	//set up database
+	boost::shared_ptr<DatabaseHandlerBase> dbH = boost::shared_ptr<DatabaseHandlerBase>(
+		new MySQLDatabaseHandler("lbanet", "localhost", "lbanetuser", "lapichonmelba"));
 
 	// set up data handler
 	boost::shared_ptr<ServerDataHandler> dataH = boost::shared_ptr<ServerDataHandler>(new ServerDataHandler(""));
@@ -66,10 +70,12 @@ int main(int argc, char *argv[])
 		boost::shared_ptr<ConnectionHandler>(new ConnectionHandler(worldN+"-GameServer-Zoidcom.log"));
 
 
+	//TODO - add config file
 	// server operates on internal port 1 and UDP port 8899
 	boost::shared_ptr<Server> Serv = boost::shared_ptr<Server>(new Server(1, 8900, 8000, 2000, 20, 200, 
 																				dataH, "127.0.0.1:8899",
-																				"127.0.0.1:8900"));
+																				"127.0.0.1:8900", dbH.get()));
+
 
 	// zoidcom needs to get called regularly to get anything done so we enter the mainloop now
 	while(global_continue)
@@ -84,6 +90,8 @@ int main(int argc, char *argv[])
 		// outstanding data will be packed up and sent from here
 		Serv->ZCom_processOutput();
 
+
+		//TODO - change that to dynamic wait
 		// pause the program for a few milliseconds
 		ZoidCom::Sleep(50);
 	}

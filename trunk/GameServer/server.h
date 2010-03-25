@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "PlayerInfoHandler.h"
 #include "GameObject.h"
 #include "ServerDataHandler.h"
-
+#include "DatabaseHandlerBase.h"
 
 
 #include <boost/shared_ptr.hpp>
@@ -41,6 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 class PhysXEngine;
+
 
 /***********************************************************************
  * Module:  Server.h
@@ -92,7 +93,7 @@ public:
 			unsigned int uplimittotal, unsigned int uplimitperconnection,
 			unsigned short downpacketpersecond, unsigned short downbyteperpacket, 
 			boost::shared_ptr<ServerDataHandler> dataH, const std::string & MainServerAddress,
-			const std::string & MyAddress);
+			const std::string & MyAddress, DatabaseHandlerBase *dbh);
 
 	//! destructor
 	~Server();
@@ -176,6 +177,10 @@ protected:
 	//deadvertize game server to main server when quitting
 	void DeadvertizeToMainServer();
 
+	// if needed, change the map the player is currently connected
+	void ChangePlayerMap(unsigned int PlayerId);
+
+
 private:
 	int m_conncount;
 	unsigned int m_uplimittotal;
@@ -206,6 +211,14 @@ private:
 
 	// data handler
 	boost::shared_ptr<ServerDataHandler> _dataH;
+
+
+	// database handler
+	DatabaseHandlerBase *_dbh;
+
+
+	//map connection id to player db id
+	std::map<unsigned int, long > _playerDbMap;
 };
 
 

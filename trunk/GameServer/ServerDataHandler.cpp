@@ -60,3 +60,13 @@ MapInfo ServerDataHandler::GetMapInfo(const std::string & Mapname)
 {
 	return MapInfo();
 }
+
+
+
+/************************************************************************/
+/* get world starting information                                   
+/************************************************************************/
+WorldStartingInfo ServerDataHandler::GetWorldStartingInfo()
+{
+	return WorldStartingInfo();
+}

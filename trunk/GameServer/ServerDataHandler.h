@@ -51,6 +51,9 @@ public:
 	//get map info
 	MapInfo GetMapInfo(const std::string & Mapname);
 
+	// get world starting information
+	WorldStartingInfo GetWorldStartingInfo();
+
 
 private:
 	std::string _RootFileName;
