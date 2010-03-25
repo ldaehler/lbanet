@@ -26,6 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ConnectionHandler.h"
 #include "server.h"
 #include "LogHandler.h"
+#include "MySQLDatabaseHandler.h"
+
 
 class SimpleClientListHandler : public ClientListHandlerBase
 {
@@ -72,7 +74,7 @@ public:
 
 
 	//return the name given a client id
-	unsigned int GetId(std::string Name)
+	unsigned int GetId(const std::string & Name)
 	{
 		std::map<unsigned int, std::string>::iterator it =	_clientmap.begin();
 		std::map<unsigned int, std::string>::iterator end =	_clientmap.end();
@@ -90,6 +92,10 @@ public:
 	virtual void ChangedStatus(unsigned int id, const std::string & Status, 
 													const std::string & Color){}
 
+
+	// called when we get new friend in list
+	virtual void NewFriend(const std::string &Name){}
+
 private:
 	std::map<unsigned int, std::string> _clientmap;
 
@@ -100,14 +106,21 @@ private:
 
 int main(int argc, char *argv[])
 {
+	//TODO - set up configuration file
+
 	LogHandler::getInstance()->Init("ChatServer.log");
+
+	//set up database
+	boost::shared_ptr<DatabaseHandlerBase> dbH = boost::shared_ptr<DatabaseHandlerBase>(
+		new MySQLDatabaseHandler("lbanet", "localhost", "lbanetuser", "lapichonmelba"));
+
 
 	// set up connection class
 	boost::shared_ptr<ConnectionHandler> ConH = boost::shared_ptr<ConnectionHandler>(new ConnectionHandler("Zoidcom.log"));
 
 	// server operates on internal port 1 and UDP port 8899
 	boost::shared_ptr<SimpleClientListHandler> clListH = boost::shared_ptr<SimpleClientListHandler>(new SimpleClientListHandler());
-	boost::shared_ptr<Server> Serv = boost::shared_ptr<Server>(new Server(1, 8899, 8000, 2000, 20, 200, clListH.get()));
+	boost::shared_ptr<Server> Serv = boost::shared_ptr<Server>(new Server(1, 8899, 8000, 2000, 20, 200, clListH.get(), dbH.get()));
 
 
 
@@ -127,4 +140,6 @@ int main(int argc, char *argv[])
 		// pause the program for a few milliseconds
 		ZoidCom::Sleep(50);
 	}
+
+
 }

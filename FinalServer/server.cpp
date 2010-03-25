@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ClientObject.h"
 #include "GameServerHandler.h"
 
+
 #define	_CUR_LBANET_SERVER_VERSION_ "v0.8"
 
 /***********************************************************
@@ -37,10 +38,10 @@ Constructor
 Server::Server( int _internalport, int _udpport, 
 				unsigned int uplimittotal, unsigned int uplimitperconnection,
 				unsigned short downpacketpersecond, unsigned short downbyteperpacket,
-				ClientListHandlerBase* clH)
+				ClientListHandlerBase* clH, DatabaseHandlerBase * dbH)
 : m_conncount(0), m_uplimittotal(uplimittotal), m_uplimitperconnection(uplimitperconnection), 
 	m_downpacketpersecond(downpacketpersecond), m_downbyteperpacket(downbyteperpacket),
-	m_chatM(NULL), m_clH(clH)
+	m_chatM(NULL), m_clH(clH), _dbh(dbH)
 {
 	// this will allocate the sockets and create local bindings
 	if ( !ZCom_initSockets( eZCom_EnableUDP, _udpport, _internalport, 0 ) )
@@ -57,6 +58,7 @@ Server::Server( int _internalport, int _udpport,
 	std::stringstream strs;
 	strs<<"Server running and listening on udp port: "<<_udpport;
 	LogHandler::getInstance()->LogToFile(strs.str(), 2);
+
 
 	// register classes
 	ChatChannelManager::registerClass(this);
@@ -139,16 +141,32 @@ eZCom_RequestResult Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitS
 			}
 			else
 			{
-				if(passwordS == "letmein2")
+				//check if user is already connected
+				std::map<unsigned int, std::pair<long, std::string> >::iterator itm = _playerDbMap.find(_id);
+				if(itm != _playerDbMap.end())
+				{
+					//if so then refuse connection
+					std::stringstream strs;
+					strs<<"Server: Incoming connection with ID: "<<_id<<" denied";
+					LogHandler::getInstance()->LogToFile(strs.str(), 2);    
+
+					// deny connection request and send reason back to requester
+					_reply.addInt(_id, 32);
+					_reply.addString( "User is already connected!" );
+					return eZCom_DenyRequest;
+				}
+
+				//check database for login and pass correctness
+				long db_id = _dbh->CheckLogin(login, versionS);
+				if(db_id >= 0)
 				{
 					std::stringstream strs;
 					strs<<"Server: Incoming connection with ID: "<<_id<<" accepted";
 					LogHandler::getInstance()->LogToFile(strs.str(), 2);    
 
 					//add to client list
-					ClientObject * cl = new ClientObject(this, _id, login, "", "", m_clH, NULL);
-					cl->GetNode()->setOwner(_id, true);
-					m_clientH.Addclient(_id, cl);
+					_playerDbMap[_id] = std::make_pair<long, std::string>(db_id, login);
+
 					_reply.addInt(_id, 32);
 					_reply.addString( "Good" );
 					return eZCom_AcceptRequest;
@@ -201,6 +219,21 @@ void Server::ZCom_cbConnectionSpawned( ZCom_ConnID _id )
 	strs<<"Server: Incoming connection with ID: "<<_id<<" has been established.";
 	LogHandler::getInstance()->LogToFile(strs.str(), 2);
 
+
+	std::map<unsigned int, std::pair<long, std::string> >::iterator itm = _playerDbMap.find(_id);
+	if(itm != _playerDbMap.end())
+	{
+		//add to client list
+		ClientObject * cl = new ClientObject(this, _id, itm->second.second, "", "", m_clH, NULL, _dbh, itm->second.first);
+		cl->GetNode()->setOwner(_id, true);
+		m_clientH.Addclient(_id, cl);
+
+		// set connected in the db
+		_dbh->SetUserConnected(itm->second.first);
+	}
+
+
+
 	//set as owner of chat manager and gameserverM
 	m_chatM->GetNode()->setOwner(_id, true);
 	m_gamesH->GetNode()->setOwner(_id, true);
@@ -229,6 +262,15 @@ void Server::ZCom_cbConnectionClosed( ZCom_ConnID _id, eZCom_CloseReason _reason
 
 	//remove from client list
 	m_clientH.Removeclient(_id);
+
+	// disconnect from the db
+	std::map<unsigned int, std::pair<long, std::string> >::iterator itm = _playerDbMap.find(_id);
+	if(itm != _playerDbMap.end())
+	{
+		_dbh->DisconnectUser(itm->second.first);
+		_playerDbMap.erase(itm);
+	}
+
 
 	--m_conncount;
 }
