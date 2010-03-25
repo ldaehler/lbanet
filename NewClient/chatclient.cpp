@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "InternalWorkpile.h"
 #include "SynchronizedTimeHandler.h"
 #include "GameServerHandler.h"
+#include "md5.h"
 
 /***********************************************************************
  * Constructor
@@ -93,6 +94,8 @@ void ChatClient::ConnectToServer(const std::string & address, const std::string 
 	evcl.Clear = true;
 	InternalWorkpile::getInstance()->HappenedJoinEvent(evcl);
 
+	std::string md5pass = MD5(password).hexdigest();
+
 
 	// create target address 
 	ZCom_Address dst_udp;
@@ -101,7 +104,7 @@ void ChatClient::ConnectToServer(const std::string & address, const std::string 
 	//prepare login info
     ZCom_BitStream *req = new ZCom_BitStream();
 	req->addString( login.c_str() );
-	req->addString( password.c_str() );
+	req->addString( md5pass.c_str() );
 	req->addString( excpectedversion.c_str() );
 
 	// connect to server
