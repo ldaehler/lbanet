@@ -263,7 +263,6 @@ void ClientObject::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoter
 				// get friend name
 				char buf[255];
 				data->getString(buf, 255);
-				m_status = buf;
 
 				if(m_dbH)
 					m_dbH->AddFriend(m_playerdbid, buf);
@@ -282,7 +281,6 @@ void ClientObject::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoter
 				// get friend name
 				char buf[255];
 				data->getString(buf, 255);
-				m_status = buf;
 
 				if(m_dbH)
 					m_dbH->RemoveFriend(m_playerdbid, buf);
@@ -306,7 +304,7 @@ void ClientObject::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoter
 						ZCom_BitStream *evt = new ZCom_BitStream();
 						evt->addInt(6, 3);
 						evt->addString(friends[i].c_str());
-						m_node->sendEvent(eZCom_ReliableUnordered, ZCOM_REPRULE_OWNER_2_AUTH, evt);
+						m_node->sendEventDirect(eZCom_ReliableUnordered, evt, eventconnid);
 					}
 				}
 			}
@@ -322,7 +320,7 @@ void ClientObject::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoter
 				// get friend name
 				char buf[255];
 				data->getString(buf, 255);
-				m_status = buf;
+				m_clH->NewFriend(buf);
 			}
 		}
 		break;

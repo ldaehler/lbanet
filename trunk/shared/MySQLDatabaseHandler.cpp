@@ -100,6 +100,8 @@ long MySQLDatabaseHandler::CheckLogin(const std::string & PlayerName, const std:
 	{
 		if(res.size() > 0)
 			return res[0][0];
+		else
+			return -1;
 	}
 
 	std::stringstream strs;
