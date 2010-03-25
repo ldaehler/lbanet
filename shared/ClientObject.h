@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GameObject.h"
 #include "ClientListHandlerBase.h"
 #include "ChatSubscriberBase.h"
+#include "DatabaseHandlerBase.h"
 
 #include <boost/shared_ptr.hpp>
 #include <map>
@@ -48,7 +49,8 @@ public:
 	// constructor
 	ClientObject(ZCom_Control *_control, unsigned int id, const std::string & name,
 					const std::string & status, const std::string & namecolor,
-					ClientListHandlerBase* clH, ChatSubscriberBase* WorldSubscriber);
+					ClientListHandlerBase* clH, ChatSubscriberBase* WorldSubscriber,
+					DatabaseHandlerBase * dbH, long playerdbid);
 
 	// destructor
 	virtual ~ClientObject();
@@ -67,6 +69,15 @@ public:
 
 	//! whisper to someone 
 	bool Whisper(const std::string & playername, std::string text);
+
+	//! add friend to friend list
+	void AddFriend(const std::string & name);
+
+	//! remove friend from friend list
+	void RemoveFriend(const std::string & name);
+
+	//! ask server for friend list
+	void GetFriendList();
 
 
 protected:
@@ -103,6 +114,9 @@ private:
 	// client list handler
 	ClientListHandlerBase* m_clH;
 	ChatSubscriberBase* m_WorldSubscriber;
+
+	DatabaseHandlerBase *	m_dbH;
+	long				m_playerdbid;
 };
 
 

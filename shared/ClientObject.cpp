@@ -27,6 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ClientObject.h"
 #include "LogHandler.h"
 
+
+
 // declare static member
 ZCom_ClassID ClientObject::m_classid = ZCom_Invalid_ID;
 
@@ -47,9 +49,10 @@ void ClientObject::registerClass(ZCom_Control *_control)
 /************************************************************************/
 ClientObject::ClientObject(ZCom_Control *_control, unsigned int id, const std::string & name,
 								const std::string & status, const std::string & namecolor,
-								ClientListHandlerBase* clH, ChatSubscriberBase* WorldSubscriber)
+								ClientListHandlerBase* clH, ChatSubscriberBase* WorldSubscriber,
+								DatabaseHandlerBase * dbH, long playerdbid)
 : m_id(id), m_name(name), m_status(status), m_namecolor(namecolor), m_clH(clH),
-	m_WorldSubscriber(WorldSubscriber)
+	m_WorldSubscriber(WorldSubscriber), m_dbH(dbH), m_playerdbid(playerdbid)
 {
 	#ifndef _ZOID_USED_NEW_VERSION_
 		m_node->registerNodeDynamic(m_classid, _control);
@@ -112,7 +115,7 @@ void ClientObject::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoter
 {
 
 	// type of custom event is in the first 2 bits of the event
-	unsigned int etype = data->getInt(2);
+	unsigned int etype = data->getInt(3);
 	switch(etype)
 	{
 		//subscribe event
@@ -131,7 +134,7 @@ void ClientObject::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoter
 
 				//send to all
 				ZCom_BitStream *evt = new ZCom_BitStream();
-				evt->addInt(0, 2);
+				evt->addInt(0, 3);
 				evt->addString(m_status.c_str());
 				m_node->sendEvent(eZCom_ReliableUnordered, ZCOM_REPRULE_AUTH_2_ALL, evt);
 			}
@@ -164,7 +167,7 @@ void ClientObject::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoter
 
 				//send to all
 				ZCom_BitStream *evt = new ZCom_BitStream();
-				evt->addInt(1, 2);
+				evt->addInt(1, 3);
 				evt->addString(m_namecolor.c_str());
 				m_node->sendEvent(eZCom_ReliableUnordered, ZCOM_REPRULE_AUTH_2_ALL, evt);
 			}
@@ -206,7 +209,7 @@ void ClientObject::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoter
 
 				//send to concerned person
 				ZCom_BitStream *evt = new ZCom_BitStream();
-				evt->addInt(2, 2);
+				evt->addInt(2, 3);
 				evt->addInt(textform, 1);
 				evt->addString(buf);
 				m_node->sendEventDirect(eZCom_ReliableOrdered, evt, sendto);	
@@ -249,6 +252,80 @@ void ClientObject::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoter
 			}		
 		}
 		break;
+
+
+		//add friend event
+		case 3:
+		{
+			// if coming from owner to server
+			if(remoterole == eZCom_RoleOwner)
+			{
+				// get friend name
+				char buf[255];
+				data->getString(buf, 255);
+				m_status = buf;
+
+				if(m_dbH)
+					m_dbH->AddFriend(m_playerdbid, buf);
+			}
+
+		}
+		break;
+
+
+		//remove friend event
+		case 4:
+		{
+			// if coming from owner to server
+			if(remoterole == eZCom_RoleOwner)
+			{
+				// get friend name
+				char buf[255];
+				data->getString(buf, 255);
+				m_status = buf;
+
+				if(m_dbH)
+					m_dbH->RemoveFriend(m_playerdbid, buf);
+			}
+
+		}
+
+
+		//friends list request
+		case 5:
+		{
+			// if coming from owner to server
+			if(remoterole == eZCom_RoleOwner)
+			{
+				if(m_dbH)
+				{
+					std::vector<std::string> friends = m_dbH->GetFriends(m_playerdbid);
+					//send message to client for each friends
+					for(size_t i=0; i<friends.size(); ++i)
+					{
+						ZCom_BitStream *evt = new ZCom_BitStream();
+						evt->addInt(6, 3);
+						evt->addString(friends[i].c_str());
+						m_node->sendEvent(eZCom_ReliableUnordered, ZCOM_REPRULE_OWNER_2_AUTH, evt);
+					}
+				}
+			}
+		}
+
+
+		//received friend name from server
+		case 6:
+		{
+			// if coming from owner to server
+			if(remoterole == eZCom_RoleAuthority)
+			{
+				// get friend name
+				char buf[255];
+				data->getString(buf, 255);
+				m_status = buf;
+			}
+		}
+		break;
 	}
 }
 
@@ -259,7 +336,7 @@ void ClientObject::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoter
 void ClientObject::ChangeStatus(const std::string & status)
 {
 	ZCom_BitStream *evt = new ZCom_BitStream();
-	evt->addInt(0, 2);
+	evt->addInt(0, 3);
 	evt->addString(status.c_str());
 	m_node->sendEvent(eZCom_ReliableUnordered, ZCOM_REPRULE_OWNER_2_AUTH, evt);
 }
@@ -271,7 +348,7 @@ void ClientObject::ChangeStatus(const std::string & status)
 void ClientObject::ChangeColor(const std::string & color)
 {
 	ZCom_BitStream *evt = new ZCom_BitStream();
-	evt->addInt(1, 2);
+	evt->addInt(1, 3);
 	evt->addString(color.c_str());
 	m_node->sendEvent(eZCom_ReliableUnordered, ZCOM_REPRULE_OWNER_2_AUTH, evt);
 }
@@ -294,7 +371,7 @@ bool ClientObject::Whisper(const std::string & playername, std::string text)
 		text = text.substr(_MAX_CHAR_SIZE_);
 
 		ZCom_BitStream *evt = new ZCom_BitStream();
-		evt->addInt(2, 2);
+		evt->addInt(2, 3);
 		evt->addInt(1, 1);
 		evt->addInt(id, 32);
 		evt->addString(Textpart.c_str());
@@ -303,7 +380,7 @@ bool ClientObject::Whisper(const std::string & playername, std::string text)
 	
 	// send last part of the text
 	ZCom_BitStream *evt = new ZCom_BitStream();
-	evt->addInt(2, 2);
+	evt->addInt(2, 3);
 	evt->addInt(0, 1);
 	evt->addInt(id, 32);
 	evt->addString(text.c_str());
@@ -311,4 +388,37 @@ bool ClientObject::Whisper(const std::string & playername, std::string text)
 
 
 	return true;
+}
+
+
+/************************************************************************/
+/* add friend to friend list                                      
+/************************************************************************/
+void ClientObject::AddFriend(const std::string & name)
+{
+	ZCom_BitStream *evt = new ZCom_BitStream();
+	evt->addInt(3, 3);
+	evt->addString(name.c_str());
+	m_node->sendEvent(eZCom_ReliableUnordered, ZCOM_REPRULE_OWNER_2_AUTH, evt);
+}
+
+/************************************************************************/
+/* remove friend from friend list                                    
+/************************************************************************/
+void ClientObject::RemoveFriend(const std::string & name)
+{
+	ZCom_BitStream *evt = new ZCom_BitStream();
+	evt->addInt(4, 3);
+	evt->addString(name.c_str());
+	m_node->sendEvent(eZCom_ReliableUnordered, ZCOM_REPRULE_OWNER_2_AUTH, evt);
+}
+
+/************************************************************************/
+/* ask server for friend list                                  
+/************************************************************************/
+void ClientObject::GetFriendList()
+{
+	ZCom_BitStream *evt = new ZCom_BitStream();
+	evt->addInt(5, 3);
+	m_node->sendEvent(eZCom_ReliableUnordered, ZCOM_REPRULE_OWNER_2_AUTH, evt);
 }

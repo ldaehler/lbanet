@@ -22,47 +22,52 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _LBA_NET_CLIENT_LIST_HANDLER_BASE_H_
-#define _LBA_NET_CLIENT_LIST_HANDLER_BASE_H_
 
+#if !defined(__Agent_database_handler_base_h)
+#define __Agent_database_handler_base_h
 
 #include <string>
+#include <vector>
+#include <map>
+
 
 /***********************************************************************
- * Module:  ClientListHandlerBase.h
+ * Module:  DatabaseHandlerBase.h
  * Author:  vivien
- * Modified: mardi 14 juillet 2009 17:41:03
- * Purpose: base class to receive connection/disconnection event from other clients
+ * Modified: lundi 27 juillet 2009 14:59:17
+ * Purpose: Declaration of the class DatabaseHandlerBase
  ***********************************************************************/
-class ClientListHandlerBase
+class DatabaseHandlerBase
 {
-
 public:
-	// constructor
-	ClientListHandlerBase(){}
+	//! default construtor
+	DatabaseHandlerBase(){}
 
-	// destructor
-	virtual ~ClientListHandlerBase(){}
 
-	// new client connected
-	virtual void Connected(unsigned int id, const std::string & Name, 
-							const std::string & Status, const std::string & Color) = 0;
+	//! destrutor
+	virtual ~DatabaseHandlerBase(){}
 
-	// client disconnected
-	virtual void Disconnected(unsigned int id) = 0;
+	//! check login
+	//! return -1 if login incorrect - else return the user id
+	virtual long CheckLogin(const std::string & PlayerName, const std::string & Password)=0;
 
-	// client changed status
-	virtual void ChangedStatus(unsigned int id, const std::string & Status, const std::string & Color) = 0;
 
-	// return the name given a client id
-	virtual std::string GetName(unsigned int id) = 0;
+	//! set the user as connected in the database
+	virtual void SetUserConnected(long Id)=0;
 
-	// return the name given a client id
-	virtual unsigned int GetId(const std::string &Name) = 0;
+	//! set the user as disconnected in the database
+	virtual void DisconnectUser(long Id)=0;
 
-	// called when we get new friend in list
-	virtual void NewFriend(const std::string &Name) = 0;
+
+    // add friend function
+    virtual void AddFriend(long myId, const std::string&  name)=0;
+
+    // remove friend function
+	virtual void RemoveFriend(long myId, const std::string&  name)=0;
+
+    // get friends function
+	virtual std::vector<std::string> GetFriends(long myId)=0;
+
 };
 
 #endif
-
