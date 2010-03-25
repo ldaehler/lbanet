@@ -28,6 +28,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 
+class WorldStartingInfo
+{
+public:
+
+};
+
 class MapInfo
 {
 public:
