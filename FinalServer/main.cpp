@@ -27,6 +27,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "server.h"
 #include "LogHandler.h"
 #include "MySQLDatabaseHandler.h"
+#include <signal.h>
+
+
+bool global_continue = true;
+
+
+//used to catch quit signal
+void catch_quit_signal(int sig) 
+{
+	global_continue = false;
+	(void) signal(SIGINT, SIG_DFL);
+}
+
 
 
 class SimpleClientListHandler : public ClientListHandlerBase
@@ -106,8 +119,12 @@ private:
 
 int main(int argc, char *argv[])
 {
-	//TODO - set up configuration file
+	//set up signal catcher
+	(void) signal(SIGINT, catch_quit_signal);
+	(void) signal(SIGTERM, catch_quit_signal);
+	(void) signal(SIGBREAK, catch_quit_signal);
 
+	//TODO - set up configuration file
 	LogHandler::getInstance()->Init("ChatServer.log");
 
 	//set up database
@@ -125,7 +142,7 @@ int main(int argc, char *argv[])
 
 
 	// zoidcom needs to get called regularly to get anything done so we enter the mainloop now
-	while (1)
+	while (global_continue)
 	{
 		// processes incoming packets
 		// all callbacks are generated from within the processInput calls
