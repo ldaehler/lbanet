@@ -98,8 +98,8 @@ eZCom_RequestResult Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitS
 	// retrieve request for login and password
 	char login[20];
 	_request.getString(login, 20);
-	char password[20];
-	_request.getString(password, 20);
+	char password[50];
+	_request.getString(password, 50);
 	char version[20];
 	_request.getString(version, 20);
 
@@ -157,7 +157,7 @@ eZCom_RequestResult Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitS
 				}
 
 				//check database for login and pass correctness
-				long db_id = _dbh->CheckLogin(login, versionS);
+				long db_id = _dbh->CheckLogin(login, password);
 				if(db_id >= 0)
 				{
 					std::stringstream strs;
