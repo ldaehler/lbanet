@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="GameServer"
 	ProjectGUID="{A7412096-86CB-4EBC-A1D4-0DD2582765A9}"
 	RootNamespace="FinalServer"
@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/D _CRT_SECURE_NO_WARNINGS"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\dependencies\zoidcom\include;..\dependencies\Boost\include;..\shared;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;;..\dependencies\tinyxml\include"
+				AdditionalIncludeDirectories="..\dependencies\zoidcom\include;..\dependencies\Boost\include;..\shared;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;;..\dependencies\tinyxml\include;&quot;..\dependencies\MySQL++\include&quot;;..\dependencies\mysql\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;TIXML_USE_STL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -62,9 +62,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="zoidcom_vcd.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib tinyxmld_STL.lib"
+				AdditionalDependencies="zoidcom_vcd.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib tinyxmld_STL.lib mysqlpp_d.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\dependencies\zoidcom\lib\msvc8;..\dependencies\Boost\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;;..\dependencies\tinyxml\lib"
+				AdditionalLibraryDirectories="..\dependencies\zoidcom\lib\msvc8;..\dependencies\Boost\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;;..\dependencies\tinyxml\lib;&quot;..\dependencies\MySQL++\lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -119,7 +119,7 @@
 				AdditionalOptions="/D _CRT_SECURE_NO_WARNINGS"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\dependencies\zoidcom\include;..\dependencies\Boost\include;..\shared;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;;..\dependencies\tinyxml\include"
+				AdditionalIncludeDirectories="..\dependencies\zoidcom\include;..\dependencies\Boost\include;..\shared;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;;..\dependencies\tinyxml\include;&quot;..\dependencies\MySQL++\include&quot;;..\dependencies\mysql\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;TIXML_USE_STL"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -138,9 +138,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="zoidcom_vc.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib tinyxml_STL.lib"
+				AdditionalDependencies="zoidcom_vc.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib tinyxml_STL.lib mysqlpp.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\dependencies\zoidcom\lib\msvc8;..\dependencies\Boost\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;;..\dependencies\tinyxml\lib"
+				AdditionalLibraryDirectories="..\dependencies\zoidcom\lib\msvc8;..\dependencies\Boost\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;;..\dependencies\tinyxml\lib;&quot;..\dependencies\MySQL++\lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -228,6 +228,10 @@
 			</File>
 			<File
 				RelativePath="..\shared\MapInfoXmlReader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\MySQLDatabaseHandler.cpp"
 				>
 			</File>
 			<File
@@ -321,6 +325,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\DatabaseHandlerBase.h"
+				>
+			</File>
+			<File
 				RelativePath="..\shared\DisplayObjectHandlerBase.h"
 				>
 			</File>
@@ -358,6 +366,10 @@
 			</File>
 			<File
 				RelativePath="..\shared\MapInfoXmlReader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\MySQLDatabaseHandler.h"
 				>
 			</File>
 			<File

@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "LogHandler.h"
 #include "PhysXEngine.h"
 #include "MainClientThread.h"
+
 #include <boost/thread/thread.hpp>
 
 #define	_CUR_LBANET_SERVER_VERSION_ "v0.8"
@@ -38,10 +39,10 @@ Server::Server( int _internalport, int _udpport,
 				unsigned int uplimittotal, unsigned int uplimitperconnection,
 				unsigned short downpacketpersecond, unsigned short downbyteperpacket, 
 				boost::shared_ptr<ServerDataHandler> dataH, const std::string & MainServerAddress,
-				const std::string & MyAddress)
+				const std::string & MyAddress, DatabaseHandlerBase *dbh)
 : m_conncount(0), m_uplimittotal(uplimittotal), m_uplimitperconnection(uplimitperconnection), 
 	m_downpacketpersecond(downpacketpersecond), m_downbyteperpacket(downbyteperpacket),
-	_dataH(dataH), m_MainServerAddress(MainServerAddress), m_MyAddress(MyAddress)
+	_dataH(dataH), m_MainServerAddress(MainServerAddress), m_MyAddress(MyAddress), _dbh(dbh)
 {
 	// this will allocate the sockets and create local bindings
 	if ( !ZCom_initSockets( eZCom_EnableUDP, _udpport, _internalport, 0 ) )
@@ -62,6 +63,7 @@ Server::Server( int _internalport, int _udpport,
 	//send advertisement to main server
 	AdvertizeToMainServer();
 
+
 	// register classes
 
 
@@ -71,7 +73,7 @@ Server::Server( int _internalport, int _udpport,
 		m_free_map_slots.push_back(i);
 
 	//populate physic engines
-	//todo - reset to 60
+	//TODO - reset to 60
 	for(int i=0; i<3/*60*/; ++i)
 		m_free_phys_slots.push_back(boost::shared_ptr<PhysXEngine>(new PhysXEngine()));
 	
@@ -85,6 +87,9 @@ Destructor
 Server::~Server()
 {
 	DeadvertizeToMainServer();
+
+	if(_dbh)
+		delete _dbh;
 }
 
 
@@ -131,13 +136,15 @@ eZCom_RequestResult Server::ZCom_cbConnectionRequest( ZCom_ConnID _id, ZCom_BitS
 	{
 		if(versionS == _CUR_LBANET_SERVER_VERSION_)
 		{
-			if(passwordS == "letmein2")
+			long db_id = _dbh->CheckLogin(login, versionS);
+			if(db_id >= 0)
 			{
 				std::stringstream strs;
 				strs<<"Server: Incoming connection with ID: "<<_id<<" accepted";
 				LogHandler::getInstance()->LogToFile(strs.str(), 2);    
 
 				//add to client list
+				_playerDbMap[_id] = db_id;
 
 				//send reply
 				_reply.addInt(_id, 32);
@@ -189,6 +196,21 @@ void Server::ZCom_cbConnectionSpawned( ZCom_ConnID _id )
 	strs<<"Server: Incoming connection with ID: "<<_id<<" has been established.";
 	LogHandler::getInstance()->LogToFile(strs.str(), 2);
 
+	
+	// create player info
+	std::map<unsigned int, long>::iterator itm = _playerDbMap.find(_id);
+	if(itm != _playerDbMap.end())
+	{
+		m_players_infos[_id] = boost::shared_ptr<PlayerInfoHandler> 
+			(new PlayerInfoHandler(_playerDbMap[_id], _dbh, _dataH->GetWorldStartingInfo()));
+
+		// remove from tmp map
+		_playerDbMap.erase(itm);
+	}
+
+
+	// connect player to first map
+	ChangePlayerMap(_id);
 
 
 	// request 20 packets/second and 200 bytes per packet from client (maximum values of course)
@@ -221,6 +243,8 @@ void Server::ZCom_cbConnectionClosed( ZCom_ConnID _id, eZCom_CloseReason _reason
 		//remove it from map
 		m_players_infos.erase(itm);
 	}
+
+
 
 	//decrease client connected count
 	--m_conncount;
@@ -377,11 +401,18 @@ bool Server::ConnectPlayerToMap(unsigned int PlayerId, const std::string & MapNa
 		{	
 			if(!(*itvec)->IsFull())
 			{
-				// if not then add player to the map
+				// add player to the map
 				(*itvec)->PlayerEnter(PlayerId, pinfo);
 
 				//add player to the connected list
 				m_connected_players[PlayerId] = *itvec;
+
+				//tell player to change zoid level
+				ZCom_BitStream *stre = new ZCom_BitStream();
+				//send event 1
+				stre->addInt(1, 4);
+				stre->addInt((*itvec)->GetZoidLevel(), 32);
+				ZCom_sendData(PlayerId, stre);
 
 				return true;
 			}
@@ -393,14 +424,23 @@ bool Server::ConnectPlayerToMap(unsigned int PlayerId, const std::string & MapNa
 	boost::shared_ptr<ServerMapManager> map = TryCreateMap(MapName);
 	if(map)
 	{
-		// if created then add player to the map
-		map->PlayerEnter(PlayerId, pinfo);	
-
 		//add map to the map list
 		m_opened_maps[MapName].push_back(map);
 
+
+		// add player to the map
+		map->PlayerEnter(PlayerId, pinfo);	
+
 		//add player to the connected list
 		m_connected_players[PlayerId] = map;
+
+		//tell player to change zoid level
+		ZCom_BitStream *stre = new ZCom_BitStream();
+		//send event 1
+		stre->addInt(1, 4);
+		stre->addInt(map->GetZoidLevel(), 32);
+		stre->addString(MapName.c_str());
+		ZCom_sendData(PlayerId, stre);
 
 		return true;
 	}
@@ -491,4 +531,29 @@ void Server::DeadvertizeToMainServer()
 	// should only be called once at the end of the program
 	MainClientThread *mtt = new MainClientThread(m_MainServerAddress, _dataH->GetWorlName(), m_MyAddress, false);
 	boost::thread thr( boost::bind( &MainClientThread::Run, mtt ));
+}
+
+
+
+/***********************************************************
+if needed, change the map the player is currently connected
+***********************************************************/
+void Server::ChangePlayerMap(unsigned int PlayerId)
+{
+	std::map<unsigned int, boost::shared_ptr<PlayerInfoHandler> >::iterator it = m_players_infos.find(PlayerId);
+	if(it != m_players_infos.end())
+	{
+		//get map to connect
+		std::string nextmap = it->second->GetNextMap();
+
+		//connect to the map
+		PlayerEnter(PlayerId, nextmap, it->second);
+	}
+	else
+	{
+		// we do not have player info - log the error
+		std::stringstream strs;
+		strs<<"Server: Player info missing for player id: "<<PlayerId;
+		LogHandler::getInstance()->LogToFile(strs.str(), 2);    
+	}
 }
