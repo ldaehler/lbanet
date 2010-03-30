@@ -160,4 +160,9 @@ int main(int argc, char *argv[])
 
 
 	Serv.reset();
+
+	// wait 10sec for server to deadvertize
+	ZoidCom::Sleep(10000);
+
+	ConH.reset();
 }
