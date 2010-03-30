@@ -87,9 +87,6 @@ Destructor
 Server::~Server()
 {
 	DeadvertizeToMainServer();
-
-	if(_dbh)
-		delete _dbh;
 }
 
 
@@ -468,11 +465,15 @@ void Server::ProcessPlayerQueue()
 		}
 		else // else skip for next time
 		{
-			//if player waiting for long then inform the client
-			ZCom_BitStream *stre = new ZCom_BitStream();
-			//send event 0
-			stre->addInt(0, 4);
-			ZCom_sendData(itp->Id, stre);
+			// if player is waiting more than 10 seconds
+			if((ZoidCom::getTime() - itp->Time) > 10000)
+			{
+				//if player waiting for long then inform the client
+				ZCom_BitStream *stre = new ZCom_BitStream();
+				//send event 0
+				stre->addInt(0, 4);
+				ZCom_sendData(itp->Id, stre);
+			}
 
 			++itp;
 		}
