@@ -38,6 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "chatclient.h"
 #include "LogHandler.h"
 #include "InternalWorkpile.h"
+#include "gameclient.h"
 
 #include <iostream>
 
@@ -61,14 +62,19 @@ int main( int argc, char **argv )
 
 
 
+	// set up game client
+	GameClient* Gamecl = new GameClient(30, 200);
 
 	// start main thread engine
-	LbaNetEngine engine(Chatcl);
+	LbaNetEngine engine(Chatcl, Gamecl);
 	engine.run();
 
+	//disconnect from servers
 	Chatcl->CloseConnection();
+	Gamecl->CloseConnection();
 
 	delete Chatcl;
+	delete Gamecl;
 	delete ConH;
 	return 0;
 }

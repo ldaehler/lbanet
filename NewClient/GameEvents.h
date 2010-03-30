@@ -152,87 +152,23 @@ public:
 
 
 /************************************************************************************************************************
-*                                                  class GameServerUnreachableEvent
+*                                                  class GameErrorMessageEvent
 *
-*	used when we receive game server unreachable from main server
+*	used to display an error message to the player during game
 ************************************************************************************************************************
 */
-class GameServerUnreachableEvent : public GameEvent
+class GameErrorMessageEvent : public GameEvent
 {
 public:
 	//! constructor
-	GameServerUnreachableEvent(const std::string &ServerName)
-		: _ServerName(ServerName)
+	GameErrorMessageEvent(const std::string &Message)
+		: _Message(Message)
 	{
 		_type = 6;
 	}
 
-	std::string _ServerName;
+	std::string _Message;
 };
-
-
-///*
-//************************************************************************************************************************
-//*                                                  class ScreenResEvent
-//*
-//*	used when the user is changing screen resolution
-//************************************************************************************************************************
-//*/
-//class ScreenResEvent : public GameEvent
-//{
-//public:
-//	//! constructor
-//	ScreenResEvent(int screenX, int screenY, bool fullscreen)
-//		: _screenX(screenX), _screenY(screenY), _fullscreen(fullscreen)
-//	{
-//		_type = 5;
-//	}
-//
-//	int _screenX;
-//	int _screenY;
-//	bool _fullscreen;
-//};
-//
-///*
-//************************************************************************************************************************
-//*                                                  class DisplayFPSEvent
-//*
-//*	used when the user is changing screen resolution
-//************************************************************************************************************************
-//*/
-//class DisplayFPSEvent : public GameEvent
-//{
-//public:
-//	//! constructor
-//	DisplayFPSEvent(bool display)
-//		: _display(display)
-//	{
-//		_type = 6;
-//	}
-//
-//	bool _display;
-//};
-//
-//
-///*
-//************************************************************************************************************************
-//*                                                  class ChangeMainBodyEvent
-//*
-//*	used when the user is changing screen resolution
-//************************************************************************************************************************
-//*/
-//class ChangeMainBodyEvent : public GameEvent
-//{
-//public:
-//	//! constructor
-//	ChangeMainBodyEvent(bool plus)
-//		: _plus(plus)
-//	{
-//		_type = 7;
-//	}
-//
-//	bool _plus;
-//};
 
 /*
 ************************************************************************************************************************
