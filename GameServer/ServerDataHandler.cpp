@@ -49,7 +49,7 @@ ServerDataHandler::~ServerDataHandler()
 /************************************************************************/
 std::string ServerDataHandler::GetWorlName()
 {
-	return "";
+	return "CitadelPvp";
 }
 
 
