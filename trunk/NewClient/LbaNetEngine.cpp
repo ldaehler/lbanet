@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "MusicHandler.h"
 #include "ConfigurationManager.h"
 #include "MessageBox.h"
+#include "gameclient.h"
 
 #define	_CUR_LBANET_VERSION_ "v0.8"
 #define	_CUR_LBANET_SERVER_VERSION_ "v0.8"
@@ -42,8 +43,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /***********************************************************
 	Constructor
 ***********************************************************/
-LbaNetEngine::LbaNetEngine(ChatClient* Chatcl)
-: m_Chatcl(Chatcl),
+LbaNetEngine::LbaNetEngine(ChatClient* Chatcl, GameClient* Gamecl)
+: m_Chatcl(Chatcl), m_Gamecl(Gamecl), 
 	m_currentstate(EGaming), m_oldstate(ELogin)
 {
 	Initialize();
@@ -122,16 +123,31 @@ void LbaNetEngine::run(void)
 			//get physic results
 			m_physic_engine->GetPhysicsResults();
 
+			//process chat client part
+			{
+				// processes incoming packets
+				// all callbacks are generated from within the processInput calls
+				m_Chatcl->ZCom_processInput( eZCom_NoBlock );
 
-			// processes incoming packets
-			// all callbacks are generated from within the processInput calls
-			m_Chatcl->ZCom_processInput( eZCom_NoBlock );
+				//process internal stuff
+				m_Chatcl->Process();
 
-			//process internal stuff
-			m_Chatcl->Process();
+				// outstanding data will be packed up and sent from here
+				m_Chatcl->ZCom_processOutput();
+			}
 
-			// outstanding data will be packed up and sent from here
-			m_Chatcl->ZCom_processOutput();
+			//process game client part
+			{
+				// processes incoming packets
+				// all callbacks are generated from within the processInput calls
+				m_Gamecl->ZCom_processInput( eZCom_NoBlock );
+
+				//process internal stuff
+				m_Gamecl->Process();
+
+				// outstanding data will be packed up and sent from here
+				m_Gamecl->ZCom_processOutput();
+			}
 
 			// process stuff between frame
 			Process();
@@ -250,8 +266,8 @@ void LbaNetEngine::HandleGameEvents()
 
 			case 6: // GameServerUnreachableEvent
 				{
-					GameServerUnreachableEvent * evdg = static_cast<GameServerUnreachableEvent *> (*it);
-					GameServerUnreachable(evdg->_ServerName);
+					GameErrorMessageEvent * evdg = static_cast<GameErrorMessageEvent *> (*it);
+					GameErrorMessage(evdg->_Message);
 				}
 			break;
 
@@ -535,6 +551,8 @@ try to login to the server
 ***********************************************************/
 void LbaNetEngine::TryLogin(const std::string &Name, const std::string &Password)
 {
+	m_userlogin = Name;
+	m_userpass = Password;
 	std::string ip;
 	ConfigurationManager::GetInstance()->GetString("Network.IpAddress", ip);
 	m_Chatcl->ConnectToServer(ip, Name, Password, _CUR_LBANET_SERVER_VERSION_, this);
@@ -550,6 +568,9 @@ void LbaNetEngine::ConnectionCallback(int SuccessFlag, const std::string & reaso
 	if(SuccessFlag < 1)
 	{
 		m_gui_handler.InformNotLoggedIn(SuccessFlag, reason);
+		SwitchGuiToLogin();
+		if(m_Gamecl)
+			m_Gamecl->CloseConnection();
 		return;
 	}
 
@@ -670,13 +691,14 @@ called when need to connect to game server
 ***********************************************************/
 void LbaNetEngine::ConnectToGameServer(const std::string &ServerName, const std::string &ServerAddress)
 {
-
+	if(m_Gamecl)
+		m_Gamecl->ConnectToServer(ServerName, ServerAddress, m_userlogin, m_userpass, _CUR_LBANET_SERVER_VERSION_);
 }
 
 /***********************************************************
 called when game server unreachable
 ***********************************************************/
-void LbaNetEngine::GameServerUnreachable(const std::string &ServerName)
+void LbaNetEngine::GameErrorMessage(const std::string &Message)
 {
-	CGMessageBox::getInstance()->Show("Game Server Unreachable", "Can not connect to the game server for world " + ServerName);
+	CGMessageBox::getInstance()->Show("Error", Message);
 }

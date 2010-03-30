@@ -251,6 +251,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\gameclient.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\GameGUI.cpp"
 				>
 			</File>
@@ -486,6 +490,10 @@
 			</File>
 			<File
 				RelativePath=".\EventHandler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\gameclient.h"
 				>
 			</File>
 			<File

@@ -1,0 +1,235 @@
+/*
+------------------------[ Lbanet Source ]-------------------------
+Copyright (C) 2009
+Author: Vivien Delage [Rincevent_123]
+Email : vdelage@gmail.com
+
+-------------------------------[ GNU License ]-------------------------------
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-----------------------------------------------------------------------------
+*/
+
+#include "gameclient.h"
+#include "LogHandler.h"
+#include "md5.h"
+#include "InternalWorkpile.h"
+#include "GameEvents.h"
+
+/***********************************************************************
+ * Constructor
+ ***********************************************************************/
+GameClient::GameClient(unsigned short downpacketpersecond, unsigned short downbyteperpacket)
+: m_id(ZCom_Invalid_ID), m_zoi_id(ZCom_Invalid_ID), m_connected(false),  
+	m_downpacketpersecond(downpacketpersecond), m_downbyteperpacket(downbyteperpacket),
+	m_disconnecting(false)
+{
+	// this will allocate the sockets and create local bindings
+    if ( !ZCom_initSockets( eZCom_EnableUDP, 0, 0, 0 ) )
+    {
+		LogHandler::getInstance()->LogToFile("Zoid: Failed to initialize sockets!", 2);
+    }
+
+    // string shown in log output
+    ZCom_setDebugName("ZCOM_GAME_CLI");
+
+
+	//register classes
+}
+
+
+/***********************************************************************
+ * Destructor
+ ***********************************************************************/
+GameClient::~GameClient()
+{
+
+}
+
+
+
+/***********************************************************************
+ * connect to a server given an address + port
+ ***********************************************************************/
+void GameClient::ConnectToServer(const std::string & servername, const std::string & address, 
+								 const std::string & login, 
+								 const std::string & password, const std::string & excpectedversion)
+{
+	if(m_connected)
+	{
+		if(m_servername == servername)
+		{
+			LogHandler::getInstance()->LogToFile("Zoid: Already connected to chat server - skipping connection", 2);
+			return;
+		}
+		else
+			CloseConnection();
+	}
+
+	m_servername = servername;
+
+	std::string md5pass = MD5(password).hexdigest();
+
+
+	// create target address 
+	ZCom_Address dst_udp;
+	dst_udp.setAddress( eZCom_AddressUDP, 0, address.c_str() );
+
+	//prepare login info
+    ZCom_BitStream *req = new ZCom_BitStream();
+	req->addString( login.c_str() );
+	req->addString( md5pass.c_str() );
+	req->addString( excpectedversion.c_str() );
+
+	// connect to server
+	LogHandler::getInstance()->LogToFile("Game client connecting to "+address, 2);
+
+	//m_id = ZCom_Connect( dst_udp, req);
+	if (!ZCom_Connect( dst_udp, req))
+		LogHandler::getInstance()->LogToFile("Game client: unable to start connecting!", 2);
+}
+
+
+/***********************************************************************
+ * called when initiated connection process yields a result
+ ***********************************************************************/
+void GameClient::ZCom_cbConnectResult( ZCom_ConnID _id, eZCom_ConnectResult _result, ZCom_BitStream &_reply )
+{
+	m_zoi_id = _id;
+	m_id = _reply.getInt(32);
+	std::string reason(_reply.getStringStatic());
+
+	std::stringstream strs;
+	strs<<"Game Client: The connection process for: "<<m_zoi_id<<" returned with resultcode "<<_result<<", the reply was "<<reason;
+	LogHandler::getInstance()->LogToFile(strs.str(), 2);   
+
+	if ( _result != eZCom_ConnAccepted )
+	{
+		m_connected = false;
+		if(reason == "")
+			reason = "Server not reachable";
+
+		InternalWorkpile::getInstance()->AddEvent(new GameErrorMessageEvent("Problem connecting to game server " + m_servername + " - " + reason));
+	}
+	else
+	{
+		m_connected = true;
+		ZCom_requestDownstreamLimit(m_zoi_id, m_downpacketpersecond, m_downbyteperpacket);
+
+		#ifndef _ZOID_USED_NEW_VERSION_
+		ZCom_requestZoidMode( m_zoi_id, 1 );
+		#else
+		ZCom_changeObjectChannelSubscription( m_zoi_id, 1, eZCom_Subscribe );
+		#endif
+	}
+}
+
+
+/***********************************************************************
+ * connection has closed
+ ***********************************************************************/
+void GameClient::ZCom_cbConnectionClosed( ZCom_ConnID _id, eZCom_CloseReason _reason, 
+									 ZCom_BitStream &_reasondata )
+{
+	std::stringstream strs;
+	strs<<"Game Client: Connection with ID: "<<_id<<" has been closed, reason is: "<<_reasondata.getStringStatic();
+	LogHandler::getInstance()->LogToFile(strs.str(), 2);   
+
+	m_connected = false;
+
+	//disconnect and get to login screen
+	if(!m_disconnecting)
+		InternalWorkpile::getInstance()->AddEvent(new DisplayGUIEvent(0));
+}
+
+
+/***********************************************************************
+ * zoidlevel transition finished
+ ***********************************************************************/
+#ifndef _ZOID_USED_NEW_VERSION_
+void GameClient::ZCom_cbZoidResult(ZCom_ConnID _id, eZCom_ZoidResult _result, zU8 _new_channel, ZCom_BitStream &_reason)
+#else
+void GameClient::ZCom_cbChannelSubscriptionChangeResult( ZCom_ConnID _id, eZCom_SubscriptionResult _result, 
+													zU32 _new_channel, ZCom_BitStream &_reason )
+#endif
+{
+	// disconnect on failure
+	if (_result == eZCom_ChannelSubscriptionDenied || _result == eZCom_ChannelSubscriptionFailed_Node)
+	{
+		std::stringstream strs;
+		strs<<"Game Client: Connection with ID: "<<_id<<" channel subscription failed: "
+				<<_new_channel<<" - disconnecting";
+		LogHandler::getInstance()->LogToFile(strs.str(), 2);   
+
+		ZCom_Disconnect(_id, NULL);
+	}
+	else
+	{
+		std::stringstream strs;
+		strs<<"Game Client: Connection with ID: "<<_id<<" channel subscription successfull: "<<_new_channel;
+		LogHandler::getInstance()->LogToFile(strs.str(), 2);   
+	}
+}
+
+
+/***********************************************************************
+ * server wants to tell us about new node
+ ***********************************************************************/
+void GameClient::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _requested_class, 
+											ZCom_BitStream *_announcedata, eZCom_NodeRole _role, 
+											ZCom_NodeID _net_id)
+{
+
+	
+}
+
+
+
+/***********************************************************
+process server internal stuff
+***********************************************************/
+void GameClient::Process()
+{
+
+}
+
+
+/***********************************************************
+close connection
+***********************************************************/
+void GameClient::CloseConnection()
+{
+	if(!m_connected)
+		return;
+
+	m_disconnecting = true;
+
+	ZCom_Disconnect( m_zoi_id, NULL );
+
+	// process until everything has been sent
+	while(m_connected)
+	{
+		ZCom_processInput( eZCom_NoBlock );
+		ZCom_processOutput();
+		ZoidCom::Sleep(10);
+	}
+
+
+	//clean up everything
+
+
+	m_disconnecting = false;
+}
+

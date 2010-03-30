@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class PhysXEngine;
 class EventHandler;
 class ChatClient;
+class GameClient;
 
 /***********************************************************************
  * Module:  LbaNetEngine.h
@@ -46,7 +47,7 @@ class LbaNetEngine
 {
 public:
 	//!constructor
-	LbaNetEngine(ChatClient* Chatcl);
+	LbaNetEngine(ChatClient* Chatcl, GameClient* Gamecl);
 
 	//!destructor
    ~LbaNetEngine();
@@ -107,7 +108,7 @@ protected:
 	void ConnectToGameServer(const std::string &ServerName, const std::string &ServerAddress);
 
 	// called when game server unreachable
-	void GameServerUnreachable(const std::string &ServerName);
+	void GameErrorMessage(const std::string &Message);
 
 
 private:
@@ -116,7 +117,10 @@ private:
 	boost::shared_ptr<EventHandler>	m_eventHandler;		// handle input events
 	boost::shared_ptr<PhysXEngine>	m_physic_engine;	//physic engine
 	ChatClient*						m_Chatcl;			//chat client
+	GameClient*						m_Gamecl;			//game client
 
+	std::string						m_userlogin;
+	std::string						m_userpass;
 
 	// game states
 	enum EngineState {ELogin=0, EChoosingWorld, EGaming, EMenu, EOption };

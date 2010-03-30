@@ -415,7 +415,7 @@ void InternalWorkpile::ReceivedAddress(const std::string & Server, const std::st
 	if(Address != "")
 		AddEvent(new GameServerAddressEvent(Server, Address));
 	else
-		AddEvent(new GameServerUnreachableEvent(Server));
+		AddEvent(new GameErrorMessageEvent("Problem connecting to game server " + Server + " - server is unreachable."));
 }
 
 
