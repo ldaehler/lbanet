@@ -52,11 +52,12 @@ public:
 	MapInfo GetMapInfo(const std::string & Mapname);
 
 	// get world starting information
-	WorldStartingInfo GetWorldStartingInfo();
+	WorldInfo GetWorldInfo();
 
 
 private:
 	std::string _RootFileName;
+	WorldInfo	_worldInfo;
 };
 
 #endif

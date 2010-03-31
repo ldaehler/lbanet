@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "LogHandler.h"
 #include "PhysXEngine.h"
 #include "MainClientThread.h"
+#include "MapInfoObject.h"
 
 #include <boost/thread/thread.hpp>
 
@@ -65,6 +66,7 @@ Server::Server( int _internalport, int _udpport,
 
 
 	// register classes
+	MapInfoObject::registerClass(this);
 
 
 	// populate free map slot list
@@ -199,7 +201,7 @@ void Server::ZCom_cbConnectionSpawned( ZCom_ConnID _id )
 	if(itm != _playerDbMap.end())
 	{
 		m_players_infos[_id] = boost::shared_ptr<PlayerInfoHandler> 
-			(new PlayerInfoHandler(_playerDbMap[_id], _dbh, _dataH->GetWorldStartingInfo()));
+			(new PlayerInfoHandler(_playerDbMap[_id], _dbh, _dataH.get()));
 
 		// remove from tmp map
 		_playerDbMap.erase(itm);

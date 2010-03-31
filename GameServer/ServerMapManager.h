@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "MapInfo.h"
 #include "PlayerInfoHandler.h"
+#include "MapInfoObject.h"
 
 class ZCom_Control;
 class PhysXEngine;
@@ -90,6 +91,8 @@ private:
 
 	bool			_needdelete;
 
+	//used to give info about map to clients
+	MapInfoObject	_mapobject;
 };
 
 #endif

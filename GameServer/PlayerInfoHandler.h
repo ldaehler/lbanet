@@ -29,6 +29,7 @@ class DatabaseHandlerBase;
 class WorldStartingInfo;
 
 #include <string>
+#include "ServerDataHandler.h"
 
 /***********************************************************************
  * Module:  PlayerInfoHandler.h
@@ -41,7 +42,7 @@ class PlayerInfoHandler
 
 public:
 	// constructor
-	PlayerInfoHandler(long PlayerDbId, DatabaseHandlerBase *DbH, const WorldStartingInfo & WorldSI);
+	PlayerInfoHandler(long PlayerDbId, DatabaseHandlerBase *DbH, ServerDataHandler* DataH);
 
 
 	// destructor
@@ -60,8 +61,10 @@ public:
 
 
 private:
-	long				_PlayerDbId;
+	long					_PlayerDbId;
 	DatabaseHandlerBase *	_DbH;
+	ServerDataHandler*		_DataH;
+	std::string				_nextMap;
 };
 
 #endif

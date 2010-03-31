@@ -31,10 +31,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /************************************************************************/
 /* constructor                                        
 /************************************************************************/
-PlayerInfoHandler::PlayerInfoHandler(long PlayerDbId, DatabaseHandlerBase *DbH, const WorldStartingInfo & WorldSI)
-: _PlayerDbId(PlayerDbId), _DbH(DbH)
+PlayerInfoHandler::PlayerInfoHandler(long PlayerDbId, DatabaseHandlerBase *DbH, ServerDataHandler* DataH)
+: _PlayerDbId(PlayerDbId), _DbH(DbH), _DataH(DataH)
 {
-
+	_nextMap = _DataH->GetWorldInfo().StartInfo.FirstMap;
 }
 
 
@@ -72,5 +72,5 @@ void PlayerInfoHandler::LoadFromDatabase()
 /************************************************************************/
 std::string PlayerInfoHandler::GetNextMap()
 {
-	return "";
+	return _nextMap;
 }
