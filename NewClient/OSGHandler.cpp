@@ -27,10 +27,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ConfigurationManager.h"
 #include "EventHandler.h"
 #include "GuiHandler.h"
+#include "OsgObjectHandler.h"
+#include "ObjectsDescription.h"
 
 #include <osg/PositionAttitudeTransform>
 #include <osg/ClipNode>
-
+#include <osg/ShapeDrawable>
 
 #include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>
@@ -905,4 +907,83 @@ void OsgHandler::GetScreenAttributes(int &resX, int &resY, bool &fullscreen)
 	fullscreen = _isFullscreen;
 	resX = _resX;
 	resY = _resY;
+}
+
+
+
+
+
+/***********************************************************
+create simple display object
+***********************************************************/
+boost::shared_ptr<DisplayObjectHandlerBase> OsgHandler::CreateSimpleObject(const std::string & filename,
+														boost::shared_ptr<DisplayTransformation> Tr)
+{
+	osg::ref_ptr<osg::Node> resnode = LoadOSGFile(filename);
+
+	if(Tr)
+	{
+		osg::ref_ptr<osg::PositionAttitudeTransform> transform = new osg::PositionAttitudeTransform();
+		transform->setPosition(osg::Vec3d(Tr->translationX, Tr->translationY, Tr->translationZ));
+		transform->setAttitude(osg::Quat(Tr->rotation.X, Tr->rotation.Y, Tr->rotation.Z, Tr->rotation.W));
+		transform->setScale(osg::Vec3d(Tr->scaleX, Tr->scaleY, Tr->scaleZ));
+
+		transform->addChild(resnode);
+		resnode = transform;
+	}
+	
+	osg::ref_ptr<osg::MatrixTransform> mat = AddActorNode(resnode);
+	return boost::shared_ptr<DisplayObjectHandlerBase>(new OsgObjectHandler(mat));
+}
+
+
+
+/***********************************************************
+create capsule object
+***********************************************************/
+boost::shared_ptr<DisplayObjectHandlerBase> OsgHandler::CreateCapsuleObject(float radius, float height, 
+														float colorR, float colorG, float colorB, float colorA,
+														boost::shared_ptr<DisplayTransformation> Tr)
+{
+	osg::ref_ptr<osg::Group> resnode = new osg::Group();
+
+	// create capsule
+	osg::ref_ptr<osg::Geode> capsuleGeode(new osg::Geode());
+	osg::ref_ptr<osg::Capsule> caps(new osg::Capsule(osg::Vec3(0,0,0),radius,height));
+	osg::ref_ptr<osg::ShapeDrawable> capsdraw = new osg::ShapeDrawable(caps);
+	capsdraw->setColor(osg::Vec4(colorR, colorG, colorB, colorA));
+	capsuleGeode->addDrawable(capsdraw);
+	resnode->addChild(capsuleGeode);
+
+
+	// create orientation line
+	osg::Geode* lineGeode = new osg::Geode();
+	osg::Geometry* lineGeometry = new osg::Geometry();
+	lineGeode->addDrawable(lineGeometry); 
+
+	osg::Vec3Array* lineVertices = new osg::Vec3Array();
+	lineVertices->push_back( osg::Vec3( 0, 0, 0) );
+	lineVertices->push_back( osg::Vec3(0, 5, 0) );
+	lineGeometry->setVertexArray( lineVertices ); 
+
+	osg::DrawElementsUInt* dunit = new osg::DrawElementsUInt(osg::PrimitiveSet::LINES, 0);
+	dunit->push_back(0);
+	dunit->push_back(1);
+	lineGeometry->addPrimitiveSet(dunit); 
+	resnode->addChild(lineGeode);
+
+
+	if(Tr)
+	{
+		osg::ref_ptr<osg::PositionAttitudeTransform> transform = new osg::PositionAttitudeTransform();
+		transform->setPosition(osg::Vec3d(Tr->translationX, Tr->translationY, Tr->translationZ));
+		transform->setAttitude(osg::Quat(Tr->rotation.X, Tr->rotation.Y, Tr->rotation.Z, Tr->rotation.W));
+		transform->setScale(osg::Vec3d(Tr->scaleX, Tr->scaleY, Tr->scaleZ));
+
+		transform->addChild(resnode);
+		resnode = transform;
+	}
+	
+	osg::ref_ptr<osg::MatrixTransform> mat = AddActorNode(resnode);
+	return boost::shared_ptr<DisplayObjectHandlerBase>(new OsgObjectHandler(mat));
 }

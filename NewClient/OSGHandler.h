@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <boost/shared_ptr.hpp>
 
 #include "CommonTypes.h"
+#include "DisplayHandlerBase.h"
 
 namespace osg
 {
@@ -66,7 +67,7 @@ class GuiHandler;
 * @brief Class takign care of the OSG 3D engine
 *
 */
-class OsgHandler
+class OsgHandler : public DisplayHandlerBase
 {
 public:
 
@@ -143,6 +144,17 @@ public:
 	bool IsPerspectiveView()
 	{return _isPerspective;}
 
+
+
+	//! create simple display object
+	virtual boost::shared_ptr<DisplayObjectHandlerBase> CreateSimpleObject(const std::string & filename,
+															boost::shared_ptr<DisplayTransformation> Tr);
+
+
+	//! create capsule object
+	virtual boost::shared_ptr<DisplayObjectHandlerBase> CreateCapsuleObject(float radius, float height, 
+															float colorR, float colorG, float colorB, float colorA,
+															boost::shared_ptr<DisplayTransformation> Tr);
 
 protected:
 	//! constructor

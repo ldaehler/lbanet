@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="LBANet"
 	ProjectGUID="{B46236F6-9F3B-4B3A-BD27-13E94D8833F2}"
 	RootNamespace="perspectivemapviewer"
@@ -478,6 +478,10 @@
 			</File>
 			<File
 				RelativePath=".\DialogBox.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\DisplayHandlerBase.h"
 				>
 			</File>
 			<File
