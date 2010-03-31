@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "ServerDataHandler.h"
+#include "MapInfoXmlReader.h"
 
 
 /************************************************************************/
@@ -30,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /************************************************************************/
 ServerDataHandler::ServerDataHandler(const std::string & RootFileName)
 {
-
+	MapInfoXmlReader::LoadWorld(RootFileName, _worldInfo);
 }
 
 
@@ -49,7 +50,7 @@ ServerDataHandler::~ServerDataHandler()
 /************************************************************************/
 std::string ServerDataHandler::GetWorlName()
 {
-	return "CitadelPvp";
+	return _worldInfo.Name;
 }
 
 
@@ -58,7 +59,7 @@ std::string ServerDataHandler::GetWorlName()
 /************************************************************************/
 MapInfo ServerDataHandler::GetMapInfo(const std::string & Mapname)
 {
-	return MapInfo();
+	return _worldInfo.Maps[Mapname];
 }
 
 
@@ -66,7 +67,7 @@ MapInfo ServerDataHandler::GetMapInfo(const std::string & Mapname)
 /************************************************************************/
 /* get world starting information                                   
 /************************************************************************/
-WorldStartingInfo ServerDataHandler::GetWorldStartingInfo()
+WorldInfo ServerDataHandler::GetWorldInfo()
 {
-	return WorldStartingInfo();
+	return _worldInfo;
 }

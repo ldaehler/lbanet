@@ -34,8 +34,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /************************************************************************/
 ServerMapManager::ServerMapManager(ZCom_Control *_control, unsigned int ZoidLevel, const MapInfo & MapInfo,
 										boost::shared_ptr<PhysXEngine> pengine)
-: _controler(_control), _zoidlevel(ZoidLevel), _needdelete(false), _pengine(pengine)
+: _controler(_control), _zoidlevel(ZoidLevel), _needdelete(false), _pengine(pengine), 
+	_mapobject(_control, MapInfo)
 {
+
 }
 
 

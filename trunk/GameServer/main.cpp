@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 		new MySQLDatabaseHandler("lbanet", "localhost", "lbanetuser", "lapichonmelba"));
 
 	// set up data handler
-	boost::shared_ptr<ServerDataHandler> dataH = boost::shared_ptr<ServerDataHandler>(new ServerDataHandler(""));
+	boost::shared_ptr<ServerDataHandler> dataH = boost::shared_ptr<ServerDataHandler>(new ServerDataHandler("Data/CitadelPvp/World.xml"));
 	std::string worldN = dataH->GetWorlName();
 
 	LogHandler::getInstance()->Init(worldN+"-GameServer.log");
