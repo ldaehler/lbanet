@@ -30,13 +30,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "PhysicalObjectHandlerBase.h"
 #include "DisplayObjectHandlerBase.h"
 #include "CommonTypes.h"
+#include "SerializerBase.h"
+#include "DisplayHandlerBase.h"
 
 class PhysXEngine;
 class DynamicObject;
 
 
 /***********************************************************************
-This class describe the tranformation applied by the display object 
+This class describe the tranformation applied by the display object
 before being drwan on the screen
  ***********************************************************************/
 class DisplayTransformation
@@ -45,8 +47,14 @@ public:
 	//! constructor
 	DisplayTransformation();
 
+	//! constructor from stream
+	DisplayTransformation(SerializerBase * stream);
+
 	//! destructor
 	~DisplayTransformation();
+
+	//! serialize to network object
+	void Serialize(SerializerBase * stream) const;
 
 
 public:
@@ -78,8 +86,14 @@ public:
 	virtual ~DisplayObjectDescriptionBase(){}
 
 	//! build description into dynamic object
-	virtual boost::shared_ptr<DisplayObjectHandlerBase> BuildSelf(boost::shared_ptr<DisplayTransformation> Tr) const = 0;
+	virtual boost::shared_ptr<DisplayObjectHandlerBase> BuildSelf(boost::shared_ptr<DisplayTransformation> Tr,
+																	DisplayHandlerBase * disH) const = 0;
 
+	//! serialize to network object
+	virtual void Serialize(SerializerBase * stream) const = 0;
+
+	//! get object type
+	virtual short GetType() = 0;
 };
 
 
@@ -98,15 +112,25 @@ public:
 		: _filename(filename)
 	{}
 
+	//! constructor from stream
+	OsgSimpleObjectDescription(SerializerBase * stream);
+
 	//! destructor
 	virtual ~OsgSimpleObjectDescription(){}
 
 	//! build description into dynamic object
-	virtual boost::shared_ptr<DisplayObjectHandlerBase> BuildSelf(boost::shared_ptr<DisplayTransformation> Tr) const;
+	virtual boost::shared_ptr<DisplayObjectHandlerBase> BuildSelf(boost::shared_ptr<DisplayTransformation> Tr, 
+																			DisplayHandlerBase * disH) const;
 
+	//! serialize to network object
+	virtual void Serialize(SerializerBase * stream) const;
+
+	//! get object type
+	virtual short GetType()
+	{return 1;}
 
 private:
-	const std::string _filename;
+	std::string _filename;
 };
 
 
@@ -121,19 +145,29 @@ class OsgOrientedCapsuleDescription : public DisplayObjectDescriptionBase
 {
 public:
 	//! constructor
-	OsgOrientedCapsuleDescription(float height, float radius, 
+	OsgOrientedCapsuleDescription(float height, float radius,
 									float colorR, float colorG, float colorB, float colorA)
-		: _height(height), _radius(radius), _colorR(colorR), 
+		: _height(height), _radius(radius), _colorR(colorR),
 					_colorG(colorG), _colorB(colorB), _colorA(colorA)
 	{}
+
+	//! constructor from stream
+	OsgOrientedCapsuleDescription(SerializerBase * stream);
 
 	//! destructor
 	virtual ~OsgOrientedCapsuleDescription(){}
 
 
 	//! build description into dynamic object
-	virtual boost::shared_ptr<DisplayObjectHandlerBase> BuildSelf(boost::shared_ptr<DisplayTransformation> Tr) const;
+	virtual boost::shared_ptr<DisplayObjectHandlerBase> BuildSelf(boost::shared_ptr<DisplayTransformation> Tr, 
+																				DisplayHandlerBase * disH) const;
 
+	//! serialize to network object
+	virtual void Serialize(SerializerBase * stream) const;
+
+	//! get object type
+	virtual short GetType()
+	{return 2;}
 
 private:
 	float _height;
@@ -156,15 +190,21 @@ class DisplayInfo
 {
 public:
 	//! constructor
-	DisplayInfo(boost::shared_ptr<DisplayTransformation> Tr, 
+	DisplayInfo(boost::shared_ptr<DisplayTransformation> Tr,
 					boost::shared_ptr<DisplayObjectDescriptionBase> Ds);
+
+	//! constructor from stream
+	DisplayInfo(SerializerBase * stream);
 
 	//! destructor
 	~DisplayInfo();
 
 
 	//! build description into dynamic object
-	boost::shared_ptr<DisplayObjectHandlerBase> BuildSelf();
+	boost::shared_ptr<DisplayObjectHandlerBase> BuildSelf(DisplayHandlerBase * disH) const;
+
+	//! serialize to network object
+	void Serialize(SerializerBase * stream) const;
 
 
 public:
@@ -177,7 +217,7 @@ public:
 
 /***********************************************************************
 This base class describe the physicall information of an object
-E.g. position in world - shape of the phisycall object
+E.g. position in world - shape of the physical object
  ***********************************************************************/
 class PhysicalDescriptionBase
 {
@@ -185,13 +225,22 @@ public:
 	//! constructor
 	PhysicalDescriptionBase(float posX, float posY, float posZ, const LbaQuaternion &rot);
 
+	//! constructor from stream
+	PhysicalDescriptionBase(SerializerBase * stream);
+
+
 	//! destructor
 	virtual ~PhysicalDescriptionBase();
 
 	//! build description into a reald physic object
 	virtual boost::shared_ptr<PhysicalObjectHandlerBase> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine) const = 0;
 
+	//! serialize to network object
+	virtual void Serialize(SerializerBase * stream) const;
 
+
+	//! get object type
+	virtual short GetType() = 0;
 
 public:
 	//position of the object in the world
@@ -205,7 +254,7 @@ public:
 
 
 /***********************************************************************
-This base class describe physicall object with no shape
+This base class describe physical object with no shape
  ***********************************************************************/
 class PhysicalDescriptionNoShape : public PhysicalDescriptionBase
 {
@@ -213,18 +262,26 @@ public:
 	//! constructor
 	PhysicalDescriptionNoShape(float posX, float posY, float posZ, const LbaQuaternion &rot);
 
+	//! constructor from stream
+	PhysicalDescriptionNoShape(SerializerBase * stream);
+
+
 	//! destructor
 	virtual ~PhysicalDescriptionNoShape();
 
 	//! build description into a reald physic object
 	virtual boost::shared_ptr<PhysicalObjectHandlerBase> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine) const;
 
+	//! get object type
+	virtual short GetType()
+	{return 1;}
+
 	//nothing more to do here, the only thing we need is a position
 };
 
 
 /***********************************************************************
-This base class describe physicall object with shape
+This base class describe physical object with shape
  ***********************************************************************/
 class PhysicalDescriptionWithShape : public PhysicalDescriptionBase
 {
@@ -234,9 +291,15 @@ public:
 									int Otype, float Odensity,
 									const LbaQuaternion &rot);
 
+	//! constructor from stream
+	PhysicalDescriptionWithShape(SerializerBase * stream);
+
+
 	//! destructor
 	virtual ~PhysicalDescriptionWithShape();
 
+	//! serialize to network object
+	virtual void Serialize(SerializerBase * stream) const;
 
 public:
 
@@ -267,12 +330,22 @@ public:
 									const LbaQuaternion &rot,
 									float sX, float sY, float sZ);
 
+	//! constructor from stream
+	PhysicalDescriptionBox(SerializerBase * stream);
+
 	//! destructor
 	virtual ~PhysicalDescriptionBox();
 
 
 	//! build description into a reald physic object
 	virtual boost::shared_ptr<PhysicalObjectHandlerBase> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine) const;
+
+	//! serialize to network object
+	virtual void Serialize(SerializerBase * stream) const;
+
+	//! get object type
+	virtual short GetType()
+	{return 2;}
 
 public:
 	// size of the box from the box center
@@ -295,12 +368,22 @@ public:
 									const LbaQuaternion &rot,
 									float rad, float ht);
 
+	//! constructor from stream
+	PhysicalDescriptionCapsule(SerializerBase * stream);
+
 	//! destructor
 	virtual ~PhysicalDescriptionCapsule();
 
 
 	//! build description into a reald physic object
 	virtual boost::shared_ptr<PhysicalObjectHandlerBase> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine) const;
+
+	//! serialize to network object
+	virtual void Serialize(SerializerBase * stream) const;
+
+	//! get object type
+	virtual short GetType()
+	{return 3;}
 
 public:
 	// radius of the capsule from capsule center
@@ -324,12 +407,22 @@ public:
 									const LbaQuaternion &rot,
 									float rad);
 
+	//! constructor from stream
+	PhysicalDescriptionSphere(SerializerBase * stream);
+
 	//! destructor
 	virtual ~PhysicalDescriptionSphere();
 
 
 	//! build description into a reald physic object
 	virtual boost::shared_ptr<PhysicalObjectHandlerBase> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine) const;
+
+	//! serialize to network object
+	virtual void Serialize(SerializerBase * stream) const;
+
+	//! get object type
+	virtual short GetType()
+	{return 4;}
 
 public:
 	// radius of the sphere from capsule sphere
@@ -349,12 +442,22 @@ public:
 	PhysicalDescriptionTriangleMesh(float posX, float posY, float posZ,
 										const std::string &FileName);
 
+	//! constructor from stream
+	PhysicalDescriptionTriangleMesh(SerializerBase * stream);
+
 	//! destructor
 	virtual ~PhysicalDescriptionTriangleMesh();
 
 
 	//! build description into a reald physic object
 	virtual boost::shared_ptr<PhysicalObjectHandlerBase> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine) const;
+
+	//! serialize to network object
+	virtual void Serialize(SerializerBase * stream) const;
+
+	//! get object type
+	virtual short GetType()
+	{return 5;}
 
 public:
 	// path of the file describing the mesh
@@ -375,11 +478,18 @@ public:
 				boost::shared_ptr<PhysicalDescriptionBase> PInfo,
 				bool Static, bool NoSmoothing=false);
 
+	//! constructor from stream
+	ObjectInfo(SerializerBase * stream);
+
 	//! destructor
 	virtual ~ObjectInfo();
 
 	//! build description into dynamic object
-	boost::shared_ptr<DynamicObject> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine, int id) const;
+	boost::shared_ptr<DynamicObject> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine, int id,
+												DisplayHandlerBase * disH) const;
+
+	//! serialize to network object
+	void Serialize(SerializerBase * stream) const;
 
 public:
 	boost::shared_ptr<DisplayInfo>				DisInfo;
