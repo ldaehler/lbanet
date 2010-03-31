@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "MapInfoXmlReader.h"
 #include "tinyxml.h"
+#include "XmlReader.h"
+#include "LogHandler.h"
 
 //#include "Actor.h"
 //#include "TextActor.h"
@@ -119,7 +121,10 @@ get the list of available worlds
  {
 	TiXmlDocument doc(Filename);
 	if (!doc.LoadFile())
+	{
+		LogHandler::getInstance()->LogToFile("Problem opening file "+Filename + std::string(" : ") + doc.ErrorDesc());
 		return false;
+	}
 
 
 	TiXmlHandle hDoc(&doc);
@@ -141,226 +146,165 @@ get the list of available worlds
  }
 
 
-//// get world description
-//void MapInfoXmlReader::GetWorldDescription(const std::string &Filename,
-//									std::string &WorldName, std::string &WorldDesc)
-//{
-//	TiXmlDocument doc(Filename);
-//	if (!doc.LoadFile())
-//		return;
-//
-//	TiXmlHandle hDoc(&doc);
-//	TiXmlElement* pElem;
-//	TiXmlHandle hRoot(0);
-//
-//	// block: world attributes
-//	{
-//		pElem=hDoc.FirstChildElement().Element();
-//
-//		// should always have a valid root but handle gracefully if it does
-//		if (!pElem)
-//			return;
-//
-//		WorldName = pElem->Attribute("name");
-//
-//		// save this for later
-//		hRoot=TiXmlHandle(pElem);
-//	}
-//
-//	// block: description
-//	{
-//		pElem=hRoot.FirstChild( "description" ).Element();
-//		if(pElem)
-//			WorldDesc=pElem->GetText();
-//	}
-//}
-//
-//// load a world information into memory
-//bool MapInfoXmlReader::LoadWorld(const std::string &Filename, WorldInfo & res)
-//{
-//	TiXmlDocument doc(Filename);
-//	if (!doc.LoadFile())
-//		return false;
-//
-//
-//
-//	TiXmlHandle hDoc(&doc);
-//	TiXmlElement* pElem;
-//	TiXmlHandle hRoot(0);
-//
-//	// block: world attributes
-//	{
-//		pElem=hDoc.FirstChildElement().Element();
-//
-//		// should always have a valid root but handle gracefully if it does
-//		if (!pElem)
-//			return false;
-//
-//		res.Name = pElem->Attribute("name");
-//		res.FirstMap = pElem->Attribute("firstmap");
-//		res.FirstSpawning = pElem->Attribute("firstsparea");
-//
-//		// save this for later
-//		hRoot=TiXmlHandle(pElem);
-//	}
-//
-//	// block: description
-//	{
-//		pElem=hRoot.FirstChild( "description" ).Element();
-//		if(pElem)
-//			res.Description=pElem->GetText();
-//	}
-//
-//	// block: teleport
-//	{
-//		pElem=hRoot.FirstChild( "teleports" ).FirstChild().Element();
-//		for( pElem; pElem; pElem=pElem->NextSiblingElement())
-//		{
-//			TPInfo tp;
-//			tp.Name=pElem->Attribute("name");
-//			tp.NewMap=pElem->Attribute("map");
-//			tp.Spawning=pElem->Attribute("sparea");
-//
-//			res.Teleports[tp.Name] = tp;
-//		}
-//	}
-//
-//	// block: files
-//	{
-//		pElem=hRoot.FirstChild( "files" ).FirstChild().Element();
-//		for( pElem; pElem; pElem=pElem->NextSiblingElement())
-//		{
-//			res.Files[pElem->Attribute("name")] = pElem->Attribute("path");
-//		}
-//	}
-//
-//	// block: map
-//	{
-//		pElem=hRoot.FirstChild( "maps" ).FirstChild("Map").Element();
-//		for( pElem; pElem; pElem=pElem->NextSiblingElement())
-//		{
-//			MapInfo mi = LoadMap(pElem);
-//			res.Maps[mi.Name] = mi;
-//		}
-//	}
-//
-//	return true;
-//}
-//
-///*
-//--------------------------------------------------------------------------------------------------
-//- load a map into memory
-//--------------------------------------------------------------------------------------------------
-//*/
-//MapInfo MapInfoXmlReader::LoadMap(TiXmlElement* pElem)
-//{
-//	MapInfo res;
-//	res.MusicLoop = 0;
-//	TiXmlHandle hRoot(0);
-//
-//	// block: map attributes
-//	{
-//		// should always have a valid root but handle gracefully if it does
-//		if (!pElem)
-//			return res;
-//
-//		res.Name = pElem->Attribute("name");
-//		res.Type = pElem->Attribute("type");
-//
-//		res.Music = pElem->Attribute("music");
-//		int testr = pElem->QueryIntAttribute("repeatmusic", &res.MusicLoop);
-//		if(testr != TIXML_SUCCESS)
-//			res.MusicLoop = 0;
-//
-//
-//		// save this for later
-//		hRoot=TiXmlHandle(pElem);
-//	}
-//
-//	// block: description
-//	{
-//		pElem=hRoot.FirstChild( "description" ).Element();
-//		if(pElem)
-//			res.Description=pElem->GetText();
-//	}
-//
-//
-//	// block: files
-//	{
-//		pElem=hRoot.FirstChild( "files" ).FirstChild().Element();
-//		for( pElem; pElem; pElem=pElem->NextSiblingElement())
-//		{
-//			res.Files[pElem->Attribute("name")] = pElem->Attribute("path");
-//		}
-//	}
-//
-//	// block: lights
-//	{
-//		pElem=hRoot.FirstChild( "lights" ).FirstChild().Element();
-//		for( pElem; pElem; pElem=pElem->NextSiblingElement())
-//		{
-//			LighInfo l;
-//			l.Name=pElem->Attribute("name");
-//			l.Type=pElem->Attribute("type");
-//
-//			pElem->QueryIntAttribute("posX", &l.PosX);
-//			pElem->QueryIntAttribute("posY", &l.PosY);
-//			pElem->QueryIntAttribute("posZ", &l.PosZ);
-//			pElem->QueryIntAttribute("dirX", &l.DirX);
-//			pElem->QueryIntAttribute("dirY", &l.DirY);
-//			pElem->QueryIntAttribute("dirZ", &l.DirZ);
-//
-//			res.Lights[l.Name] = l;
-//		}
-//	}
-//
-//	// block: spawning areas
-//	{
-//		pElem=hRoot.FirstChild( "spareas" ).FirstChild().Element();
-//		for( pElem; pElem; pElem=pElem->NextSiblingElement())
-//		{
-//			SpawningInfo sp;
-//			sp.Rotation = 0;
-//			sp.Name=pElem->Attribute("name");
-//
-//			pElem->QueryFloatAttribute("posX", &sp.PosX);
-//			pElem->QueryFloatAttribute("posY", &sp.PosY);
-//			pElem->QueryFloatAttribute("posZ", &sp.PosZ);
-//			pElem->QueryIntAttribute("RotationAtArrival", &sp.Rotation);
-//			if(sp.Rotation < 0)
-//				sp.Rotation = 0;
-//			if(sp.Rotation > 360)
-//				sp.Rotation = 0;
-//
-//			res.Spawnings[sp.Name] = sp;
-//		}
-//	}
-//
-//	// block: exit areas
-//	{
-//		pElem=hRoot.FirstChild( "exits" ).FirstChild().Element();
-//		for( pElem; pElem; pElem=pElem->NextSiblingElement())
-//		{
-//			ExitInfo ex;
-//			ex.Name=pElem->Attribute("name");
-//			ex.NewMap=pElem->Attribute("newMap");
-//			ex.Spawning=pElem->Attribute("spawning");
-//
-//			pElem->QueryFloatAttribute("TopRightX", &ex.TopRightX);
-//			pElem->QueryFloatAttribute("TopRightY", &ex.TopRightY);
-//			pElem->QueryFloatAttribute("TopRightZ", &ex.TopRightZ);
-//
-//			pElem->QueryFloatAttribute("BottomLeftX", &ex.BottomLeftX);
-//			pElem->QueryFloatAttribute("BottomLeftY", &ex.BottomLeftY);
-//			pElem->QueryFloatAttribute("BottomLeftZ", &ex.BottomLeftZ);
-//
-//			res.Exits[ex.Name] = ex;
-//		}
-//	}
-//
-//	return res;
-//}
-//
+// load a world information into memory
+bool MapInfoXmlReader::LoadWorld(const std::string &Filename, WorldInfo & res)
+{
+	TiXmlDocument doc(Filename);
+	if (!doc.LoadFile())
+	{
+		LogHandler::getInstance()->LogToFile("Problem opening file "+Filename + std::string(" : ") + doc.ErrorDesc());
+		return false;
+	}
+
+
+
+	TiXmlHandle hDoc(&doc);
+	TiXmlElement* pElem;
+	TiXmlHandle hRoot(0);
+
+	// block: world attributes
+	{
+		pElem=hDoc.FirstChildElement().Element();
+
+		// should always have a valid root but handle gracefully if it does
+		if (!pElem)
+			return false;
+
+		res.Name = pElem->Attribute("name");
+		res.StartInfo.FirstMap = pElem->Attribute("firstmap");
+		res.StartInfo.FirstSpawning = pElem->Attribute("firstsparea");
+
+		// save this for later
+		hRoot=TiXmlHandle(pElem);
+	}
+
+	// block: description
+	{
+		pElem=hRoot.FirstChild( "description" ).Element();
+		if(pElem)
+			res.Description=pElem->GetText();
+	}
+
+	// block: teleport
+	{
+		pElem=hRoot.FirstChild( "teleports" ).FirstChild().Element();
+		for( pElem; pElem; pElem=pElem->NextSiblingElement())
+		{
+			TPInfo tp;
+			tp.Name=pElem->Attribute("name");
+			tp.NewMap=pElem->Attribute("map");
+			tp.Spawning=pElem->Attribute("sparea");
+
+			res.Teleports[tp.Name] = tp;
+		}
+	}
+
+	// block: files
+	{
+		pElem=hRoot.FirstChild( "files" ).FirstChild().Element();
+		for( pElem; pElem; pElem=pElem->NextSiblingElement())
+		{
+			res.Files[pElem->Attribute("name")] = pElem->Attribute("path");
+		}
+	}
+
+	// block: map
+	{
+		pElem=hRoot.FirstChild( "maps" ).FirstChild("Map").Element();
+		for( pElem; pElem; pElem=pElem->NextSiblingElement())
+		{
+			MapInfo mi = LoadMap(pElem);
+			res.Maps[mi.Name] = mi;
+		}
+	}
+
+	return true;
+}
+
+/*
+--------------------------------------------------------------------------------------------------
+- load a map into memory
+--------------------------------------------------------------------------------------------------
+*/
+MapInfo MapInfoXmlReader::LoadMap(TiXmlElement* pElem)
+{
+	MapInfo res;
+	res.MusicLoop = 0;
+	TiXmlHandle hRoot(0);
+
+	// block: map attributes
+	{
+		// should always have a valid root but handle gracefully if it does
+		if (!pElem)
+			return res;
+
+		res.Name = pElem->Attribute("name");
+		res.Type = pElem->Attribute("type");
+
+		res.Music = pElem->Attribute("music");
+		int testr = pElem->QueryIntAttribute("repeatmusic", &res.MusicLoop);
+		if(testr != TIXML_SUCCESS)
+			res.MusicLoop = 0;
+
+
+		// save this for later
+		hRoot=TiXmlHandle(pElem);
+	}
+
+	// block: description
+	{
+		pElem=hRoot.FirstChild( "description" ).Element();
+		if(pElem)
+			res.Description=pElem->GetText();
+	}
+
+
+	// block: files
+	{
+		pElem=hRoot.FirstChild( "files" ).FirstChild().Element();
+		for( pElem; pElem; pElem=pElem->NextSiblingElement())
+		{
+			res.Files[pElem->Attribute("name")] = pElem->Attribute("path");
+		}
+	}
+
+	// block: spawning areas
+	{
+		pElem=hRoot.FirstChild( "spareas" ).FirstChild().Element();
+		for( pElem; pElem; pElem=pElem->NextSiblingElement())
+		{
+			SpawningInfo sp;
+			sp.Rotation = 0;
+			sp.Name=pElem->Attribute("name");
+
+			pElem->QueryFloatAttribute("posX", &sp.PosX);
+			pElem->QueryFloatAttribute("posY", &sp.PosY);
+			pElem->QueryFloatAttribute("posZ", &sp.PosZ);
+			pElem->QueryIntAttribute("RotationAtArrival", &sp.Rotation);
+			if(sp.Rotation < 0)
+				sp.Rotation = 0;
+			if(sp.Rotation > 360)
+				sp.Rotation = 0;
+
+			res.Spawnings[sp.Name] = sp;
+		}
+	}
+
+
+	// block: actors
+	{
+		pElem=hRoot.FirstChild( "actors" ).FirstChild().Element();
+		for( pElem; pElem; pElem=pElem->NextSiblingElement())
+		{
+			XmlReader reader(pElem);
+			ObjectInfo actor(&reader);
+			res.Actors[actor.GetId()] = actor;
+		}
+	}
+
+	return res;
+}
+
 //
 ///*
 //--------------------------------------------------------------------------------------------------

@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef __LBA_NET_MAP_INFO_XML_READER_H__
 #define __LBA_NET_MAP_INFO_XML_READER_H__
 
-#include "CommonTypes.h"
+#include "MapInfo.h"
 #include <vector>
 #include <map>
 
@@ -50,8 +50,8 @@ public:
 	//! get the list of available worlds
 	static  bool GetAvailableWorlds(const std::string &Filename, std::vector<WorldDesc> & list);
 
-	//// load a world information into memory
-	//static  bool LoadWorld(const std::string &Filename, WorldInfo & res);
+	// load a world information into memory
+	static  bool LoadWorld(const std::string &Filename, WorldInfo & res);
 
 	//// get world description
 	//static void GetWorldDescription(const std::string &Filename,
@@ -88,8 +88,8 @@ public:
 	//							InventoryHandlerBase * invH, QuestHandler * qH);
 
 protected:
-	//// load a map information into memory
-	//static MapInfo LoadMap(TiXmlElement* pElem);
+	// load a map information into memory
+	static MapInfo LoadMap(TiXmlElement* pElem);
 
 
 	//// load a condition information into memory

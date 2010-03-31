@@ -473,8 +473,11 @@ This class describe an object physical shape and display shape
 class ObjectInfo
 {
 public:
+	//! default constructor
+	ObjectInfo(){}
+
 	//! constructor
-	ObjectInfo(boost::shared_ptr<DisplayInfo> DInfo,
+	ObjectInfo(long oid, boost::shared_ptr<DisplayInfo> DInfo,
 				boost::shared_ptr<PhysicalDescriptionBase> PInfo,
 				bool Static, bool NoSmoothing=false);
 
@@ -491,11 +494,15 @@ public:
 	//! serialize to network object
 	void Serialize(SerializerBase * stream) const;
 
+	//get object id
+	long GetId(){return Id;}
+
 public:
 	boost::shared_ptr<DisplayInfo>				DisInfo;
 	boost::shared_ptr<PhysicalDescriptionBase>	PhysInfo;
 	bool										ForceNoSmoothing;
 	bool										IsStatic;
+	long										Id;
 };
 
 
