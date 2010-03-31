@@ -108,42 +108,6 @@ public:
 
 
 
-// contain world description
-struct WorldDesc
-{
-	std::string WorldName;
-	std::string Description;
-	std::string FileName;
-};
 
-
-// contain information about a teleport place
-struct TPInfo
-{
-	// name
-	std::string		Name;
-
-	// arrival point
-	std::string		NewMap;
-	std::string		Spawning;
-};
-
-
-
-//struct ActorInfo
-//{
-//	long Time;
-//	long ActorId;
-//
-//	float PosX;
-//	float PosY;
-//	float PosZ;
-//
-//	float Rotation;
-//
-//	int Model;
-//	int Body;
-//	int Animation;
-//};
 
 #endif

@@ -174,18 +174,18 @@ void DisplayInfo::Serialize(SerializerBase * stream) const
 	//serialize transform
 	if(Transform)
 	{
-		stream->startObject("Transform");
+		stream->startChildObjectList("Transform");
 		Transform->Serialize(stream);
-		stream->finishObject("Transform");
+		stream->finishChildObjectList("Transform");
 	}
 
 	//serialize description
 	if(DisplayDesc)
 	{
-		stream->startObject("DisplayDesc");
+		stream->startChildObjectList("DisplayDesc");
 		stream->addInt(DisplayDesc->GetType(), "DisplayObjectType");
 		DisplayDesc->Serialize(stream);	
-		stream->finishObject("DisplayDesc");
+		stream->finishChildObjectList("DisplayDesc");
 	}
 }
 
@@ -272,11 +272,11 @@ PhysicalDescriptionWithShape::~PhysicalDescriptionWithShape()
 /***********************************************************
 	Constructor
 ***********************************************************/
-ObjectInfo::ObjectInfo(boost::shared_ptr<DisplayInfo> DInfo,
+ObjectInfo::ObjectInfo(long oid, boost::shared_ptr<DisplayInfo> DInfo,
 				boost::shared_ptr<PhysicalDescriptionBase> PInfo,
 				bool Static, bool NoSmoothing)
 	: DisInfo(DInfo), PhysInfo(PInfo), ForceNoSmoothing(NoSmoothing),
-		IsStatic(Static)
+		IsStatic(Static), Id(oid)
 {
 
 }
@@ -286,69 +286,65 @@ ObjectInfo::ObjectInfo(boost::shared_ptr<DisplayInfo> DInfo,
 ***********************************************************/
 ObjectInfo::ObjectInfo(SerializerBase * stream)
 {
-	stream->startObject("Object");
+	//get serialized flags
+	Id = stream->getLong("Id");
+	ForceNoSmoothing = stream->getBool("ForceNoSmoothing");
+	IsStatic = stream->getBool("IsStatic");
+
+
+	// get header to tell if physics and display info are present
+	bool hasPhysInfo = stream->getBool("hasPhysInfo");
+	bool hasDisInfo = stream->getBool("hasDisInfo");
+
+
+	// get serialized physic info
+	if(hasPhysInfo)
 	{
-		//get serialized flags
-		ForceNoSmoothing = stream->getBool("ForceNoSmoothing");
-		IsStatic = stream->getBool("IsStatic");
+		stream->startChildObjectList("Physic");
 
-
-		// get header to tell if physics and display info are present
-		bool hasPhysInfo = stream->getBool("hasPhysInfo");
-		bool hasDisInfo = stream->getBool("hasDisInfo");
-
-
-		// get serialized physic info
-		if(hasPhysInfo)
+		//get serialized object type
+		int ptype = stream->getInt("PhysicalObjectType");
+		PhysicalDescriptionBase * phyobj = NULL;
+		switch(ptype)
 		{
-			stream->startObject("Physic");
+			//PhysicalDescriptionNoShape
+			case 1: 
+				phyobj = new PhysicalDescriptionNoShape(stream);
+			break;
 
-			//get serialized object type
-			int ptype = stream->getInt("PhysicalObjectType");
-			PhysicalDescriptionBase * phyobj = NULL;
-			switch(ptype)
-			{
-				//PhysicalDescriptionNoShape
-				case 1: 
-					phyobj = new PhysicalDescriptionNoShape(stream);
-				break;
+			//PhysicalDescriptionBox
+			case 2: 
+				phyobj = new PhysicalDescriptionBox(stream);
+			break;
 
-				//PhysicalDescriptionBox
-				case 2: 
-					phyobj = new PhysicalDescriptionBox(stream);
-				break;
+			//PhysicalDescriptionCapsule
+			case 3: 
+				phyobj = new PhysicalDescriptionCapsule(stream);
+			break;
 
-				//PhysicalDescriptionCapsule
-				case 3: 
-					phyobj = new PhysicalDescriptionCapsule(stream);
-				break;
+			//PhysicalDescriptionSphere
+			case 4: 
+				phyobj = new PhysicalDescriptionSphere(stream);
+			break;
 
-				//PhysicalDescriptionSphere
-				case 4: 
-					phyobj = new PhysicalDescriptionSphere(stream);
-				break;
-
-				//PhysicalDescriptionTriangleMesh
-				case 5: 
-					phyobj = new PhysicalDescriptionTriangleMesh(stream);
-				break;
-			}
-
-			PhysInfo = boost::shared_ptr<PhysicalDescriptionBase>(phyobj); 
-
-			stream->finishObject("Physic");
+			//PhysicalDescriptionTriangleMesh
+			case 5: 
+				phyobj = new PhysicalDescriptionTriangleMesh(stream);
+			break;
 		}
 
-		// get serialized display info
-		if(hasDisInfo)
-		{
-			stream->startObject("Display");
-			DisInfo = boost::shared_ptr<DisplayInfo>(new DisplayInfo(stream));
-			stream->finishObject("Display");
-		}
+		PhysInfo = boost::shared_ptr<PhysicalDescriptionBase>(phyobj); 
 
+		stream->finishChildObjectList("Physic");
 	}
-	stream->finishObject("Object");
+
+	// get serialized display info
+	if(hasDisInfo)
+	{
+		stream->startChildObjectList("Display");
+		DisInfo = boost::shared_ptr<DisplayInfo>(new DisplayInfo(stream));
+		stream->finishChildObjectList("Display");
+	}
 }
 
 
@@ -386,40 +382,38 @@ serialize to network object
 ***********************************************************/
 void ObjectInfo::Serialize(SerializerBase * stream) const
 {
-	stream->startObject("Object");
+	//serialize flags
+	stream->addLong(Id, "Id");
+	stream->addBool(ForceNoSmoothing, "ForceNoSmoothing");
+	stream->addBool(IsStatic, "IsStatic");
+
+
+	// header to tel if physics and display info are present
+	stream->addBool(PhysInfo, "hasPhysInfo");
+	stream->addBool(DisInfo, "hasDisInfo");
+
+
+	// serialize physic info
+	if(PhysInfo)
 	{
-		//serialize flags
-		stream->addBool(ForceNoSmoothing, "ForceNoSmoothing");
-		stream->addBool(IsStatic, "IsStatic");
+		stream->startChildObjectList("Physic");
 
+		//serialize object type
+		stream->addInt(PhysInfo->GetType(), "PhysicalObjectType");
+		PhysInfo->Serialize(stream);
 
-		// header to tel if physics and display info are present
-		stream->addBool(PhysInfo, "hasPhysInfo");
-		stream->addBool(DisInfo, "hasDisInfo");
-
-
-		// serialize physic info
-		if(PhysInfo)
-		{
-			stream->startObject("Physic");
-
-			//serialize object type
-			stream->addInt(PhysInfo->GetType(), "PhysicalObjectType");
-			PhysInfo->Serialize(stream);
-
-			stream->finishObject("Physic");
-		}
-
-		// serialize display info
-		if(DisInfo)
-		{
-			stream->startObject("Display");
-			DisInfo->Serialize(stream);
-			stream->finishObject("Display");
-		}
+		stream->finishChildObjectList("Physic");
 	}
-	stream->finishObject("Object");
+
+	// serialize display info
+	if(DisInfo)
+	{
+		stream->startChildObjectList("Display");
+		DisInfo->Serialize(stream);
+		stream->finishChildObjectList("Display");
+	}
 }
+
 
 
 
