@@ -107,7 +107,7 @@ void LbaNetModel::AddObject(unsigned int id, const ObjectInfo &desc, bool IsMain
 	if(IsMainPlayer)
 	{
 		m_playerObjectId = id;
-		m_playerObject = desc.BuildSelf(_physicEngine, id);
+		m_playerObject = desc.BuildSelf(_physicEngine, id, OsgHandler::getInstance());
 
 		if(m_controllerChar)
 			m_controllerChar->SetCharacter(m_playerObject);
@@ -118,7 +118,7 @@ void LbaNetModel::AddObject(unsigned int id, const ObjectInfo &desc, bool IsMain
 	}
 	else
 	{
-		_dynamicObjects[id] = desc.BuildSelf(_physicEngine, id);
+		_dynamicObjects[id] = desc.BuildSelf(_physicEngine, id, OsgHandler::getInstance());
 	}
 }
 
