@@ -27,6 +27,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "md5.h"
 #include "InternalWorkpile.h"
 #include "GameEvents.h"
+#include "MapInfoObject.h"
+#include "ActorObject.h"
+#include "ZoidSerializer.h"
+#include "ObjectsDescription.h"
+#include "MusicHandler.h"
+#include "InternalWorkpile.h"
 
 /***********************************************************************
  * Constructor
@@ -34,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 GameClient::GameClient(unsigned short downpacketpersecond, unsigned short downbyteperpacket)
 : m_id(ZCom_Invalid_ID), m_zoi_id(ZCom_Invalid_ID), m_connected(false),  
 	m_downpacketpersecond(downpacketpersecond), m_downbyteperpacket(downbyteperpacket),
-	m_disconnecting(false)
+	m_disconnecting(false), m_callback(NULL)
 {
 	// this will allocate the sockets and create local bindings
     if ( !ZCom_initSockets( eZCom_EnableUDP, 0, 0, 0 ) )
@@ -47,6 +53,8 @@ GameClient::GameClient(unsigned short downpacketpersecond, unsigned short downby
 
 
 	//register classes
+	MapInfoObject::registerClass(this);
+	ActorObject::registerClass(this);
 }
 
 
@@ -65,8 +73,11 @@ GameClient::~GameClient()
  ***********************************************************************/
 void GameClient::ConnectToServer(const std::string & servername, const std::string & address, 
 								 const std::string & login, 
-								 const std::string & password, const std::string & excpectedversion)
+								 const std::string & password, const std::string & excpectedversion,
+								 GameClientCallbackBase * callback)
 {
+	m_callback = callback;
+
 	if(m_connected)
 	{
 		if(m_servername == servername)
@@ -191,7 +202,33 @@ void GameClient::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _reque
 											ZCom_BitStream *_announcedata, eZCom_NodeRole _role, 
 											ZCom_NodeID _net_id)
 {
+	// if this is the map info 
+	if(_requested_class == MapInfoObject::getClassID())
+	{
+		char buffname[250], bufftype[250], buffmusic[250];
+		_announcedata->getString(buffname, 250);
+		_announcedata->getString(bufftype, 250);
+		_announcedata->getString(buffmusic, 250);
+		int musicloop = _announcedata->getSignedInt(16);
 
+		m_maps_objects.push_back(new MapInfoObject(this));
+		InternalWorkpile::getInstance()->AddEvent(new NewMapEvent(buffname, bufftype));
+		MusicHandler::getInstance()->PlayMusic(buffmusic, musicloop);
+	}
+
+	// if this is an actor
+	if(_requested_class == ActorObject::getClassID())
+	{
+		ZoidSerializer zserialize(_announcedata);
+		ObjectInfo oinfo(&zserialize);
+		m_actors[_id] = new ActorObject(this, oinfo);
+
+		//inform callback of new actor
+		if(m_callback)
+			m_callback->AddObject(_id, oinfo, false);
+	}
+
+	
 	
 }
 
@@ -202,7 +239,41 @@ process server internal stuff
 ***********************************************************/
 void GameClient::Process()
 {
+	//process map objects
+	{
+		std::list<MapInfoObject*>::iterator it = m_maps_objects.begin();
+		while(it != m_maps_objects.end())
+		{
+			(*it)->Process();
+			if((*it)->isGarbage())
+			{
+				delete *it;
+				it = m_maps_objects.erase(it);
+			}
+			else
+				++it;
+		}
+	}
 
+	//process actors
+	{
+		std::map<unsigned int, ActorObject*>::iterator it = m_actors.begin();
+		while(it != m_actors.end())
+		{
+			it->second->Process();
+			if(it->second->isGarbage())
+			{
+				//inform callback of actor removed
+				if(m_callback)
+					m_callback->RemObject(it->first);
+
+				delete it->second;
+				it = m_actors.erase(it);
+			}
+			else
+				++it;
+		}
+	}
 }
 
 

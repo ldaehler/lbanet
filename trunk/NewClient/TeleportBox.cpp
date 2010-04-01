@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "InternalWorkpile.h"
 #include "GameEvents.h"
 #include "CommonTypes.h"
+#include "MapInfo.h"
 
 // Sample sub-class for ListboxTextItem that auto-sets the selection brush
 // image.  This saves doing it manually every time in the code.

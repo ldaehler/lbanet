@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define __LbaNetModel_1_ChooseWorldGUI_h
 
 #include "GUI.h"
-#include "CommonTypes.h"
+#include "MapInfo.h"
 
 #include <vector>
 
