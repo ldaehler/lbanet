@@ -53,41 +53,41 @@ public:
 
 	// data will be stored as a bool on 1bit
 	virtual void addBool(bool data, const std::string &id);
-	virtual bool getBool(const std::string &id);
+	virtual void getBool(const std::string &id, bool & res);
 
 	// data will be stored as a unsigned short using 8bits
 	virtual void addUShort(unsigned short data, const std::string &id);
-	virtual unsigned short getUShort(const std::string &id);
+	virtual void getUShort(const std::string &id, unsigned short & res);
 
 	// data will be stored as a unsigned int using 16bits
 	virtual void addUInt(unsigned int data, const std::string &id);
-	virtual unsigned int getUInt(const std::string &id);
+	virtual void getUInt(const std::string &id, unsigned int & res);
 
 	// data will be stored as a unsigned long using 32bits
 	virtual void addULong(unsigned long data, const std::string &id);
-	virtual unsigned long getULong(const std::string &id);
+	virtual void getULong(const std::string &id, unsigned long & res);
 
 
 	// data will be stored as a signed short using 8bits
 	virtual void addShort(short data, const std::string &id);
-	virtual short getShort(const std::string &id);
+	virtual void getShort(const std::string &id, short & res);
 
 	// data will be stored as a signed int using 16bits
 	virtual void addInt(int data, const std::string &id);
-	virtual int getInt(const std::string &id);
+	virtual void getInt(const std::string &id, int & res);
 
 	// data will be stored as a signed long using 32bits
 	virtual void addLong(long data, const std::string &id);
-	virtual long getLong(const std::string &id);
+	virtual void getLong(const std::string &id, long & res);
 
 	// data will be stored as a float using 32bits
 	virtual void addFloat(float data, const std::string &id);
-	virtual float getFloat(const std::string &id);
+	virtual void getFloat(const std::string &id, float & res);
 
 	// data will be stored as a string of dynamic dimension
 	// however the size of the string should not be larger than 250 characters
 	virtual void addString(const std::string &data, const std::string &id);
-	virtual std::string getString(const std::string &id);
+	virtual void getString(const std::string &id, std::string & res);
 
 
 private: 

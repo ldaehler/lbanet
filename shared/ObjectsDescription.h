@@ -495,7 +495,7 @@ public:
 	void Serialize(SerializerBase * stream) const;
 
 	//get object id
-	long GetId(){return Id;}
+	long GetId() const {return Id;}
 
 public:
 	boost::shared_ptr<DisplayInfo>				DisInfo;

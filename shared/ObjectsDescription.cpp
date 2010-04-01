@@ -43,22 +43,24 @@ DisplayTransformation::DisplayTransformation()
 constructor from stream
 ***********************************************************/
 DisplayTransformation::DisplayTransformation(SerializerBase * stream)
+:translationX(0), translationY(0), translationZ(0),
+	scaleX(1),	scaleY(1), scaleZ(1)
 {
 	//get serialized translation
-	translationX = stream->getFloat("translationX");
-	translationY = stream->getFloat("translationY");
-	translationZ = stream->getFloat("translationZ");
+	stream->getFloat("translationX", translationX);
+	stream->getFloat("translationY", translationY);
+	stream->getFloat("translationZ", translationZ);
 
 	//get serialized rotation
-	rotation.X = stream->getFloat("rotationX");
-	rotation.Y = stream->getFloat("rotationY");
-	rotation.Z = stream->getFloat("rotationZ");
-	rotation.W = stream->getFloat("rotationW");
+	stream->getFloat("rotationX", rotation.X);
+	stream->getFloat("rotationY", rotation.Y);
+	stream->getFloat("rotationZ", rotation.Z);
+	stream->getFloat("rotationW", rotation.W);
 
 	//get serialized scale
-	scaleX = stream->getFloat("scaleX");
-	scaleY = stream->getFloat("scaleY");
-	scaleZ = stream->getFloat("scaleZ");
+	stream->getFloat("scaleX", scaleX);
+	stream->getFloat("scaleY", scaleY);
+	stream->getFloat("scaleZ", scaleZ);
 }
 
 
@@ -111,19 +113,27 @@ DisplayInfo::DisplayInfo(boost::shared_ptr<DisplayTransformation> Tr,
 DisplayInfo::DisplayInfo(SerializerBase * stream)
 {
 	// get header to tell if physics and display info are present
-	bool hasDisplayDesc = stream->getBool("hasDisplayDesc");
-	bool hasTransform = stream->getBool("hasTransform");	
+	bool hasDisplayDesc=false, hasTransform=false;
+	stream->getBool("hasDisplayDesc", hasDisplayDesc);
+	stream->getBool("hasTransform", hasTransform);	
 
 	//get serialized transform
 	if(hasTransform)
+	{
+		stream->startChildObjectList("Transform");
 		Transform = boost::shared_ptr<DisplayTransformation>(new DisplayTransformation(stream));
+		stream->finishChildObjectList("Transform");
+	}
 
 
 	//get serialized description
 	if(hasDisplayDesc)
 	{
+		stream->startChildObjectList("DisplayDesc");
+
 		//get type
-		int dtype = stream->getInt("DisplayObjectType");
+		int dtype = 0;
+		stream->getInt("DisplayObjectType", dtype);
 		DisplayObjectDescriptionBase * dobj = NULL;
 		switch(dtype)
 		{
@@ -137,6 +147,7 @@ DisplayInfo::DisplayInfo(SerializerBase * stream)
 		}
 
 		DisplayDesc = boost::shared_ptr<DisplayObjectDescriptionBase>(dobj);
+		stream->finishChildObjectList("DisplayDesc");
 	}
 }
 
@@ -285,16 +296,18 @@ ObjectInfo::ObjectInfo(long oid, boost::shared_ptr<DisplayInfo> DInfo,
 	constructor from stream
 ***********************************************************/
 ObjectInfo::ObjectInfo(SerializerBase * stream)
+: ForceNoSmoothing(false), IsStatic(false), Id(-1)
 {
 	//get serialized flags
-	Id = stream->getLong("Id");
-	ForceNoSmoothing = stream->getBool("ForceNoSmoothing");
-	IsStatic = stream->getBool("IsStatic");
+	stream->getLong("Id", Id);
+	stream->getBool("ForceNoSmoothing", ForceNoSmoothing);
+	stream->getBool("IsStatic", IsStatic);
 
 
 	// get header to tell if physics and display info are present
-	bool hasPhysInfo = stream->getBool("hasPhysInfo");
-	bool hasDisInfo = stream->getBool("hasDisInfo");
+	bool hasPhysInfo = false, hasDisInfo=false;
+	stream->getBool("hasPhysInfo", hasPhysInfo);
+	stream->getBool("hasDisInfo", hasDisInfo);
 
 
 	// get serialized physic info
@@ -303,7 +316,8 @@ ObjectInfo::ObjectInfo(SerializerBase * stream)
 		stream->startChildObjectList("Physic");
 
 		//get serialized object type
-		int ptype = stream->getInt("PhysicalObjectType");
+		int ptype = 0;
+		stream->getInt("PhysicalObjectType", ptype);
 		PhysicalDescriptionBase * phyobj = NULL;
 		switch(ptype)
 		{
@@ -438,17 +452,18 @@ void PhysicalDescriptionBase::Serialize(SerializerBase * stream) const
 constructor from stream
 ***********************************************************/
 PhysicalDescriptionBase::PhysicalDescriptionBase(SerializerBase * stream)
+: positionX(0), positionY(0), positionZ(0)
 {
 	//get serialized position
-	positionX = stream->getFloat("positionX");
-	positionY = stream->getFloat("positionY");
-	positionZ = stream->getFloat("positionZ");
+	stream->getFloat("positionX", positionX);
+	stream->getFloat("positionY", positionY);
+	stream->getFloat("positionZ", positionZ);
 
 	//get serialized rotation
-	rotation.X = stream->getFloat("rotationX");
-	rotation.Y = stream->getFloat("rotationY");
-	rotation.Z = stream->getFloat("rotationZ");
-	rotation.W = stream->getFloat("rotationW");
+	stream->getFloat("rotationX", rotation.X);
+	stream->getFloat("rotationY", rotation.Y);
+	stream->getFloat("rotationZ", rotation.Z);
+	stream->getFloat("rotationW", rotation.W);
 }
 
 
@@ -482,13 +497,13 @@ void PhysicalDescriptionWithShape::Serialize(SerializerBase * stream) const
 constructor from stream
 ***********************************************************/
 PhysicalDescriptionWithShape::PhysicalDescriptionWithShape(SerializerBase * stream)
-: PhysicalDescriptionBase(stream)
+: PhysicalDescriptionBase(stream), density(1), type(0)
 {
 	//get serialized type
-	type = stream->getInt("PhysicalShapeType");
+	stream->getInt("PhysicalShapeType", type);
 
 	//get serialized density of the object
-	density = stream->getFloat("density");
+	stream->getFloat("density", density);
 }
 
 
@@ -514,9 +529,9 @@ PhysicalDescriptionBox::PhysicalDescriptionBox(SerializerBase * stream)
 : PhysicalDescriptionWithShape(stream)
 {
 	//get serialized size
-	sizeX = stream->getFloat("sizeX");
-	sizeY = stream->getFloat("sizeY");
-	sizeZ = stream->getFloat("sizeZ");
+	stream->getFloat("sizeX", sizeX);
+	stream->getFloat("sizeY", sizeY);
+	stream->getFloat("sizeZ", sizeZ);
 }
 
 
@@ -537,11 +552,11 @@ void PhysicalDescriptionCapsule::Serialize(SerializerBase * stream) const
 constructor from stream
 ***********************************************************/
 PhysicalDescriptionCapsule::PhysicalDescriptionCapsule(SerializerBase * stream)
-: PhysicalDescriptionWithShape(stream)
+: PhysicalDescriptionWithShape(stream), radius(1), height(0)
 {
 	//get serialized size
-	radius = stream->getFloat("radius");
-	height = stream->getFloat("height");
+	stream->getFloat("radius", radius);
+	stream->getFloat("height", height);
 }
 
 
@@ -561,10 +576,10 @@ void PhysicalDescriptionSphere::Serialize(SerializerBase * stream) const
 constructor from stream
 ***********************************************************/
 PhysicalDescriptionSphere::PhysicalDescriptionSphere(SerializerBase * stream)
-: PhysicalDescriptionWithShape(stream)
+: PhysicalDescriptionWithShape(stream), radius(1)
 {
 	//get serialized size
-	radius = stream->getFloat("radius");
+	stream->getFloat("radius", radius);
 }
 
 
@@ -588,7 +603,7 @@ PhysicalDescriptionTriangleMesh::PhysicalDescriptionTriangleMesh(SerializerBase 
 : PhysicalDescriptionWithShape(stream)
 {
 	//get serialized filename
-	MeshInfoDataFileName = stream->getString("MeshInfoDataFileName");
+	stream->getString("MeshInfoDataFileName", MeshInfoDataFileName);
 }
 
 
@@ -607,7 +622,7 @@ constructor from stream
 OsgSimpleObjectDescription::OsgSimpleObjectDescription(SerializerBase * stream)
 {
 	//get serialized filename
-	_filename = stream->getString("OsgFilename");
+	stream->getString("OsgFilename", _filename);
 }
 
 
@@ -633,16 +648,17 @@ void OsgOrientedCapsuleDescription::Serialize(SerializerBase * stream) const
 constructor from stream
 ***********************************************************/
 OsgOrientedCapsuleDescription::OsgOrientedCapsuleDescription(SerializerBase * stream)
+: _height(0), _radius(1), _colorR(1), _colorG(1), _colorB(1), _colorA(1)
 {
 	//get serialized size
-	_height = stream->getFloat("height");
-	_radius = stream->getFloat("radius");
+	stream->getFloat("height", _height);
+	stream->getFloat("radius", _radius);
 
 	//get serialized color
-	_colorR = stream->getFloat("colorR");
-	_colorG = stream->getFloat("colorG");
-	_colorB = stream->getFloat("colorB");
-	_colorA = stream->getFloat("colorA");
+	stream->getFloat("colorR", _colorR);
+	stream->getFloat("colorG", _colorG);
+	stream->getFloat("colorB", _colorB);
+	stream->getFloat("colorA", _colorA);
 }
 
 

@@ -50,41 +50,41 @@ public:
 
 	// data will be stored as a bool on 1bit
 	virtual void addBool(bool data, const std::string &id) = 0;
-	virtual bool getBool(const std::string &id) = 0;
+	virtual void getBool(const std::string &id, bool & res) = 0;
 
 	// data will be stored as a unsigned short using 8bits
 	virtual void addUShort(unsigned short data, const std::string &id) = 0;
-	virtual unsigned short getUShort(const std::string &id) = 0;
+	virtual void getUShort(const std::string &id, unsigned short & res) = 0;
 
 	// data will be stored as a unsigned int using 16bits
 	virtual void addUInt(unsigned int data, const std::string &id) = 0;
-	virtual unsigned int getUInt(const std::string &id) = 0;
+	virtual void getUInt(const std::string &id, unsigned int & res) = 0;
 
 	// data will be stored as a unsigned long using 32bits
 	virtual void addULong(unsigned long data, const std::string &id) = 0;
-	virtual unsigned long getULong(const std::string &id) = 0;
+	virtual void getULong(const std::string &id, unsigned long & res) = 0;
 
 
 	// data will be stored as a signed short using 8bits
 	virtual void addShort(short data, const std::string &id) = 0;
-	virtual short getShort(const std::string &id) = 0;
+	virtual void getShort(const std::string &id, short & res) = 0;
 
 	// data will be stored as a signed int using 16bits
 	virtual void addInt(int data, const std::string &id) = 0;
-	virtual int getInt(const std::string &id) = 0;
+	virtual void getInt(const std::string &id, int & res) = 0;
 
 	// data will be stored as a signed long using 32bits
 	virtual void addLong(long data, const std::string &id) = 0;
-	virtual long getLong(const std::string &id) = 0;
+	virtual void getLong(const std::string &id, long & res) = 0;
 
 	// data will be stored as a float using 32bits
 	virtual void addFloat(float data, const std::string &id) = 0;
-	virtual float getFloat(const std::string &id) = 0;
+	virtual void getFloat(const std::string &id, float & res) = 0;
 
 	// data will be stored as a string of dynamic dimension
 	// however the size of the string should not be larger than 250 characters
 	virtual void addString(const std::string &data, const std::string &id) = 0;
-	virtual std::string getString(const std::string &id) = 0;
+	virtual void getString(const std::string &id, std::string & res) = 0;
 
 };
 

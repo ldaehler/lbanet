@@ -33,9 +33,9 @@ void ZoidSerializer::addBool(bool data, const std::string &id)
 	_stream->addBool(data);
 }
 
-bool ZoidSerializer::getBool(const std::string &id)
+void ZoidSerializer::getBool(const std::string &id, bool & res)
 {
-	return _stream->getBool();
+	res = _stream->getBool();
 }
 
 
@@ -47,9 +47,9 @@ void ZoidSerializer::addUShort(unsigned short data, const std::string &id)
 	_stream->addInt(data, 8);
 }
 
-unsigned short ZoidSerializer::getUShort(const std::string &id)
+void ZoidSerializer::getUShort(const std::string &id, unsigned short & res)
 {
-	return _stream->getInt(8);
+	res = _stream->getInt(8);
 }
 
 
@@ -61,9 +61,9 @@ void ZoidSerializer::addUInt(unsigned int data, const std::string &id)
 	_stream->addInt(data, 16);
 }
 
-unsigned int ZoidSerializer::getUInt(const std::string &id)
+void ZoidSerializer::getUInt(const std::string &id, unsigned int & res)
 {
-	return _stream->getInt(16);
+	res = _stream->getInt(16);
 }
 
 
@@ -75,9 +75,9 @@ void ZoidSerializer::addULong(unsigned long data, const std::string &id)
 	_stream->addInt(data, 32);
 }
 
-unsigned long ZoidSerializer::getULong(const std::string &id)
+void ZoidSerializer::getULong(const std::string &id, unsigned long & res)
 {
-	return _stream->getInt(32);
+	res = _stream->getInt(32);
 }
 
 
@@ -90,9 +90,9 @@ void ZoidSerializer::addShort(short data, const std::string &id)
 	_stream->addSignedInt(data, 8);
 }
 
-short ZoidSerializer::getShort(const std::string &id)
+void ZoidSerializer::getShort(const std::string &id, short & res)
 {
-	return _stream->getSignedInt(8);
+	res = _stream->getSignedInt(8);
 }
 
 
@@ -104,9 +104,9 @@ void ZoidSerializer::addInt(int data, const std::string &id)
 	_stream->addSignedInt(data, 16);
 }
 
-int ZoidSerializer::getInt(const std::string &id)
+void ZoidSerializer::getInt(const std::string &id, int & res)
 {
-	return _stream->getSignedInt(16);
+	res = _stream->getSignedInt(16);
 }
 
 
@@ -118,9 +118,9 @@ void ZoidSerializer::addLong(long data, const std::string &id)
 	_stream->addSignedInt(data, 32);
 }
 
-long ZoidSerializer::getLong(const std::string &id)
+void ZoidSerializer::getLong(const std::string &id, long & res)
 {
-	return _stream->getSignedInt(32);
+	res = _stream->getSignedInt(32);
 }
 
 
@@ -132,9 +132,9 @@ void ZoidSerializer::addFloat(float data, const std::string &id)
 	_stream->addFloat(data, 32);
 }
 
-float ZoidSerializer::getFloat(const std::string &id)
+void ZoidSerializer::getFloat(const std::string &id, float & res)
 {
-	return _stream->getFloat(32);
+	res = _stream->getFloat(32);
 }
 
 
@@ -147,9 +147,9 @@ void ZoidSerializer::addString(const std::string &data, const std::string &id)
 	_stream->addString(data.c_str());
 }
 
-std::string ZoidSerializer::getString(const std::string &id)
+void ZoidSerializer::getString(const std::string &id, std::string & res)
 {
 	char buff[250];
 	_stream->getString(buff, 250);
-	return buff;
+	res = buff;
 }
