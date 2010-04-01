@@ -271,6 +271,13 @@ void LbaNetEngine::HandleGameEvents()
 				}
 			break;
 
+			case 7: // NewMapEvent
+				{
+					NewMapEvent * evdg = static_cast<NewMapEvent *> (*it);
+					m_lbaNetModel.NewMapEvent(evdg->_MapName, evdg->_MapType);
+					m_gui_handler.SetCurrentMap(evdg->_MapName);
+				}
+			break;
 
 
 
@@ -692,7 +699,8 @@ called when need to connect to game server
 void LbaNetEngine::ConnectToGameServer(const std::string &ServerName, const std::string &ServerAddress)
 {
 	if(m_Gamecl)
-		m_Gamecl->ConnectToServer(ServerName, ServerAddress, m_userlogin, m_userpass, _CUR_LBANET_SERVER_VERSION_);
+		m_Gamecl->ConnectToServer(ServerName, ServerAddress, m_userlogin, m_userpass, 
+											_CUR_LBANET_SERVER_VERSION_, &m_lbaNetModel);
 }
 
 /***********************************************************

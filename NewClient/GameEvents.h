@@ -170,6 +170,27 @@ public:
 	std::string _Message;
 };
 
+
+/************************************************************************************************************************
+*                                                  class NewMapEvent
+*
+*	used to inform that player has entered a new map
+************************************************************************************************************************
+*/
+class NewMapEvent : public GameEvent
+{
+public:
+	//! constructor
+	NewMapEvent(const std::string &MapName, const std::string &MapType)
+		: _MapName(MapName), _MapType(MapType)
+	{
+		_type = 7;
+	}
+
+	std::string _MapName;
+	std::string _MapType;
+};
+
 /*
 ************************************************************************************************************************
 *                                                  class NewFontSizeEvent

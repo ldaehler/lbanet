@@ -171,14 +171,14 @@ void LbaNetModel::CleanupWorld()
 
 
 	//TODO - only for testing
-	boost::shared_ptr<DisplayObjectDescriptionBase> Ds(new OsgSimpleObjectDescription("Lba1/Maps/map0.osgb"));
-	// maps are always 1Y too much up, remove that
-	boost::shared_ptr<DisplayTransformation> Tr(new DisplayTransformation());
-	Tr->translationY = -1;
-	boost::shared_ptr<DisplayInfo> DInfo(new DisplayInfo(Tr, Ds));
-	boost::shared_ptr<PhysicalDescriptionBase> Pyd(new PhysicalDescriptionTriangleMesh(0, 0, 0, "Data/Lba1/Maps/map0.phy"));
-	ObjectInfo mapinfo(DInfo, Pyd, true);
-	AddObject(1, mapinfo, false);
+	//boost::shared_ptr<DisplayObjectDescriptionBase> Ds(new OsgSimpleObjectDescription("Lba1/Maps/map0.osgb"));
+	//// maps are always 1Y too much up, remove that
+	//boost::shared_ptr<DisplayTransformation> Tr(new DisplayTransformation());
+	//Tr->translationY = -1;
+	//boost::shared_ptr<DisplayInfo> DInfo(new DisplayInfo(Tr, Ds));
+	//boost::shared_ptr<PhysicalDescriptionBase> Pyd(new PhysicalDescriptionTriangleMesh(0, 0, 0, "Lba1/Maps/map0.phy"));
+	//ObjectInfo mapinfo(DInfo, Pyd, true);
+	//AddObject(1, mapinfo, false);
 
 
 	// clear physic engine
@@ -255,6 +255,17 @@ void LbaNetModel::ResetPlayerObject()
 	if(m_controllerCam)
 		m_controllerCam->SetCharacter(m_playerObject, true);
 }
+
+
+
+
+/***********************************************************
+inform that we entered a new map
+***********************************************************/
+void LbaNetModel::NewMapEvent(const std::string & MapName, const std::string & MapType)
+{
+}
+
 
 
 	//

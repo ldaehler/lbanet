@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 #include <vector>
-#include "CommonTypes.h"
+#include "MapInfo.h"
 
 //#include "WorldInfo.h"
 //#include "BrickInfoHandler.h"

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="LBANet"
 	ProjectGUID="{B46236F6-9F3B-4B3A-BD27-13E94D8833F2}"
 	RootNamespace="perspectivemapviewer"
@@ -179,6 +179,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\shared\ActorObject.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CameraController.cpp"
 				>
 			</File>
@@ -319,6 +323,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\MapInfoObject.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\shared\MapInfoXmlReader.cpp"
 				>
 			</File>
@@ -398,12 +406,24 @@
 				RelativePath="..\shared\WorldToDisplayObjectSynchronizer.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\shared\XmlReader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\ZoidSerializer.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Fichiers d&apos;en-tête"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath="..\shared\ActorObject.h"
+				>
+			</File>
 			<File
 				RelativePath=".\CameraController.h"
 				>
@@ -501,6 +521,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\GameClientCallbackBase.h"
+				>
+			</File>
+			<File
 				RelativePath=".\GameEvents.h"
 				>
 			</File>
@@ -577,6 +601,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\MapInfoObject.h"
+				>
+			</File>
+			<File
 				RelativePath="..\shared\MapInfoXmlReader.h"
 				>
 			</File>
@@ -637,11 +665,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\StaticObject.h"
+				RelativePath="..\shared\StaticObject.h"
 				>
 			</File>
 			<File
-				RelativePath="..\shared\StaticObject.h"
+				RelativePath=".\StaticObject.h"
 				>
 			</File>
 			<File
@@ -666,6 +694,14 @@
 			</File>
 			<File
 				RelativePath="..\shared\WorldToDisplayObjectSynchronizer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\XmlReader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\ZoidSerializer.h"
 				>
 			</File>
 		</Filter>

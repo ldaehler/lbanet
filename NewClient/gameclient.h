@@ -29,10 +29,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <zoidcom.h>
 #include <string>
 #include <map>
+#include <list>
 #include <boost/shared_ptr.hpp>
 
 #include "GameObject.h"
+#include "GameClientCallbackBase.h"
 
+
+class MapInfoObject;
+class ActorObject;
 
 
 /***********************************************************************
@@ -53,7 +58,8 @@ public:
 
 	//! connect to a server given an address + port
 	void ConnectToServer(const std::string & servername, const std::string & address, const std::string & login, 
-							const std::string & password, const std::string & excpectedversion);
+							const std::string & password, const std::string & excpectedversion,
+							GameClientCallbackBase * callback);
 
 	//! check if client is connected
 	bool IsConnected() {return m_connected;}
@@ -119,6 +125,12 @@ private:
 	unsigned short m_downpacketpersecond;
 	unsigned short m_downbyteperpacket;
 
+
+	std::list<MapInfoObject*>				m_maps_objects;
+	std::map<unsigned int, ActorObject*>	m_actors;
+
+
+	GameClientCallbackBase * m_callback;
 };
 
 #endif

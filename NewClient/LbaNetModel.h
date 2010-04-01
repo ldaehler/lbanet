@@ -31,6 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ObjectsDescription.h"
 #include "DynamicObject.h"
+#include "GameClientCallbackBase.h"
+
 #include <boost/shared_ptr.hpp>
 
 class PhysXEngine;
@@ -45,7 +47,7 @@ class CameraController;
  * Modified: mardi 14 juillet 2009 13:54:52
  * Purpose: Declaration of the class LbaNetModel
  ***********************************************************************/
-class LbaNetModel
+class LbaNetModel : public GameClientCallbackBase
 {
 public:
 	//! constructor
@@ -63,10 +65,10 @@ public:
 
 	//! add object to the scene
 	//! if IsMainPlayer then treat this object as the player object
-	void AddObject(unsigned int id, const ObjectInfo &desc, bool IsMainPlayer);
+	virtual void AddObject(unsigned int id, const ObjectInfo &desc, bool IsMainPlayer);
 
 	//! remove object from the scene
-	void RemObject(unsigned int id);
+	virtual void RemObject(unsigned int id);
 
 	//! get object from the scene
 	boost::shared_ptr<DynamicObject> GetObject(unsigned int id);
@@ -89,6 +91,9 @@ public:
 
 	//! do action from keyboard input
 	void DoAction();
+
+	//! inform that we entered a new map
+	void NewMapEvent(const std::string & MapName, const std::string & MapType);
 
 protected:
 
