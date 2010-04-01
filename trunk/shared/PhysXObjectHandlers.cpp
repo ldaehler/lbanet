@@ -555,8 +555,8 @@ boost::shared_ptr<PhysicalObjectHandlerBase> PhysicalDescriptionTriangleMesh::Bu
 
 	boost::shared_ptr<ActorUserData> udata = boost::shared_ptr<ActorUserData>(new ActorUserData());
 
-	NxActor* actor = _PEngine->LoadTriangleMeshFile(NxVec3(positionX, positionY, positionZ), MeshInfoDataFileName,
-														udata);
+	NxActor* actor = _PEngine->LoadTriangleMeshFile(NxVec3(positionX, positionY, positionZ), 
+														"Data/"+MeshInfoDataFileName, udata);
 
 	return boost::shared_ptr<PhysicalObjectHandlerBase>(new PhysXActorHandler(_PEngine, udata, actor, 
 							boost::shared_ptr<SimpleRotationHandler>(new SimpleRotationHandler(rotation))));

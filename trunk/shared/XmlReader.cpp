@@ -67,11 +67,9 @@ void XmlReader::addBool(bool data, const std::string &id)
 {
 }
 
-bool XmlReader::getBool(const std::string &id)
+void XmlReader::getBool(const std::string &id, bool & res)
 {
-	bool res = 0;
 	_stream->QueryValueAttribute(id, &res);
-	return res;
 }
 
 
@@ -82,11 +80,9 @@ void XmlReader::addUShort(unsigned short data, const std::string &id)
 {
 }
 
-unsigned short XmlReader::getUShort(const std::string &id)
+void XmlReader::getUShort(const std::string &id, unsigned short & res)
 {
-	unsigned short res = 0;
 	_stream->QueryValueAttribute(id, &res);
-	return res;
 }
 
 
@@ -97,11 +93,9 @@ void XmlReader::addUInt(unsigned int data, const std::string &id)
 {
 }
 
-unsigned int XmlReader::getUInt(const std::string &id)
+void XmlReader::getUInt(const std::string &id, unsigned int & res)
 {
-	unsigned int res = 0;
 	_stream->QueryValueAttribute(id, &res);
-	return res;
 }
 
 
@@ -112,11 +106,9 @@ void XmlReader::addULong(unsigned long data, const std::string &id)
 {
 }
 
-unsigned long XmlReader::getULong(const std::string &id)
+ void XmlReader::getULong(const std::string &id, unsigned long & res)
 {
-	unsigned long res = 0;
 	_stream->QueryValueAttribute(id, &res);
-	return res;
 }
 
 
@@ -128,11 +120,9 @@ void XmlReader::addShort(short data, const std::string &id)
 {
 }
 
-short XmlReader::getShort(const std::string &id)
+void XmlReader::getShort(const std::string &id, short & res)
 {
-	short res = 0;
 	_stream->QueryValueAttribute(id, &res);
-	return res;
 }
 
 
@@ -143,11 +133,9 @@ void XmlReader::addInt(int data, const std::string &id)
 {
 }
 
-int XmlReader::getInt(const std::string &id)
+void XmlReader::getInt(const std::string &id, int & res)
 {
-	int res = 0;
 	_stream->QueryValueAttribute(id, &res);
-	return res;
 }
 
 
@@ -158,11 +146,9 @@ void XmlReader::addLong(long data, const std::string &id)
 {
 }
 
-long XmlReader::getLong(const std::string &id)
+void XmlReader::getLong(const std::string &id, long & res)
 {
-	long res = 0;
 	_stream->QueryValueAttribute(id, &res);
-	return res;
 }
 
 
@@ -173,11 +159,9 @@ void XmlReader::addFloat(float data, const std::string &id)
 {
 }
 
-float XmlReader::getFloat(const std::string &id)
+void XmlReader::getFloat(const std::string &id, float & res)
 {
-	float res = 0;
 	_stream->QueryValueAttribute(id, &res);
-	return res;
 }
 
 
@@ -189,11 +173,9 @@ void XmlReader::addString(const std::string &data, const std::string &id)
 {
 }
 
-std::string XmlReader::getString(const std::string &id)
+void XmlReader::getString(const std::string &id, std::string & res)
 {
 	const std::string* str = _stream->Attribute(id);
 	if(str)
-		return *str;
-	else
-		return "";
+		res = *str;
 }
