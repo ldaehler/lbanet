@@ -27,6 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "PhysXEngine.h"
 #include "MainClientThread.h"
 #include "MapInfoObject.h"
+#include "ActorObject.h"
+
 
 #include <boost/thread/thread.hpp>
 
@@ -67,6 +69,7 @@ Server::Server( int _internalport, int _udpport,
 
 	// register classes
 	MapInfoObject::registerClass(this);
+	ActorObject::registerClass(this);
 
 
 	// populate free map slot list
