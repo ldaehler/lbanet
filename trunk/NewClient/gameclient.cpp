@@ -211,9 +211,9 @@ void GameClient::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _reque
 		_announcedata->getString(buffmusic, 250);
 		int musicloop = _announcedata->getSignedInt(16);
 
-		m_maps_objects.push_back(new MapInfoObject(this));
+		m_maps_objects.push_back(boost::shared_ptr<MapInfoObject>(new MapInfoObject(this)));
 		InternalWorkpile::getInstance()->AddEvent(new NewMapEvent(buffname, bufftype));
-		MusicHandler::getInstance()->PlayMusic(buffmusic, musicloop);
+		MusicHandler::getInstance()->PlayMusic(std::string("Data/") + buffmusic, musicloop);
 	}
 
 	// if this is an actor
@@ -221,11 +221,7 @@ void GameClient::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _reque
 	{
 		ZoidSerializer zserialize(_announcedata);
 		ObjectInfo oinfo(&zserialize);
-		m_actors[_id] = new ActorObject(this, oinfo);
-
-		//inform callback of new actor
-		if(m_callback)
-			m_callback->AddObject(_id, oinfo, false);
+		m_actors[_id] = boost::shared_ptr<ActorObject>(new ActorObject(this, _id, oinfo, m_callback));	
 	}
 
 	
@@ -241,15 +237,12 @@ void GameClient::Process()
 {
 	//process map objects
 	{
-		std::list<MapInfoObject*>::iterator it = m_maps_objects.begin();
+		std::list<boost::shared_ptr<MapInfoObject> >::iterator it = m_maps_objects.begin();
 		while(it != m_maps_objects.end())
 		{
 			(*it)->Process();
 			if((*it)->isGarbage())
-			{
-				delete *it;
 				it = m_maps_objects.erase(it);
-			}
 			else
 				++it;
 		}
@@ -257,19 +250,12 @@ void GameClient::Process()
 
 	//process actors
 	{
-		std::map<unsigned int, ActorObject*>::iterator it = m_actors.begin();
+		std::map<unsigned int, boost::shared_ptr<ActorObject> >::iterator it = m_actors.begin();
 		while(it != m_actors.end())
 		{
 			it->second->Process();
 			if(it->second->isGarbage())
-			{
-				//inform callback of actor removed
-				if(m_callback)
-					m_callback->RemObject(it->first);
-
-				delete it->second;
 				it = m_actors.erase(it);
-			}
 			else
 				++it;
 		}
@@ -299,6 +285,8 @@ void GameClient::CloseConnection()
 
 
 	//clean up everything
+	m_maps_objects.clear();
+	m_actors.clear();
 
 
 	m_disconnecting = false;
