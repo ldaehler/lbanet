@@ -34,6 +34,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class ZCom_Control;
 class PhysXEngine;
+class ActorObject;
+
 
 /***********************************************************************
  * Module:  ServerMapManager.h
@@ -91,8 +93,13 @@ private:
 
 	bool			_needdelete;
 
+	std::string						_mapname;
+
 	//used to give info about map to clients
-	MapInfoObject	_mapobject;
+	MapInfoObject					_mapobject;
+
+
+	std::map<long, ActorObject *>	_actors;
 };
 
 #endif

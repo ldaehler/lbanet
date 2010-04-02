@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ServerMapManager.h"
 #include "LogHandler.h"
 #include "PhysXEngine.h"
-
+#include "ActorObject.h"
 
 /************************************************************************/
 /* constructor                                        
@@ -35,9 +35,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ServerMapManager::ServerMapManager(ZCom_Control *_control, unsigned int ZoidLevel, const MapInfo & MapInfo,
 										boost::shared_ptr<PhysXEngine> pengine)
 : _controler(_control), _zoidlevel(ZoidLevel), _needdelete(false), _pengine(pengine), 
-	_mapobject(_control, MapInfo)
+	_mapobject(_control, MapInfo), _mapname(MapInfo.Name)
 {
+	std::stringstream strs;
+	strs<<"Map instance created for map: "<<_mapname;
+	LogHandler::getInstance()->LogToFile(strs.str(), 2);    
 
+	std::map<long, ObjectInfo>::const_iterator itmap = MapInfo.Actors.begin();
+	std::map<long, ObjectInfo>::const_iterator endmap = MapInfo.Actors.end();
+
+	//create actors
+	for(;itmap != endmap; ++itmap)
+		_actors[itmap->second.GetId()] = new ActorObject(_control, 0, itmap->second, NULL);
 }
 
 
@@ -47,7 +56,9 @@ ServerMapManager::ServerMapManager(ZCom_Control *_control, unsigned int ZoidLeve
 /************************************************************************/
 ServerMapManager::~ServerMapManager()
 {
-
+	std::stringstream strs;
+	strs<<"Map instance deleted for map: "<<_mapname;
+	LogHandler::getInstance()->LogToFile(strs.str(), 2);    
 }
 
 
@@ -56,7 +67,14 @@ ServerMapManager::~ServerMapManager()
 /************************************************************************/
 void ServerMapManager::Process()
 {
+	//process map info
+	_mapobject.Process();
 
+	//process actors
+	std::map<long, ActorObject *>::iterator itmap = _actors.begin();
+	std::map<long, ActorObject *>::iterator endmap = _actors.end();
+	for(;itmap != endmap; ++itmap)
+		itmap->second->Process();
 }
 
 
