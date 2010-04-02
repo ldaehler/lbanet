@@ -468,11 +468,12 @@ void LbaNetEngine::SwitchGuiToLogin()
 	if(m_currentstate == ELogin)
 		return;
 
+	// disconnect from servers
+	m_Chatcl->CloseConnection();
+	m_Gamecl->CloseConnection();
+
 	// clean up the world on disconnect
 	m_lbaNetModel.CleanupWorld();
-
-	//m_lbaNetModel.ZoomInPlayerForLogin();
-	m_Chatcl->CloseConnection();
 
 	PlayMenuMusic();
 
@@ -576,8 +577,7 @@ void LbaNetEngine::ConnectionCallback(int SuccessFlag, const std::string & reaso
 	{
 		m_gui_handler.InformNotLoggedIn(SuccessFlag, reason);
 		SwitchGuiToLogin();
-		if(m_Gamecl)
-			m_Gamecl->CloseConnection();
+
 		return;
 	}
 
@@ -611,6 +611,9 @@ change the world
 ***********************************************************/
 void LbaNetEngine::ChangeWorld(const std::string & NewWorld)
 {
+	//disconnect from previous world
+	m_Gamecl->CloseConnection();
+
 	//reset friend list
 	m_Chatcl->GetFriendList();
 

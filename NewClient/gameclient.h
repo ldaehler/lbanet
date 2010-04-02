@@ -126,8 +126,8 @@ private:
 	unsigned short m_downbyteperpacket;
 
 
-	std::list<MapInfoObject*>				m_maps_objects;
-	std::map<unsigned int, ActorObject*>	m_actors;
+	std::list<boost::shared_ptr<MapInfoObject> >				m_maps_objects;
+	std::map<unsigned int, boost::shared_ptr<ActorObject> >		m_actors;
 
 
 	GameClientCallbackBase * m_callback;
