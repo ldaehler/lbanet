@@ -671,7 +671,7 @@ boost::shared_ptr<DisplayObjectHandlerBase> OsgSimpleObjectDescription::BuildSel
 															DisplayHandlerBase * disH) const
 {
 	if(disH)
-		disH->CreateSimpleObject(_filename, Tr);
+		return disH->CreateSimpleObject(_filename, Tr);
 
 	return boost::shared_ptr<DisplayObjectHandlerBase> ();
 }
@@ -687,7 +687,7 @@ boost::shared_ptr<DisplayObjectHandlerBase> OsgOrientedCapsuleDescription::Build
 															DisplayHandlerBase * disH) const
 {
 	if(disH)
-		disH->CreateCapsuleObject(_radius, _height, _colorR, _colorG, _colorB, _colorA, Tr);
+		return disH->CreateCapsuleObject(_radius, _height, _colorR, _colorG, _colorB, _colorA, Tr);
 
 	return boost::shared_ptr<DisplayObjectHandlerBase> ();
 }
