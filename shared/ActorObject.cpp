@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "LogHandler.h"
 #include "ObjectsDescription.h"
 #include "ZoidSerializer.h"
+#include "GameClientCallbackBase.h"
 
 // declare static member
 ZCom_ClassID ActorObject::m_classid = ZCom_Invalid_ID;
@@ -46,7 +47,9 @@ void ActorObject::registerClass(ZCom_Control *_control)
 /************************************************************************/
 /* constructor                                        
 /************************************************************************/
-ActorObject::ActorObject(ZCom_Control *_control, const ObjectInfo & oinfo)
+ActorObject::ActorObject(ZCom_Control *_control, unsigned int myid, const ObjectInfo & oinfo,
+							GameClientCallbackBase * callback)
+	: m_myid(myid), m_callback(callback)
 {
 	#ifndef _ZOID_USED_NEW_VERSION_
 		m_node->registerNodeDynamic(m_classid, _control);
@@ -64,6 +67,11 @@ ActorObject::ActorObject(ZCom_Control *_control, const ObjectInfo & oinfo)
 	ZoidSerializer zoids(adata);
 	oinfo.Serialize(&zoids);
 	m_node->setAnnounceData(adata);
+
+
+	//inform callback of new actor creation
+	if(m_callback)
+		m_callback->AddObject(m_myid, oinfo, false);
 }
 
 
@@ -76,4 +84,8 @@ ActorObject::~ActorObject()
 	#ifdef _DEBUG
 		LogHandler::getInstance()->LogToFile("Deleting node " + GetObjectName());
 	#endif
+
+	//inform callback of actor removed
+	if(m_callback)
+		m_callback->RemObject(m_myid);
 }

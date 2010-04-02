@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class ZCom_Control;
 class ObjectInfo;
-
+class GameClientCallbackBase;
 
 /***********************************************************************
  * Module:  MapInfoObject.h
@@ -42,7 +42,8 @@ class ActorObject : public GameObject
 
 public:
 	// constructor for server
-	ActorObject(ZCom_Control *_control, const ObjectInfo & oinfo);
+	ActorObject(ZCom_Control *_control, unsigned int myid, const ObjectInfo & oinfo,
+					GameClientCallbackBase * callback);
 
 
 	// destructor
@@ -73,7 +74,9 @@ protected:
 private:
 	// the class id for zoidcom
 	static unsigned int  m_classid;
-
+	
+	unsigned int			m_myid; 
+	GameClientCallbackBase * m_callback;
 };
 
 
