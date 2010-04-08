@@ -27,8 +27,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 class ObjectInfo;
+class PhysicalObjectHandlerBase;
 
 /***********************************************************************
  * Module:  GameClientCallbackBase.h
@@ -47,7 +49,8 @@ public:
 	virtual ~GameClientCallbackBase(){}
 
 	// add an actor object
-	virtual void AddObject(unsigned int id, const ObjectInfo &desc, bool IsMainPlayer) = 0;
+	virtual boost::shared_ptr<PhysicalObjectHandlerBase>
+			AddObject(unsigned int id, const ObjectInfo &desc, bool IsMainPlayer) = 0;
 
 	// remove an actor object
 	virtual void RemObject(unsigned int id) = 0;

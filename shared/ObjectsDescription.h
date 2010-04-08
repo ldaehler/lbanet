@@ -491,6 +491,9 @@ public:
 	boost::shared_ptr<DynamicObject> BuildSelf(boost::shared_ptr<PhysXEngine> _PEngine, int id,
 												DisplayHandlerBase * disH) const;
 
+	//! build description into dynamic object
+	boost::shared_ptr<PhysicalObjectHandlerBase> BuildSelfServer(boost::shared_ptr<PhysXEngine> _PEngine) const;
+
 	//! serialize to network object
 	void Serialize(SerializerBase * stream) const;
 
