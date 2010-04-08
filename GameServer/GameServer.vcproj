@@ -259,6 +259,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\PlayerObject.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\server.cpp"
 				>
 			</File>
@@ -414,6 +418,10 @@
 			</File>
 			<File
 				RelativePath=".\PlayerInfoHandler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\PlayerObject.h"
 				>
 			</File>
 			<File

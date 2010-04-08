@@ -28,8 +28,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "LogHandler.h"
 #include "UserAllocatorHandler.h"
 #include "MySQLDatabaseHandler.h"
+#include "SynchronizedTimeHandler.h"
 
 #include <signal.h>
+
 
 
 bool global_continue = true;
@@ -76,10 +78,24 @@ int main(int argc, char *argv[])
 																				dataH, "127.0.0.1:8899",
 																				"127.0.0.1:8900", dbH.get()));
 
+	// init time
+	unsigned int lasttime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
 
 	// zoidcom needs to get called regularly to get anything done so we enter the mainloop now
 	while(global_continue)
 	{
+		// mesure the time used to do one cycle
+		unsigned int waittime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
+
+
+		// update replicators and tell zoidcom how much ingame time has passed since the last
+		// time this was called
+		unsigned int currtime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
+		unsigned int diff = (currtime-lasttime);
+		lasttime = currtime;
+		Serv->ZCom_processReplicators(diff);
+
+
 		// processes incoming packets
 		// all callbacks are generated from within the processInput calls
 		Serv->ZCom_processInput( eZCom_NoBlock );
@@ -91,9 +107,11 @@ int main(int argc, char *argv[])
 		Serv->ZCom_processOutput();
 
 
-		//TODO - change that to dynamic wait
 		// pause the program for a few milliseconds
-		ZoidCom::Sleep(50);
+		unsigned int currwtime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
+		unsigned int wdiff = (currwtime-waittime);
+		if(wdiff < SIMULATION_TIME_PER_UPDATE)
+			ZoidCom::Sleep(SIMULATION_TIME_PER_UPDATE-wdiff);
 	}
 
 	// important to reset server before connection
