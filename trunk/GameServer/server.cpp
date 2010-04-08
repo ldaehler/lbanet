@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "MainClientThread.h"
 #include "MapInfoObject.h"
 #include "ActorObject.h"
-
+#include "PlayerObject.h"
 
 #include <boost/thread/thread.hpp>
 
@@ -70,7 +70,7 @@ Server::Server( int _internalport, int _udpport,
 	// register classes
 	MapInfoObject::registerClass(this);
 	ActorObject::registerClass(this);
-
+	PlayerObject::registerClass(this);
 
 	// populate free map slot list
 	// from 10 to 70
@@ -376,6 +376,15 @@ void Server::PlayerLeave(unsigned int PlayerId)
 		//remove player from connected list
 		m_connected_players.erase(itp);	
 	}
+
+
+	//tell player to change to default zoid level
+	ZCom_BitStream *stre = new ZCom_BitStream();
+
+	//send event 1
+	stre->addInt(1, 4);
+	stre->addInt(1, 32);
+	ZCom_sendData(PlayerId, stre);
 }
 
 
@@ -411,6 +420,7 @@ bool Server::ConnectPlayerToMap(unsigned int PlayerId, const std::string & MapNa
 
 				//tell player to change zoid level
 				ZCom_BitStream *stre = new ZCom_BitStream();
+
 				//send event 1
 				stre->addInt(1, 4);
 				stre->addInt((*itvec)->GetZoidLevel(), 32);
@@ -438,10 +448,10 @@ bool Server::ConnectPlayerToMap(unsigned int PlayerId, const std::string & MapNa
 
 		//tell player to change zoid level
 		ZCom_BitStream *stre = new ZCom_BitStream();
+
 		//send event 1
 		stre->addInt(1, 4);
 		stre->addInt(map->GetZoidLevel(), 32);
-		stre->addString(MapName.c_str());
 		ZCom_sendData(PlayerId, stre);
 
 		return true;
@@ -475,6 +485,7 @@ void Server::ProcessPlayerQueue()
 			{
 				//if player waiting for long then inform the client
 				ZCom_BitStream *stre = new ZCom_BitStream();
+
 				//send event 0
 				stre->addInt(0, 4);
 				ZCom_sendData(itp->Id, stre);

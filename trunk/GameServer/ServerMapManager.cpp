@@ -46,7 +46,7 @@ ServerMapManager::ServerMapManager(ZCom_Control *_control, unsigned int ZoidLeve
 
 	//create actors
 	for(;itmap != endmap; ++itmap)
-		_actors[itmap->second.GetId()] = new ActorObject(_control, 0, itmap->second, NULL);
+		_actors[itmap->second.GetId()] = new ActorObject(_control, _zoidlevel, 0, itmap->second, this);
 }
 
 
@@ -97,11 +97,20 @@ void ServerMapManager::PlayerLeave(unsigned int PlayerId)
 
 
 
-
 /************************************************************************/
 /* return true if server is full                        
 /************************************************************************/
 bool ServerMapManager::IsFull()
 {
 	return false;
+}
+
+
+/************************************************************************/
+/* add an actor object callback                                  
+/************************************************************************/
+boost::shared_ptr<PhysicalObjectHandlerBase>
+			ServerMapManager::AddObject(unsigned int id, const ObjectInfo &desc, bool IsMainPlayer)
+{
+	return desc.BuildSelfServer(_pengine);
 }

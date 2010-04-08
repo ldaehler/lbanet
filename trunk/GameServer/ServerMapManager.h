@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "MapInfo.h"
 #include "PlayerInfoHandler.h"
 #include "MapInfoObject.h"
+#include "GameClientCallbackBase.h"
 
 class ZCom_Control;
 class PhysXEngine;
@@ -43,7 +44,7 @@ class ActorObject;
  * Modified: mardi 14 juillet 2009 17:41:03
  * Purpose: Class ServerMapManager
  ***********************************************************************/
-class ServerMapManager
+class ServerMapManager : public GameClientCallbackBase
 {
 
 public:
@@ -83,6 +84,14 @@ public:
 
 	//! return true if server is full
 	bool IsFull();
+
+
+	// add an actor object callback
+	virtual boost::shared_ptr<PhysicalObjectHandlerBase>
+			AddObject(unsigned int id, const ObjectInfo &desc, bool IsMainPlayer);
+
+	// remove an actor object callback
+	virtual void RemObject(unsigned int id){}
 
 
 private:
