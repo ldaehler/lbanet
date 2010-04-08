@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ObjectsDescription.h"
 #include "MusicHandler.h"
 #include "InternalWorkpile.h"
+#include "PlayerObject.h"
 
 /***********************************************************************
  * Constructor
@@ -55,6 +56,7 @@ GameClient::GameClient(unsigned short downpacketpersecond, unsigned short downby
 	//register classes
 	MapInfoObject::registerClass(this);
 	ActorObject::registerClass(this);
+	PlayerObject::registerClass(this);
 }
 
 
@@ -221,7 +223,7 @@ void GameClient::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _reque
 	{
 		ZoidSerializer zserialize(_announcedata);
 		ObjectInfo oinfo(&zserialize);
-		m_actors[_id] = boost::shared_ptr<ActorObject>(new ActorObject(this, _id, oinfo, m_callback));	
+		m_actors[_id] = boost::shared_ptr<ActorObject>(new ActorObject(this, 1, _id, oinfo, m_callback));	
 	}
 
 	
@@ -292,3 +294,35 @@ void GameClient::CloseConnection()
 	m_disconnecting = false;
 }
 
+
+
+/***********************************************************
+data received from the server
+***********************************************************/
+void GameClient::ZCom_cbDataReceived( ZCom_ConnID _id, ZCom_BitStream &_data )
+{
+	//check message type
+	unsigned int type = _data.getInt(4);
+
+	switch(type)
+	{
+		//player is in waiting queue
+		case 0:
+			//inform user through the gui
+			InternalWorkpile::getInstance()->AddEvent(new GameErrorMessageEvent("Map server is full. You have been queued for connection. Please wait for a moment you will get connected automatically..."));
+		break;
+
+		//change zoidlevel
+		case 1:
+			unsigned int newlvl = _data.getInt(32);
+
+			std::stringstream strs;
+			strs<<"Game Client: Changing zoidlevel to: "<<newlvl;
+			LogHandler::getInstance()->LogToFile(strs.str(), 2);   
+
+			ZCom_requestZoidMode(newlvl, 1);
+		break;
+
+
+	}
+}

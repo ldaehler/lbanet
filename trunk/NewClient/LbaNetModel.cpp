@@ -101,7 +101,8 @@ void LbaNetModel::Process()
 /***********************************************************
 add object to the scene
 ***********************************************************/
-void LbaNetModel::AddObject(unsigned int id, const ObjectInfo &desc, bool IsMainPlayer)
+boost::shared_ptr<PhysicalObjectHandlerBase> 
+	LbaNetModel::AddObject(unsigned int id, const ObjectInfo &desc, bool IsMainPlayer)
 {
 	//special treatment if main object
 	if(IsMainPlayer)
@@ -115,10 +116,15 @@ void LbaNetModel::AddObject(unsigned int id, const ObjectInfo &desc, bool IsMain
 			m_controllerRC->SetCharacter(m_playerObject);
 		if(m_controllerCam)
 			m_controllerCam->SetCharacter(m_playerObject);
+
+		return m_playerObject->GetPhysicalObject();
 	}
 	else
 	{
-		_dynamicObjects[id] = desc.BuildSelf(_physicEngine, id, OsgHandler::getInstance());
+		boost::shared_ptr<DynamicObject> tmpobj = desc.BuildSelf(_physicEngine, id, OsgHandler::getInstance());
+		_dynamicObjects[id] = tmpobj;
+
+		return tmpobj->GetPhysicalObject();
 	}
 }
 

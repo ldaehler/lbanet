@@ -117,6 +117,9 @@ void LbaNetEngine::run(void)
 {
 	try
 	{
+		// init time
+		unsigned int lasttime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
+
 		// Loop until a quit event is found
 		while(!OsgHandler::getInstance()->Update() && !InternalWorkpile::getInstance()->GameQuitted())
 		{
@@ -138,6 +141,13 @@ void LbaNetEngine::run(void)
 
 			//process game client part
 			{
+				// update replicators and tell zoidcom how much ingame time has passed since the last
+				// time this was called
+				unsigned int currtime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
+				unsigned int diff = (currtime-lasttime);
+				lasttime = currtime;
+				m_Gamecl->ZCom_processReplicators(diff);
+
 				// processes incoming packets
 				// all callbacks are generated from within the processInput calls
 				m_Gamecl->ZCom_processInput( eZCom_NoBlock );

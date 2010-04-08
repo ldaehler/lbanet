@@ -87,7 +87,7 @@ protected:
 								ZCom_BitStream *_announcedata, eZCom_NodeRole _role, ZCom_NodeID _net_id);
 
 	//data received from the server
-	virtual void ZCom_cbDataReceived( ZCom_ConnID _id, ZCom_BitStream &_data ) {}
+	virtual void ZCom_cbDataReceived( ZCom_ConnID _id, ZCom_BitStream &_data );
 
 
 #ifndef _ZOID_USED_NEW_VERSION_
