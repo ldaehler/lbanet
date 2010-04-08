@@ -371,6 +371,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\PlayerObject.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\RoomCutController.cpp"
 				>
 			</File>
@@ -653,6 +657,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\PlayerObject.h"
+				>
+			</File>
+			<File
 				RelativePath=".\resource.h"
 				>
 			</File>
@@ -665,11 +673,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\shared\StaticObject.h"
+				RelativePath=".\StaticObject.h"
 				>
 			</File>
 			<File
-				RelativePath=".\StaticObject.h"
+				RelativePath="..\shared\StaticObject.h"
 				>
 			</File>
 			<File

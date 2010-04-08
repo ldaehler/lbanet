@@ -65,7 +65,8 @@ public:
 
 	//! add object to the scene
 	//! if IsMainPlayer then treat this object as the player object
-	virtual void AddObject(unsigned int id, const ObjectInfo &desc, bool IsMainPlayer);
+	virtual boost::shared_ptr<PhysicalObjectHandlerBase> 
+		AddObject(unsigned int id, const ObjectInfo &desc, bool IsMainPlayer);
 
 	//! remove object from the scene
 	virtual void RemObject(unsigned int id);
