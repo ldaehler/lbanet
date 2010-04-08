@@ -22,45 +22,54 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _LBA_NET_ACTOR_OBJECT_H_
-#define _LBA_NET_ACTOR_OBJECT_H_
+#ifndef _LBA_NET_PLAYER_OBJECT_H_
+#define _LBA_NET_PLAYER_OBJECT_H_
 
 #include "GameObject.h"
 #include <boost/shared_ptr.hpp>
+#include <zoidcom.h>
 
-class ZCom_Control;
+
 class ObjectInfo;
 class GameClientCallbackBase;
 class PhysicalObjectHandlerBase;
 
 
 /***********************************************************************
- * Module:  MapInfoObject.h
+ * Module:  PlayerObject.h
  * Author:  vivien
  * Modified: mardi 14 juillet 2009 17:41:03
- * Purpose: Class MapInfoObject
+ * Purpose: Class PlayerObject
  ***********************************************************************/
-class ActorObject : public GameObject
+class PlayerObject : public GameObject, public ZCom_MoveUpdateListener<zFloat>
 {
 
 public:
 	// constructor for server
-	ActorObject(ZCom_Control *_control, unsigned int zoidlevel, unsigned int myid, const ObjectInfo & oinfo,
+	PlayerObject(ZCom_Control *_control, unsigned int zoidlevel, unsigned int myid, const ObjectInfo & oinfo,
 					GameClientCallbackBase * callback);
 
 
 	// destructor
-	virtual ~ActorObject();
+	virtual ~PlayerObject();
 
 
 	// class registration
 	static void registerClass(ZCom_Control *_control);
 	static unsigned int getClassID() { return m_classid; }
 
+
+  /* update listener callbacks */
+  void inputUpdated(ZCom_BitStream& _inputstream, bool _inputchanged, zU32 _client_time, zU32 _estimated_time_sent);
+  void inputSent(ZCom_BitStream& _inputstream);
+  void correctionReceived(zS32 *_pos, zFloat* _vel, zFloat *_acc, bool _teleport, zU32 _estimated_time_sent);
+  void updateReceived(ZCom_BitStream& _inputstream, zS32 *_pos, zFloat* _vel, zFloat *_acc, zU32 _estimated_time_sent) {}
+
+
 protected:
 	// return the object name
 	virtual std::string GetObjectName()
-	{return "ActorObject";}
+	{return "PlayerObject";}
 
 	// handle init event
 	virtual void HandleInitEvent(ZCom_BitStream * data, eZCom_NodeRole remoterole, unsigned int eventconnid){}
@@ -81,6 +90,8 @@ private:
 	unsigned int			m_myid; 
 	GameClientCallbackBase * m_callback;
 	boost::shared_ptr<PhysicalObjectHandlerBase> m_physicObj;
+
+	ZCom_Replicate_Movement<zFloat, 3> *	m_moverep;
 };
 
 

@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "NxCooking.h"
 #include "Stream.h"
 #include "LogHandler.h"
+#include "CommonTypes.h"
 
 #include <limits>
 
@@ -195,8 +196,8 @@ void PhysXEngine::Init()
 	gManager = NxCreateControllerManager(UserAllocatorHandler::getInstance()->GetAllocator());
 
 
-	// set timing to 30 timestep per second
-	gScene->setTiming(1.0f/30.0f);
+	// set timing to X timestep per second
+	gScene->setTiming(1.0f/SIM_UPDATE_RATE);
 
 
 	// Start the first frame of the simulation

@@ -346,7 +346,10 @@ move object to a position in the world
 ***********************************************************/
 void PhysXControllerHandler::MoveTo(float X, float Y, float Z)
 {
-	SetPosition(X, Y, Z);
+	if(!_Controller) return;
+
+	NxExtendedVec3 vec = _Controller->getPosition();
+	_Pengine->MoveCharacter(_Controller, NxVec3(X - (float)vec.x, Y - (float)vec.y, Z - (float)vec.z), false);
 }
 
 /***********************************************************

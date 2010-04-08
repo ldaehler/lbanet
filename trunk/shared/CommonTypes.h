@@ -28,6 +28,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 
+
+//simulation update rates
+#define SIM_UPDATE_RATE 20                              // hz
+#define SIMULATION_TIME_PER_UPDATE (1000/SIM_UPDATE_RATE) // msecs per update
+
+
 class LbaVec3
 {
 public:

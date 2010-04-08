@@ -391,6 +391,21 @@ boost::shared_ptr<DynamicObject> ObjectInfo::BuildSelf(boost::shared_ptr<PhysXEn
 }
 
 
+
+/***********************************************************
+build description into dynamic object
+***********************************************************/
+boost::shared_ptr<PhysicalObjectHandlerBase> 
+			ObjectInfo::BuildSelfServer(boost::shared_ptr<PhysXEngine> _PEngine) const
+{
+	if(PhysInfo)
+		return PhysInfo->BuildSelf(_PEngine);
+	else
+		return boost::shared_ptr<PhysicalObjectHandlerBase>();
+}
+
+
+
 /***********************************************************
 serialize to network object
 ***********************************************************/
