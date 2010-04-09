@@ -49,13 +49,13 @@ void PlayerObject::registerClass(ZCom_Control *_control)
 /* constructor                                        
 /************************************************************************/
 PlayerObject::PlayerObject(ZCom_Control *_control, unsigned int zoidlevel, unsigned int myid, 
-						   const ObjectInfo & oinfo, GameClientCallbackBase * callback)
+							const ObjectInfo & oinfo, GameClientCallbackBase * callback, bool IsMainPlayer)
 	: m_myid(myid), m_callback(callback)
 {
 
 	//inform callback of new actor creation
 	if(m_callback)
-		m_physicObj = m_callback->AddObject(m_myid, oinfo, false);
+		m_physicObj = m_callback->AddObject(m_myid, oinfo, IsMainPlayer);
 
 
 	// data replication setup
@@ -104,16 +104,20 @@ PlayerObject::PlayerObject(ZCom_Control *_control, unsigned int zoidlevel, unsig
 	#endif
 
 
-	// add announcement data
-	ZCom_BitStream *adata = new ZCom_BitStream();
-	ZoidSerializer zoids(adata);
-	oinfo.Serialize(&zoids);
-	m_node->setAnnounceData(adata);
+	// only do that on authority
+	if(m_node->getRole() == eZCom_RoleAuthority)
+	{
+		// add announcement data
+		ZCom_BitStream *adata = new ZCom_BitStream();
+		ZoidSerializer zoids(adata);
+		oinfo.Serialize(&zoids);
+		m_node->setAnnounceData(adata);
 
 
-	// change zoidlevel
-	m_node->removeFromZoidLevel( 1 );
-	m_node->applyForZoidLevel( zoidlevel );
+		// change zoidlevel
+		m_node->removeFromZoidLevel( 1 );
+		m_node->applyForZoidLevel( zoidlevel );
+	}
 }
 
 
@@ -137,7 +141,7 @@ PlayerObject::~PlayerObject()
 /* update listener callback                                     
 /************************************************************************/
 void PlayerObject::inputUpdated(ZCom_BitStream& _inputstream, bool _inputchanged, zU32 _client_time, 
-								zU32 _estimated_time_sent)
+									zU32 _estimated_time_sent)
 {
 
 }
@@ -155,9 +159,43 @@ void PlayerObject::inputSent(ZCom_BitStream& _inputstream)
 /************************************************************************/
 /* update listener callback                                     
 /************************************************************************/
-void PlayerObject::correctionReceived(zS32 *_pos, zFloat* _vel, zFloat *_acc, 
-									  bool _teleport, zU32 _estimated_time_sent)
+void PlayerObject::correctionReceived(zFloat *_pos, zFloat* _vel, zFloat *_acc, 
+										bool _teleport, zU32 _estimated_time_sent)
 {
 
+}
+
+
+
+
+/************************************************************************/
+/* do a custom process step if required                                
+/************************************************************************/
+void PlayerObject::CustomProcess()
+{
+
+}
+
+
+/************************************************************************/
+/* write input to bitstream                           
+/************************************************************************/
+void PlayerObject::PackInputs(const Input & input, ZCom_BitStream &_str) 
+{
+	_str.addBool(input.up);
+	_str.addBool(input.down);
+	_str.addBool(input.left);
+	_str.addBool(input.right);
+}
+
+/************************************************************************/
+/* read input from bitstream                       
+/************************************************************************/
+void PlayerObject::UnpackInputs(Input & input, ZCom_BitStream &_str) 
+{
+	input.up = _str.getBool();
+	input.down = _str.getBool();
+	input.left = _str.getBool();
+	input.right = _str.getBool();
 }
 

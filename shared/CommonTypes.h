@@ -115,5 +115,36 @@ public:
 
 
 
+/***********************************************************************
+the input class
+ ***********************************************************************/
+struct Input
+{
+	//! constructor
+	Input() 
+	{ 
+		up = down = left = right = false; 
+	}
+
+	// comparaison
+	bool operator==(const Input& _in) 
+	{
+		return (up == _in.up && down == _in.down && left == _in.left && right == _in.right);
+	}
+
+	// assignment
+	Input& operator=(const Input& _rhs) 
+	{
+		up = _rhs.up; down = _rhs.down; left = _rhs.left; right = _rhs.right;
+		return *this;
+	}
+
+	// members
+	bool up;
+	bool down;
+	bool left;
+	bool right;
+};
+
 
 #endif
