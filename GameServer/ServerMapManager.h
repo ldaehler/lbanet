@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class ZCom_Control;
 class PhysXEngine;
 class ActorObject;
-
+class PlayerObject;
 
 /***********************************************************************
  * Module:  ServerMapManager.h
@@ -108,7 +108,8 @@ private:
 	MapInfoObject					_mapobject;
 
 
-	std::map<long, ActorObject *>	_actors;
+	std::map<long, boost::shared_ptr<ActorObject> >				_actors;
+	std::map<unsigned int, boost::shared_ptr<PlayerObject> >	_players;
 };
 
 #endif
