@@ -67,15 +67,21 @@ ActorObject::ActorObject(ZCom_Control *_control, unsigned int zoidlevel, unsigne
 	#endif
 
 
-	// add announcement data
-	ZCom_BitStream *adata = new ZCom_BitStream();
-	ZoidSerializer zoids(adata);
-	oinfo.Serialize(&zoids);
-	m_node->setAnnounceData(adata);
 
-	// change zoidlevel
-	m_node->removeFromZoidLevel( 1 );
-	m_node->applyForZoidLevel( zoidlevel );
+	// only do that on authority
+	if(m_node->getRole() == eZCom_RoleAuthority)
+	{
+		// add announcement data
+		ZCom_BitStream *adata = new ZCom_BitStream();
+		ZoidSerializer zoids(adata);
+		oinfo.Serialize(&zoids);
+		m_node->setAnnounceData(adata);
+
+
+		// change zoidlevel
+		m_node->removeFromZoidLevel( 1 );
+		m_node->applyForZoidLevel( zoidlevel );
+	}
 }
 
 

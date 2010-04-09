@@ -238,9 +238,12 @@ public:
 	//! serialize to network object
 	virtual void Serialize(SerializerBase * stream) const;
 
-
 	//! get object type
 	virtual short GetType() = 0;
+
+	//! set object as non controllable by player
+	virtual void SetNonControllable() = 0;
+
 
 public:
 	//position of the object in the world
@@ -276,6 +279,10 @@ public:
 	virtual short GetType()
 	{return 1;}
 
+
+	//! set object as non controllable by player
+	virtual void SetNonControllable(){}
+
 	//nothing more to do here, the only thing we need is a position
 };
 
@@ -300,6 +307,14 @@ public:
 
 	//! serialize to network object
 	virtual void Serialize(SerializerBase * stream) const;
+
+	//! set object as non controllable by player
+	virtual void SetNonControllable()
+	{
+		//change from CC to kynematic actor
+		if(type == 4)
+			type = 2;
+	}
 
 public:
 

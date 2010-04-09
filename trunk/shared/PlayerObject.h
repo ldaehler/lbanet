@@ -47,7 +47,7 @@ class PlayerObject : public GameObject, public ZCom_MoveUpdateListener<zFloat>
 public:
 	// constructor for server
 	PlayerObject(ZCom_Control *_control, unsigned int zoidlevel, unsigned int myid, const ObjectInfo & oinfo,
-					GameClientCallbackBase * callback);
+					GameClientCallbackBase * callback, bool IsMainPlayer);
 
 
 	// destructor
@@ -62,8 +62,8 @@ public:
   /* update listener callbacks */
   void inputUpdated(ZCom_BitStream& _inputstream, bool _inputchanged, zU32 _client_time, zU32 _estimated_time_sent);
   void inputSent(ZCom_BitStream& _inputstream);
-  void correctionReceived(zS32 *_pos, zFloat* _vel, zFloat *_acc, bool _teleport, zU32 _estimated_time_sent);
-  void updateReceived(ZCom_BitStream& _inputstream, zS32 *_pos, zFloat* _vel, zFloat *_acc, zU32 _estimated_time_sent) {}
+  void correctionReceived(zFloat *_pos, zFloat* _vel, zFloat *_acc, bool _teleport, zU32 _estimated_time_sent);
+  void updateReceived(ZCom_BitStream& _inputstream, zFloat *_pos, zFloat* _vel, zFloat *_acc, zU32 _estimated_time_sent) {}
 
 
 protected:
@@ -81,7 +81,16 @@ protected:
 	virtual void HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoterole, unsigned int eventconnid){}
 
 	// do a custom process step if required
-	virtual void CustomProcess(){}
+	virtual void CustomProcess();
+
+
+	// write input to bitstream
+	void PackInputs(const Input & input, ZCom_BitStream &_str);
+
+	// read input from bitstream
+	void UnpackInputs(Input & input, ZCom_BitStream &_str);
+
+
 
 private:
 	// the class id for zoidcom
