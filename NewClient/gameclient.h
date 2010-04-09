@@ -38,6 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class MapInfoObject;
 class ActorObject;
+class PlayerObject;
 
 
 /***********************************************************************
@@ -128,7 +129,7 @@ private:
 
 	std::list<boost::shared_ptr<MapInfoObject> >				m_maps_objects;
 	std::map<unsigned int, boost::shared_ptr<ActorObject> >		m_actors;
-
+	std::map<unsigned int, boost::shared_ptr<PlayerObject> >	m_players;
 
 	GameClientCallbackBase * m_callback;
 };

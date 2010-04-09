@@ -226,7 +226,22 @@ void GameClient::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _reque
 		m_actors[_id] = boost::shared_ptr<ActorObject>(new ActorObject(this, 1, _id, oinfo, m_callback));	
 	}
 
-	
+
+	// if this is a player
+	if(_requested_class == PlayerObject::getClassID())
+	{
+		ZoidSerializer zserialize(_announcedata);
+		ObjectInfo oinfo(&zserialize);
+
+		//set object as non controllablae if we are not the owner
+		if(_role == eZCom_RoleProxy)
+			oinfo.PhysInfo->SetNonControllable();
+
+		m_players[_id] = boost::shared_ptr<PlayerObject>(
+					new PlayerObject(this, 1, _id, oinfo, m_callback, (_role == eZCom_RoleOwner)));	
+	}
+
+
 	
 }
 
@@ -262,7 +277,22 @@ void GameClient::Process()
 				++it;
 		}
 	}
+
+	//process players
+	{
+		std::map<unsigned int, boost::shared_ptr<PlayerObject> >::iterator it = m_players.begin();
+		while(it != m_players.end())
+		{
+			it->second->Process();
+			if(it->second->isGarbage())
+				it = m_players.erase(it);
+			else
+				++it;
+		}
+	}
+
 }
+
 
 
 /***********************************************************
