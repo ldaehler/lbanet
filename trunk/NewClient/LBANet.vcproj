@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/D _CRT_SECURE_NO_WARNINGS /D MP3_MUSIC"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\dependencies\SDL\include;..\dependencies\Boost\include;..\dependencies\CEGUI\cegui\include;..\dependencies\libconfig\include;..\dependencies\OpenSceneGraph\include;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;;..\shared;..\dependencies\zoidcom\include;..\dependencies\fmod\include;..\dependencies\tinyxml\include"
+				AdditionalIncludeDirectories="..\dependencies\SDL\include;..\dependencies\Boost\include;..\dependencies\CEGUI\cegui\include;..\dependencies\libconfig\include;..\dependencies\OpenSceneGraph\include;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\Tools\NxuStream2&quot;;..\shared;..\dependencies\zoidcom\include;..\dependencies\fmod\include;..\dependencies\tinyxml\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;TIXML_USE_STL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -119,7 +119,7 @@
 				AdditionalOptions="/D _CRT_SECURE_NO_WARNINGS /D MP3_MUSIC"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\dependencies\SDL\include;..\dependencies\Boost\include;..\dependencies\CEGUI\cegui\include;..\dependencies\libconfig\include;..\dependencies\OpenSceneGraph\include;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;;..\shared;..\dependencies\zoidcom\include;..\dependencies\fmod\include;..\dependencies\tinyxml\include"
+				AdditionalIncludeDirectories="..\dependencies\SDL\include;..\dependencies\Boost\include;..\dependencies\CEGUI\cegui\include;..\dependencies\libconfig\include;..\dependencies\OpenSceneGraph\include;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\Tools\NxuStream2&quot;;..\shared;..\dependencies\zoidcom\include;..\dependencies\fmod\include;..\dependencies\tinyxml\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;TIXML_USE_STL"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -344,6 +344,90 @@
 			</File>
 			<File
 				RelativePath=".\MusicHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\Tools\NxuStream2\NXU_Asc2Bin.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\Tools\NxuStream2\NXU_ColladaExport.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\Tools\NxuStream2\NXU_ColladaImport.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\Tools\NxuStream2\NXU_cooking.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\Tools\NxuStream2\NXU_customcopy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\Tools\NxuStream2\NXU_File.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\Tools\NxuStream2\NXU_Geometry.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\Tools\NxuStream2\NXU_GraphicsMesh.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\Tools\NxuStream2\NXU_helper.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\Tools\NxuStream2\NXU_hull.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\Tools\NxuStream2\NXU_PhysicsExport.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\Tools\NxuStream2\NXU_PhysicsInstantiator.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\Tools\NxuStream2\NXU_ScaledCopy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\Tools\NxuStream2\NXU_schema.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\Tools\NxuStream2\NXU_SchemaStream.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\Tools\NxuStream2\NXU_Streaming.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\Tools\NxuStream2\NXU_string.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\Tools\NxuStream2\NXU_tinystr.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\Tools\NxuStream2\NXU_tinyxml.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\Tools\NxuStream2\NXU_tinyxmlerror.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\Tools\NxuStream2\NXU_tinyxmlparser.cpp"
 				>
 			</File>
 			<File
@@ -645,6 +729,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\PhysicalModification.h"
+				>
+			</File>
+			<File
 				RelativePath="..\shared\PhysicalObjectHandlerBase.h"
 				>
 			</File>
@@ -673,11 +761,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\StaticObject.h"
+				RelativePath="..\shared\StaticObject.h"
 				>
 			</File>
 			<File
-				RelativePath="..\shared\StaticObject.h"
+				RelativePath=".\StaticObject.h"
 				>
 			</File>
 			<File
