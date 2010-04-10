@@ -140,71 +140,71 @@ process function
 ***********************************************************/
 void CharacterController::Process(double tnow, float tdiff)
 {
-	if(!_character)
-		return;
+	//if(!_character)
+	//	return;
 
-	boost::shared_ptr<PhysicalObjectHandlerBase> phys = _character->GetPhysicalObject();
-	if(!phys)
-		return;
+	//boost::shared_ptr<PhysicalObjectHandlerBase> phys = _character->GetPhysicalObject();
+	//if(!phys)
+	//	return;
 
-	if(_isGhost)
-	{
-		float speedX = 0.0f;
-		float speedY = 0.0f;
-		float speedZ = 0.0f;
+	//if(_isGhost)
+	//{
+	//	float speedX = 0.0f;
+	//	float speedY = 0.0f;
+	//	float speedZ = 0.0f;
 
-		//if right key pressed
-		if(_right_key_pressed)
-			speedX = 10.0f;
+	//	//if right key pressed
+	//	if(_right_key_pressed)
+	//		speedX = 10.0f;
 
-		//if left key pressed
-		if(_left_key_pressed)
-			speedX = -10.0f;
+	//	//if left key pressed
+	//	if(_left_key_pressed)
+	//		speedX = -10.0f;
 
-		//if up key pressed
-		if(_up_key_pressed)
-			speedZ = -10.0f;
+	//	//if up key pressed
+	//	if(_up_key_pressed)
+	//		speedZ = -10.0f;
 
-		//if down key pressed
-		if(_down_key_pressed)
-			speedZ = 10.0f;
+	//	//if down key pressed
+	//	if(_down_key_pressed)
+	//		speedZ = 10.0f;
 
-		phys->Move(speedX*tdiff, speedY*tdiff, speedZ*tdiff);
-	}
-	else
-	{
-		//if right key pressed
-		if(_right_key_pressed)
-		{
-			LbaQuaternion rot;
-			phys->GetRotation(rot);
-			rot.AddRotation(- tdiff*100.0f, LbaVec3(0, 1, 0));
-			phys->RotateTo(rot);
+	//	phys->Move(speedX*tdiff, speedY*tdiff, speedZ*tdiff);
+	//}
+	//else
+	//{
+	//	//if right key pressed
+	//	if(_right_key_pressed)
+	//	{
+	//		LbaQuaternion rot;
+	//		phys->GetRotation(rot);
+	//		rot.AddRotation(- tdiff*100.0f, LbaVec3(0, 1, 0));
+	//		phys->RotateTo(rot);
 
-			_current_direction = rot.GetDirection(LbaVec3(0, 0, 1));
-		}
+	//		_current_direction = rot.GetDirection(LbaVec3(0, 0, 1));
+	//	}
 
-		//if left key pressed
-		if(_left_key_pressed)
-		{
-			LbaQuaternion rot;
-			phys->GetRotation(rot);
-			rot.AddRotation(tdiff*100.0f, LbaVec3(0, 1, 0));
-			phys->RotateTo(rot);
+	//	//if left key pressed
+	//	if(_left_key_pressed)
+	//	{
+	//		LbaQuaternion rot;
+	//		phys->GetRotation(rot);
+	//		rot.AddRotation(tdiff*100.0f, LbaVec3(0, 1, 0));
+	//		phys->RotateTo(rot);
 
-			_current_direction = rot.GetDirection(LbaVec3(0, 0, 1));
-		}
+	//		_current_direction = rot.GetDirection(LbaVec3(0, 0, 1));
+	//	}
 
-		//if up/down key
-		float speed = 0.0f;
-		if(_up_key_pressed)
-			speed = 5.0f;
+	//	//if up/down key
+	//	float speed = 0.0f;
+	//	if(_up_key_pressed)
+	//		speed = 5.0f;
 
-		if(_down_key_pressed)
-			speed = -5.0f;
+	//	if(_down_key_pressed)
+	//		speed = -5.0f;
 
-		LbaVec3 Gravity;
-		_pEngine->GetGravity(Gravity);
-		phys->Move(_current_direction.x*speed* tdiff, Gravity.y/20, _current_direction.z*speed * tdiff);
-	}
+	//	LbaVec3 Gravity;
+	//	_pEngine->GetGravity(Gravity);
+	//	phys->Move(_current_direction.x*speed* tdiff, Gravity.y/20, _current_direction.z*speed * tdiff);
+	//}
 }
