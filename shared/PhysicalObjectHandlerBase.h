@@ -57,19 +57,19 @@ public:
 	virtual void GetRotation(LbaQuaternion &Q) = 0;
 
 	//! set object position in the world
-	virtual void SetPosition(float X, float Y, float Z) = 0;
+	virtual void SetPosition(unsigned int time, float X, float Y, float Z) = 0;
 
 	//! set object rotation on all axis
-	virtual void SetRotation(const LbaQuaternion& Q) = 0;
+	virtual void SetRotation(unsigned int time, const LbaQuaternion& Q) = 0;
 
 	//! move object in the world
-	virtual void Move(float deltaX, float deltaY, float deltaZ) = 0;
+	virtual void Move(unsigned int time, float deltaX, float deltaY, float deltaZ) = 0;
 
 	//! move object to a position in the world
-	virtual void MoveTo(float X, float Y, float Z) = 0;
+	virtual void MoveTo(unsigned int time, float X, float Y, float Z) = 0;
 
 	//! rotate object in the world
-	virtual void RotateTo(const LbaQuaternion& Q) = 0;
+	virtual void RotateTo(unsigned int time, const LbaQuaternion& Q) = 0;
 
 	//! call to see if the object was resetted in the physical world
 	//! (e.g. object has been teleported) in this case the synchronization process
@@ -161,7 +161,7 @@ public:
 
 
 	//! set object position in the world
-	virtual void SetPosition(float X, float Y, float Z)
+	virtual void SetPosition(unsigned int time, float X, float Y, float Z)
 	{
 		_PosX = X;
 		_PosY = Y;
@@ -171,7 +171,7 @@ public:
 
 
 	//! move object in the world
-	virtual void Move(float deltaX, float deltaY, float deltaZ)
+	virtual void Move(unsigned int time, float deltaX, float deltaY, float deltaZ)
 	{
 		_PosX += deltaX;
 		_PosY += deltaY;
@@ -186,14 +186,14 @@ public:
 	}
 
 	//! set object rotation on all axis
-	virtual void SetRotation(const LbaQuaternion& Q)
+	virtual void SetRotation(unsigned int time, const LbaQuaternion& Q)
 	{
 		_rotH.SetRotation(Q);
 		_resetted = true;
 	}
 
 	//! move object to a position in the world
-	virtual void MoveTo(float X, float Y, float Z)
+	virtual void MoveTo(unsigned int time, float X, float Y, float Z)
 	{
 		_PosX = X;
 		_PosY = Y;
@@ -202,7 +202,7 @@ public:
 
 
 	//! rotate object in the world
-	virtual void RotateTo(const LbaQuaternion& Q)
+	virtual void RotateTo(unsigned int time, const LbaQuaternion& Q)
 	{
 		_rotH.RotateTo(Q);
 	}
