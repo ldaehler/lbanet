@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Stream.h"
 #include "LogHandler.h"
 #include "CommonTypes.h"
+#include "PhysicalModification.h"
 
 #include <limits>
 
@@ -40,7 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define SKINWIDTH	0.2f
 #define GRAVITY		-9.8f
-
+#define MAX_HISTORY_TIME	1000
 
 enum GameGroup
 {
@@ -50,6 +51,26 @@ enum GameGroup
 };
 
 #define COLLIDABLE_MASK	(1<<GROUP_COLLIDABLE_NON_PUSHABLE) | (1<<GROUP_COLLIDABLE_PUSHABLE)
+
+
+
+/***********************************************************************
+* comparison functor
+***********************************************************************/
+bool classcomp::operator() (const boost::shared_ptr<PhysicalModification> &lhs, 
+								const boost::shared_ptr<PhysicalModification> &rhs) const
+{
+	return (*lhs<*rhs);
+}
+
+/***********************************************************************
+* comparison functor
+***********************************************************************/
+bool statecomp::operator() (const boost::shared_ptr<PhysicalState> &lhs, 
+								const boost::shared_ptr<PhysicalState> &rhs) const
+{
+	return (*lhs<*rhs);
+}
 
 
 /***********************************************************************
@@ -236,12 +257,15 @@ void PhysXEngine::Quit()
 ***********************************************************/
 void PhysXEngine::StartPhysics()
 {
+	//! apply historic modifications before simulating current time
+	ApplyHistoricModifications();
+
 	// Update the time step
 	double currentime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync()*0.001;
-	float tdiff = (float)(currentime - _lasttime); // time in seconds
+	_lastduration = (float)(currentime - _lasttime); // time in seconds
 
 	// Start collision and dynamics for delta time since the last frame
-    gScene->simulate(tdiff);
+    gScene->simulate(_lastduration);
 	gScene->flushStream();
 
 	_lasttime = currentime;
@@ -258,8 +282,26 @@ void PhysXEngine::GetPhysicsResults()
 
 	// update controllers position
 	gManager->updateControllers();
-}
 
+
+	//save state
+	boost::shared_ptr<PhysicalState> sstate
+		(new PhysicalState(SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync(), _lastduration));
+	sstate->SetSavedState(NXU::extractCollectionScene(gScene));
+	_savedstates.insert(sstate);
+
+	//remove too old historic entries
+	unsigned int currentime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
+	std::set<boost::shared_ptr<PhysicalState>, statecomp>::iterator it = _savedstates.begin();
+	while(it != _savedstates.end())
+	{
+		if((currentime - (*it)->GetTime()) > MAX_HISTORY_TIME)
+			it = _savedstates.erase(it);
+		else
+			break;
+	}
+
+}
 
 
 
@@ -616,6 +658,9 @@ void PhysXEngine::DestroyActor(NxActor* actor)
 		}
 	}
 
+	//remove from history
+	RemoveActorFromHistory(actor);
+
 	if(gScene && actor)
 		gScene->releaseActor(*actor);
 }
@@ -629,6 +674,9 @@ void PhysXEngine::DestroyCharacter(NxController* character)
 	#ifdef _DEBUG
 		LogHandler::getInstance()->LogToFile("Remove Character from physic engine");
 	#endif
+
+	//remove from history
+	RemoveCharFromHistory(character);
 
 	if(gManager && character)
 		gManager->releaseController(*character);
@@ -743,3 +791,165 @@ float PhysXEngine::CheckForRoof(float PositionX, float PositionY, float Position
 
 	return -1;
 }	
+
+
+
+/***********************************************************
+//! apply historic modifications
+***********************************************************/
+void PhysXEngine::ApplyHistoricModifications()
+{
+	// do something only if we got modification during this timestep
+	if(_curr_modifications.size() > 0)
+	{
+		//get oldest modification time
+		unsigned int modtime = (*_curr_modifications.begin())->GetTime();	
+
+		//get the saved state for this time
+		std::set<boost::shared_ptr<PhysicalState>, statecomp>::reverse_iterator it = _savedstates.rbegin();
+		for(; it != _savedstates.rend(); ++it)
+		{
+			if((*it)->GetTime() < modtime)
+				break;
+		}
+	
+		// if we found a corresponding saved state
+		if(it != _savedstates.rend())
+		{
+			//load the saved state at this time
+			if(it != _savedstates.rbegin())
+				NXU::instantiateCollection((*it)->GetSavedState(), *gPhysicsSDK, gScene, NULL, NULL);
+
+			(*it)->ApplyModification();
+			--it;
+
+
+			//reapply all modification since this time
+			for(; it != _savedstates.rend(); --it)
+			{
+				// do the simulation step
+				gScene->simulate((*it)->GetSimDuration());
+				gScene->flushStream();
+				gScene->fetchResults(NX_RIGID_BODY_FINISHED, true);
+				gManager->updateControllers();
+
+				//save back the new calculated state
+				(*it)->SetSavedState(NXU::extractCollectionScene(gScene));
+
+				// apply mods
+				(*it)->ApplyModification();
+			}
+		}
+
+
+		//! clear current mod vector
+		_curr_modifications.clear();
+	}
+}
+
+/***********************************************************
+//! remove actors from history
+***********************************************************/
+void PhysXEngine::RemoveActorFromHistory(NxActor* act)
+{
+	std::multiset<boost::shared_ptr<PhysicalModification>, classcomp>::iterator it = _curr_modifications.begin();
+	while(it != _curr_modifications.end())
+	{
+		if((*it)->SameActor(act))
+			it = _curr_modifications.erase(it);
+		else
+			++it;
+	}
+
+	std::set<boost::shared_ptr<PhysicalState>, statecomp>::iterator itst =	_savedstates.begin();
+	std::set<boost::shared_ptr<PhysicalState>, statecomp>::iterator endst =	_savedstates.end();
+	for(; itst != endst; ++itst)
+		(*itst)->RemoveActor(act);
+
+}
+
+/***********************************************************
+//! remove actors from history
+***********************************************************/
+void PhysXEngine::RemoveCharFromHistory(NxController* act)
+{
+	std::multiset<boost::shared_ptr<PhysicalModification>, classcomp>::iterator it = _curr_modifications.begin();
+	while(it != _curr_modifications.end())
+	{
+		if((*it)->SameCharacter(act))
+			it = _curr_modifications.erase(it);
+		else
+			++it;
+	}
+
+	std::set<boost::shared_ptr<PhysicalState>, statecomp>::iterator itst =	_savedstates.begin();
+	std::set<boost::shared_ptr<PhysicalState>, statecomp>::iterator endst =	_savedstates.end();
+	for(; itst != endst; ++itst)
+		(*itst)->RemoveCharacter(act);
+}
+
+
+/***********************************************************
+//! add physicall modification
+***********************************************************/
+void PhysXEngine::AddModification(boost::shared_ptr<PhysicalModification> mod)
+{
+	std::set<boost::shared_ptr<PhysicalState>, statecomp>::reverse_iterator it = _savedstates.rbegin();
+	for(; it != _savedstates.rend(); ++it)
+	{
+		if((*it)->GetTime() < mod->GetTime())
+		{
+			(*it)->AddModification(mod);
+			_curr_modifications.insert(mod);
+			return;
+		}
+	}
+}
+
+
+
+/***********************************************************
+//! move an actor
+***********************************************************/
+void PhysXEngine::MoveActorTo(unsigned int time, NxActor* act, const NxVec3 & targetPos)
+{
+	AddModification(boost::shared_ptr<PhysicalModification>(new MoveActorToModification(time, act, targetPos)));
+}
+
+/***********************************************************
+//! set an actor position
+***********************************************************/
+void PhysXEngine::SetActorPos(unsigned int time, NxActor* act, const NxVec3 & targetPos)
+{
+	AddModification(boost::shared_ptr<PhysicalModification>(new SetActorPosModification(time, act, targetPos)));
+}
+
+/***********************************************************
+//! set an actor rotation
+***********************************************************/
+void PhysXEngine::SetActorRotation(unsigned int time, NxActor* act, const NxQuat & quat)
+{
+	AddModification(boost::shared_ptr<PhysicalModification>(new SetActorRotationModification(time, act, quat)));
+}
+
+/***********************************************************
+//! move character - return collision flag
+***********************************************************/
+void PhysXEngine::DeltaMoveCharacter(unsigned int time, NxController* act, 
+											 boost::shared_ptr<ActorUserData> udata,
+												const NxVec3 & deltamove, bool checkCollision)
+{
+	AddModification(boost::shared_ptr<PhysicalModification>(new DeltaMoveCharacterModification(time, act, 
+																			udata, deltamove, checkCollision)));
+}
+
+/***********************************************************
+//! set character position - no collision checked
+***********************************************************/
+void PhysXEngine::SetCharacterPosition(unsigned int time, NxController* act, 
+									   boost::shared_ptr<ActorUserData> udata,
+										const NxExtendedVec3 & targetPos)
+{
+	AddModification(boost::shared_ptr<PhysicalModification>(new SetCharacterPositionModification(time, act, 
+																							udata, targetPos)));
+}

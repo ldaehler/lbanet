@@ -34,6 +34,11 @@ class NxVec3;
 class NxController;
 class NxActor;
 class NxTriangleMeshShape;
+class NxQuat;
+class PhysicalModification;
+class PhysicalState;
+struct NxExtendedVec3;
+
 
 #include <set>
 #include <vector>
@@ -41,6 +46,12 @@ class NxTriangleMeshShape;
 #include "CommonTypes.h"
 
 
+/***********************************************************************
+ * Module:  PhysXEngine.h
+ * Author:  vivien
+ * Modified: lundi 27 juillet 2009 14:59:34
+ * Purpose: Declaration of the class ActorUserData
+ ***********************************************************************/
 class ActorUserData
 {
 public:
@@ -71,6 +82,23 @@ public:
 
 
 
+/***********************************************************************
+ Comparaison functor
+ ***********************************************************************/
+struct classcomp 
+{
+	bool operator() (const boost::shared_ptr<PhysicalModification> &lhs, 
+						const boost::shared_ptr<PhysicalModification> &rhs) const;
+};
+
+/***********************************************************************
+ Comparaison functor
+ ***********************************************************************/
+struct statecomp 
+{
+	bool operator() (const boost::shared_ptr<PhysicalState> &lhs, 
+						const boost::shared_ptr<PhysicalState> &rhs) const;
+};
 
 
 
@@ -126,7 +154,7 @@ public:
 
 	//! move character
 	//! returned collision flags, collection of NxControllerFlag
-	unsigned int MoveCharacter(NxController* character, const NxVec3& moveVector, bool checkcollision=true);
+	static unsigned int MoveCharacter(NxController* character, const NxVec3& moveVector, bool checkcollision=true);
 
 
 	//! get gravity
@@ -145,6 +173,26 @@ public:
 	float CheckForRoof(float PositionX, float PositionY, float PositionZ);
 
 
+
+	//! move an actor
+	void MoveActorTo(unsigned int time, NxActor* act, const NxVec3 & targetPos);
+
+	//! set an actor position
+	void SetActorPos(unsigned int time, NxActor* act, const NxVec3 & targetPos);
+
+	//! set an actor rotation
+	void SetActorRotation(unsigned int time, NxActor* act, const NxQuat & quat);
+
+	//! move character - return collision flag
+	//! TODO check if step on water
+	void DeltaMoveCharacter(unsigned int time, NxController* act, boost::shared_ptr<ActorUserData> udata,
+										const NxVec3 & deltamove, bool checkCollision);
+
+	//! set character position - no collision checked
+	void SetCharacterPosition(unsigned int time, NxController* act, boost::shared_ptr<ActorUserData> udata,
+								const NxExtendedVec3 & targetPos);
+
+
 protected:
 	
 	//! init function
@@ -153,6 +201,16 @@ protected:
 	//! quit function
 	void Quit();
 
+
+	//! apply historic modifications
+	void ApplyHistoricModifications();
+
+	//! remove actors from history
+	void RemoveActorFromHistory(NxActor* act);
+	void RemoveCharFromHistory(NxController* act);
+
+	//! add physicall modification
+	void AddModification(boost::shared_ptr<PhysicalModification> mod);
 
 private:
 
@@ -164,8 +222,11 @@ private:
 
 	std::set<NxActor*>			_roofactors;
 
+	std::multiset<boost::shared_ptr<PhysicalModification>, classcomp>	_curr_modifications;
+	std::set<boost::shared_ptr<PhysicalState>, statecomp>				_savedstates;
 
 	double						_lasttime;
+	float						_lastduration;
 };
 
 #endif

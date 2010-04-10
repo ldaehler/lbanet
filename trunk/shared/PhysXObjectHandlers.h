@@ -76,19 +76,19 @@ public:
 	virtual void GetRotation(LbaQuaternion& Q);
 
 	//! set object position in the world
-	virtual void SetPosition(float X, float Y, float Z);
+	virtual void SetPosition(unsigned int time, float X, float Y, float Z);
 
 	//! set object rotation on all axis
-	virtual void SetRotation(const LbaQuaternion& Q);
+	virtual void SetRotation(unsigned int time, const LbaQuaternion& Q);
 
 	//! move object in the world
-	virtual void Move(float deltaX, float deltaY, float deltaZ);
+	virtual void Move(unsigned int time, float deltaX, float deltaY, float deltaZ);
 
 	//! move object to a position in the world
-	virtual void MoveTo(float X, float Y, float Z);
+	virtual void MoveTo(unsigned int time, float X, float Y, float Z);
 
 	//! rotate object in the world
-	virtual void RotateTo(const LbaQuaternion& Q);
+	virtual void RotateTo(unsigned int time, const LbaQuaternion& Q);
 
 
 protected:
@@ -118,19 +118,19 @@ public:
 	virtual void GetRotation(LbaQuaternion& Q);
 
 	//! set object position in the world
-	virtual void SetPosition(float X, float Y, float Z);
+	virtual void SetPosition(unsigned int time, float X, float Y, float Z);
 
 	//! set object rotation on all axis
-	virtual void SetRotation(const LbaQuaternion& Q);
+	virtual void SetRotation(unsigned int time, const LbaQuaternion& Q);
 
 	//! move object in the world
-	virtual void Move(float deltaX, float deltaY, float deltaZ);
+	virtual void Move(unsigned int time, float deltaX, float deltaY, float deltaZ);
 
 	//! move object to a position in the world
-	virtual void MoveTo(float X, float Y, float Z);
+	virtual void MoveTo(unsigned int time, float X, float Y, float Z);
 
 	//! rotate object in the world
-	virtual void RotateTo(const LbaQuaternion& Q);
+	virtual void RotateTo(unsigned int time, const LbaQuaternion& Q);
 
 protected:
 	NxActor*	_Actor;
@@ -159,19 +159,19 @@ public:
 	virtual void GetRotation(LbaQuaternion& Q);
 
 	//! set object position in the world
-	virtual void SetPosition(float X, float Y, float Z);
+	virtual void SetPosition(unsigned int time, float X, float Y, float Z);
 
 	//! set object rotation on all axis
-	virtual void SetRotation(const LbaQuaternion& Q);
+	virtual void SetRotation(unsigned int time, const LbaQuaternion& Q);
 
 	//! move object in the world
-	virtual void Move(float deltaX, float deltaY, float deltaZ);
+	virtual void Move(unsigned int time, float deltaX, float deltaY, float deltaZ);
 
 	//! move object to a position in the world
-	virtual void MoveTo(float X, float Y, float Z);
+	virtual void MoveTo(unsigned int time, float X, float Y, float Z);
 
 	//! rotate object in the world
-	virtual void RotateTo(const LbaQuaternion& Q);
+	virtual void RotateTo(unsigned int time, const LbaQuaternion& Q);
 
 
 protected:

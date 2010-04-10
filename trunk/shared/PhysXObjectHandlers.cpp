@@ -93,18 +93,16 @@ void PhysXActorHandler::GetRotation(LbaQuaternion& Q)
 /***********************************************************
 set object position in the world
 ***********************************************************/
-void PhysXActorHandler::SetPosition(float X, float Y, float Z)
+void PhysXActorHandler::SetPosition(unsigned int time, float X, float Y, float Z)
 {	
-	if(!_Actor) return;
-
-	_Actor->setGlobalPosition(NxVec3(X, Y, Z));
+	_Pengine->SetActorPos(time, _Actor, NxVec3(X, Y, Z));
 	_resetted = true;
 }
 
 /***********************************************************
 set object rotation on all axis
 ***********************************************************/
-void PhysXActorHandler::SetRotation(const LbaQuaternion& Q)
+void PhysXActorHandler::SetRotation(unsigned int time, const LbaQuaternion& Q)
 {
 	_rotH->SetRotation(Q);
 	_resetted = true;
@@ -113,28 +111,26 @@ void PhysXActorHandler::SetRotation(const LbaQuaternion& Q)
 /***********************************************************
 move object in the world
 ***********************************************************/
-void PhysXActorHandler::Move(float deltaX, float deltaY, float deltaZ)
+void PhysXActorHandler::Move(unsigned int time, float deltaX, float deltaY, float deltaZ)
 {
 	float currPosX, currPosY, currPosZ;
 	GetPosition(currPosX, currPosY, currPosZ);
-	MoveTo(currPosX+deltaX, currPosY+deltaY, currPosZ+deltaZ);
+	MoveTo(time, currPosX+deltaX, currPosY+deltaY, currPosZ+deltaZ);
 }
 
 /***********************************************************
 move object to a position in the world
 ***********************************************************/
-void PhysXActorHandler::MoveTo(float X, float Y, float Z)
+void PhysXActorHandler::MoveTo(unsigned int time, float X, float Y, float Z)
 {	
-	if(!_Actor) return;
-
-	_Actor->moveGlobalPosition(NxVec3(X, Y, Z));
+	_Pengine->MoveActorTo(time, _Actor, NxVec3(X, Y, Z));
 }
 
 
 /***********************************************************
 rotate object in the world
 ***********************************************************/
-void PhysXActorHandler::RotateTo(const LbaQuaternion& Q)
+void PhysXActorHandler::RotateTo(unsigned int time, const LbaQuaternion& Q)
 {
 	_rotH->RotateTo(Q);
 }
@@ -149,7 +145,8 @@ PhysXDynamicActorHandler::PhysXDynamicActorHandler(boost::shared_ptr<PhysXEngine
 													NxActor* Actor, const LbaQuaternion& rotation)
 		: PhysXObjectHandlerBase(Pengine, UserData), _Actor(Actor)
 {
-	SetRotation(rotation);
+	_Actor->setGlobalOrientationQuat(NxQuat(NxVec3(rotation.X, rotation.Y, rotation.Z), rotation.W));
+
 
 	#ifdef _DEBUG
 		LogHandler::getInstance()->LogToFile("Created new PhysXDynamicActor.");
@@ -200,54 +197,46 @@ void PhysXDynamicActorHandler::GetRotation(LbaQuaternion& Q)
 /***********************************************************
 set object position in the world
 ***********************************************************/
-void PhysXDynamicActorHandler::SetPosition(float X, float Y, float Z)
+void PhysXDynamicActorHandler::SetPosition(unsigned int time, float X, float Y, float Z)
 {	
-	if(!_Actor) return;
-
-	_Actor->setGlobalPosition(NxVec3(X, Y, Z));
+	_Pengine->SetActorPos(time, _Actor, NxVec3(X, Y, Z));
 	_resetted = true;
 }
 
 /***********************************************************
 set object rotation on all axis
 ***********************************************************/
-void PhysXDynamicActorHandler::SetRotation(const LbaQuaternion& Q)
+void PhysXDynamicActorHandler::SetRotation(unsigned int time, const LbaQuaternion& Q)
 {	
-	if(!_Actor) return;
-
-	_Actor->setGlobalOrientationQuat(NxQuat(NxVec3(Q.X, Q.Y, Q.Z), Q.W));
+	_Pengine->SetActorRotation(time, _Actor, NxQuat(NxVec3(Q.X, Q.Y, Q.Z), Q.W));
 	_resetted = true;
 }
 
 /***********************************************************
 move object in the world
 ***********************************************************/
-void PhysXDynamicActorHandler::Move(float deltaX, float deltaY, float deltaZ)
+void PhysXDynamicActorHandler::Move(unsigned int time, float deltaX, float deltaY, float deltaZ)
 {
 	float currPosX, currPosY, currPosZ;
 	GetPosition(currPosX, currPosY, currPosZ);
-	MoveTo(currPosX+deltaX, currPosY+deltaY, currPosZ+deltaZ);
+	MoveTo(time, currPosX+deltaX, currPosY+deltaY, currPosZ+deltaZ);
 }
 
 /***********************************************************
 move object to a position in the world
 ***********************************************************/
-void PhysXDynamicActorHandler::MoveTo(float X, float Y, float Z)
+void PhysXDynamicActorHandler::MoveTo(unsigned int time, float X, float Y, float Z)
 {	
-	if(!_Actor) return;
-
-	_Actor->moveGlobalPosition(NxVec3(X, Y, Z));
+	_Pengine->MoveActorTo(time, _Actor, NxVec3(X, Y, Z));
 }
 
 
 /***********************************************************
 rotate object in the world
 ***********************************************************/
-void PhysXDynamicActorHandler::RotateTo(const LbaQuaternion& Q)
+void PhysXDynamicActorHandler::RotateTo(unsigned int time, const LbaQuaternion& Q)
 {	
-	if(!_Actor) return;
-
-	_Actor->moveGlobalOrientationQuat(NxQuat(NxVec3(Q.X, Q.Y, Q.Z), Q.W));
+	_Pengine->SetActorRotation(time, _Actor, NxQuat(NxVec3(Q.X, Q.Y, Q.Z), Q.W));
 }
 
 
@@ -305,7 +294,7 @@ void PhysXControllerHandler::GetRotation(LbaQuaternion& Q)
 /***********************************************************
 set object position in the world
 ***********************************************************/
-void PhysXControllerHandler::SetPosition(float X, float Y, float Z)
+void PhysXControllerHandler::SetPosition(unsigned int time, float X, float Y, float Z)
 {	
 	if(!_Controller) return;
 
@@ -313,14 +302,14 @@ void PhysXControllerHandler::SetPosition(float X, float Y, float Z)
 	pos.x = X;
 	pos.y = Y;
 	pos.z = Z;
-	_Controller->setPosition(pos);
+	_Pengine->SetCharacterPosition(time, _Controller, _UserData, pos);
 	_resetted = true;
 }
 
 /***********************************************************
 set object rotation on all axis
 ***********************************************************/
-void PhysXControllerHandler::SetRotation(const LbaQuaternion& Q)
+void PhysXControllerHandler::SetRotation(unsigned int time, const LbaQuaternion& Q)
 {
 	_rotH->SetRotation(Q);
 	_resetted = true;
@@ -329,33 +318,27 @@ void PhysXControllerHandler::SetRotation(const LbaQuaternion& Q)
 /***********************************************************
 move object in the world
 ***********************************************************/
-void PhysXControllerHandler::Move(float deltaX, float deltaY, float deltaZ)
+void PhysXControllerHandler::Move(unsigned int time, float deltaX, float deltaY, float deltaZ)
 {	
-	if(!_Controller) return;
-
-	unsigned int CollisionFlag =
-			_Pengine->MoveCharacter(_Controller, NxVec3(deltaX, deltaY, deltaZ), true);
-
-	_UserData->CollisionUpFlag = (CollisionFlag == NXCC_COLLISION_UP);
-	_UserData->CollisionDownFlag = (CollisionFlag == NXCC_COLLISION_DOWN);
-	_UserData->CollisionSideFlag = (CollisionFlag == NXCC_COLLISION_SIDES);
+	_Pengine->DeltaMoveCharacter(time, _Controller, _UserData, NxVec3(deltaX, deltaY, deltaZ), true);
 }
 
 /***********************************************************
 move object to a position in the world
 ***********************************************************/
-void PhysXControllerHandler::MoveTo(float X, float Y, float Z)
+void PhysXControllerHandler::MoveTo(unsigned int time, float X, float Y, float Z)
 {
 	if(!_Controller) return;
 
 	NxExtendedVec3 vec = _Controller->getPosition();
-	_Pengine->MoveCharacter(_Controller, NxVec3(X - (float)vec.x, Y - (float)vec.y, Z - (float)vec.z), false);
+	_Pengine->DeltaMoveCharacter(time, _Controller, _UserData,
+									NxVec3(X - (float)vec.x, Y - (float)vec.y, Z - (float)vec.z), false);
 }
 
 /***********************************************************
 rotate object in the world
 ***********************************************************/
-void PhysXControllerHandler::RotateTo(const LbaQuaternion& Q)
+void PhysXControllerHandler::RotateTo(unsigned int time, const LbaQuaternion& Q)
 {
 	_rotH->RotateTo(Q);
 }
