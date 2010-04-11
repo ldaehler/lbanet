@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include "NxPhysics.h"
-#include "NXU_helper.h"
+
 
 #include <list>
 
@@ -312,6 +312,106 @@ protected:
 
 
 
+
+/***********************************************************************
+ * Module:  PhysXEngine.h
+ * Author:  vivien
+ * Modified: lundi 27 juillet 2009 14:59:34
+ * Purpose: store the saved state
+ ***********************************************************************/
+class SavedState
+{
+public:
+	//! constructor
+	SavedState()
+	{}
+
+	//! destructor
+	~SavedState()
+	{
+	}
+
+	//! add actor to save
+	void AddActor(NxActor* actor)
+	{
+		//only save dynamic actors
+		if(actor->isDynamic())
+		{
+			SavedActor sav;
+			sav.Pose = actor->getGlobalPose();
+			_savedActors[actor] = sav;
+		}
+	}
+
+	//! add actor to save
+	void AddCharacter(NxController* character)
+	{
+		SavedCharacter sav;
+		sav.Position = character->getPosition();
+		_savedChars[character] = sav;
+	}
+
+	//! check if same actor
+	void RemoveActor(NxActor* actor)
+	{
+		std::map<NxActor*, SavedActor>::iterator it = _savedActors.find(actor);
+		if(it != _savedActors.end())
+			_savedActors.erase(it);
+	}
+
+	//! check if same character
+	void RemoveCharacter(NxController* character)
+	{
+		std::map<NxController*, SavedCharacter>::iterator it = _savedChars.find(character);
+		if(it != _savedChars.end())
+			_savedChars.erase(it);
+	}
+
+
+	//! load back the saved state
+	void Load()
+	{
+		//load actors
+		{
+			std::map<NxActor*, SavedActor>::iterator it = _savedActors.begin();
+			std::map<NxActor*, SavedActor>::iterator end = _savedActors.end();
+			for(; it != end; ++it)
+			{
+				//TODO only reset if different
+				it->first->setGlobalPose(it->second.Pose);
+			}
+		}
+
+		//load characters
+		{
+			std::map<NxController*, SavedCharacter>::iterator it = _savedChars.begin();
+			std::map<NxController*, SavedCharacter>::iterator end = _savedChars.end();
+			for(; it != end; ++it)
+			{
+				//TODO only reset if different
+				it->first->setPosition(it->second.Position);
+			}
+		}
+	}
+
+
+
+	struct SavedActor
+	{
+		NxMat34 Pose;
+	};
+
+	struct SavedCharacter
+	{
+		NxExtendedVec3 Position;
+	};
+
+protected:
+	std::map<NxActor*, SavedActor>			_savedActors;
+	std::map<NxController*, SavedCharacter>	_savedChars;
+};
+
+
 /***********************************************************************
  * Module:  PhysXEngine.h
  * Author:  vivien
@@ -377,19 +477,19 @@ public:
 	void ReleaseState()
 	{
 		if(_savedstate)
-			 NXU::releaseCollection(_savedstate);
+			 delete _savedstate;
 	}
 
 
 	//! set saved state
-	void SetSavedState(NXU::NxuPhysicsCollection * state)
+	void SetSavedState(SavedState * state)
 	{
 		ReleaseState();
 		_savedstate = state;
 	}
 
 	//! get saved state
-	NXU::NxuPhysicsCollection * GetSavedState()
+	SavedState * GetSavedState()
 	{
 		return _savedstate;
 	}
@@ -415,7 +515,7 @@ protected:
 
 	std::list<boost::shared_ptr<PhysicalModification> >	_modification;
 
-	NXU::NxuPhysicsCollection * _savedstate;
+	SavedState * _savedstate;
 };
 
 
