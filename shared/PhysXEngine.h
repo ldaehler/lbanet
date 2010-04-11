@@ -38,6 +38,7 @@ class NxQuat;
 class PhysicalModification;
 class PhysicalState;
 struct NxExtendedVec3;
+class SavedState;
 
 
 #include <set>
@@ -212,6 +213,13 @@ protected:
 	//! add physicall modification
 	void AddModification(boost::shared_ptr<PhysicalModification> mod);
 
+	//! save current physical state
+	SavedState * SaveCurrentState();
+
+	//! load saved physical state
+	void LoadState(SavedState * state);
+
+
 private:
 
 	// physX internal data
@@ -227,6 +235,9 @@ private:
 
 	double						_lasttime;
 	float						_lastduration;
+
+
+	const float					_simtime;
 };
 
 #endif

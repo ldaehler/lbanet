@@ -150,7 +150,8 @@ public:
 	Constructor
 ***********************************************************/
 PhysXEngine::PhysXEngine()
-: gPhysicsSDK(NULL), gScene(NULL)
+: gPhysicsSDK(NULL), gScene(NULL), _lastduration(0),
+	_simtime(1.0f/SIM_UPDATE_RATE)
 {
 	Init();
 }
@@ -218,7 +219,7 @@ void PhysXEngine::Init()
 
 
 	// set timing to X timestep per second
-	gScene->setTiming(1.0f/SIM_UPDATE_RATE);
+	gScene->setTiming(_simtime);
 
 
 	// Start the first frame of the simulation
@@ -260,15 +261,16 @@ void PhysXEngine::StartPhysics()
 	//! apply historic modifications before simulating current time
 	ApplyHistoricModifications();
 
+
 	// Update the time step
 	double currentime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync()*0.001;
-	_lastduration = (float)(currentime - _lasttime); // time in seconds
+	float diff = (float)(currentime - _lasttime); // time in seconds
+	_lastduration += diff;
+	_lasttime = currentime;
 
 	// Start collision and dynamics for delta time since the last frame
-    gScene->simulate(_lastduration);
+    gScene->simulate(diff);
 	gScene->flushStream();
-
-	_lasttime = currentime;
 }
 
 
@@ -283,22 +285,28 @@ void PhysXEngine::GetPhysicsResults()
 	// update controllers position
 	gManager->updateControllers();
 
-
-	//save state
-	boost::shared_ptr<PhysicalState> sstate
-		(new PhysicalState(SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync(), _lastduration));
-	sstate->SetSavedState(NXU::extractCollectionScene(gScene));
-	_savedstates.insert(sstate);
-
-	//remove too old historic entries
-	unsigned int currentime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
-	std::set<boost::shared_ptr<PhysicalState>, statecomp>::iterator it = _savedstates.begin();
-	while(it != _savedstates.end())
+	// only save state every real update
+	if(_lastduration > _simtime)
 	{
-		if((currentime - (*it)->GetTime()) > MAX_HISTORY_TIME)
-			it = _savedstates.erase(it);
-		else
-			break;
+		//save state
+		boost::shared_ptr<PhysicalState> sstate
+			(new PhysicalState(SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync(), _lastduration));
+		sstate->SetSavedState(SaveCurrentState());
+		_savedstates.insert(sstate);
+
+		while(_lastduration > _simtime)
+			_lastduration -= _simtime;
+
+		//remove too old historic entries
+		unsigned int currentime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
+		std::set<boost::shared_ptr<PhysicalState>, statecomp>::iterator it = _savedstates.begin();
+		while(it != _savedstates.end())
+		{
+			if((currentime - (*it)->GetTime()) > MAX_HISTORY_TIME)
+				it = _savedstates.erase(it);
+			else
+				break;
+		}
 	}
 
 }
@@ -818,7 +826,7 @@ void PhysXEngine::ApplyHistoricModifications()
 		{
 			//load the saved state at this time
 			if(it != _savedstates.rbegin())
-				NXU::instantiateCollection((*it)->GetSavedState(), *gPhysicsSDK, gScene, NULL, NULL);
+				LoadState((*it)->GetSavedState());
 
 			(*it)->ApplyModification();
 			--it;
@@ -834,7 +842,7 @@ void PhysXEngine::ApplyHistoricModifications()
 				gManager->updateControllers();
 
 				//save back the new calculated state
-				(*it)->SetSavedState(NXU::extractCollectionScene(gScene));
+				(*it)->SetSavedState(SaveCurrentState());
 
 				// apply mods
 				(*it)->ApplyModification();
@@ -952,4 +960,34 @@ void PhysXEngine::SetCharacterPosition(unsigned int time, NxController* act,
 {
 	AddModification(boost::shared_ptr<PhysicalModification>(new SetCharacterPositionModification(time, act, 
 																							udata, targetPos)));
+}
+
+
+/***********************************************************
+save current physical state
+***********************************************************/
+SavedState * PhysXEngine::SaveCurrentState()
+{
+	SavedState * res = new SavedState();
+
+	//save actors
+	unsigned int nbactors = gScene->getNbActors();
+	NxActor** actors = gScene->getActors();
+	for(unsigned int i=0; i<nbactors; ++i, ++actors)
+		res->AddActor(*actors);
+
+	//save characters
+	unsigned int nbcontrols = gManager->getNbControllers();
+	for(unsigned int i=0; i<nbcontrols; ++i)
+		res->AddCharacter(gManager->getController(i));
+
+	return res;
+}
+
+/***********************************************************
+load saved physical state
+***********************************************************/
+void PhysXEngine::LoadState(SavedState * state)
+{
+	state->Load();
 }
