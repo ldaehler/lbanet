@@ -101,6 +101,15 @@ public:
 	//! process server internal stuff
 	void Process();
 
+	//! start process physic
+	void StartProcessPhysic();
+
+	//! finish process physic
+	void FinishProcessPhysic();
+
+	//! process physic historic
+	void ProcessPhysicHistoric();
+
 
 protected:
 
