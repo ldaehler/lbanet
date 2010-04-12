@@ -94,12 +94,22 @@ public:
 	virtual void RemObject(unsigned int id){}
 
 
+	//! start process physic
+	void StartProcessPhysic();
+
+	//! finish process physic
+	void FinishProcessPhysic();
+
+	//! process physic historic
+	void ProcessPhysicHistoric();
+
 private:
 	// controller
 	ZCom_Control *	_controler;
 	unsigned int	_zoidlevel;
 	boost::shared_ptr<PhysXEngine> _pengine;
 
+	bool			_cycledone;
 	bool			_needdelete;
 
 	std::string						_mapname;

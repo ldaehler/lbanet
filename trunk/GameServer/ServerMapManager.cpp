@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ServerMapManager::ServerMapManager(ZCom_Control *_control, unsigned int ZoidLevel, const MapInfo & MapInfo,
 										boost::shared_ptr<PhysXEngine> pengine)
 : _controler(_control), _zoidlevel(ZoidLevel), _needdelete(false), _pengine(pengine), 
-	_mapobject(_control, MapInfo), _mapname(MapInfo.Name)
+	_mapobject(_control, MapInfo), _mapname(MapInfo.Name), _cycledone(false)
 {
 	std::stringstream strs;
 	strs<<"Map instance created for map: "<<_mapname;
@@ -144,4 +144,29 @@ boost::shared_ptr<PhysicalObjectHandlerBase>
 			ServerMapManager::AddObject(unsigned int id, const ObjectInfo &desc, bool IsMainPlayer)
 {
 	return desc.BuildSelfServer(_pengine);
+}
+
+
+/***********************************************************
+start process physic
+***********************************************************/
+void ServerMapManager::StartProcessPhysic()
+{
+	_pengine->StartPhysics();
+}
+
+/***********************************************************
+finish process physic
+***********************************************************/
+void ServerMapManager::FinishProcessPhysic()
+{
+	_cycledone = _pengine->GetPhysicsResults();
+}
+
+/***********************************************************
+process physic historic
+***********************************************************/
+void ServerMapManager::ProcessPhysicHistoric()
+{
+	_pengine->ApplyHistoricModifications();
 }

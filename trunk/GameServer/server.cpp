@@ -574,3 +574,39 @@ void Server::ChangePlayerMap(unsigned int PlayerId)
 		LogHandler::getInstance()->LogToFile(strs.str(), 2);    
 	}
 }
+
+
+/***********************************************************
+start process physic
+***********************************************************/
+void Server::StartProcessPhysic()
+{
+	std::map<std::string, std::vector<boost::shared_ptr<ServerMapManager> > >::iterator it = m_opened_maps.begin();
+	std::map<std::string, std::vector<boost::shared_ptr<ServerMapManager> > >::iterator end = m_opened_maps.end();
+	for(; it != end; ++it)
+		it->second->StartProcessPhysic();
+}
+
+/***********************************************************
+finish process physic
+***********************************************************/
+void Server::FinishProcessPhysic()
+{
+	std::map<std::string, std::vector<boost::shared_ptr<ServerMapManager> > >::iterator it = m_opened_maps.begin();
+	std::map<std::string, std::vector<boost::shared_ptr<ServerMapManager> > >::iterator end = m_opened_maps.end();
+	for(; it != end; ++it)
+		it->second->FinishProcessPhysic();
+}
+
+/***********************************************************
+process physic historic
+***********************************************************/
+void Server::ProcessPhysicHistoric()
+{
+	//TODO - multithread this part
+
+	std::map<std::string, std::vector<boost::shared_ptr<ServerMapManager> > >::iterator it = m_opened_maps.begin();
+	std::map<std::string, std::vector<boost::shared_ptr<ServerMapManager> > >::iterator end = m_opened_maps.end();
+	for(; it != end; ++it)
+		it->second->ProcessPhysicHistoric();
+}

@@ -87,6 +87,8 @@ int main(int argc, char *argv[])
 		// mesure the time used to do one cycle
 		unsigned int waittime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
 
+		//finish process physics
+		Serv->FinishProcessPhysic();
 
 		// update replicators and tell zoidcom how much ingame time has passed since the last
 		// time this was called
@@ -95,10 +97,14 @@ int main(int argc, char *argv[])
 		lasttime = currtime;
 		Serv->ZCom_processReplicators(diff);
 
-
 		// processes incoming packets
 		// all callbacks are generated from within the processInput calls
 		Serv->ZCom_processInput( eZCom_NoBlock );
+
+
+		//finish process physics
+		Serv->ProcessPhysicHistoric();
+
 
 		// process internal stuff
 		Serv->Process();
@@ -106,12 +112,14 @@ int main(int argc, char *argv[])
 		// outstanding data will be packed up and sent from here
 		Serv->ZCom_processOutput();
 
-
 		// pause the program for a few milliseconds
 		unsigned int currwtime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
 		unsigned int wdiff = (currwtime-waittime);
 		if(wdiff < SIMULATION_TIME_PER_UPDATE)
 			ZoidCom::Sleep(SIMULATION_TIME_PER_UPDATE-wdiff);
+
+		//start process physics
+		Serv->StartProcessPhysic();
 	}
 
 	// important to reset server before connection
