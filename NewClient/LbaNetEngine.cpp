@@ -119,6 +119,7 @@ void LbaNetEngine::run(void)
 	{
 		// init time
 		unsigned int lasttime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
+		unsigned int waittime = lasttime;
 
 		// Loop until a quit event is found
 		while(!OsgHandler::getInstance()->Update() && !InternalWorkpile::getInstance()->GameQuitted())
@@ -152,6 +153,12 @@ void LbaNetEngine::run(void)
 				// all callbacks are generated from within the processInput calls
 				m_Gamecl->ZCom_processInput( eZCom_NoBlock );
 
+				// process stuff between frame
+				Process();
+
+				//! apply historic modifications before simulating current time
+				m_physic_engine->ApplyHistoricModifications();
+
 				//process internal stuff
 				m_Gamecl->Process();
 
@@ -159,11 +166,17 @@ void LbaNetEngine::run(void)
 				m_Gamecl->ZCom_processOutput();
 			}
 
-			// process stuff between frame
-			Process();
+			// pause the program for a few milliseconds
+			unsigned int currwtime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
+			unsigned int wdiff = (currwtime-waittime);
+			if(wdiff < SIMULATION_TIME_PER_UPDATE)
+				ZoidCom::Sleep(SIMULATION_TIME_PER_UPDATE-wdiff);
 
 			//start physic calculation
 			m_physic_engine->StartPhysics();
+
+			// mesure the time used to do one cycle
+			waittime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
 		}
 	}
 	catch(std::exception & ex)

@@ -71,7 +71,8 @@ do all check to be done when idle
 ***********************************************************/
 void LbaNetModel::Process()
 {
-	double currtime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync()*0.001;
+	unsigned int ctime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
+	double currtime = ctime*0.001;
 	float diff = (float)(currtime-m_lasttime);
 	m_lasttime = currtime;
 
@@ -88,11 +89,11 @@ void LbaNetModel::Process()
 
 	// process controllers
 	if(m_controllerChar)
-		m_controllerChar->Process(currtime, diff);
+		m_controllerChar->Process(ctime, diff);
 	if(m_controllerRC)
-		m_controllerRC->Process(currtime, diff);
+		m_controllerRC->Process();
 	if(m_controllerCam)
-		m_controllerCam->Process(currtime, diff);
+		m_controllerCam->Process();
 }
 
 
@@ -219,8 +220,33 @@ start a move from keyboard input
 ***********************************************************/
 void LbaNetModel::StartMove(int MoveType)
 {
-	if(m_controllerChar)
-		m_controllerChar->StartMove(MoveType);
+	if(MoveType == 1 || MoveType == 2)
+		if(m_player_input.up || m_player_input.down)
+			return;
+
+	if(MoveType == 3 && m_player_input.left)
+		return;
+
+	if(MoveType == 4 && m_player_input.right)
+		return;
+
+	switch(MoveType)
+	{
+		case 1:
+			m_player_input.up = true;
+		break;
+		case 2:
+			m_player_input.down = true;
+		break;
+		case 3:
+			m_player_input.left = true;
+			m_player_input.right = false;
+		break;
+		case 4:
+			m_player_input.left = false;
+			 m_player_input.right = true;
+		break;
+	}
 }
 
 
@@ -229,8 +255,21 @@ stop a move from keyboard input
 ***********************************************************/
 void LbaNetModel::StopMove(int MoveType)
 {
-	if(m_controllerChar)
-		m_controllerChar->StopMove(MoveType);
+	switch(MoveType)
+	{
+		case 1:
+			m_player_input.up = false;
+		break;
+		case 2:
+			m_player_input.down = false;
+		break;
+		case 3:
+			m_player_input.left = false;
+		break;
+		case 4:
+			 m_player_input.right = false;
+		break;
+	}
 }
 
 /***********************************************************
@@ -238,8 +277,8 @@ do action from keyboard input
 ***********************************************************/
 void LbaNetModel::DoAction()
 {
-	if(m_controllerChar)
-		m_controllerChar->DoAction();
+	//if(m_controllerChar)
+	//	m_controllerChar->DoAction();
 }
 
 
@@ -263,6 +302,24 @@ void LbaNetModel::ResetPlayerObject()
 }
 
 
+
+
+/***********************************************************
+get last player inputs
+***********************************************************/
+Input LbaNetModel::GetLastPlayerInput()
+{
+	return m_player_input;
+}
+
+/***********************************************************
+apply inputs
+***********************************************************/
+void LbaNetModel::ApplyInputs(const Input & in)
+{
+	if(m_controllerChar)
+		m_controllerChar->ApplyInputs(in);
+}
 
 
 /***********************************************************

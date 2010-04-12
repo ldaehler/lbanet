@@ -62,7 +62,7 @@ void RoomCutController::SetCharacter(boost::shared_ptr<DynamicObject> charac, bo
 /***********************************************************
 process function
 ***********************************************************/
-void RoomCutController::Process(double tnow, float tdiff)
+void RoomCutController::Process()
 {
 	if(_isGhost)
 		return;

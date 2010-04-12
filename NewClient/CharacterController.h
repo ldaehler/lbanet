@@ -49,18 +49,12 @@ public:
 	//! set character to control
 	void SetCharacter(boost::shared_ptr<DynamicObject> charac, bool AsGhost=false);
 
-	//! start a move from keyboard input
-	void StartMove(int moveDirection);
-
-	//! stop a move from keyboard input
-	void StopMove(int moveDirection);
-
-	//! do action from keyboard input
-	void DoAction();
 
 	//! process function
-	void Process(double tnow, float tdiff);
+	void Process(unsigned int tnow, float tdiff);
 
+	//! apply inputs
+	void ApplyInputs(const Input & in);
 
 private:
 	boost::shared_ptr<DynamicObject> _character;
@@ -68,11 +62,7 @@ private:
 
 	bool			_isGhost;
 
-	//! key pressed
-	bool			_up_key_pressed;
-	bool			_down_key_pressed;
-	bool			_right_key_pressed;
-	bool			_left_key_pressed;
+	Input			_lastInputs;
 
 	LbaVec3			_current_direction;
 };

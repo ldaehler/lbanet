@@ -63,7 +63,7 @@ void CameraController::SetCharacter(boost::shared_ptr<DynamicObject> charac, boo
 /***********************************************************
 process function
 ***********************************************************/
-void CameraController::Process(double tnow, float tdiff)
+void CameraController::Process()
 {
 	if(!_character)
 		return;
