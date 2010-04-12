@@ -75,6 +75,9 @@ public:
 	//! get object rotation on all axis
 	virtual void GetRotation(LbaQuaternion& Q);
 
+	//! get object rotation on a single angle
+	virtual float GetRotationSingleAngle();
+
 	//! set object position in the world
 	virtual void SetPosition(unsigned int time, float X, float Y, float Z);
 
@@ -117,6 +120,9 @@ public:
 	//! get object rotation on all axis
 	virtual void GetRotation(LbaQuaternion& Q);
 
+	//! get object rotation on a single angle
+	virtual float GetRotationSingleAngle();
+
 	//! set object position in the world
 	virtual void SetPosition(unsigned int time, float X, float Y, float Z);
 
@@ -157,6 +163,9 @@ public:
 
 	//! get object rotation on all axis
 	virtual void GetRotation(LbaQuaternion& Q);
+
+	//! get object rotation on a single angle
+	virtual float GetRotationSingleAngle();
 
 	//! set object position in the world
 	virtual void SetPosition(unsigned int time, float X, float Y, float Z);

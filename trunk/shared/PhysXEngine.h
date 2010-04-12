@@ -123,7 +123,8 @@ public:
 	void StartPhysics();
 
 	//! call after render to get results of calculation
-	void GetPhysicsResults();
+	//! return true if we have done one cycle
+	bool GetPhysicsResults();
 
 	//! clear the scene of all actors
 	void Clear();
@@ -194,6 +195,9 @@ public:
 								const NxExtendedVec3 & targetPos);
 
 
+	//! apply historic modifications
+	void ApplyHistoricModifications();
+
 protected:
 	
 	//! init function
@@ -202,9 +206,6 @@ protected:
 	//! quit function
 	void Quit();
 
-
-	//! apply historic modifications
-	void ApplyHistoricModifications();
 
 	//! remove actors from history
 	void RemoveActorFromHistory(NxActor* act);

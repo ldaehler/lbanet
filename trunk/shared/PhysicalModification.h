@@ -60,7 +60,7 @@ public:
 	{return _modtime;}
 
 	//! apply modification to physic engine
-	virtual void Apply() = 0;
+	virtual void Apply(float timeduration) = 0;
 
 	//! check if same actor
 	virtual bool SameActor(NxActor* actor) = 0;
@@ -167,10 +167,10 @@ public:
 
 
 	//! apply modification to physic engine
-	virtual void Apply()
+	virtual void Apply(float timeduration)
 	{
 		if(_actor)
-			_actor->moveGlobalPosition(_targetPos);
+			_actor->moveGlobalPosition(_targetPos*timeduration);
 	}
 
 protected:
@@ -198,7 +198,7 @@ public:
 
 
 	//! apply modification to physic engine
-	virtual void Apply()
+	virtual void Apply(float timeduration)
 	{
 		if(_actor)
 			_actor->setGlobalPosition(_targetPos);
@@ -229,7 +229,7 @@ public:
 
 
 	//! apply modification to physic engine
-	virtual void Apply()
+	virtual void Apply(float timeduration)
 	{
 		if(_actor)
 			_actor->setGlobalOrientationQuat(_targetRot);
@@ -262,11 +262,11 @@ public:
 
 
 	//! apply modification to physic engine
-	virtual void Apply()
+	virtual void Apply(float timeduration)
 	{
 		if(_controller)
 		{
-			unsigned int CollisionFlag = PhysXEngine::MoveCharacter(_controller, _move, _checkCollision);
+			unsigned int CollisionFlag = PhysXEngine::MoveCharacter(_controller, _move*timeduration, _checkCollision);
 			_udata->CollisionUpFlag = (CollisionFlag == NXCC_COLLISION_UP);
 			_udata->CollisionDownFlag = (CollisionFlag == NXCC_COLLISION_DOWN);
 			_udata->CollisionSideFlag = (CollisionFlag == NXCC_COLLISION_SIDES);
@@ -300,7 +300,7 @@ public:
 
 
 	//! apply modification to physic engine
-	virtual void Apply()
+	virtual void Apply(float timeduration)
 	{
 		if(_controller)
 			_controller->setPosition(_targetPos);
@@ -501,12 +501,12 @@ public:
 	}
 
 	//! Apply the modification
-	void ApplyModification()
+	void ApplyModification(float timeduration)
 	{
 		std::list<boost::shared_ptr<PhysicalModification> >::iterator it =	_modification.begin();
 		std::list<boost::shared_ptr<PhysicalModification> >::iterator end =	_modification.end();
 		for(; it != end; ++it)
-			(*it)->Apply();
+			(*it)->Apply(timeduration);
 	}
 
 protected:

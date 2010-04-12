@@ -90,6 +90,16 @@ void PhysXActorHandler::GetRotation(LbaQuaternion& Q)
 	_rotH->GetRotation(Q);
 }
 
+
+/***********************************************************
+get object rotation on all axis
+***********************************************************/
+float PhysXActorHandler::GetRotationSingleAngle()
+{
+	return _rotH->GetRotationSingleAngle();
+}
+
+
 /***********************************************************
 set object position in the world
 ***********************************************************/
@@ -195,6 +205,15 @@ void PhysXDynamicActorHandler::GetRotation(LbaQuaternion& Q)
 }
 
 /***********************************************************
+get object rotation on all axis
+***********************************************************/
+float PhysXDynamicActorHandler::GetRotationSingleAngle()
+{
+	NxQuat quat = _Actor->getGlobalOrientationQuat();
+	return quat.getAngle();
+}
+
+/***********************************************************
 set object position in the world
 ***********************************************************/
 void PhysXDynamicActorHandler::SetPosition(unsigned int time, float X, float Y, float Z)
@@ -289,6 +308,14 @@ get object rotation on all axis
 void PhysXControllerHandler::GetRotation(LbaQuaternion& Q)
 {
 	_rotH->GetRotation(Q);
+}
+
+/***********************************************************
+get object rotation on all axis
+***********************************************************/
+float PhysXControllerHandler::GetRotationSingleAngle()
+{
+	return _rotH->GetRotationSingleAngle();
 }
 
 /***********************************************************

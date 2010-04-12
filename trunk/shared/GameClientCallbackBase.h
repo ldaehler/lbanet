@@ -31,6 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class ObjectInfo;
 class PhysicalObjectHandlerBase;
+struct Input;
+
 
 /***********************************************************************
  * Module:  GameClientCallbackBase.h
@@ -55,6 +57,11 @@ public:
 	// remove an actor object
 	virtual void RemObject(unsigned int id) = 0;
 
+	// get last player inputs
+	virtual Input GetLastPlayerInput() = 0;
+
+	//apply inputs
+	virtual void ApplyInputs(const Input & in) = 0;
 };
 
 #endif

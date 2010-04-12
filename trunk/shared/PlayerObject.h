@@ -26,6 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define _LBA_NET_PLAYER_OBJECT_H_
 
 #include "GameObject.h"
+#include "CommonTypes.h"
+
 #include <boost/shared_ptr.hpp>
 #include <zoidcom.h>
 
@@ -33,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class ObjectInfo;
 class GameClientCallbackBase;
 class PhysicalObjectHandlerBase;
-struct Input;
+
 
 /***********************************************************************
  * Module:  PlayerObject.h
@@ -91,6 +93,11 @@ protected:
 	void UnpackInputs(Input & input, ZCom_BitStream &_str);
 
 
+	//do owner process work
+	void doOwner(); 
+
+	//do proxy process work
+	void doProxy(); 
 
 private:
 	// the class id for zoidcom
@@ -100,7 +107,10 @@ private:
 	GameClientCallbackBase * m_callback;
 	boost::shared_ptr<PhysicalObjectHandlerBase> m_physicObj;
 
-	ZCom_Replicate_Movement<zFloat, 3> *	m_moverep;
+	ZCom_Replicate_Movement<zFloat, 4> *	m_moverep;
+
+	//keep track of last input sent
+	Input	m_last_input_sent;
 };
 
 
