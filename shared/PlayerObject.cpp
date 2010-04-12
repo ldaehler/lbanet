@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ZoidSerializer.h"
 #include "GameClientCallbackBase.h"
 #include "PhysicalObjectHandlerBase.h"
+#include "SynchronizedTimeHandler.h"
 
 // declare static member
 ZCom_ClassID PlayerObject::m_classid = ZCom_Invalid_ID;
@@ -63,7 +64,7 @@ PlayerObject::PlayerObject(ZCom_Control *_control, unsigned int zoidlevel, unsig
 		m_node->beginReplicationSetup(1);
 
 		// create the movement replicator
-		m_moverep = new ZCom_Replicate_Movement<zFloat, 3>(32, ZCOM_REPFLAG_MOSTRECENT|ZCOM_REPFLAG_SETUPPERSISTS,
+		m_moverep = new ZCom_Replicate_Movement<zFloat, 4>(32, ZCOM_REPFLAG_MOSTRECENT|ZCOM_REPFLAG_SETUPPERSISTS,
 		ZCOM_REPRULE_OWNER_2_AUTH|ZCOM_REPRULE_AUTH_2_PROXY);
 		// set a low error threshold
 		((ZCom_RSetupMovement<zS32>*)m_moverep->getSetup())->setConstantErrorThreshold(1);
@@ -82,8 +83,9 @@ PlayerObject::PlayerObject(ZCom_Control *_control, unsigned int zoidlevel, unsig
 		// set initial position
 		if(m_physicObj)
 		{
-			float tmppos[3];
+			float tmppos[4];
 			m_physicObj->GetPosition(tmppos[0], tmppos[1], tmppos[2]);
+			tmppos[3] = m_physicObj->GetRotationSingleAngle();
 			m_moverep->updateState(tmppos, NULL, NULL, false);
 		}
 
@@ -152,7 +154,12 @@ void PlayerObject::inputUpdated(ZCom_BitStream& _inputstream, bool _inputchanged
 /************************************************************************/
 void PlayerObject::inputSent(ZCom_BitStream& _inputstream)
 {
+	// unpack the input again
+	Input in;
+	UnpackInputs(in, _inputstream);
 
+	// apply it
+	m_callback->ApplyInputs(in);
 }
 
 
@@ -173,8 +180,79 @@ void PlayerObject::correctionReceived(zFloat *_pos, zFloat* _vel, zFloat *_acc,
 /************************************************************************/
 void PlayerObject::CustomProcess()
 {
+	switch (m_node->getRole())
+	{
+		case eZCom_RoleOwner:
+			doOwner(); 
+		break;
 
+		case eZCom_RoleProxy:
+			doProxy();
+		break;
+	}
 }
+
+
+
+/************************************************************************/
+/* do owner process work                       
+/************************************************************************/
+void PlayerObject::doOwner()
+{
+	float tmppos[4] = {0, 0, 0, 0};
+	if(m_physicObj)
+	{
+		m_physicObj->GetPosition(tmppos[0], tmppos[1], tmppos[2]);
+		tmppos[3] = m_physicObj->GetRotationSingleAngle();
+	}
+
+	// get keyboard input
+	Input in = m_callback->GetLastPlayerInput();
+
+
+	// CHANGED
+	// if input didn't change, keep old input
+	if (in == m_last_input_sent)
+	{
+		// give empty input update to movement replicator.
+		// this will tell zoidcom to stay with the last input.
+		// zoidcom will optimize bandwidth doing this.
+		// the current position is needed so that the server
+		// can check if a correction is needed
+		m_moverep->updateInput(tmppos,  NULL);
+	} 
+	else
+	// input changed
+	{
+		// pack input update
+		ZCom_BitStream *bs = new ZCom_BitStream(1);
+		PackInputs(in, *bs);
+
+		// give input update to movement replicator
+		// the current position is needed so that the server
+		// can check if a correction is needed
+		m_moverep->updateInput(tmppos,  bs);
+	}
+
+	 m_last_input_sent = in;
+}
+
+
+/************************************************************************/
+/* do proxy process work                    
+/************************************************************************/
+void PlayerObject::doProxy()
+{
+	float tmppos[4] = {0, 0, 0, 0};
+	m_moverep->getExtrapolatedPosition(0, tmppos);
+	if(m_physicObj)
+	{
+		unsigned int ctime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
+		m_physicObj->MoveTo(ctime, tmppos[0], tmppos[1], tmppos[2]);
+		m_physicObj->RotateTo(ctime, tmppos[3]);
+	}
+
+} 
 
 
 /************************************************************************/

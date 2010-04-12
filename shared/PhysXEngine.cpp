@@ -258,14 +258,12 @@ void PhysXEngine::Quit()
 ***********************************************************/
 void PhysXEngine::StartPhysics()
 {
-	//! apply historic modifications before simulating current time
-	ApplyHistoricModifications();
 
 
 	// Update the time step
 	double currentime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync()*0.001;
 	float diff = (float)(currentime - _lasttime); // time in seconds
-	_lastduration += diff;
+	_lastduration = diff; //+= diff;
 	_lasttime = currentime;
 
 	// Start collision and dynamics for delta time since the last frame
@@ -277,7 +275,7 @@ void PhysXEngine::StartPhysics()
 /***********************************************************
 	call after render to get results of calculation
 ***********************************************************/
-void PhysXEngine::GetPhysicsResults()
+bool PhysXEngine::GetPhysicsResults()
 {
 	// Get results from gScene->simulate
 	gScene->fetchResults(NX_RIGID_BODY_FINISHED, true);
@@ -286,16 +284,16 @@ void PhysXEngine::GetPhysicsResults()
 	gManager->updateControllers();
 
 	// only save state every real update
-	if(_lastduration > _simtime)
-	{
+	//if(_lastduration > _simtime)
+	//{
 		//save state
 		boost::shared_ptr<PhysicalState> sstate
 			(new PhysicalState(SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync(), _lastduration));
 		sstate->SetSavedState(SaveCurrentState());
 		_savedstates.insert(sstate);
 
-		while(_lastduration > _simtime)
-			_lastduration -= _simtime;
+		//while(_lastduration > _simtime)
+		//	_lastduration -= _simtime;
 
 		//remove too old historic entries
 		unsigned int currentime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
@@ -307,7 +305,11 @@ void PhysXEngine::GetPhysicsResults()
 			else
 				break;
 		}
-	}
+
+		return true;
+	//}
+
+	return false;
 
 }
 
@@ -828,7 +830,7 @@ void PhysXEngine::ApplyHistoricModifications()
 			if(it != _savedstates.rbegin())
 				LoadState((*it)->GetSavedState());
 
-			(*it)->ApplyModification();
+			(*it)->ApplyModification((*it)->GetSimDuration());
 			--it;
 
 
@@ -845,7 +847,7 @@ void PhysXEngine::ApplyHistoricModifications()
 				(*it)->SetSavedState(SaveCurrentState());
 
 				// apply mods
-				(*it)->ApplyModification();
+				(*it)->ApplyModification((*it)->GetSimDuration());
 			}
 		}
 

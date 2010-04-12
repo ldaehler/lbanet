@@ -80,3 +80,14 @@ LbaVec3 LbaQuaternion::GetDirection(const LbaVec3 &vec)
 
 	return LbaVec3(dir.x, dir.y, dir.z);
 }
+
+
+/***********************************************************
+get object rotation on a single angle
+***********************************************************/
+float LbaQuaternion::GetRotationSingleAngle()
+{
+	NxQuat current;
+	current.setXYZW(X, Y, Z, W);
+	return current.getAngle();
+}
