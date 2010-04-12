@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ObjectsDescription.h"
 #include "DynamicObject.h"
 #include "GameClientCallbackBase.h"
+#include "CommonTypes.h"
 
 #include <boost/shared_ptr.hpp>
 
@@ -96,6 +97,12 @@ public:
 	//! inform that we entered a new map
 	void NewMapEvent(const std::string & MapName, const std::string & MapType);
 
+	// get last player inputs
+	virtual Input GetLastPlayerInput();
+
+	//apply inputs
+	virtual void ApplyInputs(const Input & in);
+
 protected:
 
 	//! reset player object
@@ -119,6 +126,11 @@ private:
 	// player object
 	unsigned int										m_playerObjectId;
 	boost::shared_ptr<DynamicObject>					m_playerObject;
+
+
+
+	//last player input
+	Input												m_player_input;
 };
 
 #endif

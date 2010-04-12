@@ -50,7 +50,7 @@ public:
 	void SetCharacter(boost::shared_ptr<DynamicObject> charac, bool AsGhost=false);
 
 	//! process function
-	void Process(double tnow, float tdiff);
+	void Process();
 
 private:
 	boost::shared_ptr<DynamicObject> _character;
