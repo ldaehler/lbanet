@@ -145,7 +145,11 @@ PlayerObject::~PlayerObject()
 void PlayerObject::inputUpdated(ZCom_BitStream& _inputstream, bool _inputchanged, zU32 _client_time, 
 									zU32 _estimated_time_sent)
 {
-
+	if(_inputchanged)
+	{
+		Input in;
+		UnpackInputs(in, _inputstream);
+	}
 }
 
 
