@@ -22,52 +22,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _LBA_NET_PLAYER_INFO_HANDLER_H_
-#define _LBA_NET_PLAYER_INFO_HANDLER_H_
+#ifndef _LBA_NET_SERVER_PLAYER_WRAP_H_
+#define _LBA_NET_SERVER_PLAYER_WRAP_H_
 
-class DatabaseHandlerBase;
-class WorldStartingInfo;
+#include "PlayerCallbackBase.h"
+#include "CharacterController.h"
 
-#include <string>
-#include "ServerDataHandler.h"
+class PhysXEngine;
+class PlayerInfoHandler;
 
 /***********************************************************************
- * Module:  PlayerInfoHandler.h
+ * Module:  ServerDataHandler.h
  * Author:  vivien
  * Modified: mardi 14 juillet 2009 17:41:03
- * Purpose: Keep track of player current state and synchronize with database
+ * Purpose: Read data from file
  ***********************************************************************/
-class PlayerInfoHandler
+class PlayerServerWrapper : public PlayerCallbackBase
 {
 
 public:
 	// constructor
-	PlayerInfoHandler(long PlayerDbId, DatabaseHandlerBase *DbH, ServerDataHandler* DataH);
+	PlayerServerWrapper(boost::shared_ptr<PhysXEngine> pEngine, boost::shared_ptr<PlayerInfoHandler> pinfo);
 
 
 	// destructor
-	~PlayerInfoHandler();
+	~PlayerServerWrapper();
 
 
-	//! save info to database
-	void SaveToDatabase();
+	// called when we get new friend in list
+	virtual void inputUpdated(unsigned int time, const Input & newinput);
 
-	//! load info from database
-	void LoadFromDatabase();
-
-
-	//! return the map the player should be connected to
-	std::string GetNextMap();
-
-	//! return player id
-	long GetId()
-	{ return _PlayerDbId; }
+	// set physcial character
+	virtual void SetPhysicalCharacter(boost::shared_ptr<PhysicalObjectHandlerBase> charac);
 
 private:
-	long					_PlayerDbId;
-	DatabaseHandlerBase *	_DbH;
-	ServerDataHandler*		_DataH;
-	std::string				_nextMap;
+	CharacterController _controller;
+	boost::shared_ptr<PhysXEngine> _pEngine;
+	boost::shared_ptr<PlayerInfoHandler> _pinfo;
 };
 
 #endif
