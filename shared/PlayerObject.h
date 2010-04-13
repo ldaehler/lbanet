@@ -112,6 +112,7 @@ private:
 
 	//keep track of last input sent
 	Input	m_last_input_sent;
+
 };
 
 
