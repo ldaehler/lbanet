@@ -146,6 +146,15 @@ void PhysXActorHandler::RotateTo(unsigned int time, const LbaQuaternion& Q)
 }
 
 
+/***********************************************************
+move object in the world
+***********************************************************/
+void PhysXActorHandler::MoveInDirection(unsigned int time, float RotationYBeforeMove, float MoveSpeed,
+									bool AddGravity)
+{
+	_Pengine->MoveInDirectionActor(time, _Actor, _rotH, RotationYBeforeMove, MoveSpeed, AddGravity);
+}
+
 
 /***********************************************************
 	Constructor
@@ -261,6 +270,17 @@ void PhysXDynamicActorHandler::RotateTo(unsigned int time, const LbaQuaternion& 
 
 
 /***********************************************************
+move object in the world
+***********************************************************/
+void PhysXDynamicActorHandler::MoveInDirection(unsigned int time, float RotationYBeforeMove, float MoveSpeed,
+									bool AddGravity)
+{
+	_Pengine->MoveInDirectionActor(time, _Actor, boost::shared_ptr<SimpleRotationHandler>(),
+											RotationYBeforeMove, MoveSpeed, AddGravity);
+}
+
+
+/***********************************************************
 	Constructor
 ***********************************************************/
 PhysXControllerHandler::PhysXControllerHandler(boost::shared_ptr<PhysXEngine> Pengine,
@@ -346,7 +366,7 @@ void PhysXControllerHandler::SetRotation(unsigned int time, const LbaQuaternion&
 move object in the world
 ***********************************************************/
 void PhysXControllerHandler::Move(unsigned int time, float deltaX, float deltaY, float deltaZ)
-{	
+{
 	_Pengine->DeltaMoveCharacter(time, _Controller, _UserData, NxVec3(deltaX, deltaY, deltaZ), true);
 }
 
@@ -370,6 +390,16 @@ void PhysXControllerHandler::RotateTo(unsigned int time, const LbaQuaternion& Q)
 	_rotH->RotateTo(Q);
 }
 
+
+/***********************************************************
+move object in the world
+***********************************************************/
+void PhysXControllerHandler::MoveInDirection(unsigned int time, float RotationYBeforeMove, float MoveSpeed,
+												bool AddGravity)
+{
+	_Pengine->MoveInDirectionCharacter(time, _Controller, _UserData, _rotH,
+											RotationYBeforeMove, MoveSpeed, AddGravity);
+}
 
 
 

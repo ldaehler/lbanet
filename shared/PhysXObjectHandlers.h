@@ -93,6 +93,9 @@ public:
 	//! rotate object in the world
 	virtual void RotateTo(unsigned int time, const LbaQuaternion& Q);
 
+	//! move object in the world
+	virtual void MoveInDirection(unsigned int time, float RotationYBeforeMove, float MoveSpeed,
+									bool AddGravity);
 
 protected:
 	NxActor*									_Actor;
@@ -138,6 +141,9 @@ public:
 	//! rotate object in the world
 	virtual void RotateTo(unsigned int time, const LbaQuaternion& Q);
 
+	//! move object in the world
+	virtual void MoveInDirection(unsigned int time, float RotationYBeforeMove, float MoveSpeed,
+									bool AddGravity);
 protected:
 	NxActor*	_Actor;
 };
@@ -182,6 +188,9 @@ public:
 	//! rotate object in the world
 	virtual void RotateTo(unsigned int time, const LbaQuaternion& Q);
 
+	//! move object in the world
+	virtual void MoveInDirection(unsigned int time, float RotationYBeforeMove, float MoveSpeed,
+									bool AddGravity);
 
 protected:
 	NxController*								_Controller;

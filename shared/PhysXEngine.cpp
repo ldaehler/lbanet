@@ -965,6 +965,38 @@ void PhysXEngine::SetCharacterPosition(unsigned int time, NxController* act,
 }
 
 
+
+/***********************************************************
+//! move actor in rotation direction
+***********************************************************/
+void PhysXEngine::MoveInDirectionActor(unsigned int time, NxActor* act, boost::shared_ptr<SimpleRotationHandler> rotH,
+							float RotationYBeforeMove, float MoveSpeed,	bool AddGravity)
+{
+	LbaVec3 Gravity(0, 0, 0);
+	if(AddGravity)
+		GetGravity(Gravity);
+
+	AddModification(boost::shared_ptr<PhysicalModification>(new MoveInDirectionActorModification(time, act, 
+																rotH, RotationYBeforeMove, MoveSpeed, Gravity)));
+
+}
+
+/***********************************************************
+//! move actor in rotation direction
+***********************************************************/
+void PhysXEngine::MoveInDirectionCharacter(unsigned int time, NxController* act, boost::shared_ptr<ActorUserData> udata,
+								boost::shared_ptr<SimpleRotationHandler> rotH,
+								float RotationYBeforeMove, float MoveSpeed,	bool AddGravity)
+{
+	LbaVec3 Gravity(0, 0, 0);
+	if(AddGravity)
+		GetGravity(Gravity);
+
+	AddModification(boost::shared_ptr<PhysicalModification>(new MoveInDirectionCharacterModification(time, act, 
+																udata, rotH, RotationYBeforeMove, MoveSpeed, Gravity)));
+}
+
+
 /***********************************************************
 save current physical state
 ***********************************************************/

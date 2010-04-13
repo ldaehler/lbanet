@@ -50,13 +50,17 @@ void PlayerObject::registerClass(ZCom_Control *_control)
 /* constructor                                        
 /************************************************************************/
 PlayerObject::PlayerObject(ZCom_Control *_control, unsigned int zoidlevel, unsigned int myid, 
-							const ObjectInfo & oinfo, GameClientCallbackBase * callback, bool IsMainPlayer)
-	: m_myid(myid), m_callback(callback)
+							const ObjectInfo & oinfo, GameClientCallbackBase * callback, 
+							PlayerCallbackBase * playerCallback, bool IsMainPlayer)
+	: m_myid(myid), m_callback(callback), m_playerCallback(playerCallback)
 {
 
 	//inform callback of new actor creation
 	if(m_callback)
 		m_physicObj = m_callback->AddObject(m_myid, oinfo, IsMainPlayer);
+
+	if(m_playerCallback)
+		m_playerCallback->SetPhysicalCharacter(m_physicObj);
 
 
 	// data replication setup
@@ -149,6 +153,9 @@ void PlayerObject::inputUpdated(ZCom_BitStream& _inputstream, bool _inputchanged
 	{
 		Input in;
 		UnpackInputs(in, _inputstream);
+
+		if(m_playerCallback)
+			m_playerCallback->inputUpdated(_client_time, in);
 	}
 }
 

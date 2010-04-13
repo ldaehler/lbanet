@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include "NxPhysics.h"
-
+#include "PhysicalObjectHandlerBase.h"
 
 #include <list>
 
@@ -308,6 +308,124 @@ public:
 
 protected:
 	NxExtendedVec3 _targetPos;
+};
+
+
+
+
+/***********************************************************************
+ * Module:  PhysXEngine.h
+ * Author:  vivien
+ * Modified: lundi 27 juillet 2009 14:59:34
+ * Purpose: class SetCharacterPositionModification
+ ***********************************************************************/
+class MoveInDirectionActorModification : public ActorPhysicalModification
+{
+public:
+	//! constructor
+	MoveInDirectionActorModification(unsigned int time, NxActor* act, 
+									boost::shared_ptr<SimpleRotationHandler> rotH,
+									float RotationYBeforeMove, float MoveSpeed,	LbaVec3 Gravity)
+		: ActorPhysicalModification(act, time), _rotH(rotH), 
+			_RotationYBeforeMove(RotationYBeforeMove), _MoveSpeed(MoveSpeed), _Gravity(Gravity)
+	{
+
+	}
+
+	//! destructor
+	virtual ~MoveInDirectionActorModification(){}
+
+
+	//! apply modification to physic engine
+	virtual void Apply(float timeduration)
+	{
+		if(_actor)
+		{
+			LbaVec3 current_direction(0, 0, 0);
+
+			TODO -> change rotation to physix rot
+			if(_rotH)
+			{
+				LbaQuaternion rot;
+				_rotH->GetRotation(rot);
+				rot.AddRotation(timeduration*_RotationYBeforeMove, LbaVec3(0, 1, 0));
+				_rotH->RotateTo(rot);
+				current_direction = rot.GetDirection(LbaVec3(0, 0, 1));
+			}
+			
+			NxVec3 tmpvec(	current_direction.x+_Gravity.x, 
+							current_direction.y+_Gravity.y, 
+							current_direction.z+_Gravity.z);
+
+			_actor->moveGlobalPosition(tmpvec*timeduration);
+		}
+	}
+
+protected:
+	boost::shared_ptr<SimpleRotationHandler> _rotH;
+	float _RotationYBeforeMove;
+	float _MoveSpeed;
+	LbaVec3 _Gravity;
+};
+
+
+/***********************************************************************
+ * Module:  PhysXEngine.h
+ * Author:  vivien
+ * Modified: lundi 27 juillet 2009 14:59:34
+ * Purpose: class SetCharacterPositionModification
+ ***********************************************************************/
+class MoveInDirectionCharacterModification : public CharacterPhysicalModification
+{
+public:
+	//! constructor
+	MoveInDirectionCharacterModification(unsigned int time, NxController* act, 
+											boost::shared_ptr<ActorUserData> udata, 
+											boost::shared_ptr<SimpleRotationHandler> rotH,
+											float RotationYBeforeMove, float MoveSpeed,	LbaVec3 Gravity)
+		: CharacterPhysicalModification(act, udata, time), _rotH(rotH), 
+			_RotationYBeforeMove(RotationYBeforeMove), _MoveSpeed(MoveSpeed), _Gravity(Gravity)
+	{
+
+	}
+
+	//! destructor
+	virtual ~MoveInDirectionCharacterModification(){}
+
+
+	//! apply modification to physic engine
+	virtual void Apply(float timeduration)
+	{
+		if(_controller)
+		{
+			LbaVec3 current_direction(0, 0, 0);
+
+			TODO -> save rotation in state
+			if(_rotH)
+			{
+				LbaQuaternion rot;
+				_rotH->GetRotation(rot);
+				rot.AddRotation(timeduration*_RotationYBeforeMove, LbaVec3(0, 1, 0));
+				_rotH->RotateTo(rot);
+				current_direction = rot.GetDirection(LbaVec3(0, 0, 1));
+			}
+			
+			NxVec3 tmpvec(	current_direction.x+_Gravity.x, 
+							current_direction.y+_Gravity.y, 
+							current_direction.z+_Gravity.z);
+
+			unsigned int CollisionFlag = PhysXEngine::MoveCharacter(_controller, tmpvec*timeduration, true);
+			_udata->CollisionUpFlag = (CollisionFlag == NXCC_COLLISION_UP);
+			_udata->CollisionDownFlag = (CollisionFlag == NXCC_COLLISION_DOWN);
+			_udata->CollisionSideFlag = (CollisionFlag == NXCC_COLLISION_SIDES);
+		}
+	}
+
+protected:
+	boost::shared_ptr<SimpleRotationHandler> _rotH;
+	float _RotationYBeforeMove;
+	float _MoveSpeed;
+	LbaVec3 _Gravity;
 };
 
 

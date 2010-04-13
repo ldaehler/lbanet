@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "GameObject.h"
 #include "CommonTypes.h"
+#include "PlayerCallbackBase.h"
 
 #include <boost/shared_ptr.hpp>
 #include <zoidcom.h>
@@ -49,7 +50,7 @@ class PlayerObject : public GameObject, public ZCom_MoveUpdateListener<zFloat>
 public:
 	// constructor for server
 	PlayerObject(ZCom_Control *_control, unsigned int zoidlevel, unsigned int myid, const ObjectInfo & oinfo,
-					GameClientCallbackBase * callback, bool IsMainPlayer);
+					GameClientCallbackBase * callback, PlayerCallbackBase * playerCallback, bool IsMainPlayer);
 
 
 	// destructor
@@ -102,16 +103,18 @@ protected:
 
 private:
 	// the class id for zoidcom
-	static unsigned int  m_classid;
+	static unsigned int								m_classid;
 	
-	unsigned int			m_myid; 
-	GameClientCallbackBase * m_callback;
-	boost::shared_ptr<PhysicalObjectHandlerBase> m_physicObj;
+	unsigned int									m_myid; 
+	GameClientCallbackBase *						m_callback;
+	PlayerCallbackBase *							m_playerCallback;
 
-	ZCom_Replicate_Movement<zFloat, 4> *	m_moverep;
+	boost::shared_ptr<PhysicalObjectHandlerBase>	m_physicObj;
+
+	ZCom_Replicate_Movement<zFloat, 4> *			m_moverep;
 
 	//keep track of last input sent
-	Input	m_last_input_sent;
+	Input											m_last_input_sent;
 
 };
 
