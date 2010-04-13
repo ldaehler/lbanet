@@ -64,6 +64,11 @@ public:
 	//! do all check to be done when idle
 	void Process();
 
+
+	//! update the element to draw on screen
+	void UpdateDrawing();
+
+
 	//! add object to the scene
 	//! if IsMainPlayer then treat this object as the player object
 	virtual boost::shared_ptr<PhysicalObjectHandlerBase> 

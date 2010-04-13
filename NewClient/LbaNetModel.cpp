@@ -76,17 +76,6 @@ void LbaNetModel::Process()
 	float diff = (float)(currtime-m_lasttime);
 	m_lasttime = currtime;
 
-
-	// process all dynamic objects
-	std::map<unsigned int, boost::shared_ptr<DynamicObject> >::iterator it = _dynamicObjects.begin();
-	std::map<unsigned int, boost::shared_ptr<DynamicObject> >::iterator end = _dynamicObjects.end();
-	for(; it != end; ++it)
-		it->second->Process();
-
-	//process player object
-	if(m_playerObject)
-		m_playerObject->Process();
-
 	// process controllers
 	if(m_controllerChar)
 		m_controllerChar->Process(ctime, diff);
@@ -96,6 +85,23 @@ void LbaNetModel::Process()
 		m_controllerCam->Process();
 }
 
+
+
+/***********************************************************
+update the elements to draw on screen
+***********************************************************/
+void LbaNetModel::UpdateDrawing()
+{
+	// process all dynamic objects
+	std::map<unsigned int, boost::shared_ptr<DynamicObject> >::iterator it = _dynamicObjects.begin();
+	std::map<unsigned int, boost::shared_ptr<DynamicObject> >::iterator end = _dynamicObjects.end();
+	for(; it != end; ++it)
+		it->second->Process();
+
+	//process player object
+	if(m_playerObject)
+		m_playerObject->Process();
+}
 
 
 
