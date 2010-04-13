@@ -98,7 +98,7 @@ void ChatChannelManager::HandleQuitEvent(ZCom_BitStream * data, eZCom_NodeRole r
 /* handle user event                                          
 /************************************************************************/
 void ChatChannelManager::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoterole, 
-											unsigned int eventconnid)
+											unsigned int eventconnid, unsigned int _estimated_time_sent)
 {
 	// only care about event coming from owner node
 	if(remoterole != eZCom_RoleOwner)

@@ -111,7 +111,8 @@ ClientObject::~ClientObject()
 /************************************************************************/
 /* handle user event                                     
 /************************************************************************/
-void ClientObject::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoterole, unsigned int eventconnid)
+void ClientObject::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoterole, 
+									unsigned int eventconnid, unsigned int _estimated_time_sent)
 {
 
 	// type of custom event is in the first 2 bits of the event

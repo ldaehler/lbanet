@@ -81,7 +81,8 @@ GameServerHandler::~GameServerHandler()
 /************************************************************************/
 /* handle user event                                     
 /************************************************************************/
-void GameServerHandler::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoterole, unsigned int eventconnid)
+void GameServerHandler::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoterole, 
+											unsigned int eventconnid, unsigned int _estimated_time_sent)
 {
 
 	// type of custom event is in the first 3 bits of the event

@@ -80,7 +80,7 @@ ChatChannel::~ChatChannel()
 /* handle user event                                          
 /************************************************************************/
 void ChatChannel::HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoterole, 
-										 unsigned int eventconnid)
+									unsigned int eventconnid, unsigned int _estimated_time_sent)
 {
 	// type of custom event is in the first 2 bits of the event
 	unsigned int etype = data->getInt(2);
