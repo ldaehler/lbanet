@@ -183,6 +183,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\CharacterController.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\shared\ChatChannel.cpp"
 				>
 			</File>
@@ -263,6 +267,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PlayerServerWrapper.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\server.cpp"
 				>
 			</File>
@@ -314,6 +322,10 @@
 			>
 			<File
 				RelativePath="..\shared\ActorObject.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\CharacterController.h"
 				>
 			</File>
 			<File
@@ -417,11 +429,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\PlayerCallbackBase.h"
+				>
+			</File>
+			<File
 				RelativePath=".\PlayerInfoHandler.h"
 				>
 			</File>
 			<File
 				RelativePath="..\shared\PlayerObject.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PlayerServerWrapper.h"
 				>
 			</File>
 			<File

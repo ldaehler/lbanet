@@ -33,10 +33,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "MapInfoObject.h"
 #include "GameClientCallbackBase.h"
 
+
 class ZCom_Control;
 class PhysXEngine;
 class ActorObject;
 class PlayerObject;
+class PlayerServerWrapper;
+
 
 /***********************************************************************
  * Module:  ServerMapManager.h
@@ -93,6 +96,12 @@ public:
 	// remove an actor object callback
 	virtual void RemObject(unsigned int id){}
 
+	// get last player inputs
+	virtual Input GetLastPlayerInput(){return Input();}
+
+	//apply inputs
+	virtual void ApplyInputs(const Input & in){}
+
 
 	//! start process physic
 	void StartProcessPhysic();
@@ -118,8 +127,9 @@ private:
 	MapInfoObject					_mapobject;
 
 
-	std::map<long, boost::shared_ptr<ActorObject> >				_actors;
-	std::map<unsigned int, boost::shared_ptr<PlayerObject> >	_players;
+	std::map<long, boost::shared_ptr<ActorObject> >						_actors;
+	std::map<unsigned int, boost::shared_ptr<PlayerObject> >			_players;
+	std::map<unsigned int, boost::shared_ptr<PlayerServerWrapper> >		_playerHandlers;
 };
 
 #endif

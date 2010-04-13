@@ -584,7 +584,13 @@ void Server::StartProcessPhysic()
 	std::map<std::string, std::vector<boost::shared_ptr<ServerMapManager> > >::iterator it = m_opened_maps.begin();
 	std::map<std::string, std::vector<boost::shared_ptr<ServerMapManager> > >::iterator end = m_opened_maps.end();
 	for(; it != end; ++it)
-		it->second->StartProcessPhysic();
+	{
+		std::vector<boost::shared_ptr<ServerMapManager> > & tmpvec = it->second;
+		std::vector<boost::shared_ptr<ServerMapManager> >::iterator itvec = tmpvec.begin();
+		std::vector<boost::shared_ptr<ServerMapManager> >::iterator endvec = tmpvec.end();
+		for(; itvec != endvec; ++itvec)
+			(*itvec)->StartProcessPhysic();
+	}
 }
 
 /***********************************************************
@@ -595,7 +601,13 @@ void Server::FinishProcessPhysic()
 	std::map<std::string, std::vector<boost::shared_ptr<ServerMapManager> > >::iterator it = m_opened_maps.begin();
 	std::map<std::string, std::vector<boost::shared_ptr<ServerMapManager> > >::iterator end = m_opened_maps.end();
 	for(; it != end; ++it)
-		it->second->FinishProcessPhysic();
+	{
+		std::vector<boost::shared_ptr<ServerMapManager> > & tmpvec = it->second;
+		std::vector<boost::shared_ptr<ServerMapManager> >::iterator itvec = tmpvec.begin();
+		std::vector<boost::shared_ptr<ServerMapManager> >::iterator endvec = tmpvec.end();
+		for(; itvec != endvec; ++itvec)
+			(*itvec)->FinishProcessPhysic();
+	}
 }
 
 /***********************************************************
@@ -608,5 +620,11 @@ void Server::ProcessPhysicHistoric()
 	std::map<std::string, std::vector<boost::shared_ptr<ServerMapManager> > >::iterator it = m_opened_maps.begin();
 	std::map<std::string, std::vector<boost::shared_ptr<ServerMapManager> > >::iterator end = m_opened_maps.end();
 	for(; it != end; ++it)
-		it->second->ProcessPhysicHistoric();
+	{
+		std::vector<boost::shared_ptr<ServerMapManager> > & tmpvec = it->second;
+		std::vector<boost::shared_ptr<ServerMapManager> >::iterator itvec = tmpvec.begin();
+		std::vector<boost::shared_ptr<ServerMapManager> >::iterator endvec = tmpvec.end();
+		for(; itvec != endvec; ++itvec)
+			(*itvec)->ProcessPhysicHistoric();
+	}
 }

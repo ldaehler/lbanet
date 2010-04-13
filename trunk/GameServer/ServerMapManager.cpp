@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "PhysXEngine.h"
 #include "ActorObject.h"
 #include "PlayerObject.h"
-
+#include "PlayerServerWrapper.h"
 
 #define MAX_PLAYERS_IN_MAP 2
 
@@ -109,9 +109,13 @@ void ServerMapManager::PlayerEnter(unsigned int PlayerId, boost::shared_ptr<Play
 	boost::shared_ptr<DisplayInfo> DInfo(new DisplayInfo(Tr, Ds));
 	boost::shared_ptr<PhysicalDescriptionBase> Pyd(new PhysicalDescriptionCapsule(20, 30, 40, 4, 1, LbaQuaternion(), 0.5, 4));
 	ObjectInfo objinfo(0, DInfo, Pyd, false, true);
+	
+	// create player handler
+	boost::shared_ptr<PlayerServerWrapper> newplayerH(new PlayerServerWrapper(_pengine, pinfo));
+	_playerHandlers[PlayerId] = newplayerH;
 
 	// create player object
-	boost::shared_ptr<PlayerObject> newplayer(new PlayerObject(_controler, _zoidlevel, 0, objinfo, this));
+	boost::shared_ptr<PlayerObject> newplayer(new PlayerObject(_controler, _zoidlevel, 0, objinfo, this, newplayerH.get(), false));
 	newplayer->GetNode()->setOwner(PlayerId, true);
 	_players[PlayerId] = newplayer;
 }
@@ -124,6 +128,10 @@ void ServerMapManager::PlayerLeave(unsigned int PlayerId)
 	std::map<unsigned int, boost::shared_ptr<PlayerObject> >::iterator it =	_players.find(PlayerId);
 	if(it != _players.end())
 		_players.erase(it);
+
+	std::map<unsigned int, boost::shared_ptr<PlayerServerWrapper> >::iterator it2 =	_playerHandlers.find(PlayerId);
+	if(it2 != _playerHandlers.end())
+		_playerHandlers.erase(it2);
 }
 
 
