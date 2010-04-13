@@ -39,7 +39,7 @@ class PhysicalModification;
 class PhysicalState;
 struct NxExtendedVec3;
 class SavedState;
-
+class SimpleRotationHandler;
 
 #include <set>
 #include <vector>
@@ -193,6 +193,15 @@ public:
 	//! set character position - no collision checked
 	void SetCharacterPosition(unsigned int time, NxController* act, boost::shared_ptr<ActorUserData> udata,
 								const NxExtendedVec3 & targetPos);
+
+	//! move actor in rotation direction
+	void MoveInDirectionActor(unsigned int time, NxActor* act, boost::shared_ptr<SimpleRotationHandler> rotH,
+								float RotationYBeforeMove, float MoveSpeed,	bool AddGravity);
+
+	//! move actor in rotation direction
+	void MoveInDirectionCharacter(unsigned int time, NxController* act, boost::shared_ptr<ActorUserData> udata,
+									boost::shared_ptr<SimpleRotationHandler> rotH,
+									float RotationYBeforeMove, float MoveSpeed,	bool AddGravity);
 
 
 	//! apply historic modifications

@@ -75,6 +75,12 @@ public:
 	//! rotate object in the world
 	virtual void RotateTo(unsigned int time, const LbaQuaternion& Q) = 0;
 
+	//! move object in the world
+	virtual void MoveInDirection(unsigned int time, float RotationYBeforeMove, float MoveSpeed,
+									bool AddGravity) = 0;
+
+
+
 	//! call to see if the object was resetted in the physical world
 	//! (e.g. object has been teleported) in this case the synchronization process
 	//! would directly set display object to the new position without smoothing
@@ -221,6 +227,20 @@ public:
 	virtual void RotateTo(unsigned int time, const LbaQuaternion& Q)
 	{
 		_rotH.RotateTo(Q);
+	}
+
+
+	//! move object in the world
+	virtual void MoveInDirection(unsigned int time, float RotationYBeforeMove, float MoveSpeed,
+									bool AddGravity)
+	{
+		LbaQuaternion rot;
+		GetRotation(rot);
+		rot.AddRotation(RotationYBeforeMove, LbaVec3(0, 1, 0));
+		RotateTo(time, rot);
+
+		LbaVec3 current_direction = rot.GetDirection(LbaVec3(0, 0, 1));
+		Move(time, current_direction.x*MoveSpeed, 0, current_direction.z*MoveSpeed);
 	}
 
 
