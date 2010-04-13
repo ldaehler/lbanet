@@ -166,6 +166,9 @@ void LbaNetEngine::run(void)
 				m_Gamecl->ZCom_processOutput();
 			}
 
+			//update the elements to draw on screen
+			m_lbaNetModel.UpdateDrawing();
+
 			// pause the program for a few milliseconds
 			unsigned int currwtime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
 			unsigned int wdiff = (currwtime-waittime);
