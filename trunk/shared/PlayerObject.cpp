@@ -169,7 +169,12 @@ void PlayerObject::inputSent(ZCom_BitStream& _inputstream)
 void PlayerObject::correctionReceived(zFloat *_pos, zFloat* _vel, zFloat *_acc, 
 										bool _teleport, zU32 _estimated_time_sent)
 {
-
+	if(_teleport)
+		m_physicObj->SetPosition(_estimated_time_sent, _pos[0], _pos[1], _pos[2]);
+	else
+		m_physicObj->MoveTo(_estimated_time_sent, _pos[0], _pos[1], _pos[2]);
+	
+	m_physicObj->RotateTo(_estimated_time_sent, LbaQuaternion(_pos[3], LbaVec3(0, 1, 0)));
 }
 
 
@@ -249,7 +254,7 @@ void PlayerObject::doProxy()
 	{
 		unsigned int ctime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
 		m_physicObj->MoveTo(ctime, tmppos[0], tmppos[1], tmppos[2]);
-		m_physicObj->RotateTo(ctime, tmppos[3]);
+		m_physicObj->RotateTo(ctime, LbaQuaternion(tmppos[3], LbaVec3(0, 1, 0)));
 	}
 
 } 

@@ -78,7 +78,8 @@ protected:
 	virtual void HandleQuitEvent(ZCom_BitStream * data, eZCom_NodeRole remoterole, unsigned int eventconnid){}
 
 	// handle user event
-	virtual void HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoterole, unsigned int eventconnid);
+	virtual void HandleUserEvent(ZCom_BitStream * data, eZCom_NodeRole remoterole, 
+									unsigned int eventconnid, unsigned int _estimated_time_sent);
 
 	// do a custom process step if required
 	virtual void CustomProcess(){}

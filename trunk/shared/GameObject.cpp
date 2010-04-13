@@ -61,9 +61,11 @@ void GameObject::Process()
 		eZCom_Event       eve_type;        // event type
 		eZCom_NodeRole    eve_remote_role; // role of remote sender
 		ZCom_ConnID       eve_connid;      // connection id of sender
+		unsigned int	  estimated_time_sent;
 
 		// get next waiting event
-		ZCom_BitStream *eve_data = m_node->getNextEvent(&eve_type, &eve_remote_role, &eve_connid);
+		ZCom_BitStream *eve_data = m_node->getNextEvent(&eve_type, &eve_remote_role, 
+														&eve_connid, &estimated_time_sent);
 
 		// if init event
 		if (eve_type == eZCom_EventInit)
@@ -88,7 +90,7 @@ void GameObject::Process()
 
 		// a custom application event arrived
 		if (eve_type == eZCom_EventUser)
-			HandleUserEvent(eve_data, eve_remote_role, eve_connid);
+			HandleUserEvent(eve_data, eve_remote_role, eve_connid, estimated_time_sent);
 	}
 
 	// child custom process step
