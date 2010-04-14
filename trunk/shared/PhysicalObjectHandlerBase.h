@@ -73,11 +73,13 @@ public:
 	virtual void MoveTo(unsigned int time, float X, float Y, float Z) = 0;
 
 	//! rotate object in the world
+	virtual void RotateYAxis(unsigned int time, float Speed) = 0;
+
+	//! rotate object in the world
 	virtual void RotateTo(unsigned int time, const LbaQuaternion& Q) = 0;
 
 	//! move object in the world
-	virtual void MoveInDirection(unsigned int time, float RotationYBeforeMove, float MoveSpeed,
-									bool AddGravity) = 0;
+	virtual void MoveInDirection(unsigned int time, float MoveSpeed, bool AddGravity) = 0;
 
 
 
@@ -137,6 +139,19 @@ public:
 	void RotateTo(const LbaQuaternion& Q)
 	{
 		_Q = Q;
+	}
+
+	//! rotate object in the world
+	void RotateYAxis(float Speed)
+	{
+		_Q.AddRotation(Speed, LbaVec3(0,1,0));
+	}
+
+
+	//! get direction vector
+	LbaVec3 GetDirection(const LbaVec3 &vec)
+	{
+		return _Q.GetDirection(vec);
 	}
 
 private:
@@ -230,15 +245,17 @@ public:
 	}
 
 
+	//! rotate object in the world
+	virtual void RotateYAxis(unsigned int time, float Speed)
+	{
+		_rotH.RotateYAxis(Speed);
+	}
+
 	//! move object in the world
-	virtual void MoveInDirection(unsigned int time, float RotationYBeforeMove, float MoveSpeed,
-									bool AddGravity)
+	virtual void MoveInDirection(unsigned int time, float MoveSpeed, bool AddGravity)
 	{
 		LbaQuaternion rot;
 		GetRotation(rot);
-		rot.AddRotation(RotationYBeforeMove, LbaVec3(0, 1, 0));
-		RotateTo(time, rot);
-
 		LbaVec3 current_direction = rot.GetDirection(LbaVec3(0, 0, 1));
 		Move(time, current_direction.x*MoveSpeed, 0, current_direction.z*MoveSpeed);
 	}

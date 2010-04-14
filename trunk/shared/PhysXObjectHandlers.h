@@ -54,68 +54,20 @@ protected:
 };
 
 
-/***********************************************************************
- * Handler on a physX actor
- ***********************************************************************/
-class PhysXActorHandler : public PhysXObjectHandlerBase
-{
-public:
-	//! constructor
-	PhysXActorHandler(boost::shared_ptr<PhysXEngine> Pengine,
-						boost::shared_ptr<ActorUserData> UserData,
-						NxActor* Actor,
-						boost::shared_ptr<SimpleRotationHandler> rotH);
-
-	//! destructor
-	virtual ~PhysXActorHandler();
-
-	//! get object position in the world
-	virtual void GetPosition(float &X, float &Y, float &Z);
-
-	//! get object rotation on all axis
-	virtual void GetRotation(LbaQuaternion& Q);
-
-	//! get object rotation on a single angle
-	virtual float GetRotationSingleAngle();
-
-	//! set object position in the world
-	virtual void SetPosition(unsigned int time, float X, float Y, float Z);
-
-	//! set object rotation on all axis
-	virtual void SetRotation(unsigned int time, const LbaQuaternion& Q);
-
-	//! move object in the world
-	virtual void Move(unsigned int time, float deltaX, float deltaY, float deltaZ);
-
-	//! move object to a position in the world
-	virtual void MoveTo(unsigned int time, float X, float Y, float Z);
-
-	//! rotate object in the world
-	virtual void RotateTo(unsigned int time, const LbaQuaternion& Q);
-
-	//! move object in the world
-	virtual void MoveInDirection(unsigned int time, float RotationYBeforeMove, float MoveSpeed,
-									bool AddGravity);
-
-protected:
-	NxActor*									_Actor;
-	boost::shared_ptr<SimpleRotationHandler>	_rotH;
-};
-
 
 /***********************************************************************
  * Handler on a physX dynamic actor - this actor controll itself its rotation
  ***********************************************************************/
-class PhysXDynamicActorHandler : public PhysXObjectHandlerBase
+class PhysXActorsHandler : public PhysXObjectHandlerBase
 {
 public:
 	//! constructor
-	PhysXDynamicActorHandler(boost::shared_ptr<PhysXEngine> Pengine,
+	PhysXActorsHandler(boost::shared_ptr<PhysXEngine> Pengine,
 						boost::shared_ptr<ActorUserData> UserData,
 						NxActor* Actor, const LbaQuaternion& rotation);
 
 	//! destructor
-	virtual ~PhysXDynamicActorHandler();
+	virtual ~PhysXActorsHandler();
 
 	//! get object position in the world
 	virtual void GetPosition(float &X, float &Y, float &Z);
@@ -139,14 +91,18 @@ public:
 	virtual void MoveTo(unsigned int time, float X, float Y, float Z);
 
 	//! rotate object in the world
+	virtual void RotateYAxis(unsigned int time, float Speed);
+
+	//! rotate object in the world
 	virtual void RotateTo(unsigned int time, const LbaQuaternion& Q);
 
 	//! move object in the world
-	virtual void MoveInDirection(unsigned int time, float RotationYBeforeMove, float MoveSpeed,
-									bool AddGravity);
+	virtual void MoveInDirection(unsigned int time, float MoveSpeed, bool AddGravity);
+
 protected:
 	NxActor*	_Actor;
 };
+
 
 
 /***********************************************************************
@@ -186,15 +142,16 @@ public:
 	virtual void MoveTo(unsigned int time, float X, float Y, float Z);
 
 	//! rotate object in the world
+	virtual void RotateYAxis(unsigned int time, float Speed);
+
+	//! rotate object in the world
 	virtual void RotateTo(unsigned int time, const LbaQuaternion& Q);
 
 	//! move object in the world
-	virtual void MoveInDirection(unsigned int time, float RotationYBeforeMove, float MoveSpeed,
-									bool AddGravity);
+	virtual void MoveInDirection(unsigned int time, float MoveSpeed, bool AddGravity);
 
 protected:
 	NxController*								_Controller;
-	boost::shared_ptr<SimpleRotationHandler>	_rotH;
 };
 
 #endif
