@@ -44,12 +44,14 @@ PhysXObjectHandlerBase::PhysXObjectHandlerBase(boost::shared_ptr<PhysXEngine> Pe
 /***********************************************************
 	Constructor
 ***********************************************************/
-PhysXActorHandler::PhysXActorHandler(boost::shared_ptr<PhysXEngine> Pengine,
-						boost::shared_ptr<ActorUserData> UserData,
-						NxActor* Actor,
-						boost::shared_ptr<SimpleRotationHandler> rotH)
-		: PhysXObjectHandlerBase(Pengine, UserData), _Actor(Actor), _rotH(rotH)
+PhysXActorsHandler::PhysXActorsHandler(boost::shared_ptr<PhysXEngine> Pengine,
+													boost::shared_ptr<ActorUserData> UserData,
+													NxActor* Actor, const LbaQuaternion& rotation)
+		: PhysXObjectHandlerBase(Pengine, UserData), _Actor(Actor)
 {
+	_Actor->setGlobalOrientationQuat(NxQuat(NxVec3(rotation.X, rotation.Y, rotation.Z), rotation.W));
+
+
 	#ifdef _DEBUG
 		LogHandler::getInstance()->LogToFile("Created new PhysXActor.");
 	#endif
@@ -59,8 +61,9 @@ PhysXActorHandler::PhysXActorHandler(boost::shared_ptr<PhysXEngine> Pengine,
 /***********************************************************
 	destructor
 ***********************************************************/
-PhysXActorHandler::~PhysXActorHandler()
+PhysXActorsHandler::~PhysXActorsHandler()
 {
+
 	#ifdef _DEBUG
 		LogHandler::getInstance()->LogToFile("Destroyed PhysXActor.");
 	#endif
@@ -68,128 +71,10 @@ PhysXActorHandler::~PhysXActorHandler()
 	_Pengine->DestroyActor(_Actor);
 }
 
-
 /***********************************************************
 get object position in the world
 ***********************************************************/
-void PhysXActorHandler::GetPosition(float &X, float &Y, float &Z)
-{
-	if(!_Actor) return;
-
-	NxVec3 vec = _Actor->getGlobalPosition();
-	X = vec.x;
-	Y = vec.y;
-	Z = vec.z;
-}
-
-/***********************************************************
-get object rotation on all axis
-***********************************************************/
-void PhysXActorHandler::GetRotation(LbaQuaternion& Q)
-{
-	_rotH->GetRotation(Q);
-}
-
-
-/***********************************************************
-get object rotation on all axis
-***********************************************************/
-float PhysXActorHandler::GetRotationSingleAngle()
-{
-	return _rotH->GetRotationSingleAngle();
-}
-
-
-/***********************************************************
-set object position in the world
-***********************************************************/
-void PhysXActorHandler::SetPosition(unsigned int time, float X, float Y, float Z)
-{	
-	_Pengine->SetActorPos(time, _Actor, NxVec3(X, Y, Z));
-	_resetted = true;
-}
-
-/***********************************************************
-set object rotation on all axis
-***********************************************************/
-void PhysXActorHandler::SetRotation(unsigned int time, const LbaQuaternion& Q)
-{
-	_rotH->SetRotation(Q);
-	_resetted = true;
-}
-
-/***********************************************************
-move object in the world
-***********************************************************/
-void PhysXActorHandler::Move(unsigned int time, float deltaX, float deltaY, float deltaZ)
-{
-	float currPosX, currPosY, currPosZ;
-	GetPosition(currPosX, currPosY, currPosZ);
-	MoveTo(time, currPosX+deltaX, currPosY+deltaY, currPosZ+deltaZ);
-}
-
-/***********************************************************
-move object to a position in the world
-***********************************************************/
-void PhysXActorHandler::MoveTo(unsigned int time, float X, float Y, float Z)
-{	
-	_Pengine->MoveActorTo(time, _Actor, NxVec3(X, Y, Z));
-}
-
-
-/***********************************************************
-rotate object in the world
-***********************************************************/
-void PhysXActorHandler::RotateTo(unsigned int time, const LbaQuaternion& Q)
-{
-	_rotH->RotateTo(Q);
-}
-
-
-/***********************************************************
-move object in the world
-***********************************************************/
-void PhysXActorHandler::MoveInDirection(unsigned int time, float RotationYBeforeMove, float MoveSpeed,
-									bool AddGravity)
-{
-	_Pengine->MoveInDirectionActor(time, _Actor, _rotH, RotationYBeforeMove, MoveSpeed, AddGravity);
-}
-
-
-/***********************************************************
-	Constructor
-***********************************************************/
-PhysXDynamicActorHandler::PhysXDynamicActorHandler(boost::shared_ptr<PhysXEngine> Pengine,
-													boost::shared_ptr<ActorUserData> UserData,
-													NxActor* Actor, const LbaQuaternion& rotation)
-		: PhysXObjectHandlerBase(Pengine, UserData), _Actor(Actor)
-{
-	_Actor->setGlobalOrientationQuat(NxQuat(NxVec3(rotation.X, rotation.Y, rotation.Z), rotation.W));
-
-
-	#ifdef _DEBUG
-		LogHandler::getInstance()->LogToFile("Created new PhysXDynamicActor.");
-	#endif
-}
-
-
-/***********************************************************
-	destructor
-***********************************************************/
-PhysXDynamicActorHandler::~PhysXDynamicActorHandler()
-{
-
-	#ifdef _DEBUG
-		LogHandler::getInstance()->LogToFile("Destroyed PhysXDynamicActor.");
-	#endif
-
-	_Pengine->DestroyActor(_Actor);
-}
-
-/***********************************************************
-get object position in the world
-***********************************************************/
-void PhysXDynamicActorHandler::GetPosition(float &X, float &Y, float &Z)
+void PhysXActorsHandler::GetPosition(float &X, float &Y, float &Z)
 {	
 	if(!_Actor) return;
 
@@ -202,7 +87,7 @@ void PhysXDynamicActorHandler::GetPosition(float &X, float &Y, float &Z)
 /***********************************************************
 get object rotation on all axis
 ***********************************************************/
-void PhysXDynamicActorHandler::GetRotation(LbaQuaternion& Q)
+void PhysXActorsHandler::GetRotation(LbaQuaternion& Q)
 {	
 	if(!_Actor) return;
 
@@ -216,7 +101,7 @@ void PhysXDynamicActorHandler::GetRotation(LbaQuaternion& Q)
 /***********************************************************
 get object rotation on all axis
 ***********************************************************/
-float PhysXDynamicActorHandler::GetRotationSingleAngle()
+float PhysXActorsHandler::GetRotationSingleAngle()
 {
 	NxQuat quat = _Actor->getGlobalOrientationQuat();
 	return quat.getAngle();
@@ -225,7 +110,7 @@ float PhysXDynamicActorHandler::GetRotationSingleAngle()
 /***********************************************************
 set object position in the world
 ***********************************************************/
-void PhysXDynamicActorHandler::SetPosition(unsigned int time, float X, float Y, float Z)
+void PhysXActorsHandler::SetPosition(unsigned int time, float X, float Y, float Z)
 {	
 	_Pengine->SetActorPos(time, _Actor, NxVec3(X, Y, Z));
 	_resetted = true;
@@ -234,7 +119,7 @@ void PhysXDynamicActorHandler::SetPosition(unsigned int time, float X, float Y, 
 /***********************************************************
 set object rotation on all axis
 ***********************************************************/
-void PhysXDynamicActorHandler::SetRotation(unsigned int time, const LbaQuaternion& Q)
+void PhysXActorsHandler::SetRotation(unsigned int time, const LbaQuaternion& Q)
 {	
 	_Pengine->SetActorRotation(time, _Actor, NxQuat(NxVec3(Q.X, Q.Y, Q.Z), Q.W));
 	_resetted = true;
@@ -243,7 +128,7 @@ void PhysXDynamicActorHandler::SetRotation(unsigned int time, const LbaQuaternio
 /***********************************************************
 move object in the world
 ***********************************************************/
-void PhysXDynamicActorHandler::Move(unsigned int time, float deltaX, float deltaY, float deltaZ)
+void PhysXActorsHandler::Move(unsigned int time, float deltaX, float deltaY, float deltaZ)
 {
 	float currPosX, currPosY, currPosZ;
 	GetPosition(currPosX, currPosY, currPosZ);
@@ -253,7 +138,7 @@ void PhysXDynamicActorHandler::Move(unsigned int time, float deltaX, float delta
 /***********************************************************
 move object to a position in the world
 ***********************************************************/
-void PhysXDynamicActorHandler::MoveTo(unsigned int time, float X, float Y, float Z)
+void PhysXActorsHandler::MoveTo(unsigned int time, float X, float Y, float Z)
 {	
 	_Pengine->MoveActorTo(time, _Actor, NxVec3(X, Y, Z));
 }
@@ -262,7 +147,15 @@ void PhysXDynamicActorHandler::MoveTo(unsigned int time, float X, float Y, float
 /***********************************************************
 rotate object in the world
 ***********************************************************/
-void PhysXDynamicActorHandler::RotateTo(unsigned int time, const LbaQuaternion& Q)
+void PhysXActorsHandler::RotateYAxis(unsigned int time, float Speed)
+{	
+	_Pengine->RotateActoryAxis(time, _Actor, Speed);
+}
+
+/***********************************************************
+rotate object in the world
+***********************************************************/
+void PhysXActorsHandler::RotateTo(unsigned int time, const LbaQuaternion& Q)
 {	
 	_Pengine->SetActorRotation(time, _Actor, NxQuat(NxVec3(Q.X, Q.Y, Q.Z), Q.W));
 }
@@ -272,12 +165,17 @@ void PhysXDynamicActorHandler::RotateTo(unsigned int time, const LbaQuaternion& 
 /***********************************************************
 move object in the world
 ***********************************************************/
-void PhysXDynamicActorHandler::MoveInDirection(unsigned int time, float RotationYBeforeMove, float MoveSpeed,
-									bool AddGravity)
+void PhysXActorsHandler::MoveInDirection(unsigned int time, float MoveSpeed, bool AddGravity)
 {
-	_Pengine->MoveInDirectionActor(time, _Actor, boost::shared_ptr<SimpleRotationHandler>(),
-											RotationYBeforeMove, MoveSpeed, AddGravity);
+	_Pengine->MoveInDirectionActor(time, _Actor, MoveSpeed, AddGravity);
 }
+
+
+
+
+
+
+
 
 
 /***********************************************************
@@ -287,8 +185,10 @@ PhysXControllerHandler::PhysXControllerHandler(boost::shared_ptr<PhysXEngine> Pe
 												boost::shared_ptr<ActorUserData> UserData,
 												NxController* Controller,
 												boost::shared_ptr<SimpleRotationHandler> rotH)
-		: PhysXObjectHandlerBase(Pengine, UserData), _Controller(Controller), _rotH(rotH)
+		: PhysXObjectHandlerBase(Pengine, UserData), _Controller(Controller)
 {
+	_UserData->RotH = rotH;
+
 	#ifdef _DEBUG
 		LogHandler::getInstance()->LogToFile("Created new PhysXController.");
 	#endif
@@ -327,7 +227,7 @@ get object rotation on all axis
 ***********************************************************/
 void PhysXControllerHandler::GetRotation(LbaQuaternion& Q)
 {
-	_rotH->GetRotation(Q);
+	_UserData->RotH->GetRotation(Q);
 }
 
 /***********************************************************
@@ -335,7 +235,7 @@ get object rotation on all axis
 ***********************************************************/
 float PhysXControllerHandler::GetRotationSingleAngle()
 {
-	return _rotH->GetRotationSingleAngle();
+	return _UserData->RotH->GetRotationSingleAngle();
 }
 
 /***********************************************************
@@ -349,7 +249,7 @@ void PhysXControllerHandler::SetPosition(unsigned int time, float X, float Y, fl
 	pos.x = X;
 	pos.y = Y;
 	pos.z = Z;
-	_Pengine->SetCharacterPosition(time, _Controller, _UserData, pos);
+	_Pengine->SetCharacterPosition(time, _Controller, pos);
 	_resetted = true;
 }
 
@@ -358,8 +258,17 @@ set object rotation on all axis
 ***********************************************************/
 void PhysXControllerHandler::SetRotation(unsigned int time, const LbaQuaternion& Q)
 {
-	_rotH->SetRotation(Q);
+	_Pengine->SetCharacterRotation(time, _Controller, Q);
 	_resetted = true;
+}
+
+
+/***********************************************************
+rotate object in the world
+***********************************************************/
+void PhysXControllerHandler::RotateYAxis(unsigned int time, float Speed)
+{	
+	_Pengine->RotateCharacteryAxis(time, _Controller, Speed);
 }
 
 /***********************************************************
@@ -367,7 +276,7 @@ move object in the world
 ***********************************************************/
 void PhysXControllerHandler::Move(unsigned int time, float deltaX, float deltaY, float deltaZ)
 {
-	_Pengine->DeltaMoveCharacter(time, _Controller, _UserData, NxVec3(deltaX, deltaY, deltaZ), true);
+	_Pengine->DeltaMoveCharacter(time, _Controller, NxVec3(deltaX, deltaY, deltaZ), true);
 }
 
 /***********************************************************
@@ -375,10 +284,11 @@ move object to a position in the world
 ***********************************************************/
 void PhysXControllerHandler::MoveTo(unsigned int time, float X, float Y, float Z)
 {
-	if(!_Controller) return;
+	if(!_Controller) 
+		return;
 
 	NxExtendedVec3 vec = _Controller->getPosition();
-	_Pengine->DeltaMoveCharacter(time, _Controller, _UserData,
+	_Pengine->DeltaMoveCharacter(time, _Controller, 
 									NxVec3(X - (float)vec.x, Y - (float)vec.y, Z - (float)vec.z), false);
 }
 
@@ -387,19 +297,21 @@ rotate object in the world
 ***********************************************************/
 void PhysXControllerHandler::RotateTo(unsigned int time, const LbaQuaternion& Q)
 {
-	_rotH->RotateTo(Q);
+	_Pengine->SetCharacterRotation(time, _Controller, Q);
 }
 
 
 /***********************************************************
 move object in the world
 ***********************************************************/
-void PhysXControllerHandler::MoveInDirection(unsigned int time, float RotationYBeforeMove, float MoveSpeed,
-												bool AddGravity)
+void PhysXControllerHandler::MoveInDirection(unsigned int time, float MoveSpeed, bool AddGravity)
 {
-	_Pengine->MoveInDirectionCharacter(time, _Controller, _UserData, _rotH,
-											RotationYBeforeMove, MoveSpeed, AddGravity);
+	_Pengine->MoveInDirectionCharacter(time, _Controller, MoveSpeed, AddGravity);
 }
+
+
+
+
 
 
 
@@ -439,15 +351,8 @@ boost::shared_ptr<PhysicalObjectHandlerBase> PhysicalDescriptionBox::BuildSelf(
 	{
 		NxActor* act = _PEngine->CreateBox(NxVec3(positionX, positionY, positionZ), sizeX, sizeY, sizeZ, 
 													density, type, udata.get());
-		if(type != 3)
-		{
-			return boost::shared_ptr<PhysicalObjectHandlerBase>(new PhysXActorHandler(_PEngine, udata, act, 
-								boost::shared_ptr<SimpleRotationHandler>(new SimpleRotationHandler(rotation))));
-		}
-		else
-		{
-			return boost::shared_ptr<PhysicalObjectHandlerBase>(new PhysXDynamicActorHandler(_PEngine, udata, act, rotation));
-		}
+		
+		return boost::shared_ptr<PhysicalObjectHandlerBase>(new PhysXActorsHandler(_PEngine, udata, act, rotation));
 	}
 	else
 	{
@@ -493,15 +398,8 @@ boost::shared_ptr<PhysicalObjectHandlerBase> PhysicalDescriptionCapsule::BuildSe
 	{
 		NxActor* act = _PEngine->CreateCapsule(NxVec3(positionX, positionY, positionZ), radius, height,
 													density, type, udata.get());
-		if(type != 3)
-		{
-			return boost::shared_ptr<PhysicalObjectHandlerBase>(new PhysXActorHandler(_PEngine, udata, act, 
-								boost::shared_ptr<SimpleRotationHandler>(new SimpleRotationHandler(rotation))));
-		}
-		else
-		{
-			return boost::shared_ptr<PhysicalObjectHandlerBase>(new PhysXDynamicActorHandler(_PEngine, udata, act, rotation));
-		}
+		
+		return boost::shared_ptr<PhysicalObjectHandlerBase>(new PhysXActorsHandler(_PEngine, udata, act, rotation));
 	}
 	else
 	{
@@ -547,15 +445,8 @@ boost::shared_ptr<PhysicalObjectHandlerBase> PhysicalDescriptionSphere::BuildSel
 	{
 		NxActor* act = _PEngine->CreateSphere(NxVec3(positionX, positionY, positionZ), radius, 
 													density, type, udata.get());
-		if(type != 3)
-		{
-			return boost::shared_ptr<PhysicalObjectHandlerBase>(new PhysXActorHandler(_PEngine, udata, act, 
-								boost::shared_ptr<SimpleRotationHandler>(new SimpleRotationHandler(rotation))));
-		}
-		else
-		{
-			return boost::shared_ptr<PhysicalObjectHandlerBase>(new PhysXDynamicActorHandler(_PEngine, udata, act, rotation));
-		}
+
+		return boost::shared_ptr<PhysicalObjectHandlerBase>(new PhysXActorsHandler(_PEngine, udata, act, rotation));
 	}
 	else
 	{
@@ -601,6 +492,5 @@ boost::shared_ptr<PhysicalObjectHandlerBase> PhysicalDescriptionTriangleMesh::Bu
 	NxActor* actor = _PEngine->LoadTriangleMeshFile(NxVec3(positionX, positionY, positionZ), 
 														"Data/"+MeshInfoDataFileName, udata);
 
-	return boost::shared_ptr<PhysicalObjectHandlerBase>(new PhysXActorHandler(_PEngine, udata, actor, 
-							boost::shared_ptr<SimpleRotationHandler>(new SimpleRotationHandler(rotation))));
+	return boost::shared_ptr<PhysicalObjectHandlerBase>(new PhysXActorsHandler(_PEngine, udata, actor, rotation));
 }

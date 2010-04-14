@@ -120,9 +120,8 @@ class CharacterPhysicalModification : public PhysicalModification
 {
 public:
 	//! constructor
-	CharacterPhysicalModification(NxController* controller, 
-									boost::shared_ptr<ActorUserData> udata, unsigned int time)
-		: PhysicalModification(time), _controller(controller), _udata(udata){}
+	CharacterPhysicalModification(NxController* controller, unsigned int time)
+		: PhysicalModification(time), _controller(controller){}
 
 	//! destructor
 	virtual ~CharacterPhysicalModification(){}
@@ -139,9 +138,14 @@ public:
 		return (_controller == character);
 	}
 
+	//! get user data pointer
+	ActorUserData * GetuserData()
+	{
+		return (ActorUserData *) _controller->getActor()->userData;
+	}
+
 protected:
 	NxController* _controller;
-	boost::shared_ptr<ActorUserData> _udata;
 };
 
 
@@ -176,6 +180,7 @@ public:
 protected:
 	NxVec3 _targetPos;
 };
+
 
 /***********************************************************************
  * Module:  PhysXEngine.h
@@ -243,16 +248,103 @@ protected:
  * Module:  PhysXEngine.h
  * Author:  vivien
  * Modified: lundi 27 juillet 2009 14:59:34
+ * Purpose: class SetActorRotationModification
+ ***********************************************************************/
+class RotateActoryAxisModification: public ActorPhysicalModification
+{
+public:
+	//! constructor
+	RotateActoryAxisModification(unsigned int time, NxActor* act, float Speed)
+		: ActorPhysicalModification(act, time), _Speed(Speed)
+	{
+
+	}
+
+	//! destructor
+	virtual ~RotateActoryAxisModification(){}
+
+
+	//! apply modification to physic engine
+	virtual void Apply(float timeduration)
+	{
+		if(_actor)
+		{
+			NxQuat q(_Speed*timeduration, NxVec3(0, 1, 0));
+			NxQuat targetRot = _actor->getGlobalOrientationQuat();
+			targetRot = q * targetRot;
+			_actor->moveGlobalOrientationQuat(targetRot);
+		}		
+	}
+
+protected:
+	float _Speed;
+};
+
+
+
+/***********************************************************************
+ * Module:  PhysXEngine.h
+ * Author:  vivien
+ * Modified: lundi 27 juillet 2009 14:59:34
+ * Purpose: class SetCharacterPositionModification
+ ***********************************************************************/
+class MoveInDirectionActorModification : public ActorPhysicalModification
+{
+public:
+	//! constructor
+	MoveInDirectionActorModification(unsigned int time, NxActor* act,  
+										float MoveSpeed, LbaVec3 Gravity)
+		: ActorPhysicalModification(act, time), _MoveSpeed(MoveSpeed), _Gravity(Gravity)
+	{
+
+	}
+
+	//! destructor
+	virtual ~MoveInDirectionActorModification(){}
+
+
+	//! apply modification to physic engine
+	virtual void Apply(float timeduration)
+	{
+		if(_actor)
+		{
+			NxQuat quat = _actor->getGlobalOrientationQuat();
+			NxVec3 current_direction(0, 0, 1);
+			quat.rotate(current_direction);
+			
+			NxVec3 tmpvec(	current_direction.x+_Gravity.x, 
+							current_direction.y+_Gravity.y, 
+							current_direction.z+_Gravity.z);
+
+			_actor->moveGlobalPosition(tmpvec*timeduration);
+		}
+	}
+
+protected:
+	float _MoveSpeed;
+	LbaVec3 _Gravity;
+};
+
+
+
+
+
+
+
+
+/***********************************************************************
+ * Module:  PhysXEngine.h
+ * Author:  vivien
+ * Modified: lundi 27 juillet 2009 14:59:34
  * Purpose: class DeltaMoveCharacterModification
  ***********************************************************************/
 class DeltaMoveCharacterModification : public CharacterPhysicalModification
 {
 public:
 	//! constructor
-	DeltaMoveCharacterModification(unsigned int time, NxController* act, 
-									boost::shared_ptr<ActorUserData> udata, const NxVec3 & deltamove, 
+	DeltaMoveCharacterModification(unsigned int time, NxController* act, const NxVec3 & deltamove, 
 																					bool checkCollision)
-		: CharacterPhysicalModification(act, udata, time), _move(deltamove), _checkCollision(checkCollision)
+		: CharacterPhysicalModification(act, time), _move(deltamove), _checkCollision(checkCollision)
 	{
 
 	}
@@ -267,9 +359,10 @@ public:
 		if(_controller)
 		{
 			unsigned int CollisionFlag = PhysXEngine::MoveCharacter(_controller, _move*timeduration, _checkCollision);
-			_udata->CollisionUpFlag = (CollisionFlag == NXCC_COLLISION_UP);
-			_udata->CollisionDownFlag = (CollisionFlag == NXCC_COLLISION_DOWN);
-			_udata->CollisionSideFlag = (CollisionFlag == NXCC_COLLISION_SIDES);
+			ActorUserData * udata = GetuserData();
+			udata->CollisionUpFlag = (CollisionFlag == NXCC_COLLISION_UP);
+			udata->CollisionDownFlag = (CollisionFlag == NXCC_COLLISION_DOWN);
+			udata->CollisionSideFlag = (CollisionFlag == NXCC_COLLISION_SIDES);
 		}
 	}
 
@@ -288,9 +381,8 @@ class SetCharacterPositionModification : public CharacterPhysicalModification
 {
 public:
 	//! constructor
-	SetCharacterPositionModification(unsigned int time, NxController* act, 
-									boost::shared_ptr<ActorUserData> udata, const NxExtendedVec3 & targetPos)
-		: CharacterPhysicalModification(act, udata, time), _targetPos(targetPos)
+	SetCharacterPositionModification(unsigned int time, NxController* act, const NxExtendedVec3 & targetPos)
+		: CharacterPhysicalModification(act, time), _targetPos(targetPos)
 	{
 
 	}
@@ -312,60 +404,77 @@ protected:
 
 
 
-
 /***********************************************************************
  * Module:  PhysXEngine.h
  * Author:  vivien
  * Modified: lundi 27 juillet 2009 14:59:34
  * Purpose: class SetCharacterPositionModification
  ***********************************************************************/
-class MoveInDirectionActorModification : public ActorPhysicalModification
+class RotateCharacteryAxisModification : public CharacterPhysicalModification
 {
 public:
 	//! constructor
-	MoveInDirectionActorModification(unsigned int time, NxActor* act, 
-									boost::shared_ptr<SimpleRotationHandler> rotH,
-									float RotationYBeforeMove, float MoveSpeed,	LbaVec3 Gravity)
-		: ActorPhysicalModification(act, time), _rotH(rotH), 
-			_RotationYBeforeMove(RotationYBeforeMove), _MoveSpeed(MoveSpeed), _Gravity(Gravity)
+	RotateCharacteryAxisModification(unsigned int time, NxController* act, float Speed)
+		: CharacterPhysicalModification(act, time), _Speed(Speed)
 	{
 
 	}
 
 	//! destructor
-	virtual ~MoveInDirectionActorModification(){}
+	virtual ~RotateCharacteryAxisModification(){}
 
 
 	//! apply modification to physic engine
 	virtual void Apply(float timeduration)
 	{
-		if(_actor)
+		if(_controller)
 		{
-			LbaVec3 current_direction(0, 0, 0);
-
-			TODO -> change rotation to physix rot
-			if(_rotH)
-			{
-				LbaQuaternion rot;
-				_rotH->GetRotation(rot);
-				rot.AddRotation(timeduration*_RotationYBeforeMove, LbaVec3(0, 1, 0));
-				_rotH->RotateTo(rot);
-				current_direction = rot.GetDirection(LbaVec3(0, 0, 1));
-			}
-			
-			NxVec3 tmpvec(	current_direction.x+_Gravity.x, 
-							current_direction.y+_Gravity.y, 
-							current_direction.z+_Gravity.z);
-
-			_actor->moveGlobalPosition(tmpvec*timeduration);
+			ActorUserData * udata = GetuserData();
+			if(udata && udata->RotH)
+				udata->RotH->RotateYAxis(timeduration*_Speed);
 		}
 	}
 
 protected:
-	boost::shared_ptr<SimpleRotationHandler> _rotH;
-	float _RotationYBeforeMove;
-	float _MoveSpeed;
-	LbaVec3 _Gravity;
+	float _Speed;
+};
+
+
+
+
+/***********************************************************************
+ * Module:  PhysXEngine.h
+ * Author:  vivien
+ * Modified: lundi 27 juillet 2009 14:59:34
+ * Purpose: class SetCharacterRotationModification
+ ***********************************************************************/
+class SetCharacterRotationModification : public CharacterPhysicalModification
+{
+public:
+	//! constructor
+	SetCharacterRotationModification(unsigned int time, NxController* act, const LbaQuaternion& Q)
+		: CharacterPhysicalModification(act, time), _Q(Q)
+	{
+
+	}
+
+	//! destructor
+	virtual ~SetCharacterRotationModification(){}
+
+
+	//! apply modification to physic engine
+	virtual void Apply(float timeduration)
+	{
+		if(_controller)
+		{
+			ActorUserData * udata = GetuserData();
+			if(udata && udata->RotH)
+				udata->RotH->SetRotation(_Q);
+		}
+	}
+
+protected:
+	LbaQuaternion _Q;
 };
 
 
@@ -380,11 +489,8 @@ class MoveInDirectionCharacterModification : public CharacterPhysicalModificatio
 public:
 	//! constructor
 	MoveInDirectionCharacterModification(unsigned int time, NxController* act, 
-											boost::shared_ptr<ActorUserData> udata, 
-											boost::shared_ptr<SimpleRotationHandler> rotH,
-											float RotationYBeforeMove, float MoveSpeed,	LbaVec3 Gravity)
-		: CharacterPhysicalModification(act, udata, time), _rotH(rotH), 
-			_RotationYBeforeMove(RotationYBeforeMove), _MoveSpeed(MoveSpeed), _Gravity(Gravity)
+											float MoveSpeed,	LbaVec3 Gravity)
+		: CharacterPhysicalModification(act, time),  _MoveSpeed(MoveSpeed), _Gravity(Gravity)
 	{
 
 	}
@@ -398,35 +504,30 @@ public:
 	{
 		if(_controller)
 		{
-			LbaVec3 current_direction(0, 0, 0);
-
-			TODO -> save rotation in state
-			if(_rotH)
+			ActorUserData * udata = GetuserData();
+			if(udata && udata->RotH)
 			{
-				LbaQuaternion rot;
-				_rotH->GetRotation(rot);
-				rot.AddRotation(timeduration*_RotationYBeforeMove, LbaVec3(0, 1, 0));
-				_rotH->RotateTo(rot);
-				current_direction = rot.GetDirection(LbaVec3(0, 0, 1));
-			}
-			
-			NxVec3 tmpvec(	current_direction.x+_Gravity.x, 
-							current_direction.y+_Gravity.y, 
-							current_direction.z+_Gravity.z);
+				LbaVec3 current_direction(0, 0, 0);
+				current_direction = udata->RotH->GetDirection(LbaVec3(0, 0, 1));
 
-			unsigned int CollisionFlag = PhysXEngine::MoveCharacter(_controller, tmpvec*timeduration, true);
-			_udata->CollisionUpFlag = (CollisionFlag == NXCC_COLLISION_UP);
-			_udata->CollisionDownFlag = (CollisionFlag == NXCC_COLLISION_DOWN);
-			_udata->CollisionSideFlag = (CollisionFlag == NXCC_COLLISION_SIDES);
+				NxVec3 tmpvec(	current_direction.x+_Gravity.x, 
+								current_direction.y+_Gravity.y, 
+								current_direction.z+_Gravity.z);
+
+				unsigned int CollisionFlag = PhysXEngine::MoveCharacter(_controller, tmpvec*timeduration, true);
+				udata->CollisionUpFlag = (CollisionFlag == NXCC_COLLISION_UP);
+				udata->CollisionDownFlag = (CollisionFlag == NXCC_COLLISION_DOWN);
+				udata->CollisionSideFlag = (CollisionFlag == NXCC_COLLISION_SIDES);
+			}
 		}
 	}
 
 protected:
-	boost::shared_ptr<SimpleRotationHandler> _rotH;
-	float _RotationYBeforeMove;
 	float _MoveSpeed;
 	LbaVec3 _Gravity;
 };
+
+
 
 
 
@@ -466,6 +567,11 @@ public:
 	{
 		SavedCharacter sav;
 		sav.Position = character->getPosition();
+
+		ActorUserData * udata = (ActorUserData *) character->getActor()->userData;
+		if(udata && udata->RotH)
+			udata->RotH->GetRotation(sav.Rotation);
+
 		_savedChars[character] = sav;
 	}
 
@@ -508,6 +614,10 @@ public:
 			{
 				//TODO only reset if different
 				it->first->setPosition(it->second.Position);
+
+				ActorUserData * udata = (ActorUserData *) it->first->getActor()->userData;
+				if(udata && udata->RotH)
+					udata->RotH->SetRotation(it->second.Rotation);		
 			}
 		}
 	}
@@ -521,7 +631,8 @@ public:
 
 	struct SavedCharacter
 	{
-		NxExtendedVec3 Position;
+		NxExtendedVec3	Position;
+		LbaQuaternion	Rotation;
 	};
 
 protected:

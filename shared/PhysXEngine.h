@@ -79,6 +79,8 @@ public:
 	bool				CollisionUpFlag;
 	bool				CollisionDownFlag;
 	bool				CollisionSideFlag;
+
+	boost::shared_ptr<SimpleRotationHandler>	RotH;
 };
 
 
@@ -183,25 +185,32 @@ public:
 	void SetActorPos(unsigned int time, NxActor* act, const NxVec3 & targetPos);
 
 	//! set an actor rotation
+	void RotateActoryAxis(unsigned int time, NxActor* act, float Speed);
+
+	//! set an actor rotation
 	void SetActorRotation(unsigned int time, NxActor* act, const NxQuat & quat);
+
+	//! move actor in rotation direction - only work for kinematic actors
+	void MoveInDirectionActor(unsigned int time, NxActor* act, float MoveSpeed, bool AddGravity);
+
+
+
 
 	//! move character - return collision flag
 	//! TODO check if step on water
-	void DeltaMoveCharacter(unsigned int time, NxController* act, boost::shared_ptr<ActorUserData> udata,
-										const NxVec3 & deltamove, bool checkCollision);
+	void DeltaMoveCharacter(unsigned int time, NxController* act, const NxVec3 & deltamove, bool checkCollision);
 
 	//! set character position - no collision checked
-	void SetCharacterPosition(unsigned int time, NxController* act, boost::shared_ptr<ActorUserData> udata,
-								const NxExtendedVec3 & targetPos);
+	void SetCharacterPosition(unsigned int time, NxController* act, const NxExtendedVec3 & targetPos);
+
+	//! set an actor rotation
+	void RotateCharacteryAxis(unsigned int time, NxController* act, float Speed);
+
+	//! set an actor rotation
+	void SetCharacterRotation(unsigned int time, NxController* act, const LbaQuaternion& Q);
 
 	//! move actor in rotation direction
-	void MoveInDirectionActor(unsigned int time, NxActor* act, boost::shared_ptr<SimpleRotationHandler> rotH,
-								float RotationYBeforeMove, float MoveSpeed,	bool AddGravity);
-
-	//! move actor in rotation direction
-	void MoveInDirectionCharacter(unsigned int time, NxController* act, boost::shared_ptr<ActorUserData> udata,
-									boost::shared_ptr<SimpleRotationHandler> rotH,
-									float RotationYBeforeMove, float MoveSpeed,	bool AddGravity);
+	void MoveInDirectionCharacter(unsigned int time, NxController* act, float MoveSpeed, bool AddGravity);
 
 
 	//! apply historic modifications

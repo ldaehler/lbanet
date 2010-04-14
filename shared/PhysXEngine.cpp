@@ -942,59 +942,86 @@ void PhysXEngine::SetActorRotation(unsigned int time, NxActor* act, const NxQuat
 	AddModification(boost::shared_ptr<PhysicalModification>(new SetActorRotationModification(time, act, quat)));
 }
 
-/***********************************************************
-//! move character - return collision flag
-***********************************************************/
-void PhysXEngine::DeltaMoveCharacter(unsigned int time, NxController* act, 
-											 boost::shared_ptr<ActorUserData> udata,
-												const NxVec3 & deltamove, bool checkCollision)
-{
-	AddModification(boost::shared_ptr<PhysicalModification>(new DeltaMoveCharacterModification(time, act, 
-																			udata, deltamove, checkCollision)));
-}
 
 /***********************************************************
-//! set character position - no collision checked
+//! set an actor rotation
 ***********************************************************/
-void PhysXEngine::SetCharacterPosition(unsigned int time, NxController* act, 
-									   boost::shared_ptr<ActorUserData> udata,
-										const NxExtendedVec3 & targetPos)
+void PhysXEngine::RotateActoryAxis(unsigned int time, NxActor* act, float Speed)
 {
-	AddModification(boost::shared_ptr<PhysicalModification>(new SetCharacterPositionModification(time, act, 
-																							udata, targetPos)));
+	AddModification(boost::shared_ptr<PhysicalModification>(new RotateActoryAxisModification(time, act, Speed)));
 }
-
-
 
 /***********************************************************
 //! move actor in rotation direction
 ***********************************************************/
-void PhysXEngine::MoveInDirectionActor(unsigned int time, NxActor* act, boost::shared_ptr<SimpleRotationHandler> rotH,
-							float RotationYBeforeMove, float MoveSpeed,	bool AddGravity)
+void PhysXEngine::MoveInDirectionActor(unsigned int time, NxActor* act, float MoveSpeed, bool AddGravity)
 {
 	LbaVec3 Gravity(0, 0, 0);
 	if(AddGravity)
 		GetGravity(Gravity);
 
 	AddModification(boost::shared_ptr<PhysicalModification>(new MoveInDirectionActorModification(time, act, 
-																rotH, RotationYBeforeMove, MoveSpeed, Gravity)));
+																MoveSpeed, Gravity)));
 
 }
+
+
+
+
+/***********************************************************
+//! move character - return collision flag
+***********************************************************/
+void PhysXEngine::DeltaMoveCharacter(unsigned int time, NxController* act, 
+										const NxVec3 & deltamove, bool checkCollision)
+{
+	AddModification(boost::shared_ptr<PhysicalModification>(new DeltaMoveCharacterModification(time, act, 
+																						deltamove, checkCollision)));
+}
+
+/***********************************************************
+//! set character position - no collision checked
+***********************************************************/
+void PhysXEngine::SetCharacterPosition(unsigned int time, NxController* act, 
+										const NxExtendedVec3 & targetPos)
+{
+	AddModification(boost::shared_ptr<PhysicalModification>(new SetCharacterPositionModification(time, act, targetPos)));
+}
+
+
+/***********************************************************
+//! set an actor rotation
+***********************************************************/
+void PhysXEngine::RotateCharacteryAxis(unsigned int time, NxController* act, float Speed)
+{
+	AddModification(boost::shared_ptr<PhysicalModification>(new RotateCharacteryAxisModification(time, act, Speed)));
+}
+
+/***********************************************************
+//! set an actor rotation
+***********************************************************/
+void PhysXEngine::SetCharacterRotation(unsigned int time, NxController* act, const LbaQuaternion& Q)
+{
+	AddModification(boost::shared_ptr<PhysicalModification>(new SetCharacterRotationModification(time, act, Q)));
+}
+
 
 /***********************************************************
 //! move actor in rotation direction
 ***********************************************************/
-void PhysXEngine::MoveInDirectionCharacter(unsigned int time, NxController* act, boost::shared_ptr<ActorUserData> udata,
-								boost::shared_ptr<SimpleRotationHandler> rotH,
-								float RotationYBeforeMove, float MoveSpeed,	bool AddGravity)
+void PhysXEngine::MoveInDirectionCharacter(unsigned int time, NxController* act, float MoveSpeed, bool AddGravity)
 {
 	LbaVec3 Gravity(0, 0, 0);
 	if(AddGravity)
 		GetGravity(Gravity);
 
 	AddModification(boost::shared_ptr<PhysicalModification>(new MoveInDirectionCharacterModification(time, act, 
-																udata, rotH, RotationYBeforeMove, MoveSpeed, Gravity)));
+																								MoveSpeed, Gravity)));
 }
+
+
+
+
+
 
 
 /***********************************************************
