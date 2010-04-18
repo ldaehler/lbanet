@@ -195,6 +195,8 @@ public:
 	//! move actor in rotation direction - only work for kinematic actors
 	void MoveInDirectionActor(unsigned int time, NxActor* act, float MoveSpeed, bool AddGravity, bool DirectApply);
 
+	//! inform engine an action has tkane place back in time 
+	void RevertBack(unsigned int time);
 
 
 

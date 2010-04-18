@@ -55,6 +55,10 @@ public:
 	virtual void applyInput(unsigned int timeleftborder, unsigned int timerightborder) = 0;
 
 
+	// apply last character move
+	virtual void applyLastMove() = 0;
+
+
 	// reset input iterator at each cycle
 	virtual void resetIterator() = 0;
 

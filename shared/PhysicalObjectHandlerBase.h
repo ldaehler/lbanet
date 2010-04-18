@@ -59,6 +59,8 @@ public:
 	//! get object rotation on a single angle
 	virtual float GetRotationSingleAngle() = 0;
 
+	//! inform engine an action has tkane place back in time 
+	virtual void RevertBack(unsigned int time) = 0;
 
 	//! set object position in the world
 	virtual void SetPosition(unsigned int time, float X, float Y, float Z) = 0;
@@ -182,6 +184,8 @@ public:
 	virtual ~SimplePhysicalObjectHandler(){}
 
 
+	//! inform engine an action has tkane place back in time 
+	virtual void RevertBack(unsigned int time){}
 
 	//! get object position in the world
 	virtual void GetPosition(float &X, float &Y, float &Z)

@@ -45,7 +45,7 @@ void MapInfoObject::registerClass(ZCom_Control *_control)
 /************************************************************************/
 /* constructor                                        
 /************************************************************************/
-MapInfoObject::MapInfoObject(ZCom_Control *_control, const MapInfo & minfo)
+MapInfoObject::MapInfoObject(ZCom_Control *_control, unsigned int zoidlevel, const MapInfo & minfo)
 {
 	#ifndef _ZOID_USED_NEW_VERSION_
 		m_node->registerNodeDynamic(m_classid, _control);
@@ -58,12 +58,24 @@ MapInfoObject::MapInfoObject(ZCom_Control *_control, const MapInfo & minfo)
 	#endif
 
 
-	ZCom_BitStream *adata = new ZCom_BitStream();
-	adata->addString(minfo.Name.c_str());
-	adata->addString(minfo.Type.c_str());
-	adata->addString(minfo.Music.c_str());
-	adata->addSignedInt(minfo.MusicLoop, 16);
-	m_node->setAnnounceData(adata);
+	// only do that on authority
+	if(m_node->getRole() == eZCom_RoleAuthority)
+	{
+		// add announcement data
+		ZCom_BitStream *adata = new ZCom_BitStream();
+		adata->addString(minfo.Name.c_str());
+		adata->addString(minfo.Type.c_str());
+		adata->addString(minfo.Music.c_str());
+		adata->addSignedInt(minfo.MusicLoop, 16);
+		m_node->setAnnounceData(adata);
+
+
+		// change zoidlevel
+		m_node->applyForZoidLevel( zoidlevel );
+		//m_node->removeFromZoidLevel( 1 );
+	}
+
+
 }
 
 

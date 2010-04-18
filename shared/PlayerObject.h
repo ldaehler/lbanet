@@ -66,7 +66,7 @@ public:
   void inputUpdated(ZCom_BitStream& _inputstream, bool _inputchanged, zU32 _client_time, zU32 _estimated_time_sent);
   void inputSent(ZCom_BitStream& _inputstream);
   void correctionReceived(zFloat *_pos, zFloat* _vel, zFloat *_acc, bool _teleport, zU32 _estimated_time_sent);
-  void updateReceived(ZCom_BitStream& _inputstream, zFloat *_pos, zFloat* _vel, zFloat *_acc, zU32 _estimated_time_sent) {}
+  void updateReceived(ZCom_BitStream& _inputstream, zFloat *_pos, zFloat* _vel, zFloat *_acc, zU32 _estimated_time_sent);
 
 
 protected:
@@ -101,6 +101,27 @@ protected:
 	//do proxy process work
 	void doProxy(); 
 
+	//do authority process work
+	void doAuth(); 
+
+	//! test if vector are equal
+	inline bool equal(const LbaVec3 &a, const LbaVec3 &b)
+	{
+		return (equal(a.x, b.x) && equal(a.y, b.y) && equal(a.z, b.z));
+	}
+
+	//! test for floating point equality within [-epsilon,+epsilon]
+	inline bool equal(float a, float b)
+	{
+		static const float epsilon = 0.01f;
+
+		const float d = a - b;
+		if (d<epsilon && d>-epsilon) 
+			return true;
+		else 
+			return false;
+	}
+
 private:
 	// the class id for zoidcom
 	static unsigned int								m_classid;
@@ -111,11 +132,13 @@ private:
 
 	boost::shared_ptr<PhysicalObjectHandlerBase>	m_physicObj;
 
-	ZCom_Replicate_Movement<zFloat, 4> *			m_moverep;
+	//ZCom_Replicate_Movement<zFloat, 4> *			m_moverep;
+	ZCom_Replicate_Movement<zFloat, 3> *			m_moverep3;
 
 	//keep track of last input sent
 	Input											m_last_input_sent;
 
+	LbaVec3											m_lastposition;
 };
 
 

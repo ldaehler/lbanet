@@ -61,7 +61,7 @@ public:
 	virtual Input GetLastPlayerInput() = 0;
 
 	//apply inputs
-	virtual void ApplyInputs(const Input & in) = 0;
+	virtual void ApplyInputs(unsigned int time, const Input & in) = 0;
 };
 
 #endif

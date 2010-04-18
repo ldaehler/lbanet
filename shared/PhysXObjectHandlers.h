@@ -53,6 +53,9 @@ public:
 	{ return _UserData; }
 	
 
+	//! inform engine an action has tkane place back in time 
+	virtual void RevertBack(unsigned int time);
+
 protected:
 	boost::shared_ptr<PhysXEngine>		_Pengine;
 	boost::shared_ptr<ActorUserData>	_UserData;

@@ -42,7 +42,7 @@ class MapInfoObject : public GameObject
 
 public:
 	// constructor for server
-	MapInfoObject(ZCom_Control *_control, const MapInfo & minfo);
+	MapInfoObject(ZCom_Control *_control, unsigned int zoidlevel, const MapInfo & minfo);
 
 	// constructor for client
 	MapInfoObject(ZCom_Control *_control);

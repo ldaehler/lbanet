@@ -30,6 +30,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ObjectsDescription.h"
 #include "LogHandler.h"
 
+
+/***********************************************************
+inform engine an action has tkane place back in time 
+***********************************************************/
+void PhysXObjectHandlerBase::RevertBack(unsigned int time)
+{
+	_Pengine->RevertBack(time);
+}
+
+
 /***********************************************************
 	Constructor
 ***********************************************************/

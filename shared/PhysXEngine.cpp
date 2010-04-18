@@ -259,6 +259,17 @@ void PhysXEngine::Quit()
 ***********************************************************/
 void PhysXEngine::StartPhysics()
 {
+	// apply last character moves
+	{
+		_currentsimduration = _lastduration;
+		unsigned int nbcontrols = gManager->getNbControllers();
+		for(unsigned int i=0; i<nbcontrols; ++i)
+		{
+			ActorUserData * characterdata = (ActorUserData *)gManager->getController(i)->getActor()->userData;
+			if(characterdata && characterdata->Callback)
+				characterdata->Callback->applyLastMove();
+		}
+	}
 
 
 	// Update the time step
@@ -266,6 +277,7 @@ void PhysXEngine::StartPhysics()
 	float diff = (float)(currentime - _lasttime); // time in seconds
 	_lastduration = diff; //+= diff;
 	_lasttime = currentime;
+
 
 	// Start collision and dynamics for delta time since the last frame
     gScene->simulate(diff);
@@ -818,31 +830,38 @@ void PhysXEngine::ApplyHistoricModifications()
 
 
 		//get the saved state for this time
-		std::set<boost::shared_ptr<PhysicalState>, statecomp>::reverse_iterator it = _savedstates.rbegin();
-		for(; it != _savedstates.rend(); ++it)
+		std::set<boost::shared_ptr<PhysicalState>, statecomp>::iterator iter = _savedstates.end();
 		{
-			if((*it)->GetTime() < modtime)
-				break;
+			std::set<boost::shared_ptr<PhysicalState>, statecomp>::reverse_iterator it = _savedstates.rbegin();
+			for(; it != _savedstates.rend(); ++it)
+			{
+				if((*it)->GetTime() < modtime)
+					break;
+			}
+
+			iter = it.base();
 		}
+
+
 	
 		// if we found a corresponding saved state
-		if(it != _savedstates.rend())
+		if(iter != _savedstates.end())
 		{
-			unsigned int currtime = (*it)->GetTime();
+			unsigned int currtime = (*iter)->GetTime();
 
 			//load the saved state at this time
-			if(it != _savedstates.rbegin())
-				LoadState((*it)->GetSavedState());
+			if(iter != _savedstates.rbegin().base())
+				LoadState((*iter)->GetSavedState());
 
-			_currentsimduration = (*it)->GetSimDuration();
-			(*it)->ApplyModification(_currentsimduration);
-			--it;
+			_currentsimduration = (*iter)->GetSimDuration();
+			(*iter)->ApplyModification(_currentsimduration);
+			++iter;
 
 
 			//reapply all modification since this time
-			for(; it != _savedstates.rend(); --it)
+			for(; iter != _savedstates.end(); ++iter)
 			{
-				unsigned int tmptime = (*it)->GetTime();	
+				unsigned int tmptime = (*iter)->GetTime();	
 
 				// apply character moves
 				{
@@ -858,29 +877,17 @@ void PhysXEngine::ApplyHistoricModifications()
 
 
 				// do the simulation step
-				gScene->simulate((*it)->GetSimDuration());
+				gScene->simulate((*iter)->GetSimDuration());
 				gScene->flushStream();
 				gScene->fetchResults(NX_RIGID_BODY_FINISHED, true);
 				gManager->updateControllers();
 
 				//save back the new calculated state
-				(*it)->SetSavedState(SaveCurrentState());
+				(*iter)->SetSavedState(SaveCurrentState());
 
 				// apply mods
-				_currentsimduration = (*it)->GetSimDuration();
-				(*it)->ApplyModification(_currentsimduration);
-			}
-
-
-			// apply last character moves
-			{
-				unsigned int nbcontrols = gManager->getNbControllers();
-				for(unsigned int i=0; i<nbcontrols; ++i)
-				{
-					ActorUserData * characterdata = (ActorUserData *)gManager->getController(i)->getActor()->userData;
-					if(characterdata && characterdata->Callback)
-						characterdata->Callback->applyInput(currtime, SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync());
-				}
+				_currentsimduration = (*iter)->GetSimDuration();
+				(*iter)->ApplyModification(_currentsimduration);
 			}
 		}
 
@@ -1080,6 +1087,13 @@ void PhysXEngine::MoveInDirectionCharacter(unsigned int time, NxController* act,
 }
 
 
+/***********************************************************
+//! inform engine an action has tkane place back in time
+***********************************************************/
+void PhysXEngine::RevertBack(unsigned int time)
+{
+	AddModification(boost::shared_ptr<PhysicalModification> (new EmptyModif(time)));
+}
 
 
 
