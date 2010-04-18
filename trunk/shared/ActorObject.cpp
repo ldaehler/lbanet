@@ -79,8 +79,8 @@ ActorObject::ActorObject(ZCom_Control *_control, unsigned int zoidlevel, unsigne
 
 
 		// change zoidlevel
-		m_node->removeFromZoidLevel( 1 );
 		m_node->applyForZoidLevel( zoidlevel );
+		//m_node->removeFromZoidLevel( 1 );
 	}
 }
 

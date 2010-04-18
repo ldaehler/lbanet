@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#include "CharacterController.h"
+#include "CharacterControllerLBA.h"
 #include "PhysicalObjectHandlerBase.h"
 #include "SynchronizedTimeHandler.h"
 #include "PhysXEngine.h"
@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	Constructor
 ***********************************************************/
 CharacterController::CharacterController()
-: _isGhost(false)
+: _isGhost(false), _lastinputime(0), _currentit(_storedinputs.end())
 {
 
 }
@@ -106,21 +106,13 @@ void CharacterController::ProcessInput(unsigned int time, const Input & in)
 			_character->RotateYAxis(time, 100.0f, true);
 
 		//if up/down key
-		bool move = false;
 		float speed = 0.0f;
 		if(in.up)
-		{
 			speed = 5.0f;
-			move = true;
-		}
 		else if(in.down)
-		{
 			speed = -5.0f;
-			move = true;
-		}
 
-		if(move)
-			_character->MoveInDirection(time, speed, true, true);
+		_character->MoveInDirection(time, speed, true, true);
 	}
 }
 
@@ -132,15 +124,34 @@ void CharacterController::inputUpdated(unsigned int time, const Input & newinput
 {
 	_storedinputs[time] = newinput;
 
+	if(time > _lastinputime)
+	{
+		_lastinputime = time;
+		_lastinput = newinput;
+	}
+
 	//delete old inputs
 	unsigned int currentime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
+
+
 	std::map<unsigned int, Input>::iterator it = _storedinputs.begin();
 	while(it != _storedinputs.end())
 	{
 		if((currentime - it->first) > MAX_HISTORY_TIME)
-			it = _storedinputs.erase(it);
-		else
-			break;
+		{
+			std::map<unsigned int, Input>::iterator ittmp = it;
+			++ittmp;
+			if(ittmp != _storedinputs.end())
+			{
+				if((currentime - ittmp->first) > MAX_HISTORY_TIME)
+				{
+					it = _storedinputs.erase(it);
+					continue;
+				}
+			}
+		}
+		
+		break;
 	}
 
 	_currentit = _storedinputs.begin();
@@ -153,18 +164,42 @@ void CharacterController::inputUpdated(unsigned int time, const Input & newinput
 /************************************************************************/
 void CharacterController::applyInput(unsigned int timeleftborder, unsigned int timerightborder)
 {
-	std::map<unsigned int, Input>::iterator end = _storedinputs.end();
 	for(;_currentit != _storedinputs.end(); ++_currentit)
 	{
 		if(_currentit->first >= timeleftborder)
 		{
 			if(_currentit->first < timerightborder)
+			{
 				ProcessInput(timeleftborder+1, _currentit->second);
+			}
+			else
+			{
+				--_currentit;
+				if(_currentit != _storedinputs.end())
+				{
+					ProcessInput(timeleftborder+1, _currentit->second);
+				}
+			}
 
-			break;
-		}
-			
+			return;
+		}	
 	}
+
+	//use the last input if exist
+	std::map<unsigned int, Input>::reverse_iterator	ittmp = _storedinputs.rbegin();
+	if(ittmp != _storedinputs.rend())
+		ProcessInput(timeleftborder+1, ittmp->second);
+	else
+		ProcessInput(timeleftborder+1, Input());
+}
+
+
+/************************************************************************/
+/* apply last character move                       
+/************************************************************************/
+void CharacterController::applyLastMove()
+{
+	ProcessInput(SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync(), _lastinput);
 }
 
 

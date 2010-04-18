@@ -61,6 +61,8 @@ public:
 	// reset input iterator at each cycle
 	virtual void resetIterator();
 
+	// apply last character move
+	virtual void applyLastMove();
 
 protected:
 	//! process the given input
@@ -74,6 +76,9 @@ private:
 
 	std::map<unsigned int, Input>				_storedinputs;
 	std::map<unsigned int, Input>::iterator		_currentit;
+
+	Input										_lastinput;
+	unsigned int								_lastinputime;
 };
 
 #endif

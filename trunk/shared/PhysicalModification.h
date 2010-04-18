@@ -79,6 +79,35 @@ protected:
  * Module:  PhysXEngine.h
  * Author:  vivien
  * Modified: lundi 27 juillet 2009 14:59:34
+ * Purpose: class EmptyModif
+ ***********************************************************************/
+class EmptyModif : public PhysicalModification
+{
+public:
+	//! constructor
+	EmptyModif(unsigned int time)
+		: PhysicalModification(time){}
+
+	//! destructor
+	virtual ~EmptyModif(){}
+
+
+	//! apply modification to physic engine
+	virtual void Apply(float timeduration){}
+
+	//! check if same actor
+	virtual bool SameActor(NxActor* actor){return false;}
+
+	//! check if same character
+	virtual bool SameCharacter(NxController* character){return false;}
+};
+
+
+
+/***********************************************************************
+ * Module:  PhysXEngine.h
+ * Author:  vivien
+ * Modified: lundi 27 juillet 2009 14:59:34
  * Purpose: class ActorPhysicalModification
  ***********************************************************************/
 class ActorPhysicalModification : public PhysicalModification
@@ -312,9 +341,9 @@ public:
 			NxVec3 current_direction(0, 0, 1);
 			quat.rotate(current_direction);
 			
-			NxVec3 tmpvec(	current_direction.x+_Gravity.x, 
-							current_direction.y+_Gravity.y, 
-							current_direction.z+_Gravity.z);
+			NxVec3 tmpvec(	current_direction.x*_MoveSpeed+_Gravity.x, 
+							current_direction.y*_MoveSpeed+_Gravity.y, 
+							current_direction.z*_MoveSpeed+_Gravity.z);
 
 			_actor->moveGlobalPosition(tmpvec*timeduration);
 		}
@@ -510,9 +539,11 @@ public:
 				LbaVec3 current_direction(0, 0, 0);
 				current_direction = udata->RotH->GetDirection(LbaVec3(0, 0, 1));
 
-				NxVec3 tmpvec(	current_direction.x+_Gravity.x, 
-								current_direction.y+_Gravity.y, 
-								current_direction.z+_Gravity.z);
+				NxVec3 tmpvec(	current_direction.x*_MoveSpeed+_Gravity.x, 
+								current_direction.y*_MoveSpeed+_Gravity.y, 
+								current_direction.z*_MoveSpeed+_Gravity.z);
+
+				NxExtendedVec3 poscurr = _controller->getPosition();
 
 				unsigned int CollisionFlag = PhysXEngine::MoveCharacter(_controller, tmpvec*timeduration, true);
 				udata->CollisionUpFlag = (CollisionFlag == NXCC_COLLISION_UP);
