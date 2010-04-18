@@ -22,8 +22,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
-#include "CharacterController.h"
+
 #include "LbaNetModel.h"
+#include "CharacterControllerLBA.h"
 #include "LogHandler.h"
 #include "PhysXEngine.h"
 #include "OSGHandler.h"
@@ -72,18 +73,15 @@ do all check to be done when idle
 ***********************************************************/
 void LbaNetModel::Process()
 {
-	unsigned int ctime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
-	double currtime = ctime*0.001;
-	float diff = (float)(currtime-m_lasttime);
-	m_lasttime = currtime;
+	//unsigned int ctime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
+	//double currtime = ctime*0.001;
+	//float diff = (float)(currtime-m_lasttime);
+	//m_lasttime = currtime;
 
 	// process controllers
-	if(m_controllerChar)
-		m_controllerChar->Process(ctime, diff);
-	if(m_controllerRC)
-		m_controllerRC->Process();
-	if(m_controllerCam)
-		m_controllerCam->Process();
+	//if(m_controllerChar)
+	//	m_controllerChar->Process(ctime, diff);
+
 }
 
 
@@ -102,6 +100,12 @@ void LbaNetModel::UpdateDrawing()
 	//process player object
 	if(m_playerObject)
 		m_playerObject->Process();
+
+
+	if(m_controllerRC)
+		m_controllerRC->Process();
+	if(m_controllerCam)
+		m_controllerCam->Process();
 }
 
 
@@ -119,7 +123,7 @@ boost::shared_ptr<PhysicalObjectHandlerBase>
 		m_playerObject = desc.BuildSelf(_physicEngine, id, OsgHandler::getInstance());
 
 		if(m_controllerChar)
-			m_controllerChar->SetCharacter(m_playerObject);
+			m_controllerChar->SetPhysicalCharacter(m_playerObject->GetPhysicalObject());
 		if(m_controllerRC)
 			m_controllerRC->SetCharacter(m_playerObject);
 		if(m_controllerCam)
@@ -301,7 +305,7 @@ void LbaNetModel::ResetPlayerObject()
 	m_playerObject = boost::shared_ptr<DynamicObject>(new StaticObject(physo, boost::shared_ptr<DisplayObjectHandlerBase>(), m_playerObjectId));
 
 	if(m_controllerChar)
-		m_controllerChar->SetCharacter(m_playerObject, true);
+		m_controllerChar->SetPhysicalCharacter(m_playerObject->GetPhysicalObject(), true);
 	if(m_controllerRC)
 		m_controllerRC->SetCharacter(m_playerObject, true);
 	if(m_controllerCam)
@@ -322,10 +326,10 @@ Input LbaNetModel::GetLastPlayerInput()
 /***********************************************************
 apply inputs
 ***********************************************************/
-void LbaNetModel::ApplyInputs(const Input & in)
+void LbaNetModel::ApplyInputs(unsigned int time, const Input & in)
 {
 	if(m_controllerChar)
-		m_controllerChar->ApplyInputs(in);
+		m_controllerChar->inputUpdated(time, in);
 }
 
 

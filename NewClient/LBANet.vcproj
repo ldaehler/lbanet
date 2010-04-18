@@ -187,7 +187,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\shared\CharacterController.cpp"
+				RelativePath="..\shared\CharacterControllerLBA.cpp"
 				>
 			</File>
 			<File
@@ -433,7 +433,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\shared\CharacterController.h"
+				RelativePath="..\shared\CharacterControllerLBA.h"
 				>
 			</File>
 			<File
