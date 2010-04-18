@@ -29,7 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "PhysXEngine.h"
 #include "ActorObject.h"
 #include "PlayerObject.h"
-#include "PlayerServerWrapper.h"
+#include "CharacterController.h"
+
 
 #define MAX_PLAYERS_IN_MAP 2
 
@@ -111,8 +112,12 @@ void ServerMapManager::PlayerEnter(unsigned int PlayerId, boost::shared_ptr<Play
 	ObjectInfo objinfo(0, DInfo, Pyd, false, true);
 	
 	// create player handler
-	boost::shared_ptr<PlayerServerWrapper> newplayerH(new PlayerServerWrapper(_pengine, pinfo));
-	_playerHandlers[PlayerId] = newplayerH;
+	boost::shared_ptr<PlayerCallbackBase> newplayerH(new CharacterController());
+	PlayerData pdata;
+	pdata.callback = newplayerH;
+	pdata.dbHandler = pinfo;
+	_playerHandlers[PlayerId] = pdata;
+	
 
 	// create player object
 	boost::shared_ptr<PlayerObject> newplayer(new PlayerObject(_controler, _zoidlevel, 0, objinfo, this, newplayerH.get(), false));
@@ -129,7 +134,7 @@ void ServerMapManager::PlayerLeave(unsigned int PlayerId)
 	if(it != _players.end())
 		_players.erase(it);
 
-	std::map<unsigned int, boost::shared_ptr<PlayerServerWrapper> >::iterator it2 =	_playerHandlers.find(PlayerId);
+	std::map<unsigned int, PlayerData>::iterator it2 =	_playerHandlers.find(PlayerId);
 	if(it2 != _playerHandlers.end())
 		_playerHandlers.erase(it2);
 }

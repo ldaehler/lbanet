@@ -267,10 +267,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\PlayerServerWrapper.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\server.cpp"
 				>
 			</File>
@@ -438,10 +434,6 @@
 			</File>
 			<File
 				RelativePath="..\shared\PlayerObject.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PlayerServerWrapper.h"
 				>
 			</File>
 			<File
