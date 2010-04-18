@@ -24,16 +24,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CharacterController.h"
 #include "PhysicalObjectHandlerBase.h"
+#include "SynchronizedTimeHandler.h"
 #include "PhysXEngine.h"
-
 
 #include <iostream>
 
 /***********************************************************
 	Constructor
 ***********************************************************/
-CharacterController::CharacterController(boost::shared_ptr<PhysXEngine> pEngine)
-:	_current_direction(0, 0, 1), _pEngine(pEngine), _isGhost(false)
+CharacterController::CharacterController()
+: _isGhost(false)
 {
 
 }
@@ -51,31 +51,25 @@ CharacterController::~CharacterController()
 /***********************************************************
 	Set character to control
 ***********************************************************/
-void CharacterController::SetCharacter(boost::shared_ptr<PhysicalObjectHandlerBase> charac, bool AsGhost)
+void CharacterController::SetPhysicalCharacter(boost::shared_ptr<PhysicalObjectHandlerBase> charac, bool AsGhost)
 {
 	_character = charac;
 	_isGhost = AsGhost;
-}
 
-
-
-
-/***********************************************************
-	apply inputs
-***********************************************************/
-void CharacterController::ApplyInputs(const Input & in)
-{
-	_lastInputs = in;
+	boost::shared_ptr<ActorUserData> udata = _character->GetUserData();
+	if(udata)
+		udata->Callback = this;
 }
 
 
 /***********************************************************
-process function
+process the given input
 ***********************************************************/
-void CharacterController::Process(unsigned int tnow, float tdiff)
+void CharacterController::ProcessInput(unsigned int time, const Input & in)
 {
 	if(!_character)
 		return;
+
 
 	if(_isGhost)
 	{
@@ -84,57 +78,100 @@ void CharacterController::Process(unsigned int tnow, float tdiff)
 		float speedZ = 0.0f;
 
 		//if right key pressed
-		if(_lastInputs.right)
+		if(in.right)
 			speedX = 10.0f;
 
 		//if left key pressed
-		if(_lastInputs.left)
+		if(in.left)
 			speedX = -10.0f;
 
 		//if up key pressed
-		if(_lastInputs.up)
+		if(in.up)
 			speedZ = -10.0f;
 
 		//if down key pressed
-		if(_lastInputs.down)
+		if(in.down)
 			speedZ = 10.0f;
 
-		_character->Move(tnow, speedX, speedY, speedZ);
+		_character->Move(time, speedX, speedY, speedZ, true);
 	}
 	else
 	{
 		//if right key pressed
-		if(_lastInputs.right)
-		{
-			LbaQuaternion rot;
-			_character->GetRotation(rot);
-			rot.AddRotation(-tdiff*100.0f, LbaVec3(0, 1, 0));
-			_character->RotateTo(tnow, rot);
-
-			_current_direction = rot.GetDirection(LbaVec3(0, 0, 1));
-		}
+		if(in.right)
+			_character->RotateYAxis(time, -100.0f, true);
 
 		//if left key pressed
-		if(_lastInputs.left)
-		{
-			LbaQuaternion rot;
-			_character->GetRotation(rot);
-			rot.AddRotation(tdiff*100.0f, LbaVec3(0, 1, 0));
-			_character->RotateTo(tnow, rot);
-
-			_current_direction = rot.GetDirection(LbaVec3(0, 0, 1));
-		}
+		if(in.left)
+			_character->RotateYAxis(time, 100.0f, true);
 
 		//if up/down key
+		bool move = false;
 		float speed = 0.0f;
-		if(_lastInputs.up)
+		if(in.up)
+		{
 			speed = 5.0f;
-
-		if(_lastInputs.down)
+			move = true;
+		}
+		else if(in.down)
+		{
 			speed = -5.0f;
+			move = true;
+		}
 
-		LbaVec3 Gravity;
-		_pEngine->GetGravity(Gravity);
-		_character->Move(tnow, _current_direction.x*speed, Gravity.y, _current_direction.z*speed);
+		if(move)
+			_character->MoveInDirection(time, speed, true, true);
 	}
+}
+
+
+/************************************************************************/
+/* called when we get new friend in list                                   
+/************************************************************************/
+void CharacterController::inputUpdated(unsigned int time, const Input & newinput)
+{
+	_storedinputs[time] = newinput;
+
+	//delete old inputs
+	unsigned int currentime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync();
+	std::map<unsigned int, Input>::iterator it = _storedinputs.begin();
+	while(it != _storedinputs.end())
+	{
+		if((currentime - it->first) > MAX_HISTORY_TIME)
+			it = _storedinputs.erase(it);
+		else
+			break;
+	}
+
+	_currentit = _storedinputs.begin();
+}
+
+
+
+/************************************************************************/
+/* apply stored input for a specific time period                                
+/************************************************************************/
+void CharacterController::applyInput(unsigned int timeleftborder, unsigned int timerightborder)
+{
+	std::map<unsigned int, Input>::iterator end = _storedinputs.end();
+	for(;_currentit != _storedinputs.end(); ++_currentit)
+	{
+		if(_currentit->first >= timeleftborder)
+		{
+			if(_currentit->first < timerightborder)
+				ProcessInput(timeleftborder+1, _currentit->second);
+
+			break;
+		}
+			
+	}
+}
+
+
+/************************************************************************/
+/* reset input iterator at each cycle                        
+/************************************************************************/
+void CharacterController::resetIterator()
+{
+	_currentit = _storedinputs.begin();
 }

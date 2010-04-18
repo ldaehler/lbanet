@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //simulation update rates
 #define SIM_UPDATE_RATE 50                              // hz
 #define SIMULATION_TIME_PER_UPDATE (1000/SIM_UPDATE_RATE) // msecs per update
-
+#define MAX_HISTORY_TIME	1000
 
 class LbaVec3
 {

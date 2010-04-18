@@ -128,28 +128,28 @@ void PhysXActorsHandler::SetRotation(unsigned int time, const LbaQuaternion& Q)
 /***********************************************************
 move object in the world
 ***********************************************************/
-void PhysXActorsHandler::Move(unsigned int time, float deltaX, float deltaY, float deltaZ)
+void PhysXActorsHandler::Move(unsigned int time, float deltaX, float deltaY, float deltaZ, bool DirectApply)
 {
 	float currPosX, currPosY, currPosZ;
 	GetPosition(currPosX, currPosY, currPosZ);
-	MoveTo(time, currPosX+deltaX, currPosY+deltaY, currPosZ+deltaZ);
+	MoveTo(time, currPosX+deltaX, currPosY+deltaY, currPosZ+deltaZ, DirectApply);
 }
 
 /***********************************************************
 move object to a position in the world
 ***********************************************************/
-void PhysXActorsHandler::MoveTo(unsigned int time, float X, float Y, float Z)
+void PhysXActorsHandler::MoveTo(unsigned int time, float X, float Y, float Z, bool DirectApply)
 {	
-	_Pengine->MoveActorTo(time, _Actor, NxVec3(X, Y, Z));
+	_Pengine->MoveActorTo(time, _Actor, NxVec3(X, Y, Z), DirectApply);
 }
 
 
 /***********************************************************
 rotate object in the world
 ***********************************************************/
-void PhysXActorsHandler::RotateYAxis(unsigned int time, float Speed)
+void PhysXActorsHandler::RotateYAxis(unsigned int time, float Speed, bool DirectApply)
 {	
-	_Pengine->RotateActoryAxis(time, _Actor, Speed);
+	_Pengine->RotateActoryAxis(time, _Actor, Speed, DirectApply);
 }
 
 /***********************************************************
@@ -165,9 +165,9 @@ void PhysXActorsHandler::RotateTo(unsigned int time, const LbaQuaternion& Q)
 /***********************************************************
 move object in the world
 ***********************************************************/
-void PhysXActorsHandler::MoveInDirection(unsigned int time, float MoveSpeed, bool AddGravity)
+void PhysXActorsHandler::MoveInDirection(unsigned int time, float MoveSpeed, bool AddGravity, bool DirectApply)
 {
-	_Pengine->MoveInDirectionActor(time, _Actor, MoveSpeed, AddGravity);
+	_Pengine->MoveInDirectionActor(time, _Actor, MoveSpeed, AddGravity, DirectApply);
 }
 
 
@@ -266,30 +266,31 @@ void PhysXControllerHandler::SetRotation(unsigned int time, const LbaQuaternion&
 /***********************************************************
 rotate object in the world
 ***********************************************************/
-void PhysXControllerHandler::RotateYAxis(unsigned int time, float Speed)
+void PhysXControllerHandler::RotateYAxis(unsigned int time, float Speed, bool DirectApply)
 {	
-	_Pengine->RotateCharacteryAxis(time, _Controller, Speed);
+	_Pengine->RotateCharacteryAxis(time, _Controller, Speed, DirectApply);
 }
 
 /***********************************************************
 move object in the world
 ***********************************************************/
-void PhysXControllerHandler::Move(unsigned int time, float deltaX, float deltaY, float deltaZ)
+void PhysXControllerHandler::Move(unsigned int time, float deltaX, float deltaY, float deltaZ, bool DirectApply)
 {
-	_Pengine->DeltaMoveCharacter(time, _Controller, NxVec3(deltaX, deltaY, deltaZ), true);
+	_Pengine->DeltaMoveCharacter(time, _Controller, NxVec3(deltaX, deltaY, deltaZ), true, DirectApply);
 }
 
 /***********************************************************
 move object to a position in the world
 ***********************************************************/
-void PhysXControllerHandler::MoveTo(unsigned int time, float X, float Y, float Z)
+void PhysXControllerHandler::MoveTo(unsigned int time, float X, float Y, float Z, bool DirectApply)
 {
 	if(!_Controller) 
 		return;
 
 	NxExtendedVec3 vec = _Controller->getPosition();
-	_Pengine->DeltaMoveCharacter(time, _Controller, 
-									NxVec3(X - (float)vec.x, Y - (float)vec.y, Z - (float)vec.z), false);
+	_Pengine->DeltaMoveCharacter(	time, _Controller, 
+									NxVec3(X - (float)vec.x, Y - (float)vec.y, Z - (float)vec.z), 
+									false, DirectApply);
 }
 
 /***********************************************************
@@ -304,9 +305,9 @@ void PhysXControllerHandler::RotateTo(unsigned int time, const LbaQuaternion& Q)
 /***********************************************************
 move object in the world
 ***********************************************************/
-void PhysXControllerHandler::MoveInDirection(unsigned int time, float MoveSpeed, bool AddGravity)
+void PhysXControllerHandler::MoveInDirection(unsigned int time, float MoveSpeed, bool AddGravity, bool DirectApply)
 {
-	_Pengine->MoveInDirectionCharacter(time, _Controller, MoveSpeed, AddGravity);
+	_Pengine->MoveInDirectionCharacter(time, _Controller, MoveSpeed, AddGravity, DirectApply);
 }
 
 

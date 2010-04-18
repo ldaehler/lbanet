@@ -40,6 +40,7 @@ class PhysicalState;
 struct NxExtendedVec3;
 class SavedState;
 class SimpleRotationHandler;
+class PlayerCallbackBase;
 
 #include <set>
 #include <vector>
@@ -73,6 +74,7 @@ public:
 	size_t				MaterialsSize;
 	short *				Materials;
 	NxActor *			InternalActor;
+	PlayerCallbackBase *Callback;	
 
 
 	short				HittedFloorMaterial;
@@ -179,38 +181,40 @@ public:
 
 
 	//! move an actor
-	void MoveActorTo(unsigned int time, NxActor* act, const NxVec3 & targetPos);
+	void MoveActorTo(unsigned int time, NxActor* act, const NxVec3 & targetPos, bool DirectApply);
 
 	//! set an actor position
 	void SetActorPos(unsigned int time, NxActor* act, const NxVec3 & targetPos);
 
 	//! set an actor rotation
-	void RotateActoryAxis(unsigned int time, NxActor* act, float Speed);
+	void RotateActoryAxis(unsigned int time, NxActor* act, float Speed, bool DirectApply);
 
 	//! set an actor rotation
 	void SetActorRotation(unsigned int time, NxActor* act, const NxQuat & quat);
 
 	//! move actor in rotation direction - only work for kinematic actors
-	void MoveInDirectionActor(unsigned int time, NxActor* act, float MoveSpeed, bool AddGravity);
+	void MoveInDirectionActor(unsigned int time, NxActor* act, float MoveSpeed, bool AddGravity, bool DirectApply);
 
 
 
 
 	//! move character - return collision flag
 	//! TODO check if step on water
-	void DeltaMoveCharacter(unsigned int time, NxController* act, const NxVec3 & deltamove, bool checkCollision);
+	void DeltaMoveCharacter(unsigned int time, NxController* act, const NxVec3 & deltamove, 
+								bool checkCollision, bool DirectApply);
 
 	//! set character position - no collision checked
 	void SetCharacterPosition(unsigned int time, NxController* act, const NxExtendedVec3 & targetPos);
 
 	//! set an actor rotation
-	void RotateCharacteryAxis(unsigned int time, NxController* act, float Speed);
+	void RotateCharacteryAxis(unsigned int time, NxController* act, float Speed, bool DirectApply);
 
 	//! set an actor rotation
 	void SetCharacterRotation(unsigned int time, NxController* act, const LbaQuaternion& Q);
 
 	//! move actor in rotation direction
-	void MoveInDirectionCharacter(unsigned int time, NxController* act, float MoveSpeed, bool AddGravity);
+	void MoveInDirectionCharacter(unsigned int time, NxController* act, float MoveSpeed, 
+									bool AddGravity, bool DirectApply);
 
 
 	//! apply historic modifications
@@ -254,6 +258,7 @@ private:
 
 	double						_lasttime;
 	float						_lastduration;
+	float						_currentsimduration;
 
 
 	const float					_simtime;
