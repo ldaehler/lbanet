@@ -22,15 +22,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 */
 
+#include "CharacterController.h"
 #include "LbaNetModel.h"
 #include "LogHandler.h"
 #include "PhysXEngine.h"
 #include "OSGHandler.h"
-#include "CharacterController.h"
 #include "RoomCutController.h"
 #include "CameraController.h"
 #include "SynchronizedTimeHandler.h"
 #include "StaticObject.h"
+
 
 /***********************************************************
 	Constructor
@@ -60,7 +61,7 @@ void LbaNetModel::SetPhysicEngine(boost::shared_ptr<PhysXEngine> & pEngine)
 	_physicEngine = pEngine;
 
 	//initialize controllers
-	m_controllerChar = boost::shared_ptr<CharacterController>(new CharacterController(_physicEngine));
+	m_controllerChar = boost::shared_ptr<CharacterController>(new CharacterController());
 	m_controllerRC = boost::shared_ptr<RoomCutController>(new RoomCutController(_physicEngine));
 	m_controllerCam = boost::shared_ptr<CameraController>(new CameraController());
 }
