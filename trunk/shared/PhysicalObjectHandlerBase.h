@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CommonTypes.h"
 
-
+class ActorUserData;
 
 //*************************************************************************************************
 //*                               class PhysicalObjectHandlerBase
@@ -67,21 +67,22 @@ public:
 	virtual void SetRotation(unsigned int time, const LbaQuaternion& Q) = 0;
 
 	//! move object in the world
-	virtual void Move(unsigned int time, float deltaX, float deltaY, float deltaZ) = 0;
+	virtual void Move(unsigned int time, float deltaX, float deltaY, float deltaZ, bool DirectApply=false) = 0;
 
 	//! move object to a position in the world
-	virtual void MoveTo(unsigned int time, float X, float Y, float Z) = 0;
+	virtual void MoveTo(unsigned int time, float X, float Y, float Z, bool DirectApply=false) = 0;
 
 	//! rotate object in the world
-	virtual void RotateYAxis(unsigned int time, float Speed) = 0;
+	virtual void RotateYAxis(unsigned int time, float Speed, bool DirectApply=false) = 0;
 
 	//! rotate object in the world
 	virtual void RotateTo(unsigned int time, const LbaQuaternion& Q) = 0;
 
 	//! move object in the world
-	virtual void MoveInDirection(unsigned int time, float MoveSpeed, bool AddGravity) = 0;
-
-
+	virtual void MoveInDirection(unsigned int time, float MoveSpeed, bool AddGravity, bool DirectApply=false) = 0;
+	
+	//! get user data
+	virtual boost::shared_ptr<ActorUserData> GetUserData() = 0;
 
 	//! call to see if the object was resetted in the physical world
 	//! (e.g. object has been teleported) in this case the synchronization process
@@ -202,7 +203,7 @@ public:
 
 
 	//! move object in the world
-	virtual void Move(unsigned int time, float deltaX, float deltaY, float deltaZ)
+	virtual void Move(unsigned int time, float deltaX, float deltaY, float deltaZ, bool DirectApply=false)
 	{
 		_PosX += deltaX;
 		_PosY += deltaY;
@@ -230,7 +231,7 @@ public:
 	}
 
 	//! move object to a position in the world
-	virtual void MoveTo(unsigned int time, float X, float Y, float Z)
+	virtual void MoveTo(unsigned int time, float X, float Y, float Z, bool DirectApply=false)
 	{
 		_PosX = X;
 		_PosY = Y;
@@ -246,13 +247,13 @@ public:
 
 
 	//! rotate object in the world
-	virtual void RotateYAxis(unsigned int time, float Speed)
+	virtual void RotateYAxis(unsigned int time, float Speed, bool DirectApply=false)
 	{
 		_rotH.RotateYAxis(Speed);
 	}
 
 	//! move object in the world
-	virtual void MoveInDirection(unsigned int time, float MoveSpeed, bool AddGravity)
+	virtual void MoveInDirection(unsigned int time, float MoveSpeed, bool AddGravity, bool DirectApply=false)
 	{
 		LbaQuaternion rot;
 		GetRotation(rot);
@@ -263,6 +264,10 @@ public:
 
 	//! destroy function - clear the object content
 	virtual void Destroy(void){}
+	
+	//! get user data
+	virtual boost::shared_ptr<ActorUserData> GetUserData()
+	{return boost::shared_ptr<ActorUserData>();}
 
 private:
 	float _PosX;

@@ -27,10 +27,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <boost/shared_ptr.hpp>
 #include "CommonTypes.h"
+#include "PlayerCallbackBase.h"
 
+#include <map>
 
-class PhysXEngine;
 class PhysicalObjectHandlerBase;
+
 
 /***********************************************************************
  * Module:  CharacterController.h
@@ -38,34 +40,40 @@ class PhysicalObjectHandlerBase;
  * Modified: mardi 14 juillet 2009 17:41:03
  * Purpose: Declaration of the class CharacterController
  ***********************************************************************/
-class CharacterController
+class CharacterController : public PlayerCallbackBase
 {
 public:
 	//! constructor
-	CharacterController(boost::shared_ptr<PhysXEngine> pEngine);
+	CharacterController();
 
 	//! destructor
 	~CharacterController();
 
-	//! set character to control
-	void SetCharacter(boost::shared_ptr<PhysicalObjectHandlerBase> charac, bool AsGhost=false);
+	// called when we get new friend in list
+	virtual void inputUpdated(unsigned int time, const Input & newinput);
+
+	// capply stored input for a specific time period
+	virtual void applyInput(unsigned int timeleftborder, unsigned int timerightborder);
+
+	// set physcial character
+	virtual void SetPhysicalCharacter(boost::shared_ptr<PhysicalObjectHandlerBase> charac, bool AsGhost=false);
+
+	// reset input iterator at each cycle
+	virtual void resetIterator();
 
 
-	//! process function
-	void Process(unsigned int tnow, float tdiff);
+protected:
+	//! process the given input
+	void ProcessInput(unsigned int time, const Input & in);
 
-	//! apply inputs
-	void ApplyInputs(const Input & in);
 
 private:
 	boost::shared_ptr<PhysicalObjectHandlerBase> _character;
-	boost::shared_ptr<PhysXEngine>	_pEngine;
 
 	bool			_isGhost;
 
-	Input			_lastInputs;
-
-	LbaVec3			_current_direction;
+	std::map<unsigned int, Input>				_storedinputs;
+	std::map<unsigned int, Input>::iterator		_currentit;
 };
 
 #endif

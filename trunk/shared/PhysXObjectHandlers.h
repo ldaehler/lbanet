@@ -48,6 +48,11 @@ public:
 	//! destructor
 	virtual ~PhysXObjectHandlerBase(){}
 
+	//! get user data
+	virtual boost::shared_ptr<ActorUserData> GetUserData()
+	{ return _UserData; }
+	
+
 protected:
 	boost::shared_ptr<PhysXEngine>		_Pengine;
 	boost::shared_ptr<ActorUserData>	_UserData;
@@ -85,19 +90,19 @@ public:
 	virtual void SetRotation(unsigned int time, const LbaQuaternion& Q);
 
 	//! move object in the world
-	virtual void Move(unsigned int time, float deltaX, float deltaY, float deltaZ);
+	virtual void Move(unsigned int time, float deltaX, float deltaY, float deltaZ, bool DirectApply=false);
 
 	//! move object to a position in the world
-	virtual void MoveTo(unsigned int time, float X, float Y, float Z);
+	virtual void MoveTo(unsigned int time, float X, float Y, float Z, bool DirectApply=false);
 
 	//! rotate object in the world
-	virtual void RotateYAxis(unsigned int time, float Speed);
+	virtual void RotateYAxis(unsigned int time, float Speed, bool DirectApply=false);
 
 	//! rotate object in the world
 	virtual void RotateTo(unsigned int time, const LbaQuaternion& Q);
 
 	//! move object in the world
-	virtual void MoveInDirection(unsigned int time, float MoveSpeed, bool AddGravity);
+	virtual void MoveInDirection(unsigned int time, float MoveSpeed, bool AddGravity, bool DirectApply=false);
 
 protected:
 	NxActor*	_Actor;
@@ -136,19 +141,19 @@ public:
 	virtual void SetRotation(unsigned int time, const LbaQuaternion& Q);
 
 	//! move object in the world
-	virtual void Move(unsigned int time, float deltaX, float deltaY, float deltaZ);
+	virtual void Move(unsigned int time, float deltaX, float deltaY, float deltaZ, bool DirectApply=false);
 
 	//! move object to a position in the world
-	virtual void MoveTo(unsigned int time, float X, float Y, float Z);
+	virtual void MoveTo(unsigned int time, float X, float Y, float Z, bool DirectApply=false);
 
 	//! rotate object in the world
-	virtual void RotateYAxis(unsigned int time, float Speed);
+	virtual void RotateYAxis(unsigned int time, float Speed, bool DirectApply=false);
 
 	//! rotate object in the world
 	virtual void RotateTo(unsigned int time, const LbaQuaternion& Q);
 
 	//! move object in the world
-	virtual void MoveInDirection(unsigned int time, float MoveSpeed, bool AddGravity);
+	virtual void MoveInDirection(unsigned int time, float MoveSpeed, bool AddGravity, bool DirectApply=false);
 
 protected:
 	NxController*								_Controller;

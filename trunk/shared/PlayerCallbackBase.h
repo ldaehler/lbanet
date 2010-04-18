@@ -51,8 +51,17 @@ public:
 	virtual void inputUpdated(unsigned int time, const Input & newinput) = 0;
 
 
+	// apply stored input for a specific time period
+	virtual void applyInput(unsigned int timeleftborder, unsigned int timerightborder) = 0;
+
+
+	// reset input iterator at each cycle
+	virtual void resetIterator() = 0;
+
+
 	// set physcial character
-	virtual void SetPhysicalCharacter(boost::shared_ptr<PhysicalObjectHandlerBase> charac) = 0;
+	virtual void SetPhysicalCharacter(boost::shared_ptr<PhysicalObjectHandlerBase> charac, 
+																			bool AsGhost=false) = 0;
 };
 
 #endif

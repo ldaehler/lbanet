@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "LogHandler.h"
 #include "CommonTypes.h"
 #include "PhysicalModification.h"
+#include "PlayerCallbackBase.h"
 
 #include <limits>
 
@@ -41,7 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define SKINWIDTH	0.2f
 #define GRAVITY		-9.8f
-#define MAX_HISTORY_TIME	1000
+
 
 enum GameGroup
 {
@@ -815,6 +816,7 @@ void PhysXEngine::ApplyHistoricModifications()
 		//get oldest modification time
 		unsigned int modtime = (*_curr_modifications.begin())->GetTime();	
 
+
 		//get the saved state for this time
 		std::set<boost::shared_ptr<PhysicalState>, statecomp>::reverse_iterator it = _savedstates.rbegin();
 		for(; it != _savedstates.rend(); ++it)
@@ -826,17 +828,35 @@ void PhysXEngine::ApplyHistoricModifications()
 		// if we found a corresponding saved state
 		if(it != _savedstates.rend())
 		{
+			unsigned int currtime = (*it)->GetTime();
+
 			//load the saved state at this time
 			if(it != _savedstates.rbegin())
 				LoadState((*it)->GetSavedState());
 
-			(*it)->ApplyModification((*it)->GetSimDuration());
+			_currentsimduration = (*it)->GetSimDuration();
+			(*it)->ApplyModification(_currentsimduration);
 			--it;
 
 
 			//reapply all modification since this time
 			for(; it != _savedstates.rend(); --it)
 			{
+				unsigned int tmptime = (*it)->GetTime();	
+
+				// apply character moves
+				{
+					unsigned int nbcontrols = gManager->getNbControllers();
+					for(unsigned int i=0; i<nbcontrols; ++i)
+					{
+						ActorUserData * characterdata = (ActorUserData *)gManager->getController(i)->getActor()->userData;
+						if(characterdata && characterdata->Callback)
+							characterdata->Callback->applyInput(currtime, tmptime);
+					}
+				}
+				currtime = tmptime;
+
+
 				// do the simulation step
 				gScene->simulate((*it)->GetSimDuration());
 				gScene->flushStream();
@@ -847,7 +867,20 @@ void PhysXEngine::ApplyHistoricModifications()
 				(*it)->SetSavedState(SaveCurrentState());
 
 				// apply mods
-				(*it)->ApplyModification((*it)->GetSimDuration());
+				_currentsimduration = (*it)->GetSimDuration();
+				(*it)->ApplyModification(_currentsimduration);
+			}
+
+
+			// apply last character moves
+			{
+				unsigned int nbcontrols = gManager->getNbControllers();
+				for(unsigned int i=0; i<nbcontrols; ++i)
+				{
+					ActorUserData * characterdata = (ActorUserData *)gManager->getController(i)->getActor()->userData;
+					if(characterdata && characterdata->Callback)
+						characterdata->Callback->applyInput(currtime, SynchronizedTimeHandler::getInstance()->GetCurrentTimeSync());
+				}
 			}
 		}
 
@@ -921,9 +954,13 @@ void PhysXEngine::AddModification(boost::shared_ptr<PhysicalModification> mod)
 /***********************************************************
 //! move an actor
 ***********************************************************/
-void PhysXEngine::MoveActorTo(unsigned int time, NxActor* act, const NxVec3 & targetPos)
+void PhysXEngine::MoveActorTo(unsigned int time, NxActor* act, const NxVec3 & targetPos, bool DirectApply)
 {
-	AddModification(boost::shared_ptr<PhysicalModification>(new MoveActorToModification(time, act, targetPos)));
+	boost::shared_ptr<PhysicalModification> ptr(new MoveActorToModification(time, act, targetPos));
+	if(DirectApply)
+		ptr->Apply(_currentsimduration);
+	else
+		AddModification(ptr);
 }
 
 /***********************************************************
@@ -946,22 +983,30 @@ void PhysXEngine::SetActorRotation(unsigned int time, NxActor* act, const NxQuat
 /***********************************************************
 //! set an actor rotation
 ***********************************************************/
-void PhysXEngine::RotateActoryAxis(unsigned int time, NxActor* act, float Speed)
+void PhysXEngine::RotateActoryAxis(unsigned int time, NxActor* act, float Speed, bool DirectApply)
 {
-	AddModification(boost::shared_ptr<PhysicalModification>(new RotateActoryAxisModification(time, act, Speed)));
+	boost::shared_ptr<PhysicalModification> ptr(new RotateActoryAxisModification(time, act, Speed));
+	if(DirectApply)
+		ptr->Apply(_currentsimduration);
+	else
+		AddModification(ptr);
 }
 
 /***********************************************************
 //! move actor in rotation direction
 ***********************************************************/
-void PhysXEngine::MoveInDirectionActor(unsigned int time, NxActor* act, float MoveSpeed, bool AddGravity)
+void PhysXEngine::MoveInDirectionActor(unsigned int time, NxActor* act, float MoveSpeed, bool AddGravity, bool DirectApply)
 {
 	LbaVec3 Gravity(0, 0, 0);
 	if(AddGravity)
 		GetGravity(Gravity);
 
-	AddModification(boost::shared_ptr<PhysicalModification>(new MoveInDirectionActorModification(time, act, 
-																MoveSpeed, Gravity)));
+	boost::shared_ptr<PhysicalModification> ptr(new MoveInDirectionActorModification(time, act, 
+																MoveSpeed, Gravity));
+	if(DirectApply)
+		ptr->Apply(_currentsimduration);
+	else
+		AddModification(ptr);
 
 }
 
@@ -972,10 +1017,14 @@ void PhysXEngine::MoveInDirectionActor(unsigned int time, NxActor* act, float Mo
 //! move character - return collision flag
 ***********************************************************/
 void PhysXEngine::DeltaMoveCharacter(unsigned int time, NxController* act, 
-										const NxVec3 & deltamove, bool checkCollision)
+										const NxVec3 & deltamove, bool checkCollision, bool DirectApply)
 {
-	AddModification(boost::shared_ptr<PhysicalModification>(new DeltaMoveCharacterModification(time, act, 
-																						deltamove, checkCollision)));
+	boost::shared_ptr<PhysicalModification> ptr(new DeltaMoveCharacterModification(time, act, 
+																						deltamove, checkCollision));
+	if(DirectApply)
+		ptr->Apply(_currentsimduration);
+	else
+		AddModification(ptr);
 }
 
 /***********************************************************
@@ -991,9 +1040,15 @@ void PhysXEngine::SetCharacterPosition(unsigned int time, NxController* act,
 /***********************************************************
 //! set an actor rotation
 ***********************************************************/
-void PhysXEngine::RotateCharacteryAxis(unsigned int time, NxController* act, float Speed)
+void PhysXEngine::RotateCharacteryAxis(unsigned int time, NxController* act, float Speed, bool DirectApply)
 {
-	AddModification(boost::shared_ptr<PhysicalModification>(new RotateCharacteryAxisModification(time, act, Speed)));
+	boost::shared_ptr<PhysicalModification> ptr(new RotateCharacteryAxisModification(time, act, Speed));
+
+	if(DirectApply)
+		ptr->Apply(_currentsimduration);
+	else
+		AddModification(ptr);
+
 }
 
 /***********************************************************
@@ -1008,14 +1063,20 @@ void PhysXEngine::SetCharacterRotation(unsigned int time, NxController* act, con
 /***********************************************************
 //! move actor in rotation direction
 ***********************************************************/
-void PhysXEngine::MoveInDirectionCharacter(unsigned int time, NxController* act, float MoveSpeed, bool AddGravity)
+void PhysXEngine::MoveInDirectionCharacter(unsigned int time, NxController* act, float MoveSpeed, 
+										   bool AddGravity, bool DirectApply)
 {
 	LbaVec3 Gravity(0, 0, 0);
 	if(AddGravity)
 		GetGravity(Gravity);
 
-	AddModification(boost::shared_ptr<PhysicalModification>(new MoveInDirectionCharacterModification(time, act, 
-																								MoveSpeed, Gravity)));
+	boost::shared_ptr<PhysicalModification> ptr(new MoveInDirectionCharacterModification(time, act, 
+																						MoveSpeed, Gravity));
+
+	if(DirectApply)
+		ptr->Apply(_currentsimduration);
+	else
+		AddModification(ptr);
 }
 
 
