@@ -106,7 +106,7 @@ public:
 	virtual Input GetLastPlayerInput();
 
 	//apply inputs
-	virtual void ApplyInputs(const Input & in);
+	virtual void ApplyInputs(unsigned int time, const Input & in);
 
 protected:
 
