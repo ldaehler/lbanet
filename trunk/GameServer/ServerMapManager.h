@@ -107,7 +107,7 @@ public:
 	virtual Input GetLastPlayerInput(){return Input();}
 
 	//apply inputs
-	virtual void ApplyInputs(const Input & in){}
+	virtual void ApplyInputs(unsigned int time, const Input & in){}
 
 
 	//! start process physic

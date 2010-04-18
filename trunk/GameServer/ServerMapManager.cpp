@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "PhysXEngine.h"
 #include "ActorObject.h"
 #include "PlayerObject.h"
-#include "CharacterController.h"
+#include "CharacterControllerLBA.h"
 
 
 #define MAX_PLAYERS_IN_MAP 2
@@ -41,7 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ServerMapManager::ServerMapManager(ZCom_Control *_control, unsigned int ZoidLevel, const MapInfo & MapInfo,
 										boost::shared_ptr<PhysXEngine> pengine)
 : _controler(_control), _zoidlevel(ZoidLevel), _needdelete(false), _pengine(pengine), 
-	_mapobject(_control, MapInfo), _mapname(MapInfo.Name), _cycledone(false)
+	_mapobject(_control, ZoidLevel, MapInfo), _mapname(MapInfo.Name), _cycledone(false)
 {
 	std::stringstream strs;
 	strs<<"Map instance created for map: "<<_mapname;
