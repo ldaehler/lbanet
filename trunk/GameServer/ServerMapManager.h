@@ -39,6 +39,13 @@ class PhysXEngine;
 class ActorObject;
 class PlayerObject;
 class PlayerServerWrapper;
+class PlayerCallbackBase;
+
+struct PlayerData
+{
+	boost::shared_ptr<PlayerCallbackBase>	callback;
+	boost::shared_ptr<PlayerInfoHandler>	dbHandler;
+};
 
 
 /***********************************************************************
@@ -129,7 +136,7 @@ private:
 
 	std::map<long, boost::shared_ptr<ActorObject> >						_actors;
 	std::map<unsigned int, boost::shared_ptr<PlayerObject> >			_players;
-	std::map<unsigned int, boost::shared_ptr<PlayerServerWrapper> >		_playerHandlers;
+	std::map<unsigned int, PlayerData>									_playerHandlers;
 };
 
 #endif
