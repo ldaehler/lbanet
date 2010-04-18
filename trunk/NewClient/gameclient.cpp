@@ -238,7 +238,7 @@ void GameClient::ZCom_cbNodeRequest_Dynamic(ZCom_ConnID _id, ZCom_ClassID _reque
 			oinfo.PhysInfo->SetNonControllable();
 
 		m_players[_id] = boost::shared_ptr<PlayerObject>(
-					new PlayerObject(this, 1, _id, oinfo, m_callback, (_role == eZCom_RoleOwner)));	
+					new PlayerObject(this, 1, _id, oinfo, m_callback, NULL, (_role == eZCom_RoleOwner)));	
 	}
 
 
