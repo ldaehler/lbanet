@@ -512,6 +512,25 @@ short PhysicHandler::GetStructure(int X, int Y, int Z)
 }
 
 
+
+/*
+--------------------------------------------------------------------------------------------------
+- return the structure of a specific brick
+--------------------------------------------------------------------------------------------------
+*/
+short PhysicHandler::GetMaterial(int X, int Y, int Z)
+{
+	if(X < 0 || Y < 0 || Z < 0 || X >= _sizeX || Y >= _sizeY || Z >= _sizeZ)
+		return 0;
+
+	if(!_physicCube)
+		return 0;
+
+	short res = _materialCube[Y*_sizeX*_sizeZ + X*_sizeZ + Z];
+	return res;
+}
+
+
 /*
 --------------------------------------------------------------------------------------------------
 - return true if the position is on water - the actor should then drow
@@ -551,17 +570,13 @@ int PhysicHandler::IsUnderRoof(int X, int Y, int Z)
 						if(!IsEmpty(X-1, i, Z+1) || !IsEmpty(X-1, i+1, Z+1) || !IsEmpty(X-1, i-1, Z+1))
 							if(!IsEmpty(X+1, i, Z-1) || !IsEmpty(X+1, i+1, Z-1) || !IsEmpty(X+1, i-1, Z-1))
 							{
-								if(i < 18 && i > 13)
-									return 13;
-								else
-									return i;
+								return i;
 							}
 		}
 	}
 
 	return -1;
 }
-
 
 /*
 --------------------------------------------------------------------------------------------------
@@ -3793,6 +3808,8 @@ search roof in the scene
 */
 void PhysicHandler::SearchRoof()
 {
+	_planesRoof.clear();
+
 	short * buffer = new short[_sizeX*_sizeY*_sizeZ];
 	memset ( buffer, 0, _sizeX*_sizeY*_sizeZ*sizeof(short) );
 

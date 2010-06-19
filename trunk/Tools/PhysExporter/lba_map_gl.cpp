@@ -304,6 +304,8 @@ constructor
 LBA_MAP_GL::LBA_MAP_GL(const std::string &filename, PhysicHandler * phH)
 : _phH(phH)
 {
+	_phH->SetMapGl(this);
+
 	LoadMap(filename);
 
 	list_name=glGenLists(1);
