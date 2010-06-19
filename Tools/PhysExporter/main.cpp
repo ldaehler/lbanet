@@ -1,6 +1,8 @@
 #include "lba_map_gl.h"
 #include "PhysicHandler.h"
 #include <sstream>
+#include <iostream>
+
 
 int main(int argc, char** argv)
 {
@@ -17,12 +19,15 @@ int main(int argc, char** argv)
 
 	for(int i=0; i<=133; ++i)
 	{
+		if(i==34)
+			std::cout<<"prout"<<std::endl;
+
 		std::stringstream file1;
 		file1<<"Maps/Lba1/map"<<i<<".txt";
 		std::stringstream file2;
 		file2<<"Maps/Lba1/map"<<i<<".phy";
 
-		LBA_MAP_GL(file1.str(), &phH);
+		LBA_MAP_GL mapgl(file1.str(), &phH);
 		phH.SearchFloors();
 		phH.SearchWallX();
 		phH.SearchWallZ();

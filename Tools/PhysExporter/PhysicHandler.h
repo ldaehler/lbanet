@@ -245,6 +245,11 @@ public:
 	//! destructor
 	~PhysicHandler();
 
+	void SetMapGl(LBA_MAP_GL * mapgl)
+	{
+		_mapgl = mapgl;
+	}
+
 	// load a map into memory
 	void Allocate(int sizeX, int sizeY, int sizeZ);
 
@@ -450,6 +455,10 @@ protected:
 	void Search13CornerStairs(short * start, short * tomodify, int sizeX, int sizeY, int sizeZ, 
 										int idX, int idY, int idZ,
 									   std::vector<CornerStairInfo> & stairs, short Material);
+
+
+	short GetMaterial(int X, int Y, int Z);
+
 private:
 
 	// cube representing the map physic
@@ -457,6 +466,8 @@ private:
 	short *	_materialCube;
 	LocalActorsHandler*	_localAH;
 	ExternalActorsHandler * _EAH;
+
+	LBA_MAP_GL * _mapgl;
 
 	// size of the cube
 	int			_sizeX;
