@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "NxCooking.h"
 #include "Stream.h"
 #include <limits>
+#include <fstream>
 
 
 #include <windows.h>    // Header File For Windows
@@ -198,7 +199,7 @@ PhysXEngine * PhysXEngine::getInstance()
 	Constructor
 ***********************************************************/
 PhysXEngine::PhysXEngine()
-: gAllocator(NULL)
+: gAllocator(NULL)//, _buffervertexroof(NULL), _sizebuff(0)
 {
 	gAllocator = new UserAllocator();
 }
@@ -266,9 +267,9 @@ void PhysXEngine::Init()
 	// add a cube and a plane
 	//CreatePlane(NxVec3(0, 0, 0), NxVec3(0, 1, 0));
 	//CreateBox(NxVec3(0, 4, 0), 3.0f, 3.0f, 3.0f, 10, false);
-	gplayablebox = CreateBox(NxVec3(30, 5, 30), 1.0f, 1.0f, 1.0f, 10, true, NULL);
-	//gplayablebox->setAngularDamping(std::numeric_limits<float>::infinity());
-	gplayablebox->raiseBodyFlag(NX_BF_FROZEN_ROT);
+	//gplayablebox = CreateBox(NxVec3(30, 5, 30), 1.0f, 1.0f, 1.0f, 10, true, NULL);
+	////gplayablebox->setAngularDamping(std::numeric_limits<float>::infinity());
+	//gplayablebox->raiseBodyFlag(NX_BF_FROZEN_ROT);
 
 	//CreateBox(NxVec3(20, -1, 20), 50.0f, 1.0f, 50.0f, 10, false);
 
@@ -529,7 +530,7 @@ NxController* PhysXEngine::CreateCharacterBox(const NxVec3 & StartPosition, cons
 ***********************************************************/
 NxActor* PhysXEngine::CreateTriangleMesh(const NxVec3 & StartPosition, float *Vertexes, size_t VertexesSize, 
 											unsigned int *Indices, size_t IndicesSize,
-											ActorUserData * adata)
+											ActorUserData * adata, bool collidablemesh)
 {
 	// Create descriptor for triangle mesh
 	NxTriangleMeshDesc triangleMeshDesc;
@@ -562,10 +563,13 @@ NxActor* PhysXEngine::CreateTriangleMesh(const NxVec3 & StartPosition, float *Ve
 	// Create TriangleMesh above code segment.
 	NxTriangleMeshShapeDesc tmsd;
 	tmsd.meshData			= pMesh;
-	//tmsd.userData			= triangleMeshDesc;
 	tmsd.localPose.t		= NxVec3(0, 0, 0);
 	tmsd.meshPagingMode 	= NX_MESH_PAGING_AUTO;
-	tmsd.group = GROUP_COLLIDABLE_NON_PUSHABLE;
+
+	if(collidablemesh)
+		tmsd.group = GROUP_COLLIDABLE_NON_PUSHABLE;
+	else
+		tmsd.group = GROUP_NON_COLLIDABLE;
 
 	NxActorDesc actorDesc;
 	NxBodyDesc  bodyDesc;
@@ -578,9 +582,6 @@ NxActor* PhysXEngine::CreateTriangleMesh(const NxVec3 & StartPosition, float *Ve
 
 	if (pMesh)
 	{
-		// Save mesh in userData for drawing
-		//pMesh->saveToDesc(triangleMeshDesc);
-
 		assert(actorDesc.isValid());
 		NxActor *actor = gScene->createActor(actorDesc);
 		assert(actor);
@@ -590,6 +591,91 @@ NxActor* PhysXEngine::CreateTriangleMesh(const NxVec3 & StartPosition, float *Ve
 
 	return NULL;
 }
+
+
+
+
+
+/***********************************************************
+//! Load triangle mesh shape to the engine
+***********************************************************/
+NxActor* PhysXEngine::LoadTriangleMeshFile(const NxVec3 & StartPosition, const std::string Filename,
+												ActorUserData * userdata)
+{
+	// load data from binary file and set it into a triangle mesh
+	std::ifstream file(Filename.c_str(), std::ifstream::binary);
+	if(!file.is_open())
+	{
+		return NULL;
+	}
+
+	unsigned int sizevertex;
+	unsigned int sizeindices;
+	unsigned int sizematerials;
+	unsigned int sizevertexroof;
+	unsigned int sizeindicesroof;
+
+	file.read((char*)&sizevertex, sizeof(unsigned int));
+	file.read((char*)&sizeindices, sizeof(unsigned int));
+	file.read((char*)&sizematerials, sizeof(unsigned int));
+	file.read((char*)&sizevertexroof, sizeof(unsigned int));
+	file.read((char*)&sizeindicesroof, sizeof(unsigned int));
+
+	float *buffervertex = new float[sizevertex];
+	unsigned int *bufferindices = new unsigned int[sizeindices];
+	short *buffermaterials = new short[sizematerials];
+
+	file.read((char*)buffervertex, sizevertex*sizeof(float));
+	file.read((char*)bufferindices, sizeindices*sizeof(unsigned int));
+	file.read((char*)buffermaterials, sizematerials*sizeof(short));
+
+
+	userdata->MaterialsSize = sizematerials;
+	userdata->Materials =  buffermaterials;
+
+	NxActor* act = CreateTriangleMesh(StartPosition, buffervertex, sizevertex, bufferindices, sizeindices, 
+											userdata);
+	//NxActor* act = NULL;
+	delete[] buffervertex;
+	delete[] bufferindices;
+
+
+	// create shape for roof if necessary
+	//_sizebuff = sizeindicesroof;
+	if(sizevertexroof > 0)
+	{
+		float *buffervertexroof = NULL;
+		unsigned int *bufferindicesroof = NULL;
+
+		buffervertexroof = new float[sizevertexroof];
+		bufferindicesroof = new unsigned int[sizeindicesroof];
+		file.read((char*)buffervertexroof, sizevertexroof*sizeof(float));
+		file.read((char*)bufferindicesroof, sizeindicesroof*sizeof(unsigned int));
+
+		//_buffervertexroof = new float[sizevertexroof];
+		//memcpy(_buffervertexroof, buffervertexroof, sizevertexroof*sizeof(float));
+		//_bufferindiceroof = new unsigned int[sizeindicesroof];
+		//memcpy(_bufferindiceroof, bufferindicesroof, sizeindicesroof*sizeof(unsigned int));
+
+
+		NxActor* roofact = CreateTriangleMesh(StartPosition, buffervertexroof, sizevertexroof, 
+												bufferindicesroof, sizeindicesroof, NULL, false);
+
+		_roofactors.insert(roofact);
+		userdata->InternalActor = roofact;
+
+		if(buffervertexroof)
+			delete buffervertexroof;
+
+		if(bufferindicesroof)
+			delete bufferindicesroof;
+	}
+
+
+
+	return act;
+}
+
 
 
 
@@ -618,8 +704,8 @@ void PhysXEngine::SetCharacterPos(NxController* character, const NxVec3& posVect
 	pos.z = posVector.z;
 	character->setPosition(pos);
 
-	gplayablebox->setLinearVelocity(NxVec3(0,0,0) );
-	gplayablebox->setGlobalPosition(NxVec3(posVector.x, posVector.y+3, posVector.z));
+	//gplayablebox->setLinearVelocity(NxVec3(0,0,0) );
+	//gplayablebox->setGlobalPosition(NxVec3(posVector.x, posVector.y+3, posVector.z));
 }
 
 /***********************************************************
@@ -636,6 +722,19 @@ DestroyActor
 ***********************************************************/
 void PhysXEngine::DestroyActor(NxActor* actor)
 {
+	//destroy internal actor if there is one
+	ActorUserData * udata = (ActorUserData *)actor->userData;
+	if(udata)
+	{
+		if(udata->InternalActor)
+		{
+			DestroyActor(udata->InternalActor);
+			std::set<NxActor*>::iterator it = _roofactors.find(udata->InternalActor);
+			if(it != _roofactors.end())
+				_roofactors.erase(it);
+		}
+	}
+
 	if(gScene && actor)
 		gScene->releaseActor(*actor);
 }
@@ -665,6 +764,34 @@ void PhysXEngine::GetCharacterPosition(NxController* character, float &posX, flo
 
 
 
+/***********************************************************
+//! check if there is a roof up the 3d position in parameter
+//! if there is a roof, return the roof position along the y axis
+//! else return -1
+***********************************************************/
+int PhysXEngine::CheckForRoof(float PositionX, float PositionY, float PositionZ)
+{
+	std::set<NxActor*>::iterator it = _roofactors.begin();
+	std::set<NxActor*>::iterator end = _roofactors.end();
+	for(;it != end; ++it)
+	{
+		if((*it)->getNbShapes() > 0)
+		{
+			NxTriangleMeshShape* _currmap = (*(*it)->getShapes())->isTriangleMesh();
+
+			NxRaycastHit hitinfo;
+			NxVec3 vec(0, 1, 0);
+			NxVec3 Position(PositionX, PositionY+1, PositionZ);
+
+			if(_currmap && _currmap->raycast(NxRay(Position, vec), 100.0f, NX_RAYCAST_DISTANCE, hitinfo, false))
+			{
+				return (int)(Position.y + hitinfo.distance + 0.5);
+			}
+		}
+	}
+
+	return -1;
+}	
 
 /***********************************************************
 	Render actors
@@ -758,10 +885,50 @@ void PhysXEngine::RenderActors()
 		//}
 
 
+
+
+
 		glPopMatrix();
-
-
     }
+
+
+	//if(_sizebuff > 0)
+	//{
+	//	glPushMatrix();
+	//	glScalef(1, 0.5f, 1);
+
+	//	for(int i=0; i<_sizebuff;)
+	//	{
+	//		int id1 = _bufferindiceroof[i++] * 3;
+	//		float p1x =_buffervertexroof[id1];
+	//		float p1y =_buffervertexroof[id1+1];
+	//		float p1z =_buffervertexroof[id1+2];
+
+	//		int id2 = _bufferindiceroof[i++] * 3;
+	//		float p2x =_buffervertexroof[id2];
+	//		float p2y =_buffervertexroof[id2+1];
+	//		float p2z =_buffervertexroof[id2+2];
+
+	//		int id3 = _bufferindiceroof[i++] * 3;
+	//		float p3x =_buffervertexroof[id3];
+	//		float p3y =_buffervertexroof[id3+1];
+	//		float p3z =_buffervertexroof[id3+2];
+
+	//		glColor4f(0.0f,0.0f,1.0f, 1.f);
+	//		glBegin(GL_LINES);
+	//			glVertex3f(p1x,p1y,p1z);
+	//			glVertex3f(p2x,p2y,p2z);
+	//			glVertex3f(p2x,p2y,p2z);
+	//			glVertex3f(p3x,p3y,p3z);
+	//			glVertex3f(p3x,p3y,p3z);
+	//			glVertex3f(p1x,p1y,p1z);
+	//		glEnd();	
+	//	}
+
+	//	glPopMatrix();
+	//}
+
+
 
 	//for(unsigned int i=0; i<gManager->getNbControllers(); ++i)
 	//{

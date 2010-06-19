@@ -35,7 +35,7 @@ class NxController;
 class NxActor;
 
 #include <vector>
-
+#include <set>
 
 class ActorUserData
 {
@@ -44,7 +44,7 @@ public:
 	ActorUserData(short ActType)
 	: ActorType(ActType), Materials(NULL), 
 		MaterialsSize(0),
-		HittedFloorMaterial(0)
+		HittedFloorMaterial(0), InternalActor(NULL)
 	{}
 
 	//! destructor
@@ -63,6 +63,7 @@ public:
 
 	size_t				MaterialsSize;
 	short *				Materials; 
+	NxActor *			InternalActor;
 
 	short				HittedFloorMaterial;
 };
@@ -115,7 +116,10 @@ public:
 
 	NxActor* CreateTriangleMesh(const NxVec3 & StartPosition, float *Vertexes, 
 										size_t VertexesSize, unsigned int *Indices, size_t IndicesSize,
-										ActorUserData * adata);
+										ActorUserData * adata, bool collidablemesh=true);
+
+	NxActor* LoadTriangleMeshFile(const NxVec3 & StartPosition, const std::string Filename,
+												ActorUserData * userdata);
 
 	void DestroyActor(NxActor* actor);
 	void DestroyCharacter(NxController* character);
@@ -139,6 +143,10 @@ public:
 	bool IsInitialized()
 	{return _isInitialized;}
 
+	//! check if actor is under roof
+	int CheckForRoof(float PositionX, float PositionY, float PositionZ);
+
+
 protected:
 	//! constructor
 	PhysXEngine();
@@ -154,9 +162,16 @@ private:
 	NxControllerManager*		gManager;
 	NxUserAllocator*			gAllocator;
 	NxActor*					gplayablebox;
+
+	std::set<NxActor*>			_roofactors;
+
 	
 	bool						_isInitialized;
 	double						_lasttime;
+
+	//float *						_buffervertexroof;
+	//unsigned int *				_bufferindiceroof;
+	//int							_sizebuff;
 };
 
 #endif

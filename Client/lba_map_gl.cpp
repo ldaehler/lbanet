@@ -327,7 +327,6 @@ void LBA_MAP_GL::RecompileRoom(int Cut)
 	double h=0.5;
 
 	int Ymax = _sizeY;
-
 	if(Cut > 0)
 		if(Cut < 18 && Cut > 13)
 			Ymax = 13;

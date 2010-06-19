@@ -511,7 +511,6 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float 
 			_mapRenderer = new MapRenderer(mapN, ph);
 			//_mapRenderer = new ObjMapRenderer("map0.obj", "map0.png");
 			//_mapRenderer = new MapMapRenderer("map0.map", "map0.png");
-
 			//_physicHandler = new PlanesPhysicHandler("map3.phy", _localActorsHandler, _externalActorsHandler);
 
 			m_room_y_cut = -1;
@@ -534,7 +533,9 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float 
 
 			_guiH->SetCurrentMap(_current_world.substr(0, _current_world.find(".xml")), _current_map);
 
-			_physicHandler = new PhysXPhysicHandler("map3.phy", _localActorsHandler, _externalActorsHandler,
+			std::string physmap = mapN;
+			physmap.replace(physmap.find(".txt"), 4, ".phy");
+			_physicHandler = new PhysXPhysicHandler(physmap, _localActorsHandler, _externalActorsHandler,
 													X, Y, Z);
 			
 			_mainPlayerHandler->SetPhysicHandler(_physicHandler);

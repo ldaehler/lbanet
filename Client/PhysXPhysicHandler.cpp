@@ -87,21 +87,6 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 										float posX, float posY, float posZ)
 	: _localAH(LAH), _externalAH(EAH)
 {
-	std::ifstream file(filename.c_str(), std::ifstream::binary);
-	unsigned int sizevertex;
-	unsigned int sizeindices;
-	unsigned int sizematerials;
-	file.read((char*)&sizevertex, sizeof(unsigned int));
-	file.read((char*)&sizeindices, sizeof(unsigned int));
-	file.read((char*)&sizematerials, sizeof(unsigned int));
-
-	float *buffervertex = new float[sizevertex];
-	unsigned int *bufferindices = new unsigned int[sizeindices];
-	short *buffermaterials = new short[sizematerials];
-
-	file.read((char*)buffervertex, sizevertex*sizeof(float));
-	file.read((char*)bufferindices, sizeindices*sizeof(unsigned int));
-	file.read((char*)buffermaterials, sizematerials*sizeof(short));
 
 	_lastposX = posX;
 	_lastposY = posY+2.499f;
@@ -109,86 +94,77 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 
 
 	ActorUserData * usdata = new ActorUserData(1);
-
 	_controller = PhysXEngine::getInstance()->CreateCharacter(NxVec3(_lastposX, _lastposY, _lastposZ), 
 																0.4, 3.8, usdata);
 
 
 	ActorUserData * mstorage = new ActorUserData(2);
-	mstorage->MaterialsSize = sizematerials;
-	mstorage->Materials =  buffermaterials;
-
-	_map = PhysXEngine::getInstance()->CreateTriangleMesh(NxVec3(0,0,0), buffervertex, 
-															sizevertex, bufferindices, sizeindices,
-															mstorage);
-
-	delete buffervertex;
-	delete bufferindices;
+	_map = PhysXEngine::getInstance()->LoadTriangleMeshFile(NxVec3(0,0,0), filename, mstorage);
 
 
-	if(LAH)
-	{	 
-		std::map<long, Actor *> * acts = LAH->GetActors();
-		if(acts)
-		{
-			std::map<long, Actor *>::iterator it = acts->begin();
-			std::map<long, Actor *>::iterator end = acts->end();
-			for(;it != end; ++it)
-			{
-				float posx = it->second->GetPosX();
-				float posy = it->second->GetPosY();
-				float posz = it->second->GetPosZ();
-				float sizex = it->second->GetSizeX();
-				float sizey = it->second->GetSizeY();
-				float sizez = it->second->GetSizeZ();
+	//if(LAH)
+	//{	 
+	//	std::map<long, Actor *> * acts = LAH->GetActors();
+	//	if(acts)
+	//	{
+	//		std::map<long, Actor *>::iterator it = acts->begin();
+	//		std::map<long, Actor *>::iterator end = acts->end();
+	//		for(;it != end; ++it)
+	//		{
+	//			float posx = it->second->GetPosX();
+	//			float posy = it->second->GetPosY();
+	//			float posz = it->second->GetPosZ();
+	//			float sizex = it->second->GetSizeX();
+	//			float sizey = it->second->GetSizeY();
+	//			float sizez = it->second->GetSizeZ();
 
-				if(sizex > 0)
-				{
-					sizey /= 2;
-					posy += sizey;
+	//			if(sizex > 0)
+	//			{
+	//				sizey /= 2;
+	//				posy += sizey;
 
-					ActorUserData * usdata = new ActorUserData(1);
-					NxController* cont = PhysXEngine::getInstance()->CreateCharacterBox(NxVec3(posx, posy, posz), 
-																NxVec3(sizex, sizey, sizez), usdata);
+	//				ActorUserData * usdata = new ActorUserData(1);
+	//				NxController* cont = PhysXEngine::getInstance()->CreateCharacterBox(NxVec3(posx, posy, posz), 
+	//															NxVec3(sizex, sizey, sizez), usdata);
 
-					it->second->SetPhysController(new ActorPositionHandler(cont, posx, posy, posz));
-					_actors.push_back(cont);
-				}
-			}
-		}
-	}
+	//				it->second->SetPhysController(new ActorPositionHandler(cont, posx, posy, posz));
+	//				_actors.push_back(cont);
+	//			}
+	//		}
+	//	}
+	//}
 
-	if(EAH)
-	{	 
-		std::map<long, Actor *> * acts = EAH->GetActors();
-		if(acts)
-		{
-			std::map<long, Actor *>::iterator it = acts->begin();
-			std::map<long, Actor *>::iterator end = acts->end();
-			for(;it != end; ++it)
-			{
-				float posx = it->second->GetPosX();
-				float posy = it->second->GetPosY();
-				float posz = it->second->GetPosZ();
-				float sizex = it->second->GetSizeX();
-				float sizey = it->second->GetSizeY();
-				float sizez = it->second->GetSizeZ();
+	//if(EAH)
+	//{	 
+	//	std::map<long, Actor *> * acts = EAH->GetActors();
+	//	if(acts)
+	//	{
+	//		std::map<long, Actor *>::iterator it = acts->begin();
+	//		std::map<long, Actor *>::iterator end = acts->end();
+	//		for(;it != end; ++it)
+	//		{
+	//			float posx = it->second->GetPosX();
+	//			float posy = it->second->GetPosY();
+	//			float posz = it->second->GetPosZ();
+	//			float sizex = it->second->GetSizeX();
+	//			float sizey = it->second->GetSizeY();
+	//			float sizez = it->second->GetSizeZ();
 
-				if(sizex > 0)
-				{
-					sizey /= 2;
-					posy += sizey;
+	//			if(sizex > 0)
+	//			{
+	//				sizey /= 2;
+	//				posy += sizey;
 
-					ActorUserData * usdata = new ActorUserData(1);
-					NxController* cont = PhysXEngine::getInstance()->CreateCharacterBox(NxVec3(posx, posy, posz), 
-																NxVec3(sizex, sizey, sizez), usdata);
+	//				ActorUserData * usdata = new ActorUserData(1);
+	//				NxController* cont = PhysXEngine::getInstance()->CreateCharacterBox(NxVec3(posx, posy, posz), 
+	//															NxVec3(sizex, sizey, sizez), usdata);
 
-					it->second->SetPhysController(new ActorPositionHandler(cont, posx, posy, posz));
-					_actors.push_back(cont);
-				}
-			}
-		}
-	}
+	//				it->second->SetPhysController(new ActorPositionHandler(cont, posx, posy, posz));
+	//				_actors.push_back(cont);
+	//			}
+	//		}
+	//	}
+	//}
 }
 
 /*
@@ -201,10 +177,13 @@ PhysXPhysicHandler::~PhysXPhysicHandler()
 	if(PhysXEngine::getInstance()->IsInitialized())
 	{
 		ActorUserData * mstorage = (ActorUserData *)_map->userData;
+		ActorUserData * characterdata = (ActorUserData *)_controller->getActor()->userData;
+
+		PhysXEngine::getInstance()->DestroyActor(_map);
+		PhysXEngine::getInstance()->DestroyCharacter(_controller);
+
 		if(mstorage)
 			delete mstorage;
-
-		ActorUserData * characterdata = (ActorUserData *)_controller->getActor()->userData;
 		if(characterdata)
 			delete characterdata;
 
@@ -221,8 +200,7 @@ PhysXPhysicHandler::~PhysXPhysicHandler()
 	}
 
 
-	PhysXEngine::getInstance()->DestroyActor(_map);
-	PhysXEngine::getInstance()->DestroyCharacter(_controller);
+
 }
 
 /*
@@ -292,7 +270,7 @@ void PhysXPhysicHandler::SetActorPos(long ActorId, const VECTOR &NewPos)
 */
 int PhysXPhysicHandler::IsUnderRoof(const VECTOR & ActorPos)
 {
-	return -1;
+	return PhysXEngine::getInstance()->CheckForRoof(ActorPos.x, ActorPos.y, ActorPos.z);
 }
 
 
