@@ -361,11 +361,16 @@ public:
 	std::vector<CornerStairInfo> GetCornerStairs()
 	{ return _cornerstairs; }
 
+	std::vector<PlaneInfo> GetRoofs()
+	{ return _planesRoof; }
 
 	//! split rectangle into part with same textures
 	void SplitToTexture(short * area, int sizeX, int sizeY, std::vector<TexPlaneInfo> & res);
 
 	void SavePlanes(const std::string & filename);
+
+	//! search roof in the scene
+	void SearchRoof();
 
 protected:
 
@@ -388,7 +393,7 @@ protected:
 
 	//! look for floors  in the map
 	void SearchFloors(short * thisY, int Y, std::vector<PlaneInfo> &planes, 
-						int sizeX, int sizeY, int sizeZ, short material);
+						int sizeX, int sizeY, int sizeZ, short material, int minareasize = 0);
 
 
 	//! look for floors  in the map
@@ -460,7 +465,7 @@ private:
 
 	std::vector<PlaneInfo> _planes;
 	std::vector<PlaneInfo> _planeshidden;
-
+	std::vector<PlaneInfo> _planesRoof;
 
 	std::vector<PlaneInfo> _wallsX;
 	std::vector<PlaneInfo> _wallsXhidden;

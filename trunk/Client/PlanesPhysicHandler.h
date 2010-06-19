@@ -80,6 +80,9 @@ public:
 	// render physic shapes
 	virtual void Render();
 
+	//! set actor position
+	virtual void SetActorPos(long ActorId, const VECTOR &NewPos){}
+
 protected:
 	// check collision with floor
 	bool ColisionWithFloor(const AABB & actorBB, const VECTOR &Speed, float &ModifiedSpeedY, bool &water);
