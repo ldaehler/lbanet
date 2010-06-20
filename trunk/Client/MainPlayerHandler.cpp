@@ -502,7 +502,7 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 
 
 	// if we are not jumping neither flying we need to add the gravity
-	if(_state != Ac_Jumping && _state != Ac_Flying)
+	if(_state != Ac_Jumping && _state != Ac_Flying && !_isAttached)
 	{
 		if(_RoomP)
 			_corrected_velocityY = _RoomP->GetGravitySpeed()/10 * tdiff;
@@ -587,7 +587,7 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 
 
 			// if the actor does not touch the ground it means he is falling down
-			if(!moveO.TouchingGround)
+			if(!moveO.TouchingGround && !_isAttached)
 			{
 				StartFallDown();
 				_touchedground = false;
@@ -595,7 +595,7 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 			else
 			{
 				//if we were falling down then player will be hurt by touching the ground
-				if(!_touchedground && (_state == Ac_FallingDown))
+				if(!_touchedground &&  (_state == Ac_FallingDown))
 				{
 					_touchedground = true;
 					_needCheck = true;
@@ -669,6 +669,13 @@ int MainPlayerHandler::FinishProcess(double tnow, float tdiff, int res)
 		_corrected_velocityX += _player->GetAddedvX();
 		_corrected_velocityY += _player->GetAddedvY();
 		_corrected_velocityZ += _player->GetAddedvZ();
+
+		_RoomP->MoveActor(-1, _player->GetBoundingBox(),
+										VECTOR	(_player->GetAddedvX(), 
+												_player->GetAddedvY(), 
+												_player->GetAddedvZ()),
+										false);
+
 		_player->SetAddedVelocity(0, 0, 0);
 	}
 

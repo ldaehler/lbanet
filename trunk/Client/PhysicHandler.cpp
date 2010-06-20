@@ -3802,3 +3802,169 @@ void PhysicHandler::SearchRoof()
 
 	delete[] buffer;
 }
+
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+search roof in the scene
+--------------------------------------------------------------------------------------------------
+*/
+void PhysicHandler::MakeSurroundingPlanes()
+{
+	int topy = _sizeY + 5;
+
+
+	// roof-1
+	{
+	CornerStairInfo csi;
+	csi.C1X = 0;
+	csi.C1Y = topy;
+	csi.C1Z = 0;
+	csi.C2X = _sizeX;
+	csi.C2Y = topy;
+	csi.C2Z = 0;
+	csi.C3X = 0;
+	csi.C3Y = topy;
+	csi.C3Z = _sizeZ;
+	_wallsout.push_back(csi);
+	}
+
+	// roof-2
+	{
+	CornerStairInfo csi;
+	csi.C1X = _sizeX;
+	csi.C1Y = topy;
+	csi.C1Z = _sizeZ;
+	csi.C2X = 0;
+	csi.C2Y = topy;
+	csi.C2Z = _sizeZ;
+	csi.C3X = _sizeX;
+	csi.C3Y = topy;
+	csi.C3Z = 0;
+	_wallsout.push_back(csi);
+	}
+
+	//wallA-1
+	{
+	CornerStairInfo csi;
+	csi.C1X = 0;
+	csi.C1Y = 0;
+	csi.C1Z = 0;
+	csi.C2X = 0;
+	csi.C2Y = topy;
+	csi.C2Z = _sizeZ;
+	csi.C3X = 0;
+	csi.C3Y = 0;
+	csi.C3Z = _sizeZ;
+	_wallsout.push_back(csi);
+	}
+
+	//wallA-2
+	{
+	CornerStairInfo csi;
+	csi.C1X = 0;
+	csi.C1Y = 0;
+	csi.C1Z = 0;
+	csi.C2X = 0;
+	csi.C2Y = topy;
+	csi.C2Z = 0;
+	csi.C3X = 0;
+	csi.C3Y = topy;
+	csi.C3Z = _sizeZ;
+	_wallsout.push_back(csi);
+	}
+
+	//wallB-1
+	{
+	CornerStairInfo csi;
+	csi.C1X = 0;
+	csi.C1Y = 0;
+	csi.C1Z = 0;
+	csi.C2X = _sizeX;
+	csi.C2Y = 0;
+	csi.C2Z = 0;
+	csi.C3X = _sizeX;
+	csi.C3Y = topy;
+	csi.C3Z = 0;
+	_wallsout.push_back(csi);
+	}
+
+	//wallB-2
+	{
+	CornerStairInfo csi;
+	csi.C1X = 0;
+	csi.C1Y = 0;
+	csi.C1Z = 0;
+	csi.C2X = _sizeX;
+	csi.C2Y = topy;
+	csi.C2Z = 0;
+	csi.C3X = 0;
+	csi.C3Y = topy;
+	csi.C3Z = 0;
+	_wallsout.push_back(csi);
+	}
+
+
+	//wallC-1
+	{
+	CornerStairInfo csi;
+	csi.C1X = _sizeX;
+	csi.C1Y = 0;
+	csi.C1Z = _sizeZ;
+	csi.C2X = 0;
+	csi.C2Y = 0;
+	csi.C2Z = _sizeZ;
+	csi.C3X = 0;
+	csi.C3Y = topy;
+	csi.C3Z = _sizeZ;
+	_wallsout.push_back(csi);
+	}
+
+	//wallC-2
+	{
+	CornerStairInfo csi;
+	csi.C1X = _sizeX;
+	csi.C1Y = 0;
+	csi.C1Z = _sizeZ;
+	csi.C2X = 0;
+	csi.C2Y = topy;
+	csi.C2Z = _sizeZ;
+	csi.C3X = _sizeX;
+	csi.C3Y = topy;
+	csi.C3Z = _sizeZ;
+	_wallsout.push_back(csi);
+	}
+
+
+	//wallD-1
+	{
+	CornerStairInfo csi;
+	csi.C1X = _sizeX;
+	csi.C1Y = 0;
+	csi.C1Z = _sizeZ;
+	csi.C2X = _sizeX;
+	csi.C2Y = topy;
+	csi.C2Z = 0;
+	csi.C3X = _sizeX;
+	csi.C3Y = 0;
+	csi.C3Z = 0;
+	_wallsout.push_back(csi);
+	}
+
+	//wallD-2
+	{
+	CornerStairInfo csi;
+	csi.C1X = _sizeX;
+	csi.C1Y = 0;
+	csi.C1Z = _sizeZ;
+	csi.C2X = _sizeX;
+	csi.C2Y = topy;
+	csi.C2Z = _sizeZ;
+	csi.C3X = _sizeX;
+	csi.C3Y = topy;
+	csi.C3Z = 0;
+	_wallsout.push_back(csi);
+	}
+}

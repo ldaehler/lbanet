@@ -77,6 +77,8 @@ void ActorPositionHandler::SetPosition(float X, float Y, float Z)
 	lastZ = Z;
 }
 
+
+
 /*
 --------------------------------------------------------------------------------------------------
 - constructor
@@ -102,69 +104,69 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 	_map = PhysXEngine::getInstance()->LoadTriangleMeshFile(NxVec3(0,0,0), filename, mstorage);
 
 
-	//if(LAH)
-	//{	 
-	//	std::map<long, Actor *> * acts = LAH->GetActors();
-	//	if(acts)
-	//	{
-	//		std::map<long, Actor *>::iterator it = acts->begin();
-	//		std::map<long, Actor *>::iterator end = acts->end();
-	//		for(;it != end; ++it)
-	//		{
-	//			float posx = it->second->GetPosX();
-	//			float posy = it->second->GetPosY();
-	//			float posz = it->second->GetPosZ();
-	//			float sizex = it->second->GetSizeX();
-	//			float sizey = it->second->GetSizeY();
-	//			float sizez = it->second->GetSizeZ();
+	if(LAH)
+	{	 
+		std::map<long, Actor *> * acts = LAH->GetActors();
+		if(acts)
+		{
+			std::map<long, Actor *>::iterator it = acts->begin();
+			std::map<long, Actor *>::iterator end = acts->end();
+			for(;it != end; ++it)
+			{
+				float posx = it->second->GetPosX();
+				float posy = it->second->GetPosY();
+				float posz = it->second->GetPosZ();
+				float sizex = it->second->GetSizeX();
+				float sizey = it->second->GetSizeY();
+				float sizez = it->second->GetSizeZ();
 
-	//			if(sizex > 0)
-	//			{
-	//				sizey /= 2;
-	//				posy += sizey;
+				if(sizex > 0)
+				{
+					sizey /= 2;
+					posy += sizey;
 
-	//				ActorUserData * usdata = new ActorUserData(1);
-	//				NxController* cont = PhysXEngine::getInstance()->CreateCharacterBox(NxVec3(posx, posy, posz), 
-	//															NxVec3(sizex, sizey, sizez), usdata);
+					ActorUserData * usdata = new ActorUserData(1);
+					NxController* cont = PhysXEngine::getInstance()->CreateCharacterBox(NxVec3(posx, posy, posz), 
+																NxVec3(sizex, sizey, sizez), usdata);
 
-	//				it->second->SetPhysController(new ActorPositionHandler(cont, posx, posy, posz));
-	//				_actors.push_back(cont);
-	//			}
-	//		}
-	//	}
-	//}
+					it->second->SetPhysController(new ActorPositionHandler(cont, posx, posy, posz));
+					_actors.push_back(cont);
+				}
+			}
+		}
+	}
 
-	//if(EAH)
-	//{	 
-	//	std::map<long, Actor *> * acts = EAH->GetActors();
-	//	if(acts)
-	//	{
-	//		std::map<long, Actor *>::iterator it = acts->begin();
-	//		std::map<long, Actor *>::iterator end = acts->end();
-	//		for(;it != end; ++it)
-	//		{
-	//			float posx = it->second->GetPosX();
-	//			float posy = it->second->GetPosY();
-	//			float posz = it->second->GetPosZ();
-	//			float sizex = it->second->GetSizeX();
-	//			float sizey = it->second->GetSizeY();
-	//			float sizez = it->second->GetSizeZ();
+	if(EAH)
+	{	 
+		std::map<long, Actor *> * acts = EAH->GetActors();
+		if(acts)
+		{
+			std::map<long, Actor *>::iterator it = acts->begin();
+			std::map<long, Actor *>::iterator end = acts->end();
+			for(;it != end; ++it)
+			{
+				float posx = it->second->GetPosX();
+				float posy = it->second->GetPosY();
+				float posz = it->second->GetPosZ();
+				float sizex = it->second->GetSizeX();
+				float sizey = it->second->GetSizeY();
+				float sizez = it->second->GetSizeZ();
 
-	//			if(sizex > 0)
-	//			{
-	//				sizey /= 2;
-	//				posy += sizey;
+				if(sizex > 0)
+				{
+					sizey /= 2;
+					posy += sizey;
 
-	//				ActorUserData * usdata = new ActorUserData(1);
-	//				NxController* cont = PhysXEngine::getInstance()->CreateCharacterBox(NxVec3(posx, posy, posz), 
-	//															NxVec3(sizex, sizey, sizez), usdata);
+					ActorUserData * usdata = new ActorUserData(1);
+					NxController* cont = PhysXEngine::getInstance()->CreateCharacterBox(NxVec3(posx, posy, posz), 
+																NxVec3(sizex, sizey, sizez), usdata);
 
-	//				it->second->SetPhysController(new ActorPositionHandler(cont, posx, posy, posz));
-	//				_actors.push_back(cont);
-	//			}
-	//		}
-	//	}
-	//}
+					it->second->SetPhysController(new ActorPositionHandler(cont, posx, posy, posz));
+					_actors.push_back(cont);
+				}
+			}
+		}
+	}
 }
 
 /*

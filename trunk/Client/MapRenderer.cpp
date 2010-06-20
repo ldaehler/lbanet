@@ -77,6 +77,7 @@ bool MapRenderer::LoadMap(const std::string &filename)
 	//_phH->SearchWallZ();
 	//_phH->SearchStairs();
 	//_phH->SearchRoof();
+	_phH->MakeSurroundingPlanes();
 	//_phH->SavePlanes("map3.phy");
 	
 	return true;
@@ -120,12 +121,38 @@ void MapRenderer::Render()
 		std::vector<StairInfo> stairs = _phH->GetStairs();
 		std::vector<CornerStairInfo> cstairs = _phH->GetCornerStairs();
 		std::vector<PlaneInfo> roofs = _phH->GetRoofs();
+		std::vector<CornerStairInfo> owalls = _phH->GetOutWalls();
 
 		glEnable(GL_BLEND);
 		glDisable(GL_TEXTURE_2D);
 		glDisable(GL_DEPTH_TEST);
 
 		glLineWidth(2.0f);
+
+
+
+		for(size_t i=0; i<owalls.size(); ++i)
+		{
+			CornerStairInfo pif = owalls[i];
+			glPushMatrix();
+
+			glTranslated(0, 0.5, 0);
+			float colorR = 0.0f;
+			float colorG = 1.0f;
+
+			glColor4f(colorR,colorG,0.0f, 1.f);
+			glBegin(GL_LINES);
+				glVertex3f(pif.C1X,pif.C1Y/2.0f,pif.C1Z);
+				glVertex3f(pif.C2X,pif.C2Y/2.0f,pif.C2Z);
+				glVertex3f(pif.C2X,pif.C2Y/2.0f,pif.C2Z);
+				glVertex3f(pif.C3X,pif.C3Y/2.0f,pif.C3Z);
+				glVertex3f(pif.C3X,pif.C3Y/2.0f,pif.C3Z);
+				glVertex3f(pif.C1X,pif.C1Y/2.0f,pif.C1Z);
+			glEnd();
+
+			glPopMatrix();
+		}
+
 
 
 		//for(size_t i=0; i<roofs.size(); ++i)
