@@ -364,6 +364,9 @@ public:
 	std::vector<PlaneInfo> GetRoofs()
 	{ return _planesRoof; }
 
+	std::vector<CornerStairInfo> GetOutWalls()
+	{ return _wallsout; }
+
 	//! split rectangle into part with same textures
 	void SplitToTexture(short * area, int sizeX, int sizeY, std::vector<TexPlaneInfo> & res);
 
@@ -371,6 +374,8 @@ public:
 
 	//! search roof in the scene
 	void SearchRoof();
+
+	void MakeSurroundingPlanes();
 
 protected:
 
@@ -475,6 +480,8 @@ private:
 
 	std::vector<StairInfo> _stairs;
 	std::vector<CornerStairInfo> _cornerstairs;
+
+	std::vector<CornerStairInfo> _wallsout;
 };
 
 #endif

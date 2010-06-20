@@ -272,7 +272,9 @@ public:
 
 	// set if the main actor is attached
 	void SetAttached(bool attached)
-	{_isAttached = attached;}
+	{
+		_isAttached = attached;
+	}
 
 	// return true if the actor is attached
 	bool IsAttached()
