@@ -482,7 +482,7 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float 
 {
 	if(NewMap != _current_map)
 	{
-		Y+= 2.6;
+		Y+= 0.1;
 
 		ThreadSafeWorkpile::getInstance()->OpenCloseContainer(0, true);
 

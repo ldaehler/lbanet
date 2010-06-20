@@ -209,6 +209,9 @@ int MainPlayerHandler::PlayScript(double tnow, float tdiff)
 {
 	if(_curr_script_position >= (int)_curr_script.size())
 	{
+		if(_RoomP)
+			_RoomP->SetActorPos(-1, VECTOR(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ()));
+
 		Stopstate();
 		return 0;
 	}
@@ -274,7 +277,10 @@ int MainPlayerHandler::PlayScript(double tnow, float tdiff)
 			_corrected_velocityX = (float)stepX;
 			_corrected_velocityY = (float)stepY;
 			_corrected_velocityZ = (float)stepZ;
-			_player->SetPosition(_player->GetPosX() + (float)stepX, _player->GetPosY() + (float)stepY, _player->GetPosZ() + (float)stepZ);
+			_player->SetPosition(	_player->GetPosX() + _corrected_velocityX, 
+									_player->GetPosY() + _corrected_velocityY, 
+									_player->GetPosZ() + _corrected_velocityZ);
+
 			UpdateFloorY();
 		}
 		break;
@@ -372,7 +378,12 @@ int MainPlayerHandler::PlayScript(double tnow, float tdiff)
 	}
 
 	if(_curr_script_position >= (int)_curr_script.size())
+	{
+		if(_RoomP)
+			_RoomP->SetActorPos(-1, VECTOR(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ()));
+
 		Stopstate();
+	}
 
 	_currentsignal = -1;
 	return -1;
