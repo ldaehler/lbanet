@@ -79,7 +79,7 @@ public:
 	// the physic engine will apply a gravity force to the move if not flying
 	// so that the actor might fall down if needed
 	virtual MoveOutput MoveActor(long ActorId, const AABB & actorBB,
-									const VECTOR &Speed);
+									const VECTOR &Speed, bool checkcolision = true);
 
 
 	// return int > 0 if there is a roof on top of the given position

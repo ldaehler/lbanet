@@ -95,7 +95,7 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 
 	ActorUserData * usdata = new ActorUserData(1);
 	_controller = PhysXEngine::getInstance()->CreateCharacter(NxVec3(_lastposX, _lastposY, _lastposZ), 
-																0.4, 3.8, usdata);
+																0.4f, 3.8f, usdata);
 
 
 	ActorUserData * mstorage = new ActorUserData(2);
@@ -214,7 +214,7 @@ PhysXPhysicHandler::~PhysXPhysicHandler()
 --------------------------------------------------------------------------------------------------
 */
 MoveOutput PhysXPhysicHandler::MoveActor(long ActorId, const AABB & actorBB,
-											const VECTOR &Speed)
+											const VECTOR &Speed, bool checkcolision)
 {
 	MoveOutput res;
 	res.NewSpeed = Speed;
@@ -223,7 +223,7 @@ MoveOutput PhysXPhysicHandler::MoveActor(long ActorId, const AABB & actorBB,
 
 
 	unsigned int flags = PhysXEngine::getInstance()->MoveCharacter(_controller, 
-													NxVec3(Speed.x, Speed.y, Speed.z));
+													NxVec3(Speed.x, Speed.y, Speed.z), checkcolision);
 
 	float posX, posY, posZ;
 	PhysXEngine::getInstance()->GetCharacterPosition(_controller, posX, posY, posZ);
