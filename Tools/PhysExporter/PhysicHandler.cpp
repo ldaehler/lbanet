@@ -3771,6 +3771,20 @@ void PhysicHandler::SavePlanes(const std::string & filename)
 		}
 	}
 
+	{
+		for(size_t i=0; i<_wallsout.size(); ++i)
+		{
+			VECTOR C1(_wallsout[i].C1X, _wallsout[i].C1Y, _wallsout[i].C1Z);
+			VECTOR C2(_wallsout[i].C2X, _wallsout[i].C2Y, _wallsout[i].C2Z);
+			VECTOR C3(_wallsout[i].C3X, _wallsout[i].C3Y, _wallsout[i].C3Z);
+
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, C1));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, C2));
+			indices.push_back(findvertexinmap(vertexmap, indiceidx, vertexes, C3));
+		}
+	}
+
+
 	unsigned int sizevertex = vertexes.size();
 	unsigned int sizeindices = indices.size();
 	unsigned int sizematerials = materials.size();
@@ -3833,4 +3847,168 @@ void PhysicHandler::SearchRoof()
 
 
 	delete[] buffer;
+}
+
+
+/*
+--------------------------------------------------------------------------------------------------
+search roof in the scene
+--------------------------------------------------------------------------------------------------
+*/
+void PhysicHandler::MakeSurroundingPlanes()
+{
+	int topy = _sizeY + 5;
+
+
+	// roof-1
+	{
+	CornerStairInfo csi;
+	csi.C1X = 0;
+	csi.C1Y = topy;
+	csi.C1Z = 0;
+	csi.C2X = _sizeX;
+	csi.C2Y = topy;
+	csi.C2Z = 0;
+	csi.C3X = 0;
+	csi.C3Y = topy;
+	csi.C3Z = _sizeZ;
+	_wallsout.push_back(csi);
+	}
+
+	// roof-2
+	{
+	CornerStairInfo csi;
+	csi.C1X = _sizeX;
+	csi.C1Y = topy;
+	csi.C1Z = _sizeZ;
+	csi.C2X = 0;
+	csi.C2Y = topy;
+	csi.C2Z = _sizeZ;
+	csi.C3X = _sizeX;
+	csi.C3Y = topy;
+	csi.C3Z = 0;
+	_wallsout.push_back(csi);
+	}
+
+	//wallA-1
+	{
+	CornerStairInfo csi;
+	csi.C1X = 0;
+	csi.C1Y = 0;
+	csi.C1Z = 0;
+	csi.C2X = 0;
+	csi.C2Y = topy;
+	csi.C2Z = _sizeZ;
+	csi.C3X = 0;
+	csi.C3Y = 0;
+	csi.C3Z = _sizeZ;
+	_wallsout.push_back(csi);
+	}
+
+	//wallA-2
+	{
+	CornerStairInfo csi;
+	csi.C1X = 0;
+	csi.C1Y = 0;
+	csi.C1Z = 0;
+	csi.C2X = 0;
+	csi.C2Y = topy;
+	csi.C2Z = 0;
+	csi.C3X = 0;
+	csi.C3Y = topy;
+	csi.C3Z = _sizeZ;
+	_wallsout.push_back(csi);
+	}
+
+	//wallB-1
+	{
+	CornerStairInfo csi;
+	csi.C1X = 0;
+	csi.C1Y = 0;
+	csi.C1Z = 0;
+	csi.C2X = _sizeX;
+	csi.C2Y = 0;
+	csi.C2Z = 0;
+	csi.C3X = _sizeX;
+	csi.C3Y = topy;
+	csi.C3Z = 0;
+	_wallsout.push_back(csi);
+	}
+
+	//wallB-2
+	{
+	CornerStairInfo csi;
+	csi.C1X = 0;
+	csi.C1Y = 0;
+	csi.C1Z = 0;
+	csi.C2X = _sizeX;
+	csi.C2Y = topy;
+	csi.C2Z = 0;
+	csi.C3X = 0;
+	csi.C3Y = topy;
+	csi.C3Z = 0;
+	_wallsout.push_back(csi);
+	}
+
+
+	//wallC-1
+	{
+	CornerStairInfo csi;
+	csi.C1X = _sizeX;
+	csi.C1Y = 0;
+	csi.C1Z = _sizeZ;
+	csi.C2X = 0;
+	csi.C2Y = 0;
+	csi.C2Z = _sizeZ;
+	csi.C3X = 0;
+	csi.C3Y = topy;
+	csi.C3Z = _sizeZ;
+	_wallsout.push_back(csi);
+	}
+
+	//wallC-2
+	{
+	CornerStairInfo csi;
+	csi.C1X = _sizeX;
+	csi.C1Y = 0;
+	csi.C1Z = _sizeZ;
+	csi.C2X = 0;
+	csi.C2Y = topy;
+	csi.C2Z = _sizeZ;
+	csi.C3X = _sizeX;
+	csi.C3Y = topy;
+	csi.C3Z = _sizeZ;
+	_wallsout.push_back(csi);
+	}
+
+
+	//wallD-1
+	{
+	CornerStairInfo csi;
+	csi.C1X = _sizeX;
+	csi.C1Y = 0;
+	csi.C1Z = _sizeZ;
+	csi.C2X = _sizeX;
+	csi.C2Y = topy;
+	csi.C2Z = 0;
+	csi.C3X = _sizeX;
+	csi.C3Y = 0;
+	csi.C3Z = 0;
+	_wallsout.push_back(csi);
+	}
+
+	//wallD-2
+	{
+	CornerStairInfo csi;
+	csi.C1X = _sizeX;
+	csi.C1Y = 0;
+	csi.C1Z = _sizeZ;
+	csi.C2X = _sizeX;
+	csi.C2Y = topy;
+	csi.C2Z = _sizeZ;
+	csi.C3X = _sizeX;
+	csi.C3Y = topy;
+	csi.C3Z = 0;
+	_wallsout.push_back(csi);
+	}
 }

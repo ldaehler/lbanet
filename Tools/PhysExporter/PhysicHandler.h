@@ -377,6 +377,8 @@ public:
 	//! search roof in the scene
 	void SearchRoof();
 
+	void MakeSurroundingPlanes();
+
 protected:
 
 	// allocate a memory buffer of given size
@@ -486,6 +488,8 @@ private:
 
 	std::vector<StairInfo> _stairs;
 	std::vector<CornerStairInfo> _cornerstairs;
+
+	std::vector<CornerStairInfo> _wallsout;
 };
 
 #endif
