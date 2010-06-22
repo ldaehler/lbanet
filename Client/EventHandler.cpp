@@ -384,6 +384,10 @@ bool EventHandler::Handle(SDL_Event flevent)
 					//_lbaNetEngine->GoNextRoom();
 					break;
 
+				case SDLK_RALT: case SDLK_LALT:
+					_lbaNetEngine->UseWeapon();
+					break;
+
 
 
 				 case SDLK_0:

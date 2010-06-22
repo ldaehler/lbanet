@@ -43,6 +43,7 @@ class ExitsHandler;
 #include <vector>
 #include <map>
 
+
 /***********************************************************************
  * Module:  LbaNetModel.h
  * Author:  vivien
@@ -184,6 +185,9 @@ public:
 	void InventoryUsed(long ObjectId, bool LifeFull, bool ManaFull);
 
 
+	// called when player want to use weapon
+	void UseWeapon();
+
 private:
 	MapRendererBase*		_mapRenderer;
 	PhysicHandlerBase*		_physicHandler;
@@ -197,6 +201,8 @@ private:
 	InventoryHandler*		_inventoryHandler;
 	GuiHandler*				_guiH;
 	ExitsHandler*			_exitsH;
+
+
 
 	std::string				_current_world;		// the current world in play
 	std::string				_current_map;		// the current map in play
