@@ -33,6 +33,8 @@ class PhysicHandlerBase;
 #include <vector>
 #include "GameEvents.h"
 
+#include "MagicBallHandler.h"
+
 
 
 class DeadReckon
@@ -334,6 +336,9 @@ public:
 	// show player
 	void Show();
 
+	// make actor use current weapon
+	// return true if weapon can be used
+	bool UseWeapon();
 
 protected:
 
@@ -377,8 +382,12 @@ protected:
 	// finish process
 	int FinishProcess(double tnow, float tdiff, int res);
 
+	// return the animation number for the weapon use
+	// depending of the stance
+	int GetWeaponAnimation();
+
 protected:
-	enum ActorState { Ac_Normal=0, Ac_Drowning, Ac_Dying, Ac_Flying, Ac_Jumping, Ac_FallingDown, Ac_protopack, Ac_hurt_fall, Ac_scripted, Ac_hurt };
+	enum ActorState { Ac_Normal=0, Ac_Drowning, Ac_Dying, Ac_Flying, Ac_Jumping, Ac_FallingDown, Ac_protopack, Ac_hurt_fall, Ac_scripted, Ac_hurt, Ac_useweapon };
 
 	Player*			_player;
 	PhysicHandlerBase*	_RoomP;
@@ -459,6 +468,9 @@ protected:
 
 	// actor used for attach/detach
 	long			_attachactor;
+
+	MagicBallHandler	_magicballH;
+	bool				_wlaunched;
 
 
 	std::string		_newmap;

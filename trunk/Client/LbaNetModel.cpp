@@ -282,6 +282,7 @@ void LbaNetModel::Draw()
 
 
 
+
 #ifdef _LBANET_SET_EDITOR_
 	// render editor stuff
 	if(_mapRenderer)
@@ -744,6 +745,14 @@ int LbaNetModel::Process()
 				m_current_main_state = 0;
 				_mainPlayerHandler->Stopstate();
 			}
+
+
+			if(m_current_main_state == 4)	// if actor was using weapon - terminate
+			{
+				m_current_main_state = 0;
+				_mainPlayerHandler->Stopstate();
+			}
+
 		break;
 
 
@@ -782,6 +791,7 @@ int LbaNetModel::Process()
 	_externalPlayers->Process(tnow, tdiff);
 	_localActorsHandler->Process(tnow, tdiff);
 	_externalActorsHandler->Process(tnow, tdiff);
+
 
 	return 1;
 }
@@ -1123,6 +1133,23 @@ void LbaNetModel::InventoryUsed(long ObjectId, bool LifeFull, bool ManaFull)
 	if(act.ChangeStance)
 		PlayerChangeStance(act.NewStance);
 }
+
+
+
+/***********************************************************
+called when player want to use weapon
+***********************************************************/
+void LbaNetModel::UseWeapon()
+{
+	if(_mainPlayerHandler->UseWeapon())
+		m_current_main_state = 4;
+}
+
+
+
+
+
+
 
 
 // get a pointer to the actors

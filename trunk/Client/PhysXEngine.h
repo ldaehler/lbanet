@@ -44,7 +44,8 @@ public:
 	ActorUserData(short ActType)
 	: ActorType(ActType), Materials(NULL), 
 		MaterialsSize(0),
-		HittedFloorMaterial(0), InternalActor(NULL)
+		HittedFloorMaterial(0), InternalActor(NULL),
+		released(false)
 	{}
 
 	//! destructor
@@ -66,6 +67,8 @@ public:
 	NxActor *			InternalActor;
 
 	short				HittedFloorMaterial;
+
+	bool				released;
 };
 
 
@@ -102,12 +105,17 @@ public:
 
 	//! create actors
 	NxActor* CreatePlane(const NxVec3 & StartPosition, const NxVec3 & PlaneNormal);
+
+	//! create actors
+	// type: 1=static, 2=kinematic, 3=dynamic
 	NxActor* CreateBox(const NxVec3 & StartPosition, float dimX, float dimY, float dimZ, 
-						float density, bool Pushable, ActorUserData * adata);
+						float density, int Type, ActorUserData * adata);
 	NxActor* CreateSphere(const NxVec3 & StartPosition, float radius, float density, 
-							bool Pushable, ActorUserData * adata);
+							int Type, ActorUserData * adata);
 	NxActor* CreateCapsule(const NxVec3 & StartPosition, float radius, float height, 
-							float density, bool Pushable, ActorUserData * adata);
+							float density, int Type, ActorUserData * adata);
+
+
 	NxController* CreateCharacter(const NxVec3 & StartPosition, float radius, float height,
 									ActorUserData * adata);
 

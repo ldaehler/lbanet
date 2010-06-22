@@ -109,6 +109,8 @@ MainPlayerHandler::MainPlayerHandler(float speedNormal, float speedSport,
 	_currentbody = 0;
 
 	_player->SetSize(0.4f, 5, 0.4f);
+
+	_magicballH.SetOwner(_player);
 }
 
 
@@ -199,6 +201,8 @@ void MainPlayerHandler::Render()
 	_player->Render(-1);
 	glPopMatrix();
 
+	// render tha magic ball
+	_magicballH.Render();
 }
 
 
@@ -395,8 +399,13 @@ do all check to be done when idle
 ***********************************************************/
 int MainPlayerHandler::Process(double tnow, float tdiff)
 {
+	// process magic ball
+	_magicballH.Process();
+
+
 	if(_paused)
 		return 0;
+
 
 	_velocityR = 0;
 	_corrected_velocityX = 0;
@@ -442,6 +451,47 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 	// in the case we are dying
 	if(_state == Ac_Dying)
 	{
+		return FinishProcess(tnow, tdiff, -1);
+	}
+
+
+	// in case we are using a weapon
+	if(_state == Ac_useweapon)
+	{
+		if(!_wlaunched && _player->getKeyframe() > 5)
+		{
+			_wlaunched = true;
+
+			int nbA = ((int)_player->GetRotation()) / 90;
+			int modA = ((int)_player->GetRotation()) % 90;
+			float radA =  M_PI * (modA) / 180.0f;
+			float dirX, dirZ;
+
+			if(nbA == 0)
+			{
+				dirX = sin(radA);
+				dirZ = cos(radA);
+			}
+			if(nbA == 1)
+			{
+				dirX = cos((float)radA);
+				dirZ = -sin((float)radA);
+			}
+			if(nbA == 2)
+			{
+				dirX = -sin(radA);
+				dirZ = -cos(radA);
+			}
+			if(nbA == 3)
+			{
+				dirX = -cos((float)radA);
+				dirZ = sin((float)radA);
+			}
+
+
+			_magicballH.Launch(GetPosX(), GetPosY(), GetPosZ(), dirX, dirZ);
+		}
+
 		return FinishProcess(tnow, tdiff, -1);
 	}
 
@@ -753,7 +803,8 @@ void MainPlayerHandler::PlayerStartMove(int moveDirection)
 	if(_state == Ac_Flying && moveDirection == 2)
 		return;
 
-	if(_state == Ac_Drowning || _state == Ac_Dying || _state == Ac_FallingDown || _state == Ac_hurt_fall || _state == Ac_Jumping || _state == Ac_scripted ||  _state == Ac_hurt)
+	if(_state == Ac_Drowning || _state == Ac_Dying || _state == Ac_FallingDown || _state == Ac_hurt_fall || 
+		_state == Ac_Jumping || _state == Ac_scripted ||  _state == Ac_hurt || _state == Ac_useweapon)
 		return;
 
 	switch(moveDirection)
@@ -1650,4 +1701,58 @@ show player
 void MainPlayerHandler::Show()
 {
 	_player->Show();
+}
+
+
+/***********************************************************
+make actor use current weapon
+return true if weapon can be used
+***********************************************************/
+bool MainPlayerHandler::UseWeapon()
+{
+	if(_state != Ac_Normal && _state != Ac_protopack)
+		return false;
+
+	if(_currentstance > 4 && _state != Ac_protopack)
+		return false;
+
+	if(_magicballH.Launched())
+		return false;
+
+	_wlaunched = false;
+	_remembering = true;
+	_rememberstate = _state;
+	_remembermodel = _player->GetModel();
+	_rememberbody = _player->GetBody();
+	_player->setActorAnimation(GetWeaponAnimation());
+	_state = Ac_useweapon;
+	return true;
+}
+
+
+/***********************************************************
+return the animation number for the weapon use
+depending of the stance
+**************************************************-********/
+int MainPlayerHandler::GetWeaponAnimation()
+{
+	switch(_currentstance)
+	{
+		case 1:
+			return 10;
+
+		case 2:
+			return 6;
+
+		case 3:
+			return 14;
+
+		case 4:
+			return 12;
+
+		case 7:
+			return 8;
+	}
+
+	return 0;
 }

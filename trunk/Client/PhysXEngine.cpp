@@ -244,7 +244,7 @@ void PhysXEngine::Init()
     // Create the scene
     NxSceneDesc sceneDesc;
  	sceneDesc.simType				= NX_SIMULATION_SW;
-    sceneDesc.gravity               = NxVec3(0,-0.3f/*-9.8f*/,0);
+    sceneDesc.gravity               = NxVec3(0,-9.8f/5.0f,0);
     gScene = gPhysicsSDK->createScene(sceneDesc);	
 	if(!gScene)
 	{ 
@@ -262,6 +262,8 @@ void PhysXEngine::Init()
 	defaultMaterial->setRestitution(0.5);
 	defaultMaterial->setStaticFriction(0.5);
 	defaultMaterial->setDynamicFriction(0.5);
+	defaultMaterial->setFrictionCombineMode(NX_CM_MIN);
+	defaultMaterial->setRestitutionCombineMode(NX_CM_MAX);
 
 
 	// add a cube and a plane
@@ -378,25 +380,30 @@ NxActor* PhysXEngine::CreatePlane(const NxVec3 & StartPosition, const NxVec3 & P
 	create box actor
 ***********************************************************/
 NxActor* PhysXEngine::CreateBox(const NxVec3 & StartPosition, float dimX, float dimY, float dimZ, 
-								float density, bool Pushable, ActorUserData * adata)
+								float density, int Type, ActorUserData * adata)
 {
 
 	// Add a single-shape actor to the scene
 	NxActorDesc actorDesc;
-
+	NxBodyDesc bodyDesc;
 
 	// The actor has one shape, a box, 1m on a side
 	NxBoxShapeDesc boxDesc;
 	boxDesc.dimensions.set(dimX, dimY, dimZ);
 	boxDesc.localPose.t = NxVec3(0, 0, 0);
 
-	if(Pushable)
+	if(Type != 1)
 	{
-		NxBodyDesc bodyDesc;
+		if(Type == 2)
+			bodyDesc.flags |= NX_BF_KINEMATIC;
+
 		actorDesc.body	= &bodyDesc;
 		actorDesc.density = density;
 
-		boxDesc.group = GROUP_COLLIDABLE_PUSHABLE;
+		if(Type == 3)
+			boxDesc.group = GROUP_COLLIDABLE_PUSHABLE;
+		else
+			boxDesc.group = GROUP_COLLIDABLE_NON_PUSHABLE;
 	}
 	else
 		boxDesc.group = GROUP_COLLIDABLE_NON_PUSHABLE;
@@ -416,22 +423,42 @@ NxActor* PhysXEngine::CreateBox(const NxVec3 & StartPosition, float dimX, float 
 	create sphere actor
 ***********************************************************/
 NxActor* PhysXEngine::CreateSphere(const NxVec3 & StartPosition, float radius, float density, 
-								   bool Pushable, ActorUserData * adata)
+									int Type,  ActorUserData * adata)
 {
 	// Add a single-shape actor to the scene
 	NxActorDesc actorDesc;
+	NxBodyDesc bodyDesc;
 
 	// The actor has one shape, a sphere, 1m on radius
 	NxSphereShapeDesc sphereDesc;
 	sphereDesc.radius		= radius;
 	sphereDesc.localPose.t	= NxVec3(0, 0, 0);
+	
 
-	if(Pushable)
+    NxMaterialDesc materialDesc;    
+	materialDesc.restitution = 0.9f;    
+	materialDesc.staticFriction = 0.5f;    
+	materialDesc.dynamicFriction = 0.5f; 
+	materialDesc.frictionCombineMode = NX_CM_MIN;
+	materialDesc.restitutionCombineMode = NX_CM_MAX;
+    NxMaterial *newMaterial=gScene->createMaterial(materialDesc); 
+
+	sphereDesc.materialIndex = newMaterial->getMaterialIndex();
+
+	
+	if(Type != 1)
 	{
-		NxBodyDesc bodyDesc;
+		if(Type == 2)
+			bodyDesc.flags |= NX_BF_KINEMATIC;
+
 		actorDesc.body	= &bodyDesc;
 		actorDesc.density		= density;
-		sphereDesc.group = GROUP_COLLIDABLE_PUSHABLE;
+		
+
+		if(Type == 3)
+			sphereDesc.group = GROUP_COLLIDABLE_PUSHABLE;
+		else
+			sphereDesc.group = GROUP_COLLIDABLE_NON_PUSHABLE;
 	}
 	else
 		sphereDesc.group = GROUP_COLLIDABLE_NON_PUSHABLE;
@@ -447,10 +474,11 @@ NxActor* PhysXEngine::CreateSphere(const NxVec3 & StartPosition, float radius, f
 	create capsule actor
 ***********************************************************/
 NxActor* PhysXEngine::CreateCapsule(const NxVec3 & StartPosition, float radius, float height, float density, 
-										bool Pushable, ActorUserData * adata)
+										int Type, ActorUserData * adata)
 {
 	// Add a single-shape actor to the scene
 	NxActorDesc actorDesc;
+	NxBodyDesc bodyDesc;
 
 	// The actor has one shape, a sphere, 1m on radius
 	NxCapsuleShapeDesc capsuleDesc;
@@ -458,12 +486,18 @@ NxActor* PhysXEngine::CreateCapsule(const NxVec3 & StartPosition, float radius, 
 	capsuleDesc.height		= height;
 	capsuleDesc.localPose.t = NxVec3(0, 0, 0);
 
-	if(Pushable)
+	if(Type != 1)
 	{
-		NxBodyDesc bodyDesc;
+		if(Type == 2)
+			bodyDesc.flags |= NX_BF_KINEMATIC;
+
 		actorDesc.body	= &bodyDesc;
 		actorDesc.density = density;
-		capsuleDesc.group = GROUP_COLLIDABLE_PUSHABLE;
+
+		if(Type == 3)
+			capsuleDesc.group = GROUP_COLLIDABLE_PUSHABLE;
+		else
+			capsuleDesc.group = GROUP_COLLIDABLE_NON_PUSHABLE;
 	}
 	else
 		capsuleDesc.group = GROUP_COLLIDABLE_NON_PUSHABLE;
@@ -722,6 +756,9 @@ DestroyActor
 ***********************************************************/
 void PhysXEngine::DestroyActor(NxActor* actor)
 {
+	if(!_isInitialized)
+		return;
+
 	//destroy internal actor if there is one
 	ActorUserData * udata = (ActorUserData *)actor->userData;
 	if(udata)
@@ -733,6 +770,8 @@ void PhysXEngine::DestroyActor(NxActor* actor)
 			if(it != _roofactors.end())
 				_roofactors.erase(it);
 		}
+
+		udata->released = true;
 	}
 
 	if(gScene && actor)

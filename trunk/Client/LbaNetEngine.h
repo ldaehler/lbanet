@@ -92,6 +92,9 @@ public:
 	// draw overlay stuff
 	void DrawOverlay();
 
+	// called when player want to use weapon
+	void UseWeapon();
+
 protected:
 	//! process function
 	bool Process(void);
