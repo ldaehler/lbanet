@@ -31,7 +31,17 @@ module LbaNet
 	    void SetTargeted(long PlayerId, long ActorId);
 	    	    
 	    // set player untargeted by actor
-	    void SetUnTargeted(long PlayerId, long ActorId);    
+	    void SetUnTargeted(long PlayerId, long ActorId);
+	    
+		    
+	    // called when player throw magic ball
+	    void MagicBallPlayed(long PlayerId, LaunchInfo Linfo);
+	    
+	    // called when magic ball touch an actor
+	    void MagicBallTouchActor(long PlayerId, long ActorId);
+	    
+	    // called when magic ball touch a player
+	    void MagicBallTouchPlayer(long PlayerId, long ActorId);	    
 	};
 };
 

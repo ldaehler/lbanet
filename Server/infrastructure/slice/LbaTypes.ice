@@ -217,6 +217,18 @@ module LbaNet
 	};
 	
 	
+	struct LaunchInfo
+	{
+		float PosX;
+		float PosY;
+		float PosZ;
+		
+		float DirX;
+		float DirZ;	
+		
+		int   Mode;
+	};
+	
 	sequence<long> QuestSeq;	
 };	
 

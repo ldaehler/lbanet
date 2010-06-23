@@ -32,6 +32,10 @@ module LbaNet
 	    void InformQuestFinished(long QuestId);	    
 	   
 	    void ActivationAborted(ActorActivationInfo ai);
+	    
+		    
+	    // called when player throw magic ball
+	    void MagicBallPlayed(long PlayerId, LaunchInfo Linfo);	    
 	};
 	
 	
