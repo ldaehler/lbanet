@@ -29,9 +29,10 @@ class NxActor;
 class ActorUserData;
 class Actor;
 
+#include "PhysicCallbackBase.h"
 
 
-class MagicBallHandler
+class MagicBallHandler : public PhysicCallbackBase
 {
 public: 
 	//! constructor
@@ -67,9 +68,15 @@ public:
 	bool Launched()
 	{ return _launched;}
 
+	//! callback function
+	virtual void CallbackOnContact(int TouchedActorType, long TouchedActorIdx);
+
 protected:
 	//! clean physycall shape if needed
 	void cleanPhys();
+
+	//! make ball come back
+	void BallComeBack();
 
 
 private:
@@ -77,6 +84,7 @@ private:
 	double	_lastlaunchtime;
 	double	_lasttime;
 	bool	_comeback;
+	int		_touch_counter;
 
 	float	_currX;
 	float	_currY;

@@ -100,8 +100,9 @@ void MagicBallHandler::Launch(float PosX, float PosY, float PosZ, float dirX, fl
 	_lastlaunchtime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDouble();
 	_launched = true;
 	_comeback = false;
+	_touch_counter = 0;
 
-	_physdata = new ActorUserData(3);
+	_physdata = new ActorUserData(4, -1, this);
 	_physH =  PhysXEngine::getInstance()->CreateSphere(NxVec3(PosX, PosY+_offset_y_, PosZ), _size_ball_, 1.0, 
 															3, _physdata);
 
@@ -173,23 +174,15 @@ void MagicBallHandler::Process()
 			_launched = false;
 		}
 	}
-	else
-	{
-		//check if time is up and magic ball should come back
-		double ctime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDouble();
-		if((ctime - _lastlaunchtime) > 5000)
-		{
-			NxVec3 vec = _physH->getGlobalPosition();
-			_currX = vec.x;
-			_currY = vec.y+1.0f+_size_ball_;
-			_currZ = vec.z;	
-
-			cleanPhys();
-
-			_comeback = true;
-			_lasttime = ctime;
-		}
-	}
+	//else
+	//{
+	//	//check if time is up and magic ball should come back
+	//	double ctime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDouble();
+	//	if((ctime - _lastlaunchtime) > 5000)
+	//	{
+	//		BallComeBack();
+	//	}
+	//}
 
 }
 
@@ -221,4 +214,42 @@ void MagicBallHandler::cleanPhys()
 	if(!_physdata->released)
 		PhysXEngine::getInstance()->DestroyActor(_physH);
 	delete _physdata;
+}
+
+
+/*
+--------------------------------------------------------------------------------------------------
+- callback function
+--------------------------------------------------------------------------------------------------
+*/
+void MagicBallHandler::CallbackOnContact(int TouchedActorType, long TouchedActorIdx)
+{
+	++_touch_counter;
+	if(_touch_counter > 3)
+	{
+		BallComeBack();
+	}
+}
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+- make ball come back
+--------------------------------------------------------------------------------------------------
+*/
+void MagicBallHandler::BallComeBack()
+{
+	if(_launched && !_comeback)
+	{
+		NxVec3 vec = _physH->getGlobalPosition();
+		_currX = vec.x;
+		_currY = vec.y+1.0f+_size_ball_;
+		_currZ = vec.z;	
+
+		cleanPhys();
+
+		_comeback = true;
+		_lasttime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDouble();
+	}
 }
