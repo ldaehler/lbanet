@@ -40,7 +40,7 @@ SessionServant::SessionServant(const std::string& userId, const RoomManagerPrx& 
 									std::string	version, DatabaseHandler & dbh)
 : _manager(manager), _curr_actor_room(""), _userId(userId), _ctracker(ctracker), _map_manager(map_manager),
 	_userNum(-1), _version(version), _currColor("FFFFFFFF"), _dbh(dbh), _selfptr(NULL), _client_observer(NULL),
-	_QH(const_cast<SessionServant *>(this)), _currWorldName(""), _needquestupdate(false)
+	_QH(const_cast<SessionServant *>(this)), _currWorldName(""), _needquestupdate(false), _magicballused(false)
 {
 	_userNum = _ctracker->Connect(_userId);
 
@@ -1291,4 +1291,54 @@ void SessionServant::InitializeClientQuests(std::vector<long> questStarted, std:
     {
 		std::cout<<"SessionServant - Unknown exception during InformQuestStarted"<<std::endl;
     }
+}
+
+
+
+/***********************************************************
+called when player throw magic ball
+***********************************************************/
+void SessionServant::MagicBallStart(const LaunchInfo & linfo, const ::Ice::Current&)
+{
+	if(_magicballused)
+		return;
+
+	_magicballused = true;
+	if(_actors_manager)
+		_actors_manager->MagicBallPlayed(_userNum, linfo);
+}
+
+/***********************************************************
+called when magic ball is back
+***********************************************************/
+void SessionServant::MagicBallEnd(const ::Ice::Current&)
+{
+	if(!_magicballused)
+		return;
+
+	_magicballused = false;
+}
+
+/***********************************************************
+called when magic ball touch an actor
+***********************************************************/
+void SessionServant::MagicBallTouchActor(Ice::Long ActorId, const ::Ice::Current&)
+{
+	if(!_magicballused)
+		return;
+
+	if(_actors_manager)
+		_actors_manager->MagicBallTouchActor(_userNum, ActorId);
+}
+
+/***********************************************************
+called when magic ball touch a player
+***********************************************************/
+void SessionServant::MagicBallTouchPlayer(Ice::Long ActorId, const ::Ice::Current&)
+{
+	if(!_magicballused)
+		return;
+
+	if(_actors_manager)
+		_actors_manager->MagicBallTouchPlayer(_userNum, ActorId);
 }
