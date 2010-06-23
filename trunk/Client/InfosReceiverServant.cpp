@@ -214,4 +214,9 @@ void InfosReceiverServant::InformQuestFinished(Ice::Long QuestId, const Ice::Cur
 	ThreadSafeWorkpile::getInstance()->NeedQuestBookUpdate(false);
 }
 
-
+		    
+// called when player throw magic ball
+void InfosReceiverServant::MagicBallPlayed(Ice::Long PlayerId, const LbaNet::LaunchInfo & linfo, const Ice::Current&)
+{
+	ThreadSafeWorkpile::getInstance()->MagicBallPlayed(PlayerId, linfo);
+}

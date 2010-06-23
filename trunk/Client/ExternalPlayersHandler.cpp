@@ -75,9 +75,12 @@ int ExternalPlayersHandler::Process(double tnow, float tdiff)
 	std::vector<LbaNet::ActorInfo> vecai;
 	std::vector<long> vecq;
 	std::vector<LbaNet::ActorLifeInfo> veclai;
+	std::vector<std::pair<long, LbaNet::LaunchInfo> > mb_vec;
+
 	wp->GetExtActorUpdate(vecai);
 	wp->GetQuittedActors(vecq);
 	wp->GetExtActorLifeUpdate(veclai);
+	wp->GetMagicBallPlayed(mb_vec);
 
 	for(size_t i=0; i<vecai.size(); ++i)
 		UpdateActor(vecai[i]);
@@ -85,6 +88,8 @@ int ExternalPlayersHandler::Process(double tnow, float tdiff)
 		UpdateLifeActor(veclai[i]);
 	for(size_t i=0; i<vecq.size(); ++i)
 		RemoveActor(vecq[i]);
+	for(size_t i=0; i<mb_vec.size(); ++i)
+		MagicBallPlayed(mb_vec[i].first, mb_vec[i].second);
 
 
 	// update actors spped and animation
@@ -193,5 +198,16 @@ Player * ExternalPlayersHandler::GetPlayer(long playerid)
 	}
 
 	return NULL;
+}
+
+
+/***********************************************************
+Magic Ball Played
+**********************************************************/
+void ExternalPlayersHandler::MagicBallPlayed(long playerid, const LbaNet::LaunchInfo & linfo)
+{
+	std::map<long, ExternalPlayer *>::iterator it = _actors.find(playerid);
+	if(it != _actors.end())
+		it->second->MagicBallPlayed(linfo);
 }
 

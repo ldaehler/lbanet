@@ -742,6 +742,88 @@ void IceConnectionManager::EndQuest(long QuestId)
 }
 
 
+ 
+/***********************************************************
+when player throw MB
+***********************************************************/   
+void IceConnectionManager::ThrowMagicBall(const LbaNet::LaunchInfo & linfo)
+{
+	try
+	{
+		_session->MagicBallStart(linfo);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception ThrowMagicBall: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception ThrowMagicBall "));
+    }
+}
+ 
+
+/***********************************************************
+when MB comeback
+***********************************************************/   
+void IceConnectionManager::MagicBallEnd()
+{
+	try
+	{
+		_session->MagicBallEnd();
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception MagicBallEnd: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception MagicBallEnd "));
+    }
+}
+
+
+/***********************************************************
+MB hitted an actor
+***********************************************************/   
+void IceConnectionManager::MbHittedActor(const std::vector<long> &vec)
+{
+	try
+	{
+		for(size_t i=0; i<vec.size(); ++i)
+			_session->MagicBallTouchActor(vec[i]);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception MagicBallTouchActor: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception MagicBallTouchActor "));
+    }
+}
+
+/***********************************************************
+MB hitted an actor
+***********************************************************/   
+void IceConnectionManager::MbHittedPlayer(const std::vector<long> &vec)
+{
+	try
+	{
+		for(size_t i=0; i<vec.size(); ++i)
+			_session->MagicBallTouchPlayer(vec[i]);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception MagicBallTouchPlayer: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception MagicBallTouchPlayer "));
+    }
+}
+
+
 
 /***********************************************************
 constructor
@@ -966,7 +1048,23 @@ void SendingLoopThread::run()
 		std::vector<long> endedQuests;
 		ThreadSafeWorkpile::getInstance()->GetQuestFinished(endedQuests);
 		for(size_t i=0; i<endedQuests.size(); ++i)
-			_connectionMananger.EndQuest(endedQuests[i]);	
+			_connectionMananger.EndQuest(endedQuests[i]);
+
+	
+		//-----------------------------------
+		// process magic ball
+		LbaNet::LaunchInfo linfo;
+		if(ThreadSafeWorkpile::getInstance()->MagicBallThrowed(linfo))
+			_connectionMananger.ThrowMagicBall(linfo);
+
+		if(ThreadSafeWorkpile::getInstance()->MagicBallEnded())
+			_connectionMananger.MagicBallEnd();
+
+		std::vector<long> mbhittedacts, mbhittedplayers;
+		ThreadSafeWorkpile::getInstance()->GetMbHittedActor(mbhittedacts);
+		ThreadSafeWorkpile::getInstance()->GetMbHittedPlayer(mbhittedplayers);
+		_connectionMananger.MbHittedActor(mbhittedacts);
+		_connectionMananger.MbHittedPlayer(mbhittedplayers);
 
 
 

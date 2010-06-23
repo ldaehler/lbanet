@@ -41,7 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	Constructor
 ***********************************************************/
 ExternalPlayer::ExternalPlayer(const LbaNet::ActorInfo & ainfo, float animationSpeed)
-: _last_update(0), _renderer(NULL)
+: _last_update(0), _renderer(NULL), _magicballH(false)
 {
 	_renderer = new Player(animationSpeed);
 
@@ -66,10 +66,10 @@ ExternalPlayer::ExternalPlayer(const LbaNet::ActorInfo & ainfo, float animationS
 ***********************************************************/
 ExternalPlayer::~ExternalPlayer()
 {
+	PhysXEngine::getInstance()->DestroyActor(_physH);
+
 	if(_usdata)
 		delete _usdata;
-
-	PhysXEngine::getInstance()->DestroyActor(_physH);
 }
 
 
@@ -139,6 +139,7 @@ do all check to be done when idle
 ***********************************************************/
 int ExternalPlayer::Process(double tnow, float tdiff)
 {
+	_magicballH.Process();
 
 	// calculate prediction
 	float predicted_posX = _renderer->GetPosX() + (_velocityX*tdiff);
@@ -208,6 +209,16 @@ draw the object
 void ExternalPlayer::draw(int RoomCut)
 {
 	_renderer->Render(RoomCut);
+	_magicballH.Render();
+}
+
+
+/***********************************************************
+magic ball played
+***********************************************************/
+void ExternalPlayer::MagicBallPlayed(const LbaNet::LaunchInfo & linfo)
+{
+	_magicballH.Launch(linfo.PosX, linfo.PosY, linfo.PosZ, linfo.DirX, linfo.DirZ, linfo.Mode);
 }
 
 

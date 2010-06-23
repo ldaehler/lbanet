@@ -415,7 +415,36 @@ public:
 	//! check if update needed
 	QuestUpdate QuestBookUpdateNeeded();
 
+	//! a magic ball was played by a player
+	void MagicBallPlayed(long PlayerId, const LbaNet::LaunchInfo & linfo);
 
+	//! get all magic ball played
+	void GetMagicBallPlayed(std::vector<std::pair<long, LbaNet::LaunchInfo> > & vec);
+
+
+	//! when player throw MB
+	void ThrowMagicBall(const LbaNet::LaunchInfo & linfo);
+
+	//! when MB comeback
+	void MagicBallEnd();
+
+	//! check if MB throwed
+	bool MagicBallThrowed(LbaNet::LaunchInfo & linfo);
+
+	//! check if MB Ended
+	bool MagicBallEnded();
+
+	//! MB hitted an actor
+	void MbHittedActor(long ActorId);
+
+	//! MB hitted an actor
+	void MbHittedPlayer(long ActorId);
+
+	//! MB hitted an actor
+	void GetMbHittedActor(std::vector<long> &vec);
+
+	//! MB hitted an actor
+	void GetMbHittedPlayer(std::vector<long> &vec);
 
 protected:
 
@@ -426,7 +455,7 @@ protected:
 			m_player_id(-1), m_new_actor_state(false), m_name_color_changed(false),
 			m_world_changed(false), m_player_pos_info_updated(false), m_waiting_container_info(false),
 			m_updated_container(false), m_exchanged_container(false), m_closed_container(false),
-			m_mplayer(NULL), m_explayers(NULL)
+			m_mplayer(NULL), m_explayers(NULL), mb_throwed(false), mb_ended(false)
 	{
 		m_update_questbook.NeedUpdate = false;
 	}
@@ -473,6 +502,12 @@ private:
 	IceUtil::Mutex								m_mutex_start_quest;
 	IceUtil::Mutex								m_mutex_end_quest;
 	IceUtil::Mutex								m_mutex_questbook_update;
+
+	IceUtil::Mutex								m_mutex_magic_ball_played;
+	IceUtil::Mutex								m_mutex_throw_MB;
+	IceUtil::Mutex								m_mutex_ended_MB;
+	IceUtil::Mutex								m_mutex_hitted_actors;
+	IceUtil::Mutex								m_mutex_hitted_players;
 
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_irc;
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_sending_loop;
@@ -567,6 +602,16 @@ private:
 	std::vector<long>							m_quest_started;
 	std::vector<long>							m_quest_ended;
 	QuestUpdate									m_update_questbook;
+
+	std::vector<std::pair<long, LbaNet::LaunchInfo> >	m_mb_played;
+
+	bool										mb_throwed;
+	LbaNet::LaunchInfo							mb_info;
+
+	bool										mb_ended;
+
+	std::vector<long>							m_mb_hitted_actors;
+	std::vector<long>							m_mb_hitted_players;
 
 	static ThreadSafeWorkpile *					_singletonInstance;
 };

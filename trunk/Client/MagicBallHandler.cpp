@@ -30,11 +30,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "PhysXEngine.h"
 #include "NxVec3.h"
 #include "NxActor.h"
+#include "NxUserContactReport.h"
 
 #include "Actor.h"
+#include "ThreadSafeWorkpile.h"
 
 #define _size_ball_	0.25f
 #define _offset_y_	5.0f
+
+
+/*
+--------------------------------------------------------------------------------------------------
+- constructor
+--------------------------------------------------------------------------------------------------
+*/
+MagicBallHandler::MagicBallHandler(bool MainPlayer)
+	: _launched(false), _comeback(false), _owner(NULL),
+		_MainPlayer(MainPlayer)
+{}
 
 
 /*
@@ -91,11 +104,23 @@ void MagicBallHandler::Render()
 - launch the magic ball
 --------------------------------------------------------------------------------------------------
 */
-void MagicBallHandler::Launch(float PosX, float PosY, float PosZ, float dirX, float dirZ)
+void MagicBallHandler::Launch(float PosX, float PosY, float PosZ, float dirX, float dirZ, int mode)
 {
 	// do nothing if ball is already launched
 	if(_launched)
 		return;
+
+	if(_MainPlayer)
+	{
+		LbaNet::LaunchInfo linfo;
+		linfo.PosX = PosX;
+		linfo.PosY = PosY;
+		linfo.PosZ = PosZ;
+		linfo.DirX = dirX;
+		linfo.DirZ = dirZ;
+		linfo.Mode = mode;
+		ThreadSafeWorkpile::getInstance()->ThrowMagicBall(linfo);
+	}
 
 	_lastlaunchtime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDouble();
 	_launched = true;
@@ -105,6 +130,7 @@ void MagicBallHandler::Launch(float PosX, float PosY, float PosZ, float dirX, fl
 	_physdata = new ActorUserData(4, -1, this);
 	_physH =  PhysXEngine::getInstance()->CreateSphere(NxVec3(PosX, PosY+_offset_y_, PosZ), _size_ball_, 1.0, 
 															3, _physdata);
+	_physH->setContactReportFlags(NX_NOTIFY_ON_START_TOUCH);
 
 	float coeffforce = 2.0f;
 
@@ -170,8 +196,7 @@ void MagicBallHandler::Process()
 
 		if(finishedx && finishedy && finishedz)
 		{
-			_comeback = false;
-			_launched = false;
+			Clear();
 		}
 	}
 	//else
@@ -194,6 +219,9 @@ void MagicBallHandler::Process()
 */
 void MagicBallHandler::Clear()
 {
+	if(_MainPlayer)
+		ThreadSafeWorkpile::getInstance()->MagicBallEnd();
+
 	cleanPhys();
 
 	_launched = false;
@@ -229,6 +257,25 @@ void MagicBallHandler::CallbackOnContact(int TouchedActorType, long TouchedActor
 	{
 		BallComeBack();
 	}
+
+	
+	if(TouchedActorType == 1)
+	{
+		if(_MainPlayer)
+			ThreadSafeWorkpile::getInstance()->MbHittedActor(TouchedActorIdx);
+
+		BallComeBack();
+	}
+
+	if(TouchedActorType == 3)
+	{
+		if(_MainPlayer)
+			ThreadSafeWorkpile::getInstance()->MbHittedPlayer(TouchedActorIdx);
+
+		BallComeBack();
+	}
+
+
 }
 
 

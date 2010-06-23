@@ -1104,3 +1104,107 @@ ThreadSafeWorkpile::QuestUpdate ThreadSafeWorkpile::QuestBookUpdateNeeded()
 	m_update_questbook.NeedUpdate = false;
 	return res;
 }
+
+
+
+/***********************************************************
+a magic ball was played by a player
+***********************************************************/
+void ThreadSafeWorkpile::MagicBallPlayed(long PlayerId, const LbaNet::LaunchInfo & linfo)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_magic_ball_played);
+	m_mb_played.push_back(std::make_pair<long, LbaNet::LaunchInfo>(PlayerId, linfo));
+}
+
+/***********************************************************
+get all magic ball played
+***********************************************************/
+void ThreadSafeWorkpile::GetMagicBallPlayed(std::vector<std::pair<long, LbaNet::LaunchInfo> > & vec)
+{
+	vec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_magic_ball_played);
+	vec.swap(m_mb_played);
+}
+
+/***********************************************************
+when player throw MB
+***********************************************************/
+void ThreadSafeWorkpile::ThrowMagicBall(const LbaNet::LaunchInfo & linfo)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_throw_MB);
+	mb_throwed = true;
+	mb_info = linfo;
+}
+
+/***********************************************************
+check if MB throwed
+***********************************************************/
+bool ThreadSafeWorkpile::MagicBallThrowed(LbaNet::LaunchInfo & linfo)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_throw_MB);
+	bool res = mb_throwed;
+	mb_throwed = false;
+	linfo = mb_info;
+	return res;
+}
+
+
+/***********************************************************
+when MB comeback
+***********************************************************/
+void ThreadSafeWorkpile::MagicBallEnd()
+{
+	IceUtil::Mutex::Lock lock(m_mutex_ended_MB);
+	mb_ended = true;
+}
+
+
+
+/***********************************************************
+check if MB Ended
+***********************************************************/
+bool ThreadSafeWorkpile::MagicBallEnded()
+{
+	IceUtil::Mutex::Lock lock(m_mutex_ended_MB);
+	bool res = mb_ended;
+	mb_ended = false;
+	return res;
+}
+
+/***********************************************************
+MB hitted an actor
+***********************************************************/
+void ThreadSafeWorkpile::MbHittedActor(long ActorId)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_hitted_actors);
+	m_mb_hitted_actors.push_back(ActorId);
+}
+
+/***********************************************************
+MB hitted an actor
+***********************************************************/
+void ThreadSafeWorkpile::MbHittedPlayer(long ActorId)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_hitted_players);
+	m_mb_hitted_players.push_back(ActorId);
+}
+
+/***********************************************************
+MB hitted an actor
+***********************************************************/
+void ThreadSafeWorkpile::GetMbHittedActor(std::vector<long> &vec)
+{
+	vec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_hitted_actors);
+	vec.swap(m_mb_hitted_actors);
+}
+
+/***********************************************************
+MB hitted an actor
+***********************************************************/
+void ThreadSafeWorkpile::GetMbHittedPlayer(std::vector<long> &vec)
+{
+	vec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_hitted_players);
+	vec.swap(m_mb_hitted_players);
+}

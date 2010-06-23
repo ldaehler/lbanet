@@ -137,6 +137,18 @@ public:
 	//! end quest
 	void EndQuest(long QuestId);
 
+	//! when player throw MB
+	void ThrowMagicBall(const LbaNet::LaunchInfo & linfo);
+
+	//! when MB comeback
+	void MagicBallEnd();
+
+	//! MB hitted an actor
+	void MbHittedActor(const std::vector<long> &vec);
+
+	//! MB hitted an actor
+	void MbHittedPlayer(const std::vector<long> &vec);
+
 private:
 
     const Ice::ObjectAdapterPtr							_adapter;	// ice adapter
