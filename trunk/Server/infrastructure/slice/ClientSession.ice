@@ -101,7 +101,20 @@ module LbaNet
 	    
 	    
 	    // called when quest should end
-	    void EndQuest(long QuestId);	    
+	    void EndQuest(long QuestId);	
+	    
+	    // called when player throw magic ball
+	    void MagicBallStart(LaunchInfo Linfo);
+	    
+	    // called when magic ball is back
+	    void MagicBallEnd();
+	    
+	    // called when magic ball touch an actor
+	    void MagicBallTouchActor(long ActorId);
+	    
+	    // called when magic ball touch a player
+	    void MagicBallTouchPlayer(long ActorId);	    
+	    
 	};
 
 };
