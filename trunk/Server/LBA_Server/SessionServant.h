@@ -200,6 +200,19 @@ public:
 	//! inform class that a quest has been finished
 	virtual void InformQuestFinished(long Questid);
 
+    
+    // called when player throw magic ball
+    virtual void MagicBallStart(const LaunchInfo & linfo, const ::Ice::Current&);
+    
+    // called when magic ball is back
+    virtual void MagicBallEnd(const ::Ice::Current&);
+    
+    // called when magic ball touch an actor
+    virtual void MagicBallTouchActor(Ice::Long ActorId, const ::Ice::Current&);
+    
+    // called when magic ball touch a player
+    virtual void MagicBallTouchPlayer(Ice::Long ActorId, const ::Ice::Current&);
+
 
 protected:
 	void ApplyInternalInventoryChanges(const UpdatedItemSeq &InventoryChanges);
@@ -246,6 +259,8 @@ private:
 
 	QuestHandler						_QH;
 	bool								_needquestupdate;
+
+	bool								_magicballused;
 };
 
 #endif
