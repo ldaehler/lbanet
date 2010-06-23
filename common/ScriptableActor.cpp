@@ -447,7 +447,7 @@ bool ScriptableActor::CheckAttach(Actor * act)
 		(act->GetPosY() >= (posY)				&& act->GetPosY() < (posY+_sizeY+1)) &&
 		(act->GetPosZ() >= (posZ-_sizeZ) && act->GetPosZ() < (posZ+_sizeZ)))
 	{
-		act->SetPosition(act->GetPosX(), posY+_sizeY, act->GetPosZ());
+		//act->SetPosition(act->GetPosX(), posY+_sizeY, act->GetPosZ());
 		Attach(act);
 		return true;
 	}

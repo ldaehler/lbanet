@@ -106,8 +106,10 @@ int DoorActor::Process(double tnow, float tdiff)
 				_posY += (float)stepY;
 				_posZ += (float)stepZ;
 
+				#ifndef _LBANET_SERVER_SIDE_
 				if(_physposhandler)
 					_physposhandler->SetPosition(_posX, _posY+(_sizeY/2.0f), _posZ);
+				#endif
 			}
 		}
 
@@ -136,8 +138,10 @@ int DoorActor::Process(double tnow, float tdiff)
 				_posY += (float)stepY;
 				_posZ += (float)stepZ;
 
+				#ifndef _LBANET_SERVER_SIDE_
 				if(_physposhandler)
 					_physposhandler->SetPosition(_posX, _posY+(_sizeY/2.0f), _posZ);
+				#endif
 			}
 		}
 	}

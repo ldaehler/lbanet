@@ -30,10 +30,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "TextWritter.h"
 #include <windows.h>    // Header File For Windows
 #include <GL/gl.h>      // Header File For The OpenGL32 Library
+#include "PhysXPhysicHandler.h"
 #endif
 
 #include <algorithm>
-#include "PhysXPhysicHandler.h"
+
 
 /***********************************************************
 	Constructor
@@ -58,8 +59,10 @@ Actor::~Actor()
 	if(_Renderer)
 		delete _Renderer;
 
+	#ifndef _LBANET_SERVER_SIDE_
 	if(_physposhandler)
 		delete _physposhandler;
+	#endif
 }
 
 /***********************************************************
@@ -345,8 +348,11 @@ void Actor::SetPosition(float  posX, float  posY, float  posZ)
 	if(_posZ < -10)
 		_posZ = -10;
 
+#ifndef _LBANET_SERVER_SIDE_
 	if(_physposhandler)
 		_physposhandler->SetPosition(_posX, _posY+(_sizeY/2.0f), _posZ);
+#endif
+
 	RefreshBB();
 }
 
