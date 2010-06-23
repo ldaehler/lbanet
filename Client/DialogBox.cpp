@@ -463,7 +463,7 @@ void NPCDialogBox::AddItem(long Id, CEGUI::Window* parent)
 	tmp->setID(Id);
 
 	CEGUI::Window*	tmp2 = CEGUI::WindowManager::getSingleton().createWindow("TaharezLook/StaticImage");
-	tmp2->setArea(CEGUI::UDim(0,5), CEGUI::UDim(0,8), CEGUI::UDim(0, _boxsize-10), CEGUI::UDim(0, _boxsize-20));
+	tmp2->setArea(CEGUI::UDim(0,5), CEGUI::UDim(0,8), CEGUI::UDim(0, (float)_boxsize-10), CEGUI::UDim(0, (float)_boxsize-20));
 
 	std::string imagesetname = ImageSetHandler::GetInstance()->GetInventoryImage(Id);
 	tmp2->setProperty("Image", "set:" + imagesetname + " image:full_image");

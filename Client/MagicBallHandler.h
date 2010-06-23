@@ -36,9 +36,7 @@ class MagicBallHandler : public PhysicCallbackBase
 {
 public: 
 	//! constructor
-	MagicBallHandler()
-		: _launched(false), _comeback(false), _owner(NULL)
-	{}
+	MagicBallHandler(bool MainPlayer);
 
 	//! destructor
 	virtual ~MagicBallHandler()
@@ -56,7 +54,7 @@ public:
 	void Render();
 
 	//! launch the magic ball
-	void Launch(float PosX, float PosY, float PosZ, float dirX, float dirZ);
+	void Launch(float PosX, float PosY, float PosZ, float dirX, float dirZ, int mode);
 
 	//! proccess magic ball
 	void Process();
@@ -85,6 +83,7 @@ private:
 	double	_lasttime;
 	bool	_comeback;
 	int		_touch_counter;
+	bool	_MainPlayer;
 
 	float	_currX;
 	float	_currY;

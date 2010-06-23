@@ -195,10 +195,10 @@ PhysXPhysicHandler::~PhysXPhysicHandler()
 		for(; it != end; ++it)
 		{
 			ActorUserData * adata = (ActorUserData *)(*it)->userData;
+			PhysXEngine::getInstance()->DestroyActor(*it);
+			
 			if(adata)
 				delete adata;
-
-			PhysXEngine::getInstance()->DestroyActor(*it);
 		}
 	}
 

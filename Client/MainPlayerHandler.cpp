@@ -100,7 +100,7 @@ MainPlayerHandler::MainPlayerHandler(float speedNormal, float speedSport,
 	_speedJump(speedJump), _heightJump(heightJump), _speedHurt(speedHurt),
 	_RoomP(NULL), _currentstance(0), 
 	_isAttached(false), _isDiscrete(false), _needCheck(false), _currentsignal(-1),
-	_touchedground(true)
+	_touchedground(true), _magicballH(true)
 {
 	_player = new Player(animationSpeed, true);
 	_player->DisplayName(true);
@@ -489,7 +489,10 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 			}
 
 
-			_magicballH.Launch(GetPosX(), GetPosY(), GetPosZ(), dirX, dirZ);
+			int mode = _currentstance;
+			if(mode > 4)
+				mode = 1;
+			_magicballH.Launch(GetPosX(), GetPosY(), GetPosZ(), dirX, dirZ, mode);
 		}
 
 		return FinishProcess(tnow, tdiff, -1);

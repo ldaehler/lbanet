@@ -27,11 +27,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <math.h>
 
+#include "MagicBallHandler.h"
 
 namespace LbaNet
 {
 	struct ActorInfo;
 	struct ActorLifeInfo;
+	struct LaunchInfo;
 }
 class Player;
 class ActorUserData;
@@ -126,6 +128,9 @@ public:
 	Player * GetPlayer()
 	{return _renderer;}
 
+	// magic ball played
+	void MagicBallPlayed(const LbaNet::LaunchInfo & linfo);
+
 private:
 	double			_last_update;
 
@@ -139,6 +144,8 @@ private:
 
 	ActorUserData * _usdata;
 	NxActor*		_physH;
+
+	MagicBallHandler _magicballH;
 };
 
 
