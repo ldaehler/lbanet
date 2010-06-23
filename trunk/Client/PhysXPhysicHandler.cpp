@@ -50,11 +50,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 - constructor
 --------------------------------------------------------------------------------------------------
 */
-ActorPositionHandler::ActorPositionHandler(NxController* contr, float X, float Y, float Z)
+ActorPositionHandler::ActorPositionHandler(NxActor* contr, float X, float Y, float Z)
 : controller(contr)
 {
 	if(controller)
-		PhysXEngine::getInstance()->SetCharacterPos(controller, NxVec3(X, Y, Z));
+		controller->setGlobalPosition(NxVec3(X, Y, Z));
 
 	lastX = X;
 	lastY = Y;
@@ -70,7 +70,8 @@ ActorPositionHandler::ActorPositionHandler(NxController* contr, float X, float Y
 void ActorPositionHandler::SetPosition(float X, float Y, float Z)
 {
 	if(controller)
-		PhysXEngine::getInstance()->MoveCharacter(controller, NxVec3(X-lastX, Y-lastY, Z-lastZ), false);
+		controller->moveGlobalPosition(NxVec3(X, Y, Z));
+		//PhysXEngine::getInstance()->MoveCharacter(controller, NxVec3(X-lastX, Y-lastY, Z-lastZ), false);
 
 	lastX = X;
 	lastY = Y;
@@ -95,12 +96,12 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 	_lastposZ = posZ;
 
 
-	ActorUserData * usdata = new ActorUserData(1);
+	ActorUserData * usdata = new ActorUserData(3, -1, NULL);
 	_controller = PhysXEngine::getInstance()->CreateCharacter(NxVec3(_lastposX, _lastposY, _lastposZ), 
 																0.4f, 3.8f, usdata);
 
 
-	ActorUserData * mstorage = new ActorUserData(2);
+	ActorUserData * mstorage = new ActorUserData(2, -1, NULL);
 	_map = PhysXEngine::getInstance()->LoadTriangleMeshFile(NxVec3(0,0,0), filename, mstorage);
 
 
@@ -125,9 +126,9 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 					sizey /= 2;
 					posy += sizey;
 
-					ActorUserData * usdata = new ActorUserData(1);
-					NxController* cont = PhysXEngine::getInstance()->CreateCharacterBox(NxVec3(posx, posy, posz), 
-																NxVec3(sizex, sizey, sizez), usdata);
+					ActorUserData * usdata = new ActorUserData(1, it->first, NULL);
+					NxActor* cont = PhysXEngine::getInstance()->CreateBox(NxVec3(posx, posy, posz), 
+																		sizex, sizey, sizez, 1.0, 2, usdata);
 
 					it->second->SetPhysController(new ActorPositionHandler(cont, posx, posy, posz));
 					_actors.push_back(cont);
@@ -157,9 +158,9 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 					sizey /= 2;
 					posy += sizey;
 
-					ActorUserData * usdata = new ActorUserData(1);
-					NxController* cont = PhysXEngine::getInstance()->CreateCharacterBox(NxVec3(posx, posy, posz), 
-																NxVec3(sizex, sizey, sizez), usdata);
+					ActorUserData * usdata = new ActorUserData(1, it->first, NULL);
+					NxActor* cont = PhysXEngine::getInstance()->CreateBox(NxVec3(posx, posy, posz), 
+																		sizex, sizey, sizez, 1.0, 2, usdata);
 
 					it->second->SetPhysController(new ActorPositionHandler(cont, posx, posy, posz));
 					_actors.push_back(cont);
@@ -189,15 +190,15 @@ PhysXPhysicHandler::~PhysXPhysicHandler()
 		if(characterdata)
 			delete characterdata;
 
-		std::vector<NxController*>::iterator it = _actors.begin();
-		std::vector<NxController*>::iterator end = _actors.end();
+		std::vector<NxActor*>::iterator it = _actors.begin();
+		std::vector<NxActor*>::iterator end = _actors.end();
 		for(; it != end; ++it)
 		{
-			ActorUserData * adata = (ActorUserData *)(*it)->getActor()->userData;
+			ActorUserData * adata = (ActorUserData *)(*it)->userData;
 			if(adata)
 				delete adata;
 
-			PhysXEngine::getInstance()->DestroyCharacter(*it);
+			PhysXEngine::getInstance()->DestroyActor(*it);
 		}
 	}
 

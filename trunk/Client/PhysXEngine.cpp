@@ -56,7 +56,27 @@ enum GameGroup
 class MyContactReport : public NxUserContactReport    
 {        
 	void onContactNotify(NxContactPair& pair, NxU32 events)        
-	{        
+	{  
+		if(events & NX_NOTIFY_ON_START_TOUCH)
+		{
+			NxActor* n1 = pair.actors[0];
+			NxActor* n2 = pair.actors[1];
+			if(n1 && n2)
+			{
+				ActorUserData * acd1 = (ActorUserData *) n1->userData;
+				ActorUserData * acd2 = (ActorUserData *) n2->userData;
+				if(acd1 && acd2)
+				{
+					if(acd1->Callback)
+						acd1->Callback->CallbackOnContact(acd2->ActorType, acd2->ActorId);
+
+					if(acd2->Callback)
+						acd2->Callback->CallbackOnContact(acd1->ActorType, acd1->ActorId);
+				}
+			}
+		} 
+
+
 		//if(events & NX_NOTIFY_ON_START_TOUCH)
 		//{
 		//	NxActor* n1 = pair.actors[0];
@@ -128,7 +148,7 @@ public:
 					if(mstorage)
 					{
 						NxRaycastHit hitinfo;
-						NxVec3 pos(hit.worldPos.x,hit.worldPos.y+0.01f,hit.worldPos.z);
+						NxVec3 pos((float)hit.worldPos.x,(float)hit.worldPos.y+0.01f,(float)hit.worldPos.z);
 						NxVec3 vec(0, -1,0);
 
 						if(tmesh->raycast(NxRay(pos, vec), 0.02f, 
@@ -380,7 +400,7 @@ NxActor* PhysXEngine::CreatePlane(const NxVec3 & StartPosition, const NxVec3 & P
 	create box actor
 ***********************************************************/
 NxActor* PhysXEngine::CreateBox(const NxVec3 & StartPosition, float dimX, float dimY, float dimZ, 
-								float density, int Type, ActorUserData * adata)
+								float density, int Type, ActorUserData * adata, bool noncollidable)
 {
 
 	// Add a single-shape actor to the scene
@@ -407,6 +427,9 @@ NxActor* PhysXEngine::CreateBox(const NxVec3 & StartPosition, float dimX, float 
 	}
 	else
 		boxDesc.group = GROUP_COLLIDABLE_NON_PUSHABLE;
+
+	if(noncollidable)
+		boxDesc.group = GROUP_NON_COLLIDABLE;
 
 	actorDesc.shapes.pushBack(&boxDesc);
 	actorDesc.userData = adata;

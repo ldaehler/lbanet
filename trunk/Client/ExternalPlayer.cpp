@@ -29,6 +29,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <IceUtil/Time.h>
 #include "SynchronizedTimeHandler.h"
 
+
+#include "PhysXPhysicHandler.h"
+#include "PhysXEngine.h"
+#include "NxVec3.h"
+#include "NxActor.h"
+#include "Actor.h"
+
+
 /***********************************************************
 	Constructor
 ***********************************************************/
@@ -41,6 +49,16 @@ ExternalPlayer::ExternalPlayer(const LbaNet::ActorInfo & ainfo, float animationS
 	_renderer->SetPosition(ainfo.X,  ainfo.Y, ainfo.Z);
 	_renderer->SetRotation(ainfo.Rotation);
 
+
+	// add physique info
+	_usdata = new ActorUserData(3, ainfo.ActorId, NULL);
+	_physH = PhysXEngine::getInstance()->CreateBox(NxVec3(ainfo.X,  ainfo.Y, ainfo.Z), 
+														_renderer->GetSizeX(), 
+														_renderer->GetSizeY(), 
+														_renderer->GetSizeZ(), 1.0, 2, _usdata, true);
+
+	_renderer->SetPhysController(new ActorPositionHandler(_physH, ainfo.X,  ainfo.Y, ainfo.Z));
+
 }
 
 /***********************************************************
@@ -48,7 +66,10 @@ ExternalPlayer::ExternalPlayer(const LbaNet::ActorInfo & ainfo, float animationS
 ***********************************************************/
 ExternalPlayer::~ExternalPlayer()
 {
+	if(_usdata)
+		delete _usdata;
 
+	PhysXEngine::getInstance()->DestroyActor(_physH);
 }
 
 

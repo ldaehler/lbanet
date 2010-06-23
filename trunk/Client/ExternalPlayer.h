@@ -34,7 +34,8 @@ namespace LbaNet
 	struct ActorLifeInfo;
 }
 class Player;
-
+class ActorUserData;
+class NxActor;
 
 class ExternalReckon
 {
@@ -135,6 +136,9 @@ private:
 
 	ExternalReckon	_dr;
 	Player *		_renderer;
+
+	ActorUserData * _usdata;
+	NxActor*		_physH;
 };
 
 

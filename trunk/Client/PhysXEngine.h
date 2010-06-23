@@ -37,15 +37,17 @@ class NxActor;
 #include <vector>
 #include <set>
 
+#include "PhysicCallbackBase.h"
+
 class ActorUserData
 {
 public:
 	//! constructor
-	ActorUserData(short ActType)
+	ActorUserData(short ActType, long index, PhysicCallbackBase * callback)
 	: ActorType(ActType), Materials(NULL), 
 		MaterialsSize(0),
 		HittedFloorMaterial(0), InternalActor(NULL),
-		released(false)
+		released(false), Callback(callback), ActorId(index)
 	{}
 
 	//! destructor
@@ -57,10 +59,12 @@ public:
 
 
 	// Actor type
-	// 1 = character
+	// 1 = actor
 	// 2 = terrain
-	// 3 = other
+	// 3 = player
+	// 4 = other
 	short				ActorType;
+	long				ActorId; 
 
 	size_t				MaterialsSize;
 	short *				Materials; 
@@ -69,6 +73,8 @@ public:
 	short				HittedFloorMaterial;
 
 	bool				released;
+
+	PhysicCallbackBase * Callback;
 };
 
 
@@ -109,7 +115,7 @@ public:
 	//! create actors
 	// type: 1=static, 2=kinematic, 3=dynamic
 	NxActor* CreateBox(const NxVec3 & StartPosition, float dimX, float dimY, float dimZ, 
-						float density, int Type, ActorUserData * adata);
+						float density, int Type, ActorUserData * adata, bool noncollidable = false);
 	NxActor* CreateSphere(const NxVec3 & StartPosition, float radius, float density, 
 							int Type, ActorUserData * adata);
 	NxActor* CreateCapsule(const NxVec3 & StartPosition, float radius, float height, 
