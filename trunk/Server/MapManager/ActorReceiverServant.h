@@ -85,6 +85,16 @@ public:
     	    
     // set player untargeted by actor
     virtual void SetUnTargeted(Ice::Long PlayerId, Ice::Long ActorId, const Ice::Current&);   
+	    
+	    
+    // called when player throw magic ball
+    virtual void MagicBallPlayed(Ice::Long PlayerId, const LbaNet::LaunchInfo& Linfo, const Ice::Current&);
+    
+    // called when magic ball touch an actor
+    virtual void MagicBallTouchActor(Ice::Long PlayerId, Ice::Long ActorId, const Ice::Current&);
+    
+    // called when magic ball touch a player
+    virtual void MagicBallTouchPlayer(Ice::Long PlayerId, Ice::Long ActorId, const Ice::Current&);	
 
 private:
 	SharedData * _SD;

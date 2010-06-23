@@ -171,6 +171,27 @@ public:
 	// get all items used
 	void GetAllUntargetedActors(std::vector<TargetedActorPlayer> & vec);
 
+		    
+    // called when player throw magic ball
+    void MagicBallPlayed(long PlayerId, const LbaNet::LaunchInfo& Linfo);
+    
+    // called when magic ball touch an actor
+    void MagicBallTouchActor(long PlayerId, long ActorId);
+    
+    // called when magic ball touch a player
+    void MagicBallTouchPlayer(long PlayerId, long ActorId);	
+
+		    
+    // called when player throw magic ball
+    void GetMagicBallPlayed(std::vector<std::pair<long, LbaNet::LaunchInfo>	> & vec);
+    
+    // called when magic ball touch an actor
+	void GetMagicBallTouchActor(std::vector<std::pair<long, long> > & vec);
+    
+    // called when magic ball touch a player
+    void GetMagicBallTouchPlayer(std::vector<std::pair<long, long> >  & vec);	
+
+
 protected:
 	SharedData(const SharedData &);
 	const SharedData & operator=(const SharedData &);
@@ -187,6 +208,9 @@ private:
 	IceUtil::Mutex								m_mutex_container_queries;
 	IceUtil::Mutex								m_mutex_container_updates;
 	IceUtil::Mutex								m_mutex_targeted_actors;
+	IceUtil::Mutex								m_mutex_magicball_played;
+	IceUtil::Mutex								m_mutex_magicball_touchedactor;
+	IceUtil::Mutex								m_mutex_magicball_touchedplayer;
 
 	std::vector<std::pair<ActorLifeInfo, bool> >	m_joined_players;
 	std::vector<LbaNet::ActorInfo>				m_players_info;
@@ -203,6 +227,12 @@ private:
 
 	std::vector<TargetedActorPlayer>			m_targeted_actors;
 	std::vector<TargetedActorPlayer>			m_untargeted_actors;
+
+	std::vector<std::pair<long, LbaNet::LaunchInfo>	> m_mb_played;
+    std::vector<std::pair<long, long> >			m_mb_touched_actor;
+    std::vector<std::pair<long, long> >			m_mb_touched_player;
+
+
 
 	bool										m_running;
 };

@@ -327,6 +327,10 @@ void MapHandlerThread::run()
 		std::vector<ContainerUpdateInfo> conuinfos;
 		std::vector<TargetedActorPlayer> targetedinfos;
 		std::vector<TargetedActorPlayer> untargetedinfos;
+		std::vector<std::pair<long, LbaNet::LaunchInfo>	> mb_played;
+		std::vector<std::pair<long, long> >	mb_touched_actor;
+		std::vector<std::pair<long, long> >	mb_touched_player;
+
 
 		_SD->GetJoined(joinedmap);
 		_SD->GetUpdatedinfo(pinfos);
@@ -340,6 +344,10 @@ void MapHandlerThread::run()
 		_SD->GetAllContainerUpdates(conuinfos);
 		_SD->GetAllTargetedActors(targetedinfos);
 		_SD->GetAllUntargetedActors(untargetedinfos);
+		_SD->GetMagicBallPlayed(mb_played);
+		_SD->GetMagicBallTouchActor(mb_touched_actor);
+		_SD->GetMagicBallTouchPlayer(mb_touched_player);	
+
 
 		Lock sync(*this);
 		// update state
@@ -454,6 +462,30 @@ void MapHandlerThread::run()
 				std::vector<TargetedActorPlayer>::const_iterator end = untargetedinfos.end();
 				for(; it != end; ++it)
 					UpdateTargetedActor(*it, false);
+			}
+
+			//played magic ball
+			{
+				std::vector<std::pair<long, LbaNet::LaunchInfo>	>::const_iterator it = mb_played.begin();
+				std::vector<std::pair<long, LbaNet::LaunchInfo>	>::const_iterator end = mb_played.end();
+				for(; it != end; ++it)
+					_publisher->MagicBallPlayed(it->first, it->second);
+			}
+
+			//touched magic ball actor
+			{
+				std::vector<std::pair<long, long> >::const_iterator it = mb_touched_actor.begin();
+				std::vector<std::pair<long, long> >::const_iterator end = mb_touched_actor.end();
+				for(; it != end; ++it)
+					MagicBallTouchedActor(it->first, it->second);
+			}
+
+			//touched magic ball actor
+			{
+				std::vector<std::pair<long, long> >::const_iterator it = mb_touched_player.begin();
+				std::vector<std::pair<long, long> >::const_iterator end = mb_touched_player.end();
+				for(; it != end; ++it)
+					MagicBallTouchedPlayer(it->first, it->second);
 			}
 		}
 
@@ -850,4 +882,22 @@ void MapHandlerThread::UpdateTargetedActor(const TargetedActorPlayer & info, boo
 
 		it->second->UpdateTargetedActor(info.PlayerId, targeted);
 	}
+}
+
+
+
+/***********************************************************
+Magic Ball Touched Actor
+***********************************************************/
+void MapHandlerThread::MagicBallTouchedActor(long PlayerId, long ActorId)
+{
+
+}
+
+/***********************************************************
+Magic Ball Touched Player
+***********************************************************/
+void MapHandlerThread::MagicBallTouchedPlayer(long PlayerId, long ActorId)
+{
+
 }

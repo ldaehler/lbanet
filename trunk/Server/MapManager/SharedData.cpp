@@ -300,3 +300,63 @@ void SharedData::GetAllUntargetedActors(std::vector<TargetedActorPlayer> & vec)
 	IceUtil::Mutex::Lock lock(m_mutex_targeted_actors);
 	m_untargeted_actors.swap(vec);
 }
+
+
+
+/***********************************************************
+called when player throw magic ball
+***********************************************************/	    
+void SharedData::MagicBallPlayed(long PlayerId, const LbaNet::LaunchInfo& Linfo)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_magicball_played);
+	m_mb_played.push_back(std::make_pair<long, LbaNet::LaunchInfo>(PlayerId, Linfo));
+}
+
+/***********************************************************
+called when magic ball touch an actor
+***********************************************************/
+void SharedData::MagicBallTouchActor(long PlayerId, long ActorId)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_magicball_touchedactor);
+	m_mb_touched_actor.push_back(std::make_pair<long, long>(PlayerId, ActorId));
+}
+
+/***********************************************************
+called when magic ball touch a player
+***********************************************************/
+void SharedData::MagicBallTouchPlayer(long PlayerId, long ActorId)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_magicball_touchedplayer);
+	m_mb_touched_player.push_back(std::make_pair<long, long>(PlayerId, ActorId));
+}	
+
+
+/***********************************************************
+called when player throw magic ball
+***********************************************************/	    
+void SharedData::GetMagicBallPlayed(std::vector<std::pair<long, LbaNet::LaunchInfo>	> & vec)
+{
+	vec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_magicball_played);
+	m_mb_played.swap(vec);
+}
+
+/***********************************************************
+called when magic ball touch an actor
+***********************************************************/
+void SharedData::GetMagicBallTouchActor(std::vector<std::pair<long, long> > & vec)
+{
+	vec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_magicball_touchedactor);
+	m_mb_touched_actor.swap(vec);
+}
+
+/***********************************************************
+called when magic ball touch a player
+***********************************************************/
+void SharedData::GetMagicBallTouchPlayer(std::vector<std::pair<long, long> > & vec)
+{
+	vec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_magicball_touchedplayer);
+	m_mb_touched_player.swap(vec);
+}	

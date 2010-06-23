@@ -106,6 +106,9 @@ protected:
 
 	void UpdateTargetedActor(const TargetedActorPlayer & info, bool targeted);
 
+	void MagicBallTouchedActor(long PlayerId, long ActorId);
+	void MagicBallTouchedPlayer(long PlayerId, long ActorId);
+
 
 private:
 	ActorsObserverPrx							_publisher;

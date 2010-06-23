@@ -82,6 +82,9 @@ public:
   	
 	// InformQuestFinished  
     virtual  void InformQuestFinished(Ice::Long QuestId, const Ice::Current&){}
+		    
+	// called when player throw magic ball
+	virtual void MagicBallPlayed(Ice::Long PlayerId, const LaunchInfo & linfo, const Ice::Current&){} 
 
 private:
 	SharedData * _SD;
