@@ -164,3 +164,28 @@ void ActorReceiverServant::SetUnTargeted(Ice::Long PlayerId,
 	info.PlayerId = PlayerId;
 	_SD->UpdateUntargetedActor(info);
 }  
+
+    
+/***********************************************************
+called when player throw magic ball
+***********************************************************/
+void ActorReceiverServant::MagicBallPlayed(Ice::Long PlayerId, const LbaNet::LaunchInfo& Linfo, const Ice::Current&)
+{
+    _SD->MagicBallPlayed(PlayerId, Linfo);
+}
+
+/***********************************************************
+called when magic ball touch an actor
+***********************************************************/
+void ActorReceiverServant::MagicBallTouchActor(Ice::Long PlayerId, Ice::Long ActorId, const Ice::Current&)
+{
+   _SD->MagicBallTouchActor(PlayerId, ActorId);
+}
+
+/***********************************************************
+called when magic ball touch a player
+***********************************************************/
+void ActorReceiverServant::MagicBallTouchPlayer(Ice::Long PlayerId, Ice::Long ActorId, const Ice::Current&)
+{
+    _SD->MagicBallTouchPlayer(PlayerId, ActorId);
+}	
