@@ -162,7 +162,7 @@ void LadderActor::ProcessActivation(float PlayerPosX, float PlayerPosY, float Pl
 	trans2b.Type = 1;
 	trans2b.Animation = 26;
 	trans2b.ValueA = _posX+remX+_deltaX;
-	trans2b.ValueB = _posY+_deltaY;
+	trans2b.ValueB = _posY+_deltaY+0.1;
 	trans2b.ValueC = _posZ+remZ+_deltaZ;
 	trans2b.Speed = 0.0025f;
 	script.push_back(trans2b);
@@ -175,7 +175,7 @@ void LadderActor::ProcessActivation(float PlayerPosX, float PlayerPosY, float Pl
 	trans3.Type = 1;
 	trans3.Animation = 26;
 	trans3.ValueA = _posX+remX+_deltaX+dX;
-	trans3.ValueB = _posY+_deltaY;
+	trans3.ValueB = _posY+_deltaY+0.1;
 	trans3.ValueC = _posZ+remZ+_deltaZ+dZ;
 	trans3.Speed = 0.003f;
 	script.push_back(trans3);
