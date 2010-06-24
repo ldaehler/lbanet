@@ -1107,10 +1107,9 @@ void LbaNetModel::PlayerHurt(long actorid)
 /***********************************************************
 player life changed
 ***********************************************************/
-void LbaNetModel::PlayerLifeChanged(float CurLife, float MaxLife, float CurMana, float MaxMana)
+void LbaNetModel::PlayerLifeChanged(float CurLife, float MaxLife, float CurMana, float MaxMana, bool Hurt)
 {
-	if(_mainPlayerHandler->PlayerLifeChanged(CurLife, MaxLife, CurMana, MaxMana))
-		m_current_main_state = 2;
+	_mainPlayerHandler->PlayerLifeChanged(CurLife, MaxLife, CurMana, MaxMana, Hurt);
 }
 
 
@@ -1147,6 +1146,14 @@ void LbaNetModel::UseWeapon()
 
 
 
+/***********************************************************
+player should die
+***********************************************************/
+void LbaNetModel::PlayerDie()
+{
+	_mainPlayerHandler->Startdying();
+	m_current_main_state = 2;
+}
 
 
 

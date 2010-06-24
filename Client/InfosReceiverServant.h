@@ -83,6 +83,9 @@ public:
 		    
 	// called when player throw magic ball
 	virtual void MagicBallPlayed(Ice::Long PlayerId, const LbaNet::LaunchInfo & linfo, const Ice::Current&);
+
+	//called when actor should die
+	virtual void Die(const Ice::Current&);
 };
 
 #endif

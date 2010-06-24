@@ -54,7 +54,7 @@ public:
 	void Render();
 
 	//! launch the magic ball
-	void Launch(float PosX, float PosY, float PosZ, float dirX, float dirZ, int mode);
+	void Launch(float PosX, float PosY, float PosZ, float dirX, float dirZ, int mode, bool enoughmana);
 
 	//! proccess magic ball
 	void Process();
@@ -84,6 +84,7 @@ private:
 	bool	_comeback;
 	int		_touch_counter;
 	bool	_MainPlayer;
+	bool	_enoughmana;
 
 	float	_currX;
 	float	_currY;

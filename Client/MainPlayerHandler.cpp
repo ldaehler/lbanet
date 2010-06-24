@@ -492,7 +492,8 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 			int mode = _currentstance;
 			if(mode > 4)
 				mode = 1;
-			_magicballH.Launch(GetPosX(), GetPosY(), GetPosZ(), dirX, dirZ, mode);
+			_magicballH.Launch(GetPosX(), GetPosY(), GetPosZ(), dirX, dirZ, mode, 
+									(_player->GetCurrentMana() > 0));
 		}
 
 		return FinishProcess(tnow, tdiff, -1);
@@ -1577,9 +1578,22 @@ player is hurt by an actor
 ***********************************************************/
 void MainPlayerHandler::PlayerHurt(long actorid)
 {
-	Stopstate();
+	// if already hurting then do nothing
+	if(_state == Ac_hurt || _state == Ac_Drowning || _state == Ac_Dying || _state == Ac_scripted)
+	{
+		if(actorid >= 0)
+		{
+			// inform back actor that the hurting is finished
+			std::vector<long> vectar;
+			vectar.push_back(_hurtingactorId);
+			long targetsignal = 3;
+			ThreadSafeWorkpile::getInstance()->AddEvent(new GameSignalvent(targetsignal, vectar));
+		}
 
-	ThreadSafeWorkpile::getInstance()->AddPlayerHurt(actorid);
+		return;
+	}
+
+	Stopstate();
 
 	std::string soundp = DataLoader::getInstance()->GetSoundPath(31);
 	if(soundp != "")
@@ -1636,20 +1650,15 @@ bool MainPlayerHandler::NeedCheck()
 /***********************************************************
 player life changed
 ***********************************************************/
-bool MainPlayerHandler::PlayerLifeChanged(float CurLife, float MaxLife, float CurMana, float MaxMana)
+void MainPlayerHandler::PlayerLifeChanged(float CurLife, float MaxLife, float CurMana, float MaxMana, bool Hurt)
 {
 	_player->setCurrentLife(CurLife);
 	_player->setMaxLife(MaxLife);
 	_player->setCurrentMana(CurMana);
 	_player->setMaxMana(MaxMana);
 
-	if(CurLife <= 0)
-	{
-		Startdying();
-		return true;
-	}
-
-	return false;
+	if(Hurt)
+		PlayerHurt(-1);
 }
 
 

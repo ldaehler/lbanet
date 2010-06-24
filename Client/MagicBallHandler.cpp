@@ -104,7 +104,7 @@ void MagicBallHandler::Render()
 - launch the magic ball
 --------------------------------------------------------------------------------------------------
 */
-void MagicBallHandler::Launch(float PosX, float PosY, float PosZ, float dirX, float dirZ, int mode)
+void MagicBallHandler::Launch(float PosX, float PosY, float PosZ, float dirX, float dirZ, int mode, bool enoughmana)
 {
 	// do nothing if ball is already launched
 	if(_launched)
@@ -119,6 +119,7 @@ void MagicBallHandler::Launch(float PosX, float PosY, float PosZ, float dirX, fl
 		linfo.DirX = dirX;
 		linfo.DirZ = dirZ;
 		linfo.Mode = mode;
+		linfo.Enoughmana = enoughmana;
 		ThreadSafeWorkpile::getInstance()->ThrowMagicBall(linfo);
 	}
 
@@ -126,6 +127,7 @@ void MagicBallHandler::Launch(float PosX, float PosY, float PosZ, float dirX, fl
 	_launched = true;
 	_comeback = false;
 	_touch_counter = 0;
+	_enoughmana = enoughmana;
 
 	_physdata = new ActorUserData(4, -1, this);
 	_physH =  PhysXEngine::getInstance()->CreateSphere(NxVec3(PosX, PosY+_offset_y_, PosZ), _size_ball_, 1.0, 
@@ -253,7 +255,7 @@ void MagicBallHandler::cleanPhys()
 void MagicBallHandler::CallbackOnContact(int TouchedActorType, long TouchedActorIdx)
 {
 	++_touch_counter;
-	if(_touch_counter > 3)
+	if(_touch_counter > 3 || !_enoughmana)
 	{
 		BallComeBack();
 	}

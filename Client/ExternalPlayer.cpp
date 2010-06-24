@@ -218,7 +218,8 @@ magic ball played
 ***********************************************************/
 void ExternalPlayer::MagicBallPlayed(const LbaNet::LaunchInfo & linfo)
 {
-	_magicballH.Launch(linfo.PosX, linfo.PosY, linfo.PosZ, linfo.DirX, linfo.DirZ, linfo.Mode);
+	_magicballH.Launch(linfo.PosX, linfo.PosY, linfo.PosZ, linfo.DirX, linfo.DirZ, 
+						linfo.Mode, linfo.Enoughmana);
 }
 
 

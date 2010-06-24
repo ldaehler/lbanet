@@ -303,7 +303,7 @@ public:
 
 	//player life changed
 	// return true if actor die
-	bool PlayerLifeChanged(float CurLife, float MaxLife, float CurMana, float MaxMana);
+	void PlayerLifeChanged(float CurLife, float MaxLife, float CurMana, float MaxMana, bool Hurt);
 
 
 	// render the main player at a fixed position for picture
