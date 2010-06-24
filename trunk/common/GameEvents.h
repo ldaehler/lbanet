@@ -480,7 +480,7 @@ class PlayerLifeChangedEvent : public GameEvent
 {
 public:
 	//! constructor
-	PlayerLifeChangedEvent(float CurLife, float MaxLife, float CurMana, float MaxMana)
+	PlayerLifeChangedEvent(float CurLife, float MaxLife, float CurMana, float MaxMana, bool Hurt)
 		: _CurLife(CurLife), _MaxLife(MaxLife), _CurMana(CurMana), _MaxMana(MaxMana)
 	{
 		_type = 19;	
@@ -490,6 +490,7 @@ public:
 	float _MaxLife;
 	float _CurMana;
 	float _MaxMana;
+	bool _Hurt;
 };
 
 
@@ -629,6 +630,24 @@ public:
 	int		_Number;
 };
 
+
+
+/*
+************************************************************************************************************************
+*                                                  class DieEvent
+*
+*	player should die
+************************************************************************************************************************
+*/
+class DieEvent : public GameEvent
+{
+public:
+	//! constructor
+	DieEvent()
+	{
+		_type = 26;	
+	}
+};
 
 
 #endif
