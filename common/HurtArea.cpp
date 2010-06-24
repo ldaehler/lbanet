@@ -72,6 +72,7 @@ int HurtArea::ActivateZone(float PlayerPosX, float PlayerPosY, float PlayerPosZ,
 	{
 		if(!_activated)
 		{
+			ThreadSafeWorkpile::getInstance()->AddPlayerHurt(_ID);
 			ThreadSafeWorkpile::getInstance()->AddEvent(new PlayerHurtEvent(_ID)); 
 			_activated = true;
 			return 1;
