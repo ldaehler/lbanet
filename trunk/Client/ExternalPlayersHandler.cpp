@@ -104,7 +104,7 @@ int ExternalPlayersHandler::Process(double tnow, float tdiff)
 
 
 /***********************************************************
-if actor already ther - update infroamtion
+if actor already ther - update information
 else add actor to the list
 **********************************************************/
 void ExternalPlayersHandler::UpdateActor(const LbaNet::ActorInfo & ai)
@@ -138,7 +138,8 @@ void ExternalPlayersHandler::UpdateLifeActor(const LbaNet::ActorLifeInfo & ai)
 	if(ai.ActorId == ThreadSafeWorkpile::getInstance()->GetPlayerId())
 	{
 		ThreadSafeWorkpile::getInstance()->AddEvent(new PlayerLifeChangedEvent(ai.CurrentLife, 
-															ai.MaxLife, ai.CurrentMana, ai.MaxMana));
+															ai.MaxLife, ai.CurrentMana, ai.MaxMana,
+															ai.ShouldHurt));
 	}
 	else
 	{

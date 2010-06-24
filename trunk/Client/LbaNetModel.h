@@ -172,7 +172,7 @@ public:
 	}
 
 	//player life changed
-	void PlayerLifeChanged(float CurLife, float MaxLife, float CurMana, float MaxMana);
+	void PlayerLifeChanged(float CurLife, float MaxLife, float CurMana, float MaxMana, bool Hurt);
 
 	//! clean up the textures before resizing
 	void CleanupTexture();
@@ -187,6 +187,9 @@ public:
 
 	// called when player want to use weapon
 	void UseWeapon();
+
+	//player should die
+	void PlayerDie();
 
 private:
 	MapRendererBase*		_mapRenderer;

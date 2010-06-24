@@ -720,7 +720,8 @@ void LbaNetEngine::HandleGameEvents()
 				{
 					PlayerLifeChangedEvent * evcs = static_cast<PlayerLifeChangedEvent *> (*it);
 					m_lbaNetModel.PlayerLifeChanged(evcs->_CurLife, evcs->_MaxLife, 
-														evcs->_CurMana, evcs->_MaxMana);
+														evcs->_CurMana, evcs->_MaxMana,
+														evcs->_Hurt);
 
 					_MaxLife = evcs->_MaxLife;
 					_MaxMana = evcs->_MaxMana;
@@ -796,6 +797,13 @@ void LbaNetEngine::HandleGameEvents()
 						cdata.Text = strs.str();
 						ThreadSafeWorkpile::getInstance()->AddChatData(cdata);
 					}
+				}
+			break;
+
+
+			case 26: // die event
+				{
+					m_lbaNetModel.PlayerDie();
 				}
 			break;
 		}

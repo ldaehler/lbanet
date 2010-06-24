@@ -1170,11 +1170,6 @@ bool SendingLoopThread::ChangeMap(const ThreadSafeWorkpile::MapChangedInformatio
 		_current_world = NewMap.NewWorldName;
 		_current_map = NewMap.NewMapName;
 
-		LbaNet::ActorLifeInfo ai = _connectionMananger.GetPlayerLife();
-		ThreadSafeWorkpile::getInstance()->AddEvent(new PlayerLifeChangedEvent(ai.CurrentLife, 
-													ai.MaxLife, ai.CurrentMana, ai.MaxMana));
-
-
 		// player update server with his current position in the world
 		LbaNet::PlayerPosition ppos;
 		ppos.MapName = NewMap.NewMapName;

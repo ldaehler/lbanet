@@ -220,3 +220,10 @@ void InfosReceiverServant::MagicBallPlayed(Ice::Long PlayerId, const LbaNet::Lau
 {
 	ThreadSafeWorkpile::getInstance()->MagicBallPlayed(PlayerId, linfo);
 }
+
+
+//called when actor should die
+void InfosReceiverServant::Die(const Ice::Current&)
+{
+	ThreadSafeWorkpile::getInstance()->AddEvent(new DieEvent());
+}
