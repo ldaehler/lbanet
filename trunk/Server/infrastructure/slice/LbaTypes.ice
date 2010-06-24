@@ -65,7 +65,21 @@ module LbaNet
 		float			CurrentLife;
 		float			MaxLife;
 		float			CurrentMana;
-		float			MaxMana;	
+		float			MaxMana;
+		
+		
+		// reason why life is changing
+		// 1- raised from dead
+		// 2- hurt by falling down		
+		// 3- hurt by actor
+		// 4- hurt by player
+		// 5- potion
+		// 6- other reason
+		int			ChangeReason;
+		long			ChangeActorId;
+		
+		// true if change should ake actor play hurt animation
+		bool			ShouldHurt;
 	};	
 	
 	
@@ -227,6 +241,7 @@ module LbaNet
 		float DirZ;	
 		
 		int   Mode;
+		bool  Enoughmana;
 	};
 	
 	sequence<long> QuestSeq;	

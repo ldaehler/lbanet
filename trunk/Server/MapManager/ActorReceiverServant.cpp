@@ -30,13 +30,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /***********************************************************
 	callback function called when an actor id activated
 ***********************************************************/
-void ActorReceiverServant::ActivateActor(const LbaNet::ActorActivationInfo& ai, 
-										 const LbaNet::ClientSessionPrx &clientPtr,
-										 const Ice::Current&)
+void ActorReceiverServant::ActivateActor(const LbaNet::ActorActivationInfo& ai,  const Ice::Current&)
 {
 	ActorActivationInfoWithCallback aic;
 	aic.ainfo = ai;
-	aic.clientPtr = clientPtr;
 	_SD->ActivateActor(aic);
 }
 
@@ -112,14 +109,11 @@ void ActorReceiverServant::UpdateLifeMana(Ice::Long ActorId, int LifeDelta, int 
 /***********************************************************
 AskForContainer
 ***********************************************************/
-void ActorReceiverServant::AskForContainer(Ice::Long ActorId, Ice::Long ContainerId, 
-										   const LbaNet::ClientSessionPrx &callback, 
-											const Ice::Current&)
+void ActorReceiverServant::AskForContainer(Ice::Long ActorId, Ice::Long ContainerId, const Ice::Current&)
 {
 	ContainerQueryInfo qinfo;
 	qinfo.ActorId = ActorId;
 	qinfo.ContainerId = ContainerId;
-	qinfo.clientPtr = callback;
 	_SD->UpdateContainerQuery(qinfo);
 }
 
@@ -127,15 +121,13 @@ void ActorReceiverServant::AskForContainer(Ice::Long ActorId, Ice::Long Containe
 UpdateContainer
 ***********************************************************/
 void ActorReceiverServant::UpdateContainer(Ice::Long ContainerId, Ice::Long ActorId, const LbaNet::ItemList &Taken, 
-											const LbaNet::ItemList &Put, const LbaNet::ClientSessionPrx &callback,
-											const Ice::Current&)
+											const LbaNet::ItemList &Put, const Ice::Current&)
 {
 	ContainerUpdateInfo qinfo;
 	qinfo.ActorId = ActorId;
 	qinfo.ContainerId = ContainerId;
 	qinfo.Taken = Taken;
 	qinfo.Put = Put;
-	qinfo.clientPtr = callback;
 	_SD->UpdateContainerUpdate(qinfo);
 }
 

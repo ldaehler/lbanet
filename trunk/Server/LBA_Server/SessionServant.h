@@ -212,7 +212,9 @@ public:
     
     // called when magic ball touch a player
     virtual void MagicBallTouchPlayer(Ice::Long ActorId, const ::Ice::Current&);
-
+	    
+	// update current life of player - called by map server
+	virtual void UpdatedLife(const ActorLifeInfo &ali, const ::Ice::Current&);
 
 protected:
 	void ApplyInternalInventoryChanges(const UpdatedItemSeq &InventoryChanges);
@@ -261,6 +263,8 @@ private:
 	bool								_needquestupdate;
 
 	bool								_magicballused;
+
+	bool								_playerdead;
 };
 
 #endif

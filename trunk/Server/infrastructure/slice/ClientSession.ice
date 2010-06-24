@@ -114,7 +114,11 @@ module LbaNet
 	    
 	    // called when magic ball touch a player
 	    void MagicBallTouchPlayer(long ActorId);	    
+	 
 	    
+	    // update current life of player - called by map server
+	    void UpdatedLife(ActorLifeInfo ali);	 
+	 
 	};
 
 };

@@ -58,7 +58,7 @@ public:
 	LbaNet::MapObserverPrx GetMapProxy();
 
 	//! a player join a map
-	void Join(Ice::Long PlayerId, const ActorLifeInfo & ali);
+	void Join(Ice::Long PlayerId, const ActorLifeInfo & ali, const LbaNet::ClientSessionPrx & callback);
 
 	//! a player leave a map
     ActorLifeInfo Leave(Ice::Long PlayerId);

@@ -45,8 +45,7 @@ public:
 	{}
 
 	// callback function called when an actor id activated
-    virtual void ActivateActor(const LbaNet::ActorActivationInfo& ai, const LbaNet::ClientSessionPrx &clientPtr,
-									const Ice::Current&);
+    virtual void ActivateActor(const LbaNet::ActorActivationInfo& ai, const Ice::Current&);
 
 	// callback function called when an actor id signaled
     virtual void SignalActor(const LbaNet::ActorSignalInfo& ai, const Ice::Current&);
@@ -71,13 +70,11 @@ public:
 									const Ice::Current&);
 
 	//! AskForContainer
-    virtual void AskForContainer(Ice::Long ActorId, Ice::Long ContainerId, const LbaNet::ClientSessionPrx &callback, 
-								const Ice::Current&);
+    virtual void AskForContainer(Ice::Long ActorId, Ice::Long ContainerId, const Ice::Current&);
     
 	//! UpdateContainer
    virtual  void UpdateContainer(Ice::Long ContainerId, Ice::Long ActorId, const LbaNet::ItemList &Taken, 
-							const LbaNet::ItemList &Put, const LbaNet::ClientSessionPrx &callback,
-							const Ice::Current&);
+							const LbaNet::ItemList &Put, const Ice::Current&);
 	    
 	    
     // set player targeted by actor

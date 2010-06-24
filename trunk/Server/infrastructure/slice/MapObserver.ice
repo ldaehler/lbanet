@@ -3,13 +3,12 @@
 
 
 #include <LbaTypes.ice>
-#include <ClientSession.ice>
 
 module LbaNet
 {
 	interface MapObserver
 	{    
-	    void ActivateActor(ActorActivationInfo ai, ClientSession* callback);  
+	    void ActivateActor(ActorActivationInfo ai);  
 	    void SignalActor(ActorSignalInfo ai);
 	    UpdateSeq GetUpdatedInfo();
 	    PlayerSeq GetPlayersInfo();
@@ -20,9 +19,9 @@ module LbaNet
 	    
 	    void RaisedFromDead(long ActorId);
 	    
-	    void AskForContainer(long ActorId, long ContainerId, ClientSession* callback);
+	    void AskForContainer(long ActorId, long ContainerId);
 	    
-	    void UpdateContainer(long ContainerId, long ActorId, ItemList Taken, ItemList Put, ClientSession* callback);
+	    void UpdateContainer(long ContainerId, long ActorId, ItemList Taken, ItemList Put);
 	    
 	    void UpdateLifeMana(long ActorId, int LifeDelta, int ManaDelta);
 	    

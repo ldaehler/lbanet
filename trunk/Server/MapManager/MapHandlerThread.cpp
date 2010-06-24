@@ -75,9 +75,9 @@ MapHandlerThread::~MapHandlerThread()
 ***********************************************************/
 void MapHandlerThread::UpdatedInfo(const LbaNet::ActorInfo& asi)
 {
-	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >::iterator it = _players.find(asi.ActorId);
+	std::map<Ice::Long, PlayerInternalInfo >::iterator it = _players.find(asi.ActorId);
 	if(it != _players.end())
-		it->second.first = asi;
+		it->second.actinfo = asi;
 }
 
 
@@ -85,10 +85,18 @@ void MapHandlerThread::UpdatedInfo(const LbaNet::ActorInfo& asi)
 /***********************************************************
 	a player join a map
 ***********************************************************/
-void MapHandlerThread::Join(const ActorLifeInfo &PlayerId)
+void MapHandlerThread::Join(const ActorLifeInfo &PlayerId, 
+								const LbaNet::ClientSessionPrx & callback)
 {
-	_players[PlayerId.ActorId] = std::make_pair(LbaNet::ActorInfo(), PlayerId);
+	PlayerInternalInfo pif;
+	pif.actlinfo = PlayerId;
+	pif.actlinfo.ChangeReason = 6;
+	pif.callback = callback;
+
+	_players[PlayerId.ActorId] = pif;
 	_stopping = false;
+
+	BroadcastUpdateLife(pif.actlinfo, NULL);
 }
 
 /***********************************************************
@@ -103,13 +111,13 @@ bool MapHandlerThread::Leave(const ActorLifeInfo &PlayerId)
 
 	//desactivate actors
 	std::map<Ice::Long, Ice::Long>::iterator it =_todeactivate.find(PlayerId.ActorId);
-	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >::iterator itp = _players.find(PlayerId.ActorId);
+	std::map<Ice::Long, PlayerInternalInfo>::iterator itp = _players.find(PlayerId.ActorId);
 
 	if(it != _todeactivate.end())
 	{
 		if(itp != _players.end())
 		{
-			_actors[(long)it->second]->ProcessDesactivation(itp->second.first.X, itp->second.first.Y, itp->second.first.Z, itp->second.first.Rotation);
+			_actors[(long)it->second]->ProcessDesactivation(itp->second.actinfo.X, itp->second.actinfo.Y, itp->second.actinfo.Z, itp->second.actinfo.Rotation);
 
 			if(_publisher)
 			{
@@ -117,10 +125,10 @@ bool MapHandlerThread::Leave(const ActorLifeInfo &PlayerId)
 				ai.Activate = false;
 				ai.ActivatedId = it->second;
 				ai.ActorId = it->first;
-				ai.X = itp->second.first.X;
-				ai.Y = itp->second.first.Y;
-				ai.Z = itp->second.first.Z;
-				ai.Rotation = itp->second.first.Rotation;
+				ai.X = itp->second.actinfo.X;
+				ai.Y = itp->second.actinfo.Y;
+				ai.Z = itp->second.actinfo.Z;
+				ai.Rotation = itp->second.actinfo.Rotation;
 				_publisher->ActivatedActor(ai);
 			}
 		}
@@ -176,7 +184,7 @@ bool MapHandlerThread::Leave(const ActorLifeInfo &PlayerId)
 void MapHandlerThread::ActivateActor(const ActorActivationInfoWithCallback& ai)
 {
 	std::map<long, Actor *>::iterator it =	_actors.find((long)ai.ainfo.ActivatedId);
-	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >::iterator itp = _players.find(ai.ainfo.ActorId);
+	std::map<Ice::Long, PlayerInternalInfo >::iterator itp = _players.find(ai.ainfo.ActorId);
 	if(it != _actors.end() && itp != _players.end())
 	{
 		if(ai.ainfo.Activate)
@@ -191,7 +199,7 @@ void MapHandlerThread::ActivateActor(const ActorActivationInfoWithCallback& ai)
 					if(std::find(vecunlocked.begin(), vecunlocked.end(), ai.ainfo.ActivatedId) == vecunlocked.end())
 					{
 						// if we do not have the key - can not activate the door
-						if(!ai.clientPtr || !ai.clientPtr->HasItem(dact->GetKeyId(), 1))
+						if(!itp->second.callback || !itp->second.callback->HasItem(dact->GetKeyId(), 1))
 							return;
 
 						// add player unlocked door to memory
@@ -205,7 +213,7 @@ void MapHandlerThread::ActivateActor(const ActorActivationInfoWithCallback& ai)
 							itm.NewCount = -1;
 							itm.InformPlayer = true;
 							InventoryChanges.push_back(itm);
-							ai.clientPtr->ApplyInventoryChanges(InventoryChanges);
+							itp->second.callback->ApplyInventoryChanges(InventoryChanges);
 						}
 					}
 				}
@@ -217,13 +225,13 @@ void MapHandlerThread::ActivateActor(const ActorActivationInfoWithCallback& ai)
 				long item = dact->GetNeededItemId();
 				if(item >= 0)
 				{
-					if(!ai.clientPtr)
+					if(!itp->second.callback)
 						return;
 
 					// if we do not have the item - can not activate
-					if(!ai.clientPtr->HasItem(item, 1))
+					if(!itp->second.callback->HasItem(item, 1))
 					{
-						ai.clientPtr->ActivatedActor(ai.ainfo, false);
+						itp->second.callback->ActivatedActor(ai.ainfo, false);
 						return;
 					}
 
@@ -236,12 +244,12 @@ void MapHandlerThread::ActivateActor(const ActorActivationInfoWithCallback& ai)
 						itm.NewCount = -1;
 						itm.InformPlayer = true;
 						InventoryChanges.push_back(itm);
-						if(ai.clientPtr) 
-							ai.clientPtr->ApplyInventoryChanges(InventoryChanges);
+						if(itp->second.callback) 
+							itp->second.callback->ApplyInventoryChanges(InventoryChanges);
 					}
 
-					if(ai.clientPtr)
-						ai.clientPtr->ActivatedActor(ai.ainfo, true);
+					if(itp->second.callback)
+						itp->second.callback->ActivatedActor(ai.ainfo, true);
 				}			
 
 				return;
@@ -315,7 +323,7 @@ void MapHandlerThread::run()
 
 
 		// get updates
-		std::vector<std::pair<ActorLifeInfo, bool> >  joinedmap;
+		std::vector<JoinedPlayer>  joinedmap;
 		std::vector<LbaNet::ActorInfo>  pinfos;
 		std::vector<ActorActivationInfoWithCallback>  ainfos;
 		std::vector<LbaNet::ActorSignalInfo>  sinfos;
@@ -386,14 +394,14 @@ void MapHandlerThread::run()
 
 			// player join/leave
 			{
-				std::vector<std::pair<ActorLifeInfo, bool> >::const_iterator it = joinedmap.begin();
-				std::vector<std::pair<ActorLifeInfo, bool> >::const_iterator end = joinedmap.end();
+				std::vector<JoinedPlayer>::const_iterator it = joinedmap.begin();
+				std::vector<JoinedPlayer>::const_iterator end = joinedmap.end();
 				for(; it != end; ++it)
 				{
-					if(it->second)
-						Join(it->first);
+					if(it->joined)
+						Join(it->actlinfo, it->callback);
 					else
-						Leave(it->first);
+						Leave(it->actlinfo);
 				}
 			}
 
@@ -469,7 +477,23 @@ void MapHandlerThread::run()
 				std::vector<std::pair<long, LbaNet::LaunchInfo>	>::const_iterator it = mb_played.begin();
 				std::vector<std::pair<long, LbaNet::LaunchInfo>	>::const_iterator end = mb_played.end();
 				for(; it != end; ++it)
+				{
 					_publisher->MagicBallPlayed(it->first, it->second);
+
+					// update player mana
+					std::map<Ice::Long, PlayerInternalInfo>::iterator itp = _players.find(it->first);
+					if(itp != _players.end())
+					{
+						ActorLifeInfo & linfo = itp->second.actlinfo;
+						linfo.CurrentMana = linfo.CurrentMana - 10; //TODO - change fixed mana
+						if(linfo.CurrentMana < 0)
+							linfo.CurrentMana = 0;
+
+						linfo.ShouldHurt = false;
+						linfo.ChangeReason = 6;
+						BroadcastUpdateLife(linfo, itp->second.callback);
+					}
+				}
 			}
 
 			//touched magic ball actor
@@ -603,13 +627,13 @@ LbaNet::PlayerSeq MapHandlerThread::GetPlayersInfo()
 	LbaNet::PlayerSeq res;
 	Lock sync(*this);
 
-	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >::iterator it =_players.begin();
-	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >::iterator end =_players.end();
+	std::map<Ice::Long, PlayerInternalInfo>::iterator it =_players.begin();
+	std::map<Ice::Long, PlayerInternalInfo>::iterator end =_players.end();
 	for(; it != end; ++it)
 	{
 		PlayerFullInfo pi;
-		pi.ai = it->second.first;
-		pi.li = it->second.second;
+		pi.ai = it->second.actinfo;
+		pi.li = it->second.actlinfo;
 		res.push_back(pi);
 	}
 
@@ -623,10 +647,10 @@ get player life
 LbaNet::ActorLifeInfo MapHandlerThread::GetPlayerLife(Ice::Long PlayerId)
 {
 	Lock sync(*this);
-	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >::iterator itp = _players.find(PlayerId);
+	std::map<Ice::Long, PlayerInternalInfo>::iterator itp = _players.find(PlayerId);
 	if(itp != _players.end())
 	{
-		return itp->second.second;
+		return itp->second.actlinfo;
 	}
 
 	return LbaNet::ActorLifeInfo();
@@ -638,17 +662,19 @@ called when a player is hurted
 ***********************************************************/
 void MapHandlerThread::Hurt(Ice::Long PlayerId, Ice::Long hurtingid)
 {
-	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >::iterator itp = _players.find(PlayerId);
+	std::map<Ice::Long, PlayerInternalInfo>::iterator itp = _players.find(PlayerId);
 	std::map<long, Actor *>::iterator it =	_actors.find((long)hurtingid);
 	if(itp != _players.end() && it != _actors.end())
 	{
 		if(it->second->GetType() == 11)
 		{
 			HurtArea * tmp = static_cast<HurtArea *>(it->second);
-			itp->second.second.CurrentLife -= tmp->GetLifeTaken();
+			itp->second.actlinfo.CurrentLife -= tmp->GetLifeTaken();
 
-			if(_publisher)
-				_publisher->UpdatedLife(itp->second.second);
+			itp->second.actlinfo.ShouldHurt = false;
+			itp->second.actlinfo.ChangeReason = 3;
+			itp->second.actlinfo.ChangeActorId = hurtingid;
+			BroadcastUpdateLife(itp->second.actlinfo, itp->second.callback);
 		}
 	}
 }
@@ -658,16 +684,17 @@ called when a player is hurted
 ***********************************************************/
 void MapHandlerThread::HurtFall(Ice::Long PlayerId, Ice::Float fallingdistance)
 {
-	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >::iterator itp = _players.find(PlayerId);
+	std::map<Ice::Long, PlayerInternalInfo>::iterator itp = _players.find(PlayerId);
 	if(itp != _players.end())
 	{
 		if(fallingdistance > 0)
 		{
 			float hurtedlife = fallingdistance * 2;
-			itp->second.second.CurrentLife -= hurtedlife;
+			itp->second.actlinfo.CurrentLife -= hurtedlife;
 
-			if(_publisher)
-				_publisher->UpdatedLife(itp->second.second);
+			itp->second.actlinfo.ShouldHurt = false;
+			itp->second.actlinfo.ChangeReason = 2;
+			BroadcastUpdateLife(itp->second.actlinfo, itp->second.callback);
 		}
 	}
 }
@@ -678,13 +705,15 @@ called when a player id dead and raised
 ***********************************************************/
 void MapHandlerThread::Raised(Ice::Long PlayerId)
 {
-	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >::iterator itp = _players.find(PlayerId);
+	std::map<Ice::Long, PlayerInternalInfo>::iterator itp = _players.find(PlayerId);
 	if(itp != _players.end())
 	{
-		itp->second.second.CurrentLife = itp->second.second.MaxLife;
+		itp->second.actlinfo.CurrentLife = itp->second.actlinfo.MaxLife;
+		itp->second.actlinfo.CurrentMana = itp->second.actlinfo.MaxMana;
 
-		if(_publisher)
-			_publisher->UpdatedLife(itp->second.second);
+		itp->second.actlinfo.ShouldHurt = false;
+		itp->second.actlinfo.ChangeReason = 1;
+		BroadcastUpdateLife(itp->second.actlinfo, itp->second.callback);
 	}
 }
 
@@ -694,14 +723,15 @@ object used
 ***********************************************************/
 void MapHandlerThread::UpdateLifeMana(const LifeManaInfo &itinfo)
 {
-	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >::iterator itp = _players.find(itinfo.ActorId);
+	std::map<Ice::Long, PlayerInternalInfo>::iterator itp = _players.find(itinfo.ActorId);
 	if(itp != _players.end())
 	{
-		itp->second.second.CurrentLife = std::min(itp->second.second.CurrentLife+itinfo.LifeDelta, itp->second.second.MaxLife);
-		itp->second.second.CurrentMana = std::min(itp->second.second.CurrentMana+itinfo.ManaDelta, itp->second.second.MaxMana);
+		itp->second.actlinfo.CurrentLife = std::min(itp->second.actlinfo.CurrentLife+itinfo.LifeDelta, itp->second.actlinfo.MaxLife);
+		itp->second.actlinfo.CurrentMana = std::min(itp->second.actlinfo.CurrentMana+itinfo.ManaDelta, itp->second.actlinfo.MaxMana);
 
-		if(_publisher)
-			_publisher->UpdatedLife(itp->second.second);
+		itp->second.actlinfo.ShouldHurt = false;
+		itp->second.actlinfo.ChangeReason = 5;
+		BroadcastUpdateLife(itp->second.actlinfo, itp->second.callback);
 	}
 
 }
@@ -742,9 +772,12 @@ void MapHandlerThread::UpdateContainerQuery(const ContainerQueryInfo &itinfo)
 
 	}
 
-
-	if(itinfo.clientPtr)
-		itinfo.clientPtr->UpdateContainerInfo(cinfo);
+	std::map<Ice::Long, PlayerInternalInfo>::iterator itp = _players.find(itinfo.ActorId);
+	if(itp != _players.end())
+	{
+		if(itp->second.callback)
+			itp->second.callback->UpdateContainerInfo(cinfo);
+	}
 }
 
 
@@ -815,8 +848,12 @@ void MapHandlerThread::UpdateContainerUpdate(const ContainerUpdateInfo &itinfo)
 
 
 				//final update player inventory
-				if(itinfo.clientPtr)
-					itinfo.clientPtr->ApplyInventoryChanges(InventoryChanges);
+				std::map<Ice::Long, PlayerInternalInfo>::iterator itp = _players.find(itinfo.ActorId);
+				if(itp != _players.end())
+				{
+					if(itp->second.callback)
+						itp->second.callback->ApplyInventoryChanges(InventoryChanges);
+				}
 
 				// remove lock
 				_lockedContainers.erase(itloc);
@@ -835,25 +872,30 @@ void MapHandlerThread::UpdateContainerUpdate(const ContainerUpdateInfo &itinfo)
 					std::map<long, TraderItem>::const_iterator itit = items.find(itinfo.Taken.begin()->first);
 					if(itit != items.end()) // if trader has this item
 					{
-						if(itinfo.clientPtr)
+
+						std::map<Ice::Long, PlayerInternalInfo>::iterator itp = _players.find(itinfo.ActorId);
+						if(itp != _players.end())
 						{
-							LbaNet::UpdatedItemSeq InventoryChanges;
+							if(itp->second.callback)
+							{
+								LbaNet::UpdatedItemSeq InventoryChanges;
 
-							// first update the money count
-							LbaNet::UpdatedItem itm;
-							itm.ItemId = itinfo.Put.begin()->first;
-							itm.NewCount = -itinfo.Put.begin()->second;
-							itm.InformPlayer = false;
-							InventoryChanges.push_back(itm);
+								// first update the money count
+								LbaNet::UpdatedItem itm;
+								itm.ItemId = itinfo.Put.begin()->first;
+								itm.NewCount = -itinfo.Put.begin()->second;
+								itm.InformPlayer = false;
+								InventoryChanges.push_back(itm);
 
-							//then add the object
-							LbaNet::UpdatedItem itm2;
-							itm2.ItemId = itinfo.Taken.begin()->first;
-							itm2.NewCount = itinfo.Taken.begin()->second;
-							itm2.InformPlayer = true;
-							InventoryChanges.push_back(itm2);
+								//then add the object
+								LbaNet::UpdatedItem itm2;
+								itm2.ItemId = itinfo.Taken.begin()->first;
+								itm2.NewCount = itinfo.Taken.begin()->second;
+								itm2.InformPlayer = true;
+								InventoryChanges.push_back(itm2);
 
-							itinfo.clientPtr->ApplyInventoryChanges(InventoryChanges);
+								itp->second.callback->ApplyInventoryChanges(InventoryChanges);
+							}
 						}
 					}
 				}
@@ -885,6 +927,19 @@ void MapHandlerThread::UpdateTargetedActor(const TargetedActorPlayer & info, boo
 }
 
 
+/***********************************************************
+Magic Ball Touched Actor
+***********************************************************/
+void MapHandlerThread::BroadcastUpdateLife(const ActorLifeInfo & lifeinfo, ClientSessionPrx callback)
+{
+	if(_publisher)
+		_publisher->UpdatedLife(lifeinfo);
+
+	if(callback)
+		callback->UpdatedLife(lifeinfo);
+}
+
+
 
 /***********************************************************
 Magic Ball Touched Actor
@@ -899,5 +954,17 @@ Magic Ball Touched Player
 ***********************************************************/
 void MapHandlerThread::MagicBallTouchedPlayer(long PlayerId, long ActorId)
 {
+	std::map<Ice::Long, PlayerInternalInfo>::iterator itp = _players.find(ActorId);
+	if(itp != _players.end())
+	{
+		ActorLifeInfo & linfo = itp->second.actlinfo;
+		linfo.CurrentLife = linfo.CurrentLife - 10; //TODO - change fixed damage
+		if(linfo.CurrentLife < 0)
+			linfo.CurrentLife = 0;
 
+		linfo.ShouldHurt = true;
+		linfo.ChangeReason = 4;
+		linfo.ChangeActorId = PlayerId;
+		BroadcastUpdateLife(linfo, itp->second.callback);
+	}
 }
