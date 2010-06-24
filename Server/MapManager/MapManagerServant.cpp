@@ -80,7 +80,9 @@ MapManagerServant::~MapManagerServant()
 
 //! a player join a map
 LbaNet::MapObserverPrx MapManagerServant::JoinMap(const std::string& mapName,
-										Ice::Long PlayerId, const ActorLifeInfo &ali, const Ice::Current&)
+											Ice::Long PlayerId, const ActorLifeInfo &ali, 
+											const LbaNet::ClientSessionPrx & callback,
+											const Ice::Current&)
 {
 	// clean old threads
 	CleanThreads();
@@ -100,7 +102,7 @@ LbaNet::MapObserverPrx MapManagerServant::JoinMap(const std::string& mapName,
 		}
 	}
 
-	MH->Join(PlayerId, ali);
+	MH->Join(PlayerId, ali, callback);
 	return MH->GetMapProxy();
 }
 

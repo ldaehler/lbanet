@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <MapObserver.h>
 #include <ActorInfo.h>
+#include <ClientSession.h>
 
 using namespace LbaNet;
 
@@ -47,14 +48,12 @@ struct LifeManaInfo
 struct ActorActivationInfoWithCallback
 {
 	LbaNet::ActorActivationInfo ainfo;
-	LbaNet::ClientSessionPrx clientPtr;
 };
 
 struct ContainerQueryInfo
 {
 	Ice::Long ActorId;
 	Ice::Long ContainerId; 
-	LbaNet::ClientSessionPrx clientPtr;
 };
 
 
@@ -64,7 +63,6 @@ struct ContainerUpdateInfo
 	Ice::Long ActorId;
 	LbaNet::ItemList Taken; 
 	LbaNet::ItemList Put;
-	LbaNet::ClientSessionPrx clientPtr;
 };
 
 
@@ -73,6 +71,29 @@ struct TargetedActorPlayer
 	Ice::Long ActorId;
 	Ice::Long PlayerId;
 };
+
+
+struct PlayerInternalInfo
+{
+	ActorInfo actinfo;
+	ActorLifeInfo actlinfo;
+	ClientSessionPrx callback;
+};
+
+
+struct JoinedPlayer
+{
+	//constructor
+	JoinedPlayer(const ActorLifeInfo & info, bool Join, ClientSessionPrx clb)
+		: actlinfo(info), joined(Join), callback(clb){}
+
+
+	ActorLifeInfo	actlinfo;
+	bool			joined;
+	ClientSessionPrx callback;
+};
+
+
 
 /***********************************************************************
  * Module:  SharedData.h
@@ -89,7 +110,8 @@ public:
 	{}
 
 	//! a player join a map
-	void Join(Ice::Long PlayerId, const ActorLifeInfo & ali);
+	void Join(Ice::Long PlayerId, const ActorLifeInfo & ali, 
+						const LbaNet::ClientSessionPrx & callback);
 
 	//! a player leave a map
     void Leave(Ice::Long PlayerId);
@@ -104,7 +126,7 @@ public:
     void SignalActor(const LbaNet::ActorSignalInfo& ai);
 
 	// get joined/left players
-	void GetJoined(std::vector<std::pair<ActorLifeInfo, bool> > & joinedmap);
+	void GetJoined(std::vector<JoinedPlayer> & joinedmap);
 
 	// get player info
 	void GetUpdatedinfo(std::vector<LbaNet::ActorInfo> & pinfos);
@@ -212,7 +234,7 @@ private:
 	IceUtil::Mutex								m_mutex_magicball_touchedactor;
 	IceUtil::Mutex								m_mutex_magicball_touchedplayer;
 
-	std::vector<std::pair<ActorLifeInfo, bool> >	m_joined_players;
+	std::vector<JoinedPlayer >					m_joined_players;
 	std::vector<LbaNet::ActorInfo>				m_players_info;
 	std::vector<ActorActivationInfoWithCallback>	m_actors_info;
 	std::vector<LbaNet::ActorSignalInfo>		m_signals_info;

@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <MapManager.h>
 #include <Ice/Ice.h>
+#include <ClientSession.h>
 
 using namespace LbaNet;
 
@@ -45,7 +46,9 @@ public:
 
 	//! a player join a map
 	virtual LbaNet::MapObserverPrx JoinMap(const std::string& mapName,
-											Ice::Long PlayerId, const ActorLifeInfo &ali, const Ice::Current&);
+											Ice::Long PlayerId, const ActorLifeInfo &ali, 
+											const LbaNet::ClientSessionPrx & callback,
+											const Ice::Current&);
 
 	//! a player leave a map
     virtual ActorLifeInfo LeaveMap(const std::string& mapName, Ice::Long PlayerId, const Ice::Current&);

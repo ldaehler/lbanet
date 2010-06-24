@@ -33,6 +33,10 @@ module LbaNet
 	   
 	    void ActivationAborted(ActorActivationInfo ai);
 	    
+	    
+	    // called when the client should die
+	    void Die();
+	    
 		    
 	    // called when player throw magic ball
 	    void MagicBallPlayed(long PlayerId, LaunchInfo Linfo);	    

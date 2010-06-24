@@ -92,9 +92,10 @@ LbaNet::MapObserverPrx MapHandler::GetMapProxy()
 /***********************************************************
 	a player join a map
 ***********************************************************/
-void MapHandler::Join(Ice::Long PlayerId, const ActorLifeInfo & ali)
+void MapHandler::Join(Ice::Long PlayerId, const ActorLifeInfo & ali, 
+						const LbaNet::ClientSessionPrx & callback)
 {
-	_SD.Join(PlayerId, ali);
+	_SD.Join(PlayerId, ali, callback);
 	std::cout<<IceUtil::Time::now().toDateTime()<<": player id "<<PlayerId<<" joined map "<<_mapName<<std::endl;
 }
 

@@ -75,7 +75,8 @@ public:
 
 protected:
 	// a player join a map
-	void Join(const ActorLifeInfo &PlayerId);
+	void Join(const ActorLifeInfo &PlayerId, 
+				const LbaNet::ClientSessionPrx & callback);
 
 	// a player leave a map
 	bool Leave(const ActorLifeInfo &PlayerId);
@@ -110,11 +111,14 @@ protected:
 	void MagicBallTouchedPlayer(long PlayerId, long ActorId);
 
 
+	void BroadcastUpdateLife(const ActorLifeInfo & lifeinfo, ClientSessionPrx callback);
+
+
 private:
 	ActorsObserverPrx							_publisher;
 
 
-	std::map<Ice::Long, std::pair<ActorInfo, ActorLifeInfo> >		_players;
+	std::map<Ice::Long, PlayerInternalInfo>		_players;
 	std::map<long, Actor *>						_actors;
 
 	std::map<Ice::Long, std::vector<Ice::Long> > _unlocked;

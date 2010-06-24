@@ -29,12 +29,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /***********************************************************
 a player join a map
 ***********************************************************/
-void SharedData::Join(Ice::Long PlayerId, const ActorLifeInfo & ali)
+void SharedData::Join(Ice::Long PlayerId, const ActorLifeInfo & ali, 
+						const LbaNet::ClientSessionPrx & callback)
 {
 	ActorLifeInfo push(ali);
 	push.ActorId = PlayerId;
 	IceUtil::Mutex::Lock lock(m_mutex_players);
-	m_joined_players.push_back(std::make_pair<ActorLifeInfo, bool>(push, true));
+	
+	m_joined_players.push_back(JoinedPlayer(push, true, callback));
 }
 
 /***********************************************************
@@ -45,7 +47,7 @@ void SharedData::Leave(Ice::Long PlayerId)
 	ActorLifeInfo push;
 	push.ActorId = PlayerId;
 	IceUtil::Mutex::Lock lock(m_mutex_players);
-	m_joined_players.push_back(std::make_pair<ActorLifeInfo, bool>(push, false));
+	m_joined_players.push_back(JoinedPlayer(push, false, NULL));
 }
 
 /***********************************************************
@@ -78,7 +80,7 @@ void SharedData::SignalActor(const LbaNet::ActorSignalInfo& ai)
 /***********************************************************
 get joined/left players
 ***********************************************************/
-void SharedData::GetJoined(std::vector<std::pair<ActorLifeInfo, bool> > & joinedmap)
+void SharedData::GetJoined(std::vector<JoinedPlayer> & joinedmap)
 {
 	joinedmap.clear();
 	IceUtil::Mutex::Lock lock(m_mutex_players);

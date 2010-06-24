@@ -40,7 +40,8 @@ SessionServant::SessionServant(const std::string& userId, const RoomManagerPrx& 
 									std::string	version, DatabaseHandler & dbh)
 : _manager(manager), _curr_actor_room(""), _userId(userId), _ctracker(ctracker), _map_manager(map_manager),
 	_userNum(-1), _version(version), _currColor("FFFFFFFF"), _dbh(dbh), _selfptr(NULL), _client_observer(NULL),
-	_QH(const_cast<SessionServant *>(this)), _currWorldName(""), _needquestupdate(false), _magicballused(false)
+	_QH(const_cast<SessionServant *>(this)), _currWorldName(""), _needquestupdate(false), _magicballused(false),
+	_playerdead(false)
 {
 	_userNum = _ctracker->Connect(_userId);
 
@@ -148,20 +149,8 @@ ActorsParticipantPrx SessionServant::ChangeRoom(		const std::string& newroom,
 	// delete old room pointer
 	if(_curr_actor_room != "")
 	{
-		LbaNet::ActorLifeInfo tmp = _map_manager->LeaveMap(_curr_actor_room, _userNum);
+		_map_manager->LeaveMap(_curr_actor_room, _userNum);
 		current.adapter->remove(_actors_room->ice_getIdentity());
-
-		_lifeinfo.CurrentLife = tmp.CurrentLife;
-		if(_lifeinfo.CurrentLife < 0)
-			_lifeinfo.CurrentLife = 0;
-		if(_lifeinfo.CurrentLife > _lifeinfo.MaxLife)
-			_lifeinfo.CurrentLife = _lifeinfo.MaxLife;
-
-		_lifeinfo.CurrentMana= tmp.CurrentMana;
-		if(_lifeinfo.CurrentMana < 0)
-			_lifeinfo.CurrentMana = 0;
-		if(_lifeinfo.CurrentMana > _lifeinfo.MaxMana)
-			_lifeinfo.CurrentMana = _lifeinfo.MaxMana;
 
 		_actors_manager = NULL;
 	}
@@ -175,7 +164,7 @@ ActorsParticipantPrx SessionServant::ChangeRoom(		const std::string& newroom,
 	ActorsParticipantServant *actors_room_ptr = new ActorsParticipantServant(newroom, _userNum, actorname, observer, _manager);
     _actors_room = ActorsParticipantPrx::uncheckedCast(current.adapter->add(actors_room_ptr, id));
 	_curr_actor_room = newroom;
-	_actors_manager = _map_manager->JoinMap(_curr_actor_room, _userNum, _lifeinfo);
+	_actors_manager = _map_manager->JoinMap(_curr_actor_room, _userNum, _lifeinfo, _selfptr);
 
     return _actors_room;
 }
@@ -308,7 +297,7 @@ void SessionServant::ActivateActor(const LbaNet::ActorActivationInfo& ai, const 
 	try
 	{
 		if(_actors_manager)
-			_actors_manager->ActivateActor(ai, _selfptr);
+			_actors_manager->ActivateActor(ai);
 	}
     catch(const IceUtil::Exception& ex)
     {
@@ -508,6 +497,11 @@ void SessionServant::PlayerRaisedFromDead(const Ice::Current&)
 	Lock sync(*this);
 	try
 	{
+		if(!_playerdead)
+			return;
+
+		_playerdead = false;
+
 		if(_actors_manager)
 			return _actors_manager->RaisedFromDead(_userNum);
 	}
@@ -813,7 +807,7 @@ void SessionServant::AskForContainerContent(Ice::Long ContainerId, const Ice::Cu
 	try
 	{
 		if(_actors_manager)
-			_actors_manager->AskForContainer(_userNum, ContainerId, _selfptr);
+			_actors_manager->AskForContainer(_userNum, ContainerId);
 	}
 	catch(const IceUtil::Exception& ex)
 	{
@@ -920,7 +914,7 @@ void SessionServant::UpdateInventoryFromContainer(Ice::Long ContainerId, const I
 
 		// send to map handler to make change to container
 		if(_actors_manager)
-			_actors_manager->UpdateContainer(ContainerId, _userNum, CheckTaken, CheckedPut, _selfptr);
+			_actors_manager->UpdateContainer(ContainerId, _userNum, CheckTaken, CheckedPut);
 	}
 	catch(const IceUtil::Exception& ex)
 	{
@@ -1341,4 +1335,22 @@ void SessionServant::MagicBallTouchPlayer(Ice::Long ActorId, const ::Ice::Curren
 
 	if(_actors_manager)
 		_actors_manager->MagicBallTouchPlayer(_userNum, ActorId);
+}
+
+ 
+/***********************************************************
+update current life of player - called by map server
+***********************************************************/   
+void SessionServant::UpdatedLife(const ActorLifeInfo &ali, const ::Ice::Current&)
+{
+	_lifeinfo = ali;
+	_lifeinfo.ShouldHurt = false; // no use for us
+
+	if(_lifeinfo.CurrentLife <= 0)
+	{
+		_playerdead = true;
+
+		if(_client_observer)
+			_client_observer->Die();
+	}
 }
