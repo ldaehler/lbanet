@@ -286,16 +286,6 @@ void PhysXEngine::Init(float gravity)
 	defaultMaterial->setRestitutionCombineMode(NX_CM_MAX);
 
 
-	// add a cube and a plane
-	//CreatePlane(NxVec3(0, 0, 0), NxVec3(0, 1, 0));
-	//CreateBox(NxVec3(0, 4, 0), 3.0f, 3.0f, 3.0f, 10, false);
-	//gplayablebox = CreateBox(NxVec3(30, 5, 30), 1.0f, 1.0f, 1.0f, 10, true, NULL);
-	////gplayablebox->setAngularDamping(std::numeric_limits<float>::infinity());
-	//gplayablebox->raiseBodyFlag(NX_BF_FROZEN_ROT);
-
-	//CreateBox(NxVec3(20, -1, 20), 50.0f, 1.0f, 50.0f, 10, false);
-
-
 	// init time
 	_lasttime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDouble();
 
@@ -400,7 +390,7 @@ NxActor* PhysXEngine::CreatePlane(const NxVec3 & StartPosition, const NxVec3 & P
 	create box actor
 ***********************************************************/
 NxActor* PhysXEngine::CreateBox(const NxVec3 & StartPosition, float dimX, float dimY, float dimZ, 
-								float density, int Type, ActorUserData * adata, bool noncollidable)
+								float density, int Type, ActorUserData * adata, bool collidable)
 {
 
 	// Add a single-shape actor to the scene
@@ -428,7 +418,7 @@ NxActor* PhysXEngine::CreateBox(const NxVec3 & StartPosition, float dimX, float 
 	else
 		boxDesc.group = GROUP_COLLIDABLE_NON_PUSHABLE;
 
-	if(noncollidable)
+	if(!collidable)
 		boxDesc.group = GROUP_NON_COLLIDABLE;
 
 	actorDesc.shapes.pushBack(&boxDesc);
@@ -555,6 +545,7 @@ NxController* PhysXEngine::CreateCharacter(const NxVec3 & StartPosition, float r
 
 	NxController* res = gManager->createController(gScene, desc);
 	res->getActor()->userData = adata;
+	res->setCollision(true);
 
 	return res;
 }
@@ -579,6 +570,7 @@ NxController* PhysXEngine::CreateCharacterBox(const NxVec3 & StartPosition, cons
 
 	NxController* res = gManager->createController(gScene, desc);
 	res->getActor()->userData = adata;
+	res->setCollision(true);
 
 	return res;
 }
