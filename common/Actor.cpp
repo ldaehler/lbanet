@@ -46,7 +46,7 @@ Actor::Actor()
 	_sizeX(0),_sizeY(0), _sizeZ(0), _visible(true), _outputsignal(-1),
 	_attachedsound(-1), _renderertype(0),
 	_AddedVelocityX(0), _AddedVelocityY(0), _AddedVelocityZ(0), 
-	_signaler(NULL), _physposhandler(NULL)
+	_signaler(NULL), _physposhandler(NULL), _collidable(true)
 {
 
 }

@@ -54,6 +54,9 @@ public:
 	//! set the actor state
 	virtual void Setstate(const ActorStateInfo & currState);
 
+	//! called when the magic ball hit an actor
+	virtual bool MagicBallHit(long LauncherId);
+
 protected:
 	//! process activation
 	virtual void ProcessActivation(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation);
