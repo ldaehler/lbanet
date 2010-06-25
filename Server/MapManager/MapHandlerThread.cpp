@@ -92,6 +92,7 @@ void MapHandlerThread::Join(const ActorLifeInfo &PlayerId,
 	pif.actlinfo = PlayerId;
 	pif.actlinfo.ChangeReason = 6;
 	pif.callback = callback;
+	pif.actlinfo.ShouldHurt = false;
 
 	_players[PlayerId.ActorId] = pif;
 	_stopping = false;
@@ -946,7 +947,8 @@ Magic Ball Touched Actor
 ***********************************************************/
 void MapHandlerThread::MagicBallTouchedActor(long PlayerId, long ActorId)
 {
-
+	if(_publisher)
+		_publisher->MagicBallComeBack(PlayerId);
 }
 
 /***********************************************************
@@ -954,6 +956,9 @@ Magic Ball Touched Player
 ***********************************************************/
 void MapHandlerThread::MagicBallTouchedPlayer(long PlayerId, long ActorId)
 {
+	if(_publisher)
+		_publisher->MagicBallComeBack(PlayerId);
+
 	std::map<Ice::Long, PlayerInternalInfo>::iterator itp = _players.find(ActorId);
 	if(itp != _players.end())
 	{

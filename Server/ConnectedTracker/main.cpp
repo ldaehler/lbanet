@@ -37,6 +37,8 @@ public:
 
     virtual int run(int argc, char* argv[])
     {
+
+
 		SharedData shd;
 
 		Ice::PropertiesPtr prop = communicator()->getProperties();
@@ -61,7 +63,8 @@ private:
 
 int main(int argc, char** argv)
 {
-    LbaServer app;
-    return app.main(argc, argv/*, "config"*/);
+	LbaServer app;
+	return app.main(argc, argv/*, "config"*/);
+
 }
 
