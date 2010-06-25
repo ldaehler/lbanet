@@ -227,3 +227,10 @@ void InfosReceiverServant::Die(const Ice::Current&)
 {
 	ThreadSafeWorkpile::getInstance()->AddEvent(new DieEvent());
 }
+
+
+// called when ball come back
+void InfosReceiverServant::MagicBallComeBack(Ice::Long PlayerId, const Ice::Current&)
+{
+	ThreadSafeWorkpile::getInstance()->MagicBallComeback(PlayerId);
+}

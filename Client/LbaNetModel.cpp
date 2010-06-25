@@ -487,6 +487,9 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float 
 
 		ThreadSafeWorkpile::getInstance()->OpenCloseContainer(0, true);
 
+		// clear magic ball if needed
+		_mainPlayerHandler->ClearMB();
+
 		CleanupMap();
 
 		// inform server we change map

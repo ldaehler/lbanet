@@ -41,7 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	Constructor
 ***********************************************************/
 ExternalPlayer::ExternalPlayer(const LbaNet::ActorInfo & ainfo, float animationSpeed)
-: _last_update(0), _renderer(NULL), _magicballH(false)
+: _last_update(0), _renderer(NULL), _magicballH(false), _physH(NULL), _usdata(NULL)
 {
 	_renderer = new Player(animationSpeed);
 
@@ -49,15 +49,26 @@ ExternalPlayer::ExternalPlayer(const LbaNet::ActorInfo & ainfo, float animationS
 	_renderer->SetPosition(ainfo.X,  ainfo.Y, ainfo.Z);
 	_renderer->SetRotation(ainfo.Rotation);
 
+	float posx = _renderer->GetPosX();
+	float posy = _renderer->GetPosY();
+	float posz = _renderer->GetPosZ();
+	float sizex = _renderer->GetSizeX();
+	float sizey = _renderer->GetSizeY();
+	float sizez = _renderer->GetSizeZ();
 
-	// add physique info
-	_usdata = new ActorUserData(3, ainfo.ActorId, NULL);
-	_physH = PhysXEngine::getInstance()->CreateBox(NxVec3(ainfo.X,  ainfo.Y, ainfo.Z), 
-														_renderer->GetSizeX(), 
-														_renderer->GetSizeY(), 
-														_renderer->GetSizeZ(), 1.0, 2, _usdata, true);
+	if(sizex > 0)
+	{
+		sizey /= 2;
+		posy += sizey;
+
+		// add physique info
+		_usdata = new ActorUserData(3, ainfo.ActorId, NULL);
+		_physH = PhysXEngine::getInstance()->CreateBox(NxVec3(posx,  posy, posz), 
+															sizex, sizey, sizez, 1.0, 2, _usdata, true);
+	}
 
 	_renderer->SetPhysController(new ActorPositionHandler(_physH, ainfo.X,  ainfo.Y, ainfo.Z));
+	_magicballH.SetOwner(_renderer);
 
 }
 
@@ -66,7 +77,8 @@ ExternalPlayer::ExternalPlayer(const LbaNet::ActorInfo & ainfo, float animationS
 ***********************************************************/
 ExternalPlayer::~ExternalPlayer()
 {
-	PhysXEngine::getInstance()->DestroyActor(_physH);
+	if(_physH)
+		PhysXEngine::getInstance()->DestroyActor(_physH);
 
 	if(_usdata)
 		delete _usdata;
@@ -95,6 +107,8 @@ void ExternalPlayer::Update(const LbaNet::ActorInfo & ainfo)
 		_renderer->changeAnimEntity(ainfo.Model, ainfo.Body);
 		_renderer->setActorAnimation(ainfo.Animation);
 		_renderer->SetBodyColor(ainfo.BodyColor);
+
+		_renderer->SetSize(ainfo.SizeX, ainfo.SizeY, ainfo.SizeZ); 
 
 		_velocityX = ainfo.vX;
 		_velocityY = ainfo.vY;
@@ -219,10 +233,18 @@ magic ball played
 void ExternalPlayer::MagicBallPlayed(const LbaNet::LaunchInfo & linfo)
 {
 	_magicballH.Launch(linfo.PosX, linfo.PosY, linfo.PosZ, linfo.DirX, linfo.DirZ, 
-						linfo.Mode, linfo.Enoughmana);
+						linfo.Mode, linfo.Enoughmana, _physH);
 }
 
 
+
+/***********************************************************
+magic ball played
+***********************************************************/
+void ExternalPlayer::MagicBallComeback()
+{
+	_magicballH.MagicBallComeback();
+}
 
 
 

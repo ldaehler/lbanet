@@ -242,7 +242,7 @@ PhysXEngine::~PhysXEngine()
 /***********************************************************
 	init function
 ***********************************************************/
-void PhysXEngine::Init()
+void PhysXEngine::Init(float gravity)
 {
 	// Create the physics SDK
     gPhysicsSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION);
@@ -264,7 +264,7 @@ void PhysXEngine::Init()
     // Create the scene
     NxSceneDesc sceneDesc;
  	sceneDesc.simType				= NX_SIMULATION_SW;
-    sceneDesc.gravity               = NxVec3(0,-9.8f/5.0f,0);
+    sceneDesc.gravity               = NxVec3(0,gravity,0);
     gScene = gPhysicsSDK->createScene(sceneDesc);	
 	if(!gScene)
 	{ 
@@ -446,7 +446,8 @@ NxActor* PhysXEngine::CreateBox(const NxVec3 & StartPosition, float dimX, float 
 	create sphere actor
 ***********************************************************/
 NxActor* PhysXEngine::CreateSphere(const NxVec3 & StartPosition, float radius, float density, 
-									int Type,  ActorUserData * adata)
+									int Type,  ActorUserData * adata,
+									float staticFriction, float dynamicFriction, float restitution)
 {
 	// Add a single-shape actor to the scene
 	NxActorDesc actorDesc;
@@ -459,9 +460,9 @@ NxActor* PhysXEngine::CreateSphere(const NxVec3 & StartPosition, float radius, f
 	
 
     NxMaterialDesc materialDesc;    
-	materialDesc.restitution = 0.9f;    
-	materialDesc.staticFriction = 0.5f;    
-	materialDesc.dynamicFriction = 0.5f; 
+	materialDesc.restitution = restitution;    
+	materialDesc.staticFriction = staticFriction;    
+	materialDesc.dynamicFriction = dynamicFriction; 
 	materialDesc.frictionCombineMode = NX_CM_MIN;
 	materialDesc.restitutionCombineMode = NX_CM_MAX;
     NxMaterial *newMaterial=gScene->createMaterial(materialDesc); 
@@ -854,6 +855,16 @@ int PhysXEngine::CheckForRoof(float PositionX, float PositionY, float PositionZ)
 
 	return -1;
 }	
+
+
+/***********************************************************
+ignore collision for a pair of actor
+***********************************************************/
+void PhysXEngine::IgnoreActorContact(NxActor* actor1, NxActor* actor2)
+{
+	gScene->setActorPairFlags(*actor1, *actor2, NX_IGNORE_PAIR);
+}
+
 
 /***********************************************************
 	Render actors

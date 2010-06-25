@@ -98,7 +98,7 @@ public:
 
 
 	//! init function
-	void Init();
+	void Init(float gravity);
 
 	//! quit function
 	void Quit();
@@ -117,7 +117,8 @@ public:
 	NxActor* CreateBox(const NxVec3 & StartPosition, float dimX, float dimY, float dimZ, 
 						float density, int Type, ActorUserData * adata, bool noncollidable = false);
 	NxActor* CreateSphere(const NxVec3 & StartPosition, float radius, float density, 
-							int Type, ActorUserData * adata);
+							int Type, ActorUserData * adata,
+							float staticFriction, float dynamicFriction, float restitution);
 	NxActor* CreateCapsule(const NxVec3 & StartPosition, float radius, float height, 
 							float density, int Type, ActorUserData * adata);
 
@@ -160,6 +161,8 @@ public:
 	//! check if actor is under roof
 	int CheckForRoof(float PositionX, float PositionY, float PositionZ);
 
+	//! ignore collision for a pair of actor
+	void IgnoreActorContact(NxActor* actor1, NxActor* actor2);
 
 protected:
 	//! constructor

@@ -130,6 +130,7 @@ public:
 
 	// magic ball played
 	void MagicBallPlayed(const LbaNet::LaunchInfo & linfo);
+	void MagicBallComeback();
 
 private:
 	double			_last_update;

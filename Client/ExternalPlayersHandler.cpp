@@ -76,11 +76,13 @@ int ExternalPlayersHandler::Process(double tnow, float tdiff)
 	std::vector<long> vecq;
 	std::vector<LbaNet::ActorLifeInfo> veclai;
 	std::vector<std::pair<long, LbaNet::LaunchInfo> > mb_vec;
+	std::vector<long> mb_cb_vec;
 
 	wp->GetExtActorUpdate(vecai);
 	wp->GetQuittedActors(vecq);
 	wp->GetExtActorLifeUpdate(veclai);
 	wp->GetMagicBallPlayed(mb_vec);
+	wp->GetMagicBallComeback(mb_cb_vec);
 
 	for(size_t i=0; i<vecai.size(); ++i)
 		UpdateActor(vecai[i]);
@@ -88,6 +90,9 @@ int ExternalPlayersHandler::Process(double tnow, float tdiff)
 		UpdateLifeActor(veclai[i]);
 	for(size_t i=0; i<vecq.size(); ++i)
 		RemoveActor(vecq[i]);
+
+	for(size_t i=0; i<mb_cb_vec.size(); ++i)
+		MagicBallComeback(mb_cb_vec[i]);
 	for(size_t i=0; i<mb_vec.size(); ++i)
 		MagicBallPlayed(mb_vec[i].first, mb_vec[i].second);
 
@@ -210,5 +215,16 @@ void ExternalPlayersHandler::MagicBallPlayed(long playerid, const LbaNet::Launch
 	std::map<long, ExternalPlayer *>::iterator it = _actors.find(playerid);
 	if(it != _actors.end())
 		it->second->MagicBallPlayed(linfo);
+}
+
+
+/***********************************************************
+Magic Ball Played
+**********************************************************/
+void ExternalPlayersHandler::MagicBallComeback(long playerid)
+{
+	std::map<long, ExternalPlayer *>::iterator it = _actors.find(playerid);
+	if(it != _actors.end())
+		it->second->MagicBallComeback();
 }
 
