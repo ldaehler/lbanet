@@ -35,9 +35,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Actor.h"
 #include "ThreadSafeWorkpile.h"
 
+#include "PhysXPhysicHandler.h"
+
+#include "DataLoader.h"
+#include "MusicHandler.h"
+#include "ConfigurationManager.h"
+
 #define _size_ball_	0.25f
 #define _offset_y_	5.0f
 
+#define M_SOUND_MB_ 24
+#define M_SOUND_BOUNCE_ 58
+
+
+	//materialDesc.restitution = 0.9f;    
+	//materialDesc.staticFriction = 0.5f;    
+	//materialDesc.dynamicFriction = 0.5f; 
 
 /*
 --------------------------------------------------------------------------------------------------
@@ -47,7 +60,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 MagicBallHandler::MagicBallHandler(bool MainPlayer)
 	: _launched(false), _comeback(false), _owner(NULL),
 		_MainPlayer(MainPlayer)
-{}
+{
+	ConfigurationManager::GetInstance()->GetFloat("Physic.MagicBallBounciness", _MagicBallBounciness);
+	ConfigurationManager::GetInstance()->GetFloat("Physic.MagicBallStaticFriction", _MagicBallStaticFriction); 
+	ConfigurationManager::GetInstance()->GetFloat("Physic.MagicBallDynamicFriction", _MagicBallDynamicFriction); 
+	ConfigurationManager::GetInstance()->GetFloat("Physic.NormalMBForce", _NormalMBForce);
+	ConfigurationManager::GetInstance()->GetFloat("Physic.NormalMBForceUp", _NormalMBForceUp); 
+	ConfigurationManager::GetInstance()->GetFloat("Physic.SportMBForce", _SportMBForce);
+	ConfigurationManager::GetInstance()->GetFloat("Physic.SportMBForceUp", _SportMBForceUp);  
+	ConfigurationManager::GetInstance()->GetFloat("Physic.AggresiveMBForce", _AggresiveMBForce);
+	ConfigurationManager::GetInstance()->GetFloat("Physic.AggresiveMBForceUp", _AggresiveMBForceUp);    
+	ConfigurationManager::GetInstance()->GetFloat("Physic.DiscreteMBForce", _DiscreteMBForce);
+	ConfigurationManager::GetInstance()->GetFloat("Physic.DiscreteMBForceUp", _DiscreteMBForceUp); 
+
+	ConfigurationManager::GetInstance()->GetFloat("Physic.NormalMBForceUpOnImpact", _NormalMBForceUpOnImpact); 
+	ConfigurationManager::GetInstance()->GetFloat("Physic.SportMBForceUpOnImpact", _SportMBForceUpOnImpact);  
+	ConfigurationManager::GetInstance()->GetFloat("Physic.AggresiveMBForceUpOnImpact", _AggresiveMBForceUpOnImpact);    
+	ConfigurationManager::GetInstance()->GetFloat("Physic.DiscreteMBForceUpOnImpact", _DiscreteMBForceUpOnImpact);  
+}
 
 
 /*
@@ -104,11 +134,18 @@ void MagicBallHandler::Render()
 - launch the magic ball
 --------------------------------------------------------------------------------------------------
 */
-void MagicBallHandler::Launch(float PosX, float PosY, float PosZ, float dirX, float dirZ, int mode, bool enoughmana)
+void MagicBallHandler::Launch(float PosX, float PosY, float PosZ, float dirX, float dirZ, int mode, 
+								bool enoughmana, NxActor* ownerphys)
 {
 	// do nothing if ball is already launched
-	if(_launched)
+	if(_MainPlayer && _launched)
 		return;
+
+	_currmode = mode;
+
+
+	// clean in case we still have an MB running
+	cleanPhys();
 
 	if(_MainPlayer)
 	{
@@ -123,6 +160,11 @@ void MagicBallHandler::Launch(float PosX, float PosY, float PosZ, float dirX, fl
 		ThreadSafeWorkpile::getInstance()->ThrowMagicBall(linfo);
 	}
 
+	//play sound
+	std::string soundp = DataLoader::getInstance()->GetSoundPath(M_SOUND_MB_);
+	if(soundp != "")
+		MusicHandler::getInstance()->PlaySample(soundp, 0);
+
 	_lastlaunchtime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDouble();
 	_launched = true;
 	_comeback = false;
@@ -131,12 +173,43 @@ void MagicBallHandler::Launch(float PosX, float PosY, float PosZ, float dirX, fl
 
 	_physdata = new ActorUserData(4, -1, this);
 	_physH =  PhysXEngine::getInstance()->CreateSphere(NxVec3(PosX, PosY+_offset_y_, PosZ), _size_ball_, 1.0, 
-															3, _physdata);
+															3, _physdata, 
+															_MagicBallBounciness,
+															_MagicBallStaticFriction,
+															_MagicBallDynamicFriction);
+
 	_physH->setContactReportFlags(NX_NOTIFY_ON_START_TOUCH);
 
-	float coeffforce = 2.0f;
+	if(ownerphys)
+		PhysXEngine::getInstance()->IgnoreActorContact(_physH, ownerphys);
 
-	_physH->addForce(NxVec3(dirX*coeffforce, 0.0, dirZ*coeffforce));
+	float coeffforce = 0.0f;
+	float coeffforceup = 0.0f;
+
+	switch(_currmode)
+	{
+		case 1:
+			coeffforce = _NormalMBForce;
+			coeffforceup = _NormalMBForceUp; 
+		break;
+
+		case 2:
+			coeffforce = _SportMBForce;
+			coeffforceup = _SportMBForceUp; 
+		break;
+
+		case 3:
+			coeffforce = _AggresiveMBForce;
+			coeffforceup = _AggresiveMBForceUp; 
+		break;
+
+		case 4:
+			coeffforce = _DiscreteMBForce;
+			coeffforceup = _DiscreteMBForceUp; 
+		break;
+	}
+
+	_physH->addForce(NxVec3(dirX*coeffforce, coeffforceup, dirZ*coeffforce));
 }
 
 
@@ -201,15 +274,15 @@ void MagicBallHandler::Process()
 			Clear();
 		}
 	}
-	//else
-	//{
-	//	//check if time is up and magic ball should come back
-	//	double ctime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDouble();
-	//	if((ctime - _lastlaunchtime) > 5000)
-	//	{
-	//		BallComeBack();
-	//	}
-	//}
+	else
+	{
+		//check if time is up and magic ball should come back
+		double ctime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDouble();
+		if((ctime - _lastlaunchtime) > 5000)
+		{
+			BallComeBack();
+		}
+	}
 
 }
 
@@ -221,6 +294,9 @@ void MagicBallHandler::Process()
 */
 void MagicBallHandler::Clear()
 {
+	if(!_launched)
+		return;
+
 	if(_MainPlayer)
 		ThreadSafeWorkpile::getInstance()->MagicBallEnd();
 
@@ -254,30 +330,64 @@ void MagicBallHandler::cleanPhys()
 */
 void MagicBallHandler::CallbackOnContact(int TouchedActorType, long TouchedActorIdx)
 {
-	++_touch_counter;
-	if(_touch_counter > 3 || !_enoughmana)
+	//play sound
+	//play sound
+	std::string soundp = DataLoader::getInstance()->GetSoundPath(M_SOUND_BOUNCE_);
+	if(soundp != "")
+		MusicHandler::getInstance()->PlaySample(soundp, 0);
+
+	if(_MainPlayer)
 	{
-		BallComeBack();
+		if(TouchedActorType == 1)
+		{
+			if(_MainPlayer)
+				ThreadSafeWorkpile::getInstance()->MbHittedActor(TouchedActorIdx);
+
+			BallComeBack();
+			return;
+		}
+
+		if(TouchedActorType == 3)
+		{
+			if(_MainPlayer)
+				ThreadSafeWorkpile::getInstance()->MbHittedPlayer(TouchedActorIdx);
+
+			BallComeBack();
+			return;
+		}
+
+		++_touch_counter;
+		if(_touch_counter > 3 || !_enoughmana)
+		{
+			if(_MainPlayer)
+				ThreadSafeWorkpile::getInstance()->MbHittedActor(-1);
+
+			BallComeBack();
+			return;
+		}
 	}
 
-	
-	if(TouchedActorType == 1)
+
+	float coeffforceup = 0.0f;
+	switch(_currmode)
 	{
-		if(_MainPlayer)
-			ThreadSafeWorkpile::getInstance()->MbHittedActor(TouchedActorIdx);
+		case 1:
+			coeffforceup = _NormalMBForceUpOnImpact; 
+		break;
 
-		BallComeBack();
+		case 2:
+			coeffforceup = _SportMBForceUpOnImpact; 
+		break;
+
+		case 3:
+			coeffforceup = _AggresiveMBForceUpOnImpact; 
+		break;
+
+		case 4:
+			coeffforceup = _DiscreteMBForceUpOnImpact; 
+		break;
 	}
-
-	if(TouchedActorType == 3)
-	{
-		if(_MainPlayer)
-			ThreadSafeWorkpile::getInstance()->MbHittedPlayer(TouchedActorIdx);
-
-		BallComeBack();
-	}
-
-
+	_physH->addForce(NxVec3(0, coeffforceup, 0));
 }
 
 

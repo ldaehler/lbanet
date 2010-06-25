@@ -493,7 +493,7 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 			if(mode > 4)
 				mode = 1;
 			_magicballH.Launch(GetPosX(), GetPosY(), GetPosZ(), dirX, dirZ, mode, 
-									(_player->GetCurrentMana() > 0));
+									(_player->GetCurrentMana() > 0), NULL);
 		}
 
 		return FinishProcess(tnow, tdiff, -1);
@@ -741,14 +741,16 @@ int MainPlayerHandler::FinishProcess(double tnow, float tdiff, int res)
 						_corrected_velocityY, _corrected_velocityZ, _velocityR,
 						_player->GetModel(), _player->GetBody(), _player->GetAnimation(),
 						_player->GetBodyColor(), _player->GetNameR(), 
-						_player->GetNameG(), _player->GetNameB(), _player->Visible()))
+						_player->GetNameG(), _player->GetNameB(), _player->Visible(),
+						_player->GetSizeX(), _player->GetSizeY(), _player->GetSizeZ()))
 	{
 		_dr.Set(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ(),
 						_player->GetRotation(), _corrected_velocityX,
 						_corrected_velocityY, _corrected_velocityZ, _velocityR,
 						_player->GetModel(), _player->GetBody(), _player->GetAnimation(),
 						_player->GetBodyColor(), _player->GetNameR(), 
-						_player->GetNameG(), _player->GetNameB(), _player->Visible());
+						_player->GetNameG(), _player->GetNameB(), _player->Visible(),
+						_player->GetSizeX(), _player->GetSizeY(), _player->GetSizeZ());
 
 
 		LbaNet::ActorInfo nai;
@@ -759,6 +761,9 @@ int MainPlayerHandler::FinishProcess(double tnow, float tdiff, int res)
 		nai.Y = _player->GetPosY();
 		nai.Z = _player->GetPosZ();
 		nai.Rotation = _player->GetRotation();
+		nai.SizeX = _player->GetSizeX();
+		nai.SizeY = _player->GetSizeY();
+		nai.SizeZ = _player->GetSizeZ();
 		nai.Model = _player->GetModel();
 		nai.Body = _player->GetBody();
 		nai.Animation = _player->GetAnimation();
@@ -1767,4 +1772,13 @@ int MainPlayerHandler::GetWeaponAnimation()
 	}
 
 	return 0;
+}
+
+
+/***********************************************************
+clear the magic ball if launched (e.g we change map)
+**************************************************-********/
+void MainPlayerHandler::ClearMB()
+{
+	_magicballH.Clear();
 }

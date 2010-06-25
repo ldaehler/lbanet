@@ -47,6 +47,9 @@ public:
 
 	void SetPosition(float X, float Y, float Z);
 
+	NxActor* GetActor()
+	{ return controller; }
+
 private:
 	float lastX;
 	float lastY;

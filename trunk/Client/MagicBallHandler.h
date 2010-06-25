@@ -54,7 +54,8 @@ public:
 	void Render();
 
 	//! launch the magic ball
-	void Launch(float PosX, float PosY, float PosZ, float dirX, float dirZ, int mode, bool enoughmana);
+	void Launch(float PosX, float PosY, float PosZ, float dirX, float dirZ, int mode, 
+					bool enoughmana, NxActor* ownerphys);
 
 	//! proccess magic ball
 	void Process();
@@ -68,6 +69,10 @@ public:
 
 	//! callback function
 	virtual void CallbackOnContact(int TouchedActorType, long TouchedActorIdx);
+
+	//! called when mb should come back
+	void MagicBallComeback()
+	{BallComeBack();}
 
 protected:
 	//! clean physycall shape if needed
@@ -90,6 +95,27 @@ private:
 	float	_currY;
 	float	_currZ;
 
+	int		_currmode;
+
+
+	//physic stuff
+	float	_MagicBallBounciness;
+	float	_MagicBallStaticFriction; 
+	float	_MagicBallDynamicFriction; 
+
+	float	_NormalMBForce;
+	float	_NormalMBForceUp; 
+	float	_SportMBForce;
+	float	_SportMBForceUp;  
+	float	_AggresiveMBForce;
+	float	_AggresiveMBForceUp;    
+	float	_DiscreteMBForce;
+	float	_DiscreteMBForceUp;  
+
+	float	_NormalMBForceUpOnImpact; 
+	float	_SportMBForceUpOnImpact;  
+	float	_AggresiveMBForceUpOnImpact;    
+	float	_DiscreteMBForceUpOnImpact;  
 
 	NxActor* _physH;
 	ActorUserData * _physdata;

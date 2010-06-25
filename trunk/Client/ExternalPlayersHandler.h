@@ -80,7 +80,7 @@ public:
 
 protected:
 	void MagicBallPlayed(long playerid, const LbaNet::LaunchInfo & linfo);
-
+	void MagicBallComeback(long playerid);
 private:
 	std::map<long, ExternalPlayer *>	_actors;
 	std::string							_mapName;

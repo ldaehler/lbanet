@@ -1126,6 +1126,28 @@ void ThreadSafeWorkpile::GetMagicBallPlayed(std::vector<std::pair<long, LbaNet::
 	vec.swap(m_mb_played);
 }
 
+
+/***********************************************************
+a magic ball come back
+***********************************************************/
+void ThreadSafeWorkpile::MagicBallComeback(long PlayerId)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_magic_ball_comeback);
+	m_mb_comeback.push_back(PlayerId);
+}
+
+/***********************************************************
+get all magic ball come back
+***********************************************************/
+void ThreadSafeWorkpile::GetMagicBallComeback(std::vector<long> & vec)
+{
+	vec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_magic_ball_comeback);
+	vec.swap(m_mb_comeback);
+}
+
+
+
 /***********************************************************
 when player throw MB
 ***********************************************************/

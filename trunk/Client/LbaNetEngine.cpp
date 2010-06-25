@@ -163,7 +163,9 @@ void LbaNetEngine::Initialize(void)
 
 	LoadHaloTexture();
 
-	PhysXEngine::getInstance()->Init();
+	float gravity = -1.0;
+	ConfigurationManager::GetInstance()->GetFloat("Physic.GlobalGravity", gravity);
+	PhysXEngine::getInstance()->Init(gravity);
 }
 
 

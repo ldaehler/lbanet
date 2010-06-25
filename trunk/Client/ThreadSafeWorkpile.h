@@ -421,6 +421,11 @@ public:
 	//! get all magic ball played
 	void GetMagicBallPlayed(std::vector<std::pair<long, LbaNet::LaunchInfo> > & vec);
 
+	//! a magic ball come back
+	void MagicBallComeback(long PlayerId);
+
+	//! get all magic ball played
+	void GetMagicBallComeback(std::vector<long> & vec);
 
 	//! when player throw MB
 	void ThrowMagicBall(const LbaNet::LaunchInfo & linfo);
@@ -504,6 +509,7 @@ private:
 	IceUtil::Mutex								m_mutex_questbook_update;
 
 	IceUtil::Mutex								m_mutex_magic_ball_played;
+	IceUtil::Mutex								m_mutex_magic_ball_comeback;
 	IceUtil::Mutex								m_mutex_throw_MB;
 	IceUtil::Mutex								m_mutex_ended_MB;
 	IceUtil::Mutex								m_mutex_hitted_actors;
@@ -604,6 +610,7 @@ private:
 	QuestUpdate									m_update_questbook;
 
 	std::vector<std::pair<long, LbaNet::LaunchInfo> >	m_mb_played;
+	std::vector<long>							m_mb_comeback;
 
 	bool										mb_throwed;
 	LbaNet::LaunchInfo							mb_info;

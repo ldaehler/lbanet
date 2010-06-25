@@ -41,15 +41,19 @@ class DeadReckon
 {
 public:
 
-	double			_posX;
-	double			_posY;
-	double			_posZ;
-	double			_rotation;
+	float			_posX;
+	float			_posY;
+	float			_posZ;
+	float			_rotation;
 
-	double			_velocityX;
-	double			_velocityY;
-	double			_velocityZ;
-	double			_velocityR;
+	float			_sizeX;
+	float			_sizeY;
+	float			_sizeZ;
+
+	float			_velocityX;
+	float			_velocityY;
+	float			_velocityZ;
+	float			_velocityR;
 
 	int				_Model;
 	int				_Body;
@@ -64,11 +68,12 @@ public:
 
 
 	// set reckon value
-	void Set( const double &posX, const double &posY, const double &posZ,
-				const double &rotation, const double &velocityX, const double &velocityY,
-				const double &velocityZ, const double &velocityR,
+	void Set( float posX, float posY, float posZ,
+				float rotation, float velocityX, float velocityY,
+				float velocityZ, float velocityR,
 				int Model, int Body, int Animation, short color,
-				int	nameR, int	nameG, int	nameB, bool Visible)
+				int	nameR, int	nameG, int	nameB, bool Visible,
+				float sizeX, float sizeY, float sizeZ)
 	{
 		_visible = Visible;
 
@@ -76,6 +81,10 @@ public:
 		_posY = posY;
 		_posZ = posZ;
 		_rotation = rotation;
+
+		_sizeX = sizeX;
+		_sizeY = sizeY;
+		_sizeZ = sizeZ;
 
 		_velocityX = velocityX;
 		_velocityY = velocityY;
@@ -93,7 +102,7 @@ public:
 	}
 
 	// update reackon on each tick
-	void Update(const double & timediff)
+	void Update(double timediff)
 	{
 		_posX += _velocityX*timediff;
 		_posY += _velocityY*timediff;
@@ -108,11 +117,12 @@ public:
 	}
 
 	// check if reackon is still on track
-	bool IsOntrack( const double &posX, const double &posY, const double &posZ,
-					const double &rotation, double velocityX, double velocityY,
-					double velocityZ, double velocityR,
+	bool IsOntrack( float posX, float posY, float posZ,
+					float rotation, float velocityX, float velocityY,
+					float velocityZ, float velocityR,
 					int Model, int Body, int Animation, short color,
-					int	nameR, int	nameG, int	nameB, bool Visible) const
+					int	nameR, int	nameG, int	nameB, bool Visible,
+					float sizeX, float sizeY, float sizeZ) const
 	{
 		if(_visible != Visible)
 			return false;
@@ -129,26 +139,29 @@ public:
 		if(_color != color)
 			return false;
 
-		double diffpos = fabs(posX - _posX) + fabs(posY - _posY) +  fabs(posZ - _posZ);
+		float diffpos = abs(posX - _posX) + abs(posY - _posY) +  abs(posZ - _posZ);
 		if(diffpos > 2)
 			return false;
 
-		double diffrot = fabs(rotation - _rotation);
+		double diffrot = abs(rotation - _rotation);
 		if(diffrot > 10)
 			return false;
 
-		if(fabs(velocityX - _velocityX) > 0.00001)
+		if(abs(velocityX - _velocityX) > 0.00001f)
 			return false;
 
-		if(fabs(velocityY - _velocityY) > 0.00001)
+		if(abs(velocityY - _velocityY) > 0.00001f)
 			return false;
 
-		if(fabs(velocityZ - _velocityZ) > 0.00001)
+		if(abs(velocityZ - _velocityZ) > 0.00001f)
 			return false;
 
-		if(fabs(velocityR - _velocityR) > 0.1)
+		if(abs(velocityR - _velocityR) > 0.1f)
 			return false;
 
+		float diffsize = abs(sizeX - _sizeX) + abs(sizeY - _sizeY) +  abs(sizeZ - _sizeZ);
+		if(diffsize > 0.00001f)
+			return false;
 
 		if(_nameR != nameR)
 			return false;
@@ -339,6 +352,9 @@ public:
 	// make actor use current weapon
 	// return true if weapon can be used
 	bool UseWeapon();
+
+	//! clear the magic ball if launched (e.g we change map)
+	void ClearMB();
 
 protected:
 
