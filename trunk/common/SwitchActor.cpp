@@ -39,7 +39,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 SwitchActor::SwitchActor(float activationdistance, int activationtype)
 : ActivableActor(activationdistance, activationtype), _switchOn(false)
 {
-
+	_collidable = false;
+	SetSize(0.4f, 1.0f, 0.4f);
 }
 
 
@@ -140,4 +141,13 @@ void SwitchActor::Setstate(const ActorStateInfo & currState)
 		}
 		#endif
 	}
+}
+
+
+/***********************************************************
+called when the magic ball hit an actor
+***********************************************************/
+bool SwitchActor::MagicBallHit(long LauncherId)
+{
+	return true;
 }

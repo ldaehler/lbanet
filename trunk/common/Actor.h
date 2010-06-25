@@ -133,6 +133,7 @@ public:
 	float  GetSizeX(){return _sizeX;} const
 	float  GetSizeY(){return _sizeY;} const
 	float  GetSizeZ(){return _sizeZ;} const
+	bool  GetCollidable(){return _collidable;} const
 
 	// set actor size
 	void SetSize(float  sizeX, float  sizeY, float  sizeZ)
@@ -152,6 +153,11 @@ public:
 	//! set movable
 	void SetMovable(bool movable)
 	{_movable = movable;}
+
+	//! set collidable
+	void SetCollidable(bool collidable)
+	{_collidable = collidable;}
+
 
 	//! set actor id
 	void SetId(long id)
@@ -311,6 +317,12 @@ public:
 	ActorPositionHandler * GetPhysController()
 	{ return _physposhandler;}
 
+
+	//! called when the magic ball hit an actor
+	//! return true if actor should be activated
+	virtual bool MagicBallHit(long LauncherId){return false;}
+
+
 protected:
 	//! refresh bounding box
 	void RefreshBB();
@@ -344,6 +356,7 @@ protected:
 	bool	_movable;
 	bool	_depthmask;
 	bool	_visible;
+	bool	_collidable;
 
 	long	_outputsignal;
 	std::vector<long> _targets;

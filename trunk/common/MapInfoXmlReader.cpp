@@ -369,6 +369,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 			bool passable = true;
 			bool depthmask = true;
 			bool movable = false;
+			bool collidable = true;
 			long renderertype=-1;
 			std::vector<long> renderertarget;
 			D3ObjectRenderer * renderer = NULL;
@@ -409,7 +410,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 			pElem->QueryValueAttribute("movable", &movable);
 			pElem->QueryValueAttribute("outputsignal", &outputsignal);
 			pElem->QueryValueAttribute("attachedsound", &attachedsound);
-
+			pElem->QueryValueAttribute("collidable", &collidable);
 
 			if(pElem->QueryValueAttribute("renderertype", &renderertype) == TIXML_SUCCESS)
 				if(renderertarget.size() > 0)
@@ -859,6 +860,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 			act->SetPassable(passable);
 			act->SetDepthMask(depthmask);
 			act->SetMovable(movable);
+			act->SetCollidable(collidable);
 
 			act->SetRenderer(renderer);
 

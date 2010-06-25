@@ -308,7 +308,7 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 		act->SetAttribute("movable", it->second->IsMovable());
 		act->SetAttribute("outputsignal", it->second->GetSignal());
 		act->SetAttribute("attachedsound", it->second->GetAttachedSound());
-
+		act->SetAttribute("collidable", it->second->GetCollidable());
 		{
 			std::vector<long> vect = it->second->GetTargets();
 			std::stringstream str;
