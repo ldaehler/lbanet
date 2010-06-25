@@ -58,7 +58,8 @@ public:
 								const std::string& WorldName,long PlayerId);
 
 	// quit current world
-	void QuitWorld(const std::string& LastWorldName,long PlayerId);
+	void QuitWorld(const std::string& LastWorldName,long PlayerId,
+					float currentlife, float currentmana, float maxlife, float maxmana);
 
 	// update player inventory structure
 	void UpdateInventory(const LbaNet::InventoryInfo &Inventory, const std::string& WorldName,long PlayerId);
@@ -89,6 +90,10 @@ public:
 	// set quest information
 	void SetQuestInfo(const std::string& WorldName, long PlayerId, 
 						const std::vector<long> &questStarted, const std::vector<long> &questFinished);
+
+
+	// record player kill
+	void RecordKill(const std::string& WorldName, long KilledId, int Reason, long KillerId);
 
 protected:
 	DatabaseHandler(const DatabaseHandler &);

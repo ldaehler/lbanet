@@ -129,7 +129,7 @@ LbaNet::SavedWorldInfo DatabaseHandler::ChangeWorld(const std::string& NewWorldN
 	}
 
 	mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
-	query << "SELECT id, lastmap, lastposx, lastposy, lastposz, lastrotation, InventorySize, Shortcuts FROM usertoworldmap";
+	query << "SELECT id, lastmap, lastposx, lastposy, lastposz, lastrotation, InventorySize, Shortcuts, LifePoint, ManaPoint, MaxLife, MaxMana FROM usertoworldmap";
 	query << " WHERE userid = '"<<PlayerId<<"'";
 	query << " AND worldname = '"<<NewWorldName<<"'";
 	if (mysqlpp::StoreQueryResult res = query.store())
@@ -157,6 +157,11 @@ LbaNet::SavedWorldInfo DatabaseHandler::ChangeWorld(const std::string& NewWorldN
 			Tokenize(shortcutstr, tokens, "#");
 			for(size_t i=0; i<tokens.size(); ++i)
 				resP.inventory.UsedShorcuts.push_back(atoi(tokens[i].c_str()));
+
+			resP.CurrentLife = res[0][8];
+			resP.CurrentMana = res[0][9];
+			resP.MaxLife = res[0][10];
+			resP.MaxMana = res[0][11];
 
 			query.clear();
 			query << "SELECT * FROM userinventory";
@@ -235,7 +240,8 @@ void DatabaseHandler::UpdatePositionInWorld(const LbaNet::PlayerPosition& Positi
 /***********************************************************
 quit current world
 ***********************************************************/
-void DatabaseHandler::QuitWorld(const std::string& LastWorldName,long PlayerId)
+void DatabaseHandler::QuitWorld(const std::string& LastWorldName,long PlayerId,
+								float currentlife, float currentmana, float maxlife, float maxmana)
 {
 	Lock sync(*this);
 	if(!_mysqlH.connected())
@@ -250,6 +256,10 @@ void DatabaseHandler::QuitWorld(const std::string& LastWorldName,long PlayerId)
 	{
 		mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
 		query << "UPDATE usertoworldmap SET timeplayedmin = timeplayedmin + TIMESTAMPDIFF(MINUTE, lastvisited, UTC_TIMESTAMP())";
+		query << " SET LifePoint = '"<<currentlife<<"'";
+		query << " SET ManaPoint = '"<<currentmana<<"'";
+		query << " SET MaxLife = '"<<maxlife<<"'";
+		query << " SET MaxMana = '"<<maxmana<<"'";
 		query << " WHERE userid = '"<<PlayerId<<"'";
 		query << " AND worldname = '"<<LastWorldName<<"'";		
 		if(!query.exec())
@@ -636,5 +646,74 @@ void DatabaseHandler::SetQuestInfo(const std::string& WorldName, long PlayerId,
 	{
 		if(_mysqlH.connected())
 			_mysqlH.disconnect();
+	}
+}
+
+
+/***********************************************************
+record player kill
+***********************************************************/
+void DatabaseHandler::RecordKill(const std::string& WorldName, long KilledId, int Reason, long KillerId)
+{
+	Lock sync(*this);
+	if(!_mysqlH.connected())
+	{
+		Connect();
+		if(!_mysqlH.connected())
+			return;
+	}
+
+	if(WorldName != "")
+	{
+		mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
+		query << "UPDATE usertoworldmap ";
+		switch(Reason)
+		{
+			case 2:
+				query << "SET FallDeath = FallDeath + 1";
+			break;
+			case 3:
+				query << "SET MonsterDeath = MonsterDeath + 1";
+			break;
+			case 4:
+				query << "SET PvpDeath = PvpDeath + 1";
+			break;
+			default:
+				query << "SET OtherDeath = OtherDeath + 1";
+			break;
+		}
+		query << " WHERE userid = '"<<KilledId<<"'";
+		query << " AND worldname = '"<<WorldName<<"'";		
+		if(!query.exec())
+		{
+			std::cerr<<IceUtil::Time::now()<<": LBA_Server - RecordKill failed for user id "<<KilledId<<" : "<<query.error()<<std::endl;		
+			if(_mysqlH.connected())
+				_mysqlH.disconnect();
+		}
+	}
+
+	if(!_mysqlH.connected())
+	{
+		Connect();
+		if(!_mysqlH.connected())
+			return;
+	}
+
+	if(WorldName != "")
+	{
+		if(Reason == 4)
+		{
+			mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
+			query << "UPDATE usertoworldmap ";
+			query << "SET PvpKill = PvpKill + 1";
+			query << " WHERE userid = '"<<KillerId<<"'";
+			query << " AND worldname = '"<<WorldName<<"'";		
+			if(!query.exec())
+			{
+				std::cerr<<IceUtil::Time::now()<<": LBA_Server - RecordKiller failed for user id "<<KillerId<<" : "<<query.error()<<std::endl;		
+				if(_mysqlH.connected())
+					_mysqlH.disconnect();
+			}
+		}
 	}
 }

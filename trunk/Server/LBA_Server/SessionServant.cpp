@@ -30,6 +30,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #define _FIRST_USER_CREATED_ID_ 10000000
+#define _STARTING_LIFE_ 50
+#define _STARTING_MANA_ 50
 
 
 /***********************************************************
@@ -45,10 +47,6 @@ SessionServant::SessionServant(const std::string& userId, const RoomManagerPrx& 
 {
 	_userNum = _ctracker->Connect(_userId);
 
-	_lifeinfo.CurrentLife = 40;
-	_lifeinfo.MaxLife = 40;
-	_lifeinfo.CurrentMana = 40;
-	_lifeinfo.MaxMana = 40;
 	_lifeinfo.ActorId = _userNum;
 	_lifeinfo.Name = _userId;
 
@@ -182,7 +180,8 @@ void SessionServant::QuitCurrentWorld()
 		cleanEphemereItems();
 		_dbh.UpdateInventory(_playerInventory, _currWorldName, _userNum);
 		_dbh.SetQuestInfo(_currWorldName, _userNum, _QH.GetQuestsStarted(), _QH.GetQuestsFinished());
-		_dbh.QuitWorld(_currWorldName, _userNum);
+		_dbh.QuitWorld(_currWorldName, _userNum, _lifeinfo.CurrentLife, _lifeinfo.CurrentMana, 
+						_lifeinfo.MaxLife, _lifeinfo.MaxMana);
 	}
 }
 
@@ -534,6 +533,16 @@ LbaNet::SavedWorldInfo SessionServant::ChangeWorld(const std::string& WorldName,
 	_currWorldName = WorldName;
 	LbaNet::SavedWorldInfo swinfo = _dbh.ChangeWorld(WorldName, _userNum);
 
+	if(swinfo.CurrentLife < 0)
+		swinfo.CurrentLife = _STARTING_LIFE_;
+	if(swinfo.MaxLife < 0)
+		swinfo.MaxLife = _STARTING_LIFE_;
+	if(swinfo.CurrentMana < 0)
+		swinfo.CurrentMana = _STARTING_MANA_;
+	if(swinfo.MaxMana < 0)
+		swinfo.MaxMana = _STARTING_MANA_;
+
+
 	// reload inventory
 	_inventory_db.clear();
 	MapInfoXmlReader::LoadInventory(_session_world_inventory_files[WorldName], _inventory_db);
@@ -553,6 +562,13 @@ LbaNet::SavedWorldInfo SessionServant::ChangeWorld(const std::string& WorldName,
 
 
 	_playerInventory = swinfo.inventory;
+
+	_lifeinfo.CurrentLife = swinfo.CurrentLife;
+	_lifeinfo.CurrentMana = swinfo.CurrentMana;
+	_lifeinfo.MaxLife = swinfo.MaxLife;
+	_lifeinfo.MaxMana = swinfo.MaxMana;
+
+
 	return swinfo;
 }
 
@@ -1352,5 +1368,9 @@ void SessionServant::UpdatedLife(const ActorLifeInfo &ali, const ::Ice::Current&
 
 		if(_client_observer)
 			_client_observer->Die();
+
+
+		// record kill in database
+		_dbh.RecordKill(_currWorldName, _userNum, ali.ChangeReason, ali.ChangeActorId);
 	}
 }

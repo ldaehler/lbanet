@@ -949,6 +949,21 @@ void MapHandlerThread::MagicBallTouchedActor(long PlayerId, long ActorId)
 {
 	if(_publisher)
 		_publisher->MagicBallComeBack(PlayerId);
+
+	std::map<long, Actor *>::iterator itact = _actors.find(ActorId);
+	if(itact != _actors.end())
+	{
+		if(itact->second->MagicBallHit(PlayerId))
+		{
+			ActorActivationInfoWithCallback ai;
+			ai.ainfo.ActivatedId = ActorId;
+			ai.ainfo.Activate = true;
+			ai.ainfo.ActorId = PlayerId;
+			ActivateActor(ai);
+		}
+	}
+	
+
 }
 
 /***********************************************************
