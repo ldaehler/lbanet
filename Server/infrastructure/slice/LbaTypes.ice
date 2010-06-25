@@ -66,7 +66,7 @@ module LbaNet
 		long			ActorId;
 		string			Name;
 		
-		// activator coordinates
+		// life/mana info
 		float			CurrentLife;
 		float			MaxLife;
 		float			CurrentMana;
@@ -195,24 +195,30 @@ module LbaNet
 	
 	struct InventoryInfo
 	{
-		int InventorySize;
-		InventoryMap InventoryStructure;
-		ShortcutSeq UsedShorcuts;
+		int 			InventorySize;
+		InventoryMap 		InventoryStructure;
+		ShortcutSeq 		UsedShorcuts;
 	};
 	
 	
 	struct SavedWorldInfo
 	{
-		PlayerPosition ppos;
-		InventoryInfo inventory;
+		PlayerPosition 		ppos;
+		InventoryInfo 		inventory;
+		
+		// life/mana info
+		float			CurrentLife;
+		float			MaxLife;
+		float			CurrentMana;
+		float			MaxMana;
 	};
 	
 	
 	struct PlayerInfo
 	{
-		long Id;
-		string Status;
-		string NameColor;
+		long 			Id;
+		string 			Status;
+		string 			NameColor;
 	};
 
 
