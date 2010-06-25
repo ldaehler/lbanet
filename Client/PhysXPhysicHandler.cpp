@@ -128,7 +128,8 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 
 					ActorUserData * usdata = new ActorUserData(1, it->first, NULL);
 					NxActor* cont = PhysXEngine::getInstance()->CreateBox(NxVec3(posx, posy, posz), 
-																		sizex, sizey, sizez, 1.0, 2, usdata);
+																		sizex, sizey, sizez, 1.0, 2, usdata,
+																		it->second->GetCollidable());
 
 					it->second->SetPhysController(new ActorPositionHandler(cont, posx, posy, posz));
 					_actors.push_back(cont);
@@ -160,7 +161,8 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 
 					ActorUserData * usdata = new ActorUserData(1, it->first, NULL);
 					NxActor* cont = PhysXEngine::getInstance()->CreateBox(NxVec3(posx, posy, posz), 
-																		sizex, sizey, sizez, 1.0, 2, usdata);
+																		sizex, sizey, sizez, 1.0, 2, usdata,
+																		it->second->GetCollidable());
 
 					it->second->SetPhysController(new ActorPositionHandler(cont, posx, posy, posz));
 					_actors.push_back(cont);

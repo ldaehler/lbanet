@@ -115,7 +115,7 @@ public:
 	//! create actors
 	// type: 1=static, 2=kinematic, 3=dynamic
 	NxActor* CreateBox(const NxVec3 & StartPosition, float dimX, float dimY, float dimZ, 
-						float density, int Type, ActorUserData * adata, bool noncollidable = false);
+						float density, int Type, ActorUserData * adata, bool collidable = true);
 	NxActor* CreateSphere(const NxVec3 & StartPosition, float radius, float density, 
 							int Type, ActorUserData * adata,
 							float staticFriction, float dynamicFriction, float restitution);

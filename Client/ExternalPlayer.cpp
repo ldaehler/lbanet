@@ -64,7 +64,7 @@ ExternalPlayer::ExternalPlayer(const LbaNet::ActorInfo & ainfo, float animationS
 		// add physique info
 		_usdata = new ActorUserData(3, ainfo.ActorId, NULL);
 		_physH = PhysXEngine::getInstance()->CreateBox(NxVec3(posx,  posy, posz), 
-															sizex, sizey, sizez, 1.0, 2, _usdata, true);
+															sizex, sizey, sizez, 1.0, 2, _usdata, false);
 	}
 
 	_renderer->SetPhysController(new ActorPositionHandler(_physH, ainfo.X,  ainfo.Y, ainfo.Z));

@@ -336,35 +336,35 @@ void MagicBallHandler::CallbackOnContact(int TouchedActorType, long TouchedActor
 	if(soundp != "")
 		MusicHandler::getInstance()->PlaySample(soundp, 0);
 
-	if(_MainPlayer)
+
+	if(TouchedActorType == 1)
 	{
-		if(TouchedActorType == 1)
+		if(_MainPlayer)
 		{
-			if(_MainPlayer)
-				ThreadSafeWorkpile::getInstance()->MbHittedActor(TouchedActorIdx);
-
-			BallComeBack();
-			return;
+			ThreadSafeWorkpile::getInstance()->MbHittedActor(TouchedActorIdx);
 		}
 
-		if(TouchedActorType == 3)
-		{
-			if(_MainPlayer)
-				ThreadSafeWorkpile::getInstance()->MbHittedPlayer(TouchedActorIdx);
+		BallComeBack();
+		return;
+	}
 
-			BallComeBack();
-			return;
-		}
+	if(TouchedActorType == 3)
+	{
+		if(_MainPlayer)
+			ThreadSafeWorkpile::getInstance()->MbHittedPlayer(TouchedActorIdx);
 
-		++_touch_counter;
-		if(_touch_counter > 3 || !_enoughmana)
-		{
-			if(_MainPlayer)
-				ThreadSafeWorkpile::getInstance()->MbHittedActor(-1);
+		BallComeBack();
+		return;
+	}
 
-			BallComeBack();
-			return;
-		}
+	++_touch_counter;
+	if(_touch_counter > 3 || !_enoughmana)
+	{
+		if(_MainPlayer)
+			ThreadSafeWorkpile::getInstance()->MbHittedActor(-1);
+
+		BallComeBack();
+		return;
 	}
 
 
