@@ -89,6 +89,9 @@ public:
 	//called when actor should die
 	virtual void Die(const Ice::Current&){} 
 
+	// called when ball come back
+	virtual void MagicBallComeBack(Ice::Long PlayerId, const Ice::Current&){} 
+
 private:
 	SharedData * _SD;
 };

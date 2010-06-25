@@ -22,6 +22,11 @@ module LbaNet
 		float			Y;
 		float			Z;
 		float			Rotation;
+		
+		// actor size
+		float			SizeX;
+		float			SizeY;
+		float			SizeZ;
 
 		// actor display
 		int			Model;

@@ -39,7 +39,11 @@ module LbaNet
 	    
 		    
 	    // called when player throw magic ball
-	    void MagicBallPlayed(long PlayerId, LaunchInfo Linfo);	    
+	    void MagicBallPlayed(long PlayerId, LaunchInfo Linfo);	
+	    
+		    
+	    // called when magic ball come back
+	    void MagicBallComeBack(long PlayerId);		    
 	};
 	
 	
