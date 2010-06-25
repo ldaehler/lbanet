@@ -481,7 +481,7 @@ class PlayerLifeChangedEvent : public GameEvent
 public:
 	//! constructor
 	PlayerLifeChangedEvent(float CurLife, float MaxLife, float CurMana, float MaxMana, bool Hurt)
-		: _CurLife(CurLife), _MaxLife(MaxLife), _CurMana(CurMana), _MaxMana(MaxMana)
+		: _CurLife(CurLife), _MaxLife(MaxLife), _CurMana(CurMana), _MaxMana(MaxMana), _Hurt(Hurt)
 	{
 		_type = 19;	
 	}
