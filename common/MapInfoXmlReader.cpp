@@ -638,6 +638,11 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 					int activationtype=1;
 					pElem->QueryValueAttribute("activationtype", &activationtype);
 					act = new SwitchActor(activationdistance, activationtype);
+
+					//sizeX=0.4f;
+					//sizeY=1.0f;
+					//sizeZ=0.4f;
+					//collidable = false;
 				}
 				break;
 

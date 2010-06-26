@@ -111,6 +111,9 @@ void Actor::Show(void)
 {
 	_visible = true;
 
+	if(_physposhandler)
+		_physposhandler->Show();
+
 	if(_Renderer)
 		return _Renderer->Show();
 }
@@ -121,6 +124,9 @@ hide object
 void Actor::Hide(void)
 {
 	_visible = false;
+
+	if(_physposhandler)
+		_physposhandler->Hide();
 
 	if(_Renderer)
 		return _Renderer->Hide();
