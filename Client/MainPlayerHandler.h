@@ -488,6 +488,8 @@ protected:
 	MagicBallHandler	_magicballH;
 	bool				_wlaunched;
 
+	float				_GravityFalldown;
+
 
 	std::string		_newmap;
 	std::string		_spawning;

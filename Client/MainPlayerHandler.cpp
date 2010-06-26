@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ThreadSafeWorkpile.h"
 #include "MusicHandler.h"
 #include "DataLoader.h"
+#include "ConfigurationManager.h"
 
 #include <windows.h>    // Header File For Windows
 #include <GL/gl.h>      // Header File For The OpenGL32 Library
@@ -111,6 +112,8 @@ MainPlayerHandler::MainPlayerHandler(float speedNormal, float speedSport,
 	_player->SetSize(0.4f, 5, 0.4f);
 
 	_magicballH.SetOwner(_player);
+
+	ConfigurationManager::GetInstance()->GetFloat("Physic.GravityFalldown", _GravityFalldown);
 }
 
 
@@ -559,7 +562,7 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 	if(_state != Ac_Jumping && _state != Ac_Flying && !_isAttached)
 	{
 		if(_RoomP)
-			_corrected_velocityY = _RoomP->GetGravitySpeed()/10 * tdiff;
+			_corrected_velocityY = _GravityFalldown * tdiff;
 	}
 
 
@@ -1065,6 +1068,8 @@ start drawning
 ***********************************************************/
 void MainPlayerHandler::Startdrowning()
 {
+	ThreadSafeWorkpile::getInstance()->InformDrown();
+
 	if(_state != Ac_Drowning)
 	{
 		StopJump();

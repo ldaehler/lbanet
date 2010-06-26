@@ -1230,3 +1230,24 @@ void ThreadSafeWorkpile::GetMbHittedPlayer(std::vector<long> &vec)
 	IceUtil::Mutex::Lock lock(m_mutex_hitted_players);
 	vec.swap(m_mb_hitted_players);
 }
+
+
+/***********************************************************
+inform server that player drow
+***********************************************************/
+void ThreadSafeWorkpile::InformDrown()
+{
+	IceUtil::Mutex::Lock lock(m_mutex_drowing);
+	m_drowning = true;
+}
+
+/***********************************************************
+check if player drowning
+***********************************************************/
+bool ThreadSafeWorkpile::IsDrowning()
+{
+	IceUtil::Mutex::Lock lock(m_mutex_drowing);
+	bool res = m_drowning;
+	m_drowning = false;
+	return res;
+}
