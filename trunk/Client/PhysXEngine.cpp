@@ -863,185 +863,185 @@ void PhysXEngine::IgnoreActorContact(NxActor* actor1, NxActor* actor2)
 ***********************************************************/
 void PhysXEngine::RenderActors()
 {
-	//glEnable(GL_BLEND);
-	//glDisable(GL_TEXTURE_2D);
-	//glDisable(GL_DEPTH_TEST);
-	//glLineWidth(2.0f);
+	glEnable(GL_BLEND);
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_DEPTH_TEST);
+	glLineWidth(2.0f);
 
- //   // Render all the actors in the scene
- //   NxU32 nbActors = gScene->getNbActors();
- //   NxActor** actors = gScene->getActors();
- //   while (nbActors--)
- //   {
- //       NxActor* actor = *actors++;
+    // Render all the actors in the scene
+    NxU32 nbActors = gScene->getNbActors();
+    NxActor** actors = gScene->getActors();
+    while (nbActors--)
+    {
+        NxActor* actor = *actors++;
 
+		glPushMatrix();
+
+		glScalef(1, 0.5f, 1);
+		NxMat34 pose = actor->getShapes()[0]->getGlobalPose();
+		//glTranslated(pose.t.x, pose.t.y/2. + 0.5, pose.t.z);
+
+		float glmat[16];	//4x4 column major matrix for OpenGL.
+		pose.M.getColumnMajorStride4(&(glmat[0]));
+		pose.t.get(&(glmat[12]));
+		//clear the elements we don't need:
+		glmat[3] = glmat[7] = glmat[11] = 0.0f;
+		glmat[15] = 1.0f;
+		glMultMatrixf(&(glmat[0]));
+
+		NxBoxShape* boxshap = actor->getShapes()[0]->isBox();
+		if(boxshap)
+		{
+			glColor4f(0.0f,0.0f,1.0f, 1.f);
+
+			NxVec3 boxDim = boxshap->getDimensions();
+			glScalef(boxDim.x, boxDim.y, boxDim.z);
+
+			float _sizeX = 1, _sizeY = 1, _sizeZ = 1;
+			glBegin(GL_LINES);
+				glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+				glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+				glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+				glVertex3f(_sizeX,-_sizeY,_sizeZ);
+				glVertex3f(_sizeX,-_sizeY,_sizeZ);
+				glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+				glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+				glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+
+				glVertex3f(-_sizeX,_sizeY,-_sizeZ);
+				glVertex3f(_sizeX,_sizeY,-_sizeZ);
+				glVertex3f(_sizeX,_sizeY,-_sizeZ);
+				glVertex3f(_sizeX,_sizeY,_sizeZ);
+				glVertex3f(_sizeX,_sizeY,_sizeZ);
+				glVertex3f(-_sizeX,_sizeY,_sizeZ);
+				glVertex3f(-_sizeX,_sizeY,_sizeZ);
+				glVertex3f(-_sizeX,_sizeY,-_sizeZ);
+
+				glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+				glVertex3f(-_sizeX,_sizeY,-_sizeZ);
+
+				glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+				glVertex3f(_sizeX,_sizeY,-_sizeZ);
+
+				glVertex3f(_sizeX,-_sizeY,_sizeZ);
+				glVertex3f(_sizeX,_sizeY,_sizeZ);
+
+				glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+				glVertex3f(-_sizeX,_sizeY,_sizeZ);
+			glEnd();
+		}
+		//else
+		//{
+		//	for(int i=1; i<100; ++i)
+		//	{
+		//		glColor4f(1.0f,0.0f,0.0f, 1.f);
+		//		float _sizeX = (float)i, _sizeY = 0, _sizeZ = (float)i;
+		//		glBegin(GL_LINES);
+		//			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+		//			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+		//			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+		//			glVertex3f(_sizeX,-_sizeY,_sizeZ);
+		//			glVertex3f(_sizeX,-_sizeY,_sizeZ);
+		//			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+		//			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+		//			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+		//		glEnd();
+		//	}
+		//}
+
+
+
+
+
+		glPopMatrix();
+    }
+
+
+	//if(_sizebuff > 0)
+	//{
 	//	glPushMatrix();
-
 	//	glScalef(1, 0.5f, 1);
-	//	NxMat34 pose = actor->getShapes()[0]->getGlobalPose();
-	//	//glTranslated(pose.t.x, pose.t.y/2. + 0.5, pose.t.z);
 
-	//	float glmat[16];	//4x4 column major matrix for OpenGL.
-	//	pose.M.getColumnMajorStride4(&(glmat[0]));
-	//	pose.t.get(&(glmat[12]));
-	//	//clear the elements we don't need:
-	//	glmat[3] = glmat[7] = glmat[11] = 0.0f;
-	//	glmat[15] = 1.0f;
-	//	glMultMatrixf(&(glmat[0]));
-
-	//	NxBoxShape* boxshap = actor->getShapes()[0]->isBox();
-	//	if(boxshap)
+	//	for(int i=0; i<_sizebuff;)
 	//	{
+	//		int id1 = _bufferindiceroof[i++] * 3;
+	//		float p1x =_buffervertexroof[id1];
+	//		float p1y =_buffervertexroof[id1+1];
+	//		float p1z =_buffervertexroof[id1+2];
+
+	//		int id2 = _bufferindiceroof[i++] * 3;
+	//		float p2x =_buffervertexroof[id2];
+	//		float p2y =_buffervertexroof[id2+1];
+	//		float p2z =_buffervertexroof[id2+2];
+
+	//		int id3 = _bufferindiceroof[i++] * 3;
+	//		float p3x =_buffervertexroof[id3];
+	//		float p3y =_buffervertexroof[id3+1];
+	//		float p3z =_buffervertexroof[id3+2];
+
 	//		glColor4f(0.0f,0.0f,1.0f, 1.f);
-
-	//		NxVec3 boxDim = boxshap->getDimensions();
-	//		glScalef(boxDim.x, boxDim.y, boxDim.z);
-
-	//		float _sizeX = 1, _sizeY = 1, _sizeZ = 1;
 	//		glBegin(GL_LINES);
-	//			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
-	//			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
-	//			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
-	//			glVertex3f(_sizeX,-_sizeY,_sizeZ);
-	//			glVertex3f(_sizeX,-_sizeY,_sizeZ);
-	//			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
-	//			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
-	//			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
-
-	//			glVertex3f(-_sizeX,_sizeY,-_sizeZ);
-	//			glVertex3f(_sizeX,_sizeY,-_sizeZ);
-	//			glVertex3f(_sizeX,_sizeY,-_sizeZ);
-	//			glVertex3f(_sizeX,_sizeY,_sizeZ);
-	//			glVertex3f(_sizeX,_sizeY,_sizeZ);
-	//			glVertex3f(-_sizeX,_sizeY,_sizeZ);
-	//			glVertex3f(-_sizeX,_sizeY,_sizeZ);
-	//			glVertex3f(-_sizeX,_sizeY,-_sizeZ);
-
-	//			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
-	//			glVertex3f(-_sizeX,_sizeY,-_sizeZ);
-
-	//			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
-	//			glVertex3f(_sizeX,_sizeY,-_sizeZ);
-
-	//			glVertex3f(_sizeX,-_sizeY,_sizeZ);
-	//			glVertex3f(_sizeX,_sizeY,_sizeZ);
-
-	//			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
-	//			glVertex3f(-_sizeX,_sizeY,_sizeZ);
-	//		glEnd();
+	//			glVertex3f(p1x,p1y,p1z);
+	//			glVertex3f(p2x,p2y,p2z);
+	//			glVertex3f(p2x,p2y,p2z);
+	//			glVertex3f(p3x,p3y,p3z);
+	//			glVertex3f(p3x,p3y,p3z);
+	//			glVertex3f(p1x,p1y,p1z);
+	//		glEnd();	
 	//	}
-	//	//else
-	//	//{
-	//	//	for(int i=1; i<100; ++i)
-	//	//	{
-	//	//		glColor4f(1.0f,0.0f,0.0f, 1.f);
-	//	//		float _sizeX = (float)i, _sizeY = 0, _sizeZ = (float)i;
-	//	//		glBegin(GL_LINES);
-	//	//			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
-	//	//			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
-	//	//			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
-	//	//			glVertex3f(_sizeX,-_sizeY,_sizeZ);
-	//	//			glVertex3f(_sizeX,-_sizeY,_sizeZ);
-	//	//			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
-	//	//			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
-	//	//			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
-	//	//		glEnd();
-	//	//	}
-	//	//}
-
-
-
-
 
 	//	glPopMatrix();
- //   }
-
-
-	////if(_sizebuff > 0)
-	////{
-	////	glPushMatrix();
-	////	glScalef(1, 0.5f, 1);
-
-	////	for(int i=0; i<_sizebuff;)
-	////	{
-	////		int id1 = _bufferindiceroof[i++] * 3;
-	////		float p1x =_buffervertexroof[id1];
-	////		float p1y =_buffervertexroof[id1+1];
-	////		float p1z =_buffervertexroof[id1+2];
-
-	////		int id2 = _bufferindiceroof[i++] * 3;
-	////		float p2x =_buffervertexroof[id2];
-	////		float p2y =_buffervertexroof[id2+1];
-	////		float p2z =_buffervertexroof[id2+2];
-
-	////		int id3 = _bufferindiceroof[i++] * 3;
-	////		float p3x =_buffervertexroof[id3];
-	////		float p3y =_buffervertexroof[id3+1];
-	////		float p3z =_buffervertexroof[id3+2];
-
-	////		glColor4f(0.0f,0.0f,1.0f, 1.f);
-	////		glBegin(GL_LINES);
-	////			glVertex3f(p1x,p1y,p1z);
-	////			glVertex3f(p2x,p2y,p2z);
-	////			glVertex3f(p2x,p2y,p2z);
-	////			glVertex3f(p3x,p3y,p3z);
-	////			glVertex3f(p3x,p3y,p3z);
-	////			glVertex3f(p1x,p1y,p1z);
-	////		glEnd();	
-	////	}
-
-	////	glPopMatrix();
-	////}
+	//}
 
 
 
-	////for(unsigned int i=0; i<gManager->getNbControllers(); ++i)
-	////{
-	////	NxController* ctrl = gManager->getController(i);
-	////	NxExtendedVec3 vec = ctrl->getPosition();
+	//for(unsigned int i=0; i<gManager->getNbControllers(); ++i)
+	//{
+	//	NxController* ctrl = gManager->getController(i);
+	//	NxExtendedVec3 vec = ctrl->getPosition();
 
-	////	glPushMatrix();
-	////	glScalef(1, 0.5f, 1);
-	////	glTranslated(vec.x, vec.y, vec.z);
-	////	glColor4f(1.0f,1.0f,0.0f, 1.f);
+	//	glPushMatrix();
+	//	glScalef(1, 0.5f, 1);
+	//	glTranslated(vec.x, vec.y, vec.z);
+	//	glColor4f(1.0f,1.0f,0.0f, 1.f);
 
-	////	float _sizeX = 0.4f, _sizeY = 2.5f, _sizeZ = 0.4f;
-	////	glBegin(GL_LINES);
-	////		glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
-	////		glVertex3f(_sizeX,-_sizeY,-_sizeZ);
-	////		glVertex3f(_sizeX,-_sizeY,-_sizeZ);
-	////		glVertex3f(_sizeX,-_sizeY,_sizeZ);
-	////		glVertex3f(_sizeX,-_sizeY,_sizeZ);
-	////		glVertex3f(-_sizeX,-_sizeY,_sizeZ);
-	////		glVertex3f(-_sizeX,-_sizeY,_sizeZ);
-	////		glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+	//	float _sizeX = 0.4f, _sizeY = 2.5f, _sizeZ = 0.4f;
+	//	glBegin(GL_LINES);
+	//		glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+	//		glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+	//		glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+	//		glVertex3f(_sizeX,-_sizeY,_sizeZ);
+	//		glVertex3f(_sizeX,-_sizeY,_sizeZ);
+	//		glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+	//		glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+	//		glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
 
-	////		glVertex3f(-_sizeX,_sizeY,-_sizeZ);
-	////		glVertex3f(_sizeX,_sizeY,-_sizeZ);
-	////		glVertex3f(_sizeX,_sizeY,-_sizeZ);
-	////		glVertex3f(_sizeX,_sizeY,_sizeZ);
-	////		glVertex3f(_sizeX,_sizeY,_sizeZ);
-	////		glVertex3f(-_sizeX,_sizeY,_sizeZ);
-	////		glVertex3f(-_sizeX,_sizeY,_sizeZ);
-	////		glVertex3f(-_sizeX,_sizeY,-_sizeZ);
+	//		glVertex3f(-_sizeX,_sizeY,-_sizeZ);
+	//		glVertex3f(_sizeX,_sizeY,-_sizeZ);
+	//		glVertex3f(_sizeX,_sizeY,-_sizeZ);
+	//		glVertex3f(_sizeX,_sizeY,_sizeZ);
+	//		glVertex3f(_sizeX,_sizeY,_sizeZ);
+	//		glVertex3f(-_sizeX,_sizeY,_sizeZ);
+	//		glVertex3f(-_sizeX,_sizeY,_sizeZ);
+	//		glVertex3f(-_sizeX,_sizeY,-_sizeZ);
 
-	////		glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
-	////		glVertex3f(-_sizeX,_sizeY,-_sizeZ);
+	//		glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+	//		glVertex3f(-_sizeX,_sizeY,-_sizeZ);
 
-	////		glVertex3f(_sizeX,-_sizeY,-_sizeZ);
-	////		glVertex3f(_sizeX,_sizeY,-_sizeZ);
+	//		glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+	//		glVertex3f(_sizeX,_sizeY,-_sizeZ);
 
-	////		glVertex3f(_sizeX,-_sizeY,_sizeZ);
-	////		glVertex3f(_sizeX,_sizeY,_sizeZ);
+	//		glVertex3f(_sizeX,-_sizeY,_sizeZ);
+	//		glVertex3f(_sizeX,_sizeY,_sizeZ);
 
-	////		glVertex3f(-_sizeX,-_sizeY,_sizeZ);
-	////		glVertex3f(-_sizeX,_sizeY,_sizeZ);
-	////	glEnd();
+	//		glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+	//		glVertex3f(-_sizeX,_sizeY,_sizeZ);
+	//	glEnd();
 
-	////	glPopMatrix();
-	////}
+	//	glPopMatrix();
+	//}
 
 
-	//glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_TEXTURE_2D);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_2D);
 }

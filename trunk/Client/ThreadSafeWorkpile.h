@@ -451,6 +451,12 @@ public:
 	//! MB hitted an actor
 	void GetMbHittedPlayer(std::vector<long> &vec);
 
+	//! inform server that player drow
+	void InformDrown();
+
+	//! check if player drowning
+	bool IsDrowning();
+
 protected:
 
 	//! construtor
@@ -460,7 +466,7 @@ protected:
 			m_player_id(-1), m_new_actor_state(false), m_name_color_changed(false),
 			m_world_changed(false), m_player_pos_info_updated(false), m_waiting_container_info(false),
 			m_updated_container(false), m_exchanged_container(false), m_closed_container(false),
-			m_mplayer(NULL), m_explayers(NULL), mb_throwed(false), mb_ended(false)
+			m_mplayer(NULL), m_explayers(NULL), mb_throwed(false), mb_ended(false), m_drowning(false)
 	{
 		m_update_questbook.NeedUpdate = false;
 	}
@@ -514,6 +520,8 @@ private:
 	IceUtil::Mutex								m_mutex_ended_MB;
 	IceUtil::Mutex								m_mutex_hitted_actors;
 	IceUtil::Mutex								m_mutex_hitted_players;
+
+	IceUtil::Mutex								m_mutex_drowing;
 
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_irc;
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_sending_loop;
@@ -619,6 +627,8 @@ private:
 
 	std::vector<long>							m_mb_hitted_actors;
 	std::vector<long>							m_mb_hitted_players;
+
+	bool										m_drowning;
 
 	static ThreadSafeWorkpile *					_singletonInstance;
 };

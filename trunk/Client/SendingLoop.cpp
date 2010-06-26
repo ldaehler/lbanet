@@ -413,6 +413,26 @@ void IceConnectionManager::PlayerRaised()
 
 
 /***********************************************************
+inform server drow
+***********************************************************/
+void IceConnectionManager::Drown()
+{
+	try
+	{
+		_session->PlayerDrowning();
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception Drown: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception Drown "));
+    }
+}
+
+
+/***********************************************************
 player has changed world
 ***********************************************************/
 LbaNet::SavedWorldInfo IceConnectionManager::ChangeWorld(const std::string& WorldName)
@@ -853,6 +873,14 @@ void SendingLoopThread::run()
 		{
 			if(ThreadSafeWorkpile::getInstance()->IsRaised())
 				_connectionMananger.PlayerRaised();
+		}
+
+
+		//-----------------------------------
+		// player drown
+		{
+			if(ThreadSafeWorkpile::getInstance()->IsDrowning())
+				_connectionMananger.Drown();
 		}
 
 		//-----------------------------------

@@ -50,6 +50,9 @@ public:
 	NxActor* GetActor()
 	{ return controller; }
 
+	void Hide();
+	void Show();
+
 private:
 	float lastX;
 	float lastY;

@@ -946,6 +946,8 @@ zoom the player fro login screen
 ***********************************************************/
 void LbaNetModel::ZoomInPlayerForLogin()
 {
+	_mainPlayerHandler->SetPhysicHandler(NULL);
+
 	_actor_in_exterior = false;
 	m_main_actor_starting_X = 0;
 	m_main_actor_starting_Y = 0;

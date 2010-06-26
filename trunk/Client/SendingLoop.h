@@ -82,6 +82,9 @@ public:
 	// player has been raised
 	void PlayerRaised();
 
+	// inform server drow
+	void Drown();
+
 	// player has changed world
 	LbaNet::SavedWorldInfo ChangeWorld(const std::string& WorldName);
 

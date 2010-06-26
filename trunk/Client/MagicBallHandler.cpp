@@ -45,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define _offset_y_	5.0f
 
 #define M_SOUND_MB_ 24
-#define M_SOUND_BOUNCE_ 58
+#define M_SOUND_BOUNCE_ 3080//58
 
 
 	//materialDesc.restitution = 0.9f;    
@@ -100,7 +100,7 @@ void MagicBallHandler::Render()
 		drawY = _currY;
 		drawZ = _currZ;
 
-		glColor4f(0.3f, 0.6f, 0.4f, 0.8f);
+		glColor4f(0.9f, 0.788f, 0.376f, 0.6f);
 	}
 	else
 	{
@@ -108,7 +108,7 @@ void MagicBallHandler::Render()
 		drawX = vec.x;
 		drawY = vec.y+1.0f+_size_ball_;
 		drawZ = vec.z;
-		glColor4f(0.3f, 0.6f, 0.4f, 1.0f);
+		glColor4f(0.9f, 0.788f, 0.376f, 1.0f);
 	}
 
     glEnable(GL_BLEND);
