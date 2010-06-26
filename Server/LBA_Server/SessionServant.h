@@ -108,7 +108,10 @@ public:
 
 	//! player is dead and reborn
     virtual void PlayerRaisedFromDead(const Ice::Current&);
-	    
+	       
+    //called when player is drowning
+    virtual void PlayerDrowning(const Ice::Current&);
+
 	// change name display color
 	virtual void ChangeNameColor(const std::string& Color, const Ice::Current&);
 
