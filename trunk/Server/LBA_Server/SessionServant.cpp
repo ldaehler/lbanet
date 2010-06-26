@@ -516,6 +516,18 @@ void SessionServant::PlayerRaisedFromDead(const Ice::Current&)
 
 
 
+/***********************************************************
+called when player is drowning
+***********************************************************/	       
+void SessionServant::PlayerDrowning(const Ice::Current&)
+{
+	Lock sync(*this);
+	_playerdead = true;
+
+	// record kill in database
+	_dbh.RecordKill(_currWorldName, _userNum, 6, 0);
+}
+
 
 /***********************************************************
 player has changed world

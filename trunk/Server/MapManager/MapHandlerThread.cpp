@@ -90,7 +90,7 @@ void MapHandlerThread::Join(const ActorLifeInfo &PlayerId,
 {
 	PlayerInternalInfo pif;
 	pif.actlinfo = PlayerId;
-	pif.actlinfo.ChangeReason = 6;
+	pif.actlinfo.ChangeReason = 7;
 	pif.callback = callback;
 	pif.actlinfo.ShouldHurt = false;
 
@@ -491,7 +491,7 @@ void MapHandlerThread::run()
 							linfo.CurrentMana = 0;
 
 						linfo.ShouldHurt = false;
-						linfo.ChangeReason = 6;
+						linfo.ChangeReason = 7;
 						BroadcastUpdateLife(linfo, itp->second.callback);
 					}
 				}

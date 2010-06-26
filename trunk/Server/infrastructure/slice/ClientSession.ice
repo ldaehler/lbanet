@@ -46,6 +46,9 @@ module LbaNet
 	    
 	    void PlayerRaisedFromDead();
 	    
+	    //called when player is drowning
+	    void PlayerDrowning();
+	    
 	    
 	    void UseItem(long ItemId);
 	    

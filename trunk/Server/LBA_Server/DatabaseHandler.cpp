@@ -119,6 +119,10 @@ LbaNet::SavedWorldInfo DatabaseHandler::ChangeWorld(const std::string& NewWorldN
 {
 	LbaNet::SavedWorldInfo resP;
 	resP.ppos.MapName = "";
+	resP.CurrentLife = -1;
+	resP.CurrentMana = -1;
+	resP.MaxLife = -1;
+	resP.MaxMana = -1;
 
 	Lock sync(*this);
 	if(!_mysqlH.connected())
@@ -256,10 +260,10 @@ void DatabaseHandler::QuitWorld(const std::string& LastWorldName,long PlayerId,
 	{
 		mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
 		query << "UPDATE usertoworldmap SET timeplayedmin = timeplayedmin + TIMESTAMPDIFF(MINUTE, lastvisited, UTC_TIMESTAMP())";
-		query << " SET LifePoint = '"<<currentlife<<"'";
-		query << " SET ManaPoint = '"<<currentmana<<"'";
-		query << " SET MaxLife = '"<<maxlife<<"'";
-		query << " SET MaxMana = '"<<maxmana<<"'";
+		query << ", LifePoint = '"<<currentlife<<"'";
+		query << ", ManaPoint = '"<<currentmana<<"'";
+		query << ", MaxLife = '"<<maxlife<<"'";
+		query << ", MaxMana = '"<<maxmana<<"'";
 		query << " WHERE userid = '"<<PlayerId<<"'";
 		query << " AND worldname = '"<<LastWorldName<<"'";		
 		if(!query.exec())
@@ -677,6 +681,9 @@ void DatabaseHandler::RecordKill(const std::string& WorldName, long KilledId, in
 			break;
 			case 4:
 				query << "SET PvpDeath = PvpDeath + 1";
+			break;
+			case 6:
+				query << "SET DrowningDeath = DrowningDeath + 1";
 			break;
 			default:
 				query << "SET OtherDeath = OtherDeath + 1";

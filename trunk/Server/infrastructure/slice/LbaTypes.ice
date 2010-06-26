@@ -79,7 +79,8 @@ module LbaNet
 		// 3- hurt by actor
 		// 4- hurt by player
 		// 5- potion
-		// 6- other reason
+		// 6- drowning
+		// 7- other reason
 		int			ChangeReason;
 		long			ChangeActorId;
 		
