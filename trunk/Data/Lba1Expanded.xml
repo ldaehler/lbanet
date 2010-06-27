@@ -2362,7 +2362,7 @@
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
                 <sparea name="spawning1" posX="56.999985" posY="7.000000" posZ="27.000000" RotationAtArrival="0" />
-                <sparea name="spawning2" posX="23.000000" posY="5.000000" posZ="21.000000" RotationAtArrival="0" />
+                <sparea name="spawning2" posX="23.000000" posY="6.000000" posZ="21.000000" RotationAtArrival="0" />
                 <sparea name="spawning3" posX="18.999992" posY="2.000002" posZ="11.000008" RotationAtArrival="0" />
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
