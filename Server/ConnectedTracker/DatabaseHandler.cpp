@@ -32,7 +32,7 @@ constructor
 ***********************************************************/
 DatabaseHandler::DatabaseHandler(const std::string db, const std::string server,
 									const std::string user, const std::string password)
-				:  _mysqlH(false), _db(db), _server(server), _user(user), _password(password)
+				:  _mysqlH(NULL), _db(db), _server(server), _user(user), _password(password)
 {
 	Connect();
 }
@@ -45,12 +45,18 @@ void DatabaseHandler::Connect()
 {
 	try
 	{
-		if (!_mysqlH.connect(_db.c_str(), _server.c_str(), _user.c_str(), _password.c_str()))
+		Clear();
+		_mysqlH = new mysqlpp::Connection(false);
+
+		if (!_mysqlH->connect(_db.c_str(), _server.c_str(), _user.c_str(), _password.c_str()))
 		{
-			std::cerr<<IceUtil::Time::now()<<": Connected tracker - DB connection failed: " << _mysqlH.error() << std::endl;
+			std::cerr<<IceUtil::Time::now()<<": Connected tracker - DB connection failed: " << _mysqlH->error() << std::endl;
 		}
 	}
-	catch(...){}
+	catch(...)
+	{
+		std::cerr<<IceUtil::Time::now()<<": unknown execption during DB connection" << std::endl;
+	}
 }
 
 /***********************************************************
@@ -60,17 +66,18 @@ return -1 if login incorrect - else return the user id
 long DatabaseHandler::CheckLogin(const std::string & PlayerName, const std::string & Password)
 {
 	Lock sync(*this);
-	if(!_mysqlH.connected())
+	if(!_mysqlH || !_mysqlH->connected())
 	{
 		Connect();
-		if(!_mysqlH.connected())
+		if(!_mysqlH->connected())
 		{
 			std::cerr<<IceUtil::Time::now()<<": Connected tracker - CheckLoginfailed for user "<<PlayerName<<std::endl;
+			Clear();
 			return -1;
 		}
 	}
 
-	mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
+	mysqlpp::Query query(_mysqlH, false);
 	query << "SELECT id FROM users WHERE status = '1' AND username COLLATE utf8_bin = '"<<PlayerName;
 	query << "' AND password = '"<<Password<<"'";
 	if (mysqlpp::StoreQueryResult res = query.store())
@@ -87,9 +94,7 @@ long DatabaseHandler::CheckLogin(const std::string & PlayerName, const std::stri
 	}
 
 	std::cerr<<IceUtil::Time::now()<<": Connected tracker - CheckLoginfailed for user "<<PlayerName<<" : "<<query.error()<<std::endl;
-	if(_mysqlH.connected())
-		_mysqlH.disconnect();
-
+	Clear();
 	return -1;
 }
 
@@ -101,22 +106,39 @@ set the user as disconnected in the database
 void DatabaseHandler::DisconnectUser(long Id)
 {
 	Lock sync(*this);
-	if(!_mysqlH.connected())
+	if(!_mysqlH || !_mysqlH->connected())
 	{
 		Connect();
-		if(!_mysqlH.connected())
+		if(!_mysqlH->connected())
 		{
 			std::cerr<<IceUtil::Time::now()<<": Connected tracker - Update DisconnectUser failed for user id "<<Id<<std::endl;
+			Clear();
 			return;
 		}
 	}
 
-	mysqlpp::Query query(const_cast<mysqlpp::Connection *>(&_mysqlH), false);
+	mysqlpp::Query query(_mysqlH, false);
 	query << "UPDATE users SET playedtimemin = playedtimemin + TIMESTAMPDIFF(MINUTE, lastconnected, UTC_TIMESTAMP()), connected = '0' WHERE id = '"<<Id<<"'";
 	if(!query.exec())
 	{
 		std::cerr<<IceUtil::Time::now()<<": Connected tracker - Update timeplayed failed for user id "<<Id<<" : "<<query.error()<<std::endl;
-		if(_mysqlH.connected())
-			_mysqlH.disconnect();
+		Clear();
+	}
+}
+
+
+
+/***********************************************************
+clear db connection
+***********************************************************/
+void DatabaseHandler::Clear()
+{
+	if(_mysqlH)
+	{
+		if(_mysqlH->connected())
+			_mysqlH->disconnect();
+
+		delete _mysqlH;
+		_mysqlH = NULL;
 	}
 }

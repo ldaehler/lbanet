@@ -37,8 +37,6 @@ public:
 
     virtual int run(int argc, char* argv[])
     {
-
-
 		SharedData shd;
 
 		Ice::PropertiesPtr prop = communicator()->getProperties();
