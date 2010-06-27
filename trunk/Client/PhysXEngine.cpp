@@ -219,7 +219,7 @@ PhysXEngine * PhysXEngine::getInstance()
 	Constructor
 ***********************************************************/
 PhysXEngine::PhysXEngine()
-: gAllocator(NULL)//, _buffervertexroof(NULL), _sizebuff(0)
+: gAllocator(NULL), _flooractor(NULL)
 {
 	gAllocator = new UserAllocator();
 }
@@ -683,7 +683,7 @@ NxActor* PhysXEngine::LoadTriangleMeshFile(const NxVec3 & StartPosition, const s
 	userdata->MaterialsSize = sizematerials;
 	userdata->Materials =  buffermaterials;
 
-	NxActor* act = CreateTriangleMesh(StartPosition, buffervertex, sizevertex, bufferindices, sizeindices, 
+	_flooractor = CreateTriangleMesh(StartPosition, buffervertex, sizevertex, bufferindices, sizeindices, 
 											userdata);
 	//NxActor* act = NULL;
 	delete[] buffervertex;
@@ -723,7 +723,7 @@ NxActor* PhysXEngine::LoadTriangleMeshFile(const NxVec3 & StartPosition, const s
 
 
 
-	return act;
+	return _flooractor;
 }
 
 
@@ -753,9 +753,6 @@ void PhysXEngine::SetCharacterPos(NxController* character, const NxVec3& posVect
 	pos.y = posVector.y;
 	pos.z = posVector.z;
 	character->setPosition(pos);
-
-	//gplayablebox->setLinearVelocity(NxVec3(0,0,0) );
-	//gplayablebox->setGlobalPosition(NxVec3(posVector.x, posVector.y+3, posVector.z));
 }
 
 /***********************************************************
@@ -774,6 +771,9 @@ void PhysXEngine::DestroyActor(NxActor* actor)
 {
 	if(!_isInitialized)
 		return;
+
+	if(actor == _flooractor)
+		_flooractor = NULL;
 
 	//destroy internal actor if there is one
 	ActorUserData * udata = (ActorUserData *)actor->userData;
@@ -847,6 +847,32 @@ int PhysXEngine::CheckForRoof(float PositionX, float PositionY, float PositionZ)
 
 	return -1;
 }	
+
+/***********************************************************
+//! Get Closest Floor
+***********************************************************/
+int PhysXEngine::GetClosestFloor(float PositionX, float PositionY, float PositionZ)
+{
+	if(_flooractor)
+	{
+		if(_flooractor->getNbShapes() > 0)
+		{
+			NxTriangleMeshShape* _currmap = (*_flooractor->getShapes())->isTriangleMesh();
+
+			NxRaycastHit hitinfo;
+			NxVec3 vec(0, -1, 0);
+			NxVec3 Position(PositionX, PositionY+1, PositionZ);
+
+			if(_currmap && _currmap->raycast(NxRay(Position, vec), 100.0f, NX_RAYCAST_DISTANCE, hitinfo, false))
+			{
+				return (int)(Position.y - hitinfo.distance + 0.5);
+			}
+		}
+	}
+
+	return -1;
+}
+
 
 
 /***********************************************************

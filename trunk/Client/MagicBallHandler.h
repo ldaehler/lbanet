@@ -94,6 +94,7 @@ private:
 	float	_currX;
 	float	_currY;
 	float	_currZ;
+	float	_floorY;
 
 	int		_currmode;
 
