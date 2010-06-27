@@ -309,7 +309,7 @@ int PhysXPhysicHandler::IsUnderRoof(const VECTOR & ActorPos)
 */
 float PhysXPhysicHandler::GetClosestFloor(const VECTOR & ActorPos)
 {
-	return 0;
+	return PhysXEngine::getInstance()->GetClosestFloor(ActorPos.x, ActorPos.y, ActorPos.z);
 }
 
 

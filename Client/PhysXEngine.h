@@ -161,6 +161,9 @@ public:
 	//! check if actor is under roof
 	int CheckForRoof(float PositionX, float PositionY, float PositionZ);
 
+	//! Get Closest Floor
+	int GetClosestFloor(float PositionX, float PositionY, float PositionZ);
+
 	//! ignore collision for a pair of actor
 	void IgnoreActorContact(NxActor* actor1, NxActor* actor2);
 
@@ -178,17 +181,12 @@ private:
 	NxScene*					gScene;
 	NxControllerManager*		gManager;
 	NxUserAllocator*			gAllocator;
-	NxActor*					gplayablebox;
 
 	std::set<NxActor*>			_roofactors;
+	NxActor*					_flooractor;
 
-	
 	bool						_isInitialized;
 	double						_lasttime;
-
-	//float *						_buffervertexroof;
-	//unsigned int *				_bufferindiceroof;
-	//int							_sizebuff;
 };
 
 #endif

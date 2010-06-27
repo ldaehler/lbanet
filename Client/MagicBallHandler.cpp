@@ -48,9 +48,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define M_SOUND_BOUNCE_ 3080//58
 
 
-	//materialDesc.restitution = 0.9f;    
-	//materialDesc.staticFriction = 0.5f;    
-	//materialDesc.dynamicFriction = 0.5f; 
+//materialDesc.restitution = 0.9f;    
+//materialDesc.staticFriction = 0.5f;    
+//materialDesc.dynamicFriction = 0.5f; 
+
+
+/***********************************************************
+	helper function
+***********************************************************/
+void doCirclefillBall(double x, double y, double radius)
+{
+
+	double y1=y;
+	double x1=x;
+	glBegin(GL_TRIANGLES);
+	for(int i=0;i<=360;i++)
+	{
+		double angle=(float)(((double)i)/57.29577957795135);
+		double x2=x+(radius*(float)sin((double)angle));
+		double y2=y+(radius*(float)cos((double)angle));
+		glVertex2d(x,y);
+		glVertex2d(x1,y1);
+		glVertex2d(x2,y2);
+		y1=y2;
+		x1=x2;
+	}
+	glEnd();
+}
+
 
 /*
 --------------------------------------------------------------------------------------------------
@@ -59,7 +84,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 MagicBallHandler::MagicBallHandler(bool MainPlayer)
 	: _launched(false), _comeback(false), _owner(NULL),
-		_MainPlayer(MainPlayer)
+		_MainPlayer(MainPlayer), _floorY(0)
 {
 	ConfigurationManager::GetInstance()->GetFloat("Physic.MagicBallBounciness", _MagicBallBounciness);
 	ConfigurationManager::GetInstance()->GetFloat("Physic.MagicBallStaticFriction", _MagicBallStaticFriction); 
@@ -90,24 +115,16 @@ void MagicBallHandler::Render()
 	if(!_launched)
 		return;
 
-	float drawX = 0;
-	float drawY = 0;
-	float drawZ = 0;
+	float drawX = _currX;
+	float drawY = _currY;
+	float drawZ = _currZ;
 
 	if(_comeback)
 	{
-		drawX = _currX;
-		drawY = _currY;
-		drawZ = _currZ;
-
 		glColor4f(0.9f, 0.788f, 0.376f, 0.6f);
 	}
 	else
 	{
-		NxVec3 vec = _physH->getGlobalPosition();
-		drawX = vec.x;
-		drawY = vec.y+1.0f+_size_ball_;
-		drawZ = vec.z;
 		glColor4f(0.9f, 0.788f, 0.376f, 1.0f);
 	}
 
@@ -124,6 +141,17 @@ void MagicBallHandler::Render()
 	glPopMatrix();
 
 	gluDeleteQuadric(quadric);
+
+	// draw the shadow
+	if(!_comeback)
+	{
+		glPushMatrix();
+		glColor4f(0.0f,0.0f,0.0f, 0.4f);
+		glTranslated(drawX, (_floorY)/2. + 0.6, drawZ);
+		glRotatef( 90, 1.0, 0.0, 0.0 );
+		doCirclefillBall(0, 0, _size_ball_);
+		glPopMatrix();
+	}
 
     glEnable(GL_TEXTURE_2D);
 }
@@ -276,6 +304,11 @@ void MagicBallHandler::Process()
 	}
 	else
 	{
+		NxVec3 vec = _physH->getGlobalPosition();
+		_currX = vec.x;
+		_currY = vec.y+1.0f+_size_ball_;
+		_currZ = vec.z;	
+		
 		//check if time is up and magic ball should come back
 		double ctime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDouble();
 		if((ctime - _lastlaunchtime) > 5000)
@@ -284,6 +317,8 @@ void MagicBallHandler::Process()
 		}
 	}
 
+	//calculate ball shadow
+	_floorY = PhysXEngine::getInstance()->GetClosestFloor(_currX, _currY, _currZ);
 }
 
 
