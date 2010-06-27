@@ -94,12 +94,11 @@ bool SharedData::Disconnect(Ice::Long playerid)
 		if(it->second.Id == playerid)
 		{
 			std::cout<<IceUtil::Time::now().toDateTime()<<": "<<it->first<<" disconnected"<<std::endl;
-			m_connected_users.erase(it);
-
-			IceUtil::Mutex::Lock lock(m_mutex_wisper);
 			std::map<std::string, LbaNet::ChatRoomObserverPrx>::iterator itw = 	m_wisper_map.find(it->first);
 			if(itw != m_wisper_map.end())
 				m_wisper_map.erase(itw);
+
+			m_connected_users.erase(it);
 
 			return true;
 		}
@@ -139,7 +138,7 @@ set player wisper interface
 ***********************************************************/
 void SharedData::SetWhisperInterface(const std::string& Nickname, const LbaNet::ChatRoomObserverPrx& winterface)
 {
-	IceUtil::Mutex::Lock lock(m_mutex_wisper);
+	Lock sync(*this);
 	m_wisper_map[Nickname] = winterface;
 }
 
@@ -148,7 +147,7 @@ a player wisper to another
 ***********************************************************/
 bool SharedData::Whisper(const std::string& From, const std::string& To, const std::string& Message)
 {
-	IceUtil::Mutex::Lock lock(m_mutex_wisper);
+	Lock sync(*this);
 	std::map<std::string, LbaNet::ChatRoomObserverPrx>::iterator it = 	m_wisper_map.find(To);
 	if(it != m_wisper_map.end())
 	{

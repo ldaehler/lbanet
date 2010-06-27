@@ -102,9 +102,11 @@ protected:
 	// connect to database
 	void Connect();
 
+	void Clear();
+
 private:
 	// mysql connection handler
-	mysqlpp::Connection	_mysqlH;
+	mysqlpp::Connection* _mysqlH;
 
 	std::string			_db;
 	std::string			_server;

@@ -81,10 +81,9 @@ protected:
 	const SharedData & operator=(const SharedData &);
 
 private:
-	LbaNet::ConnectedL 			m_connected_users;
-	std::map<std::string, long>	m_id_map;
+	LbaNet::ConnectedL 										m_connected_users;
+	std::map<std::string, long>								m_id_map;
 
-	IceUtil::Mutex											m_mutex_wisper;
 	std::map<std::string, LbaNet::ChatRoomObserverPrx>		m_wisper_map;
 };
 
