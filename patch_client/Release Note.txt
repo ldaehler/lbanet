@@ -118,3 +118,12 @@ Version 0.8 changes:
 - 2 quests have been added in LbaxExpanded world for testing purpose. The first one is given by Baldino. For the second one just go have a look at Principal Island stables ;-)
 
 
+__________________________
+Version 0.9 changes:
+- new physic engine base on Nvidia PhysiX
+
+- implementation of the magic ball
+- the magic ball can activate switches
+
+- implementation of the pvp in game. Collecting pvp statistics and display on the website (number of kill, death)
+
