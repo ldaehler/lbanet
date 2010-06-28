@@ -70,7 +70,7 @@ public:
 
 
 	// get closest floor from the actor position
-	virtual float GetClosestFloor(const VECTOR & ActorPos);
+	virtual int GetClosestFloor(const VECTOR & ActorPos);
 
 
 	// return a positive number giving the speed of the gravity on the Y axis

@@ -366,7 +366,7 @@ int PlanesPhysicHandler::IsUnderRoof(const VECTOR & ActorPos)
 - get closest floor from the actor position
 --------------------------------------------------------------------------------------------------
 */
-float PlanesPhysicHandler::GetClosestFloor(const VECTOR & ActorPos)
+int PlanesPhysicHandler::GetClosestFloor(const VECTOR & ActorPos)
 {
 	return 0;
 }
