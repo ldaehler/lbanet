@@ -1374,7 +1374,7 @@ void SessionServant::UpdatedLife(const ActorLifeInfo &ali, const ::Ice::Current&
 	_lifeinfo = ali;
 	_lifeinfo.ShouldHurt = false; // no use for us
 
-	if(_lifeinfo.CurrentLife <= 0)
+	if(!_playerdead && _lifeinfo.CurrentLife <= 0)
 	{
 		_playerdead = true;
 
