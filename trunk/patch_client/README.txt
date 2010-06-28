@@ -34,6 +34,9 @@ F12:change from windowed mode to fullscreen
 
 PageUp/PageDown: to be used with dino-fly
 
+space: jump
+alt: magic ball
+
 ESC: game menu
 
 
