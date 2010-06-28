@@ -85,7 +85,7 @@ void MapHandlerThread::UpdatedInfo(const LbaNet::ActorInfo& asi)
 /***********************************************************
 	a player join a map
 ***********************************************************/
-void MapHandlerThread::Join(const ActorLifeInfo &PlayerId, 
+void MapHandlerThread::Join(const ActorLifeInfo &PlayerId,
 								const LbaNet::ClientSessionPrx & callback)
 {
 	PlayerInternalInfo pif;
@@ -245,13 +245,13 @@ void MapHandlerThread::ActivateActor(const ActorActivationInfoWithCallback& ai)
 						itm.NewCount = -1;
 						itm.InformPlayer = true;
 						InventoryChanges.push_back(itm);
-						if(itp->second.callback) 
+						if(itp->second.callback)
 							itp->second.callback->ApplyInventoryChanges(InventoryChanges);
 					}
 
 					if(itp->second.callback)
 						itp->second.callback->ActivatedActor(ai.ainfo, true);
-				}			
+				}
 
 				return;
 			}
@@ -341,7 +341,7 @@ void MapHandlerThread::run()
 		_SD->GetAllUntargetedActors(untargetedinfos);
 		_SD->GetMagicBallPlayed(mb_played);
 		_SD->GetMagicBallTouchActor(mb_touched_actor);
-		_SD->GetMagicBallTouchPlayer(mb_touched_player);	
+		_SD->GetMagicBallTouchPlayer(mb_touched_player);
 
 
 		Lock sync(*this);
@@ -472,7 +472,7 @@ void MapHandlerThread::run()
 					if(itp != _players.end())
 					{
 						ActorLifeInfo & linfo = itp->second.actlinfo;
-						linfo.CurrentMana = linfo.CurrentMana - 10; //TODO - change fixed mana
+						linfo.CurrentMana = linfo.CurrentMana - 5; //TODO - change fixed mana
 						if(linfo.CurrentMana < 0)
 							linfo.CurrentMana = 0;
 
@@ -774,7 +774,7 @@ object used
 void MapHandlerThread::UpdateContainerUpdate(const ContainerUpdateInfo &itinfo)
 {
 	std::map<long, Actor *>::iterator it =	_actors.find((long)itinfo.ContainerId);
-	if(it != _actors.end()) 
+	if(it != _actors.end())
 	{
 		if(it->second->GetType() == 5) // if we have a container
 		{
@@ -949,7 +949,7 @@ void MapHandlerThread::MagicBallTouchedActor(long PlayerId, long ActorId)
 		//	ActivateActor(ai);
 		//}
 	}
-	
+
 
 }
 
