@@ -45,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define _offset_y_	5.0f
 
 #define M_SOUND_MB_ 24
-#define M_SOUND_BOUNCE_ 3080//58
+#define M_SOUND_BOUNCE_ 308//58
 
 
 //materialDesc.restitution = 0.9f;    
@@ -365,7 +365,6 @@ void MagicBallHandler::cleanPhys()
 */
 void MagicBallHandler::CallbackOnContact(int TouchedActorType, long TouchedActorIdx)
 {
-	//play sound
 	//play sound
 	std::string soundp = DataLoader::getInstance()->GetSoundPath(M_SOUND_BOUNCE_);
 	if(soundp != "")
