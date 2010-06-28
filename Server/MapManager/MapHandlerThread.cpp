@@ -279,9 +279,9 @@ void MapHandlerThread::ActivateActor(const ActorActivationInfoWithCallback& ai)
 /***********************************************************
 	callback function called when an actor id signaled
 ***********************************************************/
-void MapHandlerThread::SignalActor(const LbaNet::ActorSignalInfo& ai)
+void MapHandlerThread::SignalActor(const LbaNet::ActorSignalInfo& ai, bool broadcast)
 {
-	if(_publisher)
+	if(broadcast && _publisher)
 		_publisher->SignaledActor(ai);
 
 	for(size_t i=0; i< ai.Targets.size(); ++i)
@@ -293,20 +293,6 @@ void MapHandlerThread::SignalActor(const LbaNet::ActorSignalInfo& ai)
 }
 
 
-/***********************************************************
-send signal
-***********************************************************/
-void MapHandlerThread::SendSignal(long signal, const std::vector<long> &targets)
-{
-	std::vector<long>::const_iterator it = targets.begin();
-	std::vector<long>::const_iterator end = targets.end();
-	for(; it != end; ++it)
-	{
-		std::map<long, Actor *>::iterator itm = _actors.find(*it);
-		if(itm != _actors.end())
-			itm->second->OnSignal(signal);
-	}
-}
 
 
 /***********************************************************
@@ -419,7 +405,7 @@ void MapHandlerThread::run()
 				std::vector<LbaNet::ActorSignalInfo>::const_iterator it = sinfos.begin();
 				std::vector<LbaNet::ActorSignalInfo>::const_iterator end = sinfos.end();
 				for(; it != end; ++it)
-					SignalActor(*it);
+					SignalActor(*it, true);
 			}
 
 
@@ -953,14 +939,15 @@ void MapHandlerThread::MagicBallTouchedActor(long PlayerId, long ActorId)
 	std::map<long, Actor *>::iterator itact = _actors.find(ActorId);
 	if(itact != _actors.end())
 	{
-		if(itact->second->MagicBallHit(PlayerId))
-		{
-			ActorActivationInfoWithCallback ai;
-			ai.ainfo.ActivatedId = ActorId;
-			ai.ainfo.Activate = true;
-			ai.ainfo.ActorId = PlayerId;
-			ActivateActor(ai);
-		}
+		itact->second->MagicBallHit(PlayerId);
+		//if(itact->second->MagicBallHit(PlayerId))
+		//{
+		//	ActorActivationInfoWithCallback ai;
+		//	ai.ainfo.ActivatedId = ActorId;
+		//	ai.ainfo.Activate = true;
+		//	ai.ainfo.ActorId = PlayerId;
+		//	ActivateActor(ai);
+		//}
 	}
 	
 

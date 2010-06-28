@@ -58,9 +58,9 @@ public:
 	virtual void run();
 
 
-	//! send signal
-	void SendSignal(long signal, const std::vector<long> &targets);
 
+	// callback function called when an actor id signaled
+	void SignalActor(const LbaNet::ActorSignalInfo& ai, bool broadcast);
 
 	//! get updated info
 	LbaNet::UpdateSeq GetUpdatedInfo();
@@ -87,8 +87,6 @@ protected:
 	// callback function called when an actor id activated
 	void ActivateActor(const ActorActivationInfoWithCallback& ai);
 
-	// callback function called when an actor id signaled
-	void SignalActor(const LbaNet::ActorSignalInfo& ai);
 
 	// called when a player is hurted
 	void Hurt(Ice::Long PlayerId, Ice::Long hurtingid);

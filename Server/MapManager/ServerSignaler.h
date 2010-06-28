@@ -46,9 +46,15 @@ public:
 	virtual ~ServerSignaler(){}
 
 	//! send signal
-	virtual void SendSignal(long signal, const std::vector<long> &targets)
+	virtual void SendSignal(long actorid, long signal, const std::vector<long> &targets, 
+																	bool broadcast = false)
 	{
-		_MH->SendSignal(signal, targets);
+		LbaNet::ActorSignalInfo aif;
+		aif.ActorId = actorid;
+		aif.SignalId =  signal;
+		for(size_t i=0; i<targets.size(); ++i)
+			aif.Targets.push_back(targets[i]);
+		_MH->SignalActor(aif, broadcast);
 	}
 
 private:
