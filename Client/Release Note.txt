@@ -81,3 +81,49 @@ Version 0.71 changes:
 - Updated game patcher. The patcher will now log its output into a file named "patching.log". In case of issue during patch please have a look at this file. The patcher will now also automatically start the game after it is done.
 
 - Few bugs fixes.
+
+
+__________________________
+Version 0.75 changes:
+- Added NPC actors. They are fully animated however they is no real dialog yet. You can already talk to them but they will not say anything.
+
+- Added merchants. You can now buy items from some of the NPC all over the maps.
+
+- Added actor travel feature. You should now be able to use the ferries but also the cars and motorbikes.
+
+- Added scripted zone. Just try to hide in the trash in the map out of citadel prison ;)
+
+
+__________________________
+Version 0.755 changes:
+- you can now use the return key on login screen instead of pressing the login button
+
+- you can now use the return key on choose world screen instead of pressing the button
+
+- you can now use the action key to close the dialog window
+
+- you can now use the action key to close the container window
+
+- you can now choose the amount of item you want to take/ put from/in the container when you drag and drop it.
+
+
+__________________________
+Version 0.8 changes:
+- added dialog mechanism. Now NPC can have extended conditionnnal dialog trees.
+
+- added quest feature. 
+
+- added journal in game (parchment icon)
+
+- 2 quests have been added in LbaxExpanded world for testing purpose. The first one is given by Baldino. For the second one just go have a look at Principal Island stables ;-)
+
+
+__________________________
+Version 0.9 changes:
+- new physic engine base on Nvidia PhysiX
+
+- implementation of the magic ball
+- the magic ball can activate switches
+
+- implementation of the pvp in game. Collecting pvp statistics and display on the website (number of kill, death)
+

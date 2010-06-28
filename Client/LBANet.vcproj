@@ -139,6 +139,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="SDL.lib SDLmain.lib opengl32.lib glu32.lib ice.lib iceutil.lib glacier2.lib libpng.lib zlib.lib DevIL.lib ILU.lib ILUT.lib tinyxml_STL.lib fmodex_vc.lib libfreetype.lib CEGUIBase.lib CEGUIOpenGLRenderer.lib libircclient-static.lib wsock32.lib libconfig++.lib vfw32.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib winmm.lib"
+				OutputFile="$(OutDir)\LBANetGame.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\dependencies\SDL\lib;&quot;$(ICE_HOME)\lib&quot;;..\dependencies\DevIL\lib;..\dependencies\tinyxml\lib;..\dependencies\fmod\lib;..\dependencies\Boost\lib;..\dependencies\CEGUI\lib;..\dependencies\libircclient\lib;..\dependencies\libconfig\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;"
 				GenerateDebugInformation="true"

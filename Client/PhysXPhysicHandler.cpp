@@ -137,7 +137,7 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 			for(;it != end; ++it)
 			{
 				float posx = it->second->GetPosX();
-				float posy = it->second->GetPosY();
+				float posy = it->second->GetPosY() + it->second->GetOffsetSizeY();
 				float posz = it->second->GetPosZ();
 				float sizex = it->second->GetSizeX();
 				float sizey = it->second->GetSizeY();
@@ -170,7 +170,7 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 			for(;it != end; ++it)
 			{
 				float posx = it->second->GetPosX();
-				float posy = it->second->GetPosY();
+				float posy = it->second->GetPosY() + it->second->GetOffsetSizeY();
 				float posz = it->second->GetPosZ();
 				float sizex = it->second->GetSizeX();
 				float sizey = it->second->GetSizeY();
@@ -307,7 +307,7 @@ int PhysXPhysicHandler::IsUnderRoof(const VECTOR & ActorPos)
 - get closest floor from the actor position
 --------------------------------------------------------------------------------------------------
 */
-float PhysXPhysicHandler::GetClosestFloor(const VECTOR & ActorPos)
+int PhysXPhysicHandler::GetClosestFloor(const VECTOR & ActorPos)
 {
 	return PhysXEngine::getInstance()->GetClosestFloor(ActorPos.x, ActorPos.y, ActorPos.z);
 }

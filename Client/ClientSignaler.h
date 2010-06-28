@@ -47,7 +47,8 @@ public:
 	virtual ~ClientSignaler(){}
 
 	//! send signal
-	virtual void SendSignal(long signal, const std::vector<long> &targets)
+	virtual void SendSignal(long actorid, long signal, const std::vector<long> &targets, 
+																	bool broadcast = false)
 	{
 		ThreadSafeWorkpile::getInstance()->AddEvent(new GameSignalvent(signal, targets));
 	}

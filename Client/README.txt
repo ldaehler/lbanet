@@ -29,9 +29,13 @@ F6: dino-fly
 F7: protopack
 
 F10: reset twinsen position on the map, use it if you are stucked
+F11: takes a screenshot
 F12:change from windowed mode to fullscreen
 
 PageUp/PageDown: to be used with dino-fly
+
+space: jump
+alt: magic ball
 
 ESC: game menu
 
