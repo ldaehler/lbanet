@@ -148,5 +148,8 @@ called when the magic ball hit an actor
 ***********************************************************/
 bool SwitchActor::MagicBallHit(long LauncherId)
 {
+	std::vector<long> targets;
+	targets.push_back(_ID);
+	SendSignal(3, targets, true);
 	return true;
 }

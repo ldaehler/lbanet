@@ -46,7 +46,8 @@ Actor::Actor()
 	_sizeX(0),_sizeY(0), _sizeZ(0), _visible(true), _outputsignal(-1),
 	_attachedsound(-1), _renderertype(0),
 	_AddedVelocityX(0), _AddedVelocityY(0), _AddedVelocityZ(0), 
-	_signaler(NULL), _physposhandler(NULL), _collidable(true)
+	_signaler(NULL), _physposhandler(NULL), _collidable(true),
+	_offsetsizeY(0)
 {
 
 }
@@ -111,8 +112,10 @@ void Actor::Show(void)
 {
 	_visible = true;
 
+#ifndef _LBANET_SERVER_SIDE_
 	if(_physposhandler)
 		_physposhandler->Show();
+#endif
 
 	if(_Renderer)
 		return _Renderer->Show();
@@ -125,8 +128,10 @@ void Actor::Hide(void)
 {
 	_visible = false;
 
+#ifndef _LBANET_SERVER_SIDE_
 	if(_physposhandler)
 		_physposhandler->Hide();
+#endif
 
 	if(_Renderer)
 		return _Renderer->Hide();
@@ -308,10 +313,12 @@ bool Actor::Dettach(Actor * act)
 /***********************************************************
 send stored signal to targets
 ***********************************************************/
-void Actor::SendSignal(long signal, const std::vector<long> &targets)
+void Actor::SendSignal(long signal, const std::vector<long> &targets, bool broadcast)
 {
 	if(targets.size() > 0 && _signaler)
-		_signaler->SendSignal(signal, targets);
+	{
+		_signaler->SendSignal(_ID, signal, targets, broadcast);
+	}
 }
 
 

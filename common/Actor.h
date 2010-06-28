@@ -134,6 +134,7 @@ public:
 	float  GetSizeY(){return _sizeY;} const
 	float  GetSizeZ(){return _sizeZ;} const
 	bool  GetCollidable(){return _collidable;} const
+	float  GetOffsetSizeY(){return _offsetsizeY;} const
 
 	// set actor size
 	void SetSize(float  sizeX, float  sizeY, float  sizeZ)
@@ -142,6 +143,12 @@ public:
 		_sizeY = sizeY;
 		_sizeZ = sizeZ;
 		RefreshBB();
+	}
+
+	// set offset apply to the BB on Y
+	void SetOffsetSizeY(float  osizeY)
+	{
+		_offsetsizeY = osizeY;
 	}
 
 	//! set passable state
@@ -273,7 +280,7 @@ public:
 
 
 	//! send signal to targets
-	void SendSignal(long signal, const std::vector<long> &targets);
+	void SendSignal(long signal, const std::vector<long> &targets, bool broadcast = false);
 
 	//! set object used as signaler
 	void SetSignaler(SignalerBase * signaler)
@@ -339,6 +346,8 @@ protected:
    float	_sizeX;						// bounding box
    float	_sizeY;
    float	_sizeZ;
+
+   float	_offsetsizeY;
 
    AABB		_boundingbox;
 

@@ -302,6 +302,7 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 		act->SetDoubleAttribute("sizeX", it->second->GetSizeX());
 		act->SetDoubleAttribute("sizeY", it->second->GetSizeY());
 		act->SetDoubleAttribute("sizeZ", it->second->GetSizeZ());
+		act->SetDoubleAttribute("offsetsizeX", it->second->GetOffsetSizeY());
 		act->SetDoubleAttribute("rotation", it->second->GetRotation());
 		act->SetAttribute("passable", it->second->IsPassable());
 		act->SetAttribute("depthmask", it->second->IsDepthMask());

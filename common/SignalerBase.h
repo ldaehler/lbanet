@@ -43,7 +43,8 @@ public:
 	virtual ~SignalerBase(){}
 
 	//! send signal
-	virtual void SendSignal(long signal, const std::vector<long> &targets) = 0;
+	virtual void SendSignal(long actorid, long signal, const std::vector<long> &targets, 
+																	bool broadcast = false) = 0;
 
 };
 

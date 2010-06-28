@@ -365,6 +365,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 			long id=0, type=0;
 			float posX=0, posY=0, posZ=0;
 			float sizeX=0, sizeY=0, sizeZ=0;
+			float offsetsizeX=0;
 			int rotation=0;
 			bool passable = true;
 			bool depthmask = true;
@@ -404,6 +405,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 			pElem->QueryFloatAttribute("sizeX", &sizeX);
 			pElem->QueryFloatAttribute("sizeY", &sizeY);
 			pElem->QueryFloatAttribute("sizeZ", &sizeZ);
+			pElem->QueryFloatAttribute("offsetsizeX", &offsetsizeX);
 			pElem->QueryIntAttribute("rotation", &rotation);
 			pElem->QueryValueAttribute("passable", &passable);
 			pElem->QueryValueAttribute("depthmask", &depthmask);
@@ -639,10 +641,11 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 					pElem->QueryValueAttribute("activationtype", &activationtype);
 					act = new SwitchActor(activationdistance, activationtype);
 
-					//sizeX=0.4f;
-					//sizeY=1.0f;
-					//sizeZ=0.4f;
-					//collidable = false;
+					sizeX=0.4f;
+					sizeY=3.0f;
+					sizeZ=0.4f;
+					offsetsizeX=3.5f;
+					collidable = false;
 				}
 				break;
 
@@ -862,6 +865,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 			act->SetPosition(posX, posY, posZ);
 			act->SetRotation((float)rotation);
 			act->SetSize(sizeX, sizeY, sizeZ);
+			act->SetOffsetSizeY(offsetsizeX);
 			act->SetPassable(passable);
 			act->SetDepthMask(depthmask);
 			act->SetMovable(movable);
