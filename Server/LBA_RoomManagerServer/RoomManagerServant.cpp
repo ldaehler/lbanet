@@ -116,9 +116,9 @@ ChatRoomObserverPrx RoomManagerServant::JoinChat(	const std::string& room,
 		std::cout<<"Unknown exception getting the publisher. "<<std::endl;
 	}
 
-	Ice::Context context;
-	context["_fwd"] = "Oz";
-	return ChatRoomObserverPrx::uncheckedCast(pub->ice_context(context));
+	//Ice::Context context;
+	//context["_fwd"] = "Oz";
+	return ChatRoomObserverPrx::uncheckedCast(pub/*->ice_context(context)*/);
 }
 
 
@@ -236,10 +236,10 @@ ActorsObserverPrx RoomManagerServant::JoinActorRoom(const std::string& room,
 		std::cout<<"Unknown exception getting the publisher. "<<std::endl;
 	}
 
-	Ice::Context context;
-	context["_fwd"] = "Oz";
-	//context["_ovrd"] = actorName;
-	return ActorsObserverPrx::uncheckedCast(pub->ice_context(context));
+	//Ice::Context context;
+	//context["_fwd"] = "Oz";
+	////context["_ovrd"] = actorName;
+	return ActorsObserverPrx::uncheckedCast(/*pub->ice_context(context)*/);
 }
 
 
