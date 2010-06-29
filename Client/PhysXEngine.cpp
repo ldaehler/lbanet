@@ -711,6 +711,8 @@ NxActor* PhysXEngine::LoadTriangleMeshFile(const NxVec3 & StartPosition, const s
 		NxActor* roofact = CreateTriangleMesh(StartPosition, buffervertexroof, sizevertexroof, 
 												bufferindicesroof, sizeindicesroof, NULL, false);
 
+		roofact->raiseActorFlag(NX_AF_DISABLE_COLLISION);
+
 		_roofactors.insert(roofact);
 		userdata->InternalActor = roofact;
 
