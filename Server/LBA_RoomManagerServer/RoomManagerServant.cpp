@@ -239,7 +239,7 @@ ActorsObserverPrx RoomManagerServant::JoinActorRoom(const std::string& room,
 	//Ice::Context context;
 	//context["_fwd"] = "Oz";
 	////context["_ovrd"] = actorName;
-	return ActorsObserverPrx::uncheckedCast(/*pub->ice_context(context)*/);
+	return ActorsObserverPrx::uncheckedCast(pub/*->ice_context(context)*/);
 }
 
 
