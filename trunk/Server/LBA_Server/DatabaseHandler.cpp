@@ -216,6 +216,14 @@ LbaNet::SavedWorldInfo DatabaseHandler::ChangeWorld(const std::string& NewWorldN
 			for(int i=0; i<10; ++i)
 				resP.inventory.UsedShorcuts.push_back(-1);
 		}
+
+		//insert world name into user
+		{
+			query.clear();
+			query << "UPDATE users SET currentworld = '"<<NewWorldName<<"' WHERE id = '"<<PlayerId<<"'";
+			if(!query.exec())
+				std::cerr<<IceUtil::Time::now()<<": LBA_Server - UPDATE users failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
+		}
 	}
 	else
 	{
