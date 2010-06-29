@@ -1112,7 +1112,7 @@ void SendingLoopThread::run()
 		else // refresh info to server every 5sec in case nothing is happening
 		{
 			++_refresh_counter;
-			if(_refresh_counter == 200)
+			if(_refresh_counter == 100)
 			{
 				UpdateActorInfo(_last_ai);
 				_refresh_counter = 0;

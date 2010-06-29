@@ -140,7 +140,7 @@ public:
 			return false;
 
 		float diffpos = abs(posX - _posX) + abs(posY - _posY) +  abs(posZ - _posZ);
-		if(diffpos > 2)
+		if(diffpos > 5)
 			return false;
 
 		double diffrot = abs(rotation - _rotation);
@@ -160,7 +160,7 @@ public:
 			return false;
 
 		float diffsize = abs(sizeX - _sizeX) + abs(sizeY - _sizeY) +  abs(sizeZ - _sizeZ);
-		if(diffsize > 0.00001f)
+		if(diffsize > 0.01f)
 			return false;
 
 		if(_nameR != nameR)
