@@ -211,8 +211,6 @@
 			<parameter name="client-endpoints" default="tcp -p 4063"/>   
 			<parameter name="server-endpoints" default="tcp -h 127.0.0.1"/>
 			<parameter name="session-timeout" default="120"/>
-			<parameter name="client-sleeptime" default="10"/>   
-			<parameter name="server-sleeptime" default="10"/>			
 			<parameter name="session-manager"/>   
 			<parameter name="permissions-verifier"/>			
 
@@ -222,11 +220,9 @@
 					<property name="Glacier2.SessionTimeout" value="${session-timeout}"/>	
 					<property name="Glacier2.Client.Endpoints" value="${client-endpoints}"/>
 					<property name="Glacier2.Server.Endpoints" value="${server-endpoints}"/>
-					<property name="Glacier2.Client.SleepTime" value="${client-sleeptime}"/>
-					<property name="Glacier2.Server.SleepTime" value="${server-sleeptime}"/>
 					<property name="Glacier2.SessionManager" value="${session-manager}"/>
 					<property name="Glacier2.PermissionsVerifier" value="${permissions-verifier}"/>
-					<property name="Glacier2.Client.Buffered" value="1"/>
+					<property name="Glacier2.Client.Buffered" value="0"/>
 					<property name="Glacier2.Server.Buffered" value="1"/>					
 				</properties>
 			</server>
