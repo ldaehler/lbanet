@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF8" ?>
 <actors>
-    <actor id="0" type="12" NPCType="2" posX="52.000000" posY="0.000000" posZ="55.468750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="13,0">
+    <actor id="0" type="12" Welcome="Welcome to my shop!" NPCType="2" posX="52.000000" posY="0.000000" posZ="55.468750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="13,0">
+         <scripts />
          <items>
         	<item id="1" />
         	<item id="2" />  
