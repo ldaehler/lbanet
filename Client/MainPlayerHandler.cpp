@@ -101,7 +101,7 @@ MainPlayerHandler::MainPlayerHandler(float speedNormal, float speedSport,
 	_speedJump(speedJump), _heightJump(heightJump), _speedHurt(speedHurt),
 	_RoomP(NULL), _currentstance(0), 
 	_isAttached(false), _isDiscrete(false), _needCheck(false), _currentsignal(-1),
-	_touchedground(true), _magicballH(true)
+	_touchedground(true), _magicballH(true), _oldtdiff(1)
 {
 	_player = new Player(animationSpeed, true);
 	_player->DisplayName(true);
@@ -714,10 +714,16 @@ int MainPlayerHandler::FinishProcess(double tnow, float tdiff, int res)
 	if(_state == Ac_hurt && resA == 1)
 		StopHurt();
 
+	//float chexkvx = _corrected_velocityX;
+	//float chexkvy = _corrected_velocityY;
+	//float chexkvz = _corrected_velocityZ;
+
 	// normalize the velocity again
-	_corrected_velocityX/=tdiff;
-	_corrected_velocityY/=tdiff;
-	_corrected_velocityZ/=tdiff;
+	_corrected_velocityX/=_oldtdiff;
+	_corrected_velocityY/=_oldtdiff;
+	_corrected_velocityZ/=_oldtdiff;
+
+	_oldtdiff = tdiff;
 
 
 	// if attached - correct velocity
@@ -753,7 +759,8 @@ int MainPlayerHandler::FinishProcess(double tnow, float tdiff, int res)
 						_player->GetModel(), _player->GetBody(), _player->GetAnimation(),
 						_player->GetBodyColor(), _player->GetNameR(), 
 						_player->GetNameG(), _player->GetNameB(), _player->Visible(),
-						_player->GetSizeX(), _player->GetSizeY(), _player->GetSizeZ());
+						_player->GetSizeX(), _player->GetSizeY(), _player->GetSizeZ()
+						/*,chexkvx, chexkvy, chexkvz, tdiff*/);
 
 
 		LbaNet::ActorInfo nai;

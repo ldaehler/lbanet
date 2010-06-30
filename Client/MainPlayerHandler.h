@@ -31,6 +31,10 @@ class PhysicHandlerBase;
 
 #include <math.h>
 #include <vector>
+#include <fstream>
+
+#include <IceUtil/Time.h>
+
 #include "GameEvents.h"
 
 #include "MagicBallHandler.h"
@@ -66,6 +70,13 @@ public:
 
 	bool			_visible;
 
+	//std::ofstream	_file;
+
+
+	DeadReckon()
+		//: _file("dump2.csv")
+	{}
+
 
 	// set reckon value
 	void Set( float posX, float posY, float posZ,
@@ -73,7 +84,7 @@ public:
 				float velocityZ, float velocityR,
 				int Model, int Body, int Animation, short color,
 				int	nameR, int	nameG, int	nameB, bool Visible,
-				float sizeX, float sizeY, float sizeZ)
+				float sizeX, float sizeY, float sizeZ/*, float checkvx, float checkvy, float checkvz, float tdiff*/)
 	{
 		_visible = Visible;
 
@@ -99,6 +110,24 @@ public:
 		_nameR = nameR;
 		_nameG = nameG;
 		_nameB = nameB;
+
+		//_file<<","<<IceUtil::Time::now().toDateTime()
+		//	<<","<<_posX
+		//	<<","<<_posY
+		//	<<","<<_posZ
+		//	<<","<<_rotation
+		//	<<","<<_sizeX
+		//	<<","<<_sizeY
+		//	<<","<<_sizeZ
+		//	<<","<<_velocityX
+		//	<<","<<_velocityY
+		//	<<","<<_velocityZ
+		//	<<","<<_velocityR
+		//	<<","<<checkvx
+		//	<<","<<checkvy
+		//	<<","<<checkvz
+		//	<<","<<tdiff
+		//	<<std::endl;
 	}
 
 	// update reackon on each tick
@@ -125,52 +154,97 @@ public:
 					float sizeX, float sizeY, float sizeZ) const
 	{
 		if(_visible != Visible)
+		{
+			//_file<<"visible";
 			return false;
+		}
 
 		if(_Model != Model)
+		{
+			//_file<<"model";
 			return false;
+		}
 
 		if(_Body != Body)
+		{
+			//_file<<"body";
 			return false;
+		}
 
 		if(_Animation != Animation)
+		{
+			//_file<<"anim";
 			return false;
+		}
 
 		if(_color != color)
+		{
+			//_file<<"color";
 			return false;
+		}
 
 		float diffpos = abs(posX - _posX) + abs(posY - _posY) +  abs(posZ - _posZ);
 		if(diffpos > 5)
+		{
+			//_file<<"position";
 			return false;
+		}
 
 		double diffrot = abs(rotation - _rotation);
 		if(diffrot > 10)
+		{
+			//_file<<"rotation";
 			return false;
+		}
 
-		if(abs(velocityX - _velocityX) > 0.00001f)
+		if(abs(velocityX - _velocityX) > 0.001f)
+		{
+			//_file<<"vX";
 			return false;
+		}
 
-		if(abs(velocityY - _velocityY) > 0.00001f)
+		if(abs(velocityY - _velocityY) > 0.001f)
+		{
+			//_file<<"vY";
 			return false;
+		}
 
-		if(abs(velocityZ - _velocityZ) > 0.00001f)
+		if(abs(velocityZ - _velocityZ) > 0.001f)
+		{
+			//_file<<"vZ";
 			return false;
+		}
 
 		if(abs(velocityR - _velocityR) > 0.1f)
+		{
+			//_file<<"vR";
 			return false;
+		}
 
 		float diffsize = abs(sizeX - _sizeX) + abs(sizeY - _sizeY) +  abs(sizeZ - _sizeZ);
 		if(diffsize > 0.01f)
+		{
+			//_file<<"size";
 			return false;
+		}
 
 		if(_nameR != nameR)
+		{
+			//_file<<"namer";
 			return false;
+		}
 
 		if(_nameG != nameG)
+		{
+			//_file<<"nameg";
 			return false;
+		}
 
 		if(_nameB != nameB)
+		{
+			//_file<<"nameb";
 			return false;
+		}
 
 		return true;
 	}
@@ -446,6 +520,7 @@ protected:
 	float			_corrected_velocityX;
 	float			_corrected_velocityY;
 	float			_corrected_velocityZ;
+	float			_oldtdiff;
 
 
 	DeadReckon		_dr;

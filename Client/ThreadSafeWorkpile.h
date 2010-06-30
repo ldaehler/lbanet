@@ -462,7 +462,7 @@ protected:
 	//! construtor
 	ThreadSafeWorkpile()
 		: m_game_quitted(false), m_irc_quitted(false), m_sending_quitted(false),
-			m_send_cycle_time(50), m_is_updated(false), m_map_changed(false), m_server_on(false),
+			m_send_cycle_time(10), m_is_updated(false), m_map_changed(false), m_server_on(false),
 			m_player_id(-1), m_new_actor_state(false), m_name_color_changed(false),
 			m_world_changed(false), m_player_pos_info_updated(false), m_waiting_container_info(false),
 			m_updated_container(false), m_exchanged_container(false), m_closed_container(false),

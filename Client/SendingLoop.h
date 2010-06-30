@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <ChatInfo.h>
 #include <ClientSession.h>
 #include "ThreadSafeWorkpile.h"
+#include <fstream>
 
 class GameGUI;
 
@@ -217,6 +218,8 @@ private:
 	bool					_previousworld;
 
 	IceConnectionManager	_connectionMananger;	// ice connection manager
+
+	//std::ofstream			_dumplog;
 };
 
 #endif

@@ -853,8 +853,34 @@ SendingLoopThread::SendingLoopThread(	const Ice::ObjectAdapterPtr& adapter, cons
 										const std::string & MainName)
 	: _main_name(MainName), _refresh_counter(0), _afk_counter(0),
 			_connectionMananger(adapter, session, category), _afked(false), _previousworld(false)
+			//,_dumplog("dump.csv")
 {
-
+		//_dumplog<<"Time"
+		//	<<","<<"actor time"
+		//	<<","<<"ActorId"
+		//	<<","<<"MapName"
+		//	<<","<<"Name"
+		//	<<","<<"DisplayName"
+		//	<<","<<"NameR"
+		//	<<","<<"NameG"
+		//	<<","<<"NameB"
+		//	<<","<<"Visible"
+		//	<<","<<"X"
+		//	<<","<<"Y"
+		//	<<","<<"Z"
+		//	<<","<<"Rotation"
+		//	<<","<<"SizeX"
+		//	<<","<<"SizeY"
+		//	<<","<<"SizeZ"
+		//	<<","<<"Model"
+		//	<<","<<"Body"
+		//	<<","<<"Animation"
+		//	<<","<<"BodyColor"
+		//	<<","<<"vX"
+		//	<<","<<"vY"
+		//	<<","<<"vZ"
+		//	<<","<<"vRotation"
+		//	<<std::endl;
 }
 
 /***********************************************************
@@ -1112,7 +1138,7 @@ void SendingLoopThread::run()
 		else // refresh info to server every 5sec in case nothing is happening
 		{
 			++_refresh_counter;
-			if(_refresh_counter == 100)
+			if(_refresh_counter == 500)
 			{
 				UpdateActorInfo(_last_ai);
 				_refresh_counter = 0;
@@ -1227,6 +1253,33 @@ void SendingLoopThread::UpdateActorInfo(const LbaNet::ActorInfo & MainInfo)
 	try
 	{
 		_connectionMananger.GetActorPublisher()->Update(MainInfo);
+
+		//_dumplog<<IceUtil::Time::now().toDateTime()
+		//	<<","<<MainInfo.Time
+		//	<<","<<MainInfo.ActorId
+		//	<<","<<MainInfo.MapName
+		//	<<","<<MainInfo.Name
+		//	<<","<<MainInfo.DisplayName
+		//	<<","<<MainInfo.NameR
+		//	<<","<<MainInfo.NameG
+		//	<<","<<MainInfo.NameB
+		//	<<","<<MainInfo.Visible
+		//	<<","<<MainInfo.X
+		//	<<","<<MainInfo.Y
+		//	<<","<<MainInfo.Z
+		//	<<","<<MainInfo.Rotation
+		//	<<","<<MainInfo.SizeX
+		//	<<","<<MainInfo.SizeY
+		//	<<","<<MainInfo.SizeZ
+		//	<<","<<MainInfo.Model
+		//	<<","<<MainInfo.Body
+		//	<<","<<MainInfo.Animation
+		//	<<","<<MainInfo.BodyColor
+		//	<<","<<MainInfo.vX
+		//	<<","<<MainInfo.vY
+		//	<<","<<MainInfo.vZ
+		//	<<","<<MainInfo.vRotation
+		//	<<std::endl;
 	}
     catch(const IceUtil::Exception& ex)
     {
