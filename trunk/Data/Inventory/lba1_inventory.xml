@@ -11,5 +11,7 @@
     <item id="9" filename="Feather" type="7" valueA="0" Max="1" Description="8"/>
     <item id="10" filename="letter" type="8" valueA="0" Max="1" From="9" Subject="10" Description="11"/>   
     <item id="11" filename="Gas" type="6" valueA="0" Max="10" Price="10" Description="12"/>   
-    <item id="12" filename="Ticket" type="6" valueA="0" Max="1" Price="10" Description="13"/>     
+    <item id="12" filename="Ticket" type="6" valueA="0" Max="1" Price="10" Description="13"/>   
+     
+    <item id="20" filename="bcake1" type="1" valueA="3" Max="5" Price="1" Description="21" Effect="100"/>       
 </items>
