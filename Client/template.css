@@ -13,12 +13,12 @@ body {
         margin: 0px 0px 0px 0px;
         font-family: tahoma, sans serif; 
         text-shadow:1px 1px 2px #000000; 
-	font-size: 12px;
-	line-height: 1.3em;
+	      font-size: 12px;
+	      line-height: 1.3em;
 }
 a:link, a:visited {
-	text-decoration: none;
-	font-weight: normal;
+	      text-decoration: none;
+	      font-weight: normal;
         color: #C0C0C0; 
         font-size: 14px; 
         font-family: tahoma, sans serif; 
@@ -158,8 +158,10 @@ div.module_menu div div {
 div.module_menu div div div {
 	background: url(../images/mw_box_tl.png) 0 0 no-repeat;
 }
-
-
+div.module_menu div div div div {
+	margin: 0px;
+	background: transparent 0 0 no-repeat;
+}
 
 
 /* set all other menus style (right and left)*/
