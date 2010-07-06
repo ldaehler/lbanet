@@ -8,8 +8,6 @@
 
 module LbaNet
 {
-	sequence<string> FriendsSeq;	
-
 	interface ClientSession extends Glacier2::Session
 	{
 	    ChatRoomParticipant* JoinChat(string room, ChatRoomObserver* view);
@@ -70,8 +68,9 @@ module LbaNet
 	    
 	    
 	    // friends functions
-	    void AddFriend(string name);
-	    void RemoveFriend(string name);
+	    void AskFriend(long friendid);
+	    void AcceptFriend(long friendid);    
+	    void RemoveFriend(long friendid);
 	    FriendsSeq GetFriends();
 	    
 	    // store letter to the server and return the letter id
