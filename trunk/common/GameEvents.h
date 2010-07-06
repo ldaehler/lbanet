@@ -100,13 +100,14 @@ class ChangeWorldEvent : public GameEvent
 {
 public:
 	//! constructor
-	ChangeWorldEvent(const std::string & NewWorld)
-		: _NewWorld(NewWorld)
+	ChangeWorldEvent(const std::string & NewWorldName, const std::string & NewWorldFileName)
+		: _NewWorldName(NewWorldName), _NewWorldFileName(NewWorldFileName)
 	{
 		_type = 3;
 	}
 
-	std::string _NewWorld;
+	std::string _NewWorldName;
+	std::string _NewWorldFileName;
 };
 
 /*
