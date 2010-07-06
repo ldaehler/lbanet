@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<World name="Lba1" firstmap="Map0_1" firstsparea="FirstSpawning">
+<World name="Lba1Original" firstmap="Map0_1" firstsparea="FirstSpawning">
     <description>Reconstruction of the LBA1 original world.</description>
        
          <!--Define the place it is possible to teleport to, the first place is the place where we arrive in the world-->   
