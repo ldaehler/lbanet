@@ -419,18 +419,18 @@ void LbaNetModel::DrawOnlyChar()
 /***********************************************************
 change the world
 ***********************************************************/
-void LbaNetModel::ChangeWorld(const std::string & NewWorld)
+void LbaNetModel::ChangeWorld(const std::string & NewWorldName, const std::string & NewWorldFileName)
 {
-	if(NewWorld != _current_world)
+	if(NewWorldName != _current_world)
 	{
 		// inform the server we changed world
-		ThreadSafeWorkpile::getInstance()->InformChangeWorld(NewWorld.substr(0, NewWorld.find(".xml")));
+		ThreadSafeWorkpile::getInstance()->InformChangeWorld(NewWorldName);
 
 		CleanupWorld();
 
-		if(DataLoader::getInstance()->LoadWorld("./Data/" + NewWorld))
+		if(DataLoader::getInstance()->LoadWorld("./Data/" + NewWorldFileName))
 		{
-			_current_world = NewWorld;
+			_current_world = NewWorldName;
 			_inventoryHandler->SetInventoryDb(DataLoader::getInstance()->GetInventory());
 
 			//set the teleport list

@@ -869,7 +869,7 @@ void ThreadSafeWorkpile::GetRemovedFriend(std::vector<std::string> &scvec)
 /***********************************************************
 set friend list
 ***********************************************************/
-void ThreadSafeWorkpile::SetFriends(const std::vector<std::string> & friends)
+void ThreadSafeWorkpile::SetFriends(const LbaNet::FriendsSeq & friends)
 {
 	IceUtil::Mutex::Lock lock(m_mutex_friend);
 	m_friend_list = friends;
@@ -878,7 +878,7 @@ void ThreadSafeWorkpile::SetFriends(const std::vector<std::string> & friends)
 /***********************************************************
 get friend list
 ***********************************************************/
-void ThreadSafeWorkpile::GetFriends(std::vector<std::string> & friends)
+void ThreadSafeWorkpile::GetFriends(LbaNet::FriendsSeq & friends)
 {
 	IceUtil::Mutex::Lock lock(m_mutex_friend);
 	friends.swap(m_friend_list);

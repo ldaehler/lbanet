@@ -344,10 +344,10 @@ public:
 	void GetRemovedFriend(std::vector<std::string> &scvec);
 
 	//! set friend list
-	void SetFriends(const std::vector<std::string> & friends);
+	void SetFriends(const LbaNet::FriendsSeq & friends);
 
 	//! get friend list
-	void GetFriends(std::vector<std::string> & friends);
+	void GetFriends(LbaNet::FriendsSeq & friends);
 
 	//! add written letter to the server
 	void AddWrittenLetter(const WrittenLetter & letter);
@@ -596,7 +596,7 @@ private:
 
 	std::vector<std::string>					m_added_friends;
 	std::vector<std::string>					m_removed_friends;
-	std::vector<std::string>					m_friend_list;
+	LbaNet::FriendsSeq							m_friend_list;
 
 	std::vector<WrittenLetter>					m_letters;
 

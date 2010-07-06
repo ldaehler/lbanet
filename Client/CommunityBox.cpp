@@ -229,8 +229,8 @@ void CommunityBox::AddOnline(const std::string & listname, const std::string &_o
 		}
 
 
-		if(IsFriend(_online))
-			UpdateFriend(_online);
+		//if(IsFriend(_online))
+			//TODO UpdateFriend(_online);
 	}
 
 	if(listname == "IRC")
@@ -262,8 +262,8 @@ void CommunityBox::RemoveOnline(const std::string & listname, const std::string 
 			_onlines.erase(itmap);
 		}
 
-		if(IsFriend(_offline))
-			UpdateFriend(_offline);
+		//if(IsFriend(_offline))
+			//TODO UpdateFriend(_offline);
 	}
 
 	if(listname == "IRC")
@@ -304,7 +304,7 @@ void CommunityBox::Process()
 	}
 
 
-	std::vector<std::string> friends;
+	LbaNet::FriendsSeq friends;
 	ThreadSafeWorkpile::getInstance()->GetFriends(friends);
 	for(size_t i=0; i<friends.size(); ++i)
 		UpdateFriend(friends[i]);
@@ -373,9 +373,9 @@ bool CommunityBox::HandleRemoveFriend(const CEGUI::EventArgs& e)
 /***********************************************************
 add people friend
 ***********************************************************/
-void CommunityBox::UpdateFriend(const std::string & name)
+void CommunityBox::UpdateFriend(const LbaNet::FriendInfo & frd)
 {
-	RemoveFriend(name);
+	RemoveFriend(frd.Name);
 
 	CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
 		CEGUI::WindowManager::getSingleton().getWindow("Community/friendlist"));
@@ -383,17 +383,17 @@ void CommunityBox::UpdateFriend(const std::string & name)
 
 	bool connected = false;
 	std::string color = "FF777777";
-	std::map<std::string, CEGUI::ListboxItem *>::iterator iton = _onlines.find(name);
+	std::map<std::string, CEGUI::ListboxItem *>::iterator iton = _onlines.find(frd.Name);
 	if(iton != _onlines.end())
 	{
 		connected = true;
 		color = "FF33FF33";
 	}
 
-	std::string dis = "[colour='" + color + "']" + name;
+	std::string dis = "[colour='" + color + "']" + frd.Name;
 	CEGUI::ListboxItem *item = new MyComListItem(dis);
-	_friends[name] = item;
-
+	_friends[frd.Name] = item;
+	//TODO 
 	if(connected)
 	{
 		if(lb->getItemCount() > 0)
@@ -453,7 +453,7 @@ bool CommunityBox::HandleCPOk (const CEGUI::EventArgs& e)
 
 	if(strc != "")
 	{
-		UpdateFriend(strc);
+		//TODO UpdateFriend(strc);
 		ThreadSafeWorkpile::getInstance()->AddFriend(strc);
 
 		bed->setProperty("Text", "");

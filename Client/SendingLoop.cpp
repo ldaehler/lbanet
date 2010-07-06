@@ -564,7 +564,7 @@ void IceConnectionManager::AddFriend(const std::string& Name)
 {
 	try
 	{
-		_session->AddFriend(Name);
+		_session->AskFriend(Name);
 	}
     catch(const IceUtil::Exception& ex)
     {
@@ -583,7 +583,7 @@ void IceConnectionManager::RemoveFriend(const std::string& Name)
 {
 	try
 	{
-		_session->RemoveFriend(Name);
+		//_session->RemoveFriend(Name);
 	}
     catch(const IceUtil::Exception& ex)
     {

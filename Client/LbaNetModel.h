@@ -78,7 +78,7 @@ public:
 	int Process();
 
 	// change the world
-	void ChangeWorld(const std::string & NewWorld);
+	void ChangeWorld(const std::string & NewWorldName, const std::string & NewWorldFileName);
 
 	// change the map
 	void ChangeMap(const std::string & NewMap, const std::string & Spawning,
