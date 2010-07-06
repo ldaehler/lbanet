@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<joomfish type="contentelement">
+  <name>Community Builder:Field Values</name>
+  <author>Chris Simon</author>
+  <email>info@decomputeur.nl</email>
+  <version>1.7</version>
+  <description>Definitions for Community Builder Field Values</description>
+  <reference>
+  	<table name="comprofiler_field_values">
+  		<field type="referenceid" name="fieldvalueid" translate="0">ID</field>
+  		<field type="text" name="fieldtitle" translate="1">Title</field>
+  	</table>
+  </reference>
+</joomfish>
