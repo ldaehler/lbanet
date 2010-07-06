@@ -78,18 +78,55 @@ long DatabaseHandler::CheckLogin(const std::string & PlayerName, const std::stri
 	}
 
 	mysqlpp::Query query(_mysqlH, false);
-	query << "SELECT id FROM users WHERE status = '1' AND username COLLATE utf8_bin = '"<<PlayerName;
-	query << "' AND password = '"<<Password<<"'";
+	query << "SELECT ju.id FROM jos_users ju, jos_comprofiler jc WHERE jc.confirmed = '1' AND ju.username COLLATE utf8_bin = '"<<PlayerName;
+	query << "' AND ju.password = '"<<Password<<"' AND ju.id = jc.user_id";
 	if (mysqlpp::StoreQueryResult res = query.store())
 	{
 		if(res.size() > 0)
 		{
-			//set the user as connected
+			long lbaid = -1;
+			long juid = res[0][0];
+
+			// check if user is already in the lbanet table
 			query.clear();
-			query << "UPDATE users SET lastconnected = UTC_TIMESTAMP(), connected = '1' WHERE id = '"<<res[0][0]<<"'";
-			if(!query.exec())
-				std::cerr<<IceUtil::Time::now()<<": Connected tracker - Update lastconnected failed for user id "<<res[0][0]<<" : "<<query.error()<<std::endl;
-			return res[0][0];
+			query << "SELECT id FROM lba_users WHERE josiid = '"<<juid<<"';
+			if (res = query.store())
+			{
+				lbaid = res[0][0];
+
+				//set the user as connected
+				query.clear();
+				query << "UPDATE lba_users SET lastconnected = UTC_TIMESTAMP(), connected = '1' WHERE id = '"<<lbaid<<"'";
+				if(!query.exec())
+					std::cerr<<IceUtil::Time::now()<<": Connected tracker - Update lastconnected failed for user id "<<lbaid<<" : "<<query.error()<<std::endl;
+			}
+			else
+			{
+				// if not exist then create it
+				query.clear();
+				query << "INSERT  INTO lba_users (josiid, lastconnected, connected) VALUES('"<<juid<<"', UTC_TIMESTAMP(), '1');
+				if(!query.exec())
+					std::cerr<<IceUtil::Time::now()<<": Connected tracker - Can not create new lba user entry for id "<<juid<<" : "<<query.error()<<std::endl;
+				else
+				{
+					// get the id afterwards
+					lbaid = query.insert_id();
+				}
+
+				//query.clear();
+				//query << "SELECT id FROM lba_users WHERE josiid = '"<<juid<<"';
+				//if (res = query.store())
+				//{
+				//	lbaid = res[0][0];	
+				//}
+				//else
+				//{
+				//	std::cerr<<IceUtil::Time::now()<<": Connected tracker - CheckLoginfailed on create for user "<<PlayerName<<" : "<<query.error()<<std::endl;
+				//}
+			
+			} 
+
+			return lbaid;
 		}
 	}
 
@@ -118,7 +155,7 @@ void DatabaseHandler::DisconnectUser(long Id)
 	}
 
 	mysqlpp::Query query(_mysqlH, false);
-	query << "UPDATE users SET playedtimemin = playedtimemin + TIMESTAMPDIFF(MINUTE, lastconnected, UTC_TIMESTAMP()), connected = '0' WHERE id = '"<<Id<<"'";
+	query << "UPDATE lba_users SET playedtimemin = playedtimemin + TIMESTAMPDIFF(MINUTE, lastconnected, UTC_TIMESTAMP()), connected = '0' WHERE id = '"<<Id<<"'";
 	if(!query.exec())
 	{
 		std::cerr<<IceUtil::Time::now()<<": Connected tracker - Update timeplayed failed for user id "<<Id<<" : "<<query.error()<<std::endl;

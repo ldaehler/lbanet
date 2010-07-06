@@ -135,6 +135,7 @@ player has changed world
 ***********************************************************/
 LbaNet::SavedWorldInfo DatabaseHandler::ChangeWorld(const std::string& NewWorldName, long PlayerId)
 {
+	long worldid = -*;
 	LbaNet::SavedWorldInfo resP;
 	resP.ppos.MapName = "";
 	resP.CurrentLife = -1;
@@ -154,16 +155,18 @@ LbaNet::SavedWorldInfo DatabaseHandler::ChangeWorld(const std::string& NewWorldN
 	}
 
 	mysqlpp::Query query(_mysqlH, false);
-	query << "SELECT id, lastmap, lastposx, lastposy, lastposz, lastrotation, InventorySize, Shortcuts, LifePoint, ManaPoint, MaxLife, MaxMana FROM usertoworldmap";
-	query << " WHERE userid = '"<<PlayerId<<"'";
-	query << " AND worldname = '"<<NewWorldName<<"'";
+	query << "SELECT uw.id, uw.lastmap, uw.lastposx, uw.lastposy, uw.lastposz, uw.lastrotation, uw.InventorySize, uw.Shortcuts, uw.LifePoint, uw.ManaPoint, uw.MaxLife, uw.MaxMana, w.id";
+	query << " FROM lba_usertoworld uw, lba_worlds w;
+	query << " WHERE uw.userid = '"<<PlayerId<<"'";
+	query << " AND w.name = '"<<NewWorldName<<"'";
+	query << " AND uw.worldid = w.id"
 	if (mysqlpp::StoreQueryResult res = query.store())
 	{
 		if(res.size() > 0)
 		{
 			//set the user as connected
 			query.clear();
-			query << "UPDATE usertoworldmap SET lastvisited = UTC_TIMESTAMP() WHERE id = '"<<res[0][0]<<"'";
+			query << "UPDATE lba_usertoworld SET lastvisited = UTC_TIMESTAMP() WHERE id = '"<<res[0][0]<<"'";
 			if(!query.exec())
 				std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update usertoworldmap.lastvisited failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
 			
@@ -188,8 +191,10 @@ LbaNet::SavedWorldInfo DatabaseHandler::ChangeWorld(const std::string& NewWorldN
 			resP.MaxLife = res[0][10];
 			resP.MaxMana = res[0][11];
 
+			worldid = res[0][12];
+
 			query.clear();
-			query << "SELECT * FROM userinventory";
+			query << "SELECT * FROM lba_inventory";
 			query << " WHERE worldid = '"<<res[0][0]<<"'";
 			if (mysqlpp::StoreQueryResult res2 = query.store())
 			{
@@ -204,12 +209,23 @@ LbaNet::SavedWorldInfo DatabaseHandler::ChangeWorld(const std::string& NewWorldN
 
 		}
 		else
-		{
+		{	
 			query.clear();
-			query << "INSERT usertoworldmap (userid, worldname, lastvisited) VALUES('";
-			query << PlayerId << "', '" << NewWorldName<< "', UTC_TIMESTAMP())";
-			if(!query.exec())
-				std::cerr<<IceUtil::Time::now()<<": LBA_Server - INSERT usertoworldmap failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
+			query <<"SELECT id FROM lba_worlds WHERE name = '"<<name<<"'";
+			if (mysqlpp::StoreQueryResult res = query.store())
+			{
+				if(res.size() > 0)
+				{
+					worldid = res[0][0];
+
+					query.clear();
+					query << "INSERT lba_usertoworld (userid, worldid, lastvisited) VALUES('";
+					query << PlayerId << "', '"<<worldid<<"', UTC_TIMESTAMP())";
+					if(!query.exec())
+						std::cerr<<IceUtil::Time::now()<<": LBA_Server - INSERT lba_usertoworld failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
+				}
+			}
+
 
 		
 			resP.inventory.InventorySize = 30;
@@ -220,7 +236,7 @@ LbaNet::SavedWorldInfo DatabaseHandler::ChangeWorld(const std::string& NewWorldN
 		//insert world name into user
 		{
 			query.clear();
-			query << "UPDATE users SET currentworld = '"<<NewWorldName<<"' WHERE id = '"<<PlayerId<<"'";
+			query << "UPDATE lba_users SET currentworldid = '"<<worldid<<"' WHERE id = '"<<PlayerId<<"'";
 			if(!query.exec())
 				std::cerr<<IceUtil::Time::now()<<": LBA_Server - UPDATE users failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
 		}
@@ -254,13 +270,13 @@ void DatabaseHandler::UpdatePositionInWorld(const LbaNet::PlayerPosition& Positi
 	}
 
 	mysqlpp::Query query(_mysqlH, false);
-	query << "UPDATE usertoworldmap SET lastmap = '"<<Position.MapName<<"',";
+	query << "UPDATE lba_usertoworld SET lastmap = '"<<Position.MapName<<"',";
 	query << "lastposx = '"<<Position.X<<"',";
 	query << "lastposy = '"<<Position.Y<<"',";
 	query << "lastposz = '"<<Position.Z<<"',";
 	query << "lastrotation = '"<<Position.Rotation<<"'";
 	query << " WHERE userid = '"<<PlayerId<<"'";
-	query << " AND worldname = '"<<WorldName<<"'";
+	query << " AND worldid = (SELECT id FROM lba_worlds WHERE name = '"<<WorldName<<"')";
 	if(!query.exec())
 	{
 		std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update UpdatePositionInWorld failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
@@ -292,13 +308,13 @@ void DatabaseHandler::QuitWorld(const std::string& LastWorldName,long PlayerId,
 	if(LastWorldName != "")
 	{
 		mysqlpp::Query query(_mysqlH, false);
-		query << "UPDATE usertoworldmap SET timeplayedmin = timeplayedmin + TIMESTAMPDIFF(MINUTE, lastvisited, UTC_TIMESTAMP())";
+		query << "UPDATE lba_usertoworld SET timeplayedmin = timeplayedmin + TIMESTAMPDIFF(MINUTE, lastvisited, UTC_TIMESTAMP())";
 		query << ", LifePoint = '"<<currentlife<<"'";
 		query << ", ManaPoint = '"<<currentmana<<"'";
 		query << ", MaxLife = '"<<maxlife<<"'";
 		query << ", MaxMana = '"<<maxmana<<"'";
 		query << " WHERE userid = '"<<PlayerId<<"'";
-		query << " AND worldname = '"<<LastWorldName<<"'";		
+		query << " AND worldid = (SELECT id FROM lba_worlds WHERE name = '"<<LastWorldName<<"')";	
 		if(!query.exec())
 		{
 			std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update usertoworldmap.timeplayedmin failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;		
@@ -342,15 +358,15 @@ void DatabaseHandler::UpdateInventory(const LbaNet::InventoryInfo &Inventory, co
 
 
 	mysqlpp::Query query(_mysqlH, false);
-	query << "SELECT id FROM usertoworldmap";
+	query << "SELECT id FROM lba_usertoworld";
 	query << " WHERE userid = '"<<PlayerId<<"'";
-	query << " AND worldname = '"<<WorldName<<"'";
+	query << " AND worldid = (SELECT id FROM lba_worlds WHERE name = '"<<WorldName<<"')";;
 	if (mysqlpp::StoreQueryResult res = query.store())
 	{
 		if(res.size() > 0)
 		{
 			query.clear();
-			query << "UPDATE usertoworldmap SET InventorySize = '"<<Inventory.InventorySize<<"',";
+			query << "UPDATE lba_usertoworld SET InventorySize = '"<<Inventory.InventorySize<<"',";
 			query << "Shortcuts = '"<<shortcutstring.str()<<"' ";
 			query << " WHERE id = '"<<res[0][0]<<"'";
 			if(!query.exec())
@@ -358,7 +374,7 @@ void DatabaseHandler::UpdateInventory(const LbaNet::InventoryInfo &Inventory, co
 
 
 			query.clear();
-			query << "DELETE FROM userinventory";
+			query << "DELETE FROM lba_inventory";
 			query << " WHERE worldid = '"<<res[0][0]<<"'";
 			if(!query.exec())
 				std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update DELETE failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
@@ -368,7 +384,7 @@ void DatabaseHandler::UpdateInventory(const LbaNet::InventoryInfo &Inventory, co
 			for(;iti != endi; ++iti)
 			{
 				query.clear();
-				query << "INSERT INTO userinventory (worldid, objectid, number, InventoryPlace) VALUES('";
+				query << "INSERT INTO lba_inventory (worldid, objectid, number, InventoryPlace) VALUES('";
 				query << res[0][0] << "', '" << iti->first << "', '" << iti->second.Number << "', '" << iti->second.PlaceInInventory << "')";
 				if(!query.exec())
 					std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update INSERT usertoworldmap failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
@@ -387,36 +403,36 @@ add friend function
 ***********************************************************/
 void DatabaseHandler::AddFriend(long myId, const std::string&  name)
 {
-	Lock sync(*this);
-	if(!_mysqlH || !_mysqlH->connected())
-	{
-		Connect();
-		if(!_mysqlH->connected())
-		{
-			Clear();
-			return;
-		}
-	}
+	//Lock sync(*this);
+	//if(!_mysqlH || !_mysqlH->connected())
+	//{
+	//	Connect();
+	//	if(!_mysqlH->connected())
+	//	{
+	//		Clear();
+	//		return;
+	//	}
+	//}
 
-	mysqlpp::Query query(_mysqlH, false);
+	//mysqlpp::Query query(_mysqlH, false);
 
-	query << "SELECT id FROM users";
-	query << " WHERE username = '"<<name<<"'";
-	if (mysqlpp::StoreQueryResult res = query.store())
-	{
-		if(res.size() > 0)
-		{
-			query.clear();
-			query << "INSERT INTO friends (userid, friendid) VALUES('";
-			query << myId << "', '" << res[0][0] << "')";
-			if(!query.exec())
-				std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update INSERT friends failed for user id "<<myId<<" : "<<query.error()<<std::endl;
-		}
-	}
-	else
-	{
-		Clear();
-	}
+	//query << "SELECT id FROM users";
+	//query << " WHERE username = '"<<name<<"'";
+	//if (mysqlpp::StoreQueryResult res = query.store())
+	//{
+	//	if(res.size() > 0)
+	//	{
+	//		query.clear();
+	//		query << "INSERT INTO friends (userid, friendid) VALUES('";
+	//		query << myId << "', '" << res[0][0] << "')";
+	//		if(!query.exec())
+	//			std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update INSERT friends failed for user id "<<myId<<" : "<<query.error()<<std::endl;
+	//	}
+	//}
+	//else
+	//{
+	//	Clear();
+	//}
 }
 
 /***********************************************************
@@ -424,36 +440,36 @@ remove friend function
 ***********************************************************/
 void DatabaseHandler::RemoveFriend(long myId, const std::string&  name)
 {
-	Lock sync(*this);
-	if(!_mysqlH || !_mysqlH->connected())
-	{
-		Connect();
-		if(!_mysqlH->connected())
-		{
-			Clear();
-			return;
-		}
-	}
+	//Lock sync(*this);
+	//if(!_mysqlH || !_mysqlH->connected())
+	//{
+	//	Connect();
+	//	if(!_mysqlH->connected())
+	//	{
+	//		Clear();
+	//		return;
+	//	}
+	//}
 
-	mysqlpp::Query query(_mysqlH, false);
+	//mysqlpp::Query query(_mysqlH, false);
 
-	query << "SELECT id FROM users";
-	query << " WHERE username = '"<<name<<"'";
-	if (mysqlpp::StoreQueryResult res = query.store())
-	{
-		if(res.size() > 0)
-		{
-			query.clear();
-			query << "DELETE FROM friends";
-			query << " WHERE userid = '"<<myId<<"' AND friendid = '"<<res[0][0]<<"'";
-			if(!query.exec())
-				std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update DELETE friends failed for user id "<<myId<<" : "<<query.error()<<std::endl;
-		}
-	}
-	else
-	{
-		Clear();
-	}
+	//query << "SELECT id FROM users";
+	//query << " WHERE username = '"<<name<<"'";
+	//if (mysqlpp::StoreQueryResult res = query.store())
+	//{
+	//	if(res.size() > 0)
+	//	{
+	//		query.clear();
+	//		query << "DELETE FROM friends";
+	//		query << " WHERE userid = '"<<myId<<"' AND friendid = '"<<res[0][0]<<"'";
+	//		if(!query.exec())
+	//			std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update DELETE friends failed for user id "<<myId<<" : "<<query.error()<<std::endl;
+	//	}
+	//}
+	//else
+	//{
+	//	Clear();
+	//}
 }
 
 /***********************************************************
@@ -477,15 +493,42 @@ LbaNet::FriendsSeq DatabaseHandler::GetFriends(long myId)
 
 	mysqlpp::Query query(_mysqlH, false);
 
-	query << "SELECT users.username FROM users, friends";
-	query << " WHERE users.id = friends.friendid";
-	query << " AND friends.userid = '"<<myId<<"'";
+	query << "SELECT cm.memberid, cm.pending";
+	query << " FROM jos_comprofiler_members cm, jos_users ju, lba_users lu";
+	query << " WHERE cm.accepted = '1'";
+	query << " AND ju.id = cm.referenceid";
+	query << " AND ju.id = lu.josiid";
+	query << " AND lu.id = '"<<myId<<"'";
 	if (mysqlpp::StoreQueryResult res = query.store())
 	{
 		if(res.size() > 0)
 		{
 			for(size_t i=0; i<res.size(); ++i)
-				resF.push_back(res[i][0].c_str());
+			{
+				query.clear();
+				query << "SELECT ju.username, lu.id";
+				query << " FROM jos_users ju, lba_users lu";
+				query << " WHERE ju.id = '"<<res[i][0]<<"'";
+				query << " AND ju.id = lu.josiid";
+
+				if (mysqlpp::StoreQueryResult res2 = query.store())
+				{
+					if(res2.size() > 0)
+					{
+						std::string uname = res2[i][0];
+						// if friendship is in pending state add it
+						if(res[i][1] == 1)
+						{
+							uname += " [P]";
+						}
+						LbaNet::FriendInfo ftmp;
+						ftmp.Id = res2[i][1];
+						ftmp.Name = uname;
+						resF.push_back(ftmp);
+					}
+				}
+			}
+				
 		}
 	}
 	else
@@ -520,7 +563,7 @@ long DatabaseHandler::AddLetter(long myId, const std::string& title, const std::
 	std::string replaced = replaceall(message, "'", "#quote#");
 
 	mysqlpp::Query query(_mysqlH, false);
-	query << "INSERT INTO letters (userid, creationdate, title, message) VALUES('";
+	query << "INSERT INTO lba_letters (userid, creationdate, title, message) VALUES('";
 	query << myId << "', UTC_TIMESTAMP(), '"<< title <<"', '" << replaced << "')";
 	if(!query.exec())
 	{
@@ -557,10 +600,11 @@ LbaNet::LetterInfo DatabaseHandler::GetLetterInfo(Ice::Long LetterId)
 	}
 
 	mysqlpp::Query query(_mysqlH, false);
-
-	query << "SELECT users.username, letters.creationdate, letters.title, letters.message FROM users, letters";
-	query << " WHERE users.id = letters.userid";
-	query << " AND letters.id = '"<<LetterId<<"'";
+	query << "SELECT ju.username, l.creationdate, l.title, l.message";
+	query << " FROM lba_users u, lba_letters l, jos_users ju";
+	query << " WHERE ju.id = u.josiid";
+	query << " AND u.id = l.userid";
+	query << " AND l.id = '"<<LetterId<<"'";
 	if (mysqlpp::StoreQueryResult res = query.store())
 	{
 		if(res.size() > 0)
@@ -605,15 +649,15 @@ void DatabaseHandler::GetQuestInfo(const std::string& WorldName, long PlayerId,
 	}
 
 	mysqlpp::Query query(_mysqlH, false);
-	query << "SELECT id FROM usertoworldmap";
+	query << "SELECT id FROM lba_usertoworld";
 	query << " WHERE userid = '"<<PlayerId<<"'";
-	query << " AND worldname = '"<<WorldName<<"'";
+	query << " AND worldid = (SELECT id FROM lba_worlds WHERE name = '"<<WorldName<<"')";
 	if (mysqlpp::StoreQueryResult res = query.store())
 	{
 		if(res.size() > 0)
 		{
 			query.clear();
-			query << "SELECT questid, status FROM quests";
+			query << "SELECT questid, status FROM lba_quests";
 			query << " WHERE worldid = '"<<res[0][0]<<"'";
 			if (mysqlpp::StoreQueryResult res2 = query.store())
 			{
@@ -659,15 +703,15 @@ void DatabaseHandler::SetQuestInfo(const std::string& WorldName, long PlayerId,
 	}
 
 	mysqlpp::Query query(_mysqlH, false);
-	query << "SELECT id FROM usertoworldmap";
+	query << "SELECT id FROM lba_usertoworld";
 	query << " WHERE userid = '"<<PlayerId<<"'";
-	query << " AND worldname = '"<<WorldName<<"'";
+	query << " AND worldid = (SELECT id FROM lba_worlds WHERE name = '"<<WorldName<<"')";
 	if (mysqlpp::StoreQueryResult res = query.store())
 	{
 		if(res.size() > 0)
 		{
 			query.clear();
-			query << "DELETE FROM quests";
+			query << "DELETE FROM lba_quests";
 			query << " WHERE worldid = '"<<res[0][0]<<"'";
 			if(!query.exec())
 				std::cerr<<IceUtil::Time::now()<<": LBA_Server - Quest DELETE failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
@@ -677,7 +721,7 @@ void DatabaseHandler::SetQuestInfo(const std::string& WorldName, long PlayerId,
 			for(;iti != endi; ++iti)
 			{
 				query.clear();
-				query << "INSERT INTO quests (worldid, questid, status) VALUES('";
+				query << "INSERT INTO lba_quests (worldid, questid, status) VALUES('";
 				query << res[0][0] << "', '" << *iti << "', '" << 0  << "')";
 				if(!query.exec())
 					std::cerr<<IceUtil::Time::now()<<": LBA_Server - Quest INSERT failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
@@ -688,7 +732,7 @@ void DatabaseHandler::SetQuestInfo(const std::string& WorldName, long PlayerId,
 			for(;iti != endi; ++iti)
 			{
 				query.clear();
-				query << "INSERT INTO quests (worldid, questid, status) VALUES('";
+				query << "INSERT INTO lba_quests (worldid, questid, status) VALUES('";
 				query << res[0][0] << "', '" << *iti << "', '" << 1  << "')";
 				if(!query.exec())
 					std::cerr<<IceUtil::Time::now()<<": LBA_Server - Quest INSERT failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
@@ -721,7 +765,7 @@ void DatabaseHandler::RecordKill(const std::string& WorldName, long KilledId, in
 	if(WorldName != "")
 	{
 		mysqlpp::Query query(_mysqlH, false);
-		query << "UPDATE usertoworldmap ";
+		query << "UPDATE lba_usertoworld ";
 		switch(Reason)
 		{
 			case 2:
@@ -741,7 +785,7 @@ void DatabaseHandler::RecordKill(const std::string& WorldName, long KilledId, in
 			break;
 		}
 		query << " WHERE userid = '"<<KilledId<<"'";
-		query << " AND worldname = '"<<WorldName<<"'";		
+		query << " AND worldid = (SELECT id FROM lba_worlds WHERE name = '"<<WorldName<<"')";	
 		if(!query.exec())
 		{
 			std::cerr<<IceUtil::Time::now()<<": LBA_Server - RecordKill failed for user id "<<KilledId<<" : "<<query.error()<<std::endl;		
@@ -764,10 +808,10 @@ void DatabaseHandler::RecordKill(const std::string& WorldName, long KilledId, in
 		if(Reason == 4)
 		{
 			mysqlpp::Query query(_mysqlH, false);
-			query << "UPDATE usertoworldmap ";
+			query << "UPDATE lba_usertoworld ";
 			query << "SET PvpKill = PvpKill + 1";
 			query << " WHERE userid = '"<<KillerId<<"'";
-			query << " AND worldname = '"<<WorldName<<"'";		
+			query << " AND worldid = (SELECT id FROM lba_worlds WHERE name = '"<<WorldName<<"')";		
 			if(!query.exec())
 			{
 				std::cerr<<IceUtil::Time::now()<<": LBA_Server - RecordKiller failed for user id "<<KillerId<<" : "<<query.error()<<std::endl;		

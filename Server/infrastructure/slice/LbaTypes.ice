@@ -256,7 +256,16 @@ module LbaNet
 		bool  Enoughmana;
 	};
 	
-	sequence<long> QuestSeq;	
+	sequence<long> QuestSeq;
+	
+	
+	struct FriendInfo
+	{
+		long Id;
+		string Name;
+	};
+	
+	sequence<FriendInfo> FriendsSeq;
 };	
 
 #endif
