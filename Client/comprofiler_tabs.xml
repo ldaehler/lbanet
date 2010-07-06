@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<joomfish type="contentelement">
+  <name>Community Builder:Tabs</name>
+  <author>Chris Simon</author>
+  <email>info@decomputeur.nl</email>
+  <version>1.7</version>
+  <description>Definitions for Community Builder Tabs</description>
+  <reference>
+  	<table name="comprofiler_tabs">
+  		<field type="referenceid" name="tabid" translate="0">ID</field>
+  		<field type="text" name="title" translate="1">Title</field>
+  		<field type="textarea" name="description" translate="1">Description</field>
+  	</table>
+  </reference>
+</joomfish>
