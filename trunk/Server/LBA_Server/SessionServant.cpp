@@ -50,16 +50,16 @@ SessionServant::SessionServant(const std::string& userId, const RoomManagerPrx& 
 	_lifeinfo.ActorId = _userNum;
 	_lifeinfo.Name = _userId;
 
-	_session_world_inventory_files["Lba1OriginalWorld"] = "Data/Inventory/lba1_inventory.xml";
+	_session_world_inventory_files["Lba1Original"] = "Data/Inventory/lba1_inventory.xml";
 	_session_world_inventory_files["Lba1Expanded"] = "Data/Inventory/lba1E_inventory.xml";
-	_session_world_inventory_files["GiantCitadelWorld"] = "Data/Inventory/lba1_inventory.xml";
-	_session_world_inventory_files["GiantPrincipalWorld"] = "Data/Inventory/lba1_inventory.xml";
+	_session_world_inventory_files["GiantCitadel"] = "Data/Inventory/lba1_inventory.xml";
+	_session_world_inventory_files["GiantPrincipal"] = "Data/Inventory/lba1_inventory.xml";
 
 
-	_session_world_quest_files["Lba1OriginalWorld"] = "Data/Quest/lba1.xml";
+	_session_world_quest_files["Lba1Original"] = "Data/Quest/lba1.xml";
 	_session_world_quest_files["Lba1Expanded"] = "Data/Quest/lba1E.xml";
-	_session_world_quest_files["GiantCitadelWorld"] = "Data/Quest/lba1.xml";
-	_session_world_quest_files["GiantPrincipalWorld"] = "Data/Quest/lba1.xml";
+	_session_world_quest_files["GiantCitadel"] = "Data/Quest/lba1.xml";
+	_session_world_quest_files["GiantPrincipal"] = "Data/Quest/lba1.xml";
 }
 
 
@@ -1006,17 +1006,25 @@ bool SessionServant::Whisper(const std::string& To, const std::string& Message, 
 /***********************************************************
 add friend function
 ***********************************************************/
-void SessionServant::AddFriend(const std::string&  name, const ::Ice::Current&)
+void SessionServant::AskFriend(const std::string &friendname, const ::Ice::Current&)
 {
-	_dbh.AddFriend(_userNum, name);
+	_dbh.AskFriend(_userNum, friendname);
+}
+
+/***********************************************************
+add friend function
+***********************************************************/
+void SessionServant::AcceptFriend(Ice::Long friendid, const ::Ice::Current&)
+{
+	_dbh.AcceptFriend(_userNum, friendid);
 }
 
 /***********************************************************
 remove friend function
 ***********************************************************/
-void SessionServant::RemoveFriend(const std::string&  name, const ::Ice::Current&)
+void SessionServant::RemoveFriend(Ice::Long friendid, const ::Ice::Current&)
 {
-	_dbh.RemoveFriend(_userNum, name);
+	_dbh.RemoveFriend(_userNum, friendid);
 }
 
 /***********************************************************

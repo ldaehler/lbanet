@@ -39,13 +39,14 @@ MapManagerServant::MapManagerServant(const Ice::CommunicatorPtr& communicator,
 
 	for(size_t i=0; i<worlds.size(); ++i)
 	{
-		std::string worldname = worlds[i];
+
 
 		WorldInfo wi;
-		MapInfoXmlReader::LoadWorld("Data/" + worldname + ".xml", wi);
+		MapInfoXmlReader::LoadWorld("Data/" + worlds[i] + ".xml", wi);
 		std::map<std::string, MapInfo>::iterator itmap = wi.Maps.begin();
 		for(;itmap != wi.Maps.end(); ++itmap)
 		{
+			std::string worldname = wi.Name;
 			std::string mapS = itmap->first;
 			std::string localfile = itmap->second.Files["LocalActors"];
 			std::string externalfile = itmap->second.Files["ExternalActors"];

@@ -153,10 +153,13 @@ public:
 
 
     // add friend function
-    virtual void AddFriend(const std::string&  name, const ::Ice::Current&);
+    virtual void AskFriend(const std::string &friendname, const ::Ice::Current&);
+
+	// accept friend invitation
+    virtual void AcceptFriend(Ice::Long friendid, const ::Ice::Current&);
 
     // remove friend function
-	virtual void RemoveFriend(const std::string&  name, const ::Ice::Current&);
+	virtual void RemoveFriend(Ice::Long friendid, const ::Ice::Current&);
 
     // get friends function
     virtual LbaNet::FriendsSeq GetFriends(const ::Ice::Current&);

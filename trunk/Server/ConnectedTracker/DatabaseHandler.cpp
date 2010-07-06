@@ -26,6 +26,70 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DatabaseHandler.h"
 #include <IceUtil/Time.h>
 
+#include "md5.h"
+
+
+
+/***********************************************************
+helper functions
+***********************************************************/
+static void Trim(std::string& str)
+{
+	std::string::size_type pos = str.find_last_not_of(' ');
+	if(pos != std::string::npos)
+	{
+		str.erase(pos + 1);
+		pos = str.find_first_not_of(' ');
+
+		if(pos != std::string::npos)
+			str.erase(0, pos);
+	}
+	else
+		str.clear();
+
+}
+
+static void Tokenize(const std::string& str,
+										std::vector<std::string>& tokens,
+										const std::string& delimiters)
+{
+	// Skip delimiters at beginning.
+	std::string::size_type lastPos = str.find_first_not_of(delimiters, 0);
+	// Find first "non-delimiter".
+	std::string::size_type pos     = str.find_first_of(delimiters, lastPos);
+
+
+
+	while (std::string::npos != pos || std::string::npos != lastPos)
+	{
+		// Found a token, add it to the vector.
+		std::string tmp = str.substr(lastPos, pos - lastPos);
+		Trim(tmp);
+		tokens.push_back(tmp);
+
+		// Skip delimiters.  Note the "not_of"
+		lastPos = str.find_first_not_of(delimiters, pos);
+
+		// Find next "non-delimiter"
+		pos = str.find_first_of(delimiters, lastPos);
+	}
+}
+
+
+static std::string replaceall(const std::string & str, const std::string & toreplace, const std::string & with)
+{
+	std::string res = str;
+
+    int len = toreplace.size(), pos;
+	while((pos=res.find(toreplace)) != std::string::npos)
+    {
+        res=res.substr(0,pos)+with+res.substr(pos+len); 
+    }
+
+	return res;
+} 
+
+
 
 /***********************************************************
 constructor
@@ -78,8 +142,8 @@ long DatabaseHandler::CheckLogin(const std::string & PlayerName, const std::stri
 	}
 
 	mysqlpp::Query query(_mysqlH, false);
-	query << "SELECT ju.id FROM jos_users ju, jos_comprofiler jc WHERE jc.confirmed = '1' AND ju.username COLLATE utf8_bin = '"<<PlayerName;
-	query << "' AND ju.password = '"<<Password<<"' AND ju.id = jc.user_id";
+	query << "SELECT ju.id, ju.password FROM jos_users ju, jos_comprofiler jc WHERE jc.confirmed = '1' AND ju.username COLLATE utf8_bin = '"<<PlayerName;
+	query <<"' AND ju.id = jc.user_id";
 	if (mysqlpp::StoreQueryResult res = query.store())
 	{
 		if(res.size() > 0)
@@ -87,10 +151,25 @@ long DatabaseHandler::CheckLogin(const std::string & PlayerName, const std::stri
 			long lbaid = -1;
 			long juid = res[0][0];
 
+			// check if password match
+			std::string dbentry = res[0][1];
+
+			std::vector<std::string> entries;
+			Tokenize(dbentry, entries, ":");
+			if(entries.size() != 2)
+				return -1;
+
+			std::string md5pass = MD5(Password + entries[1]).hexdigest();
+			if(md5pass != entries[0])
+			{
+				std::cout<<IceUtil::Time::now()<<": Wrong password for user "<<PlayerName<<std::endl;
+				return -1;
+			}
+
 			// check if user is already in the lbanet table
 			query.clear();
-			query << "SELECT id FROM lba_users WHERE josiid = '"<<juid<<"';
-			if (res = query.store())
+			query << "SELECT id FROM lba_users WHERE josiid = '"<<juid<<"'";
+			if ((res = query.store()) && (res.size() > 0))
 			{
 				lbaid = res[0][0];
 
@@ -104,13 +183,13 @@ long DatabaseHandler::CheckLogin(const std::string & PlayerName, const std::stri
 			{
 				// if not exist then create it
 				query.clear();
-				query << "INSERT  INTO lba_users (josiid, lastconnected, connected) VALUES('"<<juid<<"', UTC_TIMESTAMP(), '1');
+				query << "INSERT  INTO lba_users (josiid, lastconnected, connected) VALUES('"<<juid<<"', UTC_TIMESTAMP(), '1')";
 				if(!query.exec())
 					std::cerr<<IceUtil::Time::now()<<": Connected tracker - Can not create new lba user entry for id "<<juid<<" : "<<query.error()<<std::endl;
 				else
 				{
 					// get the id afterwards
-					lbaid = query.insert_id();
+					lbaid = (long)query.insert_id();
 				}
 
 				//query.clear();

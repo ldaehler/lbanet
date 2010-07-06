@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="LBA_RoomManagerServer"
 	ProjectGUID="{713A566D-9D6D-4DEE-9F41-5B03CB522AFB}"
 	RootNamespace="LBA_Server"
@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(ICE_HOME)\include;..\infrastructure\include;&quot;..\MySQL++\include&quot;;..\mysql\include"
+				AdditionalIncludeDirectories="&quot;$(ICE_HOME)\include&quot;;..\infrastructure\include;&quot;..\MySQL++\include&quot;;..\mysql\include;..\..\common"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -118,7 +118,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="$(ICE_HOME)\include;..\infrastructure\include;&quot;..\MySQL++\include&quot;;..\mysql\include"
+				AdditionalIncludeDirectories="&quot;$(ICE_HOME)\include&quot;;..\infrastructure\include;&quot;..\MySQL++\include&quot;;..\mysql\include;..\..\common"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -201,6 +201,10 @@
 			</File>
 			<File
 				RelativePath=".\main.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\md5.cpp"
 				>
 			</File>
 			<File

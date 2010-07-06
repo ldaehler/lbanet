@@ -135,7 +135,7 @@ player has changed world
 ***********************************************************/
 LbaNet::SavedWorldInfo DatabaseHandler::ChangeWorld(const std::string& NewWorldName, long PlayerId)
 {
-	long worldid = -*;
+	long worldid = -1;
 	LbaNet::SavedWorldInfo resP;
 	resP.ppos.MapName = "";
 	resP.CurrentLife = -1;
@@ -156,10 +156,10 @@ LbaNet::SavedWorldInfo DatabaseHandler::ChangeWorld(const std::string& NewWorldN
 
 	mysqlpp::Query query(_mysqlH, false);
 	query << "SELECT uw.id, uw.lastmap, uw.lastposx, uw.lastposy, uw.lastposz, uw.lastrotation, uw.InventorySize, uw.Shortcuts, uw.LifePoint, uw.ManaPoint, uw.MaxLife, uw.MaxMana, w.id";
-	query << " FROM lba_usertoworld uw, lba_worlds w;
+	query << " FROM lba_usertoworld uw, lba_worlds w";
 	query << " WHERE uw.userid = '"<<PlayerId<<"'";
 	query << " AND w.name = '"<<NewWorldName<<"'";
-	query << " AND uw.worldid = w.id"
+	query << " AND uw.worldid = w.id";
 	if (mysqlpp::StoreQueryResult res = query.store())
 	{
 		if(res.size() > 0)
@@ -211,7 +211,7 @@ LbaNet::SavedWorldInfo DatabaseHandler::ChangeWorld(const std::string& NewWorldN
 		else
 		{	
 			query.clear();
-			query <<"SELECT id FROM lba_worlds WHERE name = '"<<name<<"'";
+			query <<"SELECT id FROM lba_worlds WHERE name = '"<<NewWorldName<<"'";
 			if (mysqlpp::StoreQueryResult res = query.store())
 			{
 				if(res.size() > 0)
@@ -401,7 +401,78 @@ void DatabaseHandler::UpdateInventory(const LbaNet::InventoryInfo &Inventory, co
 /***********************************************************
 add friend function
 ***********************************************************/
-void DatabaseHandler::AddFriend(long myId, const std::string&  name)
+bool DatabaseHandler::AskFriend(long myId, const std::string &friendname)
+{
+	Lock sync(*this);
+	if(!_mysqlH || !_mysqlH->connected())
+	{
+		Connect();
+		if(!_mysqlH->connected())
+		{
+			Clear();
+			return false;
+		}
+	}
+
+	mysqlpp::Query query(_mysqlH, false);
+
+	query << "SELECT id FROM jos_users";
+	query << " WHERE username = '"<<friendname<<"'";
+	if (mysqlpp::StoreQueryResult res = query.store())
+	{
+		if(res.size() > 0)
+		{
+			long juid = res[0][0];
+
+			// get my jos id
+			query.clear();
+			query << "SELECT ju.id FROM jos_users ju, lba_users lu";
+			query << " WHERE ju.id = lu.josiid AND lu.id = '"<<myId<<"'";
+			if (mysqlpp::StoreQueryResult res = query.store())
+			{
+				if(res.size() > 0)
+				{
+					myId = res[0][0];
+
+					//check if there is no existing connexion - if it is the case then do nothing
+					query.clear();
+					query << "SELECT accepted FROM jos_comprofiler_members";
+					query << " WHERE referenceid = '"<<myId<<"'";
+					query << " AND memberid = '"<<juid<<"'";
+					if (mysqlpp::StoreQueryResult res = query.store())
+					{
+						if(res.size() > 0)
+							return false;
+					}
+
+					// else add the connexion
+					query.clear();
+					query << "INSERT INTO jos_comprofiler_members (referenceid, memberid, accepted, pending, membersince, reason, type) VALUES";
+					query << "('" << myId << "', '" << juid << "', '1', '1', NOW(), 'Friend request from Lbanet', 'Friend')";
+					query << ",('" << juid << "', '" << myId << "', '0', '0', NOW(), 'Friend request from Lbanet', 'Friend')";
+					if(!query.exec())
+					{
+						std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update INSERT friends failed for user id "<<myId<<" : "<<query.error()<<std::endl;
+						return false;
+					}
+
+					return true;
+				}
+			}
+		}
+	}
+	else
+	{
+		Clear();
+	}
+
+	return false;
+}
+
+/***********************************************************
+accept friend invitation
+***********************************************************/
+void DatabaseHandler::AcceptFriend(long myId, long friendid)
 {
 	//Lock sync(*this);
 	//if(!_mysqlH || !_mysqlH->connected())
@@ -438,7 +509,7 @@ void DatabaseHandler::AddFriend(long myId, const std::string&  name)
 /***********************************************************
 remove friend function
 ***********************************************************/
-void DatabaseHandler::RemoveFriend(long myId, const std::string&  name)
+void DatabaseHandler::RemoveFriend(long myId, long friendid)
 {
 	//Lock sync(*this);
 	//if(!_mysqlH || !_mysqlH->connected())
@@ -505,24 +576,27 @@ LbaNet::FriendsSeq DatabaseHandler::GetFriends(long myId)
 		{
 			for(size_t i=0; i<res.size(); ++i)
 			{
+				long juid = res[i][0];
+				int pending=res[i][1];
 				query.clear();
 				query << "SELECT ju.username, lu.id";
 				query << " FROM jos_users ju, lba_users lu";
-				query << " WHERE ju.id = '"<<res[i][0]<<"'";
+				query << " WHERE ju.id = '"<<juid<<"'";
 				query << " AND ju.id = lu.josiid";
 
 				if (mysqlpp::StoreQueryResult res2 = query.store())
 				{
 					if(res2.size() > 0)
 					{
-						std::string uname = res2[i][0];
+						std::string uname = res2[0][0];
+
 						// if friendship is in pending state add it
-						if(res[i][1] == 1)
+						if(pending == 1)
 						{
-							uname += " [P]";
+							uname += " (Pending)";
 						}
 						LbaNet::FriendInfo ftmp;
-						ftmp.Id = res2[i][1];
+						ftmp.Id = res2[0][1];
 						ftmp.Name = uname;
 						resF.push_back(ftmp);
 					}

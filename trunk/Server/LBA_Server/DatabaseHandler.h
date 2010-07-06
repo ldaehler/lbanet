@@ -66,10 +66,13 @@ public:
 
 
     // add friend function
-    void AddFriend(long myId, const std::string&  name);
+	bool AskFriend(long myId, const std::string &friendname);
+
+	// accept friend invitation
+    void AcceptFriend(long myId, long friendid);
 
     // remove friend function
-	void RemoveFriend(long myId, const std::string&  name);
+	void RemoveFriend(long myId, long friendid);
 
     // get friends function
     LbaNet::FriendsSeq GetFriends(long myId);

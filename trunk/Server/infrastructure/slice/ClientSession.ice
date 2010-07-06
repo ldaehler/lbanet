@@ -68,7 +68,7 @@ module LbaNet
 	    
 	    
 	    // friends functions
-	    void AskFriend(long friendid);
+	    void AskFriend(string friendname);
 	    void AcceptFriend(long friendid);    
 	    void RemoveFriend(long friendid);
 	    FriendsSeq GetFriends();
