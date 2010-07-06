@@ -36,6 +36,11 @@ namespace CEGUI
 	class ListboxItem;
 }
 
+namespace LbaNet
+{
+	struct FriendInfo;
+}
+
 #include <string>
 #include <list>
 #include <vector>
@@ -106,7 +111,7 @@ protected:
 	bool IsFriend(const std::string & name);
 
 	//! add people friend
-	void UpdateFriend(const std::string & name);
+	void UpdateFriend(const LbaNet::FriendInfo & frd);
 
 	//! remove people friend
 	void RemoveFriend(const std::string & name);

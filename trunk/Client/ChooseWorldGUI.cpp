@@ -109,7 +109,7 @@ handle connect button event
 bool ChooseWorldGUI::HandleConnect(const CEGUI::EventArgs& e)
 {
 	if(_selectedworld != "")
-		ThreadSafeWorkpile::getInstance()->AddEvent(new ChangeWorldEvent(_selectedworld));
+		ThreadSafeWorkpile::getInstance()->AddEvent(new ChangeWorldEvent(_selectedworld, _selectedworldFile));
 
 	return true;
 }
@@ -178,7 +178,8 @@ bool ChooseWorldGUI::HandleWorldSelected (const CEGUI::EventArgs& e)
 					eb->setText(_wlist[idx].Description);
 				}
 
-				_selectedworld = _wlist[idx].FileName;
+				_selectedworld = _wlist[idx].WorldName;
+				_selectedworldFile = _wlist[idx].FileName;
 			}
 		}
 	}

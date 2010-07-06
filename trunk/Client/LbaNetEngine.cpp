@@ -121,10 +121,11 @@ void LbaNetEngine::Initialize(void)
     ResetScreen();
     if ( m_screen == NULL )
 	{
-		std::string err("Couldn't set the video mode: ");
-		std::cout<<err<<SDL_GetError()<<std::endl;
+		LogHandler::getInstance()->LogToFile(std::string("Couldn't set the video mode: ") + SDL_GetError());
 		return;
     }
+
+	LogHandler::getInstance()->LogToFile("Setting windows caption...");
 
 	// set window caption
 	SDL_WM_SetCaption("LBANet",NULL);
@@ -593,7 +594,7 @@ void LbaNetEngine::HandleGameEvents()
 			case 3: // change world event
 				{
 					ChangeWorldEvent * evcw = static_cast<ChangeWorldEvent *> (*it);
-					ChangeWorld(evcw->_NewWorld);
+					ChangeWorld(evcw->_NewWorldName, evcw->_NewWorldFileName);
 				}
 			break;
 
@@ -953,9 +954,9 @@ void LbaNetEngine::ExitGui()
 /***********************************************************
 change the world
 ***********************************************************/
-void LbaNetEngine::ChangeWorld(const std::string & NewWorld)
+void LbaNetEngine::ChangeWorld(const std::string & NewWorldName, const std::string & NewWorldFileName)
 {
-	m_lbaNetModel.ChangeWorld(NewWorld);
+	m_lbaNetModel.ChangeWorld(NewWorldName, NewWorldFileName);
 	SwitchGuiToGame();
 }
 

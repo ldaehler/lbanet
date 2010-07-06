@@ -129,7 +129,7 @@ protected:
 	void ExitGui();
 
 	// change the world
-	void ChangeWorld(const std::string & NewWorld);
+	void ChangeWorld(const std::string & NewWorldName, const std::string & NewWorldFileName);
 
 	// called to play the assigned music when menu
 	void PlayMenuMusic();
