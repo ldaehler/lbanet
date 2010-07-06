@@ -92,7 +92,7 @@
 				<property name="Ice.ThreadPool.Server.SizeMax" value="10"/>	
 				<property name="LbanetVersion" value="${ServVersion}"/>
 				
-				<property name="dbname" value="lbanet"/>
+				<property name="dbname" value="joomlalbanet"/>
 				<property name="dbserver" value="localhost"/>	
 				<property name="dbuser" value="lbanetuser"/>
 				<property name="dbpassword" value="lapichonmelba"/>					
@@ -160,7 +160,7 @@
 				<property name="Ice.ThreadPool.Client.SizeMax" value="10"/>
 				<property name="Ice.ThreadPool.Server.SizeMax" value="10"/>
 				
-				<property name="dbname" value="lbanet"/>
+				<property name="dbname" value="joomlalbanet"/>
 				<property name="dbserver" value="localhost"/>	
 				<property name="dbuser" value="lbanetuser"/>
 				<property name="dbpassword" value="lapichonmelba"/>				
