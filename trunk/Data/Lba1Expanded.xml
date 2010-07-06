@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<World name="LbaExpanded" firstmap="Map5_1" firstsparea="spawning1">
+<World name="Lba1Expanded" firstmap="Map5_1" firstsparea="spawning1">
     <description>Expansion of the LBA1 original world. Made by Kobold.</description>
     <!--Define the place it is possible to teleport to, the first place is the place where we arrive in the world-->
     <teleports>
