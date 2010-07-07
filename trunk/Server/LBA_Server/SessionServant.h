@@ -208,19 +208,31 @@ public:
 
     
     // called when player throw magic ball
-    virtual void MagicBallStart(const LaunchInfo & linfo, const ::Ice::Current&);
+    virtual void MagicBallStart(const LaunchInfo & linfo, const Ice::Current&);
     
     // called when magic ball is back
     virtual void MagicBallEnd(const ::Ice::Current&);
     
     // called when magic ball touch an actor
-    virtual void MagicBallTouchActor(Ice::Long ActorId, const ::Ice::Current&);
+    virtual void MagicBallTouchActor(Ice::Long ActorId, const Ice::Current&);
     
     // called when magic ball touch a player
-    virtual void MagicBallTouchPlayer(Ice::Long ActorId, const ::Ice::Current&);
+    virtual void MagicBallTouchPlayer(Ice::Long ActorId, const Ice::Current&);
 	    
 	// update current life of player - called by map server
-	virtual void UpdatedLife(const ActorLifeInfo &ali, const ::Ice::Current&);
+	virtual void UpdatedLife(const ActorLifeInfo &ali, const Ice::Current&);
+
+
+    // send a pm to someone
+    virtual void SendPM(const LbaNet::PMInfo &pm, const Ice::Current&);
+    
+    // delete a pm
+    virtual void DeletePM(Ice::Long pmid, const Ice::Current&);
+    
+    //get all pm in your mailbox
+    virtual LbaNet::PMsSeq GetInboxPM(const Ice::Current&);
+
+
 
 protected:
 	void ApplyInternalInventoryChanges(const UpdatedItemSeq &InventoryChanges);

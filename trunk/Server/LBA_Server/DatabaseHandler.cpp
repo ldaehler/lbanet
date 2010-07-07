@@ -472,38 +472,74 @@ bool DatabaseHandler::AskFriend(long myId, const std::string &friendname)
 /***********************************************************
 accept friend invitation
 ***********************************************************/
-void DatabaseHandler::AcceptFriend(long myId, long friendid)
+bool DatabaseHandler::AcceptFriend(long myId, long friendid, std::string &friendname)
 {
-	//Lock sync(*this);
-	//if(!_mysqlH || !_mysqlH->connected())
-	//{
-	//	Connect();
-	//	if(!_mysqlH->connected())
-	//	{
-	//		Clear();
-	//		return;
-	//	}
-	//}
+	Lock sync(*this);
+	if(!_mysqlH || !_mysqlH->connected())
+	{
+		Connect();
+		if(!_mysqlH->connected())
+		{
+			Clear();
+			return false;
+		}
+	}
 
-	//mysqlpp::Query query(_mysqlH, false);
+	mysqlpp::Query query(_mysqlH, false);
 
-	//query << "SELECT id FROM users";
-	//query << " WHERE username = '"<<name<<"'";
-	//if (mysqlpp::StoreQueryResult res = query.store())
-	//{
-	//	if(res.size() > 0)
-	//	{
-	//		query.clear();
-	//		query << "INSERT INTO friends (userid, friendid) VALUES('";
-	//		query << myId << "', '" << res[0][0] << "')";
-	//		if(!query.exec())
-	//			std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update INSERT friends failed for user id "<<myId<<" : "<<query.error()<<std::endl;
-	//	}
-	//}
-	//else
-	//{
-	//	Clear();
-	//}
+	query << "SELECT ju.id, ju.username FROM jos_users ju, lba_users lu";
+	query << " WHERE ju.id = lu.josiid AND lu.id = '"<<friendid<<"'";
+	if (mysqlpp::StoreQueryResult res = query.store())
+	{
+		if(res.size() > 0)
+		{
+			long juid = res[0][0];
+			friendname = res[0][1];
+
+			// get my jos id
+			query.clear();
+			query << "SELECT ju.id FROM jos_users ju, lba_users lu";
+			query << " WHERE ju.id = lu.josiid AND lu.id = '"<<myId<<"'";
+			if (mysqlpp::StoreQueryResult res = query.store())
+			{
+				if(res.size() > 0)
+				{
+					myId = res[0][0];
+
+					// check if we are in pending state
+					query.clear();
+					query << "SELECT accepted, pending FROM jos_comprofiler_members";
+					query << " WHERE (referenceid = '"<<myId<<"' AND memberid = '"<<juid<<"')";
+					if (res = query.store())
+					{
+						if(res.size() > 0)
+						{
+							int acpt= res[0][0];
+							int pend= res[0][1];
+							if(acpt == 0 && pend == 0)
+							{
+								query.clear();
+								query << "UPDATE jos_comprofiler_members SET accepted = '1', pending = '0' ";
+								query << " WHERE (referenceid = '"<<myId<<"' AND memberid = '"<<juid<<"')";
+								query << " OR (referenceid = '"<<juid<<"' AND memberid = '"<<myId<<"')";
+								if(!query.exec())
+									std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update UPDATE friends failed for user id "<<myId<<" : "<<query.error()<<std::endl;
+							
+							
+								return true;
+							}
+						}
+					}
+				}	
+			}
+		}
+	}
+	else
+	{
+		Clear();
+	}
+
+	return false;
 }
 
 /***********************************************************
@@ -511,36 +547,51 @@ remove friend function
 ***********************************************************/
 void DatabaseHandler::RemoveFriend(long myId, long friendid)
 {
-	//Lock sync(*this);
-	//if(!_mysqlH || !_mysqlH->connected())
-	//{
-	//	Connect();
-	//	if(!_mysqlH->connected())
-	//	{
-	//		Clear();
-	//		return;
-	//	}
-	//}
+	Lock sync(*this);
+	if(!_mysqlH || !_mysqlH->connected())
+	{
+		Connect();
+		if(!_mysqlH->connected())
+		{
+			Clear();
+			return;
+		}
+	}
 
-	//mysqlpp::Query query(_mysqlH, false);
+	mysqlpp::Query query(_mysqlH, false);
 
-	//query << "SELECT id FROM users";
-	//query << " WHERE username = '"<<name<<"'";
-	//if (mysqlpp::StoreQueryResult res = query.store())
-	//{
-	//	if(res.size() > 0)
-	//	{
-	//		query.clear();
-	//		query << "DELETE FROM friends";
-	//		query << " WHERE userid = '"<<myId<<"' AND friendid = '"<<res[0][0]<<"'";
-	//		if(!query.exec())
-	//			std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update DELETE friends failed for user id "<<myId<<" : "<<query.error()<<std::endl;
-	//	}
-	//}
-	//else
-	//{
-	//	Clear();
-	//}
+	query << "SELECT ju.id FROM jos_users ju, lba_users lu";
+	query << " WHERE ju.id = lu.josiid AND lu.id = '"<<friendid<<"'";
+	if (mysqlpp::StoreQueryResult res = query.store())
+	{
+		if(res.size() > 0)
+		{
+			long juid = res[0][0];
+
+			// get my jos id
+			query.clear();
+			query << "SELECT ju.id FROM jos_users ju, lba_users lu";
+			query << " WHERE ju.id = lu.josiid AND lu.id = '"<<myId<<"'";
+			if (mysqlpp::StoreQueryResult res = query.store())
+			{
+				if(res.size() > 0)
+				{
+					myId = res[0][0];
+
+					query.clear();
+					query << "DELETE FROM jos_comprofiler_members";
+					query << " WHERE (referenceid = '"<<myId<<"' AND memberid = '"<<juid<<"')";
+					query << " OR (referenceid = '"<<juid<<"' AND memberid = '"<<myId<<"')";
+					if(!query.exec())
+						std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update DELETE friends failed for user id "<<myId<<" : "<<query.error()<<std::endl;
+				}	
+			}
+		}
+	}
+	else
+	{
+		Clear();
+	}
 }
 
 /***********************************************************
@@ -564,10 +615,9 @@ LbaNet::FriendsSeq DatabaseHandler::GetFriends(long myId)
 
 	mysqlpp::Query query(_mysqlH, false);
 
-	query << "SELECT cm.memberid, cm.pending";
+	query << "SELECT cm.memberid, cm.pending, cm.accepted";
 	query << " FROM jos_comprofiler_members cm, jos_users ju, lba_users lu";
-	query << " WHERE cm.accepted = '1'";
-	query << " AND ju.id = cm.referenceid";
+	query << " WHERE ju.id = cm.referenceid";
 	query << " AND ju.id = lu.josiid";
 	query << " AND lu.id = '"<<myId<<"'";
 	if (mysqlpp::StoreQueryResult res = query.store())
@@ -578,6 +628,7 @@ LbaNet::FriendsSeq DatabaseHandler::GetFriends(long myId)
 			{
 				long juid = res[i][0];
 				int pending=res[i][1];
+				int accepted=res[i][2];
 				query.clear();
 				query << "SELECT ju.username, lu.id";
 				query << " FROM jos_users ju, lba_users lu";
@@ -587,17 +638,12 @@ LbaNet::FriendsSeq DatabaseHandler::GetFriends(long myId)
 				if (mysqlpp::StoreQueryResult res2 = query.store())
 				{
 					if(res2.size() > 0)
-					{
-						std::string uname = res2[0][0];
-
-						// if friendship is in pending state add it
-						if(pending == 1)
-						{
-							uname += " (Pending)";
-						}
+					{			
 						LbaNet::FriendInfo ftmp;
 						ftmp.Id = res2[0][1];
-						ftmp.Name = uname;
+						ftmp.Name = res2[0][0];
+						ftmp.Pending = (pending == 1);
+						ftmp.ToAccept = (accepted == 0);
 						resF.push_back(ftmp);
 					}
 				}
@@ -893,4 +939,71 @@ void DatabaseHandler::RecordKill(const std::string& WorldName, long KilledId, in
 			}
 		}
 	}
+}
+
+ 
+/***********************************************************
+send a pm to someone
+***********************************************************/   
+void DatabaseHandler::SendPM(const LbaNet::PMInfo &pm)
+{
+	Lock sync(*this);
+	if(!_mysqlH || !_mysqlH->connected())
+	{
+		Connect();
+		if(!_mysqlH->connected())
+		{
+			Clear();
+			return;
+		}
+	}
+
+	mysqlpp::Query query(_mysqlH, false);
+	query << "INSERT INTO jos_uddeim (replyid, fromid, toid, message, datum) VALUES(";
+	query << "'"<<pm.ReplyId<<"'"; // __________
+	query << ",(SELECT id FROM jos_users WHERE username = '"<<pm.FromName<<"')"; 
+	query << ",(SELECT id FROM jos_users WHERE username = '"<<pm.ToName<<"')";
+	query << ",'"<<pm.Text<<"'";
+	query << ", (int)time()"; //UNIX_TIMESTAMP()
+	if(!query.exec())
+	{
+		std::cerr<<IceUtil::Time::now()<<": LBA_Server - SendPM failed for user id "<<pm.FromName<<" : "<<query.error()<<std::endl;		
+		Clear();
+	}
+}
+ 
+/***********************************************************
+delete a pm
+***********************************************************/   
+void DatabaseHandler::DeletePM(Ice::Long pmid)
+{
+	Lock sync(*this);
+	if(!_mysqlH || !_mysqlH->connected())
+	{
+		Connect();
+		if(!_mysqlH->connected())
+		{
+			Clear();
+			return;
+		}
+	}
+
+	mysqlpp::Query query(_mysqlH, false);
+	query << "UPDATE jos_uddeim SET totrash='1', totrashdate=((int)time()) WHERE id = '"<<pmid<<"'"; 
+	if(!query.exec())
+	{
+		std::cerr<<IceUtil::Time::now()<<": LBA_Server - DeletePM failed for id "<<pmid<<" : "<<query.error()<<std::endl;		
+		Clear();
+	}
+
+}
+ 
+/***********************************************************
+get all pm in your mailbox
+***********************************************************/   
+LbaNet::PMsSeq DatabaseHandler::GetInboxPM()
+{
+	LbaNet::PMsSeq res;
+
+	return res;
 }

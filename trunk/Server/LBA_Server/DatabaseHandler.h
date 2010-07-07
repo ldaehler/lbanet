@@ -69,7 +69,7 @@ public:
 	bool AskFriend(long myId, const std::string &friendname);
 
 	// accept friend invitation
-    void AcceptFriend(long myId, long friendid);
+    bool AcceptFriend(long myId, long friendid, std::string &friendname);
 
     // remove friend function
 	void RemoveFriend(long myId, long friendid);
@@ -97,6 +97,18 @@ public:
 
 	// record player kill
 	void RecordKill(const std::string& WorldName, long KilledId, int Reason, long KillerId);
+
+
+
+    // send a pm to someone
+    void SendPM(const LbaNet::PMInfo &pm);
+    
+    // delete a pm
+    void DeletePM(Ice::Long pmid);
+    
+    //get all pm in your mailbox
+    LbaNet::PMsSeq GetInboxPM();
+
 
 protected:
 	DatabaseHandler(const DatabaseHandler &);
