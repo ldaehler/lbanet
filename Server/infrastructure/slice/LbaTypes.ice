@@ -262,10 +262,26 @@ module LbaNet
 	struct FriendInfo
 	{
 		long Id;
+		bool Pending;
+		bool ToAccept;
 		string Name;
 	};
 	
 	sequence<FriendInfo> FriendsSeq;
+	
+	struct PMInfo
+	{
+		long PMId;
+		long ReplyId;
+		long FromId;
+		string FromName;
+		long ToId;
+		string ToName;
+		string Text;
+		bool Opened;
+	};
+	
+	sequence<FriendInfo> PMsSeq;	
 };	
 
 #endif

@@ -73,6 +73,15 @@ module LbaNet
 	    void RemoveFriend(long friendid);
 	    FriendsSeq GetFriends();
 	    
+	    // send a pm to someone
+	    void SendPM(PMInfo pm);
+	    
+	    // delete a pm
+	    void DeletePM(long pmid);
+	    
+	    //get all pm in your mailbox
+	    PMsSeq GetInboxPM();
+	    
 	    // store letter to the server and return the letter id
 	    void AddLetter(string title, string message);
 	    

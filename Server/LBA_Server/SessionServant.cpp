@@ -1006,17 +1006,20 @@ bool SessionServant::Whisper(const std::string& To, const std::string& Message, 
 /***********************************************************
 add friend function
 ***********************************************************/
-void SessionServant::AskFriend(const std::string &friendname, const ::Ice::Current&)
+void SessionServant::AskFriend(const std::string &friendname, const ::Ice::Current& c)
 {
-	_dbh.AskFriend(_userNum, friendname);
+	if(_dbh.AskFriend(_userNum, friendname))
+		Whisper(friendname, "Info - you have a new friend request from " + _userId, c);
 }
 
 /***********************************************************
 add friend function
 ***********************************************************/
-void SessionServant::AcceptFriend(Ice::Long friendid, const ::Ice::Current&)
+void SessionServant::AcceptFriend(Ice::Long friendid, const ::Ice::Current& c)
 {
-	_dbh.AcceptFriend(_userNum, friendid);
+	std::string friendname;
+	if(_dbh.AcceptFriend(_userNum, friendid, friendname))
+		Whisper(friendname, "Info - your friend request has been accepted by " + _userId, c);
 }
 
 /***********************************************************
@@ -1328,7 +1331,7 @@ void SessionServant::InitializeClientQuests(std::vector<long> questStarted, std:
 /***********************************************************
 called when player throw magic ball
 ***********************************************************/
-void SessionServant::MagicBallStart(const LaunchInfo & linfo, const ::Ice::Current&)
+void SessionServant::MagicBallStart(const LaunchInfo & linfo, const Ice::Current&)
 {
 	if(_magicballused)
 		return;
@@ -1341,7 +1344,7 @@ void SessionServant::MagicBallStart(const LaunchInfo & linfo, const ::Ice::Curre
 /***********************************************************
 called when magic ball is back
 ***********************************************************/
-void SessionServant::MagicBallEnd(const ::Ice::Current&)
+void SessionServant::MagicBallEnd(const Ice::Current&)
 {
 	if(!_magicballused)
 		return;
@@ -1352,7 +1355,7 @@ void SessionServant::MagicBallEnd(const ::Ice::Current&)
 /***********************************************************
 called when magic ball touch an actor
 ***********************************************************/
-void SessionServant::MagicBallTouchActor(Ice::Long ActorId, const ::Ice::Current&)
+void SessionServant::MagicBallTouchActor(Ice::Long ActorId, const Ice::Current&)
 {
 	if(!_magicballused)
 		return;
@@ -1364,7 +1367,7 @@ void SessionServant::MagicBallTouchActor(Ice::Long ActorId, const ::Ice::Current
 /***********************************************************
 called when magic ball touch a player
 ***********************************************************/
-void SessionServant::MagicBallTouchPlayer(Ice::Long ActorId, const ::Ice::Current&)
+void SessionServant::MagicBallTouchPlayer(Ice::Long ActorId, const Ice::Current&)
 {
 	if(!_magicballused)
 		return;
@@ -1377,7 +1380,7 @@ void SessionServant::MagicBallTouchPlayer(Ice::Long ActorId, const ::Ice::Curren
 /***********************************************************
 update current life of player - called by map server
 ***********************************************************/   
-void SessionServant::UpdatedLife(const ActorLifeInfo &ali, const ::Ice::Current&)
+void SessionServant::UpdatedLife(const ActorLifeInfo &ali, const Ice::Current&)
 {
 	_lifeinfo = ali;
 	_lifeinfo.ShouldHurt = false; // no use for us
@@ -1393,4 +1396,31 @@ void SessionServant::UpdatedLife(const ActorLifeInfo &ali, const ::Ice::Current&
 		// record kill in database
 		_dbh.RecordKill(_currWorldName, _userNum, ali.ChangeReason, ali.ChangeActorId);
 	}
+}
+
+ 
+/***********************************************************
+send a pm to someone
+***********************************************************/   
+void SessionServant::SendPM(const LbaNet::PMInfo &pm, const Ice::Current&)
+{
+	LbaNet::PMInfo pmchange(pm);
+	pmchange.FromName = _userId;
+	_dbh.SendPM(pmchange);
+}
+ 
+/***********************************************************
+delete a pm
+***********************************************************/   
+void SessionServant::DeletePM(Ice::Long pmid, const Ice::Current&)
+{
+	_dbh.DeletePM(pmid);
+}
+ 
+/***********************************************************
+get all pm in your mailbox
+***********************************************************/   
+LbaNet::PMsSeq SessionServant::GetInboxPM(const Ice::Current&)
+{
+	return _dbh.GetInboxPM();
 }
