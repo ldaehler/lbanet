@@ -279,9 +279,10 @@ module LbaNet
 		string ToName;
 		string Text;
 		bool Opened;
+		string Date;
 	};
 	
-	sequence<FriendInfo> PMsSeq;	
+	sequence<PMInfo> PMsSeq;	
 };	
 
 #endif

@@ -1422,5 +1422,5 @@ get all pm in your mailbox
 ***********************************************************/   
 LbaNet::PMsSeq SessionServant::GetInboxPM(const Ice::Current&)
 {
-	return _dbh.GetInboxPM();
+	return _dbh.GetInboxPM(_userNum);
 }

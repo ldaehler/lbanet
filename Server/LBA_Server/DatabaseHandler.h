@@ -107,7 +107,7 @@ public:
     void DeletePM(Ice::Long pmid);
     
     //get all pm in your mailbox
-    LbaNet::PMsSeq GetInboxPM();
+    LbaNet::PMsSeq GetInboxPM(long playerid);
 
 
 protected:
