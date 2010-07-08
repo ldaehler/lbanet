@@ -964,7 +964,7 @@ void DatabaseHandler::SendPM(const LbaNet::PMInfo &pm)
 	query << ",(SELECT id FROM jos_users WHERE username = '"<<pm.FromName<<"')"; 
 	query << ",(SELECT id FROM jos_users WHERE username = '"<<pm.ToName<<"')";
 	query << ",'"<<pm.Text<<"'";
-	query << ", (int)time()"; //UNIX_TIMESTAMP()
+	query << ", UNIX_TIMESTAMP()";
 	if(!query.exec())
 	{
 		std::cerr<<IceUtil::Time::now()<<": LBA_Server - SendPM failed for user id "<<pm.FromName<<" : "<<query.error()<<std::endl;		
@@ -989,7 +989,7 @@ void DatabaseHandler::DeletePM(Ice::Long pmid)
 	}
 
 	mysqlpp::Query query(_mysqlH, false);
-	query << "UPDATE jos_uddeim SET totrash='1', totrashdate=((int)time()) WHERE id = '"<<pmid<<"'"; 
+	query << "UPDATE jos_uddeim SET totrash='1', totrashdate=UNIX_TIMESTAMP() WHERE id = '"<<pmid<<"'"; 
 	if(!query.exec())
 	{
 		std::cerr<<IceUtil::Time::now()<<": LBA_Server - DeletePM failed for id "<<pmid<<" : "<<query.error()<<std::endl;		
@@ -1001,9 +1001,50 @@ void DatabaseHandler::DeletePM(Ice::Long pmid)
 /***********************************************************
 get all pm in your mailbox
 ***********************************************************/   
-LbaNet::PMsSeq DatabaseHandler::GetInboxPM()
+LbaNet::PMsSeq DatabaseHandler::GetInboxPM(long playerid)
 {
-	LbaNet::PMsSeq res;
+	LbaNet::PMsSeq pmsres;
 
-	return res;
+	mysqlpp::Query query(_mysqlH, false);
+	query << "SELECT pm.id,	pm.fromid, pm.message, FROM_UNIXTIME(pm.datum), pm.toread";
+	query << " FROM jos_uddeim pm, jos_users ju, lba_users lu";
+	query << " WHERE ju.id = lu.josiid";
+	query << " AND ju.id = pm.toid";
+	query << " pm.totrash = '0'";
+	query << " AND lu.id = '"<<playerid<<"')";
+	if (mysqlpp::StoreQueryResult res = query.store())
+	{
+		for(size_t i=0; i<res.size(); ++i)
+		{
+			LbaNet::PMInfo pi;
+			pi.PMId = res[i][0];
+			pi.Text = res[i][2];
+			pi.Date = res[i][3];
+			pi.Opened = ((int)res[i][4] == 1);
+
+			query.clear();
+			query << "SELECT lu.id,	ju.username";
+			query << " FROM jos_users ju, lba_users lu";
+			query << " WHERE ju.id = lu.josiid";
+			query << " AND ju.id = '"<<(long)res[i][1]<<"'";
+
+			if (res = query.store())
+			{
+				for(size_t i=0; i<res.size(); ++i)
+				{
+					pi.FromId = res[0][0];
+					pi.FromName = res[0][1];
+
+					pmsres.push_back(pi);
+				}
+			}
+			
+		}
+	}
+	else
+	{
+		Clear();
+	}
+
+	return pmsres;
 }
