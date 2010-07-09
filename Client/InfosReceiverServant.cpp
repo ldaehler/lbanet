@@ -234,3 +234,10 @@ void InfosReceiverServant::MagicBallComeBack(Ice::Long PlayerId, const Ice::Curr
 {
 	ThreadSafeWorkpile::getInstance()->MagicBallComeback(PlayerId);
 }
+
+
+// refresh GUI friend list
+void InfosReceiverServant::RefreshFriends(const LbaNet::FriendsSeq &friendlist, const Ice::Current&)
+{
+	ThreadSafeWorkpile::getInstance()->SetFriends(friendlist);
+}

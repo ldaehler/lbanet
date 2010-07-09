@@ -112,7 +112,13 @@ public:
     void AddFriend(const std::string& Name);
 
 	//! remove friend
-    void RemoveFriend(const std::string& Name);
+    void RemoveFriend(long id);
+
+	//! accept a friend request
+	void AcceptFriend(long friendid);
+
+	//! refresh friend list
+	void RefreshFriend();
 
 	//! send letter to the server
 	void SendLetter(const ThreadSafeWorkpile::WrittenLetter &wl);
@@ -152,6 +158,7 @@ public:
 
 	//! MB hitted an actor
 	void MbHittedPlayer(const std::vector<long> &vec);
+
 
 private:
 

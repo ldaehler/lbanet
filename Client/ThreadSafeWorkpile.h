@@ -338,16 +338,29 @@ public:
 	void GetAddedFriend(std::vector<std::string> &scvec);
 
 	// add a whisper channel
-	void RemoveFriend(const std::string & name);
+	void RemoveFriend(long id);
 
 	// cget all queries for whisper channel
-	void GetRemovedFriend(std::vector<std::string> &scvec);
+	void GetRemovedFriend(std::vector<long> &scvec);
 
 	//! set friend list
 	void SetFriends(const LbaNet::FriendsSeq & friends);
 
 	//! get friend list
 	void GetFriends(LbaNet::FriendsSeq & friends);
+
+	//! accept a friend request
+	void AcceptFriend(long id);
+
+	// cget all queries for whisper channel
+	void GetAcceptedFriend(std::vector<long> &scvec);
+
+	//! ask server to refresh friend list
+	void RefreshFriend();
+
+	//! check if list should be refreshed
+	bool ShouldRefreshFriends();
+
 
 	//! add written letter to the server
 	void AddWrittenLetter(const WrittenLetter & letter);
@@ -502,6 +515,8 @@ private:
 	IceUtil::Mutex								m_mutex_whisper_chanel;
 	IceUtil::Mutex								m_mutex_added_friend;
 	IceUtil::Mutex								m_mutex_removed_friend;
+	IceUtil::Mutex								m_mutex_accept_friend;
+	IceUtil::Mutex								m_mutex_refresh_friend;
 	IceUtil::Mutex								m_mutex_friend;
 	IceUtil::Mutex								m_mutex_letters;
 	IceUtil::Mutex								m_mutex_letter_queries;
@@ -595,8 +610,10 @@ private:
 	std::vector<std::string>					m_asked_whispers;
 
 	std::vector<std::string>					m_added_friends;
-	std::vector<std::string>					m_removed_friends;
+	std::vector<long>							m_removed_friends;
+	std::vector<long>							m_accept_friends;
 	LbaNet::FriendsSeq							m_friend_list;
+	bool										m_refresh_friends;
 
 	std::vector<WrittenLetter>					m_letters;
 

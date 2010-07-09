@@ -183,10 +183,7 @@ int ServerConnectionHandler::Connect(const std::string &user, const std::string 
 			ThreadSafeWorkpile::getInstance()->ChatColorChanged(ev.Nickname, ev.Color);
 		}
 
-
-		LbaNet::FriendsSeq friends = _session->GetFriends();
-		if(friends.size() > 0)
-			ThreadSafeWorkpile::getInstance()->SetFriends(friends);
+		ThreadSafeWorkpile::getInstance()->RefreshFriend();			
 
 
 		//synchronize time with server

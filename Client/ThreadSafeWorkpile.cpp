@@ -849,16 +849,16 @@ void ThreadSafeWorkpile::GetAddedFriend(std::vector<std::string> &scvec)
 /***********************************************************
 add a whisper channel
 ***********************************************************/
-void ThreadSafeWorkpile::RemoveFriend(const std::string & name)
+void ThreadSafeWorkpile::RemoveFriend(long id)
 {
 	IceUtil::Mutex::Lock lock(m_mutex_removed_friend);
-	m_removed_friends.push_back(name);
+	m_removed_friends.push_back(id);
 }
 
 /***********************************************************
 get all queries for whisper channel
 ***********************************************************/
-void ThreadSafeWorkpile::GetRemovedFriend(std::vector<std::string> &scvec)
+void ThreadSafeWorkpile::GetRemovedFriend(std::vector<long> &scvec)
 {
 	scvec.clear();
 	IceUtil::Mutex::Lock lock(m_mutex_removed_friend);
@@ -883,6 +883,48 @@ void ThreadSafeWorkpile::GetFriends(LbaNet::FriendsSeq & friends)
 	IceUtil::Mutex::Lock lock(m_mutex_friend);
 	friends.swap(m_friend_list);
 }
+
+
+
+/***********************************************************
+accept a friend request
+***********************************************************/
+void ThreadSafeWorkpile::AcceptFriend(long id)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_accept_friend);
+	m_accept_friends.push_back(id);
+}
+
+/***********************************************************
+get all queries for whisper channel
+***********************************************************/
+void ThreadSafeWorkpile::GetAcceptedFriend(std::vector<long> &scvec)
+{
+	scvec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_accept_friend);
+	m_accept_friends.swap(scvec);
+}
+
+/***********************************************************
+ask server to refresh friend list
+***********************************************************/
+void ThreadSafeWorkpile::RefreshFriend()
+{
+	IceUtil::Mutex::Lock lock(m_mutex_refresh_friend);
+	m_refresh_friends = true;
+}
+
+/***********************************************************
+check if list should be refreshed
+***********************************************************/
+bool ThreadSafeWorkpile::ShouldRefreshFriends()
+{
+	IceUtil::Mutex::Lock lock(m_mutex_refresh_friend);
+	bool res = m_refresh_friends;
+	m_refresh_friends = false;
+	return res;
+}
+
 
 
 /***********************************************************
