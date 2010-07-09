@@ -43,7 +43,10 @@ module LbaNet
 	    
 		    
 	    // called when magic ball come back
-	    void MagicBallComeBack(long PlayerId);		    
+	    void MagicBallComeBack(long PlayerId);	
+	    
+	    // refresh GUI friend list
+	    void RefreshFriends(FriendsSeq friendlist);
 	};
 	
 	
