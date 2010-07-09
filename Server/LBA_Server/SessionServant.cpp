@@ -1010,6 +1010,8 @@ void SessionServant::AskFriend(const std::string &friendname, const ::Ice::Curre
 {
 	if(_dbh.AskFriend(_userNum, friendname))
 		Whisper(friendname, "Info - you have a new friend request from " + _userId, c);
+
+	GetFriends(c);
 }
 
 /***********************************************************
@@ -1020,22 +1022,26 @@ void SessionServant::AcceptFriend(Ice::Long friendid, const ::Ice::Current& c)
 	std::string friendname;
 	if(_dbh.AcceptFriend(_userNum, friendid, friendname))
 		Whisper(friendname, "Info - your friend request has been accepted by " + _userId, c);
+
+	GetFriends(c);
 }
 
 /***********************************************************
 remove friend function
 ***********************************************************/
-void SessionServant::RemoveFriend(Ice::Long friendid, const ::Ice::Current&)
+void SessionServant::RemoveFriend(Ice::Long friendid, const ::Ice::Current& c)
 {
 	_dbh.RemoveFriend(_userNum, friendid);
+	GetFriends(c);
 }
 
 /***********************************************************
 get friends function
 ***********************************************************/
-LbaNet::FriendsSeq SessionServant::GetFriends(const ::Ice::Current&)
+void SessionServant::GetFriends(const ::Ice::Current&)
 {
-	return _dbh.GetFriends(_userNum);
+	if(_client_observer)
+		_client_observer->RefreshFriends(_dbh.GetFriends(_userNum));
 }
 
 

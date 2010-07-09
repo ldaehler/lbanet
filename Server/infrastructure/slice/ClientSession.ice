@@ -71,7 +71,7 @@ module LbaNet
 	    void AskFriend(string friendname);
 	    void AcceptFriend(long friendid);    
 	    void RemoveFriend(long friendid);
-	    FriendsSeq GetFriends();
+	    void GetFriends();
 	    
 	    // send a pm to someone
 	    void SendPM(PMInfo pm);

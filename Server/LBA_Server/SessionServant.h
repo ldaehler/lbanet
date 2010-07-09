@@ -162,7 +162,7 @@ public:
 	virtual void RemoveFriend(Ice::Long friendid, const ::Ice::Current&);
 
     // get friends function
-    virtual LbaNet::FriendsSeq GetFriends(const ::Ice::Current&);
+    virtual void GetFriends(const ::Ice::Current&);
 
     
     // store letter to the server and return the letter id
