@@ -579,11 +579,11 @@ void IceConnectionManager::AddFriend(const std::string& Name)
 /***********************************************************
 remove friend
 ***********************************************************/
-void IceConnectionManager::RemoveFriend(const std::string& Name)
+void IceConnectionManager::RemoveFriend(long id)
 {
 	try
 	{
-		//_session->RemoveFriend(Name);
+		_session->RemoveFriend(id);
 	}
     catch(const IceUtil::Exception& ex)
     {
@@ -594,6 +594,46 @@ void IceConnectionManager::RemoveFriend(const std::string& Name)
 		LogHandler::getInstance()->LogToFile(std::string("Unknown exception RemoveFriend "));
     }
 }
+
+/***********************************************************
+accept a friend request	
+***********************************************************/
+void IceConnectionManager::AcceptFriend(long friendid)
+{
+	try
+	{
+		_session->AcceptFriend(friendid);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception AcceptFriend: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception AcceptFriend "));
+    }
+}
+
+
+/***********************************************************
+accept a friend request	
+***********************************************************/
+void IceConnectionManager::RefreshFriend()
+{
+	try
+	{
+		_session->GetFriends();
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception RefreshFriend: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception RefreshFriend "));
+    }
+}
+
 
 
 /***********************************************************
@@ -1046,10 +1086,22 @@ void SendingLoopThread::run()
 
 		//-----------------------------------
 		// process removed friends
-		std::vector<std::string> rfriends;
+		std::vector<long> rfriends;
 		ThreadSafeWorkpile::getInstance()->GetRemovedFriend(rfriends);
 		for(size_t i=0; i<rfriends.size(); ++i)
 			_connectionMananger.RemoveFriend(rfriends[i]);
+
+		//-----------------------------------
+		// process accepted friends
+		std::vector<long> acfriends;
+		ThreadSafeWorkpile::getInstance()->GetAcceptedFriend(acfriends);
+		for(size_t i=0; i<acfriends.size(); ++i)
+			_connectionMananger.AcceptFriend(acfriends[i]);
+
+		//-----------------------------------
+		// process refresh friends
+		if(ThreadSafeWorkpile::getInstance()->ShouldRefreshFriends())
+			_connectionMananger.RefreshFriend();
 
 
 		//-----------------------------------

@@ -123,6 +123,13 @@ void CommunityBox::Initialize(CEGUI::Window* Root)
 			CEGUI::PushButton::EventClicked,
 			CEGUI::Event::Subscriber (&CommunityBox::HandleRemoveFriend, this));
 
+		static_cast<CEGUI::PushButton *> (
+			CEGUI::WindowManager::getSingleton().getWindow("CommunityFrame/friendRefresh"))->subscribeEvent (
+			CEGUI::PushButton::EventClicked,
+			CEGUI::Event::Subscriber (&CommunityBox::HandleRefreshFriend, this));
+
+
+
 
 		_myChooseName = CEGUI::WindowManager::getSingleton().loadWindowLayout( "AddFriendName.layout" );
 		_myChooseName->setProperty("AlwaysOnTop", "True");
@@ -228,9 +235,7 @@ void CommunityBox::AddOnline(const std::string & listname, const std::string &_o
 			_onlines[_online] = it;
 		}
 
-
-		//if(IsFriend(_online))
-			//TODO UpdateFriend(_online);
+		UpdateFriendOnlineStatus(_online);
 	}
 
 	if(listname == "IRC")
@@ -262,8 +267,7 @@ void CommunityBox::RemoveOnline(const std::string & listname, const std::string 
 			_onlines.erase(itmap);
 		}
 
-		//if(IsFriend(_offline))
-			//TODO UpdateFriend(_offline);
+		UpdateFriendOnlineStatus(_offline);
 	}
 
 	if(listname == "IRC")
@@ -306,8 +310,12 @@ void CommunityBox::Process()
 
 	LbaNet::FriendsSeq friends;
 	ThreadSafeWorkpile::getInstance()->GetFriends(friends);
-	for(size_t i=0; i<friends.size(); ++i)
-		UpdateFriend(friends[i]);
+	if(friends.size() > 0)
+	{
+		ClearFriends();
+		for(size_t i=0; i<friends.size(); ++i)
+			UpdateFriend(friends[i]);
+	}
 }
 
 
@@ -339,11 +347,30 @@ handle event when add friend clicked
 ***********************************************************/
 bool CommunityBox::HandleAddFriend(const CEGUI::EventArgs& e)
 {
+	CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
+		CEGUI::WindowManager::getSingleton().getWindow("Community/friendlist"));
+
+	// check if we accept pending friend
+	const CEGUI::ListboxTextItem * it = static_cast<const CEGUI::ListboxTextItem *>(lb->getFirstSelectedItem());
+	if(it)
+	{
+		long fid = (long)it->getID();
+		T_friendmap::iterator itm = _friends.find(fid);
+		if(itm != _friends.end())
+		{
+			if(itm->second.first.ToAccept)
+			{
+				ThreadSafeWorkpile::getInstance()->AcceptFriend(fid);
+				return true;
+			}
+		}
+	}
+
+	// if not then we add a new friend
 	_myChooseName->show();
 	CEGUI::Editbox * bed = static_cast<CEGUI::Editbox *>
 		(CEGUI::WindowManager::getSingleton().getWindow("Chat/choosePlayerName/edit"));
 	bed->activate();
-
 	return true;
 }
 
@@ -359,12 +386,22 @@ bool CommunityBox::HandleRemoveFriend(const CEGUI::EventArgs& e)
 	const CEGUI::ListboxTextItem * it = static_cast<const CEGUI::ListboxTextItem *>(lb->getFirstSelectedItem());
 	if(it)
 	{
-		std::string name = it->getText().c_str();
-		name = name.substr(name.find("]")+1);
-		RemoveFriend(name);
-		ThreadSafeWorkpile::getInstance()->RemoveFriend(name);
+		long fid = (long)it->getID();
+		//RemoveFriend(fid);
+		ThreadSafeWorkpile::getInstance()->RemoveFriend(fid);
 	}
 
+	return true;
+}
+
+
+
+/***********************************************************
+handle event when remove friend clicked
+***********************************************************/
+bool CommunityBox::HandleRefreshFriend(const CEGUI::EventArgs& e)
+{
+	ThreadSafeWorkpile::getInstance()->RefreshFriend();
 	return true;
 }
 
@@ -375,7 +412,7 @@ add people friend
 ***********************************************************/
 void CommunityBox::UpdateFriend(const LbaNet::FriendInfo & frd)
 {
-	RemoveFriend(frd.Name);
+	//RemoveFriend(frd.Name);
 
 	CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
 		CEGUI::WindowManager::getSingleton().getWindow("Community/friendlist"));
@@ -390,52 +427,86 @@ void CommunityBox::UpdateFriend(const LbaNet::FriendInfo & frd)
 		color = "FF33FF33";
 	}
 
-	std::string dis = "[colour='" + color + "']" + frd.Name;
-	CEGUI::ListboxItem *item = new MyComListItem(dis);
-	_friends[frd.Name] = item;
-	//TODO 
-	if(connected)
+	std::string dis = "[colour='" + color + "']";
+	if(frd.ToAccept)
+		dis += "(Request) ";
+
+	dis += frd.Name;
+
+	if(frd.Pending)
+		dis += " (Pending)";
+
+
+	//check if already exist just update the text
+	T_friendmap::iterator it = _friends.find(frd.Id);
+	if(it != _friends.end())
 	{
-		if(lb->getItemCount() > 0)
-			lb->insertItem(item, lb->getListboxItemFromIndex(0));
-		else
-			lb->addItem(item);
+		it->second.second->setText(dis);
 	}
 	else
 	{
+		CEGUI::ListboxItem *item = new MyComListItem(dis);
+		item->setID((unsigned int)frd.Id);
 		lb->addItem(item);
+		_friends[frd.Id] = std::make_pair<LbaNet::FriendInfo, CEGUI::ListboxItem *>(frd, item);
+
 	}
 }
+
+
+/***********************************************************
+update friend online status
+***********************************************************/
+void CommunityBox::UpdateFriendOnlineStatus(const std::string & name)
+{
+	T_friendmap::iterator it = _friends.begin();
+	T_friendmap::iterator end = _friends.end();
+	for(; it != end; ++it)
+	{
+		if(it->second.first.Name == name)
+		{
+			UpdateFriend(it->second.first);
+			break;
+		}
+	}
+}
+
 
 /***********************************************************
 remove people friend
 ***********************************************************/
-void CommunityBox::RemoveFriend(const std::string & name)
+//void CommunityBox::RemoveFriend(long frid)
+//{
+//	T_friendmap::iterator it = _friends.find(frid);
+//	if(it == _friends.end()) // does not exist
+//		return;
+//
+//
+//	CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
+//		CEGUI::WindowManager::getSingleton().getWindow("Community/friendlist"));
+//
+//	lb->removeItem(it->second.second);
+//	_friends.erase(it);
+//}
+
+
+
+/***********************************************************
+clear the friend list
+***********************************************************/
+void CommunityBox::ClearFriends()
 {
-	std::map<std::string, CEGUI::ListboxItem *>::iterator it = _friends.find(name);
-	if(it == _friends.end()) // does not exist
-		return;
-
-
 	CEGUI::Listbox * lb = static_cast<CEGUI::Listbox *> (
 		CEGUI::WindowManager::getSingleton().getWindow("Community/friendlist"));
 
-	lb->removeItem(it->second);
-	_friends.erase(it);
+	T_friendmap::iterator it = _friends.begin();
+	T_friendmap::iterator end = _friends.end();
+	for(; it != end; ++it)
+		lb->removeItem(it->second.second);
+
+	_friends.clear();
 }
 
-/***********************************************************
-return true if is friend
-***********************************************************/
-bool CommunityBox::IsFriend(const std::string & name)
-{
-	std::map<std::string, CEGUI::ListboxItem *>::iterator it = _friends.find(name);
-	if(it == _friends.end()) // does not exist
-		return false;
-
-
-	return true;
-}
 
 
 
@@ -453,7 +524,6 @@ bool CommunityBox::HandleCPOk (const CEGUI::EventArgs& e)
 
 	if(strc != "")
 	{
-		//TODO UpdateFriend(strc);
 		ThreadSafeWorkpile::getInstance()->AddFriend(strc);
 
 		bed->setProperty("Text", "");

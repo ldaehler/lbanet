@@ -49,12 +49,8 @@ int main(int argc, char *argv[])
 
 //TODO:
 
-//- small bug allowing twinsen falling out of a stair with a very small wall
-
 //- others actors and sprites should disapear if the room is cut to half
 
 //-actor - check if it is possible to change fixed shadow on twinsen for dynamic one
 
 //- play with light and fog
-
-//- change physics so that twinsen really go to the wall and do not stop at 5cm of it

@@ -81,6 +81,9 @@ class CommunityBox
 	//! handle event when remove friend clicked
 	bool HandleRemoveFriend(const CEGUI::EventArgs& e);
 
+	//! handle event when remove friend clicked
+	bool HandleRefreshFriend(const CEGUI::EventArgs& e);
+
 	//! handle enter key
 	bool HandleCPOk (const CEGUI::EventArgs& e);
 
@@ -106,15 +109,19 @@ protected:
 	//! clear the list
 	void ClearList(const std::string & listname);
 
-
-	//! return true if is friend
-	bool IsFriend(const std::string & name);
+	//! clear the friend list
+	void ClearFriends();
 
 	//! add people friend
 	void UpdateFriend(const LbaNet::FriendInfo & frd);
 
 	//! remove people friend
-	void RemoveFriend(const std::string & name);
+	//void RemoveFriend(long frid);
+
+
+	//! update friend online status
+	void UpdateFriendOnlineStatus(const std::string & name);
+
 
 private:
 	CEGUI::Window*			_myBox;
@@ -123,7 +130,8 @@ private:
 
 	std::map<std::string, CEGUI::ListboxItem *> _onlines;
 
-	std::map<std::string, CEGUI::ListboxItem *> _friends;
+	typedef std::map<long, std::pair<LbaNet::FriendInfo, CEGUI::ListboxItem *> > T_friendmap;
+	T_friendmap				_friends;
 };
 
 #endif
