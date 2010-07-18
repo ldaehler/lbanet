@@ -873,15 +873,19 @@ void ThreadSafeWorkpile::SetFriends(const LbaNet::FriendsSeq & friends)
 {
 	IceUtil::Mutex::Lock lock(m_mutex_friend);
 	m_friend_list = friends;
+	m_newfriendlist = true;
 }
 
 /***********************************************************
 get friend list
 ***********************************************************/
-void ThreadSafeWorkpile::GetFriends(LbaNet::FriendsSeq & friends)
+bool ThreadSafeWorkpile::GetFriends(LbaNet::FriendsSeq & friends)
 {
 	IceUtil::Mutex::Lock lock(m_mutex_friend);
 	friends.swap(m_friend_list);
+	bool res = m_newfriendlist;
+	m_newfriendlist = false;
+	return res;
 }
 
 

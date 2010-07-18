@@ -309,8 +309,7 @@ void CommunityBox::Process()
 
 
 	LbaNet::FriendsSeq friends;
-	ThreadSafeWorkpile::getInstance()->GetFriends(friends);
-	if(friends.size() > 0)
+	if(ThreadSafeWorkpile::getInstance()->GetFriends(friends))
 	{
 		ClearFriends();
 		for(size_t i=0; i<friends.size(); ++i)
@@ -442,6 +441,7 @@ void CommunityBox::UpdateFriend(const LbaNet::FriendInfo & frd)
 	if(it != _friends.end())
 	{
 		it->second.second->setText(dis);
+		lb->invalidate();
 	}
 	else
 	{

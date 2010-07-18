@@ -347,7 +347,7 @@ public:
 	void SetFriends(const LbaNet::FriendsSeq & friends);
 
 	//! get friend list
-	void GetFriends(LbaNet::FriendsSeq & friends);
+	bool GetFriends(LbaNet::FriendsSeq & friends);
 
 	//! accept a friend request
 	void AcceptFriend(long id);
@@ -479,7 +479,8 @@ protected:
 			m_player_id(-1), m_new_actor_state(false), m_name_color_changed(false),
 			m_world_changed(false), m_player_pos_info_updated(false), m_waiting_container_info(false),
 			m_updated_container(false), m_exchanged_container(false), m_closed_container(false),
-			m_mplayer(NULL), m_explayers(NULL), mb_throwed(false), mb_ended(false), m_drowning(false)
+			m_mplayer(NULL), m_explayers(NULL), mb_throwed(false), mb_ended(false), m_drowning(false),
+			m_newfriendlist(false)
 	{
 		m_update_questbook.NeedUpdate = false;
 	}
@@ -614,6 +615,7 @@ private:
 	std::vector<long>							m_accept_friends;
 	LbaNet::FriendsSeq							m_friend_list;
 	bool										m_refresh_friends;
+	bool										m_newfriendlist;
 
 	std::vector<WrittenLetter>					m_letters;
 
