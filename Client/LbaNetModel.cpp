@@ -454,9 +454,11 @@ void LbaNetModel::ChangeWorld(const std::string & NewWorldName, const std::strin
 				ChangeMap(ppos.MapName,	ppos.X, ppos.Y, ppos.Z, ppos.Rotation);
 			}
 		}
-
-
 	}
+
+
+	// refresh the friend list
+	ThreadSafeWorkpile::getInstance()->RefreshFriend();
 }
 
 /***********************************************************

@@ -183,9 +183,6 @@ int ServerConnectionHandler::Connect(const std::string &user, const std::string 
 			ThreadSafeWorkpile::getInstance()->ChatColorChanged(ev.Nickname, ev.Color);
 		}
 
-		ThreadSafeWorkpile::getInstance()->RefreshFriend();			
-
-
 		//synchronize time with server
 		//SynchronizedTimeHandler::getInstance()->Initialize(session);
 	}
