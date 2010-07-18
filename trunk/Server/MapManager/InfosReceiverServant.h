@@ -92,6 +92,9 @@ public:
 	// called when ball come back
 	virtual void MagicBallComeBack(Ice::Long PlayerId, const Ice::Current&){} 
 
+	// refresh friends
+	void RefreshFriends(const LbaNet::FriendsSeq &, const Ice::Current&){} 
+
 private:
 	SharedData * _SD;
 };
