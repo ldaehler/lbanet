@@ -273,9 +273,7 @@ module LbaNet
 	{
 		long PMId;
 		long ReplyId;
-		long FromId;
 		string FromName;
-		long ToId;
 		string ToName;
 		string Text;
 		bool Opened;

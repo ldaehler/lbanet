@@ -1005,13 +1005,26 @@ LbaNet::PMsSeq DatabaseHandler::GetInboxPM(long playerid)
 {
 	LbaNet::PMsSeq pmsres;
 
+	Lock sync(*this);
+	if(!_mysqlH || !_mysqlH->connected())
+	{
+		Connect();
+		if(!_mysqlH->connected())
+		{
+			Clear();
+			return pmsres;
+		}
+	}
+
+
+
 	mysqlpp::Query query(_mysqlH, false);
-	query << "SELECT pm.id,	pm.fromid, pm.message, FROM_UNIXTIME(pm.datum), pm.toread";
+	query << "SELECT pm.id,	pm.fromid, pm.message, FROM_UNIXTIME(pm.datum), pm.toread, pm.replyid";
 	query << " FROM jos_uddeim pm, jos_users ju, lba_users lu";
 	query << " WHERE ju.id = lu.josiid";
 	query << " AND ju.id = pm.toid";
-	query << " pm.totrash = '0'";
-	query << " AND lu.id = '"<<playerid<<"')";
+	query << " AND pm.totrash = '0'";
+	query << " AND lu.id = '"<<playerid<<"'";
 	if (mysqlpp::StoreQueryResult res = query.store())
 	{
 		for(size_t i=0; i<res.size(); ++i)
@@ -1021,20 +1034,20 @@ LbaNet::PMsSeq DatabaseHandler::GetInboxPM(long playerid)
 			pi.Text = res[i][2];
 			pi.Date = res[i][3];
 			pi.Opened = ((int)res[i][4] == 1);
+			pi.ReplyId = res[i][5];
+
+			long senderid = res[i][1];
 
 			query.clear();
-			query << "SELECT lu.id,	ju.username";
-			query << " FROM jos_users ju, lba_users lu";
-			query << " WHERE ju.id = lu.josiid";
-			query << " AND ju.id = '"<<(long)res[i][1]<<"'";
+			query << "SELECT username";
+			query << " FROM jos_users";
+			query << " WHERE id = '"<<senderid<<"'";
 
-			if (res = query.store())
+			if (mysqlpp::StoreQueryResult res2 = query.store())
 			{
-				for(size_t i=0; i<res.size(); ++i)
+				if(res2.size() > 0)
 				{
-					pi.FromId = res[0][0];
-					pi.FromName = res[0][1];
-
+					pi.FromName = res2[0][0];
 					pmsres.push_back(pi);
 				}
 			}
@@ -1043,6 +1056,7 @@ LbaNet::PMsSeq DatabaseHandler::GetInboxPM(long playerid)
 	}
 	else
 	{
+		std::cerr<<IceUtil::Time::now()<<": LBA_Server - GetInboxPM failed for playerid "<<playerid<<" : "<<query.error()<<std::endl;
 		Clear();
 	}
 
