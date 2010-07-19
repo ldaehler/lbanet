@@ -160,6 +160,15 @@ public:
 	void MbHittedPlayer(const std::vector<long> &vec);
 
 
+	//! ask server for pms
+	void AskPms();
+
+	//! send new pm
+	void SendPM(const LbaNet::PMInfo &pm);
+
+	//! delete pm
+	void DeletePM(long pmid);
+
 private:
 
     const Ice::ObjectAdapterPtr							_adapter;	// ice adapter

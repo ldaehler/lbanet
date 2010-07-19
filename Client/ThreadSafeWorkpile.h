@@ -470,6 +470,27 @@ public:
 	//! check if player drowning
 	bool IsDrowning();
 
+
+	//! ask to get all pms
+	void AskPMs();
+
+	//! check if PM is asked
+	bool IsPMAsked();
+
+	//! send new pm
+	void SendPM(const LbaNet::PMInfo &pm);
+
+	//! get all pm to send
+	void GetPMToSend(std::vector<LbaNet::PMInfo> &vec);
+
+	//! delete a pm
+	void DeletePM(long pmid);
+
+	//! get all pm to send
+	void GetPMToDelete(std::vector<long> &vec);
+
+
+
 protected:
 
 	//! construtor
@@ -480,7 +501,7 @@ protected:
 			m_world_changed(false), m_player_pos_info_updated(false), m_waiting_container_info(false),
 			m_updated_container(false), m_exchanged_container(false), m_closed_container(false),
 			m_mplayer(NULL), m_explayers(NULL), mb_throwed(false), mb_ended(false), m_drowning(false),
-			m_newfriendlist(false)
+			m_newfriendlist(false), m_askpms(false)
 	{
 		m_update_questbook.NeedUpdate = false;
 	}
@@ -538,6 +559,11 @@ private:
 	IceUtil::Mutex								m_mutex_hitted_players;
 
 	IceUtil::Mutex								m_mutex_drowing;
+
+	IceUtil::Mutex								m_mutex_askpm;
+	IceUtil::Mutex								m_mutex_sendpm;
+	IceUtil::Mutex								m_mutex_deletepm;
+
 
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_irc;
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_sending_loop;
@@ -648,6 +674,10 @@ private:
 	std::vector<long>							m_mb_hitted_players;
 
 	bool										m_drowning;
+
+	bool										m_askpms;
+	std::vector<LbaNet::PMInfo>					m_pmtosend;
+	std::vector<long>							m_pmtodelete;
 
 	static ThreadSafeWorkpile *					_singletonInstance;
 };

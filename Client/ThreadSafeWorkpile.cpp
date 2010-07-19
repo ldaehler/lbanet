@@ -1297,3 +1297,62 @@ bool ThreadSafeWorkpile::IsDrowning()
 	m_drowning = false;
 	return res;
 }
+
+/***********************************************************
+ask to get all pms
+***********************************************************/
+void ThreadSafeWorkpile::AskPMs()
+{
+	IceUtil::Mutex::Lock lock(m_mutex_askpm);
+	m_askpms = true;
+}
+
+/***********************************************************
+check if PM is asked
+***********************************************************/
+bool ThreadSafeWorkpile::IsPMAsked()
+{
+	IceUtil::Mutex::Lock lock(m_mutex_askpm);
+	bool res = m_askpms;
+	m_askpms = false;
+	return res;
+}
+
+/***********************************************************
+send new pm
+***********************************************************/
+void ThreadSafeWorkpile::SendPM(const LbaNet::PMInfo &pm)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_sendpm);
+	m_pmtosend.push_back(pm);
+	
+}
+
+/***********************************************************
+get all pm to send
+***********************************************************/
+void ThreadSafeWorkpile::GetPMToSend(std::vector<LbaNet::PMInfo> &vec)
+{
+	vec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_sendpm);
+	vec.swap(m_pmtosend);
+}
+
+/***********************************************************
+delete a pm
+***********************************************************/
+void ThreadSafeWorkpile::DeletePM(long pmid)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_deletepm);
+	m_pmtodelete.push_back(pmid);
+}
+
+/***********************************************************
+get all pm to send
+***********************************************************/
+void ThreadSafeWorkpile::GetPMToDelete(std::vector<long> &vec)
+{
+	vec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_deletepm);
+	vec.swap(m_pmtodelete);
+}

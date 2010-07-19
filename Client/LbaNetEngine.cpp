@@ -809,6 +809,16 @@ void LbaNetEngine::HandleGameEvents()
 					m_lbaNetModel.PlayerDie();
 				}
 			break;
+
+
+			case 27: // display pm event
+				{
+					DisplayMailEvent * evcs = 
+						static_cast<DisplayMailEvent *> (*it);
+
+					std::cout<<"pouet"<<std::endl;
+				}
+			break;
 		}
 
 		delete *it;
