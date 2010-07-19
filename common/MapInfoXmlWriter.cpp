@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "HurtArea.h"
 #include "NPCActor.h"
 #include "ScriptedZoneActor.h"
+#include "MailboxActor.h"
 
 #include <fstream>
 
@@ -581,6 +582,16 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 						script->SetAttribute("newMap", scriptsV[cci].NewMap);
 						script->SetAttribute("spawning", scriptsV[cci].Spawning);
 					}
+				}
+			}
+			break;
+
+			case 14:	//mailbox class
+			{
+				{
+					MailboxActor * tmpa = static_cast<MailboxActor *>(it->second);
+					act->SetDoubleAttribute("activationdistance", tmpa->GetActivationDistance());
+					act->SetAttribute("activationtype", tmpa->GetActivationType());
 				}
 			}
 			break;

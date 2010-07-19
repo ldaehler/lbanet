@@ -49,7 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Quest.h"
 #include "QuestCondition.h"
 #include "QuestHandler.h"
-
+#include "MailboxActor.h"
 
 #ifndef _LBANET_SERVER_SIDE_
 #include "SpriteRenderer.h"
@@ -856,6 +856,17 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 					}
 					act = new ScriptedZoneActor(zoneSizeX, zoneSizeY, zoneSizeZ, scripts, 
 												activationtype, neededitem, destroyitem, abortedmessages);
+				}
+				break;
+
+
+				case 14:	//mailbox class
+				{
+					float activationdistance;
+					int activationtype=1;
+					pElem->QueryValueAttribute("activationdistance", &activationdistance);
+					pElem->QueryValueAttribute("activationtype", &activationtype);
+					act = new MailboxActor(activationdistance, activationtype);
 				}
 				break;
 			}

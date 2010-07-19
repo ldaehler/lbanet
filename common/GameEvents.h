@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <map>
 #include "WorldInfo.h"
+#include <LbaTypes.h>
 
 /*
 ************************************************************************************************************************
@@ -648,6 +649,27 @@ public:
 	{
 		_type = 26;	
 	}
+};
+
+
+/*
+************************************************************************************************************************
+*                                                  class DisplayMailEvent
+*
+*	DisplayMailEvent
+************************************************************************************************************************
+*/
+class DisplayMailEvent : public GameEvent
+{
+public:
+	//! constructor
+	DisplayMailEvent(std::vector<LbaNet::PMInfo> &pms)
+		: _pms(pms)
+	{
+		_type = 27;	
+	}
+
+	std::vector<LbaNet::PMInfo> _pms;
 };
 
 
