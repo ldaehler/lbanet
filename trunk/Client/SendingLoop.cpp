@@ -886,6 +886,68 @@ void IceConnectionManager::MbHittedPlayer(const std::vector<long> &vec)
 
 
 /***********************************************************
+ask server for pms
+***********************************************************/ 
+void IceConnectionManager::AskPms()
+{
+	try
+	{
+		LbaNet::PMsSeq pms = _session->GetInboxPM();
+		ThreadSafeWorkpile::getInstance()->AddEvent(new DisplayMailEvent(pms));
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception AskPms: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception AskPms "));
+    }
+}
+
+/***********************************************************
+send new pm
+***********************************************************/ 
+void IceConnectionManager::SendPM(const LbaNet::PMInfo &pm)
+{
+	try
+	{
+		_session->SendPM(pm);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception SendPM: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception SendPM "));
+    }
+}
+
+/***********************************************************
+delete pm
+***********************************************************/ 
+void IceConnectionManager::DeletePM(long pmid)
+{
+	try
+	{
+		_session->DeletePM(pmid);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception DeletePM: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception DeletePM "));
+    }
+}
+
+
+
+
+
+/***********************************************************
 constructor
 ***********************************************************/
 SendingLoopThread::SendingLoopThread(	const Ice::ObjectAdapterPtr& adapter, const LbaNet::ClientSessionPrx& session,
@@ -1171,6 +1233,22 @@ void SendingLoopThread::run()
 		ThreadSafeWorkpile::getInstance()->GetMbHittedPlayer(mbhittedplayers);
 		_connectionMananger.MbHittedActor(mbhittedacts);
 		_connectionMananger.MbHittedPlayer(mbhittedplayers);
+
+
+		//-----------------------------------
+		// process pms
+		if(ThreadSafeWorkpile::getInstance()->IsPMAsked())
+			_connectionMananger.AskPms();
+
+		std::vector<LbaNet::PMInfo> sendpms;
+		ThreadSafeWorkpile::getInstance()->GetPMToSend(sendpms);
+		for(size_t i=0; i<sendpms.size(); ++i)
+			_connectionMananger.SendPM(sendpms[i]);
+
+		std::vector<long> deletepms;
+		ThreadSafeWorkpile::getInstance()->GetPMToDelete(deletepms);
+		for(size_t i=0; i<deletepms.size(); ++i)
+			_connectionMananger.DeletePM(deletepms[i]);
 
 
 
