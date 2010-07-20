@@ -230,8 +230,10 @@ public:
     virtual void DeletePM(Ice::Long pmid, const Ice::Current&);
     
     //get all pm in your mailbox
-    virtual LbaNet::PMsSeq GetInboxPM(const Ice::Current&);
+    virtual void GetInboxPM(const Ice::Current&);
 
+    //mark pm as read
+    virtual void MarkReadPM(Ice::Long pmid, const Ice::Current &);
 
 
 protected:

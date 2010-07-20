@@ -79,8 +79,11 @@ module LbaNet
 	    // delete a pm
 	    void DeletePM(long pmid);
 	    
+	    // mark pm as read
+	    void MarkReadPM(long pmid);
+	    
 	    //get all pm in your mailbox
-	    PMsSeq GetInboxPM();
+	    void GetInboxPM();
 	    
 	    // store letter to the server and return the letter id
 	    void AddLetter(string title, string message);

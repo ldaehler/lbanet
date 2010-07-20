@@ -1413,20 +1413,34 @@ void SessionServant::SendPM(const LbaNet::PMInfo &pm, const Ice::Current&)
 	LbaNet::PMInfo pmchange(pm);
 	pmchange.FromName = _userId;
 	_dbh.SendPM(pmchange);
+
 }
  
 /***********************************************************
 delete a pm
 ***********************************************************/   
-void SessionServant::DeletePM(Ice::Long pmid, const Ice::Current&)
+void SessionServant::DeletePM(Ice::Long pmid, const Ice::Current& c)
 {
 	_dbh.DeletePM(pmid);
+	GetInboxPM(c);
 }
  
 /***********************************************************
+mark pm as read
+***********************************************************/   
+void SessionServant::MarkReadPM(Ice::Long pmid, const Ice::Current & c)
+{
+	_dbh.MarkReadPM(pmid);
+	GetInboxPM(c);
+}
+
+
+/***********************************************************
 get all pm in your mailbox
 ***********************************************************/   
-LbaNet::PMsSeq SessionServant::GetInboxPM(const Ice::Current&)
+void SessionServant::GetInboxPM(const Ice::Current&)
 {
-	return _dbh.GetInboxPM(_userNum);
+	if(_client_observer)
+		_client_observer->RefreshPMs(_dbh.GetInboxPM(_userNum));
 }
+

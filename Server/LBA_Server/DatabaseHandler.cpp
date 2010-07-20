@@ -997,6 +997,33 @@ void DatabaseHandler::DeletePM(Ice::Long pmid)
 	}
 
 }
+
+/***********************************************************
+MarkReadPM
+***********************************************************/   
+void DatabaseHandler::MarkReadPM(Ice::Long pmid)
+{
+	Lock sync(*this);
+	if(!_mysqlH || !_mysqlH->connected())
+	{
+		Connect();
+		if(!_mysqlH->connected())
+		{
+			Clear();
+			return;
+		}
+	}
+
+	mysqlpp::Query query(_mysqlH, false);
+	query << "UPDATE jos_uddeim SET toread='1' WHERE id = '"<<pmid<<"'"; 
+	if(!query.exec())
+	{
+		std::cerr<<IceUtil::Time::now()<<": LBA_Server - MarkReadPM failed for id "<<pmid<<" : "<<query.error()<<std::endl;		
+		Clear();
+	}
+
+}
+
  
 /***********************************************************
 get all pm in your mailbox
