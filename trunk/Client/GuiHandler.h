@@ -40,6 +40,12 @@ namespace CEGUI
 }
 
 
+namespace LbaNet
+{
+	struct PMInfo;
+}
+
+
 
 #include <string>
 #include <vector>
@@ -120,6 +126,10 @@ public:
 	// show dialog with NPC
 	void ShowDialog(long ActorId, const std::string &ActorName, DialogHandlerPtr Dialog,
 						bool Show,	const std::map<long, TraderItem> &inventory);
+
+
+	//! display the chatbox on screen
+	void ShowMails(const std::vector<LbaNet::PMInfo> &pms);
 
 protected:
 	//! inject time to the GUI

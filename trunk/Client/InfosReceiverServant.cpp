@@ -241,3 +241,10 @@ void InfosReceiverServant::RefreshFriends(const LbaNet::FriendsSeq &friendlist, 
 {
 	ThreadSafeWorkpile::getInstance()->SetFriends(friendlist);
 }
+
+
+// refresh PMs
+void InfosReceiverServant::RefreshPMs(const LbaNet::PMsSeq & pms, const Ice::Current &)
+{
+	ThreadSafeWorkpile::getInstance()->AddEvent(new DisplayMailEvent(pms));
+}

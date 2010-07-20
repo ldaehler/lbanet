@@ -767,10 +767,13 @@ void LbaNetEngine::HandleGameEvents()
 
 			case 24: // display NPC dialog
 				{
-					DisplayDialogEvent * evcs = 
-						static_cast<DisplayDialogEvent *> (*it);
-					m_guiHandler.ShowDialog(evcs->_ActorId, evcs->_ActorName, evcs->_Dialog,
-												evcs->_Show, evcs->_inventory);
+					if(m_currentstate == EGaming)
+					{
+						DisplayDialogEvent * evcs = 
+							static_cast<DisplayDialogEvent *> (*it);
+						m_guiHandler.ShowDialog(evcs->_ActorId, evcs->_ActorName, evcs->_Dialog,
+													evcs->_Show, evcs->_inventory);
+					}
 				}
 			break;
 
@@ -813,12 +816,17 @@ void LbaNetEngine::HandleGameEvents()
 
 			case 27: // display pm event
 				{
-					DisplayMailEvent * evcs = 
-						static_cast<DisplayMailEvent *> (*it);
+					if(m_currentstate == EGaming)
+					{
+						DisplayMailEvent * evcs = 
+							static_cast<DisplayMailEvent *> (*it);
 
-					std::cout<<"pouet"<<std::endl;
+						m_guiHandler.ShowMails(evcs->_pms);	
+					}
 				}
 			break;
+
+
 		}
 
 		delete *it;

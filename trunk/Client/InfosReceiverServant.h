@@ -93,6 +93,9 @@ public:
 	    
 	// refresh GUI friend list
 	virtual void RefreshFriends(const LbaNet::FriendsSeq &friendlist, const Ice::Current&);
+
+	// refresh PMs
+	virtual void RefreshPMs(const LbaNet::PMsSeq & pms, const Ice::Current &);
 };
 
 #endif

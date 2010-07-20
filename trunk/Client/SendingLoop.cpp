@@ -892,8 +892,7 @@ void IceConnectionManager::AskPms()
 {
 	try
 	{
-		LbaNet::PMsSeq pms = _session->GetInboxPM();
-		ThreadSafeWorkpile::getInstance()->AddEvent(new DisplayMailEvent(pms));
+		_session->GetInboxPM();
 	}
     catch(const IceUtil::Exception& ex)
     {
