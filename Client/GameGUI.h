@@ -41,6 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogBox.h"
 #include "WorldInfo.h"
 #include "JournalBox.h"
+#include "MailBox.h"
 
 namespace CEGUI
 {
@@ -148,6 +149,9 @@ public:
 	void ShowDialog(long ActorId, const std::string &ActorName, DialogHandlerPtr Dialog, 
 						bool Show, const std::map<long, TraderItem> &inventory);
 
+	//! display the chatbox on screen
+	void ShowMails(const std::vector<LbaNet::PMInfo> &pms);
+
 private:
 	ChatBox			_cb;
 	CommunityBox	_comb;
@@ -159,6 +163,7 @@ private:
 	LetterViewerBox _letterviewb;
 	NPCDialogBox	_dialogb;
 	JournalBox		_journalb;
+	MailBox			_mailbox;
 
 	EditorBox *		_editb;
 };

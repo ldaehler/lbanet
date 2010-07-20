@@ -287,7 +287,21 @@ void GuiHandler::Initialize(int screen_size_X, int screen_size_Y, bool ServerOn,
 			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("sm_tongue", "smileys/tongue.png");
 			ims.setAutoScalingEnabled(false);
 			}
-			
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("mailb_new", "new_im.png");
+			ims.setAutoScalingEnabled(false);
+			}
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("mailb_notnew", "nonew_im.png");
+			ims.setAutoScalingEnabled(false);
+			}
+
+			{
+			CEGUI::Imageset &ims = CEGUI::ImagesetManager::getSingleton().createFromImageFile("mailb_trash", "trash.png");
+			ims.setAutoScalingEnabled(false);
+			}	
 		}
 	}
 	catch(CEGUI::Exception &ex)
@@ -513,7 +527,8 @@ set actors
 ***********************************************************/
 void GuiHandler::SetActors(std::map<long, Actor *> * Lactors, std::map<long, Actor *> * Eactors)
 {
-	if(_game_gui)_game_gui->SetActors(Lactors, Eactors);
+	if(_game_gui)
+		_game_gui->SetActors(Lactors, Eactors);
 }
 
 
@@ -546,7 +561,8 @@ display inventory
 ***********************************************************/
 void GuiHandler::ShowInventory()
 {
-	if(_game_gui)_game_gui->ShowInventory();
+	if(_game_gui)
+		_game_gui->ShowInventory();
 }
 
 
@@ -555,7 +571,8 @@ display inventory
 ***********************************************************/
 void GuiHandler::RefreshOption()
 {
-	if(_option_gui)_option_gui->SendNameColor();
+	if(_option_gui)
+		_option_gui->SendNameColor();
 }
 
 
@@ -565,5 +582,16 @@ show dialog with NPC
 void GuiHandler::ShowDialog(long ActorId, const std::string &ActorName, DialogHandlerPtr Dialog, 
 								bool Show, const std::map<long, TraderItem> &inventory)
 {
-	if(_game_gui)_game_gui->ShowDialog(ActorId, ActorName, Dialog, Show, inventory);
+	if(_game_gui)
+		_game_gui->ShowDialog(ActorId, ActorName, Dialog, Show, inventory);
+}
+
+
+/***********************************************************
+display the chatbox on screen
+***********************************************************/
+void GuiHandler::ShowMails(const std::vector<LbaNet::PMInfo> &pms)
+{
+	if(_game_gui)
+		_game_gui->ShowMails(pms);
 }

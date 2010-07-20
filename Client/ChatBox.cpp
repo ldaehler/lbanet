@@ -559,6 +559,10 @@ bool ChatBox::HandleEnterKey (const CEGUI::EventArgs& e)
 		return true;
 	}
 
+	if(we.scancode == CEGUI::Key::LeftAlt || we.scancode == CEGUI::Key::RightAlt)
+	{
+		return true;
+	}
 
 	if(wine.window->getName() == "Chat/edit")
 	{

@@ -78,6 +78,7 @@ void GameGUI::Initialize()
 		_journalb.Initialize(_root);
 		CGMessageBox::getInstance()->Initialize(_root);
 		ChooseNumberBox::getInstance()->Initialize(_root);
+		_mailbox.Initialize(_root);
 
 
 		if(_editb)_editb->Initialize(_root);
@@ -471,4 +472,14 @@ void GameGUI::ShowDialog(long ActorId, const std::string &ActorName, DialogHandl
 							bool Show,	const std::map<long, TraderItem> &inventory)
 {
 	_dialogb.ShowDialog(ActorId, ActorName, Dialog, Show, inventory);
+}
+
+
+
+/***********************************************************
+display the chatbox on screen
+***********************************************************/
+void GameGUI::ShowMails(const std::vector<LbaNet::PMInfo> &pms)
+{
+	_mailbox.Show(pms);
 }
