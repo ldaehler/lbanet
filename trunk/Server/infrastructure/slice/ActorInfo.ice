@@ -47,6 +47,9 @@ module LbaNet
 	    
 	    // refresh GUI friend list
 	    void RefreshFriends(FriendsSeq friendlist);
+	    
+	    // refresh PMs list
+	    void RefreshPMs(PMsSeq pms);
 	};
 	
 	

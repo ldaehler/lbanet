@@ -106,6 +106,9 @@ public:
     // delete a pm
     void DeletePM(Ice::Long pmid);
     
+    //mark pm as read
+    void MarkReadPM(Ice::Long pmid);
+
     //get all pm in your mailbox
     LbaNet::PMsSeq GetInboxPM(long playerid);
 
