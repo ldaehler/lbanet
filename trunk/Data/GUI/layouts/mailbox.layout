@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="TaharezLook/FrameWindow" Name="Mailbox" >
+        <Property Name="Text" Value="Mailbox" />
+	<Property Name="TitlebarFont" Value="Commonwealth-10" />        
+        <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+        <Property Name="UnifiedMinSize" Value="{{0,128},{0,128}}" />
+        <Property Name="TitlebarEnabled" Value="true" />
+        <Property Name="SizingEnabled" Value="true" />
+        <Property Name="CloseButtonEnabled" Value="true" />          
+        <Property Name="UnifiedAreaRect" Value="{{0.3,0},{0.3,0},{0.7,0},{0.7,0}}" />   
+        
+        <Window Type="TaharezLook/MultiColumnList" Name="Mailbox/list" >
+            <Property Name="UnifiedAreaRect" Value="{{0,5},{0,0},{1,-5},{1,-5}}" />
+            <Property Name="ForceVertScrollbar" Value="True" />
+	    <Property Name="ColumnHeader" Value="width:{0.05,0} id:1" />
+	    <Property Name="ColumnHeader" Value="width:{0.05,0} id:2" />	    
+	    <Property Name="ColumnHeader" Value="text:Date width:{0.3,0} id:3" />
+	    <Property Name="ColumnHeader" Value="text:Sender width:{0.2,0} id:4" />    
+	    <Property Name="ColumnHeader" Value="text:Text width:{0.4,0} id:5" />
+	    
+        </Window>
+    </Window>
+</GUILayout>
