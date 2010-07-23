@@ -58,7 +58,14 @@ NPCActor::NPCActor(const std::vector<PlayerScriptPart> & scripts, bool IsLift,
 ***********************************************************/
 NPCActor::~NPCActor()
 {
-
+#ifndef _LBANET_SERVER_SIDE_
+	if(_activated)
+	{
+		ThreadSafeWorkpile::getInstance()->SetUntargetedActor(_ID);
+		ThreadSafeWorkpile::getInstance()->AddEvent(new DisplayDialogEvent(_ID, _Name, 
+														_Dialog, false, _items));
+	}
+#endif
 }
 
 /***********************************************************

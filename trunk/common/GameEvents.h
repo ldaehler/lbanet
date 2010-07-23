@@ -663,7 +663,7 @@ class DisplayMailEvent : public GameEvent
 {
 public:
 	//! constructor
-	DisplayMailEvent(std::vector<LbaNet::PMInfo> &pms)
+	DisplayMailEvent(const std::vector<LbaNet::PMInfo> &pms)
 		: _pms(pms)
 	{
 		_type = 27;	
@@ -672,6 +672,25 @@ public:
 	std::vector<LbaNet::PMInfo> _pms;
 };
 
+
+
+/*
+************************************************************************************************************************
+*                                                  class CloseMailEvent
+*
+*	CloseMailEvent
+************************************************************************************************************************
+*/
+class CloseMailEvent : public GameEvent
+{
+public:
+	//! constructor
+	CloseMailEvent()
+	{
+		_type = 28;	
+	}
+
+};
 
 
 #endif

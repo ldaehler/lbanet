@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	Constructor
 ***********************************************************/
 MailboxActor::MailboxActor(float activationdistance, int activationtype)
-: ActivableActor(activationdistance, activationtype)
+: ActivableActor(activationdistance, activationtype), _activated(false)
 {
 
 }
@@ -45,7 +45,12 @@ MailboxActor::MailboxActor(float activationdistance, int activationtype)
 ***********************************************************/
 MailboxActor::~MailboxActor()
 {
-
+#ifndef _LBANET_SERVER_SIDE_
+	if(_activated)
+	{
+		ThreadSafeWorkpile::getInstance()->AddEvent(new CloseMailEvent());
+	}
+#endif
 }
 
 /***********************************************************
@@ -55,5 +60,34 @@ void MailboxActor::ProcessActivation(float PlayerPosX, float PlayerPosY, float P
 {
 #ifndef _LBANET_SERVER_SIDE_
 	ThreadSafeWorkpile::getInstance()->AskPMs();
+	_activated = true;
 #endif
+}
+
+
+/***********************************************************
+check zone activation
+***********************************************************/
+int MailboxActor::ActivateZone(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation,
+									MainPlayerHandler  * _mph, bool DirectActivation)
+{
+
+#ifndef _LBANET_SERVER_SIDE_
+	if(_activated)
+	{
+		float distX = _posX-PlayerPosX;
+		float distY = _posY-PlayerPosY;
+		float distZ = _posZ-PlayerPosZ;
+
+		double distance = (distX * distX) + (distY * distY) + (distZ * distZ);
+		if(distance > _activationdistance)
+		{
+			ThreadSafeWorkpile::getInstance()->AddEvent(new CloseMailEvent());
+			_activated = false;
+		}
+	}
+#endif
+
+
+	return 0;
 }
