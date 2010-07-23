@@ -680,11 +680,15 @@ long DatabaseHandler::AddLetter(long myId, const std::string& title, const std::
 		}
 	}
 
-	std::string replaced = replaceall(message, "'", "#quote#");
+	{
+	mysqlpp::Query query(_mysqlH, false);
+	query << "SET character_set_client=utf8";
+	query.execute();
+	}
 
 	mysqlpp::Query query(_mysqlH, false);
 	query << "INSERT INTO lba_letters (userid, creationdate, title, message) VALUES('";
-	query << myId << "', UTC_TIMESTAMP(), '"<< title <<"', '" << replaced << "')";
+	query << myId << "', UTC_TIMESTAMP(), "<<mysqlpp::quote<< title <<", " <<mysqlpp::quote<< message << ")";
 	if(!query.exec())
 	{
 		std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update INSERT letters failed for user id "<<myId<<" : "<<query.error()<<std::endl;
@@ -719,6 +723,12 @@ LbaNet::LetterInfo DatabaseHandler::GetLetterInfo(Ice::Long LetterId)
 		}
 	}
 
+	{
+	mysqlpp::Query query(_mysqlH, false);
+	query << "SET character_set_results=utf8";
+	query.execute();
+	}
+
 	mysqlpp::Query query(_mysqlH, false);
 	query << "SELECT ju.username, l.creationdate, l.title, l.message";
 	query << " FROM lba_users u, lba_letters l, jos_users ju";
@@ -730,11 +740,10 @@ LbaNet::LetterInfo DatabaseHandler::GetLetterInfo(Ice::Long LetterId)
 		if(res.size() > 0)
 		{
 			resF.Id = LetterId;
-			resF.Writter = res[0][0].c_str();
+			resF.Writter = res[0][0];
 			res[0][1].to_string(resF.Date);
-			resF.Title= res[0][2].c_str();
-			resF.Message= res[0][3].c_str();
-			resF.Message = replaceall(resF.Message, "#quote#", "'");
+			resF.Title= res[0][2];
+			resF.Message= res[0][3];
 		}
 	}
 	else
@@ -958,17 +967,28 @@ void DatabaseHandler::SendPM(const LbaNet::PMInfo &pm)
 		}
 	}
 
-	mysqlpp::Query query(_mysqlH, false);
-	query << "INSERT INTO jos_uddeim (replyid, fromid, toid, message, datum) VALUES(";
-	query << "'"<<pm.ReplyId<<"'"; // __________
-	query << ",(SELECT id FROM jos_users WHERE username = '"<<pm.FromName<<"')"; 
-	query << ",(SELECT id FROM jos_users WHERE username = '"<<pm.ToName<<"')";
-	query << ",'"<<pm.Text<<"'";
-	query << ", UNIX_TIMESTAMP()";
-	if(!query.exec())
 	{
-		std::cerr<<IceUtil::Time::now()<<": LBA_Server - SendPM failed for user id "<<pm.FromName<<" : "<<query.error()<<std::endl;		
-		Clear();
+	mysqlpp::Query query(_mysqlH, false);
+	query << "SET character_set_client=utf8";
+	query.execute();
+	}
+
+	std::vector<std::string> tos;
+	Tokenize(pm.ToName, tos, ",");
+	for(size_t i=0; i<tos.size(); ++i)
+	{
+		mysqlpp::Query query(_mysqlH, false);
+		query << "INSERT INTO jos_uddeim (replyid, fromid, toid, message, datum) VALUES(";
+		query << "'"<<pm.ReplyId<<"'"; // __________
+		query << ",(SELECT id FROM jos_users WHERE username = "<<mysqlpp::quote<<pm.FromName<<")"; 
+		query << ",(SELECT id FROM jos_users WHERE username = "<<mysqlpp::quote<<tos[i]<<")";
+		query << ","<<mysqlpp::quote<<pm.Text;
+		query << ", UNIX_TIMESTAMP() )";
+		if(!query.exec())
+		{
+			std::cerr<<IceUtil::Time::now()<<": LBA_Server - SendPM failed for user id "<<pm.FromName<<" : "<<query.error()<<std::endl;		
+		}
+
 	}
 }
  
@@ -1043,6 +1063,11 @@ LbaNet::PMsSeq DatabaseHandler::GetInboxPM(long playerid)
 		}
 	}
 
+	{
+	mysqlpp::Query query(_mysqlH, false);
+	query << "SET character_set_results=utf8";
+	query.execute();
+	}
 
 
 	mysqlpp::Query query(_mysqlH, false);
