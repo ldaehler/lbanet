@@ -44,10 +44,17 @@ public:
 	//! destructor
 	virtual ~MailboxActor();
 
+	//! check zone activation
+	virtual int ActivateZone(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation,
+								MainPlayerHandler  * _mph, bool DirectActivation=true);
+
 protected:
 	//! process activation
 	virtual void ProcessActivation(float PlayerPosX, float PlayerPosY, float PlayerPosZ, float PlayerRotation);
-
+	
+	
+private:	
+	bool _activated;
 };
 
 #endif

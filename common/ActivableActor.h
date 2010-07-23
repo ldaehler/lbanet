@@ -59,9 +59,8 @@ public:
 	void SetActivationType(int type)
 	{_activationtype = type;}
 
-private:
+protected:
 	float _activationdistance;
-
 	int _activationtype;
 };
 
