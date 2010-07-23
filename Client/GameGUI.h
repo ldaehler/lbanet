@@ -152,6 +152,12 @@ public:
 	//! display the chatbox on screen
 	void ShowMails(const std::vector<LbaNet::PMInfo> &pms);
 
+	//! add mail window
+	void HideMails();
+
+	//! get friend list
+	std::vector<std::string> GetFriendList();
+
 private:
 	ChatBox			_cb;
 	CommunityBox	_comb;

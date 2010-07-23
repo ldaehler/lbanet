@@ -131,6 +131,9 @@ public:
 	//! display the chatbox on screen
 	void ShowMails(const std::vector<LbaNet::PMInfo> &pms);
 
+	//! add mail window
+	void HideMails();
+
 protected:
 	//! inject time to the GUI
 	void inject_time_pulse();

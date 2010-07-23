@@ -595,3 +595,13 @@ void GuiHandler::ShowMails(const std::vector<LbaNet::PMInfo> &pms)
 	if(_game_gui)
 		_game_gui->ShowMails(pms);
 }
+
+
+/***********************************************************
+display the chatbox on screen
+***********************************************************/
+void GuiHandler::HideMails()
+{
+	if(_game_gui)
+		_game_gui->HideMails();
+}

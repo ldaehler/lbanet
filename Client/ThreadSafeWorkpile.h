@@ -477,6 +477,12 @@ public:
 	//! check if PM is asked
 	bool IsPMAsked();
 
+	//! ask to get all pms
+	void ClosePMs();
+
+	//! check if PM is asked
+	bool IsPMClosed();
+
 	//! send new pm
 	void SendPM(const LbaNet::PMInfo &pm);
 
@@ -489,6 +495,11 @@ public:
 	//! get all pm to send
 	void GetPMToDelete(std::vector<long> &vec);
 
+	//! delete a pm
+	void MarkReadPM(long pmid);
+
+	//! get all pm to send
+	void GetPMMarkRead(std::vector<long> &vec);
 
 
 protected:
@@ -563,6 +574,7 @@ private:
 	IceUtil::Mutex								m_mutex_askpm;
 	IceUtil::Mutex								m_mutex_sendpm;
 	IceUtil::Mutex								m_mutex_deletepm;
+	IceUtil::Mutex								m_mutex_markreadpm;
 
 
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_irc;
@@ -678,6 +690,7 @@ private:
 	bool										m_askpms;
 	std::vector<LbaNet::PMInfo>					m_pmtosend;
 	std::vector<long>							m_pmtodelete;
+	std::vector<long>							m_pmtomarkread;
 
 	static ThreadSafeWorkpile *					_singletonInstance;
 };

@@ -43,7 +43,7 @@ constructor
 GameGUI::GameGUI()
 : _cb(this), _comb(this), _telb(this), _invb(this, 50), 
 	_shortb(this, 50), _containerb(this, 50), _editb(NULL), _lettereditb(this), 
-	_letterviewb(this), _dialogb(this, 50)
+	_letterviewb(this), _dialogb(this, 50), _mailbox(this)
 {
 	#ifdef _LBANET_SET_EDITOR_
 	_editb = new EditorBox(this);
@@ -483,3 +483,21 @@ void GameGUI::ShowMails(const std::vector<LbaNet::PMInfo> &pms)
 {
 	_mailbox.Show(pms);
 }
+
+/***********************************************************
+display the chatbox on screen
+***********************************************************/
+void GameGUI::HideMails()
+{
+	_mailbox.HideMails();
+}
+
+
+/***********************************************************
+get friend list
+***********************************************************/
+std::vector<std::string> GameGUI::GetFriendList()
+{
+	return _comb.GetFriendList();
+}
+
