@@ -943,6 +943,24 @@ void IceConnectionManager::DeletePM(long pmid)
 }
 
 
+/***********************************************************
+mark pm read
+***********************************************************/ 
+void IceConnectionManager::MarkReadPM(long pmid)
+{
+	try
+	{
+		_session->MarkReadPM(pmid);
+	}
+    catch(const IceUtil::Exception& ex)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Exception MarkReadPM: ")+ ex.what());
+    }
+    catch(...)
+    {
+		LogHandler::getInstance()->LogToFile(std::string("Unknown exception MarkReadPM "));
+    }
+}
 
 
 
@@ -1249,6 +1267,10 @@ void SendingLoopThread::run()
 		for(size_t i=0; i<deletepms.size(); ++i)
 			_connectionMananger.DeletePM(deletepms[i]);
 
+		std::vector<long> markreadpms;
+		ThreadSafeWorkpile::getInstance()->GetPMMarkRead(markreadpms);
+		for(size_t i=0; i<markreadpms.size(); ++i)
+			_connectionMananger.MarkReadPM(markreadpms[i]);
 
 
 

@@ -96,6 +96,8 @@ class CommunityBox
 	//! handle event when list is double clicked
 	bool HandleConnecteddblClick (const CEGUI::EventArgs& e);
 
+	//! get friend list
+	std::vector<std::string> GetFriendList();
 
 protected:
 

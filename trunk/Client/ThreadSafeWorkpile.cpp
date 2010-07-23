@@ -1318,6 +1318,10 @@ bool ThreadSafeWorkpile::IsPMAsked()
 	return res;
 }
 
+
+
+
+
 /***********************************************************
 send new pm
 ***********************************************************/
@@ -1355,4 +1359,24 @@ void ThreadSafeWorkpile::GetPMToDelete(std::vector<long> &vec)
 	vec.clear();
 	IceUtil::Mutex::Lock lock(m_mutex_deletepm);
 	vec.swap(m_pmtodelete);
+}
+
+
+/***********************************************************
+delete a pm
+***********************************************************/
+void ThreadSafeWorkpile::MarkReadPM(long pmid)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_markreadpm);
+	m_pmtomarkread.push_back(pmid);
+}
+
+/***********************************************************
+get all pm to send
+***********************************************************/
+void ThreadSafeWorkpile::GetPMMarkRead(std::vector<long> &vec)
+{
+	vec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_markreadpm);
+	vec.swap(m_pmtomarkread);
 }

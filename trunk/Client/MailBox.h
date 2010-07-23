@@ -53,7 +53,7 @@ class MailBox
 {
  public:
 	//! constructor
-	 MailBox();
+	 MailBox(GameGUI * gamgui);
 
 	//! destructor
 	virtual ~MailBox();
@@ -70,10 +70,54 @@ class MailBox
 	//! handle list selected event
 	bool Handlelistselected(const CEGUI::EventArgs& e);	
 
+	//! handle list selected event
+	bool HandleCloseRead(const CEGUI::EventArgs& e);	
 
+	//! handle list selected event
+	bool HandleReadDelete(const CEGUI::EventArgs& e);	
+
+	//! handle list selected event
+	bool HandleReadReply(const CEGUI::EventArgs& e);
+
+	//! handle list selected event
+	bool HandleCompose(const CEGUI::EventArgs& e);
+
+	//! handle list selected event
+	bool HandleWriteSend(const CEGUI::EventArgs& e);
+
+	//! handle list selected event
+	bool HandleWriteCancel(const CEGUI::EventArgs& e);
+
+	//! handle list selected event
+	bool Handlecontactselected(const CEGUI::EventArgs& e);	
+
+	//! add mail window
+	void HideMails();
+
+protected:
+	//! display a mail on the screen
+	void DisplayMail(const LbaNet::PMInfo & pm);
+
+	//! display a write mail on the screen
+	void DisplayWriteMail();
+
+	//! switch to mailbox
+	void SwitchToMailBox();
 
 private:
 	CEGUI::Window*					_myBox;
+	CEGUI::Window*					_readMailBox;
+	CEGUI::Window*					_writeMailBox;
+
+	std::vector<LbaNet::PMInfo>		_currentpms;
+	long							_currentread;
+	std::string						_currentcomposeTo;
+	std::string						_currentcomposeText;
+
+	long							_replyto;
+	bool							_hidemailbox;
+	
+	GameGUI *						_gamgui;
 
 };
 

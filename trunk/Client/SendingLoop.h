@@ -169,6 +169,9 @@ public:
 	//! delete pm
 	void DeletePM(long pmid);
 
+	//! mark pm read
+	void MarkReadPM(long pmid);
+
 private:
 
     const Ice::ObjectAdapterPtr							_adapter;	// ice adapter

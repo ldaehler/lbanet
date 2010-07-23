@@ -600,3 +600,18 @@ bool CommunityBox::HandleConnecteddblClick (const CEGUI::EventArgs& e)
 
 	return true;
 }
+
+/***********************************************************
+get friend list
+***********************************************************/
+std::vector<std::string> CommunityBox::GetFriendList()
+{
+	std::vector<std::string> res;
+
+	T_friendmap::iterator it = _friends.begin();
+	T_friendmap::iterator end = _friends.end();
+	for(; it != end; ++it)
+		res.push_back(it->second.first.Name);
+
+	return res;
+}

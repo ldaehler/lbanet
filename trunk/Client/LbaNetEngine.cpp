@@ -826,6 +826,14 @@ void LbaNetEngine::HandleGameEvents()
 				}
 			break;
 
+			case 28: // close pm event
+				{
+					if(m_currentstate == EGaming)
+					{
+						m_guiHandler.HideMails();	
+					}
+				}
+			break;
 
 		}
 

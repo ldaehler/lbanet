@@ -48,7 +48,20 @@ destructor
 ***********************************************************/
 LetterEditorBox::~LetterEditorBox()
 {
+	{
+		CEGUI::FrameWindow * frw = static_cast<CEGUI::FrameWindow *> (
+			CEGUI::WindowManager::getSingleton().getWindow("LetterEditorWIndowFrame"));
 
+		CEGUI::UVector2 vec = frw->getPosition();
+		ConfigurationManager::GetInstance()->SetFloat("Gui.LetterEditorFrame.PosX", vec.d_x.d_scale);
+		ConfigurationManager::GetInstance()->SetFloat("Gui.LetterEditorFrame.PosY", vec.d_y.d_scale);
+		ConfigurationManager::GetInstance()->SetFloat("Gui.LetterEditorFrame.SizeX", frw->getWidth().d_scale);
+		ConfigurationManager::GetInstance()->SetFloat("Gui.LetterEditorFrame.SizeY", frw->getHeight().d_scale);
+		ConfigurationManager::GetInstance()->SetFloat("Gui.LetterEditorFrame.OffsetPosX", vec.d_x.d_offset);
+		ConfigurationManager::GetInstance()->SetFloat("Gui.LetterEditorFrame.OffsetPosY", vec.d_y.d_offset);
+		ConfigurationManager::GetInstance()->SetFloat("Gui.LetterEditorFrame.OffsetSizeX", frw->getWidth().d_offset);
+		ConfigurationManager::GetInstance()->SetFloat("Gui.LetterEditorFrame.OffsetSizeY", frw->getHeight().d_offset);
+	}
 }
 
 
@@ -81,6 +94,20 @@ void LetterEditorBox::Initialize(CEGUI::Window* Root)
 		_myBox->hide();
 
 		InventoryHandler::getInstance()->SetLetterEditor(this);
+
+
+		float PosX, PosY, SizeX, SizeY, OPosX, OPosY, OSizeX, OSizeY;
+		ConfigurationManager::GetInstance()->GetFloat("Gui.LetterEditorFrame.PosX", PosX);
+		ConfigurationManager::GetInstance()->GetFloat("Gui.LetterEditorFrame.PosY", PosY);
+		ConfigurationManager::GetInstance()->GetFloat("Gui.LetterEditorFrame.SizeX", SizeX);
+		ConfigurationManager::GetInstance()->GetFloat("Gui.LetterEditorFrame.SizeY", SizeY);
+		ConfigurationManager::GetInstance()->GetFloat("Gui.LetterEditorFrame.OffsetPosX", OPosX);
+		ConfigurationManager::GetInstance()->GetFloat("Gui.LetterEditorFrame.OffsetPosY", OPosY);
+		ConfigurationManager::GetInstance()->GetFloat("Gui.LetterEditorFrame.OffsetSizeX", OSizeX);
+		ConfigurationManager::GetInstance()->GetFloat("Gui.LetterEditorFrame.OffsetSizeY", OSizeY);
+		frw->setPosition(CEGUI::UVector2(CEGUI::UDim(PosX, OPosX), CEGUI::UDim(PosY, OPosY)));
+		frw->setWidth(CEGUI::UDim(SizeX, OSizeX));
+		frw->setHeight(CEGUI::UDim(SizeY, OSizeY));
 	}
 	catch(CEGUI::Exception &ex)
 	{
