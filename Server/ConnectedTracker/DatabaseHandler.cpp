@@ -83,11 +83,11 @@ static std::string replaceall(const std::string & str, const std::string & torep
     int len = toreplace.size(), pos;
 	while((pos=res.find(toreplace)) != std::string::npos)
     {
-        res=res.substr(0,pos)+with+res.substr(pos+len); 
+        res=res.substr(0,pos)+with+res.substr(pos+len);
     }
 
 	return res;
-} 
+}
 
 
 
@@ -152,7 +152,7 @@ long DatabaseHandler::CheckLogin(const std::string & PlayerName, const std::stri
 			long juid = res[0][0];
 
 			// check if password match
-			std::string dbentry = res[0][1];
+			std::string dbentry = res[0][1].c_str();
 
 			std::vector<std::string> entries;
 			Tokenize(dbentry, entries, ":");
@@ -196,14 +196,14 @@ long DatabaseHandler::CheckLogin(const std::string & PlayerName, const std::stri
 				//query << "SELECT id FROM lba_users WHERE josiid = '"<<juid<<"';
 				//if (res = query.store())
 				//{
-				//	lbaid = res[0][0];	
+				//	lbaid = res[0][0];
 				//}
 				//else
 				//{
 				//	std::cerr<<IceUtil::Time::now()<<": Connected tracker - CheckLoginfailed on create for user "<<PlayerName<<" : "<<query.error()<<std::endl;
 				//}
-			
-			} 
+
+			}
 
 			return lbaid;
 		}
