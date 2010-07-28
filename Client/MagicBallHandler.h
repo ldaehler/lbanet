@@ -39,10 +39,7 @@ public:
 	MagicBallHandler(bool MainPlayer);
 
 	//! destructor
-	virtual ~MagicBallHandler()
-	{
-		cleanPhys();
-	}
+	virtual ~MagicBallHandler();
 
 	//! set ball owner
 	void SetOwner(Actor * owner)
@@ -90,6 +87,7 @@ private:
 	int		_touch_counter;
 	bool	_MainPlayer;
 	bool	_enoughmana;
+
 
 	float	_currX;
 	float	_currY;
