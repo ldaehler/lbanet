@@ -284,8 +284,8 @@ void DatabaseHandler::ReformatLetters()
 			Message = replaceall(Message, "#quote#", "'");
 			std::cout<<id<<" "<<Title<<" "<<Message<<std::endl;
 
-			query << "UPDATE lba_letters SET title = "<<mysqlpp::quote<<Title<<", message = "<<mysqlpp::quote<<Message<<" WHERE id = "<<mysqlpp::quote<<id;
-			query.exec();
+			//query << "UPDATE lba_letters SET title = "<<mysqlpp::quote<<Title<<", message = "<<mysqlpp::quote<<Message<<" WHERE id = "<<mysqlpp::quote<<id;
+			//query.exec();
 		}
 	}
 }
