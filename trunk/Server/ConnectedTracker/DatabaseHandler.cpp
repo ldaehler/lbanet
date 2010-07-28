@@ -248,47 +248,6 @@ void DatabaseHandler::DisconnectUser(long Id)
 
 
 /***********************************************************
-store letter to the server and return the letter id
-***********************************************************/
-long DatabaseHandler::AddLetter(long myId, const std::string& title, const std::string& message)
-{
-	long resF = -1;
-
-	Lock sync(*this);
-	if(!_mysqlH || !_mysqlH->connected())
-	{
-		Connect();
-		if(!_mysqlH->connected())
-		{
-			Clear();
-			return resF;
-		}
-	}
-
-	{
-	mysqlpp::Query query(_mysqlH, false);
-	query << "SET character_set_client=utf8";
-	query.execute();
-	}
-
-	mysqlpp::Query query(_mysqlH, false);
-	query << "INSERT INTO lba_letters (userid, creationdate, title, message) VALUES('";
-	query << myId << "', UTC_TIMESTAMP(), "<<mysqlpp::quote<< title <<", " <<mysqlpp::quote<< message << ")";
-	if(!query.exec())
-	{
-		std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update INSERT letters failed for user id "<<myId<<" : "<<query.error()<<std::endl;
-		Clear();
-	}
-	else
-	{
-		resF = (long) query.insert_id();
-	}
-
-	return resF;
-}
-
-
-/***********************************************************
 reformat stored letters
 ***********************************************************/
 void DatabaseHandler::ReformatLetters()
