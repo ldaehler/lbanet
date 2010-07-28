@@ -244,6 +244,98 @@ void DatabaseHandler::DisconnectUser(long Id)
 
 
 
+
+
+
+/***********************************************************
+store letter to the server and return the letter id
+***********************************************************/
+long DatabaseHandler::AddLetter(long myId, const std::string& title, const std::string& message)
+{
+	long resF = -1;
+
+	Lock sync(*this);
+	if(!_mysqlH || !_mysqlH->connected())
+	{
+		Connect();
+		if(!_mysqlH->connected())
+		{
+			Clear();
+			return resF;
+		}
+	}
+
+	{
+	mysqlpp::Query query(_mysqlH, false);
+	query << "SET character_set_client=utf8";
+	query.execute();
+	}
+
+	mysqlpp::Query query(_mysqlH, false);
+	query << "INSERT INTO lba_letters (userid, creationdate, title, message) VALUES('";
+	query << myId << "', UTC_TIMESTAMP(), "<<mysqlpp::quote<< title <<", " <<mysqlpp::quote<< message << ")";
+	if(!query.exec())
+	{
+		std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update INSERT letters failed for user id "<<myId<<" : "<<query.error()<<std::endl;
+		Clear();
+	}
+	else
+	{
+		resF = (long) query.insert_id();
+	}
+
+	return resF;
+}
+
+
+/***********************************************************
+reformat stored letters
+***********************************************************/
+void DatabaseHandler::ReformatLetters()
+{
+	LbaNet::LetterInfo resF;
+	resF.Id = -1;
+
+
+	Lock sync(*this);
+	if(!_mysqlH || !_mysqlH->connected())
+	{
+		Connect();
+		if(!_mysqlH->connected())
+		{
+			Clear();
+			return resF;
+		}
+	}
+
+	{
+	mysqlpp::Query query(_mysqlH, false);
+	query << "SET character_set_client=utf8";
+	query.execute();
+	}
+
+
+	mysqlpp::Query query(_mysqlH, false);
+	query << "SELECT id, title, message";
+	query << " FROM lba_letters";
+	if (mysqlpp::StoreQueryResult res = query.store())
+	{
+		for(size_t i=0; i<res.size(); ++i)
+		{
+			long id = res[0][0];
+			std::string Title= res[0][1].c_str();
+			std::string Message= res[0][1].c_str();
+			Message = replaceall(Message, "#quote#", "'");
+
+			query << "UPDATE lba_letters SET title = "<<mysqlpp::quote<<Title<<", message = "<<mysqlpp::quote<<Message<<" WHERE id = "<<mysqlpp::quote<<id;
+			query.exec();
+		}
+	}
+}
+
+
+
+
 /***********************************************************
 clear db connection
 ***********************************************************/
