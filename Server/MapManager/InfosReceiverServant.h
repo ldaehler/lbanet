@@ -66,34 +66,37 @@ public:
 
 	// apply inventory changes
 	virtual  void InformInventoryChanges(const LbaNet::UpdatedItemSeq &InventoryChanges, const Ice::Current&){}
-	    
+
 	// Update Actor State
 	virtual  void UpdateActorState(const LbaNet::ActorUpdateInfo &newinfo, const Ice::Current&){}
-	    
+
 	// Update Actor State
 	virtual  void ActivationAborted(const LbaNet::ActorActivationInfo &ai, const Ice::Current&){}
 
-	// InitQuestStartedFinished  
-    virtual  void InitQuestStartedFinished(const LbaNet::QuestSeq &Started, 
+	// InitQuestStartedFinished
+    virtual  void InitQuestStartedFinished(const LbaNet::QuestSeq &Started,
 												const LbaNet::QuestSeq &Finished, const Ice::Current&){}
-    
+
 	// InformQuestStarted
 	virtual  void InformQuestStarted(Ice::Long QuestId, const Ice::Current&){}
-  	
-	// InformQuestFinished  
+
+	// InformQuestFinished
     virtual  void InformQuestFinished(Ice::Long QuestId, const Ice::Current&){}
-		    
+
 	// called when player throw magic ball
-	virtual void MagicBallPlayed(Ice::Long PlayerId, const LaunchInfo & linfo, const Ice::Current&){} 
+	virtual void MagicBallPlayed(Ice::Long PlayerId, const LaunchInfo & linfo, const Ice::Current&){}
 
 	//called when actor should die
-	virtual void Die(const Ice::Current&){} 
+	virtual void Die(const Ice::Current&){}
 
 	// called when ball come back
-	virtual void MagicBallComeBack(Ice::Long PlayerId, const Ice::Current&){} 
+	virtual void MagicBallComeBack(Ice::Long PlayerId, const Ice::Current&){}
 
 	// refresh friends
-	void RefreshFriends(const LbaNet::FriendsSeq &, const Ice::Current&){} 
+	void RefreshFriends(const LbaNet::FriendsSeq &, const Ice::Current&){}
+
+	// refresh PMs list
+	void RefreshPMs(const LbaNet::PMsSeq &, const Ice::Current&){}
 
 private:
 	SharedData * _SD;
