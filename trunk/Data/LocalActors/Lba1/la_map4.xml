@@ -9,4 +9,7 @@
 	</itemgroup>	
     </actor> 
     <actor id="1" type="1" posX="27.999001" posY="0.000000" posZ="3.499020" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" activationdistance="6.000000" textid="91" />
+
+    <actor id="14" type="14" posX="29.0" posY="1.000000" posZ="42.0" sizeX="0.500000" sizeY="4.000000" sizeZ="0.500000" rotation="100.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="2" renderertarget="14" activationdistance="5.0"/>
+
 </actors>
