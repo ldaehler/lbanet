@@ -102,6 +102,19 @@ MagicBallHandler::MagicBallHandler(bool MainPlayer)
 	ConfigurationManager::GetInstance()->GetFloat("Physic.SportMBForceUpOnImpact", _SportMBForceUpOnImpact);  
 	ConfigurationManager::GetInstance()->GetFloat("Physic.AggresiveMBForceUpOnImpact", _AggresiveMBForceUpOnImpact);    
 	ConfigurationManager::GetInstance()->GetFloat("Physic.DiscreteMBForceUpOnImpact", _DiscreteMBForceUpOnImpact);  
+
+	_physdata = new ActorUserData(4, -1, this);
+}
+
+/*
+--------------------------------------------------------------------------------------------------
+- destructor
+--------------------------------------------------------------------------------------------------
+*/
+MagicBallHandler::~MagicBallHandler()
+{
+	cleanPhys();
+	delete _physdata;
 }
 
 
@@ -199,7 +212,7 @@ void MagicBallHandler::Launch(float PosX, float PosY, float PosZ, float dirX, fl
 	_touch_counter = 0;
 	_enoughmana = enoughmana;
 
-	_physdata = new ActorUserData(4, -1, this);
+	_physdata->released = false;
 	_physH =  PhysXEngine::getInstance()->CreateSphere(NxVec3(PosX, PosY+_offset_y_, PosZ), _size_ball_, 1.0, 
 															3, _physdata, 
 															_MagicBallBounciness,
@@ -305,6 +318,7 @@ void MagicBallHandler::Process()
 	else
 	{
 		NxVec3 vec = _physH->getGlobalPosition();
+		float diffY = abs(vec.y+1.0f+_size_ball_ - _currY);
 		_currX = vec.x;
 		_currY = vec.y+1.0f+_size_ball_;
 		_currZ = vec.z;	
@@ -315,10 +329,15 @@ void MagicBallHandler::Process()
 		{
 			BallComeBack();
 		}
+
+		if(diffY < 0.000001f)
+		{
+			BallComeBack();
+		}
 	}
 
 	//calculate ball shadow
-	_floorY = PhysXEngine::getInstance()->GetClosestFloor(_currX, _currY, _currZ);
+	_floorY = (float)PhysXEngine::getInstance()->GetClosestFloor(_currX, _currY, _currZ);
 }
 
 
@@ -353,8 +372,11 @@ void MagicBallHandler::cleanPhys()
 		return;
 
 	if(!_physdata->released)
+	{
+		//_physH->userData = NULL;
 		PhysXEngine::getInstance()->DestroyActor(_physH);
-	delete _physdata;
+		_physdata->released = true;
+	}
 }
 
 
@@ -423,6 +445,8 @@ void MagicBallHandler::CallbackOnContact(int TouchedActorType, long TouchedActor
 	}
 	_physH->addForce(NxVec3(0, coeffforceup, 0));
 }
+
+
 
 
 

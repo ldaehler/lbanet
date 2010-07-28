@@ -67,15 +67,14 @@ class MyContactReport : public NxUserContactReport
 				ActorUserData * acd2 = (ActorUserData *) n2->userData;
 				if(acd1 && acd2)
 				{
-					if(acd1->Callback)
+					if((acd1->ActorType >= 0) && acd1->Callback)
 						acd1->Callback->CallbackOnContact(acd2->ActorType, acd2->ActorId);
 
-					if(acd2->Callback)
+					if((acd2->ActorType >= 0) && acd2->Callback)
 						acd2->Callback->CallbackOnContact(acd1->ActorType, acd1->ActorId);
 				}
 			}
 		} 
-
 
 		//if(events & NX_NOTIFY_ON_START_TOUCH)
 		//{
