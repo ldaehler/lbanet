@@ -15,6 +15,6 @@
     <model id="11" filename="Data/Models/christmas/xmas prezzie/cado1.ms3d" scaleX="0.05" scaleY="0.05" scaleZ="0.05"/>
     <model id="12" filename="Data/Models/christmas/xmas prezzie/cado2.ms3d" scaleX="0.06" scaleY="0.06" scaleZ="0.06"/>    
     <model id="13" filename="Data/Models/christmas/xmas prezzie/cado3.ms3d" scaleX="0.04" scaleY="0.04" scaleZ="0.04"/>
-    <model id="14" filename="Data/Models/mailbox/model.ms3d" scaleX="0.004" scaleY="0.004" scaleZ="0.004" rotX="-90.0" transY="1.0"/>   
+    <model id="14" filename="Data/Models/mailbox/model.ms3d" scaleX="0.004" scaleY="0.004" scaleZ="0.004" rotX="-90.0" transY="2.0"/>   
     
 </models>
