@@ -273,10 +273,8 @@ void DatabaseHandler::ReformatLetters()
 
 	mysqlpp::Query query(_mysqlH, false);
 	query << "SELECT id, title, message FROM lba_letters";
-	std::cout<<"test1"<<std::endl;
 	if (mysqlpp::StoreQueryResult res = query.store())
 	{
-		std::cout<<"test2"<<std::endl;
 		for(size_t i=0; i<res.size(); ++i)
 		{
 			long id = res[i][0];
@@ -285,8 +283,11 @@ void DatabaseHandler::ReformatLetters()
 			Message = replaceall(Message, "#quote#", "'");
 			std::cout<<id<<" "<<Title<<" "<<Message<<std::endl;
 
-			//query << "UPDATE lba_letters SET title = "<<mysqlpp::quote<<Title<<", message = "<<mysqlpp::quote<<Message<<" WHERE id = "<<mysqlpp::quote<<id;
-			//query.exec();
+			mysqlpp::Query query2(_mysqlH, false);
+			query2 << "UPDATE lba_letters SET title = "<<mysqlpp::quote<<Title;
+			query2 <<", message = "<<mysqlpp::quote<<Message;
+			query2 <<" WHERE id = "<<mysqlpp::quote<<id;
+			query2.exec();
 		}
 	}
 }
