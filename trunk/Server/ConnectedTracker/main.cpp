@@ -41,8 +41,9 @@ public:
 
 		Ice::PropertiesPtr prop = communicator()->getProperties();
 
-		DatabaseHandler dbh(prop->getProperty("dbname"), prop->getProperty("dbserver"), 
+		DatabaseHandler dbh(prop->getProperty("dbname"), prop->getProperty("dbserver"),
 							prop->getProperty("dbuser"), prop->getProperty("dbpassword"));
+		dbh.ReformatLetters();
 
 		_adapter = communicator()->createObjectAdapter(prop->getProperty("IdentityAdapter"));
 		_adapter->add(new ConnectedTrackerServant(communicator(), &shd, dbh), communicator()->stringToIdentity(prop->getProperty("ConnectedServantName")));

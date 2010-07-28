@@ -56,6 +56,8 @@ public:
 	//! set the user as disconnected in the database
 	void DisconnectUser(long Id);
 
+	//! reformat stored letters
+	void ReformatLetters();
 
 protected:
 	DatabaseHandler(const DatabaseHandler &);
