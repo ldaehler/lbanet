@@ -271,16 +271,18 @@ void DatabaseHandler::ReformatLetters()
 
 
 	mysqlpp::Query query(_mysqlH, false);
-	query << "SELECT id, title, message";
-	query << " FROM lba_letters";
+	query << "SELECT id, title, message FROM lba_letters";
+	std::cout<<"test1"<std::endl;
 	if (mysqlpp::StoreQueryResult res = query.store())
 	{
+		std::cout<<"test2"<std::endl;
 		for(size_t i=0; i<res.size(); ++i)
 		{
 			long id = res[0][0];
 			std::string Title= res[0][1].c_str();
 			std::string Message= res[0][2].c_str();
 			Message = replaceall(Message, "#quote#", "'");
+			std::cout<<id<<" "<<Title<<" "<<Message<<std::endl;
 
 			query << "UPDATE lba_letters SET title = "<<mysqlpp::quote<<Title<<", message = "<<mysqlpp::quote<<Message<<" WHERE id = "<<mysqlpp::quote<<id;
 			query.exec();
