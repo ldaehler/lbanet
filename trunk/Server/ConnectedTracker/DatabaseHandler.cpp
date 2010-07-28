@@ -293,10 +293,6 @@ reformat stored letters
 ***********************************************************/
 void DatabaseHandler::ReformatLetters()
 {
-	LbaNet::LetterInfo resF;
-	resF.Id = -1;
-
-
 	Lock sync(*this);
 	if(!_mysqlH || !_mysqlH->connected())
 	{
@@ -304,7 +300,7 @@ void DatabaseHandler::ReformatLetters()
 		if(!_mysqlH->connected())
 		{
 			Clear();
-			return resF;
+			return;
 		}
 	}
 
