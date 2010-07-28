@@ -127,3 +127,15 @@ Version 0.9 changes:
 
 - implementation of the pvp in game. Collecting pvp statistics and display on the website (number of kill, death)
 
+
+__________________________
+Version 0.91 changes:
+- new website features a lot of new stuff:
+you can now login to the website, change your contact info from there, add pic to your profile, make friends, comments articles, etc.
+
+- friend system of Lbanet synchronized to friend system of the website
+- new feature ingame: the mailbox, yo ucan now send message to people. This feature is synchronized to the PM system of the website so
+whatever you send in game will also show as PM in the website on the inverse is also working. In order to access the mailbox ingame, just go in front
+of Twinsen house.
+
+
