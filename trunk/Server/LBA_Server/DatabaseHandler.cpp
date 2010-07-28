@@ -1083,8 +1083,8 @@ LbaNet::PMsSeq DatabaseHandler::GetInboxPM(long playerid)
 		{
 			LbaNet::PMInfo pi;
 			pi.PMId = res[i][0];
-			pi.Text = res[i][2];
-			pi.Date = res[i][3];
+			pi.Text = res[i][2].c_str();
+			pi.Date = res[i][3].c_str();
 			pi.Opened = ((int)res[i][4] == 1);
 			pi.ReplyId = res[i][5];
 
