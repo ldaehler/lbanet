@@ -1099,7 +1099,7 @@ LbaNet::PMsSeq DatabaseHandler::GetInboxPM(long playerid)
 			{
 				if(res2.size() > 0)
 				{
-					pi.FromName = res2[0][0];
+					pi.FromName = res2[0][0].c_str();
 					pmsres.push_back(pi);
 				}
 			}
