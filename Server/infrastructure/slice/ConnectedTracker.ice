@@ -14,7 +14,7 @@ module LbaNet
 		void ChangeStatus(string Nickname, string NewStatus);
 		void ChangeNameColor(string Nickname, string Color);	
 		
-		void ConnectFromWebChat(string Nickname);
+		void ConnectFromWebChat(string Nickname, ChatRoomObserver * winterface);
 		void DisconnectFromWebChat(string Nickname);	
 
 		ConnectedL GetConnected();
