@@ -1,5 +1,5 @@
 TARGET=pollingchatserver
-OBJ=ChatReceiverServant.o ChatPollingSession.o ChatSessionManagerServant.o
+OBJ=ChatReceiverServant.o ChatPollingSession.o ChatSessionManagerServant.o main.o
 CC=g++
 INCDIR=-I. -I../infrastructure/include -I/usr/include
 LIBDIR=-L/usr/lib -L../infrastructure/lib
