@@ -100,6 +100,38 @@
 		</server-template>
 		
 		
+			
+		<!--
+		**********************************************************************
+		Configuration of Polling Chat Server
+		-->
+		<server-template id="PollingChatServer">
+			<parameter name="index"/>
+			<parameter name="exepath"
+			default="../bin/pollingchatserver"/>				
+			<parameter name="RoomManager"/>
+			<parameter name="ConnectedTracker"/>	
+			<parameter name="ReaperTimeout"/>	
+
+			<server id="PollingChatServer-${index}" 
+			exe="${exepath}"
+			activation="on-demand">
+				<adapter name="PollingChatServer${index}-Adapter" register-process="true"
+				endpoints="tcp">
+				</adapter>
+
+				<property name="IdentityAdapter" value="PollingChatServer${index}-Adapter"/>
+				<property name="RoomManager" value="${RoomManager}"/>	
+				<property name="ConnectedTracker" value="${ConnectedTracker}"/>	
+				<property name="Ice.MessageSizeMax" value="4096"/>
+				<property name="Ice.ThreadPool.Client.Size" value="2"/>
+				<property name="Ice.ThreadPool.Server.Size" value="2"/>	
+				<property name="Ice.ThreadPool.Client.SizeMax" value="50"/>
+				<property name="Ice.ThreadPool.Server.SizeMax" value="50"/>	
+				<property name="ReaperTimeout" value="${ReaperTimeout}"/>			
+			</server>
+		</server-template>
+		
 		
 		<!--
 		**********************************************************************
@@ -229,27 +261,6 @@
 
 		</server-template>	
 			
-
-	
-		<!--
-		**********************************************************************
-		Configuration of ClientSessionService
-		-->		
-		<service-template id="ClientSessionService">
-			<parameter name="name"/>
-			<parameter name="IcestormTopicManager"/>			
-			<service name="${name}" entry="LBA_Server:create">
-				<adapter name="${name}-SessionMAdapter" endpoints="tcp">
-					<object identity="${name}-SessionManager" type="::Glacier2::SessionManager"/>
-					<object identity="${name}-Verifier" type="::Glacier2::PermissionsVerifier"/>
-				</adapter>
-				
-				<properties>
-					<property name="TopicManagerProxy" value="${IcestormTopicManager}"/>
-				</properties>			
-			</service>
-		</service-template>	
-		
 	
 	
 	
@@ -259,7 +270,8 @@
 			<server-instance template="LBANetServer" index="1" ServVersion="ver. 0.91" RoomManager="LBANetServer1-RoomManager" ConnectedTracker="LBANetServer1-ConnectedTracker" MapManager="LBANetServer1-MapManager"/>		
 			<server-instance template="RoomManager" index="1" IceStorm="IceStormLbaNet" />	
 			<server-instance template="ConnectedTracker" index="1" />	
-			<server-instance template="MapManager" index="1" IceStorm="IceStormLbaNet"/>				
+			<server-instance template="MapManager" index="1" IceStorm="IceStormLbaNet"/>	
+			<server-instance template="PollingChatServer" index="1" RoomManager="LBANetServer1-RoomManager" ConnectedTracker="LBANetServer1-ConnectedTracker" ReaperTimeout="10"/>			
 		</node>	
 	</application>
 </icegrid>	
