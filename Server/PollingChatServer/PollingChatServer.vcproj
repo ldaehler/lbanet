@@ -139,7 +139,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ice.lib iceutil.lib icestorm.lib glacier2.lib icebox.lib mysqlpp.lib tinyxml_STL.lib"
-				OutputFile="$(OutDir)\lbaserver.exe"
+				OutputFile="$(OutDir)\pollingchatserver.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(ICE_HOME)\lib;&quot;..\MySQL++\lib&quot;;..\..\dependencies\tinyxml\lib"
 				GenerateDebugInformation="true"
