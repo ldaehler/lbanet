@@ -32,12 +32,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 constructor
 ***********************************************************/
 ChatPollingSessionServant::ChatPollingSessionServant(const std::string username,
-													const LbaNet::ChatRoomObserverPrx & chatP) 
+													const LbaNet::ChatRoomObserverPrx & chatP,
+													const LbaNet::ConnectedTrackerPrx &ctracker) 
 :    _name(username),
     _timestamp(IceUtil::Time::now(IceUtil::Time::Monotonic)),
-    _destroy(false), _chatP(chatP)
+    _destroy(false), _chatP(chatP), _ctracker(ctracker)
 {
-	_chatP->Message("info", "#joined " +_name);
+	try
+	{
+		_chatP->Message("info", "#joined " +_name);
+		_ctracker->ConnectFromWebChat(_name);
+	}
+	catch(Ice::Exception &)	{}
 }
 
 /***********************************************************
@@ -52,9 +58,23 @@ get user online
 ***********************************************************/
 LbaNet::UserSeq ChatPollingSessionServant::getInitialUsers(const Ice::Current&)
 {
+	LbaNet::UserSeq res;
+
     IceUtil::Mutex::Lock sync(_mutex);
     if(_destroy)
         throw Ice::ObjectNotExistException(__FILE__, __LINE__);
+
+	try
+	{
+		LbaNet::ConnectedL cl = _ctracker->GetConnected();
+		LbaNet::ConnectedL::const_iterator it = cl.begin();
+		LbaNet::ConnectedL::const_iterator end = cl.end();
+		for(;it != end; ++it)
+			res.push_back(it->first);
+	}
+	catch(Ice::Exception &)	{}
+
+	return res;
 }
 
 /***********************************************************
@@ -106,8 +126,9 @@ void ChatPollingSessionServant::destroy(const Ice::Current& c)
     {
         c.adapter->remove(c.id);
 		_chatP->Message("info", "#left " +_name);
+		_ctracker->DisconnectFromWebChat(_name);
     }
-    catch(const Ice::ObjectAdapterDeactivatedException&)
+    catch(const Ice::Exception&)
     {
         // No need to clean up, the server is shutting down.
     }

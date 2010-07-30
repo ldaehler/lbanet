@@ -49,9 +49,12 @@ public:
 	//! remove a disconnected person
     virtual void Disconnect(Ice::Long Id, const Ice::Current&);
 	
+	//! set wisper interface used for web chat
+	virtual void SetWebWisperInterface(const LbaNet::ChatRoomObserverPrx& winterface, 
+										const Ice::Current&);
+
 	//! connect from web chat
 	virtual void ConnectFromWebChat(const std::string& Nickname, 
-									const LbaNet::ChatRoomObserverPrx& winterface,
 									const Ice::Current&);
 
 	//! disconnect from web chat

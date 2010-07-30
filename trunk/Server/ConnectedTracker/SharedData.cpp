@@ -107,12 +107,19 @@ bool SharedData::Disconnect(Ice::Long playerid)
 	return false;
 }
 
+/***********************************************************
+set wisper interface used for web chat
+***********************************************************/	
+void SharedData::SetWebWisperInterface(const LbaNet::ChatRoomObserverPrx& winterface)
+{
+	Lock sync(*this);
+	m_web_wisper = winterface;
+}
 
 /***********************************************************
 connect from web chat
 ***********************************************************/
-void SharedData::ConnectFromWebChat(const std::string& Nickname, 
-									const LbaNet::ChatRoomObserverPrx& winterface)
+void SharedData::ConnectFromWebChat(const std::string& Nickname)
 {
 	Lock sync(*this);
 	LbaNet::PlayerInfo pi;
@@ -122,7 +129,7 @@ void SharedData::ConnectFromWebChat(const std::string& Nickname,
 
 	std::cout<<IceUtil::Time::now().toDateTime()<<": "<<Nickname<<" connected from web chat"<<std::endl;
 
-	m_wisper_map[Nickname] = winterface;
+	m_wisper_map[Nickname] = m_web_wisper;
 }
 
 /***********************************************************

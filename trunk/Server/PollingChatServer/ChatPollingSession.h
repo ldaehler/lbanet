@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "PollingChat.h"
 
 #include <ChatInfo.h>
-
+#include <ConnectedTracker.h>
 
 /***********************************************************************
  * Module:  ChatPollingSessionServant
@@ -42,7 +42,8 @@ class ChatPollingSessionServant : public LbaNet::PollingChatSession
 public:
 	//! constructor
 	ChatPollingSessionServant(const std::string username,
-								const LbaNet::ChatRoomObserverPrx & chatP);
+								const LbaNet::ChatRoomObserverPrx & chatP,
+								const LbaNet::ConnectedTrackerPrx &ctracker);
 
 	//! destructor
     ~ChatPollingSessionServant();
@@ -72,7 +73,7 @@ private:
     IceUtil::Mutex		_mutex;
 
 	LbaNet::ChatRoomObserverPrx _chatP;
-
+	LbaNet::ConnectedTrackerPrx _ctracker;
 
 	LbaNet::ChatRoomEventSeq	_events;
 };

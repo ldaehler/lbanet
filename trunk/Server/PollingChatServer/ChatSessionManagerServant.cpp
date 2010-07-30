@@ -85,8 +85,9 @@ constructor
 ***********************************************************/
 ChatSessionManagerServant::ChatSessionManagerServant(const ReaperTaskPtr& reaper,
 														const LbaNet::ChatRoomObserverPrx & chatP,
-														const ChatReceiverServantPtr & chatR)
-: _reaper(reaper), _chatP(chatP), _chatR(chatR)
+														const ChatReceiverServantPtr & chatR,
+														const LbaNet::ConnectedTrackerPrx &ctracker)
+: _reaper(reaper), _chatP(chatP), _chatR(chatR), _ctracker(ctracker)
 {
 }
 
@@ -108,7 +109,7 @@ LbaNet::PollingChatSessionPrx ChatSessionManagerServant::create(const std::strin
 																  const Ice::Current& c)
 {
     LbaNet::PollingChatSessionPrx proxy;
-    ChatPollingSessionServantPtr session = new ChatPollingSessionServant(name, _chatP);
+    ChatPollingSessionServantPtr session = new ChatPollingSessionServant(name, _chatP, _ctracker);
     proxy = LbaNet::PollingChatSessionPrx::uncheckedCast(c.adapter->addWithUUID(session));
     _reaper->add(proxy, session);
 	_chatR->Subscribe(session);
