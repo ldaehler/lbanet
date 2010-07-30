@@ -12,7 +12,10 @@ module LbaNet
 		long Connect(string Nickname);
 		void Disconnect(long PlayerId);
 		void ChangeStatus(string Nickname, string NewStatus);
-		void ChangeNameColor(string Nickname, string Color);		
+		void ChangeNameColor(string Nickname, string Color);	
+		
+		void ConnectFromWebChat(string Nickname);
+		void DisconnectFromWebChat(string Nickname);	
 
 		ConnectedL GetConnected();
 		
