@@ -61,6 +61,12 @@ public:
 
 	//! disconnect player
 	bool Disconnect(Ice::Long playerid);
+	
+	//! connect from web chat
+	void ConnectFromWebChat(const std::string& Nickname, const LbaNet::ChatRoomObserverPrx& winterface);
+
+	//! disconnect from web chat
+	void DisconnectFromWebChat(const std::string& Nickname);	
 
 	//! change player status
 	void ChangeStatus(const std::string& Nickname, const std::string& NewStatus);

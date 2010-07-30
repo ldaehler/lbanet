@@ -55,6 +55,27 @@ void ConnectedTrackerServant::Disconnect(Ice::Long Id, const Ice::Current&)
 	_dbh.DisconnectUser(Id);
 }
 
+
+
+/***********************************************************
+connect from web chat
+***********************************************************/
+void ConnectedTrackerServant::ConnectFromWebChat(const std::string& Nickname, 
+												 const LbaNet::ChatRoomObserverPrx& winterface,
+												 const Ice::Current&)
+{
+	_shd->ConnectFromWebChat(Nickname, winterface);
+}
+
+/***********************************************************
+disconnect from web chat
+***********************************************************/
+void ConnectedTrackerServant::DisconnectFromWebChat(const std::string& Nickname, const Ice::Current&)
+{
+	_shd->DisconnectFromWebChat(Nickname);
+}
+
+
 /***********************************************************
 get list of connected people
 ***********************************************************/
