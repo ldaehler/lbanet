@@ -201,6 +201,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\infrastructure\cpp\ConnectedTracker.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\infrastructure\cpp\LbaTypes.cpp"
 				>
 			</File>

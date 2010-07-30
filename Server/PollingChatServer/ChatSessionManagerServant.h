@@ -74,7 +74,8 @@ public:
 	//! constructor
     ChatSessionManagerServant(const ReaperTaskPtr& reaper,
 								const LbaNet::ChatRoomObserverPrx & chatP,
-								const ChatReceiverServantPtr & chatR);
+								const ChatReceiverServantPtr & chatR,
+								const LbaNet::ConnectedTrackerPrx &ctracker);
 
 	//! destructor
     ~ChatSessionManagerServant();
@@ -88,6 +89,7 @@ private:
 	ReaperTaskPtr _reaper;
 	LbaNet::ChatRoomObserverPrx _chatP;
 	ChatReceiverServantPtr _chatR;
+	LbaNet::ConnectedTrackerPrx _ctracker;
 };
 
 #endif

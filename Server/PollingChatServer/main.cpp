@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ChatSessionManagerServant.h"
 #include "ChatReceiverServant.h"
 #include <RoomManager.h>
-
+#include <ConnectedTracker.h>
 
 class PollingChatServer : public Ice::Application
 {
@@ -49,6 +49,11 @@ public:
 
 		_adapter = communicator()->createObjectAdapter(prop->getProperty("IdentityAdapter"));
 
+		// get conencted tracker interface
+		LbaNet::ConnectedTrackerPrx ctracker = LbaNet::ConnectedTrackerPrx::checkedCast(communicator()->stringToProxy(
+																		prop->getProperty("ConnectedTracker")));
+
+
 
 		// join chat world channel
 		LbaNet::ChatRoomObserverPrx proxyChat;
@@ -59,9 +64,12 @@ public:
 		LbaNet::ChatRoomObserverPrx chatobs = roomM->JoinChat("World", proxyChat);
 
 		// create session manager
-		_adapter->add(new ChatSessionManagerServant(reaper, chatobs, chatservant), 
+		_adapter->add(new ChatSessionManagerServant(reaper, chatobs, chatservant, ctracker), 
 						communicator()->stringToIdentity("PollingChatSessionFactory"));
 		_adapter->activate();
+
+		// set web whisper
+		ctracker->SetWebWisperInterface(proxyChat);
 
 		communicator()->waitForShutdown();
 

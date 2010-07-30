@@ -56,15 +56,22 @@ void ConnectedTrackerServant::Disconnect(Ice::Long Id, const Ice::Current&)
 }
 
 
+/***********************************************************
+set wisper interface used for web chat
+***********************************************************/	
+void ConnectedTrackerServant::SetWebWisperInterface(const LbaNet::ChatRoomObserverPrx& winterface, 
+														const Ice::Current&)
+{
+	_shd->SetWebWisperInterface(winterface);
+}
 
 /***********************************************************
 connect from web chat
 ***********************************************************/
 void ConnectedTrackerServant::ConnectFromWebChat(const std::string& Nickname, 
-												 const LbaNet::ChatRoomObserverPrx& winterface,
 												 const Ice::Current&)
 {
-	_shd->ConnectFromWebChat(Nickname, winterface);
+	_shd->ConnectFromWebChat(Nickname);
 }
 
 /***********************************************************

@@ -61,9 +61,12 @@ public:
 
 	//! disconnect player
 	bool Disconnect(Ice::Long playerid);
-	
+		
+	//! set wisper interface used for web chat
+	void SetWebWisperInterface(const LbaNet::ChatRoomObserverPrx& winterface);
+
 	//! connect from web chat
-	void ConnectFromWebChat(const std::string& Nickname, const LbaNet::ChatRoomObserverPrx& winterface);
+	void ConnectFromWebChat(const std::string& Nickname);
 
 	//! disconnect from web chat
 	void DisconnectFromWebChat(const std::string& Nickname);	
@@ -91,6 +94,7 @@ private:
 	std::map<std::string, long>								m_id_map;
 
 	std::map<std::string, LbaNet::ChatRoomObserverPrx>		m_wisper_map;
+	LbaNet::ChatRoomObserverPrx								m_web_wisper;
 };
 
 #endif
