@@ -109,6 +109,42 @@ bool SharedData::Disconnect(Ice::Long playerid)
 
 
 /***********************************************************
+connect from web chat
+***********************************************************/
+void SharedData::ConnectFromWebChat(const std::string& Nickname, 
+									const LbaNet::ChatRoomObserverPrx& winterface)
+{
+	Lock sync(*this);
+	LbaNet::PlayerInfo pi;
+	pi.Id = -1;
+	pi.NameColor = "FFFFFFFF";
+	m_connected_users[Nickname] = pi;
+
+	std::cout<<IceUtil::Time::now().toDateTime()<<": "<<Nickname<<" connected from web chat"<<std::endl;
+
+	m_wisper_map[Nickname] = winterface;
+}
+
+/***********************************************************
+disconnect from web chat
+***********************************************************/
+void SharedData::DisconnectFromWebChat(const std::string& Nickname)
+{
+	Lock sync(*this);
+	LbaNet::ConnectedL::iterator it = m_connected_users.find(Nickname);
+	if(it != m_connected_users.end())
+	{
+		std::cout<<IceUtil::Time::now().toDateTime()<<": "<<Nickname<<" disconnected"<<std::endl;
+		std::map<std::string, LbaNet::ChatRoomObserverPrx>::iterator itw = 	m_wisper_map.find(Nickname);
+		if(itw != m_wisper_map.end())
+			m_wisper_map.erase(itw);
+
+		m_connected_users.erase(it);
+	}
+}
+
+
+/***********************************************************
 change player status
 ***********************************************************/
 void SharedData::ChangeStatus(const std::string& Nickname, const std::string& NewStatus)

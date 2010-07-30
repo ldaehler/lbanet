@@ -48,6 +48,14 @@ public:
 
 	//! remove a disconnected person
     virtual void Disconnect(Ice::Long Id, const Ice::Current&);
+	
+	//! connect from web chat
+	virtual void ConnectFromWebChat(const std::string& Nickname, 
+									const LbaNet::ChatRoomObserverPrx& winterface,
+									const Ice::Current&);
+
+	//! disconnect from web chat
+	virtual void DisconnectFromWebChat(const std::string& Nickname, const Ice::Current&);	
 
 	//! get list of connected people
     virtual LbaNet::ConnectedL GetConnected(const Ice::Current&);
