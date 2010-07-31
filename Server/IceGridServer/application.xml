@@ -118,9 +118,11 @@
 			activation="on-demand">
 				<adapter name="PollingChatServer${index}-Adapter" register-process="true"
 				endpoints="tcp">
+					<object identity="PollingChatServer${index}-ChatSessionFactory" type="::LbaNet::PollingChatSessionFactory"/>				
 				</adapter>
 
 				<property name="IdentityAdapter" value="PollingChatServer${index}-Adapter"/>
+				<property name="SessionServantName" value="PollingChatServer${index}-ChatSessionFactory"/>				
 				<property name="RoomManager" value="${RoomManager}"/>	
 				<property name="ConnectedTracker" value="${ConnectedTracker}"/>	
 				<property name="Ice.MessageSizeMax" value="4096"/>

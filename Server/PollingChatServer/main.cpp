@@ -65,7 +65,7 @@ public:
 
 		// create session manager
 		_adapter->add(new ChatSessionManagerServant(reaper, chatobs, chatservant, ctracker), 
-						communicator()->stringToIdentity("PollingChatSessionFactory"));
+						communicator()->stringToIdentity(prop->getProperty("SessionServantName")));
 		_adapter->activate();
 
 		// set web whisper
