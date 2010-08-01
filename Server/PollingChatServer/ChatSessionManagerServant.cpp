@@ -36,6 +36,14 @@ ReaperTask::ReaperTask(int timeout, const ChatReceiverServantPtr & chatR)
 {
 }
 
+/***********************************************************
+set callback
+***********************************************************/
+void ReaperTask::SetCallback(ChatSessionManagerServant * callbak)
+{
+	_callbak = callbak;
+}
+
 
 /***********************************************************
 called by the timer
@@ -50,8 +58,9 @@ void ReaperTask::runTimerTask()
         {
             if((IceUtil::Time::now(IceUtil::Time::Monotonic) - (*p).second->timestamp()) > _timeout)
             {
-				_chatR->Unsubscribe((*p).second);
-               (*p).first->destroy();
+				_callbak->SessionDestroyed(p->second->GetName());
+				_chatR->Unsubscribe(p->second);
+                p->first->destroy();
                 p = _reapables.erase(p);
 				
             }
@@ -62,7 +71,8 @@ void ReaperTask::runTimerTask()
         }
         catch(const Ice::LocalException&)
         {
-			_chatR->Unsubscribe((*p).second);
+			_callbak->SessionDestroyed(p->second->GetName());
+			_chatR->Unsubscribe(p->second);
             p = _reapables.erase(p);
         }
     }
@@ -108,11 +118,31 @@ LbaNet::PollingChatSessionPrx ChatSessionManagerServant::create(const std::strin
 																  const std::string & password,
 																  const Ice::Current& c)
 {
-    LbaNet::PollingChatSessionPrx proxy;
-    ChatPollingSessionServantPtr session = new ChatPollingSessionServant(name, _chatP, _ctracker);
-    proxy = LbaNet::PollingChatSessionPrx::uncheckedCast(c.adapter->addWithUUID(session));
-    _reaper->add(proxy, session);
-	_chatR->Subscribe(session);
+	std::map<std::string, LbaNet::PollingChatSessionPrx>::iterator it =	_sessions.find(name);
+	if(it != _sessions.end())
+	{
+		return it->second;
+	}
+	else
+	{
+		LbaNet::PollingChatSessionPrx proxy;
+		ChatPollingSessionServantPtr session = new ChatPollingSessionServant(name, _chatP, _ctracker);
+		proxy = LbaNet::PollingChatSessionPrx::uncheckedCast(c.adapter->addWithUUID(session));
+		_reaper->add(proxy, session);
+		_chatR->Subscribe(session);
 
-    return proxy;
+		_sessions[name] = proxy;
+		return proxy;
+	}
+}
+
+
+/***********************************************************
+inform session destroyed
+***********************************************************/
+void ChatSessionManagerServant::SessionDestroyed(const std::string & name)
+{
+	std::map<std::string, LbaNet::PollingChatSessionPrx>::iterator it =	_sessions.find(name);
+	if(it != _sessions.end())
+		_sessions.erase(it);
 }

@@ -32,7 +32,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ChatReceiverServant.h"
 
 #include <list>
+#include <map>
 
+class ChatSessionManagerServant;
 
 /***********************************************************************
  * Module:  ReaperTask
@@ -45,6 +47,9 @@ public:
 	//! constructor
     ReaperTask(int timeout, const ChatReceiverServantPtr & chatR);
 
+	//! set callback
+	void SetCallback(ChatSessionManagerServant * callbak);
+
 	//! called by the timer
     virtual void runTimerTask();
 
@@ -56,6 +61,7 @@ private:
     const IceUtil::Time _timeout;
     std::list<std::pair<LbaNet::PollingChatSessionPrx, ChatPollingSessionServantPtr> > _reapables;
 	ChatReceiverServantPtr _chatR;
+	ChatSessionManagerServant * _callbak;
 };
 typedef IceUtil::Handle<ReaperTask> ReaperTaskPtr;
 
@@ -85,11 +91,17 @@ public:
 													const std::string & password, 
 													const Ice::Current&);
 
+	//! infrom session destroyed
+	void SessionDestroyed(const std::string & name);
+
+
 private:
-	ReaperTaskPtr _reaper;
-	LbaNet::ChatRoomObserverPrx _chatP;
-	ChatReceiverServantPtr _chatR;
-	LbaNet::ConnectedTrackerPrx _ctracker;
+	ReaperTaskPtr											_reaper;
+	LbaNet::ChatRoomObserverPrx								_chatP;
+	ChatReceiverServantPtr									_chatR;
+	LbaNet::ConnectedTrackerPrx								_ctracker;
+
+	std::map<std::string, LbaNet::PollingChatSessionPrx>	_sessions;
 };
 
 #endif

@@ -36,7 +36,8 @@ ChatPollingSessionServant::ChatPollingSessionServant(const std::string username,
 													const LbaNet::ConnectedTrackerPrx &ctracker) 
 :    _name(username),
     _timestamp(IceUtil::Time::now(IceUtil::Time::Monotonic)),
-    _destroy(false), _chatP(chatP), _ctracker(ctracker)
+    _destroy(false), _chatP(chatP), _ctracker(ctracker),
+	_currcolor("FFFFFFFF")
 {
 	try
 	{
@@ -70,7 +71,13 @@ LbaNet::UserSeq ChatPollingSessionServant::getInitialUsers(const Ice::Current&)
 		LbaNet::ConnectedL::const_iterator it = cl.begin();
 		LbaNet::ConnectedL::const_iterator end = cl.end();
 		for(;it != end; ++it)
-			res.push_back(it->first);
+		{
+			LbaNet::ChatUserStatusPtr cs = new LbaNet::ChatUserStatus();
+			cs->name = it->first;
+			cs->color = it->second.NameColor;
+			cs->status = it->second.Status;
+			res.push_back(cs);
+		}
 	}
 	catch(Ice::Exception &)	{}
 
@@ -101,6 +108,61 @@ Ice::Long ChatPollingSessionServant::send(const std::string& message, const Ice:
     IceUtil::Mutex::Lock sync(_mutex);
     if(_destroy)
         throw Ice::ObjectNotExistException(__FILE__, __LINE__);
+
+
+	// return if text is empty
+	if(message == "")
+		return IceUtil::Time::now().toMilliSeconds();
+
+	// if it is a command - preproccess it
+	if(message[0] == '/')
+	{
+		std::vector<std::string> tok;
+		std::stringstream ss(message);
+		std::string buf;
+		while(ss >> buf)
+		{
+			tok.push_back(buf);
+		}
+
+		if(tok.size() > 0)
+		{
+			if(tok[0] == "/w")
+			{
+				if(tok.size() < 3)
+					return IceUtil::Time::now().toMilliSeconds();
+
+				std::string playername = tok[1];
+				std::string message;
+				for(size_t i=2; i<tok.size(); ++i)
+					message += tok[i] + " ";
+
+				try
+				{
+					_ctracker->Whisper(_name, playername, message);
+				}
+				catch(Ice::Exception &)	{}
+				
+				return IceUtil::Time::now().toMilliSeconds();
+			}
+
+			if(tok[0] == "/afk")
+			{
+				_currstatus = "away";
+				UpdateStatus();
+				return IceUtil::Time::now().toMilliSeconds();
+			}
+
+			if(tok[0] == "/back")
+			{
+				_currstatus = "";
+				UpdateStatus();
+				return IceUtil::Time::now().toMilliSeconds();
+			}
+		}
+	}
+
+
 
 	try
 	{
@@ -155,4 +217,18 @@ void ChatPollingSessionServant::AddEvent(const LbaNet::ChatRoomEventPtr & evt)
 {
     IceUtil::Mutex::Lock sync(_mutex);
 	_events.push_back(evt);
+}
+
+/***********************************************************
+send status update
+***********************************************************/
+void ChatPollingSessionServant::UpdateStatus()
+{
+	try
+	{
+		_chatP->Message("info", "#status "+ _name + " " + _currstatus + " " + _currcolor);
+		_ctracker->ChangeStatus(_name, _currstatus);
+		_ctracker->ChangeNameColor(_name, _currcolor);
+	}
+	catch(Ice::Exception &)	{}
 }
