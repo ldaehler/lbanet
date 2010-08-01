@@ -54,7 +54,10 @@ public:
 
 protected:
 	// publish an event
-	void Publish(const LbaNet::ChatRoomEventPtr & evt);
+	void PublishMessage(const LbaNet::MessageEventPtr & evt);
+	void PublishStatus(const LbaNet::UserStatusEventPtr & evt);
+	void PublishOther(const LbaNet::ChatRoomEventPtr & evt);
+
 
 private:
 	IceUtil::Mutex								_mutex;

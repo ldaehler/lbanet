@@ -66,8 +66,15 @@ public:
 	//! add new chat event
 	void AddEvent(const LbaNet::ChatRoomEventPtr & evt);
 
+	//! get usr name
+	const std::string &GetName(){return _name;}
+
+protected:
+	//! send status update
+	void UpdateStatus();
+
 private:
-	const std::string	_name;
+	std::string			_name;
     IceUtil::Time		_timestamp; // The last time the session was refreshed.
     bool				_destroy;
     IceUtil::Mutex		_mutex;
@@ -76,6 +83,9 @@ private:
 	LbaNet::ConnectedTrackerPrx _ctracker;
 
 	LbaNet::ChatRoomEventSeq	_events;
+
+	std::string					_currstatus;
+	std::string					_currcolor;
 };
 typedef IceUtil::Handle<ChatPollingSessionServant> ChatPollingSessionServantPtr;
 

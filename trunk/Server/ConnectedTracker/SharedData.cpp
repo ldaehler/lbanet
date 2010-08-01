@@ -196,7 +196,7 @@ bool SharedData::Whisper(const std::string& From, const std::string& To, const s
 	{
 		try
 		{
-			it->second->Message(From, Message);
+			it->second->Message(From, "/" + To + " " + Message);
 		}
 		catch(...)
 		{

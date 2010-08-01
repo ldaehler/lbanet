@@ -37,7 +37,7 @@ void ChatReceiverServant::Message(const std::string& Sender, const std::string& 
 			LbaNet::UserJoinedEventPtr ev = new LbaNet::UserJoinedEvent();
 			ev->timestamp = IceUtil::Time::now().toMilliSeconds();
 			ev->name = Text.substr(8);
-			Publish(ev);
+			PublishOther(ev);
 			return;
 		}
 
@@ -46,26 +46,25 @@ void ChatReceiverServant::Message(const std::string& Sender, const std::string& 
 			LbaNet::UserLeftEventPtr ev = new LbaNet::UserLeftEvent();
 			ev->timestamp = IceUtil::Time::now().toMilliSeconds();
 			ev->name = Text.substr(6);
-			Publish(ev);
+			PublishOther(ev);
 			return;
 		}
 
-	//	if(Text.substr(0, 7) == "#status")
-	//	{
-	//		ThreadSafeWorkpile::JoinEvent ev;
-	//		ev.ListName = "online";
-	//		ev.Joined = true;
-	//		ev.Clear = false;
-	//		std::string tmptxt = Text.substr(8);
-	//		ev.Nickname = tmptxt.substr(0, tmptxt.find(" "));
-	//		tmptxt = tmptxt.substr(tmptxt.find(" ")+1);
-	//		ev.Status = tmptxt.substr(0, tmptxt.find(" "));
-	//		tmptxt = tmptxt.substr(tmptxt.find(" ")+1);
-	//		ev.Color = tmptxt;
-	//		ThreadSafeWorkpile::getInstance()->HappenedJoinEvent(ev);
-	//		ThreadSafeWorkpile::getInstance()->ChatColorChanged(ev.Nickname, ev.Color);
-	//		return;
-	//	}
+		if(Text.substr(0, 7) == "#status")
+		{
+			LbaNet::UserStatusEventPtr ev = new LbaNet::UserStatusEvent();
+			ev->timestamp = IceUtil::Time::now().toMilliSeconds();
+
+			std::string tmptxt = Text.substr(8);
+			ev->name = tmptxt.substr(0, tmptxt.find(" "));
+			tmptxt = tmptxt.substr(tmptxt.find(" ")+1);
+			ev->status = tmptxt.substr(0, tmptxt.find(" "));
+			tmptxt = tmptxt.substr(tmptxt.find(" ")+1);
+			ev->color = tmptxt;
+
+			PublishStatus(ev);
+			return;
+		}
 
 	}
 
@@ -73,7 +72,7 @@ void ChatReceiverServant::Message(const std::string& Sender, const std::string& 
 	ev->timestamp = IceUtil::Time::now().toMilliSeconds();
 	ev->name = Sender;
 	ev->message = Text;
-	Publish(ev);
+	PublishMessage(ev);
 }
 
 /***********************************************************
@@ -100,9 +99,69 @@ void ChatReceiverServant::Unsubscribe(const ChatPollingSessionServantPtr session
 /***********************************************************
 publish an event
 ***********************************************************/
-void ChatReceiverServant::Publish(const LbaNet::ChatRoomEventPtr & evt)
+void ChatReceiverServant::PublishMessage(const LbaNet::MessageEventPtr & evt)
+{
+	// take care fo whispers
+	if(evt->message[0] == '/')
+	{
+		std::vector<std::string> tok;
+		std::stringstream ss(evt->message);
+		std::string buf;
+		while(ss >> buf)
+		{
+			tok.push_back(buf);
+		}
+		if(tok.size() > 1)
+		{
+			tok[0] = tok[0].substr(1);
+			IceUtil::Mutex::Lock sync(_mutex);
+			for(size_t i=0; i<_sessions.size(); ++i)
+			{
+				if(_sessions[i]->GetName() == tok[0])
+				{
+					LbaNet::MessageEventPtr evnew = new LbaNet::MessageEvent();
+					evnew->timestamp = evt->timestamp;
+					evnew->name = evt->name;
+
+					for(size_t j=2; i<tok.size(); ++j)
+						evnew->message += tok[j] + " ";
+
+					_sessions[i]->AddEvent(evnew);
+					return;
+				}
+					
+			}
+		}
+	}
+	else
+		PublishOther(evt);
+}
+
+
+
+/***********************************************************
+publish an event
+***********************************************************/
+void ChatReceiverServant::PublishStatus(const LbaNet::UserStatusEventPtr & evt)
 {
 	IceUtil::Mutex::Lock sync(_mutex);
 	for(size_t i=0; i<_sessions.size(); ++i)
+	{
 		_sessions[i]->AddEvent(evt);
+	}
+}
+
+
+
+/***********************************************************
+publish an event
+***********************************************************/
+void ChatReceiverServant::PublishOther(const LbaNet::ChatRoomEventPtr & evt)
+{
+	IceUtil::Mutex::Lock sync(_mutex);
+	for(size_t i=0; i<_sessions.size(); ++i)
+	{
+		if(_sessions[i]->GetName() != evt->name)
+			_sessions[i]->AddEvent(evt);
+	}
 }

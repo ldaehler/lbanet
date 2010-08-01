@@ -64,8 +64,12 @@ public:
 		LbaNet::ChatRoomObserverPrx chatobs = roomM->JoinChat("World", proxyChat);
 
 		// create session manager
-		_adapter->add(new ChatSessionManagerServant(reaper, chatobs, chatservant, ctracker), 
-						communicator()->stringToIdentity(prop->getProperty("SessionServantName")));
+		ChatSessionManagerServant * smanager = 
+						new ChatSessionManagerServant(reaper, chatobs, chatservant, ctracker);				
+		reaper->SetCallback(smanager);
+		_adapter->add(smanager, communicator()->stringToIdentity(prop->getProperty("SessionServantName")));
+
+		// activate server
 		_adapter->activate();
 
 		// set web whisper
@@ -85,6 +89,6 @@ private:
 int main(int argc, char** argv)
 {
     PollingChatServer app;
-    return app.main(argc, argv/*, "config"*/);
+    return app.main(argc, argv, "config");
 }
 
