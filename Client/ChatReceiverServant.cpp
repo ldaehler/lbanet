@@ -73,10 +73,31 @@ void ChatReceiverServant::Message(const std::string& Sender, const std::string& 
 
 	}
 
+	// remove name from whisper
+	std::string message = Text;
+	if(message[0] == '/')
+	{
+		std::vector<std::string> tok;
+		std::stringstream ss(message);
+		std::string buf;
+		while(ss >> buf)
+		{
+			tok.push_back(buf);
+		}
+
+		if(tok.size() > 1)
+		{
+			message = "";
+			for(size_t i=1; i<tok.size(); ++i)
+				message += tok[i] + " ";
+		}
+	}
+
+
 	ThreadSafeWorkpile::ChatTextData cdata;
 	cdata.Channel = _RoomName;
 	cdata.Sender = Sender;
-	cdata.Text = Text;
+	cdata.Text = message;
 	ThreadSafeWorkpile::getInstance()->AddChatData(cdata);
 }
 

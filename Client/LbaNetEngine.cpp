@@ -49,6 +49,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define TICK_INTERVAL    30 //16
 
+//#define FULL_DEBUG 1
+
 
 
 /***********************************************************
@@ -60,6 +62,8 @@ LbaNetEngine::LbaNetEngine(ServerConnectionHandler * serverH, const std::string 
 	m_currentstate(EGaming), m_oldstate(ELogin), m_lbaNetModel(&m_guiHandler),
 	m_clientV(clientV), m_halo_loaded(false), m_char_loaded(false)
 {
+	LogHandler::getInstance()->LogToFile("Starting engine version "+m_clientV);
+
 	//init the values from file
 	ConfigurationManager::GetInstance()->GetInt("Options.Video.ScreenResolutionX", m_screen_size_X);
 	ConfigurationManager::GetInstance()->GetInt("Options.Video.ScreenResolutionY", m_screen_size_Y);
@@ -175,6 +179,8 @@ entry point of the engine
 ***********************************************************/
 void LbaNetEngine::run(void)
 {
+	LogHandler::getInstance()->LogToFile("Start main loop...");
+
 	bool quit = false;
 	SDL_Event even;
 	m_lasttime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDouble();
@@ -184,20 +190,38 @@ void LbaNetEngine::run(void)
 		// Loop until an SDL_QUIT event is found
 		while( !quit )
 		{
+			#ifdef FULL_DEBUG
+				LogHandler::getInstance()->LogToFile("Get current time...");
+			#endif
+
 			double currtime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDouble();
 			m_currframetime.Update( currtime - m_lasttime ) ;
 			m_lasttime = currtime;
 
+			#ifdef FULL_DEBUG
+				LogHandler::getInstance()->LogToFile("Get SDL events...");
+			#endif
 
 			while( SDL_PollEvent( &even ) )
 				quit = m_eventHandler.Handle(even);
 
+			#ifdef FULL_DEBUG
+				LogHandler::getInstance()->LogToFile("Process Engine...");
+			#endif
 
 			// proceed function doing everything that need to be done for each new tick
 			Process();
 
+			#ifdef FULL_DEBUG
+				LogHandler::getInstance()->LogToFile("Redraw...");
+			#endif
+
 			// redraw the scene
 			Redraw();
+
+			#ifdef FULL_DEBUG
+				LogHandler::getInstance()->LogToFile("wait time left...");
+			#endif
 
 			// wait function used to keep framerate constant
 			SDL_Delay(TimeLeft());
@@ -221,7 +245,15 @@ process function
 ***********************************************************/
 bool LbaNetEngine::Process(void)
 {
+	#ifdef FULL_DEBUG
+		LogHandler::getInstance()->LogToFile("get physic results...");
+	#endif
+
 	PhysXEngine::getInstance()->GetPhysicsResults();
+
+	#ifdef FULL_DEBUG
+		LogHandler::getInstance()->LogToFile("process GUI...");
+	#endif
 
 	//let the gui process
 	//if(m_currentstate != EGaming)
@@ -229,12 +261,23 @@ bool LbaNetEngine::Process(void)
 	m_guiHandler.process();
 	//}
 
+	#ifdef FULL_DEBUG
+		LogHandler::getInstance()->LogToFile("handle game events...");
+	#endif
+
 	//check for game events
 	HandleGameEvents();
+
+	#ifdef FULL_DEBUG
+		LogHandler::getInstance()->LogToFile("handle model events...");
+	#endif
 
 	// process model
 	m_lbaNetModel.Process();
 
+	#ifdef FULL_DEBUG
+		LogHandler::getInstance()->LogToFile("start physic calculation...");
+	#endif
 
 	PhysXEngine::getInstance()->StartPhysics();
 
@@ -847,6 +890,8 @@ switch gui helpers
 ***********************************************************/
 void LbaNetEngine::SwitchGuiToLogin()
 {
+	LogHandler::getInstance()->LogToFile("Loading login screen...");
+
 	if(m_currentstate == ELogin)
 		return;
 
@@ -857,6 +902,8 @@ void LbaNetEngine::SwitchGuiToLogin()
 	m_guiHandler.SwitchGUI(0);
 	m_oldstate = m_currentstate;
 	m_currentstate = ELogin;
+
+	LogHandler::getInstance()->LogToFile("Login screen loaded");
 }
 
 /***********************************************************
@@ -864,6 +911,8 @@ switch gui helpers
 ***********************************************************/
 void LbaNetEngine::SwitchGuiToChooseWorld()
 {
+	LogHandler::getInstance()->LogToFile("Loading choose world screen...");
+
 	if(m_currentstate == EChoosingWorld)
 		return;
 
@@ -873,6 +922,8 @@ void LbaNetEngine::SwitchGuiToChooseWorld()
 	m_guiHandler.SwitchGUI(1);
 	m_oldstate = m_currentstate;
 	m_currentstate = EChoosingWorld;
+
+	LogHandler::getInstance()->LogToFile("Choose world loaded");
 }
 
 /***********************************************************
@@ -880,6 +931,8 @@ switch gui helpers
 ***********************************************************/
 void LbaNetEngine::SwitchGuiToGame()
 {
+	LogHandler::getInstance()->LogToFile("Loading game screen...");
+
 	if(m_currentstate == EGaming)
 		return;
 
@@ -890,6 +943,8 @@ void LbaNetEngine::SwitchGuiToGame()
 	m_guiHandler.SwitchGUI(2);
 	m_oldstate = m_currentstate;
 	m_currentstate = EGaming;
+
+	LogHandler::getInstance()->LogToFile("Game screen loaded");
 }
 
 /***********************************************************
@@ -897,6 +952,8 @@ switch gui helpers
 ***********************************************************/
 void LbaNetEngine::SwitchGuiToMenu()
 {
+	LogHandler::getInstance()->LogToFile("Loading menu screen...");
+
 	if(m_currentstate == EMenu)
 	{
 		SwitchGuiToGame();
@@ -910,6 +967,8 @@ void LbaNetEngine::SwitchGuiToMenu()
 		m_oldstate = m_currentstate;
 		m_currentstate = EMenu;
 	}
+
+	LogHandler::getInstance()->LogToFile("Menu screen loaded");
 }
 
 /***********************************************************
@@ -917,6 +976,8 @@ switch gui helpers
 ***********************************************************/
 void LbaNetEngine::SwitchGuiToOption()
 {
+	LogHandler::getInstance()->LogToFile("Loading option screen...");
+
 	if(m_currentstate == EOption)
 		return;
 
@@ -924,6 +985,8 @@ void LbaNetEngine::SwitchGuiToOption()
 	m_guiHandler.SwitchGUI(4);
 	m_oldstate = m_currentstate;
 	m_currentstate = EOption;
+
+	LogHandler::getInstance()->LogToFile("Option screen loaded");
 }
 
 
@@ -982,8 +1045,12 @@ change the world
 ***********************************************************/
 void LbaNetEngine::ChangeWorld(const std::string & NewWorldName, const std::string & NewWorldFileName)
 {
+	LogHandler::getInstance()->LogToFile("Loading new world " + NewWorldName + "...");
+
 	m_lbaNetModel.ChangeWorld(NewWorldName, NewWorldFileName);
 	SwitchGuiToGame();
+
+	LogHandler::getInstance()->LogToFile("World " + NewWorldName + " loaded");
 }
 
 
@@ -1189,6 +1256,8 @@ take screen function
 ***********************************************************/
 void LbaNetEngine::SaveCharToFile()
 {
+	LogHandler::getInstance()->LogToFile("Save char to file...");
+
 	if(m_char_loaded)
 	{
 		glDeleteTextures(1, &m_char_texture);
@@ -1237,6 +1306,7 @@ void LbaNetEngine::SaveCharToFile()
 	ilDeleteImages(1, &imn2);
 
 	m_char_loaded = true;
+	LogHandler::getInstance()->LogToFile("Save char to file finished");
 }
 
 
@@ -1248,6 +1318,8 @@ void LbaNetEngine::SaveCharToFile()
 */
 void LbaNetEngine::LoadHaloTexture()
 {
+	LogHandler::getInstance()->LogToFile("Loading halo texture...");
+
 	if(m_halo_loaded)
 	{
 		glDeleteTextures(1, &m_halo_texture);
@@ -1265,4 +1337,5 @@ void LbaNetEngine::LoadHaloTexture()
 	}
 
 	m_halo_loaded = true;
+	LogHandler::getInstance()->LogToFile("Halo texture loaded");
 }

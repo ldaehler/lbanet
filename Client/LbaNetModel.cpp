@@ -285,8 +285,8 @@ void LbaNetModel::Draw()
 
 #ifdef _LBANET_SET_EDITOR_
 	// render editor stuff
-	if(_mapRenderer)
-		_mapRenderer->RenderEditor();
+	//if(_mapRenderer)
+	//	_mapRenderer->RenderEditor();
 
 	_localActorsHandler->RenderEditor();
 	_externalActorsHandler->RenderEditor();
@@ -483,6 +483,7 @@ change the map
 ***********************************************************/
 void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float Z, float R)
 {
+	LogHandler::getInstance()->LogToFile("Loading map " + NewMap + "...");
 	if(NewMap != _current_map)
 	{
 		Y+= 0.1;
@@ -557,6 +558,7 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float 
 	_mainPlayerHandler->SetAttached(false);
 	ReplaceMain();
 	_mainPlayerHandler->Show();
+	LogHandler::getInstance()->LogToFile("Map " + NewMap + " loaded");
 }
 
 
@@ -565,6 +567,8 @@ clean up all loaded world data in memory
 ***********************************************************/
 void LbaNetModel::CleanupWorld()
 {
+	LogHandler::getInstance()->LogToFile("Cleaning up world...");
+
 	CleanupMap();
 	_current_world = "";
 }
@@ -574,6 +578,8 @@ clean up all loaded map data in memory
 ***********************************************************/
 void LbaNetModel::CleanupMap()
 {
+	LogHandler::getInstance()->LogToFile("Cleaning up map...");
+
 	_current_map="";
 
 	if(_mapRenderer)
