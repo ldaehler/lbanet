@@ -123,7 +123,7 @@ void ChatReceiverServant::PublishMessage(const LbaNet::MessageEventPtr & evt)
 					evnew->timestamp = evt->timestamp;
 					evnew->name = evt->name;
 
-					for(size_t j=2; i<tok.size(); ++j)
+					for(size_t j=1; j<tok.size(); ++j)
 						evnew->message += tok[j] + " ";
 
 					_sessions[i]->AddEvent(evnew);

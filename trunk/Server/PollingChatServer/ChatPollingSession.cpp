@@ -27,6 +27,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ChatReceiverServant.h"
 #include <IceUtil/UUID.h>
 
+///Checks whether a std::string containg positive hexadecimal value
+///Returns true if possible
+///Returns false otherwise
+bool IsHexInt(const std::string& s)
+{
+	unsigned int rInt;
+	std::istringstream i(s);
+	i >> std::hex;
+	if (!(i >> rInt))
+		return false;
+
+	return true;
+}
+
 
 /***********************************************************
 constructor
@@ -37,7 +51,7 @@ ChatPollingSessionServant::ChatPollingSessionServant(const std::string username,
 :    _name(username),
     _timestamp(IceUtil::Time::now(IceUtil::Time::Monotonic)),
     _destroy(false), _chatP(chatP), _ctracker(ctracker),
-	_currcolor("FFFFFFFF")
+	_currcolor("FFFFFFFF"), _away(false), _timestamptalk(IceUtil::Time::now(IceUtil::Time::Monotonic))
 {
 	try
 	{
@@ -95,6 +109,15 @@ LbaNet::ChatRoomEventSeq ChatPollingSessionServant::getUpdates(const Ice::Curren
 
 	_timestamp = IceUtil::Time::now(IceUtil::Time::Monotonic);
 
+	// we are afk
+	if(!_away && (_timestamp -_timestamptalk) > IceUtil::Time::seconds(300))
+	{
+		_away = true;
+		_currstatus = "away";
+		UpdateStatus();
+	}
+		
+
 	LbaNet::ChatRoomEventSeq seq;
 	seq.swap(_events);
 	return seq;
@@ -108,6 +131,16 @@ Ice::Long ChatPollingSessionServant::send(const std::string& message, const Ice:
     IceUtil::Mutex::Lock sync(_mutex);
     if(_destroy)
         throw Ice::ObjectNotExistException(__FILE__, __LINE__);
+
+	_timestamptalk = IceUtil::Time::now(IceUtil::Time::Monotonic);
+
+	// we are not anymore afk
+	if(_away)
+	{
+		_away = false;
+		_currstatus = "";
+		UpdateStatus();
+	}
 
 
 	// return if text is empty
@@ -159,6 +192,23 @@ Ice::Long ChatPollingSessionServant::send(const std::string& message, const Ice:
 				UpdateStatus();
 				return IceUtil::Time::now().toMilliSeconds();
 			}
+
+			if(tok[0] == "/colour")
+			{
+				if(tok.size() < 2)
+					return IceUtil::Time::now().toMilliSeconds();
+
+				if(tok[1].size() == 6)
+				{
+					if(IsHexInt(tok[1]))
+					{
+						_currcolor = "FF"+tok[1];
+						UpdateStatus();
+						return IceUtil::Time::now().toMilliSeconds();
+					}
+				}
+			}
+
 		}
 	}
 

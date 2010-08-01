@@ -76,8 +76,10 @@ protected:
 private:
 	std::string			_name;
     IceUtil::Time		_timestamp; // The last time the session was refreshed.
+    IceUtil::Time		_timestamptalk; // The last time we talked.
     bool				_destroy;
     IceUtil::Mutex		_mutex;
+	bool				_away;
 
 	LbaNet::ChatRoomObserverPrx _chatP;
 	LbaNet::ConnectedTrackerPrx _ctracker;

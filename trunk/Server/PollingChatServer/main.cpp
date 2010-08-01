@@ -89,6 +89,6 @@ private:
 int main(int argc, char** argv)
 {
     PollingChatServer app;
-    return app.main(argc, argv/*, "config"*/);
+    return app.main(argc, argv, "config");
 }
 
