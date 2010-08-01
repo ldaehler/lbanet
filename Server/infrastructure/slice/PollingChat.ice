@@ -18,6 +18,20 @@
  **/
 module LbaNet
 {
+	class ChatUserStatus
+	{
+	    /** The name of the user. */
+	    string name;
+	    
+	    /** The color of the name. */    
+	    string color;
+	    
+	    /** The status of the user. */ 	    
+	    string status;
+	};
+
+	sequence<ChatUserStatus> UserSeq;
+
 
 	/**
 	 *
@@ -33,8 +47,6 @@ module LbaNet
 	    string name;
 	};
 	
-	sequence<string> UserSeq;
-
 	/**
 	 *
 	 * A sequence of state changes in the chat room.
@@ -79,6 +91,23 @@ module LbaNet
 	    /** The contents of the message. */
 	    string message;
 	};
+	
+	/**
+	 *
+	 * This event is generated when a user change his status
+	 *
+	 * @see ChatRoomEvent
+	 *
+	 **/
+	class UserStatusEvent extends ChatRoomEvent
+	{
+	    /** The color of the name. */    
+	    string color;
+	    
+	    /** The status of the user. */ 	    
+	    string status;	
+	};	
+	
 
 	/**
 	 *
