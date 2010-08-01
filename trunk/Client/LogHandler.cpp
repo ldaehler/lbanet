@@ -56,7 +56,7 @@ LogHandler * LogHandler::getInstance()
 Constructor
 ***********************************************************/
 LogHandler::LogHandler()
-: _logfile("LBAClient.log", std::ios::app)
+: _logfile("LBAClient.log")
 {
 	_logfile<<std::endl<<std::endl<<"**********************************"<<std::endl;
 	_logfile<<IceUtil::Time::now().toDateTime()<<" - Starting new game."<<std::endl;
