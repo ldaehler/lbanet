@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Stream.h"
 #include <limits>
 #include <fstream>
-
+#include "PhysXErrorStream.h"
 
 #include <windows.h>    // Header File For Windows
 #include <GL/gl.h>      // Header File For The OpenGL32 Library
@@ -244,9 +244,14 @@ PhysXEngine::~PhysXEngine()
 void PhysXEngine::Init(float gravity)
 {
 	// Create the physics SDK
-    gPhysicsSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION);
+	NxPhysicsSDKDesc desc;
+	NxSDKCreateError errorCode = NXCE_NO_ERROR;
+	gPhysicsSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION, NULL, new PhysXErrorStream(), desc, &errorCode);
     if (!gPhysicsSDK)  
+	{
+		LogHandler::getInstance()->LogToFile("Problem initializing physX - error initializing creating SDK. Make sure you have the physX drivers installed!");
 		return;
+	}
 
 	if (gPhysicsSDK->getFoundationSDK().getRemoteDebugger())
 		gPhysicsSDK->getFoundationSDK().getRemoteDebugger()->connect("localhost", 5425);
@@ -270,7 +275,10 @@ void PhysXEngine::Init(float gravity)
 		sceneDesc.simType			= NX_SIMULATION_SW; 
 		gScene = gPhysicsSDK->createScene(sceneDesc);  
 		if(!gScene) 
+		{
+			LogHandler::getInstance()->LogToFile("Problem initializing physX - error initializing the scene. Make sure you have the physX drivers installed!");
 			return;
+		}
 	}
 
 	gScene->setUserContactReport(&myReport);
