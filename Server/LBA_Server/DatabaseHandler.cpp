@@ -123,7 +123,7 @@ void DatabaseHandler::Connect()
 
 		if (!_mysqlH->connect(_db.c_str(), _server.c_str(), _user.c_str(), _password.c_str()))
 		{
-			std::cerr<<IceUtil::Time::now()<<": LBA_Server - DB connection failed: " << _mysqlH->error() << std::endl;
+			std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - DB connection failed: " << _mysqlH->error() << std::endl;
 		}
 	}
 	catch(...){}
@@ -168,7 +168,7 @@ LbaNet::SavedWorldInfo DatabaseHandler::ChangeWorld(const std::string& NewWorldN
 			query.clear();
 			query << "UPDATE lba_usertoworld SET lastvisited = UTC_TIMESTAMP() WHERE id = '"<<res[0][0]<<"'";
 			if(!query.exec())
-				std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update usertoworldmap.lastvisited failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
+				std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - Update usertoworldmap.lastvisited failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
 
 			// player pos part
 			resP.ppos.MapName = res[0][1].c_str();
@@ -179,9 +179,21 @@ LbaNet::SavedWorldInfo DatabaseHandler::ChangeWorld(const std::string& NewWorldN
 
 			// player inventory part
 			resP.inventory.InventorySize = res[0][6];
+			if(resP.inventory.InventorySize > 500)
+			{
+				resP.inventory.InventorySize = 30;
+				std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - Database inconstistant for user id "<<PlayerId<<" : inventory size too big"<<std::endl;
+			}
 
 			std::vector<std::string> tokens;
 			std::string shortcutstr = res[0][7].c_str();
+			if(shortcutstr == "")
+			{
+				shortcutstr = "-1#-1#-1#-1#-1#-1#-1#-1#-1#-1";
+				std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - Database inconstistant for user id "<<PlayerId<<" : shortcuts are empty"<<std::endl;
+			}
+
+
 			Tokenize(shortcutstr, tokens, "#");
 			for(size_t i=0; i<tokens.size(); ++i)
 				resP.inventory.UsedShorcuts.push_back(atoi(tokens[i].c_str()));
@@ -222,7 +234,7 @@ LbaNet::SavedWorldInfo DatabaseHandler::ChangeWorld(const std::string& NewWorldN
 					query << "INSERT lba_usertoworld (userid, worldid, lastvisited) VALUES('";
 					query << PlayerId << "', '"<<worldid<<"', UTC_TIMESTAMP())";
 					if(!query.exec())
-						std::cerr<<IceUtil::Time::now()<<": LBA_Server - INSERT lba_usertoworld failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
+						std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - INSERT lba_usertoworld failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
 				}
 			}
 
@@ -238,7 +250,7 @@ LbaNet::SavedWorldInfo DatabaseHandler::ChangeWorld(const std::string& NewWorldN
 			query.clear();
 			query << "UPDATE lba_users SET currentworldid = '"<<worldid<<"' WHERE id = '"<<PlayerId<<"'";
 			if(!query.exec())
-				std::cerr<<IceUtil::Time::now()<<": LBA_Server - UPDATE users failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
+				std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - UPDATE users failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
 		}
 	}
 	else
@@ -279,7 +291,7 @@ void DatabaseHandler::UpdatePositionInWorld(const LbaNet::PlayerPosition& Positi
 	query << " AND worldid = (SELECT id FROM lba_worlds WHERE name = '"<<WorldName<<"')";
 	if(!query.exec())
 	{
-		std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update UpdatePositionInWorld failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
+		std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - Update UpdatePositionInWorld failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
 		Clear();
 	}
 
@@ -317,7 +329,7 @@ void DatabaseHandler::QuitWorld(const std::string& LastWorldName,long PlayerId,
 		query << " AND worldid = (SELECT id FROM lba_worlds WHERE name = '"<<LastWorldName<<"')";
 		if(!query.exec())
 		{
-			std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update usertoworldmap.timeplayedmin failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
+			std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - Update usertoworldmap.timeplayedmin failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
 			Clear();
 		}
 	}
@@ -365,29 +377,36 @@ void DatabaseHandler::UpdateInventory(const LbaNet::InventoryInfo &Inventory, co
 	{
 		if(res.size() > 0)
 		{
+			long curid = res[0][0];
+
 			query.clear();
 			query << "UPDATE lba_usertoworld SET InventorySize = '"<<Inventory.InventorySize<<"',";
 			query << "Shortcuts = '"<<shortcutstring.str()<<"' ";
-			query << " WHERE id = '"<<res[0][0]<<"'";
+			query << " WHERE id = '"<<curid<<"'";
 			if(!query.exec())
-				std::cout<<"LBA_Server - Update usertoworldmap_inv failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
-
+			{
+				std::cout<<IceUtil::Time::now().toDateTime()<<": LBA_Server - Update usertoworldmap_inv failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
+				return;
+			}
 
 			query.clear();
 			query << "DELETE FROM lba_inventory";
-			query << " WHERE worldid = '"<<res[0][0]<<"'";
+			query << " WHERE worldid = '"<<curid<<"'";
 			if(!query.exec())
-				std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update DELETE failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
-
+			{
+				std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - Update DELETE failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
+				return;
+			}
+		
 			LbaNet::InventoryMap::const_iterator iti = Inventory.InventoryStructure.begin();
 			LbaNet::InventoryMap::const_iterator endi = Inventory.InventoryStructure.end();
 			for(;iti != endi; ++iti)
 			{
 				query.clear();
 				query << "INSERT INTO lba_inventory (worldid, objectid, number, InventoryPlace) VALUES('";
-				query << res[0][0] << "', '" << iti->first << "', '" << iti->second.Number << "', '" << iti->second.PlaceInInventory << "')";
+				query << curid << "', '" << iti->first << "', '" << iti->second.Number << "', '" << iti->second.PlaceInInventory << "')";
 				if(!query.exec())
-					std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update INSERT usertoworldmap failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
+					std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - Update INSERT usertoworldmap failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
 
 			}
 		}
@@ -452,7 +471,7 @@ bool DatabaseHandler::AskFriend(long myId, const std::string &friendname)
 					query << ",('" << juid << "', '" << myId << "', '0', '0', NOW(), 'Friend request from Lbanet', 'Friend')";
 					if(!query.exec())
 					{
-						std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update INSERT friends failed for user id "<<myId<<" : "<<query.error()<<std::endl;
+						std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - Update INSERT friends failed for user id "<<myId<<" : "<<query.error()<<std::endl;
 						return false;
 					}
 
@@ -523,7 +542,7 @@ bool DatabaseHandler::AcceptFriend(long myId, long friendid, std::string &friend
 								query << " WHERE (referenceid = '"<<myId<<"' AND memberid = '"<<juid<<"')";
 								query << " OR (referenceid = '"<<juid<<"' AND memberid = '"<<myId<<"')";
 								if(!query.exec())
-									std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update UPDATE friends failed for user id "<<myId<<" : "<<query.error()<<std::endl;
+									std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - Update UPDATE friends failed for user id "<<myId<<" : "<<query.error()<<std::endl;
 
 
 								return true;
@@ -583,7 +602,7 @@ void DatabaseHandler::RemoveFriend(long myId, long friendid)
 					query << " WHERE (referenceid = '"<<myId<<"' AND memberid = '"<<juid<<"')";
 					query << " OR (referenceid = '"<<juid<<"' AND memberid = '"<<myId<<"')";
 					if(!query.exec())
-						std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update DELETE friends failed for user id "<<myId<<" : "<<query.error()<<std::endl;
+						std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - Update DELETE friends failed for user id "<<myId<<" : "<<query.error()<<std::endl;
 				}
 			}
 		}
@@ -653,7 +672,7 @@ LbaNet::FriendsSeq DatabaseHandler::GetFriends(long myId)
 	}
 	else
 	{
-		std::cerr<<IceUtil::Time::now()<<": LBA_Server - GetFriends failed: "<<query.error()<<std::endl;
+		std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - GetFriends failed: "<<query.error()<<std::endl;
 		Clear();
 	}
 
@@ -691,7 +710,7 @@ long DatabaseHandler::AddLetter(long myId, const std::string& title, const std::
 	query << myId << "', UTC_TIMESTAMP(), "<<mysqlpp::quote<< title <<", " <<mysqlpp::quote<< message << ")";
 	if(!query.exec())
 	{
-		std::cerr<<IceUtil::Time::now()<<": LBA_Server - Update INSERT letters failed for user id "<<myId<<" : "<<query.error()<<std::endl;
+		std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - Update INSERT letters failed for user id "<<myId<<" : "<<query.error()<<std::endl;
 		Clear();
 	}
 	else
@@ -748,7 +767,7 @@ LbaNet::LetterInfo DatabaseHandler::GetLetterInfo(Ice::Long LetterId)
 	}
 	else
 	{
-		std::cerr<<IceUtil::Time::now()<<": LBA_Server - GetLetterInfo failed: "<<query.error()<<std::endl;
+		std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - GetLetterInfo failed: "<<query.error()<<std::endl;
 		Clear();
 	}
 
@@ -801,7 +820,7 @@ void DatabaseHandler::GetQuestInfo(const std::string& WorldName, long PlayerId,
 				}
 			}
 			else
-				std::cerr<<IceUtil::Time::now()<<": LBA_Server - Quest SELECT failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
+				std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - Quest SELECT failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
 		}
 	}
 	else
@@ -843,7 +862,7 @@ void DatabaseHandler::SetQuestInfo(const std::string& WorldName, long PlayerId,
 			query << "DELETE FROM lba_quests";
 			query << " WHERE worldid = '"<<res[0][0]<<"'";
 			if(!query.exec())
-				std::cerr<<IceUtil::Time::now()<<": LBA_Server - Quest DELETE failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
+				std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - Quest DELETE failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
 
 			std::vector<long>::const_iterator iti = questStarted.begin();
 			std::vector<long>::const_iterator endi = questStarted.end();
@@ -853,7 +872,7 @@ void DatabaseHandler::SetQuestInfo(const std::string& WorldName, long PlayerId,
 				query << "INSERT INTO lba_quests (worldid, questid, status) VALUES('";
 				query << res[0][0] << "', '" << *iti << "', '" << 0  << "')";
 				if(!query.exec())
-					std::cerr<<IceUtil::Time::now()<<": LBA_Server - Quest INSERT failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
+					std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - Quest INSERT failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
 			}
 
 			iti = questFinished.begin();
@@ -864,7 +883,7 @@ void DatabaseHandler::SetQuestInfo(const std::string& WorldName, long PlayerId,
 				query << "INSERT INTO lba_quests (worldid, questid, status) VALUES('";
 				query << res[0][0] << "', '" << *iti << "', '" << 1  << "')";
 				if(!query.exec())
-					std::cerr<<IceUtil::Time::now()<<": LBA_Server - Quest INSERT failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
+					std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - Quest INSERT failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
 			}
 		}
 	}
@@ -917,7 +936,7 @@ void DatabaseHandler::RecordKill(const std::string& WorldName, long KilledId, in
 		query << " AND worldid = (SELECT id FROM lba_worlds WHERE name = '"<<WorldName<<"')";
 		if(!query.exec())
 		{
-			std::cerr<<IceUtil::Time::now()<<": LBA_Server - RecordKill failed for user id "<<KilledId<<" : "<<query.error()<<std::endl;
+			std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - RecordKill failed for user id "<<KilledId<<" : "<<query.error()<<std::endl;
 			Clear();
 		}
 	}
@@ -943,7 +962,7 @@ void DatabaseHandler::RecordKill(const std::string& WorldName, long KilledId, in
 			query << " AND worldid = (SELECT id FROM lba_worlds WHERE name = '"<<WorldName<<"')";
 			if(!query.exec())
 			{
-				std::cerr<<IceUtil::Time::now()<<": LBA_Server - RecordKiller failed for user id "<<KillerId<<" : "<<query.error()<<std::endl;
+				std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - RecordKiller failed for user id "<<KillerId<<" : "<<query.error()<<std::endl;
 				Clear();
 			}
 		}
@@ -986,7 +1005,7 @@ void DatabaseHandler::SendPM(const LbaNet::PMInfo &pm)
 		query << ", UNIX_TIMESTAMP() )";
 		if(!query.exec())
 		{
-			std::cerr<<IceUtil::Time::now()<<": LBA_Server - SendPM failed for user id "<<pm.FromName<<" : "<<query.error()<<std::endl;
+			std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - SendPM failed for user id "<<pm.FromName<<" : "<<query.error()<<std::endl;
 		}
 
 	}
@@ -1012,7 +1031,7 @@ void DatabaseHandler::DeletePM(Ice::Long pmid)
 	query << "UPDATE jos_uddeim SET totrash='1', totrashdate=UNIX_TIMESTAMP() WHERE id = '"<<pmid<<"'";
 	if(!query.exec())
 	{
-		std::cerr<<IceUtil::Time::now()<<": LBA_Server - DeletePM failed for id "<<pmid<<" : "<<query.error()<<std::endl;
+		std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - DeletePM failed for id "<<pmid<<" : "<<query.error()<<std::endl;
 		Clear();
 	}
 
@@ -1038,7 +1057,7 @@ void DatabaseHandler::MarkReadPM(Ice::Long pmid)
 	query << "UPDATE jos_uddeim SET toread='1' WHERE id = '"<<pmid<<"'";
 	if(!query.exec())
 	{
-		std::cerr<<IceUtil::Time::now()<<": LBA_Server - MarkReadPM failed for id "<<pmid<<" : "<<query.error()<<std::endl;
+		std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - MarkReadPM failed for id "<<pmid<<" : "<<query.error()<<std::endl;
 		Clear();
 	}
 
@@ -1108,7 +1127,7 @@ LbaNet::PMsSeq DatabaseHandler::GetInboxPM(long playerid)
 	}
 	else
 	{
-		std::cerr<<IceUtil::Time::now()<<": LBA_Server - GetInboxPM failed for playerid "<<playerid<<" : "<<query.error()<<std::endl;
+		std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - GetInboxPM failed for playerid "<<playerid<<" : "<<query.error()<<std::endl;
 		Clear();
 	}
 

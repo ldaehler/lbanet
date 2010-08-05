@@ -115,12 +115,12 @@ void DatabaseHandler::Connect()
 
 		if (!_mysqlH->connect(_db.c_str(), _server.c_str(), _user.c_str(), _password.c_str()))
 		{
-			std::cerr<<IceUtil::Time::now()<<": Connected tracker - DB connection failed: " << _mysqlH->error() << std::endl;
+			std::cerr<<IceUtil::Time::now().toDateTime()<<": Connected tracker - DB connection failed: " << _mysqlH->error() << std::endl;
 		}
 	}
 	catch(...)
 	{
-		std::cerr<<IceUtil::Time::now()<<": unknown execption during DB connection" << std::endl;
+		std::cerr<<IceUtil::Time::now().toDateTime()<<": unknown execption during DB connection" << std::endl;
 	}
 }
 
@@ -136,7 +136,7 @@ long DatabaseHandler::CheckLogin(const std::string & PlayerName, const std::stri
 		Connect();
 		if(!_mysqlH->connected())
 		{
-			std::cerr<<IceUtil::Time::now()<<": Connected tracker - CheckLoginfailed for user "<<PlayerName<<std::endl;
+			std::cerr<<IceUtil::Time::now().toDateTime()<<": Connected tracker - CheckLoginfailed for user "<<PlayerName<<std::endl;
 			Clear();
 			return -1;
 		}
@@ -163,7 +163,7 @@ long DatabaseHandler::CheckLogin(const std::string & PlayerName, const std::stri
 			std::string md5pass = MD5(Password + entries[1]).hexdigest();
 			if(md5pass != entries[0])
 			{
-				std::cout<<IceUtil::Time::now()<<": Wrong password for user "<<PlayerName<<std::endl;
+				std::cout<<IceUtil::Time::now().toDateTime()<<": Wrong password for user "<<PlayerName<<std::endl;
 				return -1;
 			}
 
@@ -178,7 +178,7 @@ long DatabaseHandler::CheckLogin(const std::string & PlayerName, const std::stri
 				query.clear();
 				query << "UPDATE lba_users SET lastconnected = UTC_TIMESTAMP(), connected = '1' WHERE id = '"<<lbaid<<"'";
 				if(!query.exec())
-					std::cerr<<IceUtil::Time::now()<<": Connected tracker - Update lastconnected failed for user id "<<lbaid<<" : "<<query.error()<<std::endl;
+					std::cerr<<IceUtil::Time::now().toDateTime()<<": Connected tracker - Update lastconnected failed for user id "<<lbaid<<" : "<<query.error()<<std::endl;
 			}
 			else
 			{
@@ -186,7 +186,7 @@ long DatabaseHandler::CheckLogin(const std::string & PlayerName, const std::stri
 				query.clear();
 				query << "INSERT  INTO lba_users (josiid, lastconnected, connected) VALUES('"<<juid<<"', UTC_TIMESTAMP(), '1')";
 				if(!query.exec())
-					std::cerr<<IceUtil::Time::now()<<": Connected tracker - Can not create new lba user entry for id "<<juid<<" : "<<query.error()<<std::endl;
+					std::cerr<<IceUtil::Time::now().toDateTime()<<": Connected tracker - Can not create new lba user entry for id "<<juid<<" : "<<query.error()<<std::endl;
 				else
 				{
 					// get the id afterwards
@@ -210,7 +210,7 @@ long DatabaseHandler::CheckLogin(const std::string & PlayerName, const std::stri
 		}
 	}
 
-	std::cerr<<IceUtil::Time::now()<<": Connected tracker - CheckLoginfailed for user "<<PlayerName<<" : "<<query.error()<<std::endl;
+	std::cerr<<IceUtil::Time::now().toDateTime()<<": Connected tracker - CheckLoginfailed for user "<<PlayerName<<" : "<<query.error()<<std::endl;
 	Clear();
 	return -1;
 }
@@ -228,7 +228,7 @@ void DatabaseHandler::DisconnectUser(long Id)
 		Connect();
 		if(!_mysqlH->connected())
 		{
-			std::cerr<<IceUtil::Time::now()<<": Connected tracker - Update DisconnectUser failed for user id "<<Id<<std::endl;
+			std::cerr<<IceUtil::Time::now().toDateTime()<<": Connected tracker - Update DisconnectUser failed for user id "<<Id<<std::endl;
 			Clear();
 			return;
 		}
@@ -238,7 +238,7 @@ void DatabaseHandler::DisconnectUser(long Id)
 	query << "UPDATE lba_users SET playedtimemin = playedtimemin + TIMESTAMPDIFF(MINUTE, lastconnected, UTC_TIMESTAMP()), connected = '0' WHERE id = '"<<Id<<"'";
 	if(!query.exec())
 	{
-		std::cerr<<IceUtil::Time::now()<<": Connected tracker - Update timeplayed failed for user id "<<Id<<" : "<<query.error()<<std::endl;
+		std::cerr<<IceUtil::Time::now().toDateTime()<<": Connected tracker - Update timeplayed failed for user id "<<Id<<" : "<<query.error()<<std::endl;
 		Clear();
 	}
 }
