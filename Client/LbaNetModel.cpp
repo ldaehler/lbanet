@@ -440,7 +440,7 @@ void LbaNetModel::ChangeWorld(const std::string & NewWorldName, const std::strin
 			// wait for the server to return with player position
 			ThreadSafeWorkpile::PlayerWorldPos ppos = ThreadSafeWorkpile::getInstance()->WaitForPlayerPosition();
 
-
+			_mainPlayerHandler->PlayerChangeStance(1);
 			if(ppos.MapName == "")
 			{
 				// load the first map

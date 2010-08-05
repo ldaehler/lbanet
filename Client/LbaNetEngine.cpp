@@ -168,6 +168,7 @@ void LbaNetEngine::Initialize(void)
 
 	LoadHaloTexture();
 
+	LogHandler::getInstance()->LogToFile("Initializing physX...");
 	float gravity = -1.0;
 	ConfigurationManager::GetInstance()->GetFloat("Physic.GlobalGravity", gravity);
 	PhysXEngine::getInstance()->Init(gravity);
@@ -530,6 +531,7 @@ create a new screen surface
 ***********************************************************/
 void LbaNetEngine::ResetScreen()
 {
+	LogHandler::getInstance()->LogToFile("Clearing old screen data...");
 	if(m_screen)
 	{
 		SDL_FreeSurface(m_screen);
@@ -539,12 +541,16 @@ void LbaNetEngine::ResetScreen()
 
 	if (!m_fullscreen)
 	{
+		LogHandler::getInstance()->LogToFile("Creating screen for windowed mode...");
 		m_screen = SDL_SetVideoMode(m_screen_size_X, m_screen_size_Y, 0, SDL_OPENGL);
+		LogHandler::getInstance()->LogToFile("Getting video info...");
 		const SDL_VideoInfo *vidI = SDL_GetVideoInfo();
 	}
 	else
 	{
+		LogHandler::getInstance()->LogToFile("Creating screen for fullscreen mode...");
 		m_screen = SDL_SetVideoMode(m_screen_size_X, m_screen_size_Y, 0, SDL_OPENGL|SDL_FULLSCREEN);
+		LogHandler::getInstance()->LogToFile("Getting video info...");
 		const SDL_VideoInfo *vidI = SDL_GetVideoInfo();
 	}
 }

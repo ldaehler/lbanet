@@ -714,11 +714,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\Entities.h"
+				RelativePath=".\Entities.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Entities.h"
+				RelativePath="..\common\Entities.h"
 				>
 			</File>
 			<File
@@ -770,19 +770,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\HQRHandler.h"
-				>
-			</File>
-			<File
 				RelativePath=".\HQRHandler.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\HQRlib.h"
+				RelativePath="..\common\HQRHandler.h"
 				>
 			</File>
 			<File
 				RelativePath=".\HQRlib.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\HQRlib.h"
 				>
 			</File>
 			<File
@@ -951,6 +951,10 @@
 			</File>
 			<File
 				RelativePath=".\PhysXEngine.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PhysXErrorStream.h"
 				>
 			</File>
 			<File
