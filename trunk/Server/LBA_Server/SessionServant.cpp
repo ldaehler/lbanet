@@ -1008,6 +1008,7 @@ add friend function
 ***********************************************************/
 void SessionServant::AskFriend(const std::string &friendname, const ::Ice::Current& c)
 {
+    Lock sync(*this);
 	if(_dbh.AskFriend(_userNum, friendname))
 		Whisper(friendname, "Info - you have a new friend request from " + _userId, c);
 
@@ -1019,6 +1020,7 @@ add friend function
 ***********************************************************/
 void SessionServant::AcceptFriend(Ice::Long friendid, const ::Ice::Current& c)
 {
+    Lock sync(*this);
 	std::string friendname;
 	if(_dbh.AcceptFriend(_userNum, friendid, friendname))
 		Whisper(friendname, "Info - your friend request has been accepted by " + _userId, c);
@@ -1031,6 +1033,7 @@ remove friend function
 ***********************************************************/
 void SessionServant::RemoveFriend(Ice::Long friendid, const ::Ice::Current& c)
 {
+    Lock sync(*this);
 	_dbh.RemoveFriend(_userNum, friendid);
 	GetFriends(c);
 }
@@ -1039,7 +1042,8 @@ void SessionServant::RemoveFriend(Ice::Long friendid, const ::Ice::Current& c)
 get friends function
 ***********************************************************/
 void SessionServant::GetFriends(const ::Ice::Current&)
-{
+{    
+	Lock sync(*this);
 	if(_client_observer)
 		_client_observer->RefreshFriends(_dbh.GetFriends(_userNum));
 }

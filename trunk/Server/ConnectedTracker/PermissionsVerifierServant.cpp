@@ -41,7 +41,7 @@ check user permission
 bool PermissionsVerifierServant::checkPermissions(const std::string& userId, const std::string& passwd,
 												  std::string& reason, const Ice::Current&) const
 {
-	std::cout<<"Got login request from user "<<userId<<std::endl;
+	std::cout<<IceUtil::Time::now().toDateTime()<<": "<<"Got login request from user "<<userId<<std::endl;
 
 
 	if(userId == "")
