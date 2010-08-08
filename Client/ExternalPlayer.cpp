@@ -36,12 +36,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "NxActor.h"
 #include "Actor.h"
 
+#include <math.h>
+
+#ifndef M_PI
+#define M_PI    3.14159265358979323846f
+#endif
 
 /***********************************************************
 	Constructor
 ***********************************************************/
 ExternalPlayer::ExternalPlayer(const LbaNet::ActorInfo & ainfo, float animationSpeed)
-: _last_update(0), _renderer(NULL), _magicballH(false), _physH(NULL), _usdata(NULL)
+: _last_update(0), _renderer(NULL), _magicballH(false), _physH(NULL), _usdata(NULL), 
+	_forward(false), _collisionx(false), _collisionz(false)
 {
 	_renderer = new Player(animationSpeed);
 
@@ -49,12 +55,14 @@ ExternalPlayer::ExternalPlayer(const LbaNet::ActorInfo & ainfo, float animationS
 	_renderer->SetPosition(ainfo.X,  ainfo.Y, ainfo.Z);
 	_renderer->SetRotation(ainfo.Rotation);
 
-	float posx = _renderer->GetPosX();
-	float posy = _renderer->GetPosY();
-	float posz = _renderer->GetPosZ();
 	float sizex = _renderer->GetSizeX();
 	float sizey = _renderer->GetSizeY();
 	float sizez = _renderer->GetSizeZ();
+
+	float posx = _renderer->GetPosX();
+	float posy = _renderer->GetPosY();
+	float posz = _renderer->GetPosZ();
+
 
 	if(sizex > 0)
 	{
@@ -64,12 +72,14 @@ ExternalPlayer::ExternalPlayer(const LbaNet::ActorInfo & ainfo, float animationS
 		// add physique info
 		_usdata = new ActorUserData(3, ainfo.ActorId, NULL);
 		_physH = PhysXEngine::getInstance()->CreateBox(NxVec3(posx,  posy, posz), 
-															sizex, sizey, sizez, 1.0, 2, _usdata, false);
+															sizex, sizey, sizez, 1.0, 2, _usdata, 
+															false);
 	}
 
 	_renderer->SetPhysController(new ActorPositionHandler(_physH, ainfo.X,  ainfo.Y, ainfo.Z));
 	_magicballH.SetOwner(_renderer);
 
+	_renderer->SetPosition(ainfo.X,  ainfo.Y, ainfo.Z);
 }
 
 /***********************************************************
@@ -110,13 +120,32 @@ void ExternalPlayer::Update(const LbaNet::ActorInfo & ainfo)
 
 		_renderer->SetSize(ainfo.SizeX, ainfo.SizeY, ainfo.SizeZ); 
 
-		_velocityX = ainfo.vX;
-		_velocityY = ainfo.vY;
-		_velocityZ = ainfo.vZ;
+		float vx = ainfo.vX;
+		_forward = (bool)(int)vx;
+
+		float vy = ainfo.vY;
+		_collisionx = (bool)(int)vy;
+
+		float vz = ainfo.vZ;
+		_collisionz = (bool)(int)vz;
+
+		//_velocityX = ainfo.vX;
+		//_velocityY = ainfo.vY;
+		//_velocityZ = ainfo.vZ;
 		_velocityR = ainfo.vRotation;
 
-		if(_velocityX == 0 && _velocityY == 0 && _velocityZ == 0)
+		//if(_velocityX == 0 && _velocityY == 0 && _velocityZ == 0)
+		//	_renderer->SetPosition(ainfo.X,  ainfo.Y, ainfo.Z);
+
+		if(!_forward)
 			_renderer->SetPosition(ainfo.X,  ainfo.Y, ainfo.Z);
+
+		if(_collisionx)
+			_renderer->SetPosition(ainfo.X, _renderer->GetPosY(), _renderer->GetPosZ());
+
+		if(_collisionz)
+			_renderer->SetPosition(_renderer->GetPosX(), _renderer->GetPosY(), ainfo.Z);
+
 
 		if(_velocityR == 0)
 			_renderer->SetRotation(ainfo.Rotation);
@@ -124,7 +153,7 @@ void ExternalPlayer::Update(const LbaNet::ActorInfo & ainfo)
 		// update dead reckon for the rest
 		_dr.Set(SynchronizedTimeHandler::getInstance()->GetCurrentTimeDouble()/*ainfo.Time*/,
 					ainfo.X,  ainfo.Y, ainfo.Z, ainfo.Rotation,
-					ainfo.vX, ainfo.vY, ainfo.vZ, ainfo.vRotation);
+					/*ainfo.vX, ainfo.vY, ainfo.vZ,*/ ainfo.vRotation);
 
 		_renderer->SetNameColor(ainfo.NameR, ainfo.NameG, ainfo.NameB);
 	}
@@ -155,20 +184,26 @@ int ExternalPlayer::Process(double tnow, float tdiff)
 {
 	_magicballH.Process();
 
+	// calculate dead reckon rotation
+	_dr.UpdateRot(tnow);
+
 	// calculate prediction
-	float predicted_posX = _renderer->GetPosX() + (_velocityX*tdiff);
-	float predicted_posY = _renderer->GetPosY() + (_velocityY*tdiff);
-	float predicted_posZ = _renderer->GetPosZ() + (_velocityZ*tdiff);
+	CalculateVelocity(_dr._predicted_rotation);
+
 	float predicted_rotation = _renderer->GetRotation() + (_velocityR*tdiff);
+	float predicted_posX = _renderer->GetPosX() + (_velocityX);
+	float predicted_posY = _renderer->GetPosY() + (_velocityY);
+	float predicted_posZ = _renderer->GetPosZ() + (_velocityZ);
+
 
 	// calculate dead reckon
-	_dr.Update(tnow);
+	_dr.Update(_velocityX, _velocityY, _velocityZ);
 
 
 	//// do interpolation X
 	{
 		float diffX = _dr._predicted_posX - predicted_posX;
-		if(fabs(diffX) > 8)
+		if(fabs(diffX) > 8 || fabs(diffX) < 0.01)
 			predicted_posX = _dr._predicted_posX;
 		else
 			predicted_posX += diffX / 40;
@@ -178,7 +213,7 @@ int ExternalPlayer::Process(double tnow, float tdiff)
 	//// do interpolation Y
 	{
 		float diffY = _dr._predicted_posY - predicted_posY;
-		if(fabs(diffY) > 8)
+		if(fabs(diffY) > 8 || fabs(diffY) < 0.01)
 			predicted_posY = _dr._predicted_posY;
 		else
 			predicted_posY += diffY / 40;
@@ -188,7 +223,7 @@ int ExternalPlayer::Process(double tnow, float tdiff)
 	//// do interpolation Z
 	{
 		float diffZ = _dr._predicted_posZ - predicted_posZ;
-		if(fabs(diffZ) > 8)
+		if(fabs(diffZ) > 8 || fabs(diffZ) < 0.01)
 			predicted_posZ = _dr._predicted_posZ;
 		else
 			predicted_posZ += diffZ / 40;
@@ -249,3 +284,59 @@ void ExternalPlayer::MagicBallComeback()
 
 
 
+/***********************************************************
+recalculate actor velocity
+***********************************************************/
+void ExternalPlayer::CalculateVelocity(float rotation)
+{
+	if(!_forward)
+	{
+		_velocityX = 0;
+		_velocityY = 0;
+		_velocityZ = 0;
+		return;
+	}
+
+	float halfM = -_renderer->GetRendererSpeed();
+	
+	//speed up if dino
+	if(_renderer->GetModel() == 64)
+		halfM *= 3;
+
+
+	int nbA = ((int)rotation) / 90;
+	int modA = ((int)rotation) % 90;
+
+
+	float radA =  M_PI * (modA) / 180.0f;
+
+
+	if(nbA == 0)
+	{
+		_velocityX = sin(radA) * -halfM;
+		_velocityZ = cos(radA) * -halfM;
+	}
+	if(nbA == 1)
+	{
+		_velocityX = cos((float)radA) * -halfM;
+		_velocityZ = sin((float)radA) * halfM;
+	}
+	if(nbA == 2)
+	{
+		_velocityX = sin(radA) * halfM;
+		_velocityZ = cos(radA) * halfM;
+	}
+	if(nbA == 3)
+	{
+		_velocityX = cos((float)radA) * halfM;
+		_velocityZ = sin((float)radA) * -halfM;
+	}
+
+	_velocityY = _renderer->GetRendererSpeedY();
+
+	if(_collisionx)
+		_velocityX = 0;
+
+	if(_collisionz)
+		_velocityZ = 0;
+}

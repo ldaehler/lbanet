@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _LBANET_CAMERA_H_
 #define _LBANET_CAMERA_H_
 
+#include "averages.h"
 
 class Actor;
 
@@ -95,6 +96,10 @@ private:
 	double	_lastactY;
 	double	_lastactZ;
 	bool	_movecamera;
+
+	MeanValue		_speedxema;
+	MeanValue		_speedyema;
+	MeanValue		_speedzema;
 };
 
 

@@ -46,6 +46,7 @@ public:
 	ActorPositionHandler(NxActor* contr, float X, float Y, float Z);
 
 	void SetPosition(float X, float Y, float Z);
+	void GetPosition(float &X, float &Y, float &Z);
 
 	NxActor* GetActor()
 	{ return controller; }
@@ -53,10 +54,10 @@ public:
 	void Hide();
 	void Show();
 
+	// check if graphic need to be refresh from physic
+	bool GraphicsNeedUpdate();
+
 private:
-	float lastX;
-	float lastY;
-	float lastZ;
 	NxActor* controller;
 };
 
@@ -105,6 +106,9 @@ public:
 
 	// render physic shapes
 	virtual void Render();
+
+	// set if actor is allowed to move objects
+	virtual void SetAllowedMoving(bool allowed);
 
 protected:
 

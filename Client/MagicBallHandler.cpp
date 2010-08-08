@@ -217,7 +217,7 @@ void MagicBallHandler::Launch(float PosX, float PosY, float PosZ, float dirX, fl
 															3, _physdata, 
 															_MagicBallBounciness,
 															_MagicBallStaticFriction,
-															_MagicBallDynamicFriction);
+															_MagicBallDynamicFriction, true);
 
 	_physH->setContactReportFlags(NX_NOTIFY_ON_START_TOUCH);
 

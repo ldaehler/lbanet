@@ -136,6 +136,8 @@ public:
 
 	// debug function
 	void GoNextRoom();
+	void CamPlus();
+	void CamMinus();
 
 	// called when a signal has been generated
 	void SignalEvent(long signal, const std::vector<long> &targets);
@@ -200,11 +202,13 @@ private:
 
 	LocalActorsHandler*		_localActorsHandler;
 	ExternalActorsHandler*	_externalActorsHandler;
+	std::vector<Actor *>	_actifactors;
 
 	InventoryHandler*		_inventoryHandler;
 	GuiHandler*				_guiH;
 	ExitsHandler*			_exitsH;
 
+	float					_camRot;
 
 
 	std::string				_current_world;		// the current world in play

@@ -49,9 +49,9 @@ public:
 	float			_posZ;
 	float			_rotation;
 
-	float			_velocityX;
-	float			_velocityY;
-	float			_velocityZ;
+	//float			_velocityX;
+	//float			_velocityY;
+	//float			_velocityZ;
 	float			_velocityR;
 
 
@@ -60,33 +60,43 @@ public:
 	float			_predicted_posZ;
 	float			_predicted_rotation;
 
+
 	// set reckon value
 	void Set(const double & time, float posX, float posY, float posZ,
-				float rotation, float velocityX, float velocityY,
-				float velocityZ, float velocityR)
+				float rotation/*, float velocityX, float velocityY,
+				float velocityZ*/, float velocityR)
 	{
 		_time = time;
 
 		_posX = posX;
 		_posY = posY;
 		_posZ = posZ;
+		_predicted_posX = posX;
+		_predicted_posY = posY;
+		_predicted_posZ = posZ;
+
 		_rotation = rotation;
 
-		_velocityX = velocityX;
-		_velocityY = velocityY;
-		_velocityZ = velocityZ;
+		//_velocityX = velocityX;
+		//_velocityY = velocityY;
+		//_velocityZ = velocityZ;
 		_velocityR = velocityR;
 	}
 
 
 	// calculate reackon prediction on each tick
-	void Update(const double & currtime)
+	void Update(float vX, float vY, float vZ)
+	{
+		_predicted_posX += vX;
+		_predicted_posY += vY;
+		_predicted_posZ += vZ;
+	}
+
+	// calculate reackon prediction on each tick
+	void UpdateRot(const double & currtime)
 	{
 		float tdiff = (float)(currtime - _time);
 
-		_predicted_posX = _posX + (_velocityX*tdiff);
-		_predicted_posY = _posY + (_velocityY*tdiff);
-		_predicted_posZ = _posZ + (_velocityZ*tdiff);
 		_predicted_rotation = _rotation + (_velocityR*tdiff);
 
 		if(_predicted_rotation > 360)
@@ -94,6 +104,7 @@ public:
 		if(_predicted_rotation < 0)
 			_predicted_rotation = 360 + _predicted_rotation;
 	}
+	
 
 };
 
@@ -132,6 +143,9 @@ public:
 	void MagicBallPlayed(const LbaNet::LaunchInfo & linfo);
 	void MagicBallComeback();
 
+protected:
+	void CalculateVelocity(float rotation);
+
 private:
 	double			_last_update;
 
@@ -139,6 +153,10 @@ private:
 	float 			_velocityY;
 	float 			_velocityZ;
 	float 			_velocityR;
+
+	bool			_forward;
+	bool			_collisionx;
+	bool			_collisionz;
 
 	ExternalReckon	_dr;
 	Player *		_renderer;

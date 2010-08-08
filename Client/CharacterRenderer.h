@@ -78,6 +78,9 @@ public:
 	{ return _currAnimation;}
 	int getKeyframe();
 
+	//! set the current keyframe
+	void setKeyFrame(int keyframe);
+
 	//! set body color
 	void SetBodyColor(short newColor);
 
@@ -91,6 +94,12 @@ public:
 		_animationfinished = false;
 		return res;
 	}
+
+	// return speed asociated with animation
+	double GetCurrentSpeed();
+
+	// return speed Yasociated with animation
+	double GetCurrentSpeedY();
 
 protected:
 	// translate anim number into correct animation depending of the entity

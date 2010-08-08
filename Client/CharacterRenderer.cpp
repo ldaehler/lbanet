@@ -87,7 +87,7 @@ void CharacterRenderer::Render()
 
 	glPushMatrix();
 	{
-		glScalef(40, 40, 40);
+		glScalef(32, 32, 32);
 
 		if(_displayHidden)
 		{
@@ -262,6 +262,15 @@ int CharacterRenderer::getKeyframe()
 	return 0;
 }
 
+/***********************************************************
+set the current keyframe
+***********************************************************/
+void CharacterRenderer::setKeyFrame(int keyframe)
+{
+	if(_modelRenderer)
+		_modelRenderer->setAtKeyFrame(keyframe, false);
+}
+
 
 
 /***********************************************************
@@ -286,3 +295,26 @@ short CharacterRenderer::GetBodyColor()
 	return _bodyColor;
 }
 
+
+
+/***********************************************************
+return speed asociated with animation
+***********************************************************/
+double CharacterRenderer::GetCurrentSpeed()
+{
+	if(!_modelRenderer)
+		return 0;
+
+	return _modelRenderer->GetCurrentSpeed();
+}
+
+/***********************************************************
+return speed asociated with animation
+***********************************************************/
+double CharacterRenderer::GetCurrentSpeedY()
+{
+	if(!_modelRenderer)
+		return 0;
+
+	return _modelRenderer->GetCurrentSpeedY();
+}

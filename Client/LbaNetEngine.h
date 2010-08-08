@@ -85,6 +85,8 @@ public:
 
 	// debug function
 	void GoNextRoom();
+	void CamPlus();
+	void CamMinus();
 
 	//take screen function
 	void TakeScreenshot();

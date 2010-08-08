@@ -266,6 +266,12 @@ private:
 	bool m_useAnimSteps;
 
 	unsigned char*	m_paletteRGB;
+
+	double m_currentSpeed;
+	double m_cumuSpeed;
+	double m_currentSpeedY;
+	double m_cumuSpeedY;
+
 public:
 
 	short int processActorVar5;
@@ -289,6 +295,7 @@ public:
 	int currentBone;
 
 	int angle;
+
 
 	LBA1ModelClass(entitiesTableStruct* entitiesData, const std::string &bodyPath, const std::string &animPath, int entityNum=0,int bodyNum=0);
 	~LBA1ModelClass();
@@ -387,6 +394,9 @@ public:
 
     void setKeyframeLength(int keyframe, short int value);
     short int getKeyframeLength(int keyframe);
+
+	double GetCurrentSpeed() { return m_currentSpeed; }
+	double GetCurrentSpeedY() { return m_currentSpeedY; }
 };
 
 #endif

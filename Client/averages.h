@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define __LBANET_AVERAGE_H__
 
 #include <cmath>
-
+#include "RingBuffer.h"
 
 /*
 ************************************************************************************************************************
@@ -99,6 +99,64 @@ protected:
 	double			_Q;
 	unsigned long	_n;
 };
+
+
+
+/*
+************************************************************************************************************************
+*                                                  class MA
+************************************************************************************************************************
+*/
+class MA
+{
+
+public:
+
+	MA()
+		: _data( 0 )
+		, _val ( 0. )
+		, _var ( 0. )
+	{ }
+
+	explicit MA( unsigned long w_length )
+		: _data( w_length )
+		, _val ( 0. )
+		, _var ( 0. )
+	{ }
+
+	double Update( double val )
+	{
+		_data.Add( val );
+
+		MeanValue v;
+		for(size_t i=0; i<_data.Size(); ++i) 
+			v.Update(_data[i]);
+
+		_val = v.Value();
+		_var = v.Variance();
+
+		return _val;
+	}
+
+
+	double Value( void ) const { return _val; }
+	double Variance( void ) const { return _var; }
+
+	unsigned long Elements( void ) const { return static_cast<unsigned long>(_data.Size()); }
+	unsigned long WindowLength( void ) const { return static_cast<unsigned long>(_data.Capacity()); }
+
+	void Reset( void )
+	{ _val = 0.; _var = 0; _data.ClearAll(); }
+
+protected:
+
+	typedef RingBuffer<double> T_array;
+
+	T_array _data;
+	double  _val;
+	double  _var;
+};
+
 
 /*
 ************************************************************************************************************************

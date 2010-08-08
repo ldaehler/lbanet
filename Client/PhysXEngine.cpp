@@ -48,6 +48,7 @@ enum GameGroup
 	GROUP_NON_COLLIDABLE,
 	GROUP_COLLIDABLE_NON_PUSHABLE,
 	GROUP_COLLIDABLE_PUSHABLE,
+	GROUP_EXTERNAL_PLAYERS
 };
 
 #define COLLIDABLE_MASK	(1<<GROUP_COLLIDABLE_NON_PUSHABLE) | (1<<GROUP_COLLIDABLE_PUSHABLE)
@@ -166,7 +167,7 @@ public:
 
 
 			NxCollisionGroup group = hit.shape->getGroup();
-			if(group!=GROUP_COLLIDABLE_NON_PUSHABLE)
+			if(group==GROUP_COLLIDABLE_PUSHABLE)
 			{
 				NxActor& actor = hit.shape->getActor();
 				if(actor.isDynamic())
@@ -176,8 +177,39 @@ public:
 					// particular objects, if the gameplay requires it.
 					if(hit.dir.y==0.0f)
 					{
-						NxF32 coeff = actor.getMass() * hit.length * 2.0f;
-						actor.addForceAtLocalPos(hit.dir*coeff, NxVec3(0,0,0), NX_IMPULSE);
+						ActorUserData * characterdata = (ActorUserData *)hit.controller->getActor()->userData;
+						if(characterdata)
+						{
+							if(characterdata->AllowedMoving)
+							{
+								if(actor.readBodyFlag(NX_BF_KINEMATIC))
+								{
+									actor.moveGlobalPosition(actor.getGlobalPosition() + (hit.length * hit.dir));
+								}
+								else
+								{
+									//return NX_ACTION_PUSH;
+									NxF32 coeff = actor.getMass() * hit.length * 20.0f;
+									actor.addForceAtLocalPos(hit.dir*coeff, NxVec3(0,0,0), NX_SMOOTH_IMPULSE);
+								}
+							}
+
+							characterdata->MovingObject = true;
+							if(abs(hit.worldNormal.x) > abs(hit.worldNormal.z))
+							{
+								if(hit.worldNormal.x > 0)
+									characterdata->MovingDirection = 2;
+								else
+									characterdata->MovingDirection = 1;
+							}
+							else
+							{
+								if(hit.worldNormal.z > 0)
+									characterdata->MovingDirection = 4;
+								else
+									characterdata->MovingDirection = 3;
+							}
+						}
 					}
 				}
 			}
@@ -304,6 +336,10 @@ void PhysXEngine::Init(float gravity)
 	//float TimeStep = 1.0f / 60.0f;
 	gScene->setTiming();
 
+	gScene->setGroupCollisionFlag(GROUP_COLLIDABLE_PUSHABLE, GROUP_NON_COLLIDABLE, false);
+	
+
+
 
 	// Start the first frame of the simulation
 	if (gScene)  
@@ -397,7 +433,8 @@ NxActor* PhysXEngine::CreatePlane(const NxVec3 & StartPosition, const NxVec3 & P
 	create box actor
 ***********************************************************/
 NxActor* PhysXEngine::CreateBox(const NxVec3 & StartPosition, float dimX, float dimY, float dimZ, 
-								float density, int Type, ActorUserData * adata, bool collidable)
+								float density, int Type, ActorUserData * adata, bool collidable,
+								bool movable)
 {
 
 	// Add a single-shape actor to the scene
@@ -414,10 +451,13 @@ NxActor* PhysXEngine::CreateBox(const NxVec3 & StartPosition, float dimX, float 
 		if(Type == 2)
 			bodyDesc.flags |= NX_BF_KINEMATIC;
 
+		if(Type == 3)
+			bodyDesc.flags |= NX_BF_FROZEN_ROT ;
+
 		actorDesc.body	= &bodyDesc;
 		actorDesc.density = density;
 
-		if(Type == 3)
+		if(movable)
 			boxDesc.group = GROUP_COLLIDABLE_PUSHABLE;
 		else
 			boxDesc.group = GROUP_COLLIDABLE_NON_PUSHABLE;
@@ -427,6 +467,7 @@ NxActor* PhysXEngine::CreateBox(const NxVec3 & StartPosition, float dimX, float 
 
 	if(!collidable)
 		boxDesc.group = GROUP_NON_COLLIDABLE;
+
 
 	actorDesc.shapes.pushBack(&boxDesc);
 	actorDesc.userData = adata;
@@ -444,7 +485,8 @@ NxActor* PhysXEngine::CreateBox(const NxVec3 & StartPosition, float dimX, float 
 ***********************************************************/
 NxActor* PhysXEngine::CreateSphere(const NxVec3 & StartPosition, float radius, float density, 
 									int Type,  ActorUserData * adata,
-									float staticFriction, float dynamicFriction, float restitution)
+									float staticFriction, float dynamicFriction, float restitution, 
+									bool magicball)
 {
 	// Add a single-shape actor to the scene
 	NxActorDesc actorDesc;
@@ -479,6 +521,9 @@ NxActor* PhysXEngine::CreateSphere(const NxVec3 & StartPosition, float radius, f
 		if(Type == 3)
 			sphereDesc.group = GROUP_COLLIDABLE_PUSHABLE;
 		else
+			sphereDesc.group = GROUP_COLLIDABLE_NON_PUSHABLE;
+
+		if(magicball)
 			sphereDesc.group = GROUP_COLLIDABLE_NON_PUSHABLE;
 	}
 	else
@@ -898,98 +943,99 @@ void PhysXEngine::IgnoreActorContact(NxActor* actor1, NxActor* actor2)
 ***********************************************************/
 void PhysXEngine::RenderActors()
 {
-	//glEnable(GL_BLEND);
-	//glDisable(GL_TEXTURE_2D);
-	//glDisable(GL_DEPTH_TEST);
-	//glLineWidth(2.0f);
+	glEnable(GL_BLEND);
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_DEPTH_TEST);
+	glLineWidth(2.0f);
 
- //   // Render all the actors in the scene
- //   NxU32 nbActors = gScene->getNbActors();
- //   NxActor** actors = gScene->getActors();
- //   while (nbActors--)
- //   {
- //       NxActor* actor = *actors++;
+    // Render all the actors in the scene
+    NxU32 nbActors = gScene->getNbActors();
+    NxActor** actors = gScene->getActors();
+    while (nbActors--)
+    {
+        NxActor* actor = *actors++;
 
-	//	glPushMatrix();
+		glPushMatrix();
 
-	//	glScalef(1, 0.5f, 1);
-	//	NxMat34 pose = actor->getShapes()[0]->getGlobalPose();
-	//	//glTranslated(pose.t.x, pose.t.y/2. + 0.5, pose.t.z);
+		glScalef(1, 0.5f, 1);
+		glTranslated(0, 1.0, 0);
+		NxMat34 pose = actor->getShapes()[0]->getGlobalPose();
+		//glTranslated(pose.t.x, pose.t.y/2. + 0.5, pose.t.z);
 
-	//	float glmat[16];	//4x4 column major matrix for OpenGL.
-	//	pose.M.getColumnMajorStride4(&(glmat[0]));
-	//	pose.t.get(&(glmat[12]));
-	//	//clear the elements we don't need:
-	//	glmat[3] = glmat[7] = glmat[11] = 0.0f;
-	//	glmat[15] = 1.0f;
-	//	glMultMatrixf(&(glmat[0]));
+		float glmat[16];	//4x4 column major matrix for OpenGL.
+		pose.M.getColumnMajorStride4(&(glmat[0]));
+		pose.t.get(&(glmat[12]));
+		//clear the elements we don't need:
+		glmat[3] = glmat[7] = glmat[11] = 0.0f;
+		glmat[15] = 1.0f;
+		glMultMatrixf(&(glmat[0]));
 
-	//	NxBoxShape* boxshap = actor->getShapes()[0]->isBox();
-	//	if(boxshap)
-	//	{
-	//		glColor4f(0.0f,0.0f,1.0f, 1.f);
+		NxBoxShape* boxshap = actor->getShapes()[0]->isBox();
+		if(boxshap)
+		{
+			glColor4f(0.0f,0.0f,1.0f, 1.f);
 
-	//		NxVec3 boxDim = boxshap->getDimensions();
-	//		glScalef(boxDim.x, boxDim.y, boxDim.z);
+			NxVec3 boxDim = boxshap->getDimensions();
+			glScalef(boxDim.x, boxDim.y, boxDim.z);
 
-	//		float _sizeX = 1, _sizeY = 1, _sizeZ = 1;
-	//		glBegin(GL_LINES);
-	//			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
-	//			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
-	//			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
-	//			glVertex3f(_sizeX,-_sizeY,_sizeZ);
-	//			glVertex3f(_sizeX,-_sizeY,_sizeZ);
-	//			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
-	//			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
-	//			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+			float _sizeX = 1, _sizeY = 1, _sizeZ = 1;
+			glBegin(GL_LINES);
+				glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+				glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+				glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+				glVertex3f(_sizeX,-_sizeY,_sizeZ);
+				glVertex3f(_sizeX,-_sizeY,_sizeZ);
+				glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+				glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+				glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
 
-	//			glVertex3f(-_sizeX,_sizeY,-_sizeZ);
-	//			glVertex3f(_sizeX,_sizeY,-_sizeZ);
-	//			glVertex3f(_sizeX,_sizeY,-_sizeZ);
-	//			glVertex3f(_sizeX,_sizeY,_sizeZ);
-	//			glVertex3f(_sizeX,_sizeY,_sizeZ);
-	//			glVertex3f(-_sizeX,_sizeY,_sizeZ);
-	//			glVertex3f(-_sizeX,_sizeY,_sizeZ);
-	//			glVertex3f(-_sizeX,_sizeY,-_sizeZ);
+				glVertex3f(-_sizeX,_sizeY,-_sizeZ);
+				glVertex3f(_sizeX,_sizeY,-_sizeZ);
+				glVertex3f(_sizeX,_sizeY,-_sizeZ);
+				glVertex3f(_sizeX,_sizeY,_sizeZ);
+				glVertex3f(_sizeX,_sizeY,_sizeZ);
+				glVertex3f(-_sizeX,_sizeY,_sizeZ);
+				glVertex3f(-_sizeX,_sizeY,_sizeZ);
+				glVertex3f(-_sizeX,_sizeY,-_sizeZ);
 
-	//			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
-	//			glVertex3f(-_sizeX,_sizeY,-_sizeZ);
+				glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+				glVertex3f(-_sizeX,_sizeY,-_sizeZ);
 
-	//			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
-	//			glVertex3f(_sizeX,_sizeY,-_sizeZ);
+				glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+				glVertex3f(_sizeX,_sizeY,-_sizeZ);
 
-	//			glVertex3f(_sizeX,-_sizeY,_sizeZ);
-	//			glVertex3f(_sizeX,_sizeY,_sizeZ);
+				glVertex3f(_sizeX,-_sizeY,_sizeZ);
+				glVertex3f(_sizeX,_sizeY,_sizeZ);
 
-	//			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
-	//			glVertex3f(-_sizeX,_sizeY,_sizeZ);
-	//		glEnd();
-	//	}
-	//	//else
-	//	//{
-	//	//	for(int i=1; i<100; ++i)
-	//	//	{
-	//	//		glColor4f(1.0f,0.0f,0.0f, 1.f);
-	//	//		float _sizeX = (float)i, _sizeY = 0, _sizeZ = (float)i;
-	//	//		glBegin(GL_LINES);
-	//	//			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
-	//	//			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
-	//	//			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
-	//	//			glVertex3f(_sizeX,-_sizeY,_sizeZ);
-	//	//			glVertex3f(_sizeX,-_sizeY,_sizeZ);
-	//	//			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
-	//	//			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
-	//	//			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
-	//	//		glEnd();
-	//	//	}
-	//	//}
-
-
-
+				glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+				glVertex3f(-_sizeX,_sizeY,_sizeZ);
+			glEnd();
+		}
+		//else
+		//{
+		//	for(int i=1; i<100; ++i)
+		//	{
+		//		glColor4f(1.0f,0.0f,0.0f, 1.f);
+		//		float _sizeX = (float)i, _sizeY = 0, _sizeZ = (float)i;
+		//		glBegin(GL_LINES);
+		//			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+		//			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+		//			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+		//			glVertex3f(_sizeX,-_sizeY,_sizeZ);
+		//			glVertex3f(_sizeX,-_sizeY,_sizeZ);
+		//			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+		//			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+		//			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+		//		glEnd();
+		//	}
+		//}
 
 
-	//	glPopMatrix();
- //   }
+
+
+
+		glPopMatrix();
+    }
 
 
 	////if(_sizebuff > 0)
@@ -1077,6 +1123,6 @@ void PhysXEngine::RenderActors()
 	////}
 
 
-	//glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_TEXTURE_2D);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_2D);
 }

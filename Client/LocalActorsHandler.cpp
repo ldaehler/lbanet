@@ -267,3 +267,16 @@ void LocalActorsHandler::ForcedDettach(Actor * act, long actorId)
 	if(it != _actors.end())
 		it->second->Dettach(act);
 }
+
+/***********************************************************
+actor avtivate other actors
+***********************************************************/
+void LocalActorsHandler::ActorActivateActor(Actor * act)
+{
+	std::map<long, Actor *>::iterator it = _actors.begin();
+	std::map<long, Actor *>::iterator end = _actors.end();
+	for(; it != end; ++it)
+	{
+		it->second->ActorActivateActor(act);
+	}
+}

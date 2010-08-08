@@ -1218,6 +1218,23 @@ void LbaNetEngine::GoNextRoom()
 }
 
 
+/***********************************************************
+debug function
+***********************************************************/
+void LbaNetEngine::CamPlus()
+{
+	m_lbaNetModel.CamPlus();
+}
+
+
+/***********************************************************
+debug function
+***********************************************************/
+void LbaNetEngine::CamMinus()
+{
+	m_lbaNetModel.CamMinus();
+}
+
 
 /***********************************************************
 called when player want to use weapon
