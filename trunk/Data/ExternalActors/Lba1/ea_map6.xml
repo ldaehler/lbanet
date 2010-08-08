@@ -19,10 +19,18 @@
     <actor id="10" type="12" posX="49.718750" posY="4.000000" posZ="45.468750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="247.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="16,0" />
     <actor id="11" type="12" posX="56.968750" posY="4.000000" posZ="22.437500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="16,0" />
     <actor id="12" type="12" posX="20.062500" posY="4.000000" posZ="43.375000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="322.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="26,0" />
-    <actor id="13" type="12" NPCType="2" posX="50.375000" posY="4.000000" posZ="23.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="13,0">
+    <actor id="13" type="12" Welcome="Welcome to my shop!" NPCType="2" posX="50.375000" posY="4.000000" posZ="23.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="13,0">
          <items>
         	<item id="12" />           	
-        </items>     
+        </items>  
+        
+       	<Dialog StandardQuitDialog="111" StandardGoToRootDialog="97" TradingDialog="96"> 
+		<DialogEntry type="0" TextId="9">
+		</DialogEntry>
+       	
+       		<DialogTree>
+    		</DialogTree> 		
+	</Dialog>          
     </actor>      
     <actor id="14" type="12" posX="37.000000" posY="0.000000" posZ="62.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="177.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="27,0" />
     <actor id="15" type="12" posX="0.000000" posY="0.875000" posZ="0.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="9,0" />
