@@ -1026,7 +1026,7 @@
             <exits>
                 <exit name="exit0" TopRightX="37.998047" TopRightY="5.996094" TopRightZ="63.998047" BottomLeftX="27.000000" BottomLeftY="1.000000" BottomLeftZ="63.000000" newMap="Map3_1" spawning="spawning1" />
                 <exit name="exit1" TopRightX="36.000000" TopRightY="10.000000" TopRightZ="18.000000" BottomLeftX="35.000000" BottomLeftY="3.000000" BottomLeftZ="13.000000" newMap="Map0_1" spawning="spawning1" />
-                <exit name="exit14" TopRightX="53.998047" TopRightY="6.996094" TopRightZ="45.998047" BottomLeftX="52.000000" BottomLeftY="3.000000" BottomLeftZ="45.000000" newMap="Map0_1" spawning="spawning2" />
+                <exit name="exit14" TopRightX="53.998047" TopRightY="6.996094" TopRightZ="46.4" BottomLeftX="52.000000" BottomLeftY="0.000000" BottomLeftZ="45.000000" newMap="Map0_1" spawning="spawning2" />
                 <exit name="exit9" TopRightX="23.998047" TopRightY="7.996094" TopRightZ="55.998047" BottomLeftX="21.000000" BottomLeftY="1.000000" BottomLeftZ="55.000000" newMap="Map16_1" spawning="spawning1" />
             </exits>
         </Map>
