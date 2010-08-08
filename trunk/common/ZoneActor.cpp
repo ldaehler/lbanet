@@ -87,6 +87,19 @@ int ZoneActor::ActivateZone(float PlayerPosX, float PlayerPosY, float PlayerPosZ
 }
 
 
+
+/***********************************************************
+actor avtivate other actors
+***********************************************************/
+void ZoneActor::ActorActivateActor(Actor * act)
+{
+	_activatingactor = act->GetId();
+	ActivateZone(act->GetPosX(), act->GetPosY(), act->GetPosZ(), act->GetRotation(), NULL, true);
+	_activatingactor = -1;
+}
+
+
+
 /***********************************************************
 render editor part
 ***********************************************************/

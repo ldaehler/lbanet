@@ -266,9 +266,9 @@ bool DoorActor::Close()
 /***********************************************************
 set actor position in the scene
 ***********************************************************/
-void DoorActor::SetPosition(float  posX, float  posY, float  posZ)
+void DoorActor::SetPosition(float  posX, float  posY, float  posZ, bool refreshPhysic)
 {
-	Actor::SetPosition(posX, posY, posZ);
+	Actor::SetPosition(posX, posY, posZ, refreshPhysic);
 
 	UpdateCLoseOpen();
 }

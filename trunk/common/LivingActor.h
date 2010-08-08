@@ -72,6 +72,8 @@ public:
 	bool GetDisplayName()
 	{return _DisplayName;}
 
+	//! set the current keyframe
+	void setKeyFrame(int keyframe);
 
 	//! set body color
 	void SetBodyColor(short newColor);
@@ -117,6 +119,16 @@ public:
 
 	int GetNameB()
 	{return _nameB;}
+
+	//! get speed associated with renderer
+	double GetRendererSpeed();
+
+	// return speed Yasociated with animation
+	double GetRendererSpeedY();
+
+	//! is animation finished
+	bool IsAnimationFinished();
+
 
 protected:
 	std::string		_Name;

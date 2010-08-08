@@ -304,6 +304,7 @@ struct PlayerScriptPart
 	bool Flag;
 	std::string NewMap;
 	std::string Spawning;
+	bool AutoMoveY;
 
 	float Speed;
 };

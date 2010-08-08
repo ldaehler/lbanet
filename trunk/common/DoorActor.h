@@ -57,7 +57,7 @@ public:
 	virtual bool OnSignal(long SignalNumber);
 
 	// set actor position in the scene
-	virtual void SetPosition(float  posX, float  posY, float  posZ);
+	virtual void SetPosition(float  posX, float  posY, float  posZ, bool refreshPhysic = true);
 
 	//! accessors
 	bool GetLocked()

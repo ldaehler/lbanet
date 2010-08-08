@@ -120,6 +120,7 @@ void LadderActor::ProcessActivation(float PlayerPosX, float PlayerPosY, float Pl
 	trans1.ValueB = _posY;
 	trans1.ValueC = _posZ+remZ;
 	trans1.Speed = 0.003f;
+	trans1.AutoMoveY = true;
 	script.push_back(trans1);
 	}
 
@@ -135,13 +136,13 @@ void LadderActor::ProcessActivation(float PlayerPosX, float PlayerPosY, float Pl
 
 
 	// play short climbing animation
-	{
-	PlayerScriptPart anim1;
-	anim1.Type = 2;
-	anim1.Animation = 21;
-	anim1.ValueA = 3;
-	script.push_back(anim1);
-	}
+	//{
+	//PlayerScriptPart anim1;
+	//anim1.Type = 2;
+	//anim1.Animation = 21;
+	//anim1.ValueA = 3;
+	//script.push_back(anim1);
+	//}
 
 	// add translation up the ladder
 	{
@@ -149,35 +150,47 @@ void LadderActor::ProcessActivation(float PlayerPosX, float PlayerPosY, float Pl
 	trans2.Type = 1;
 	trans2.Animation = 21;
 	trans2.ValueA = _posX+remX+_deltaX;
-	trans2.ValueB = _posY+_deltaY-5.f;
+	trans2.ValueB = _posY+_deltaY-4.7f;
 	trans2.ValueC = _posZ+remZ+_deltaZ;
 	trans2.Speed = 0.0025f;
-	if((_deltaY-5.f)  > 0)
+	trans2.AutoMoveY = false;
+	if((_deltaY-4.7f)  > 0)
 		script.push_back(trans2);
 	}
 
-	// add translation up the ladder
+	// add action up the ladder
 	{
-	PlayerScriptPart trans2b;
-	trans2b.Type = 1;
-	trans2b.Animation = 26;
-	trans2b.ValueA = _posX+remX+_deltaX;
-	trans2b.ValueB = _posY+_deltaY+0.1;
-	trans2b.ValueC = _posZ+remZ+_deltaZ;
-	trans2b.Speed = 0.0025f;
-	script.push_back(trans2b);
+	PlayerScriptPart anim1;
+	anim1.Type = 2;
+	anim1.Animation = 26;
+	anim1.ValueA = -1;
+	script.push_back(anim1);
 	}
+
+	// add translation up the ladder
+	//{
+	//PlayerScriptPart trans2b;
+	//trans2b.Type = 1;
+	//trans2b.Animation = 26;
+	//trans2b.ValueA = _posX+remX+_deltaX;
+	//trans2b.ValueB = _posY+_deltaY+0.1;
+	//trans2b.ValueC = _posZ+remZ+_deltaZ;
+	//trans2b.Speed = 0.0025f;
+	//trans2b.AutoMoveY = true;
+	//script.push_back(trans2b);
+	//}
 
 
 	// add translation to exit the ladder 2
 	{
 	PlayerScriptPart trans3;
 	trans3.Type = 1;
-	trans3.Animation = 26;
+	trans3.Animation = 1;
 	trans3.ValueA = _posX+remX+_deltaX+dX;
 	trans3.ValueB = _posY+_deltaY+0.1;
 	trans3.ValueC = _posZ+remZ+_deltaZ+dZ;
 	trans3.Speed = 0.003f;
+	trans3.AutoMoveY = true;
 	script.push_back(trans3);
 	}
 

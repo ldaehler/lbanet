@@ -77,16 +77,16 @@ void ExitActor::ProcessActivation(float PlayerPosX, float PlayerPosY, float Play
 	switch(_direction)
 	{
 		case 0:
-			remZ = -1.f;
+			remZ = -1.5f;
 		break;
 		case 90:
-			remX = -1.f;
+			remX = -1.5f;
 		break;
 		case 180:
-			remZ = 1.f;
+			remZ = 1.5f;
 		break;
 		case 270:
-			remX = 1.f;
+			remX = 1.5f;
 		break;
 	}
 
@@ -113,6 +113,7 @@ void ExitActor::ProcessActivation(float PlayerPosX, float PlayerPosY, float Play
 	trans1.ValueB = _posY;
 	trans1.ValueC = _posZ+remZ;
 	trans1.Speed = 0.003f;
+	trans1.AutoMoveY = true;
 	script.push_back(trans1);
 	}
 
@@ -127,13 +128,13 @@ void ExitActor::ProcessActivation(float PlayerPosX, float PlayerPosY, float Play
 	}
 
 	// play short down animation
-	{
-	PlayerScriptPart anim1;
-	anim1.Type = 2;
-	anim1.Animation = 24;
-	anim1.ValueA = 3;
-	script.push_back(anim1);
-	}
+	//{
+	//PlayerScriptPart anim1;
+	//anim1.Type = 2;
+	//anim1.Animation = 24;
+	//anim1.ValueA = 3;
+	//script.push_back(anim1);
+	//}
 
 
 	// do translation to exit
@@ -145,6 +146,7 @@ void ExitActor::ProcessActivation(float PlayerPosX, float PlayerPosY, float Play
 	trans2.ValueB = _posY+_deltaY;
 	trans2.ValueC = _posZ+remZ+_deltaZ;
 	trans2.Speed = 0.003f;
+	trans2.AutoMoveY = true;
 	script.push_back(trans2);
 	}
 
