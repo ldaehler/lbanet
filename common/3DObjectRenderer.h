@@ -66,6 +66,12 @@ public:
 	int GetType()
 	{return _type;}
 
+	// return speed asociated with animation
+	virtual double GetCurrentSpeed() {return 0;}
+
+	// return speed Yasociated with animation
+	virtual double GetCurrentSpeedY() {return 0;}
+
 protected:
    bool Visible;
 

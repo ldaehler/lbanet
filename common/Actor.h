@@ -91,7 +91,7 @@ public:
    void Hide(void);
 
 	// set actor position in the scene
-	virtual void SetPosition(float  posX, float  posY, float  posZ);
+	virtual void SetPosition(float  posX, float  posY, float  posZ, bool refreshPhysic = true);
 
 	// update actor position in the scene
 	virtual void UpdatePosition(float deltaposX, float  deltaposY, float  deltaposZ, float tdiff);
@@ -136,6 +136,10 @@ public:
 	bool  GetCollidable(){return _collidable;} const
 	float  GetOffsetSizeY(){return _offsetsizeY;} const
 
+	//! get actif
+	bool GetActif() const
+	{return _actif;}
+
 	// set actor size
 	void SetSize(float  sizeX, float  sizeY, float  sizeZ)
 	{
@@ -165,6 +169,9 @@ public:
 	void SetCollidable(bool collidable)
 	{_collidable = collidable;}
 
+	//! set actif
+	void SetActif(bool actif)
+	{_actif = actif;}
 
 	//! set actor id
 	void SetId(long id)
@@ -329,6 +336,24 @@ public:
 	//! return true if actor should be activated
 	virtual bool MagicBallHit(long LauncherId){return false;}
 
+	//! check if actor is moving
+	bool IsMoving()
+	{ return _actormoving;}
+
+	//! set if actor is moving
+	void SetMoving(bool moving)
+	{_actormoving = moving;}
+
+	// set if the main actor is attached
+	void SetAttached(bool attached)
+	{_isAttached = attached;}
+
+	// return true if the actor is attached
+	bool IsAttached()
+	{ return _isAttached;}
+
+	// actor avtivate other actors
+	virtual void ActorActivateActor(Actor * act) {}
 
 protected:
 	//! refresh bounding box
@@ -360,12 +385,18 @@ protected:
    float	_AddedVelocityZ;
 
 
-
+	bool	_actif;
 	bool	_passable;
 	bool	_movable;
 	bool	_depthmask;
 	bool	_visible;
 	bool	_collidable;
+	bool	_actormoving;
+	bool	_isAttached;
+
+	// used when actor activate actor
+	long		_activatingactor;
+
 
 	long	_outputsignal;
 	std::vector<long> _targets;

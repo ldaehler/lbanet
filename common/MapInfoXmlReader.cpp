@@ -365,12 +365,13 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 			long id=0, type=0;
 			float posX=0, posY=0, posZ=0;
 			float sizeX=0, sizeY=0, sizeZ=0;
-			float offsetsizeX=0;
+			float offsetsizeY=0;
 			int rotation=0;
 			bool passable = true;
 			bool depthmask = true;
 			bool movable = false;
 			bool collidable = true;
+			bool actif = false;
 			long renderertype=-1;
 			std::vector<long> renderertarget;
 			D3ObjectRenderer * renderer = NULL;
@@ -405,7 +406,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 			pElem->QueryFloatAttribute("sizeX", &sizeX);
 			pElem->QueryFloatAttribute("sizeY", &sizeY);
 			pElem->QueryFloatAttribute("sizeZ", &sizeZ);
-			pElem->QueryFloatAttribute("offsetsizeX", &offsetsizeX);
+			pElem->QueryFloatAttribute("offsetsizeY", &offsetsizeY);
 			pElem->QueryIntAttribute("rotation", &rotation);
 			pElem->QueryValueAttribute("passable", &passable);
 			pElem->QueryValueAttribute("depthmask", &depthmask);
@@ -413,6 +414,8 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 			pElem->QueryValueAttribute("outputsignal", &outputsignal);
 			pElem->QueryValueAttribute("attachedsound", &attachedsound);
 			pElem->QueryValueAttribute("collidable", &collidable);
+			pElem->QueryValueAttribute("actif", &actif);
+
 
 			if(pElem->QueryValueAttribute("renderertype", &renderertype) == TIXML_SUCCESS)
 				if(renderertarget.size() > 0)
@@ -644,7 +647,7 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 					sizeX=0.4f;
 					sizeY=3.0f;
 					sizeZ=0.4f;
-					offsetsizeX=3.5f;
+					offsetsizeY=3.5f;
 					collidable = false;
 				}
 				break;
@@ -876,11 +879,13 @@ bool MapInfoXmlReader::LoadActors(const std::string &Filename, std::map<long, Sp
 			act->SetPosition(posX, posY, posZ);
 			act->SetRotation((float)rotation);
 			act->SetSize(sizeX, sizeY, sizeZ);
-			act->SetOffsetSizeY(offsetsizeX);
+			act->SetOffsetSizeY(offsetsizeY);
 			act->SetPassable(passable);
 			act->SetDepthMask(depthmask);
 			act->SetMovable(movable);
 			act->SetCollidable(collidable);
+			act->SetActif(actif);
+			
 
 			act->SetRenderer(renderer);
 

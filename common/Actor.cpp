@@ -47,7 +47,7 @@ Actor::Actor()
 	_attachedsound(-1), _renderertype(0),
 	_AddedVelocityX(0), _AddedVelocityY(0), _AddedVelocityZ(0), 
 	_signaler(NULL), _physposhandler(NULL), _collidable(true),
-	_offsetsizeY(0)
+	_offsetsizeY(0), _actormoving(false), _isAttached(false), _activatingactor(-1)
 {
 
 }
@@ -99,8 +99,21 @@ void Actor::Render(int RoomCut)
 ***********************************************************/
 int Actor::Process(double tnow, float tdiff)
 {
+	#ifndef _LBANET_SERVER_SIDE_
+	if(_physposhandler)
+	{
+		if(_physposhandler->GraphicsNeedUpdate())
+		{
+			float x, y, z;
+			_physposhandler->GetPosition(x, y, z);
+			SetPosition(x, y-(_sizeY/2.0f), z, false);
+		}
+	}
+	#endif
+
 	if(_Renderer)
 		return _Renderer->Process(tnow, tdiff);
+
 	return 0;
 }
 
@@ -340,7 +353,7 @@ void Actor::UpdatePosition(float  deltaposX, float  deltaposY, float  deltaposZ,
 /***********************************************************
 set actor position in the scene
 ***********************************************************/
-void Actor::SetPosition(float  posX, float  posY, float  posZ)
+void Actor::SetPosition(float  posX, float  posY, float  posZ, bool refreshPhysic)
 {
 	std::vector<Actor *>::iterator itaa = _attachedActors.begin();
 	std::vector<Actor *>::iterator endaa = _attachedActors.end();
@@ -362,7 +375,7 @@ void Actor::SetPosition(float  posX, float  posY, float  posZ)
 		_posZ = -10;
 
 #ifndef _LBANET_SERVER_SIDE_
-	if(_physposhandler)
+	if(refreshPhysic && _physposhandler)
 		_physposhandler->SetPosition(_posX, _posY+(_sizeY/2.0f), _posZ);
 #endif
 

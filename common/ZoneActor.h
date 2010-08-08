@@ -68,6 +68,11 @@ public:
 	//! check if the actor need desactivation
 	virtual bool NeedDesactivation(){return true;}
 
+
+	// actor avtivate other actors
+	virtual void ActorActivateActor(Actor * act);
+
+
 protected:
 	// used to get the zone center - depend of the actor type
 	virtual float GetZoneCenterX(){return _posX;}

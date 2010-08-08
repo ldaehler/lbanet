@@ -116,6 +116,7 @@ void UpExitActor::ProcessActivation(float PlayerPosX, float PlayerPosY, float Pl
 	trans1.ValueB = _posY;
 	trans1.ValueC = _posZ+remZ;
 	trans1.Speed = 0.003f;
+	trans1.AutoMoveY = true;
 	script.push_back(trans1);
 	}
 
@@ -132,36 +133,36 @@ void UpExitActor::ProcessActivation(float PlayerPosX, float PlayerPosY, float Pl
 	// play  animation
 	{
 	PlayerScriptPart anim1;
-	anim1.Type = 2;
 	anim1.Animation = 25;
-	anim1.ValueA = 3;
+	anim1.Type = 2;
+	anim1.ValueA = -1;
 	script.push_back(anim1);
 	}
 
 
 	// do translation to exit
-	{
-	PlayerScriptPart trans2;
-	trans2.Type = 1;
-	trans2.Animation = 36;
-	trans2.ValueA = _posX;
-	trans2.ValueB = _posY+2;
-	trans2.ValueC = _posZ;
-	trans2.Speed = 1.f;
-	script.push_back(trans2);
-	}
+	//{
+	//PlayerScriptPart trans2;
+	//trans2.Type = 1;
+	//trans2.Animation = 36;
+	//trans2.ValueA = _posX;
+	//trans2.ValueB = _posY+2;
+	//trans2.ValueC = _posZ;
+	//trans2.Speed = 1.f;
+	//script.push_back(trans2);
+	//}
 
 	// do translation to exit
-	{
-	PlayerScriptPart trans2;
-	trans2.Type = 1;
-	trans2.Animation = 36;
-	trans2.ValueA = _posX-remX;
-	trans2.ValueB = _posY+2;
-	trans2.ValueC = _posZ-remZ;
-	trans2.Speed = 0.003f;
-	script.push_back(trans2);
-	}
+	//{
+	//PlayerScriptPart trans2;
+	//trans2.Type = 1;
+	//trans2.Animation = 36;
+	//trans2.ValueA = _posX-remX;
+	//trans2.ValueB = _posY+2;
+	//trans2.ValueC = _posZ-remZ;
+	//trans2.Speed = 0.003f;
+	//script.push_back(trans2);
+	//}
 
 	ThreadSafeWorkpile::getInstance()->AddEvent(new MainPlayerScriptedEvent(script));
 #endif

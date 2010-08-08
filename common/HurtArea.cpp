@@ -67,7 +67,7 @@ int HurtArea::ActivateZone(float PlayerPosX, float PlayerPosY, float PlayerPosZ,
 
 
 	if( (PlayerPosX >= (posX-_zoneSizeX-_mph->GetSizeX()) && PlayerPosX < (posX+_zoneSizeX+_mph->GetSizeX())) &&
-		(PlayerPosY >= (posY)				&& PlayerPosY <= (posY+_zoneSizeY)) &&
+		(PlayerPosY >= (posY)				&& (PlayerPosY-0.001f) <= (posY+_zoneSizeY)) &&
 		(PlayerPosZ >= (posZ-_zoneSizeZ-_mph->GetSizeZ()) && PlayerPosZ < (posZ+_zoneSizeZ+_mph->GetSizeZ())))
 	{
 		if(!_activated)

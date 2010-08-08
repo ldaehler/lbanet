@@ -33,9 +33,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <GL/gl.h>      // Header File For The OpenGL32 Library
 #endif
 
-//#ifndef _LBANET_SET_EDITOR_
-//#define _LBANET_SET_EDITOR_
-//#endif
+#ifndef _LBANET_SET_EDITOR_
+#define _LBANET_SET_EDITOR_
+#endif
 
 
 /***********************************************************
@@ -329,6 +329,20 @@ int LivingActor::getKeyframe()
 
 
 /***********************************************************
+accessors
+***********************************************************/
+void LivingActor::setKeyFrame(int keyframe)
+{
+#ifndef _LBANET_SERVER_SIDE_
+	if(_Renderer)
+		static_cast<CharacterRenderer *>(_Renderer)->setKeyFrame(keyframe);
+#endif
+
+}
+
+
+
+/***********************************************************
 set body color
 ***********************************************************/
 void LivingActor::SetBodyColor(short newColor)
@@ -352,3 +366,43 @@ short LivingActor::GetBodyColor()
 	return -1;
 }
 
+
+/***********************************************************
+get speed associated with renderer
+***********************************************************/
+double LivingActor::GetRendererSpeed() 
+{ 
+#ifndef _LBANET_SERVER_SIDE_
+	if(_Renderer)
+		return _Renderer->GetCurrentSpeed();
+#endif
+
+	return 0;
+}
+
+/***********************************************************
+get speed associated with renderer
+***********************************************************/
+double LivingActor::GetRendererSpeedY() 
+{ 
+#ifndef _LBANET_SERVER_SIDE_
+	if(_Renderer)
+		return _Renderer->GetCurrentSpeedY();
+#endif
+
+	return 0;
+}
+
+
+/***********************************************************
+is animation finished
+***********************************************************/
+bool LivingActor::IsAnimationFinished() 
+{ 
+#ifndef _LBANET_SERVER_SIDE_
+	if(_Renderer)
+		return static_cast<CharacterRenderer *>(_Renderer)->IsAnimationFinished();
+#endif
+
+	return false;
+}
