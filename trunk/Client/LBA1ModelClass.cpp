@@ -48,6 +48,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "HQRHandler.h"
 #include "DataFileHandler.h"
 
+#include <iostream>
 
 LBA1ModelClass::~LBA1ModelClass()
 {
@@ -84,7 +85,7 @@ LBA1ModelClass::~LBA1ModelClass()
 
 LBA1ModelClass::LBA1ModelClass(entitiesTableStruct* entitiesData, const std::string &bodyPath,
 								const std::string &animPath, int entityNum,int bodyNum)
-: bodyPtr(NULL), animPtr(NULL)
+: bodyPtr(NULL), animPtr(NULL), m_currentSpeed(0)
 {
 
 	HQRHandler HQH(DataFileHandler::GetPath("RESS"));
@@ -172,6 +173,9 @@ void LBA1ModelClass::LoadAnim(entitiesTableStruct* entitiesData, int animNum)
 
 	unsigned char* localAnim; // changed unsigned
 
+	m_currentSpeed = 0;
+	m_cumuSpeed = 0;
+	m_cumuSpeedY = 0;
 	currentKeyFrame=0;
     animsize = loadResource(m_animPath.c_str(),animNum, &localAnim);
 
@@ -1614,6 +1618,8 @@ int LBA1ModelClass::setAnimAtKeyFrame(int index, unsigned char *anim, TElements 
     short int *ptrToData;
     int i;
 
+	m_cumuSpeed = 0;
+	m_cumuSpeedY = 0;
     currentKeyFrame = index;
 
     numOfIndexInAnim = *(short int *) anim;
@@ -1972,6 +1978,9 @@ void LBA1ModelClass::setAtKeyFrame(int keyframe, bool reset)
 
 bool LBA1ModelClass::AnimateModel(void)
 {
+	m_currentSpeed = 0;
+	m_currentSpeedY = 0;
+
 	long int oldTick;
 
 	oldTick = lastTick;
@@ -2006,6 +2015,13 @@ bool LBA1ModelClass::AnimateModel(void)
         currentX = stepX;
        	currentZ = stepY;
 
+		m_currentSpeed = (currentZ /512.) - m_cumuSpeed;
+		m_cumuSpeed = (currentZ /512.);
+
+		m_currentSpeedY = (currentY /256.) - m_cumuSpeedY;
+		m_cumuSpeedY = (currentY /256.);
+		
+
         if(m_useAnimSteps)
         {
             currentX = currentX/5 + lastCurrentX;
@@ -2026,6 +2042,8 @@ bool LBA1ModelClass::AnimateModel(void)
 
         if(keyFrameState)
  	    {
+			m_cumuSpeed = 0;
+			m_cumuSpeedY = 0;
   		    currentKeyFrame++;
       		if(currentKeyFrame==getAnimMaxIndex((char*)animPtr))
   	    	{
@@ -2114,6 +2132,8 @@ int LBA1ModelClass::getKeyframe(void)
 
 void LBA1ModelClass::resetKeyframe()
 {
+	m_cumuSpeed = 0;
+	m_cumuSpeedY = 0;
 	currentKeyFrame = 0;
 }
 

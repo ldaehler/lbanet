@@ -380,9 +380,14 @@ bool EventHandler::Handle(SDL_Event flevent)
 					break;
 
 
-				case SDLK_KP_PLUS:
-					//_lbaNetEngine->GoNextRoom();
-					break;
+				//case SDLK_KP_PLUS:
+				//	_lbaNetEngine->CamPlus();
+				//	break;
+
+				//case SDLK_KP_MINUS:
+				//	_lbaNetEngine->CamMinus();
+				//	break;
+
 
 				case SDLK_RALT: case SDLK_LALT:
 					_lbaNetEngine->UseWeapon();

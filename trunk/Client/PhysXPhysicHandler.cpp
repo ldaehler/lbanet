@@ -45,6 +45,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <GL/glu.h>     // Header File For The GLu32 Library
 
 
+#define _OFFSET_MISS_Y	2.499f
+#define _OFFSET_MISS_2_Y	0.0f
+
+
 /*
 --------------------------------------------------------------------------------------------------
 - constructor
@@ -54,11 +58,7 @@ ActorPositionHandler::ActorPositionHandler(NxActor* contr, float X, float Y, flo
 : controller(contr)
 {
 	if(controller)
-		controller->setGlobalPosition(NxVec3(X, Y, Z));
-
-	lastX = X;
-	lastY = Y;
-	lastZ = Z;
+		controller->setGlobalPosition(NxVec3(X, Y+_OFFSET_MISS_2_Y, Z));
 }
 
 
@@ -70,13 +70,25 @@ ActorPositionHandler::ActorPositionHandler(NxActor* contr, float X, float Y, flo
 void ActorPositionHandler::SetPosition(float X, float Y, float Z)
 {
 	if(controller)
-		controller->moveGlobalPosition(NxVec3(X, Y, Z));
-		//PhysXEngine::getInstance()->MoveCharacter(controller, NxVec3(X-lastX, Y-lastY, Z-lastZ), false);
-
-	lastX = X;
-	lastY = Y;
-	lastZ = Z;
+		controller->moveGlobalPosition(NxVec3(X, Y+_OFFSET_MISS_2_Y, Z));
 }
+
+/*
+--------------------------------------------------------------------------------------------------
+- GetPosition
+--------------------------------------------------------------------------------------------------
+*/
+void ActorPositionHandler::GetPosition(float &X, float &Y, float &Z)
+{
+	if(controller)
+	{
+		NxVec3 vec = controller->getGlobalPosition();
+		X = vec.x;
+		Y = vec.y-_OFFSET_MISS_2_Y;
+		Z = vec.z;
+	}
+}
+
 
 
 /*
@@ -102,6 +114,37 @@ void ActorPositionHandler::Show()
 }
 
 
+
+/*
+--------------------------------------------------------------------------------------------------
+- check if graphic need to be refresh from physic
+--------------------------------------------------------------------------------------------------
+*/
+bool ActorPositionHandler::GraphicsNeedUpdate()
+{
+	bool res = false;
+
+	if(controller)
+	{
+		
+		if(controller->isDynamic())
+		{
+			if(!controller->readBodyFlag(NX_BF_KINEMATIC))
+			{
+				if(!controller->isSleeping())
+				{
+					res = true;
+				}
+			}
+		}
+	}
+
+	return res;
+}
+
+
+
+
 /*
 --------------------------------------------------------------------------------------------------
 - constructor
@@ -114,7 +157,7 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 {
 
 	_lastposX = posX;
-	_lastposY = posY+2.499f;
+	_lastposY = posY+_OFFSET_MISS_Y;
 	_lastposZ = posZ;
 
 
@@ -136,22 +179,30 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 			std::map<long, Actor *>::iterator end = acts->end();
 			for(;it != end; ++it)
 			{
-				float posx = it->second->GetPosX();
-				float posy = it->second->GetPosY() + it->second->GetOffsetSizeY();
-				float posz = it->second->GetPosZ();
 				float sizex = it->second->GetSizeX();
 				float sizey = it->second->GetSizeY();
 				float sizez = it->second->GetSizeZ();
+
+				float posx = it->second->GetPosX();
+				float posy = it->second->GetPosY() + it->second->GetOffsetSizeY();
+				float posz = it->second->GetPosZ();
+
+
+				int ctype = 2; //kynematic by default
+				if(it->second->IsMovable())
+					ctype = 3; // dynamic if movable
 
 				if(sizex > 0)
 				{
 					sizey /= 2;
 					posy += sizey;
 
+
+
 					ActorUserData * usdata = new ActorUserData(1, it->first, NULL);
 					NxActor* cont = PhysXEngine::getInstance()->CreateBox(NxVec3(posx, posy, posz), 
-																		sizex, sizey, sizez, 1.0, 2, usdata,
-																		it->second->GetCollidable());
+																		sizex, sizey, sizez, 1.0, ctype, usdata,
+																		it->second->GetCollidable(), it->second->IsMovable());
 
 					it->second->SetPhysController(new ActorPositionHandler(cont, posx, posy, posz));
 					_actors.push_back(cont);
@@ -169,12 +220,17 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 			std::map<long, Actor *>::iterator end = acts->end();
 			for(;it != end; ++it)
 			{
-				float posx = it->second->GetPosX();
-				float posy = it->second->GetPosY() + it->second->GetOffsetSizeY();
-				float posz = it->second->GetPosZ();
 				float sizex = it->second->GetSizeX();
 				float sizey = it->second->GetSizeY();
 				float sizez = it->second->GetSizeZ();
+
+				float posx = it->second->GetPosX();
+				float posy = it->second->GetPosY() + it->second->GetOffsetSizeY();
+				float posz = it->second->GetPosZ();
+
+				int ctype = 2; //kynematic by default
+				if(it->second->IsMovable())
+					ctype = 3; // dynamic if movable
 
 				if(sizex > 0)
 				{
@@ -183,8 +239,8 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 
 					ActorUserData * usdata = new ActorUserData(1, it->first, NULL);
 					NxActor* cont = PhysXEngine::getInstance()->CreateBox(NxVec3(posx, posy, posz), 
-																		sizex, sizey, sizez, 1.0, 2, usdata,
-																		it->second->GetCollidable());
+																		sizex, sizey, sizez, 1.0, ctype, usdata,
+																		it->second->GetCollidable(), it->second->IsMovable());
 
 					it->second->SetPhysController(new ActorPositionHandler(cont, posx, posy, posz));
 					_actors.push_back(cont);
@@ -247,7 +303,11 @@ MoveOutput PhysXPhysicHandler::MoveActor(long ActorId, const AABB & actorBB,
 	res.NewSpeed = Speed;
 	res.TouchingWater = false;
 	res.TouchingGround = false;
-
+	res.MovingObject = false;
+	res.Collisionx = false;
+	res.Collisionz = false;
+	res.CollisionUp = false;
+	
 
 	unsigned int flags = PhysXEngine::getInstance()->MoveCharacter(_controller, 
 													NxVec3(Speed.x, Speed.y, Speed.z), checkcolision);
@@ -259,12 +319,29 @@ MoveOutput PhysXPhysicHandler::MoveActor(long ActorId, const AABB & actorBB,
 	res.NewSpeed.y = posY - _lastposY;
 	res.NewSpeed.z = posZ - _lastposZ;
 
-	res.TouchingGround = flags & NXCC_COLLISION_DOWN;
+	if((bool)(flags & NXCC_COLLISION_SIDES))
+	{
+		if(abs(res.NewSpeed.x - Speed.x) > 0.00001)
+			res.Collisionx = true;
+
+		if(abs(res.NewSpeed.z - Speed.z) > 0.00001)
+			res.Collisionz = true;
+	}
+
+	res.CollisionUp = (bool)(flags & NXCC_COLLISION_UP);
+
+	res.TouchingGround = (bool)(flags & NXCC_COLLISION_DOWN);
 	if(res.TouchingGround)
 	{
 		ActorUserData * characterdata = (ActorUserData *)_controller->getActor()->userData;
 		if(characterdata)
+		{
 			res.TouchingWater = (characterdata->HittedFloorMaterial > 16);
+
+			res.MovingObject = characterdata->MovingObject;
+			characterdata->MovingObject = false;
+			res.MovingDirection = characterdata->MovingDirection;
+		}
 	}
 
 	_lastposX = posX;
@@ -283,7 +360,7 @@ MoveOutput PhysXPhysicHandler::MoveActor(long ActorId, const AABB & actorBB,
 void PhysXPhysicHandler::SetActorPos(long ActorId, const VECTOR &NewPos)
 {
 	_lastposX = NewPos.x;
-	_lastposY = NewPos.y+2.499f;
+	_lastposY = NewPos.y+_OFFSET_MISS_Y;
 	_lastposZ = NewPos.z;
 	PhysXEngine::getInstance()->SetCharacterPos(_controller, NxVec3(_lastposX, _lastposY, _lastposZ));
 }
@@ -335,4 +412,19 @@ float PhysXPhysicHandler::GetGravitySpeed()
 void PhysXPhysicHandler::Render()
 {
 	PhysXEngine::getInstance()->RenderActors();
+}
+
+
+/*
+--------------------------------------------------------------------------------------------------
+- set if actor is allowed to move objects
+--------------------------------------------------------------------------------------------------
+*/
+void PhysXPhysicHandler::SetAllowedMoving(bool allowed)
+{
+	ActorUserData * characterdata = (ActorUserData *)_controller->getActor()->userData;
+	if(characterdata)
+	{
+		characterdata->AllowedMoving = allowed;
+	}
 }

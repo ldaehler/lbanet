@@ -179,7 +179,7 @@ reset all actors - typically called when changing map
 void ExternalPlayersHandler::ResetActors(const std::string &newmapName)
 {
 	std::map<long, ExternalPlayer *>::iterator it = _actors.begin();
-	std::map<long, ExternalPlayer *>::iterator end = _actors.begin();
+	std::map<long, ExternalPlayer *>::iterator end = _actors.end();
 
 	for(;it!=end; ++it)
 		delete it->second;

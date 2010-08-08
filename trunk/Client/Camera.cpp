@@ -79,9 +79,14 @@ void Camera::Process()
 
 		// start to move camera only when actor moves a certain distance
 		if(abs(actX - _targetx) > 3 || abs(actY - _targety) > 3 || abs(actZ - _targetz) > 3)
+		{
+			_speedxema.Reset();
+			_speedyema.Reset();
+			_speedzema.Reset();
 			_movecamera = true;
+		}
 
-		if(abs(actX - _targetx) > 5 || abs(actY - _targety) > 5 || abs(actZ - _targetz) > 5)
+		if(abs(actX - _targetx) > 6 || abs(actY - _targety) > 6 || abs(actZ - _targetz) > 6)
 		{
 			ResetPosition();
 			_movecamera = false;
@@ -91,24 +96,31 @@ void Camera::Process()
 
 		if(_movecamera)
 		{
-			double speedX = (actX - _lastactX);
-			double speedY = (actY - _lastactY);
-			double speedZ = (actZ - _lastactZ);
-			SetTarget(_targetx+speedX, _targety+speedY, _targetz+speedZ);
+			double speedX = /*_speedxema.Update*/(actX - _lastactX);
+			double speedY = /*_speedyema.Update*/(actY - _lastactY);
+			double speedZ = /*_speedzema.Update*/(actZ - _lastactZ);
 
 			double deltaX = (actX - _targetx);
 			double deltaY = (actY - _targety);
 			double deltaZ = (actZ - _targetz);
 
-			if(abs(deltaX) > 0.1)
-				_targetx+=deltaX/100;
-			if(abs(deltaY) > 0.1)
-				_targety+=deltaY/100;
-			if(abs(deltaZ) > 0.1)
-				_targetz+=deltaZ/100;
+			if(deltaX > 0.1)
+				speedX+=deltaX/100;
+			
+			if(deltaY > 0.1)
+				speedY+=deltaY/100;
+			
+			if(deltaZ > 0.1)
+				speedZ+=deltaZ/100;
 
+			//if(abs(speedX) > 0.001)
+				_targetx+= speedX;
+			//if(abs(speedY) > 0.001)
+				_targety+= speedY;
+			//if(abs(speedZ) > 0.001)
+				_targetz+= speedZ;
 
-			if(actX == _lastactX && actY == _lastactY && actZ == _lastactZ)
+			if(!_attached_actor->IsMoving())
 			{
 				_movecamera = false;		
 			}

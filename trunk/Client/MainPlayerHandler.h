@@ -38,7 +38,7 @@ class PhysicHandlerBase;
 #include "GameEvents.h"
 
 #include "MagicBallHandler.h"
-
+#include "averages.h"
 
 
 class DeadReckon
@@ -54,9 +54,9 @@ public:
 	float			_sizeY;
 	float			_sizeZ;
 
-	float			_velocityX;
-	float			_velocityY;
-	float			_velocityZ;
+	//float			_velocityX;
+	//float			_velocityY;
+	//float			_velocityZ;
 	float			_velocityR;
 
 	int				_Model;
@@ -69,22 +69,28 @@ public:
 	int				_nameB;
 
 	bool			_visible;
+	bool			_moveforward;
+	bool			_collisionx;
+	bool			_collisionz;
 
 	//std::ofstream	_file;
 
 
 	DeadReckon()
+		//: _moveforward(false)
 		//: _file("dump2.csv")
 	{}
 
 
 	// set reckon value
 	void Set( float posX, float posY, float posZ,
-				float rotation, float velocityX, float velocityY,
-				float velocityZ, float velocityR,
+				float rotation/*, float velocityX, float velocityY,
+				float velocityZ*/, float velocityR,
 				int Model, int Body, int Animation, short color,
 				int	nameR, int	nameG, int	nameB, bool Visible,
-				float sizeX, float sizeY, float sizeZ/*, float checkvx, float checkvy, float checkvz, float tdiff*/)
+				float sizeX, float sizeY, float sizeZ, 
+				bool moveforward, bool collisionx, bool collisionz
+				/*, float checkvx, float checkvy, float checkvz, float tdiff*/)
 	{
 		_visible = Visible;
 
@@ -97,9 +103,9 @@ public:
 		_sizeY = sizeY;
 		_sizeZ = sizeZ;
 
-		_velocityX = velocityX;
-		_velocityY = velocityY;
-		_velocityZ = velocityZ;
+		//_velocityX = velocityX;
+		//_velocityY = velocityY;
+		//_velocityZ = velocityZ;
 		_velocityR = velocityR;
 
 		_Model = Model;
@@ -110,6 +116,10 @@ public:
 		_nameR = nameR;
 		_nameG = nameG;
 		_nameB = nameB;
+
+		_moveforward = moveforward;
+		_collisionx = collisionx;
+		_collisionz = collisionz;
 
 		//_file<<","<<IceUtil::Time::now().toDateTime()
 		//	<<","<<_posX
@@ -123,19 +133,16 @@ public:
 		//	<<","<<_velocityY
 		//	<<","<<_velocityZ
 		//	<<","<<_velocityR
-		//	<<","<<checkvx
-		//	<<","<<checkvy
-		//	<<","<<checkvz
-		//	<<","<<tdiff
+		//	<<","<<_Animation
 		//	<<std::endl;
 	}
 
 	// update reackon on each tick
 	void Update(double timediff)
 	{
-		_posX += _velocityX*timediff;
-		_posY += _velocityY*timediff;
-		_posZ += _velocityZ*timediff;
+		//_posX += _velocityX*timediff;
+		//_posY += _velocityY*timediff;
+		//_posZ += _velocityZ*timediff;
 
 		_rotation += _velocityR*timediff;
 
@@ -147,11 +154,12 @@ public:
 
 	// check if reackon is still on track
 	bool IsOntrack( float posX, float posY, float posZ,
-					float rotation, float velocityX, float velocityY,
-					float velocityZ, float velocityR,
+					float rotation/*, float velocityX, float velocityY,
+					float velocityZ*/, float velocityR,
 					int Model, int Body, int Animation, short color,
 					int	nameR, int	nameG, int	nameB, bool Visible,
-					float sizeX, float sizeY, float sizeZ) const
+					float sizeX, float sizeY, float sizeZ, bool moveforward, 
+					bool collisionx, bool collisionz) const
 	{
 		if(_visible != Visible)
 		{
@@ -197,23 +205,41 @@ public:
 			return false;
 		}
 
-		if(abs(velocityX - _velocityX) > 0.001f)
+		if(_moveforward != moveforward)
 		{
-			//_file<<"vX";
+			//_file<<"forward";
 			return false;
 		}
 
-		if(abs(velocityY - _velocityY) > 0.001f)
+		if(_collisionx != collisionx)
 		{
-			//_file<<"vY";
+			//_file<<"collisionx";
 			return false;
 		}
 
-		if(abs(velocityZ - _velocityZ) > 0.001f)
+		if(_collisionz != collisionz)
 		{
-			//_file<<"vZ";
+			//_file<<"collisionz";
 			return false;
 		}
+
+		//if(abs(velocityX - _velocityX) > 0.002f)
+		//{
+		//	//_file<<"vX";
+		//	return false;
+		//}
+
+		//if(abs(velocityY - _velocityY) > 0.002f)
+		//{
+		//	//_file<<"vY";
+		//	return false;
+		//}
+
+		//if(abs(velocityZ - _velocityZ) > 0.002f)
+		//{
+		//	//_file<<"vZ";
+		//	return false;
+		//}
 
 		if(abs(velocityR - _velocityR) > 0.1f)
 		{
@@ -360,14 +386,10 @@ public:
 
 
 	// set if the main actor is attached
-	void SetAttached(bool attached)
-	{
-		_isAttached = attached;
-	}
+	void SetAttached(bool attached);
 
 	// return true if the actor is attached
-	bool IsAttached()
-	{ return _isAttached;}
+	bool IsAttached();
 
 
 	//! accessor
@@ -449,7 +471,7 @@ protected:
 
 	// recalculate actor velocity
 	// moveType: 0 - no move, 1 - move upward, -1 - move backward
-	void CalculateVelocity(bool MoveForward, bool ManualSpeed=false, float speed=0.0f);
+	void CalculateVelocity(/*bool MoveForward, bool ManualSpeed=false, float speed=0.0f*/);
 
 	// stop all move an reset all velocities
 	void ResetMove();
@@ -476,8 +498,16 @@ protected:
 	// depending of the stance
 	int GetWeaponAnimation();
 
+	//! called when player start moving objects
+	void SetCharMovingObject(int MovingDirection);
+
+	//! called when player should stop moving objects
+	void EndCharMovingObject();
+
 protected:
-	enum ActorState { Ac_Normal=0, Ac_Drowning, Ac_Dying, Ac_Flying, Ac_Jumping, Ac_FallingDown, Ac_protopack, Ac_hurt_fall, Ac_scripted, Ac_hurt, Ac_useweapon };
+	enum ActorState { Ac_Normal=0, Ac_Drowning, Ac_Dying, Ac_Flying, 
+						Ac_Jumping, Ac_FallingDown, Ac_protopack, Ac_hurt_fall, 
+						Ac_scripted, Ac_hurt, Ac_useweapon, Ac_movingobjects };
 
 	Player*			_player;
 	PhysicHandlerBase*	_RoomP;
@@ -491,6 +521,11 @@ protected:
 	ActorState		_rememberstate;
 	bool			_remembering;
 	bool			_touchedground;
+
+	bool			_chefkiffall;
+	float			_ycheckiffall;
+
+
 
 	ActorState		_state;
 	float			_keepYfall;
@@ -547,7 +582,7 @@ protected:
 	int								_curr_script_position;
 
 	// flag to tell if the main actor is attached to another actor or not
-	bool			_isAttached;
+
 
 	long			_hurtingactorId;
 	bool			_needCheck;
@@ -561,14 +596,26 @@ protected:
 	long			_attachactor;
 
 	MagicBallHandler	_magicballH;
-	bool				_wlaunched;
+	bool			_wlaunched;
 
-	float				_GravityFalldown;
+	float			_GravityFalldown;
 
+
+	MA				_averageSpeedX;
+	MA				_averageSpeedY;
+	MA				_averageSpeedZ;
 
 	std::string		_newmap;
 	std::string		_spawning;
 
+	// flag needed so that we can not directly jump after a jump
+	bool			_waittojump;
+
+	bool			_iscollisionup;
+	bool			_iscollisionx;
+	bool			_iscollisionz;
+
+	float			_cumujumpY;
 };
 
 #endif

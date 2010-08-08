@@ -28,6 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ThreadSafeWorkpile.h"
 #include "GameEvents.h"
 #include "ConfigurationManager.h"
+#include "MusicHandler.h"
+
 
 /***********************************************************
 	Constructor
@@ -164,6 +166,8 @@ bool LoginGUI::HandleConnect(const CEGUI::EventArgs& e)
 			std::string txtt = pt->getText().c_str();
 			if((txtl != "") && (txtl.size() <= 20) && (txtt.size() <= 20))
 			{
+				std::string samples = "Data/Samples/lba2launcherblob.wav";
+				MusicHandler::getInstance()->PlaySample(samples, 0);
 				ConfigurationManager::GetInstance()->SetString("Player.Name", txtl);
 				pt->setText("");
 				ThreadSafeWorkpile::getInstance()->AddEvent(new LoginEvent(txtl, txtt, seleplaylo));

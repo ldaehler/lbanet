@@ -27,6 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "LogHandler.h"
 #include "ThreadSafeWorkpile.h"
 #include "GameEvents.h"
+#include "MusicHandler.h"
+
 
 class MyListItemCW : public CEGUI::ListboxTextItem
 {
@@ -109,7 +111,11 @@ handle connect button event
 bool ChooseWorldGUI::HandleConnect(const CEGUI::EventArgs& e)
 {
 	if(_selectedworld != "")
+	{
+		std::string samples = "Data/Samples/lba2launcherblob.wav";
+		MusicHandler::getInstance()->PlaySample(samples, 0);
 		ThreadSafeWorkpile::getInstance()->AddEvent(new ChangeWorldEvent(_selectedworld, _selectedworldFile));
+	}
 
 	return true;
 }

@@ -35,6 +35,11 @@ struct MoveOutput
 	VECTOR	NewSpeed;		// modified actor speed
 	bool	TouchingWater;	// flag indicate if the actor is touchign water
 	bool	TouchingGround;	// flag indicate if the actor is on the ground or if he is flying/falling down
+	bool	MovingObject;	//flag set if player is moving object
+	int		MovingDirection;
+	bool	Collisionx;
+	bool	Collisionz;
+	bool	CollisionUp;
 };
 
 
@@ -79,6 +84,9 @@ public:
 
 	// render physic shapes
 	virtual void Render() =0;
+
+	// set if actor is allowed to move objects
+	virtual void SetAllowedMoving(bool allowed) = 0;
 };
 
 #endif

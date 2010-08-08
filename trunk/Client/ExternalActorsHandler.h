@@ -99,6 +99,9 @@ public:
 	// dettach player from actor
 	void ForcedDettach(Actor * act, long actorId);
 
+	// actor avtivate other actors
+	void ActorActivateActor(Actor * act);
+
 protected:
 	std::map<long, Actor *> _actors;
 

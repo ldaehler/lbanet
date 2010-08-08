@@ -70,7 +70,7 @@ const short	LbaNetModel::m_body_color_map[] = {-1, 2, 19, 32, 36, 48, 64, 80, 96
 LbaNetModel::LbaNetModel(GuiHandler*	guiH)
 : _current_room_cut(-1), m_current_main_state(0), _game_paused(false),
 	m_current_main_body(0), _guiH(guiH), m_current_main_body_color(0), m_debug_map(0), 
-	m_room_y_cut(-1), m_need_full_check(false), _mapRenderer(NULL), _physicHandler(NULL)
+	m_room_y_cut(-1), m_need_full_check(false), _mapRenderer(NULL), _physicHandler(NULL), _camRot(30.0f)
 {
 	LogHandler::getInstance()->LogToFile("Initializing model class...");
 
@@ -238,16 +238,24 @@ void LbaNetModel::Draw()
 		gluPerspective(_camera->GetFOV(),_windowWidth/(double)_windowHeight,0.01,2000);
 		glTranslated(0,0,-_camera->GetDistance());
 		glRotated(_camera->GetZenit(),1,0,0);
+		glRotated(-_camera->GetAzimut()-45,0,1,0);
 	}
 	else
 	{
-		glOrtho(-0.12*_camera->GetDistance(), 0.12*_camera->GetDistance(), -0.12*_camera->GetDistance(), 0.12*_camera->GetDistance(), -2000, 2000);
+		float factorX = _windowWidth * 0.0001;
+		float factorY = _windowHeight * 0.0001;
+
+		glOrtho(-factorX*_camera->GetDistance(), factorX*_camera->GetDistance(), 
+				-factorY*_camera->GetDistance(), factorY*_camera->GetDistance(), 
+				-2000, 2000);
 		glTranslated(0,0,-1000);
-		glRotated(30,1,0,0);
+		//std::cout<<_camRot<<std::endl;
+		glRotated( 30.0, 1.0, 0.0, 0.0);
+		glRotated( -45.0, 0.0, 1.0, 0.0);
+		//glScaled(1.0, 1.5, 1.0);
 	}
 
 
-    glRotated(-_camera->GetAzimut()-45,0,1,0);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glEnable(GL_DEPTH_TEST);
@@ -319,18 +327,18 @@ void LbaNetModel::DrawForLogin()
 	glPushMatrix();
     glLoadIdentity();
 
-	if(_camera->IsPerspective())
-	{
+	//if(_camera->IsPerspective())
+	//{
 		gluPerspective(_camera->GetFOV(),_windowWidth/(double)_windowHeight,0.01,2000);
 		glTranslated(0,0,-_camera->GetDistance());
 		glRotated(_camera->GetZenit(),1,0,0);
-	}
-	else
-	{
-		glOrtho(-0.12*_camera->GetDistance(), 0.12*_camera->GetDistance(), -0.12*_camera->GetDistance(), 0.12*_camera->GetDistance(), -2000, 2000);
-		glTranslated(0,0,-1000);
-		glRotated(30,1,0,0);
-	}
+	//}
+	//else
+	//{
+	//	glOrtho(-0.12*_camera->GetDistance(), 0.12*_camera->GetDistance(), -0.12*_camera->GetDistance(), 0.12*_camera->GetDistance(), -2000, 2000);
+	//	glTranslated(0,0,-1000);
+	//	glRotated(30,1,0,0);
+	//}
 
 
     glRotated(-_camera->GetAzimut()-45,0,1,0);
@@ -370,7 +378,7 @@ void LbaNetModel::DrawOnlyChar()
 	double remember_zoom = _camera->GetDistance();
 	double remember_zenit = _camera->GetZenit();
 	bool remember_perspective = _camera->IsPerspective();
-	_camera->SetDistance(15);
+	_camera->SetDistance(12);
 	_camera->SetZenit(30);
 	_camera->SetPerspective(true);
 
@@ -533,10 +541,33 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float 
 			std::map<long, Actor *> vec;
 			DataLoader::getInstance()->GetLocalMapActors(vec, m_AnimationSpeed);
 			_localActorsHandler->SetActors(vec);
+			
+			// add actif actors to list
+			{
+				std::map<long, Actor *>::const_iterator itm = vec.begin();
+				std::map<long, Actor *>::const_iterator endm = vec.end();
+				for(;itm != endm; ++itm)
+				{
+					if(itm->second->GetActif())
+						_actifactors.push_back(itm->second);
+				}
+			}
 
 			std::map<long, Actor *> vec2;
 			DataLoader::getInstance()->GetExternalMapActors(vec2, m_AnimationSpeed);
 			_externalActorsHandler->SetActors(vec2);
+			
+			// add actif actors to list
+			{
+				std::map<long, Actor *>::const_iterator itm = vec2.begin();
+				std::map<long, Actor *>::const_iterator endm = vec2.end();
+				for(;itm != endm; ++itm)
+				{
+					if(itm->second->GetActif())
+						_actifactors.push_back(itm->second);
+				}
+			}
+
 
 			_guiH->SetCurrentMap(_current_world.substr(0, _current_world.find(".xml")), _current_map);
 
@@ -580,6 +611,7 @@ void LbaNetModel::CleanupMap()
 {
 	LogHandler::getInstance()->LogToFile("Cleaning up map...");
 
+	_actifactors.clear();
 	_current_map="";
 
 	if(_mapRenderer)
@@ -704,6 +736,34 @@ int LbaNetModel::Process()
 					_mainPlayerHandler->SetAttached(true);
 			}
 
+		}
+	}
+
+	//process actif actors
+	{
+		std::vector<Actor *>::const_iterator it = _actifactors.begin();
+		std::vector<Actor *>::const_iterator end = _actifactors.end();
+		for(; it != end; ++it)
+		{
+			Actor *tmp = *it;
+
+			// check attach
+			if(tmp->IsAttached())
+			{
+				if(_localActorsHandler->CheckDettach(tmp) || _externalActorsHandler->CheckDettach(tmp))
+				{
+					tmp->SetAttached(false);
+				}
+			}
+			else
+			{
+				if(_localActorsHandler->CheckAttach(tmp) || _externalActorsHandler->CheckAttach(tmp))
+					tmp->SetAttached(true);
+			}
+
+			// actor activate actor
+			_localActorsHandler->ActorActivateActor(tmp);
+			_externalActorsHandler->ActorActivateActor(tmp);
 		}
 	}
 
@@ -1070,6 +1130,24 @@ void LbaNetModel::GoNextRoom()
 
 	//if(it->second.Spawnings.size() > 0)
 	//	ChangeMap(it->first, it->second.Spawnings.begin()->first);
+}
+
+
+/***********************************************************
+debug function
+***********************************************************/
+void LbaNetModel::CamPlus()
+{
+	_camRot += 0.001f;
+}
+
+
+/***********************************************************
+debug function
+***********************************************************/
+void LbaNetModel::CamMinus()
+{
+	_camRot -= 0.001f;
 }
 
 

@@ -47,7 +47,8 @@ public:
 	: ActorType(ActType), Materials(NULL), 
 		MaterialsSize(0),
 		HittedFloorMaterial(0), InternalActor(NULL),
-		released(false), Callback(callback), ActorId(index)
+		released(false), Callback(callback), ActorId(index), MovingObject(false),
+		AllowedMoving(false)
 	{}
 
 	//! destructor
@@ -73,6 +74,10 @@ public:
 	short				HittedFloorMaterial;
 
 	bool				released;
+	bool				MovingObject;
+	int					MovingDirection;
+
+	bool				AllowedMoving;
 
 	PhysicCallbackBase * Callback;
 };
@@ -115,10 +120,12 @@ public:
 	//! create actors
 	// type: 1=static, 2=kinematic, 3=dynamic
 	NxActor* CreateBox(const NxVec3 & StartPosition, float dimX, float dimY, float dimZ, 
-						float density, int Type, ActorUserData * adata, bool collidable = true);
+						float density, int Type, ActorUserData * adata, bool collidable = true,
+						bool movable = false);
 	NxActor* CreateSphere(const NxVec3 & StartPosition, float radius, float density, 
 							int Type, ActorUserData * adata,
-							float staticFriction, float dynamicFriction, float restitution);
+							float staticFriction, float dynamicFriction, float restitution, 
+							bool magicball= false);
 	NxActor* CreateCapsule(const NxVec3 & StartPosition, float radius, float height, 
 							float density, int Type, ActorUserData * adata);
 

@@ -100,8 +100,10 @@ MainPlayerHandler::MainPlayerHandler(float speedNormal, float speedSport,
 	_speedHorse(speedHorse), _speedDino(speedDino),
 	_speedJump(speedJump), _heightJump(heightJump), _speedHurt(speedHurt),
 	_RoomP(NULL), _currentstance(0), 
-	_isAttached(false), _isDiscrete(false), _needCheck(false), _currentsignal(-1),
-	_touchedground(true), _magicballH(true), _oldtdiff(1)
+	_isDiscrete(false), _needCheck(false), _currentsignal(-1),
+	_touchedground(true), _magicballH(true), _oldtdiff(1),
+	_averageSpeedX(10), _averageSpeedY(10), _averageSpeedZ(10), _waittojump(false),
+	_iscollisionup(false), _iscollisionx(false), _iscollisionz(false)
 {
 	_player = new Player(animationSpeed, true);
 	_player->DisplayName(true);
@@ -267,19 +269,42 @@ int MainPlayerHandler::PlayScript(double tnow, float tdiff)
 			double diffY = expectedY - currY;
 			double diffZ = expectedZ - currZ;
 
-			double stepX = tdiff*ps.Speed * ((diffX > 0) ? 1 : -1);
-			double stepY = tdiff*ps.Speed * ((diffY > 0) ? 1 : -1);
-			double stepZ = tdiff*ps.Speed * ((diffZ > 0) ? 1 : -1);
+			CalculateVelocity();
+			double stepX = _velocityX;
+			double stepY = _player->GetRendererSpeedY();
+			double stepZ = _velocityZ;
 
-			if(fabs(stepX) > fabs(diffX))
+			if(ps.AutoMoveY)
+			{
+				if(abs(diffY) > 0.0000001)
+					stepY = tdiff*0.0025f * ((diffY > 0) ? 1 : -1);
+				else
+					stepY = diffY;
+			}
+
+			//double stepX = tdiff*ps.Speed * ((diffX > 0) ? 1 : -1);
+			//double stepY = tdiff*ps.Speed * ((diffY > 0) ? 1 : -1);
+			//double stepZ = tdiff*ps.Speed * ((diffZ > 0) ? 1 : -1);
+
+			bool finishedx = false;
+			bool finishedy = false;
+			bool finishedz = false;
+
+			if(fabs(stepX) >= fabs(diffX) || (stepX > 0 && diffX < 0) || (stepX < 0 && diffX > 0) || (abs(diffX) < 0.01))
+			{
+				finishedx = true;
 				stepX = diffX;
-			if(fabs(stepY) > fabs(diffY))
+			}
+			if(fabs(stepY) >= fabs(diffY) || (stepY > 0 && diffY < 0) || (stepY < 0 && diffY > 0) || (abs(diffY) < 0.01))
+			{
+				finishedy = true;
 				stepY = diffY;
-			if(fabs(stepZ) > fabs(diffZ))
+			}
+			if(fabs(stepZ) >= fabs(diffZ) || (stepZ > 0 && diffZ < 0) || (stepZ < 0 && diffZ > 0) || (abs(diffZ) < 0.01))
+			{
+				finishedz = true;
 				stepZ = diffZ;
-
-			if(stepX == 0 && stepY == 0 && stepZ == 0)
-				++_curr_script_position;
+			}
 
 			_corrected_velocityX = (float)stepX;
 			_corrected_velocityY = (float)stepY;
@@ -288,11 +313,35 @@ int MainPlayerHandler::PlayScript(double tnow, float tdiff)
 									_player->GetPosY() + _corrected_velocityY, 
 									_player->GetPosZ() + _corrected_velocityZ);
 
+
+			if(finishedx && finishedy && finishedz)
+				++_curr_script_position;
+
 			UpdateFloorY();
 		}
 		break;
 		case 2: // animation
 		{
+			//do the move from the animation
+			CalculateVelocity();
+			double stepX = _velocityX;
+			double stepY = _player->GetRendererSpeedY();
+			double stepZ = _velocityZ;
+
+			//if need to boost Y
+			//if(ps.BoostY)
+			//{
+			//	if(abs(stepY) > 0.00001)
+			//		stepY += tdiff*ps.Speed * ((stepY > 0) ? 1 : -1);
+			//}
+
+			_corrected_velocityX = (float)stepX;
+			_corrected_velocityY = (float)stepY;
+			_corrected_velocityZ = (float)stepZ;
+			_player->SetPosition(	_player->GetPosX() + _corrected_velocityX, 
+									_player->GetPosY() + _corrected_velocityY, 
+									_player->GetPosZ() + _corrected_velocityZ);
+
 			int animend = (int)ps.ValueA;
 			if(animend >= 0)
 			{
@@ -301,7 +350,7 @@ int MainPlayerHandler::PlayScript(double tnow, float tdiff)
 			}
 			else
 			{
-				if(_player->Process(tnow, tdiff) == 1)
+				if(_player->IsAnimationFinished())
 					++_curr_script_position;
 			}
 		}
@@ -409,6 +458,10 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 	if(_paused)
 		return 0;
 
+	_iscollisionup = false; 
+	_iscollisionx = false; 
+	_iscollisionz = false; 
+
 
 	_velocityR = 0;
 	_corrected_velocityX = 0;
@@ -512,7 +565,7 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 		{
 			if(_player->getKeyframe() > 2)
 			{
-				CalculateVelocity(true, true, -_speedJump);
+				//CalculateVelocity(true, true, -_speedJump);
 
 				if(!_jump_sound_started)
 				{
@@ -522,47 +575,61 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 					_jump_sound_started = true;
 				}
 			}
-			else
-			{
-				CalculateVelocity(true, true, 0);
-			}
+			//else
+			//{
+			//	CalculateVelocity(true, true, 0);
+			//}
 
-			if(_player->getKeyframe() > 2 && _player->getKeyframe() < 5)
-				_corrected_velocityY = _heightJump * tdiff;
+			//if(_player->getKeyframe() > 2 && _player->getKeyframe() < 5)
+			//	_corrected_velocityY = _heightJump * tdiff;
 
-			if(_player->getKeyframe() > 4)
-				_corrected_velocityY = -_heightJump * tdiff;
+			//if(_player->getKeyframe() > 4)
+			//	_corrected_velocityY = -_heightJump * tdiff;
 		}
 
 		// in case we are in horse mode
-		if(_currentstance == 5)
-		{
-			CalculateVelocity(true, true, -_speedHorse);
+		//if(_currentstance == 5)
+		//{
+		//	CalculateVelocity(true, true, -_speedHorse);
 
-			if( _player->getKeyframe() < 3)
-				_corrected_velocityY = _heightJump * 2 * tdiff;
+		//	if( _player->getKeyframe() < 3)
+		//		_corrected_velocityY = _heightJump * 2 * tdiff;
 
-			if(_player->getKeyframe() > 2)
-				_corrected_velocityY = -_heightJump * 2 * tdiff;
-		}
+		//	if(_player->getKeyframe() > 2)
+		//		_corrected_velocityY = -_heightJump * 2 * tdiff;
+		//}
 
-		_corrected_velocityX = _velocityX * tdiff;
-		_corrected_velocityZ = _velocityZ * tdiff;
+		CalculateVelocity();
+		_corrected_velocityX = _velocityX/* * tdiff*/;
+		_corrected_velocityZ = _velocityZ/* * tdiff*/;
+		_corrected_velocityY = _player->GetRendererSpeedY();
+
+		_cumujumpY += _corrected_velocityY;
+		if(_cumujumpY > 2.2)
+			_corrected_velocityY = 0;
+
+		//if(_corrected_velocityY > 0)
+		//	_corrected_velocityY += 0.08;
+		//if(_corrected_velocityY < 0)
+		//	_corrected_velocityY -= 0.08;
 	}
 
 
 	// in case player has been touch and is hurt - make him move backward
 	if(_state == Ac_hurt)
 	{
-		CalculateVelocity(false, true, _speedHurt);
+		CalculateVelocity(/*false, true, _speedHurt*/);
+		_corrected_velocityX = _velocityX/* * tdiff*/;
+		_corrected_velocityZ = _velocityZ/* * tdiff*/;
 	}
 
 
 	// if we are not jumping neither flying we need to add the gravity
-	if(_state != Ac_Jumping && _state != Ac_Flying && !_isAttached)
+	if(_state != Ac_Jumping && _state != Ac_Flying && !_player->IsAttached())
 	{
-		if(_RoomP)
-			_corrected_velocityY = _GravityFalldown * tdiff;
+		_corrected_velocityY = _GravityFalldown * tdiff;
+		if(_state == Ac_FallingDown)
+			_corrected_velocityY = _player->GetRendererSpeedY();
 	}
 
 
@@ -573,14 +640,14 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 		_state != Ac_Jumping && _state != Ac_hurt)
 	{
 		//if right key pressed
-		if(_right_key_pressed)
+		if(_right_key_pressed && _state != Ac_movingobjects)
 		{
 			_velocityR = -0.15f;
 			_player->SetRotation(_player->GetRotation() - tdiff*0.15f);
 		}
 
 		//if left key pressed
-		if(_left_key_pressed)
+		if(_left_key_pressed && _state != Ac_movingobjects)
 		{
 			_velocityR = 0.15f;
 			_player->SetRotation(_player->GetRotation() + tdiff*0.15f);
@@ -599,10 +666,12 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 		// if up/down key
 		if(_up_key_pressed || _down_key_pressed)
 		{
-			CalculateVelocity(_up_key_pressed);
-
-			_corrected_velocityX = _velocityX * tdiff;
-			_corrected_velocityZ = _velocityZ * tdiff;
+			if(_state != Ac_movingobjects || _up_key_pressed)
+			{
+				CalculateVelocity(/*_up_key_pressed*/);
+				_corrected_velocityX = _velocityX;// * tdiff;
+				_corrected_velocityZ = _velocityZ;// * tdiff;
+			}
 		}
 	}
 
@@ -614,6 +683,10 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 		MoveOutput moveO = _RoomP->MoveActor(-1, _player->GetBoundingBox(),
 										VECTOR(_corrected_velocityX, _corrected_velocityY, _corrected_velocityZ));
 
+		_iscollisionup = moveO.CollisionUp; 
+		_iscollisionx = moveO.Collisionx; 
+		_iscollisionz = moveO.Collisionz; 
+
 		// update actor speed
 		_corrected_velocityX = moveO.NewSpeed.x;		
 		_corrected_velocityY = moveO.NewSpeed.y;		
@@ -624,10 +697,17 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 								_player->GetPosY()+_corrected_velocityY, 
 								_player->GetPosZ()+_corrected_velocityZ);
 
+		if(moveO.MovingObject)
+		{
+			SetCharMovingObject(moveO.MovingDirection);
+		}
+
 
 		//if not flying or jumping make a few tests
 		if(_state != Ac_Jumping && _state != Ac_Flying)
 		{
+			_waittojump = false;
+
 			if(_player->GetPosY() < -0.5) // the actor should die by falling out of the map
 				return 2;
 
@@ -644,13 +724,27 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 
 
 			// if the actor does not touch the ground it means he is falling down
-			if(!moveO.TouchingGround && !_isAttached)
+			if(!moveO.TouchingGround && !_player->IsAttached())
 			{
-				StartFallDown();
-				_touchedground = false;
+				if(!_chefkiffall)
+				{
+					_chefkiffall = true;
+					_ycheckiffall = _player->GetPosY();
+				}
+				else
+				{
+					float fallsize = _ycheckiffall - _player->GetPosY();
+					if(fallsize > 0.1)
+					{
+						StartFallDown();
+						_touchedground = false;
+					}
+				}
 			}
 			else
 			{
+				_chefkiffall = false;
+
 				//if we were falling down then player will be hurt by touching the ground
 				if(!_touchedground &&  (_state == Ac_FallingDown))
 				{
@@ -705,8 +799,10 @@ FinishProcess
 int MainPlayerHandler::FinishProcess(double tnow, float tdiff, int res)
 {
 	int resA = _player->Process(tnow, tdiff);
-	if(resA == 1 && res == -1)	// if actor animation is terminated and there is no other event
+	if(resA == 1 && res == -1) // if actor animation is terminated and there is no other event
 		res = 3;	// inform engine
+
+
 
 	if(_state == Ac_Jumping && resA == 1)
 		StopJump();
@@ -714,9 +810,6 @@ int MainPlayerHandler::FinishProcess(double tnow, float tdiff, int res)
 	if(_state == Ac_hurt && resA == 1)
 		StopHurt();
 
-	//float chexkvx = _corrected_velocityX;
-	//float chexkvy = _corrected_velocityY;
-	//float chexkvz = _corrected_velocityZ;
 
 	// normalize the velocity again
 	_corrected_velocityX/=_oldtdiff;
@@ -727,7 +820,7 @@ int MainPlayerHandler::FinishProcess(double tnow, float tdiff, int res)
 
 
 	// if attached - correct velocity
-	if(_isAttached || (_state == Ac_scripted))
+	if(_player->IsAttached() || (_state == Ac_scripted))
 	{
 		_corrected_velocityX += _player->GetAddedvX();
 		_corrected_velocityY += _player->GetAddedvY();
@@ -743,23 +836,30 @@ int MainPlayerHandler::FinishProcess(double tnow, float tdiff, int res)
 	}
 
 
+	double avspx = _averageSpeedX.Update(_corrected_velocityX);
+	double avspy = _averageSpeedY.Update(_corrected_velocityY);
+	double avspz = _averageSpeedZ.Update(_corrected_velocityZ);
+
+	bool fwdR = _isMovingForward || (_state == Ac_Jumping) || (_state == Ac_hurt) 
+				|| (_state == Ac_scripted) || (_state == Ac_FallingDown);
+
 
 	_dr.Update(tdiff);
 	if(!_dr.IsOntrack(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ(),
-						_player->GetRotation(), _corrected_velocityX,
-						_corrected_velocityY, _corrected_velocityZ, _velocityR,
+						_player->GetRotation()/*, avspx, avspy, avspz*/, _velocityR,
 						_player->GetModel(), _player->GetBody(), _player->GetAnimation(),
 						_player->GetBodyColor(), _player->GetNameR(), 
 						_player->GetNameG(), _player->GetNameB(), _player->Visible(),
-						_player->GetSizeX(), _player->GetSizeY(), _player->GetSizeZ()))
+						_player->GetSizeX(), _player->GetSizeY(), _player->GetSizeZ(), 
+						fwdR, _iscollisionx, _iscollisionz))
 	{
 		_dr.Set(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ(),
-						_player->GetRotation(), _corrected_velocityX,
-						_corrected_velocityY, _corrected_velocityZ, _velocityR,
+						_player->GetRotation()/*, avspx, avspy, avspz*/, _velocityR,
 						_player->GetModel(), _player->GetBody(), _player->GetAnimation(),
 						_player->GetBodyColor(), _player->GetNameR(), 
 						_player->GetNameG(), _player->GetNameB(), _player->Visible(),
-						_player->GetSizeX(), _player->GetSizeY(), _player->GetSizeZ()
+						_player->GetSizeX(), _player->GetSizeY(), _player->GetSizeZ(), 
+						fwdR, _iscollisionx, _iscollisionz
 						/*,chexkvx, chexkvy, chexkvz, tdiff*/);
 
 
@@ -778,9 +878,9 @@ int MainPlayerHandler::FinishProcess(double tnow, float tdiff, int res)
 		nai.Body = _player->GetBody();
 		nai.Animation = _player->GetAnimation();
 		nai.BodyColor = _player->GetBodyColor();
-		nai.vX = _corrected_velocityX;
-		nai.vY = _corrected_velocityY;
-		nai.vZ = _corrected_velocityZ;
+		nai.vX = (int)fwdR;//_corrected_velocityX;
+		nai.vY = (int)_iscollisionx; // _corrected_velocityY;
+		nai.vZ = (int)_iscollisionz; //_corrected_velocityZ;
 		nai.vRotation = _velocityR;
 		nai.NameR = _player->GetNameR();
 		nai.NameG = _player->GetNameG();
@@ -857,9 +957,10 @@ void MainPlayerHandler::PlayerStartMove(int moveDirection)
 	{
 		if(!_isMovingForward)
 		{
+			_player->SetMoving(true);
 			_isMovingForward = true;
 			_player->setActorAnimation(moveDirection);
-	}
+		}
 	}
 	else
 	{
@@ -886,9 +987,11 @@ void MainPlayerHandler::PlayerStopMove(int moveDirection)
 	{
 		case 1:
 			_up_key_pressed = false;
+			EndCharMovingObject();
 		break;
 		case 2:
 			_down_key_pressed = false;
+			EndCharMovingObject();
 		break;
 		case 3:
 			_left_key_pressed = false;
@@ -906,6 +1009,7 @@ void MainPlayerHandler::PlayerStopMove(int moveDirection)
 		if(_isMovingForward && !_up_key_pressed && !_down_key_pressed)
 		{
 			_isMovingForward = false;
+			_player->SetMoving(false);
 
 			if(_state == Ac_Normal || _state == Ac_Flying || _state == Ac_protopack)
 			{
@@ -1065,7 +1169,10 @@ return true if actor is hidden under roof
 ***********************************************************/
 int MainPlayerHandler::IsUnderRoof()
 {
-	return _RoomP->IsUnderRoof(_player->GetPosition());
+	if(_RoomP)
+		return _RoomP->IsUnderRoof(_player->GetPosition());
+	else
+		return -1;
 }
 
 
@@ -1159,6 +1266,9 @@ get actor moving speed
 ***********************************************************/
 float MainPlayerHandler::GetMovingSpeed()
 {
+	if(_state == Ac_movingobjects)
+		return _speedNormal/2;
+
 	switch(_player->GetModel())
 	{
 		case 0:
@@ -1193,6 +1303,7 @@ void MainPlayerHandler::StartFallDown()
 
 		_keepYfall = _player->GetPosY();
 
+		
 		if(!_remembering)
 		{
 			_remembermodel = _player->GetModel();
@@ -1237,8 +1348,9 @@ called when the actor start  jump
 ***********************************************************/
 void MainPlayerHandler::StartJump()
 {
-	if(_state != Ac_Jumping)
+	if(_state == Ac_Normal && !_waittojump && !_chefkiffall)
 	{
+		_cumujumpY = 0;
 		_jump_sound_started = false;
 		_state = Ac_Jumping;
 
@@ -1263,6 +1375,7 @@ void MainPlayerHandler::StopJump()
 		_player->setActorAnimation(GetActoAnim());
 
 		_needCheck = true;
+		_waittojump = true;
 	}
 }
 
@@ -1273,11 +1386,21 @@ void MainPlayerHandler::StopJump()
 /***********************************************************
 recalculate actor velocity
 ***********************************************************/
-void MainPlayerHandler::CalculateVelocity(bool MoveForward, bool ManualSpeed, float speed)
+void MainPlayerHandler::CalculateVelocity(/*bool MoveForward, bool ManualSpeed, float speed*/)
 {
-	float halfM = GetMovingSpeed() * (MoveForward ? -1.0f : 0.5f);
-	if(ManualSpeed)
-		halfM = speed;
+	//std::cout<<_player->GetRendererSpeed()<<std::endl;
+
+	//float halfM = GetMovingSpeed() * (MoveForward ? -1.0f : 0.5f);
+	float halfM = -_player->GetRendererSpeed();// / -2.0;
+	
+	//speed up if dino
+	if(_currentstance == 6)
+		halfM *= 3;
+
+	//if(ManualSpeed)
+	//	halfM = speed;
+
+
 
 
 	int nbA = ((int)_player->GetRotation()) / 90;
@@ -1759,6 +1882,60 @@ bool MainPlayerHandler::UseWeapon()
 }
 
 
+
+/***********************************************************
+called when player start moving objects
+***********************************************************/
+void MainPlayerHandler::SetCharMovingObject(int MovingDirection)
+{
+	if(_state != Ac_Normal && _state != Ac_protopack)
+		return;
+
+	_RoomP->SetAllowedMoving(true);
+
+	_remembering = true;
+	_rememberstate = _state;
+	_remembermodel = _player->GetModel();
+	_rememberbody = _player->GetBody();
+
+	if(_up_key_pressed)
+	{
+		_player->changeAnimEntity(0, _currentbody);
+		_player->setActorAnimation(18);
+
+		switch(MovingDirection)
+		{
+			case 1:
+				_player->SetRotation(90);
+			break;
+			case 2:
+				_player->SetRotation(270);
+			break;
+			case 3:
+				_player->SetRotation(0);
+			break;
+			case 4:
+				_player->SetRotation(180);
+			break;
+		}
+	}
+
+	_state = Ac_movingobjects;
+}
+
+/***********************************************************
+called when player should stop moving objects
+***********************************************************/
+void MainPlayerHandler::EndCharMovingObject()
+{
+	if(_state != Ac_movingobjects)
+		return;
+
+	_RoomP->SetAllowedMoving(false);
+	Stopstate();
+}
+
+
 /***********************************************************
 return the animation number for the weapon use
 depending of the stance
@@ -1793,4 +1970,22 @@ clear the magic ball if launched (e.g we change map)
 void MainPlayerHandler::ClearMB()
 {
 	_magicballH.Clear();
+}
+
+
+
+/***********************************************************
+set if the main actor is attached
+**************************************************-********/
+void MainPlayerHandler::SetAttached(bool attached)
+{
+	_player->SetAttached(attached);
+}
+
+/***********************************************************
+return true if the actor is attached
+**************************************************-********/
+bool MainPlayerHandler::IsAttached()
+{ 
+	return _player->IsAttached();
 }
