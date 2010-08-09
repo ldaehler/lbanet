@@ -48,7 +48,7 @@ public:
 		MaterialsSize(0),
 		HittedFloorMaterial(0), InternalActor(NULL),
 		released(false), Callback(callback), ActorId(index), MovingObject(false),
-		AllowedMoving(false)
+		AllowedMoving(false), ShouldUpdate(false)
 	{}
 
 	//! destructor
@@ -78,6 +78,8 @@ public:
 	int					MovingDirection;
 
 	bool				AllowedMoving;
+
+	bool				ShouldUpdate;
 
 	PhysicCallbackBase * Callback;
 };
@@ -151,10 +153,8 @@ public:
 	//! returned collision flags, collection of NxControllerFlag
 	unsigned int MoveCharacter(NxController* character, const NxVec3& moveVector, bool checkcollision=true);
 	void SetCharacterPos(NxController* character, const NxVec3& posVector);
-
-
 	void GetCharacterPosition(NxController* character, float &posX, float &posY, float &posZ);
-
+	void HideShowCharacter(NxController* character, bool Show);
 
 	//! render actors
 	void RenderActors();
