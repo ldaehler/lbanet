@@ -55,7 +55,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --------------------------------------------------------------------------------------------------
 */
 ActorPositionHandler::ActorPositionHandler(NxActor* contr, float X, float Y, float Z)
-: controller(contr)
+: controller(contr), _tempkinec(false)
 {
 	if(controller)
 		controller->setGlobalPosition(NxVec3(X, Y+_OFFSET_MISS_2_Y, Z));
@@ -129,7 +129,7 @@ bool ActorPositionHandler::GraphicsNeedUpdate()
 		
 		if(controller->isDynamic())
 		{
-			if(!controller->readBodyFlag(NX_BF_KINEMATIC))
+			if(_tempkinec || !controller->readBodyFlag(NX_BF_KINEMATIC))
 			{
 				if(!controller->isSleeping())
 				{
@@ -141,6 +141,134 @@ bool ActorPositionHandler::GraphicsNeedUpdate()
 
 	return res;
 }
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+- check if graphic need to be refresh from physic
+--------------------------------------------------------------------------------------------------
+*/
+void ActorPositionHandler::SetKinematic(bool kinematic)
+{
+	if(controller)
+	{
+		
+		if(kinematic)
+		{
+			_tempkinec = true;
+			_savedkinematic = controller->readBodyFlag(NX_BF_KINEMATIC);
+			controller->raiseBodyFlag(NX_BF_KINEMATIC);
+		}
+		else
+		{
+			_tempkinec = false;
+			if(!_savedkinematic)
+				controller->clearBodyFlag(NX_BF_KINEMATIC);
+		}
+	}
+}
+
+
+
+
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+- constructor
+--------------------------------------------------------------------------------------------------
+*/
+MovableActorPositionHandler::MovableActorPositionHandler(NxController* contr, float X, float Y, float Z)
+: _controller(contr), ActorPositionHandler(NULL, 0, 0, 0)
+{
+	_lastposX = X;
+	_lastposY = Y;
+	_lastposZ = Z;
+	if(_controller)
+		PhysXEngine::getInstance()->SetCharacterPos(_controller, NxVec3(_lastposX, _lastposY, _lastposZ));
+}
+
+
+/*
+--------------------------------------------------------------------------------------------------
+- SetPosition
+--------------------------------------------------------------------------------------------------
+*/
+void MovableActorPositionHandler::SetPosition(float X, float Y, float Z)
+{
+	float speedX = X - _lastposX;
+	float speedY = Y - _lastposY;
+	float speedZ = Z - _lastposZ;
+	if(_controller)
+		PhysXEngine::getInstance()->MoveCharacter(_controller, NxVec3(speedX, speedY, speedZ), false);
+
+	_lastposX = X;
+	_lastposY = Y;
+	_lastposZ = Z;
+}
+
+/*
+--------------------------------------------------------------------------------------------------
+- GetPosition
+--------------------------------------------------------------------------------------------------
+*/
+void MovableActorPositionHandler::GetPosition(float &X, float &Y, float &Z)
+{
+	if(_controller)
+		PhysXEngine::getInstance()->GetCharacterPosition(_controller, X, Y, Z);
+}
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+- hide
+--------------------------------------------------------------------------------------------------
+*/
+void MovableActorPositionHandler::Hide()
+{
+	if(_controller)
+		PhysXEngine::getInstance()->HideShowCharacter(_controller, false);
+}
+
+/*
+--------------------------------------------------------------------------------------------------
+- show
+--------------------------------------------------------------------------------------------------
+*/
+void MovableActorPositionHandler::Show()
+{
+	if(_controller)
+		PhysXEngine::getInstance()->HideShowCharacter(_controller, true);
+}
+
+
+
+/*
+--------------------------------------------------------------------------------------------------
+- check if graphic need to be refresh from physic
+--------------------------------------------------------------------------------------------------
+*/
+bool MovableActorPositionHandler::GraphicsNeedUpdate()
+{
+	bool res = false;
+
+	if(_controller)
+	{
+		ActorUserData * characterdata = (ActorUserData *)_controller->getActor()->userData;
+		if(characterdata)
+		{
+			res = characterdata->ShouldUpdate;
+			characterdata->ShouldUpdate = false;
+		}
+	}
+
+	return res;
+}
+
+
 
 
 

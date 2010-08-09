@@ -38,34 +38,69 @@ class ExternalActorsHandler;
 class NxActor;
 class NxController;
 
-
+//*************************************************************************************************
+//*                                      class taking care of normal actor sync
+//*************************************************************************************************
 class ActorPositionHandler
 {
 public:
 	//! constructor
 	ActorPositionHandler(NxActor* contr, float X, float Y, float Z);
 
-	void SetPosition(float X, float Y, float Z);
-	void GetPosition(float &X, float &Y, float &Z);
+	virtual void SetPosition(float X, float Y, float Z);
+	virtual void GetPosition(float &X, float &Y, float &Z);
 
-	NxActor* GetActor()
-	{ return controller; }
+	//NxActor* GetActor()
+	//{ return controller; }
 
-	void Hide();
-	void Show();
+	virtual void Hide();
+	virtual void Show();
 
 	// check if graphic need to be refresh from physic
-	bool GraphicsNeedUpdate();
+	virtual bool GraphicsNeedUpdate();
+
+	// set wether actor is kinematic or not
+	void SetKinematic(bool kinematic);
 
 private:
 	NxActor* controller;
+	bool _savedkinematic;
+	bool _tempkinec;
 };
 
 
-//*************************************************************************************************
-//*                                      class PlanesPhysicHandler
-//*************************************************************************************************
 
+//*************************************************************************************************
+//*                                      class taking care of movable actor sync
+//*************************************************************************************************
+class MovableActorPositionHandler : public ActorPositionHandler
+{
+public:
+	//! constructor
+	MovableActorPositionHandler(NxController* contr, float X, float Y, float Z);
+
+	virtual void SetPosition(float X, float Y, float Z);
+	virtual void GetPosition(float &X, float &Y, float &Z);
+
+	virtual void Hide();
+	virtual void Show();
+
+	// check if graphic need to be refresh from physic
+	virtual bool GraphicsNeedUpdate();
+
+private:
+	NxController*	_controller;
+	float			_lastposX;
+	float			_lastposY;
+	float			_lastposZ;
+};
+
+
+
+
+//*************************************************************************************************
+//*                                      class PhysXPhysicHandler
+//*************************************************************************************************
 class PhysXPhysicHandler : public PhysicHandlerBase
 {
 public:
@@ -149,12 +184,12 @@ private:
 	ExternalActorsHandler*			_externalAH;
 
 
-	std::map<int, std::vector<NormalPlane> >		_floors;
-	std::map<int, std::vector<NormalPlane> >		_wallsX;
-	std::map<int, std::vector<NormalPlane> >		_wallsZ;
+	//std::map<int, std::vector<NormalPlane> >		_floors;
+	//std::map<int, std::vector<NormalPlane> >		_wallsX;
+	//std::map<int, std::vector<NormalPlane> >		_wallsZ;
 
-	std::vector<StairPlane>							_stairs;
-	std::vector<CornerStairPlane>					_corner_stairs;
+	//std::vector<StairPlane>							_stairs;
+	//std::vector<CornerStairPlane>					_corner_stairs;
 
 	bool											_shiftcheck;
 

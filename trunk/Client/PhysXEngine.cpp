@@ -76,52 +76,6 @@ class MyContactReport : public NxUserContactReport
 				}
 			}
 		} 
-
-		//if(events & NX_NOTIFY_ON_START_TOUCH)
-		//{
-		//	NxActor* n1 = pair.actors[0];
-		//	NxActor* n2 = pair.actors[1];
-		//	if(n1 && n2)
-		//	{
-		//		ActorUserData * acd1 = (ActorUserData *) n1->userData;
-		//		ActorUserData * acd2 = (ActorUserData *) n2->userData;
-		//		if(acd1 && acd2)
-		//		{
-		//			if(	(acd1->ActorType == 1 && acd2->ActorType == 2) ||
-		//				(acd2->ActorType == 1 && acd1->ActorType == 2))
-		//			{
-		//				// Iterate through contact points
-		//				NxContactStreamIterator i(pair.stream);
-		//				//user can call getNumPairs() here
-		//				while(i.goNextPair())
-		//				{
-		//					//user can also call getShape() and getNumPatches() here
-		//					while(i.goNextPatch())
-		//					{
-		//						while(i.goNextPoint())
-		//						{
-		//							//user can also call getPoint() and getSeparation() here
-		//							if(i.getSeparation()<0.0f)
-		//							{
-		//								const NxVec3& contactPoint = i.getPoint();
-
-		//								NxU32 faceIndex = i.getFeatureIndex0();
-		//								if(faceIndex==0xffffffff)	
-		//									faceIndex = i.getFeatureIndex1();
-
-		//								if(faceIndex!=0xffffffff)
-		//								{
-		//									std::cout<<faceIndex<<std::endl;
-		//									//gTouchedTris.pushBack(faceIndex);
-		//								}
-		//							}
-		//						}
-		//					}
-		//				}		
-		//			}
-		//		}
-		//	}
-		//} 
 	}    
 } myReport;
 
@@ -182,6 +136,11 @@ public:
 						{
 							if(characterdata->AllowedMoving)
 							{
+								bool rememberflag = actor.readBodyFlag(NX_BF_KINEMATIC);
+								if(!rememberflag)
+									actor.clearBodyFlag(NX_BF_KINEMATIC);
+
+
 								if(actor.readBodyFlag(NX_BF_KINEMATIC))
 								{
 									actor.moveGlobalPosition(actor.getGlobalPosition() + (hit.length * hit.dir));
@@ -189,9 +148,12 @@ public:
 								else
 								{
 									//return NX_ACTION_PUSH;
-									NxF32 coeff = actor.getMass() * hit.length * 20.0f;
-									actor.addForceAtLocalPos(hit.dir*coeff, NxVec3(0,0,0), NX_SMOOTH_IMPULSE);
+									NxF32 coeff = actor.getMass() * hit.length * 10.0f;
+									actor.addForceAtLocalPos(hit.dir*coeff, NxVec3(0,0,0), NX_IMPULSE);
 								}
+
+								if(rememberflag)
+									actor.raiseBodyFlag(NX_BF_KINEMATIC);
 							}
 
 							characterdata->MovingObject = true;
@@ -220,7 +182,13 @@ public:
 
 	virtual NxControllerAction  onControllerHit(const NxControllersHit& hit)
 	{
-		return NX_ACTION_NONE;
+		ActorUserData * characterdata = (ActorUserData *)hit.other->getActor()->userData;
+		if(characterdata)
+		{
+			characterdata->ShouldUpdate = true;
+		}
+
+		return NX_ACTION_PUSH;
 	}
 
 } gControllerHitReport;
@@ -336,8 +304,7 @@ void PhysXEngine::Init(float gravity)
 	//float TimeStep = 1.0f / 60.0f;
 	gScene->setTiming();
 
-	gScene->setGroupCollisionFlag(GROUP_COLLIDABLE_PUSHABLE, GROUP_NON_COLLIDABLE, false);
-	
+	//gScene->setGroupCollisionFlag(GROUP_COLLIDABLE_PUSHABLE, GROUP_NON_COLLIDABLE, false);
 
 
 
@@ -870,6 +837,16 @@ void PhysXEngine::GetCharacterPosition(NxController* character, float &posX, flo
 	posY = (float)vec.y;
 	posZ = (float)vec.z;
 }
+
+
+/***********************************************************
+GetCharacterPosition
+***********************************************************/
+void PhysXEngine::HideShowCharacter(NxController* character, bool Show)
+{
+	character->setCollision(Show);
+}
+
 
 
 
