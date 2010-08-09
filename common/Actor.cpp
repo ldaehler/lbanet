@@ -403,3 +403,22 @@ VECTOR Actor::GetPosition()
 {
 	return VECTOR(_posX, _posY, _posZ);
 }
+
+/***********************************************************
+set if the main actor is attached
+***********************************************************/
+void Actor::SetAttached(bool attached)
+{
+	_isAttached = attached;
+
+	if(attached)
+	{
+		if(_actif && _physposhandler)
+			_physposhandler->SetKinematic(true);
+	}
+	else
+	{
+		if(_actif && _physposhandler)
+			_physposhandler->SetKinematic(false);
+	}
+}
