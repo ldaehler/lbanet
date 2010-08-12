@@ -193,6 +193,9 @@ public:
 	//player should die
 	void PlayerDie();
 
+	// attach an actor to another
+	void AttachActor(Actor *toattach, long attachingid);
+
 private:
 	MapRendererBase*		_mapRenderer;
 	PhysicHandlerBase*		_physicHandler;

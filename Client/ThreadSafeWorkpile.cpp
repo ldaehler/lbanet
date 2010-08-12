@@ -307,6 +307,28 @@ void ThreadSafeWorkpile::GetExtActorUpdate(std::vector<LbaNet::ActorInfo> & vec)
 	m_ext_info.swap(vec);
 }
 
+
+/***********************************************************
+update actor info
+***********************************************************/
+void ThreadSafeWorkpile::UpdateGhost(const LbaNet::GhostActorInfo & ai)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_ghost);
+	m_ext_ghost_info.push_back(ai);
+}
+
+/***********************************************************
+get the last update info
+***********************************************************/
+void ThreadSafeWorkpile::GetExtGhostUpdate(std::vector<LbaNet::GhostActorInfo> & vec)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_ghost);
+	vec.clear();
+	m_ext_ghost_info.swap(vec);
+}
+
+
+
 /***********************************************************
 get the last update info
 ***********************************************************/
@@ -1379,4 +1401,35 @@ void ThreadSafeWorkpile::GetPMMarkRead(std::vector<long> &vec)
 	vec.clear();
 	IceUtil::Mutex::Lock lock(m_mutex_markreadpm);
 	vec.swap(m_pmtomarkread);
+}
+
+
+/***********************************************************
+get next ghost id
+***********************************************************/
+int ThreadSafeWorkpile::GetNextGhostId()
+{
+	IceUtil::Mutex::Lock lock(m_mutex_ghostid);
+	return m_ghostid++;
+}
+
+
+
+/***********************************************************
+update ghost actor
+***********************************************************/
+void ThreadSafeWorkpile::UpdateIntGhost(LbaNet::GhostActorInfo ginfo)
+{
+	IceUtil::Mutex::Lock lock(m_mutex_ghostupd);
+	m_ghost_updates.push_back(ginfo);
+}
+
+/***********************************************************
+get last ghost updates
+***********************************************************/
+void ThreadSafeWorkpile::GetIntUpdateGhosts(std::vector<LbaNet::GhostActorInfo> & vec)
+{
+	vec.clear();
+	IceUtil::Mutex::Lock lock(m_mutex_ghostupd);
+	vec.swap(m_ghost_updates);
 }

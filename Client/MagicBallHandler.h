@@ -87,6 +87,7 @@ private:
 	int		_touch_counter;
 	bool	_MainPlayer;
 	bool	_enoughmana;
+	bool	_shouldclearphysic;
 
 
 	float	_currX;

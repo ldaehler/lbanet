@@ -28,13 +28,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <IceUtil/Time.h>
 #include "SynchronizedTimeHandler.h"
-
+#include "ThreadSafeWorkpile.h"
+#include "GameEvents.h"
 
 #include "PhysXPhysicHandler.h"
 #include "PhysXEngine.h"
 #include "NxVec3.h"
 #include "NxActor.h"
 #include "Actor.h"
+#include "DataLoader.h"
+#include "SpriteRenderer.h"
 
 #include <math.h>
 
@@ -92,6 +95,13 @@ ExternalPlayer::~ExternalPlayer()
 
 	if(_usdata)
 		delete _usdata;
+
+	{
+		std::map<int, Actor *>::iterator itm = _ghosts.begin();
+		std::map<int, Actor *>::iterator endm = _ghosts.end();
+		for(; itm != endm; ++itm)
+			delete itm->second;
+	}
 }
 
 
@@ -120,19 +130,51 @@ void ExternalPlayer::Update(const LbaNet::ActorInfo & ainfo)
 
 		_renderer->SetSize(ainfo.SizeX, ainfo.SizeY, ainfo.SizeZ); 
 
-		float vx = ainfo.vX;
-		_forward = (bool)(int)vx;
-
-		float vy = ainfo.vY;
-		_collisionx = (bool)(int)vy;
-
-		float vz = ainfo.vZ;
-		_collisionz = (bool)(int)vz;
+		_forward = ainfo.MoveMorward;
+		_collisionx = ainfo.CollisionX;
+		_collisionz = ainfo.CollisionZ;
 
 		//_velocityX = ainfo.vX;
 		//_velocityY = ainfo.vY;
 		//_velocityZ = ainfo.vZ;
+		_extravelocityY = ainfo.extravY;
 		_velocityR = ainfo.vRotation;
+
+		const std::vector<Actor *> & attachingacts = _renderer->GetAttaching();
+
+		// add missing attached
+		for(size_t i=0; i<ainfo.AttachedToActor.size(); ++i)
+		{
+			bool found = false;
+			for(size_t j=0; j<attachingacts.size(); ++j)
+			{
+				if(	attachingacts[j]->GetId() == ainfo.AttachedToActor[i])
+				{
+					found = true;
+					break;
+				}
+			}	
+
+			if(!found)
+				ThreadSafeWorkpile::getInstance()->AddEvent(new AttachActorToActorEvent(_renderer, ainfo.AttachedToActor[i]));
+		}
+
+		// remove old attached
+		for(size_t j=0; j<attachingacts.size(); ++j)
+		{
+			bool found = false;
+			for(size_t i=0; i<ainfo.AttachedToActor.size(); ++i)
+			{
+				if(	attachingacts[j]->GetId() == ainfo.AttachedToActor[i])
+				{
+					found = true;
+					break;
+				}
+			}
+			
+			if(!found)
+				_renderer->RemoveAttaching(attachingacts[j]);
+		}		
 
 		//if(_velocityX == 0 && _velocityY == 0 && _velocityZ == 0)
 		//	_renderer->SetPosition(ainfo.X,  ainfo.Y, ainfo.Z);
@@ -162,6 +204,8 @@ void ExternalPlayer::Update(const LbaNet::ActorInfo & ainfo)
 
 
 
+
+
 /***********************************************************
  update with external info
 ***********************************************************/
@@ -184,11 +228,19 @@ int ExternalPlayer::Process(double tnow, float tdiff)
 {
 	_magicballH.Process();
 
+	{
+		std::map<int, Actor *>::iterator itm = _ghosts.begin();
+		std::map<int, Actor *>::iterator endm = _ghosts.end();
+		for(; itm != endm; ++itm)
+			itm->second->Process(tnow, tdiff);
+	}
+
 	// calculate dead reckon rotation
 	_dr.UpdateRot(tnow);
 
 	// calculate prediction
 	CalculateVelocity(_dr._predicted_rotation);
+	_velocityY += _extravelocityY * tdiff;
 
 	float predicted_rotation = _renderer->GetRotation() + (_velocityR*tdiff);
 	float predicted_posX = _renderer->GetPosX() + (_velocityX);
@@ -259,6 +311,13 @@ void ExternalPlayer::draw(int RoomCut)
 {
 	_renderer->Render(RoomCut);
 	_magicballH.Render();
+
+	{
+		std::map<int, Actor *>::iterator itm = _ghosts.begin();
+		std::map<int, Actor *>::iterator endm = _ghosts.end();
+		for(; itm != endm; ++itm)
+			itm->second->Render(RoomCut);
+	}
 }
 
 
@@ -340,3 +399,79 @@ void ExternalPlayer::CalculateVelocity(float rotation)
 	if(_collisionz)
 		_velocityZ = 0;
 }
+
+
+
+/***********************************************************
+ update with external info
+***********************************************************/
+void ExternalPlayer::UpdateGhost(const LbaNet::GhostActorInfo & ainfo)
+{
+	std::map<int, Actor *>::iterator it = _ghosts.find(ainfo.GhostId);
+	if(it == _ghosts.end())
+	{
+		//create new actor
+		Actor * tmp = new Actor();
+		tmp->SetRenderer(DataLoader ::getInstance()->CreateSpriteRenderer(ainfo.SpriteId));
+
+		tmp->SetPosition(ainfo.X, ainfo.Y, ainfo.Z);
+		tmp->SetRotation(ainfo.Rotation);
+
+		// add missing attached
+		for(size_t i=0; i<ainfo.AttachedToActors.size(); ++i)
+			ThreadSafeWorkpile::getInstance()->AddEvent(new AttachActorToActorEvent(_renderer, ainfo.AttachedToActors[i]));
+
+		if(ainfo.AttachedToPlayer)
+			_renderer->Attach(tmp);
+
+		_ghosts[ainfo.GhostId] = tmp;
+	}
+	else
+	{
+		//update existing actor
+		Actor * tmp = it->second;
+		tmp->SetPosition(ainfo.X, ainfo.Y, ainfo.Z);
+		tmp->SetRotation(ainfo.Rotation);
+
+		const std::vector<Actor *> & attachingacts = tmp->GetAttaching();
+
+		// add missing attached
+		for(size_t i=0; i<ainfo.AttachedToActors.size(); ++i)
+		{
+			bool found = false;
+			for(size_t j=0; j<attachingacts.size(); ++j)
+			{
+				if(	attachingacts[j]->GetId() == ainfo.AttachedToActors[i])
+				{
+					found = true;
+					break;
+				}
+			}	
+
+			if(!found)
+				ThreadSafeWorkpile::getInstance()->AddEvent(new AttachActorToActorEvent(_renderer, ainfo.AttachedToActors[i]));
+		}
+
+		// remove old attached
+		for(size_t j=0; j<attachingacts.size(); ++j)
+		{
+			bool found = false;
+			for(size_t i=0; i<ainfo.AttachedToActors.size(); ++i)
+			{
+				if(	attachingacts[j]->GetId() == ainfo.AttachedToActors[i])
+				{
+					found = true;
+					break;
+				}
+			}
+			
+			if(!found)
+				_renderer->RemoveAttaching(attachingacts[j]);
+		}
+
+		if(ainfo.AttachedToPlayer)
+			_renderer->Attach(tmp);
+		else
+			_renderer->Dettach(tmp);
+	}	
+}   

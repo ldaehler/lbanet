@@ -85,7 +85,7 @@ LBA1ModelClass::~LBA1ModelClass()
 
 LBA1ModelClass::LBA1ModelClass(entitiesTableStruct* entitiesData, const std::string &bodyPath,
 								const std::string &animPath, int entityNum,int bodyNum)
-: bodyPtr(NULL), animPtr(NULL), m_currentSpeed(0)
+: bodyPtr(NULL), animPtr(NULL), m_currentSpeed(0), m_currentSpeedY(0)
 {
 
 	HQRHandler HQH(DataFileHandler::GetPath("RESS"));

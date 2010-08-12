@@ -85,6 +85,10 @@ public:
 	//! cleanup the textures
 	void CleanUp();
 
+	//! only used form sprites
+	virtual long GetSpriteId() 
+	{return _sprites[0]->id;}
+
 protected:
 	//! load function
 	virtual void Load(const std::string & filename);

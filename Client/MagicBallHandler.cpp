@@ -84,7 +84,7 @@ void doCirclefillBall(double x, double y, double radius)
 */
 MagicBallHandler::MagicBallHandler(bool MainPlayer)
 	: _launched(false), _comeback(false), _owner(NULL),
-		_MainPlayer(MainPlayer), _floorY(0)
+		_MainPlayer(MainPlayer), _floorY(0), _shouldclearphysic(false)
 {
 	ConfigurationManager::GetInstance()->GetFloat("Physic.MagicBallBounciness", _MagicBallBounciness);
 	ConfigurationManager::GetInstance()->GetFloat("Physic.MagicBallStaticFriction", _MagicBallStaticFriction); 
@@ -185,6 +185,7 @@ void MagicBallHandler::Launch(float PosX, float PosY, float PosZ, float dirX, fl
 	_currmode = mode;
 
 
+
 	// clean in case we still have an MB running
 	cleanPhys();
 
@@ -212,7 +213,7 @@ void MagicBallHandler::Launch(float PosX, float PosY, float PosZ, float dirX, fl
 	_touch_counter = 0;
 	_enoughmana = enoughmana;
 
-	_physdata->released = false;
+	_physdata->Setreleased(false);
 	_physH =  PhysXEngine::getInstance()->CreateSphere(NxVec3(PosX, PosY+_offset_y_, PosZ), _size_ball_, 1.0, 
 															3, _physdata, 
 															_MagicBallBounciness,
@@ -261,6 +262,9 @@ void MagicBallHandler::Launch(float PosX, float PosY, float PosZ, float dirX, fl
 */
 void MagicBallHandler::Process()
 {
+	if(_shouldclearphysic)
+		cleanPhys();
+
 	if(!_launched)
 		return;
 
@@ -368,14 +372,16 @@ void MagicBallHandler::Clear()
 */
 void MagicBallHandler::cleanPhys()
 {
-	if(!_launched || _comeback)
+	if(!_shouldclearphysic)
 		return;
 
-	if(!_physdata->released)
+	_shouldclearphysic = false;
+
+	if(!_physdata->Getreleased())
 	{
 		//_physH->userData = NULL;
+		_physdata->Setreleased(true);
 		PhysXEngine::getInstance()->DestroyActor(_physH);
-		_physdata->released = true;
 	}
 }
 
@@ -464,7 +470,7 @@ void MagicBallHandler::BallComeBack()
 		_currY = vec.y+1.0f+_size_ball_;
 		_currZ = vec.z;	
 
-		cleanPhys();
+		_shouldclearphysic = true;
 
 		_comeback = true;
 		_lasttime = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDouble();

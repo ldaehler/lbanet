@@ -1273,6 +1273,16 @@ void SendingLoopThread::run()
 			_connectionMananger.MarkReadPM(markreadpms[i]);
 
 
+		std::vector<LbaNet::GhostActorInfo> updatedghosts;
+		ThreadSafeWorkpile::getInstance()->GetIntUpdateGhosts(updatedghosts);
+		for(size_t i=0; i<updatedghosts.size(); ++i)
+		{
+			updatedghosts[i].MapName = _current_map;
+			_connectionMananger.GetActorPublisher()->UpdateGhost(updatedghosts[i]);
+		}
+
+
+
 
 		if(ThreadSafeWorkpile::getInstance()->HasUpdatedInfo(_last_ai))
 		{

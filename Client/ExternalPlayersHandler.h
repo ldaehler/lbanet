@@ -78,6 +78,11 @@ public:
 	//! get player from id
 	Player * GetPlayer(long playerid);
 
+	// if actor already ther - update infroamtion
+	// else add actor to the list
+	void UpdateGhost(const LbaNet::GhostActorInfo & ai);
+
+
 protected:
 	void MagicBallPlayed(long playerid, const LbaNet::LaunchInfo & linfo);
 	void MagicBallComeback(long playerid);

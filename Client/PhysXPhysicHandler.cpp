@@ -181,13 +181,10 @@ void ActorPositionHandler::SetKinematic(bool kinematic)
 --------------------------------------------------------------------------------------------------
 */
 MovableActorPositionHandler::MovableActorPositionHandler(NxController* contr, float X, float Y, float Z)
-: _controller(contr), ActorPositionHandler(NULL, 0, 0, 0)
+: _controller(contr), ActorPositionHandler(NULL, 0, 0, 0), _wasfalling(false)
 {
-	_lastposX = X;
-	_lastposY = Y;
-	_lastposZ = Z;
 	if(_controller)
-		PhysXEngine::getInstance()->SetCharacterPos(_controller, NxVec3(_lastposX, _lastposY, _lastposZ));
+		PhysXEngine::getInstance()->SetCharacterPos(_controller, NxVec3(X, Y, Z));
 }
 
 
@@ -198,15 +195,14 @@ MovableActorPositionHandler::MovableActorPositionHandler(NxController* contr, fl
 */
 void MovableActorPositionHandler::SetPosition(float X, float Y, float Z)
 {
-	float speedX = X - _lastposX;
-	float speedY = Y - _lastposY;
-	float speedZ = Z - _lastposZ;
+	float lX, lY, lZ;
+	GetPosition(lX, lY, lZ);
+	float speedX = X - lX;
+	float speedY = Y - lY;
+	float speedZ = Z - lZ;
 	if(_controller)
 		PhysXEngine::getInstance()->MoveCharacter(_controller, NxVec3(speedX, speedY, speedZ), false);
 
-	_lastposX = X;
-	_lastposY = Y;
-	_lastposZ = Z;
 }
 
 /*
@@ -260,8 +256,8 @@ bool MovableActorPositionHandler::GraphicsNeedUpdate()
 		ActorUserData * characterdata = (ActorUserData *)_controller->getActor()->userData;
 		if(characterdata)
 		{
-			res = characterdata->ShouldUpdate;
-			characterdata->ShouldUpdate = false;
+			res = characterdata->GetShouldUpdate();
+			characterdata->SetShouldUpdate(false);
 		}
 	}
 
@@ -270,6 +266,44 @@ bool MovableActorPositionHandler::GraphicsNeedUpdate()
 
 
 
+/*
+--------------------------------------------------------------------------------------------------
+- process physci if needed
+--------------------------------------------------------------------------------------------------
+*/
+void MovableActorPositionHandler::Process(bool isattached)
+{
+	if(isattached)
+		return;
+
+	if(_controller)
+	{
+		NxVec3 vecg;
+		PhysXEngine::getInstance()->GetGravity(vecg);
+
+		unsigned int flags = PhysXEngine::getInstance()->MoveCharacter(_controller, 
+																	NxVec3(0, vecg.y/10.0f, 0), true);
+
+		// we are falling
+		if(!(flags & NXCC_COLLISION_DOWN))
+		{
+			_wasfalling = true;
+			ActorUserData * characterdata = (ActorUserData *)_controller->getActor()->userData;
+			if(characterdata)
+				characterdata->SetShouldUpdate(true);
+		}
+		else
+		{
+			if(_wasfalling)
+			{
+				ActorUserData * characterdata = (ActorUserData *)_controller->getActor()->userData;
+				if(characterdata)
+					characterdata->SetShouldUpdate(true);
+			}
+			_wasfalling = false;
+		}
+	}
+}
 
 
 
@@ -317,23 +351,30 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 
 
 				int ctype = 2; //kynematic by default
-				if(it->second->IsMovable())
-					ctype = 3; // dynamic if movable
 
 				if(sizex > 0)
 				{
 					sizey /= 2;
 					posy += sizey;
-
-
-
 					ActorUserData * usdata = new ActorUserData(1, it->first, NULL);
-					NxActor* cont = PhysXEngine::getInstance()->CreateBox(NxVec3(posx, posy, posz), 
-																		sizex, sizey, sizez, 1.0, ctype, usdata,
-																		it->second->GetCollidable(), it->second->IsMovable());
 
-					it->second->SetPhysController(new ActorPositionHandler(cont, posx, posy, posz));
-					_actors.push_back(cont);
+					if(it->second->IsMovable())
+					{
+						NxController* cont = PhysXEngine::getInstance()->CreateCharacterBox(NxVec3(posx, posy, posz), 
+																							NxVec3(sizex, sizey, sizez), usdata);
+
+						it->second->SetPhysController(new MovableActorPositionHandler(cont, posx, posy, posz));
+						_mactors.push_back(cont);
+					}
+					else
+					{				
+						NxActor* cont = PhysXEngine::getInstance()->CreateBox(NxVec3(posx, posy, posz), 
+																			sizex, sizey, sizez, 1.0, ctype, usdata,
+																			it->second->GetCollidable(), it->second->IsMovable());
+
+						it->second->SetPhysController(new ActorPositionHandler(cont, posx, posy, posz));
+						_actors.push_back(cont);
+					}
 				}
 			}
 		}
@@ -357,21 +398,30 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 				float posz = it->second->GetPosZ();
 
 				int ctype = 2; //kynematic by default
-				if(it->second->IsMovable())
-					ctype = 3; // dynamic if movable
 
 				if(sizex > 0)
 				{
 					sizey /= 2;
 					posy += sizey;
 
-					ActorUserData * usdata = new ActorUserData(1, it->first, NULL);
-					NxActor* cont = PhysXEngine::getInstance()->CreateBox(NxVec3(posx, posy, posz), 
-																		sizex, sizey, sizez, 1.0, ctype, usdata,
-																		it->second->GetCollidable(), it->second->IsMovable());
+					if(it->second->IsMovable())
+					{
+						NxController* cont = PhysXEngine::getInstance()->CreateCharacterBox(NxVec3(posx, posy, posz), 
+																							NxVec3(sizex, sizey, sizez), usdata);
 
-					it->second->SetPhysController(new ActorPositionHandler(cont, posx, posy, posz));
-					_actors.push_back(cont);
+						it->second->SetPhysController(new MovableActorPositionHandler(cont, posx, posy, posz));
+						_mactors.push_back(cont);
+					}
+					else
+					{
+						ActorUserData * usdata = new ActorUserData(1, it->first, NULL);
+						NxActor* cont = PhysXEngine::getInstance()->CreateBox(NxVec3(posx, posy, posz), 
+																			sizex, sizey, sizez, 1.0, ctype, usdata,
+																			it->second->GetCollidable(), it->second->IsMovable());
+
+						it->second->SetPhysController(new ActorPositionHandler(cont, posx, posy, posz));
+						_actors.push_back(cont);
+					}
 				}
 			}
 		}
@@ -398,20 +448,35 @@ PhysXPhysicHandler::~PhysXPhysicHandler()
 		if(characterdata)
 			delete characterdata;
 
-		std::vector<NxActor*>::iterator it = _actors.begin();
-		std::vector<NxActor*>::iterator end = _actors.end();
-		for(; it != end; ++it)
+		//destroy actors
 		{
-			ActorUserData * adata = (ActorUserData *)(*it)->userData;
-			PhysXEngine::getInstance()->DestroyActor(*it);
-			
-			if(adata)
-				delete adata;
+			std::vector<NxActor*>::iterator it = _actors.begin();
+			std::vector<NxActor*>::iterator end = _actors.end();
+			for(; it != end; ++it)
+			{
+				ActorUserData * adata = (ActorUserData *)(*it)->userData;
+				PhysXEngine::getInstance()->DestroyActor(*it);
+				
+				if(adata)
+					delete adata;
+			}
 		}
+
+		//destroy movable actors
+		{
+			std::vector<NxController*>::iterator it = _mactors.begin();
+			std::vector<NxController*>::iterator end = _mactors.end();
+			for(; it != end; ++it)
+			{
+				ActorUserData * adata = (ActorUserData *)(*it)->getActor()->userData;
+				PhysXEngine::getInstance()->DestroyCharacter(*it);
+				
+				if(adata)
+					delete adata;
+			}
+		}
+		
 	}
-
-
-
 }
 
 /*
@@ -435,7 +500,14 @@ MoveOutput PhysXPhysicHandler::MoveActor(long ActorId, const AABB & actorBB,
 	res.Collisionx = false;
 	res.Collisionz = false;
 	res.CollisionUp = false;
-	
+
+	ActorUserData * characterdata = (ActorUserData *)_controller->getActor()->userData;
+	if(characterdata)
+	{
+		characterdata->SetCurrentMoveX(Speed.x);
+		characterdata->SetCurrentMoveY(Speed.y);
+		characterdata->SetCurrentMoveZ(Speed.z);
+	}
 
 	unsigned int flags = PhysXEngine::getInstance()->MoveCharacter(_controller, 
 													NxVec3(Speed.x, Speed.y, Speed.z), checkcolision);
@@ -457,19 +529,18 @@ MoveOutput PhysXPhysicHandler::MoveActor(long ActorId, const AABB & actorBB,
 	}
 
 	res.CollisionUp = (bool)(flags & NXCC_COLLISION_UP);
-
 	res.TouchingGround = (bool)(flags & NXCC_COLLISION_DOWN);
 	if(res.TouchingGround)
 	{
-		ActorUserData * characterdata = (ActorUserData *)_controller->getActor()->userData;
 		if(characterdata)
-		{
-			res.TouchingWater = (characterdata->HittedFloorMaterial > 16);
+			res.TouchingWater = (characterdata->GetHittedFloorMaterial() > 16);
+	}
 
-			res.MovingObject = characterdata->MovingObject;
-			characterdata->MovingObject = false;
-			res.MovingDirection = characterdata->MovingDirection;
-		}
+	if(characterdata)
+	{
+		res.MovingObject = characterdata->GetMovingObject();
+		characterdata->SetMovingObject(false);
+		res.MovingDirection = characterdata->GetMovingDirection();
 	}
 
 	_lastposX = posX;
@@ -548,11 +619,12 @@ void PhysXPhysicHandler::Render()
 - set if actor is allowed to move objects
 --------------------------------------------------------------------------------------------------
 */
-void PhysXPhysicHandler::SetAllowedMoving(bool allowed)
+void PhysXPhysicHandler::SetAllowedMoving(bool allowedX, bool allowedZ)
 {
 	ActorUserData * characterdata = (ActorUserData *)_controller->getActor()->userData;
 	if(characterdata)
 	{
-		characterdata->AllowedMoving = allowed;
+		characterdata->SetAllowedMovingX(allowedX);
+		characterdata->SetAllowedMovingZ(allowedZ);
 	}
 }

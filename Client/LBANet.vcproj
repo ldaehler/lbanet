@@ -119,13 +119,14 @@
 				AdditionalOptions="/D _CRT_SECURE_NO_WARNINGS /D MP3_MUSIC"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
+				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="..\dependencies\SDL\include;&quot;$(ICE_HOME)\include&quot;;..\Server\infrastructure\include;..\dependencies\DevIL\include;..\dependencies\tinyxml\include;..\dependencies\fmod\include;..\dependencies\Boost\include;..\dependencies\CEGUI\cegui\include;..\dependencies\libircclient\include;..\dependencies\libconfig\include;..\common;.;..\dependencies\opende\include;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;TIXML_USE_STL"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				DebugInformationFormat="3"
+				DebugInformationFormat="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -142,10 +143,12 @@
 				OutputFile="$(OutDir)\LBANetGame.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\dependencies\SDL\lib;&quot;$(ICE_HOME)\lib&quot;;..\dependencies\DevIL\lib;..\dependencies\tinyxml\lib;..\dependencies\fmod\lib;..\dependencies\Boost\lib;..\dependencies\CEGUI\lib;..\dependencies\libircclient\lib;..\dependencies\libconfig\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;"
-				GenerateDebugInformation="true"
+				GenerateDebugInformation="false"
+				AssemblyDebug="0"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				DataExecutionPrevention="1"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -193,6 +196,10 @@
 			</File>
 			<File
 				RelativePath="..\Server\infrastructure\cpp\ActorInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ActorUserData.cpp"
 				>
 			</File>
 			<File
@@ -626,6 +633,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ActorUserData.h"
+				>
+			</File>
+			<File
 				RelativePath="..\common\AreaSwitch.h"
 				>
 			</File>
@@ -1038,11 +1049,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\StreamReader.h"
+				RelativePath=".\StreamReader.h"
 				>
 			</File>
 			<File
-				RelativePath=".\StreamReader.h"
+				RelativePath="..\common\StreamReader.h"
 				>
 			</File>
 			<File

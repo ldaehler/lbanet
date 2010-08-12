@@ -72,6 +72,8 @@ public:
 	bool			_moveforward;
 	bool			_collisionx;
 	bool			_collisionz;
+	long			_attachingactor;
+	float			_extramoveY;
 
 	//std::ofstream	_file;
 
@@ -89,7 +91,8 @@ public:
 				int Model, int Body, int Animation, short color,
 				int	nameR, int	nameG, int	nameB, bool Visible,
 				float sizeX, float sizeY, float sizeZ, 
-				bool moveforward, bool collisionx, bool collisionz
+				bool moveforward, bool collisionx, bool collisionz, long attachingactor, 
+				float extramoveY
 				/*, float checkvx, float checkvy, float checkvz, float tdiff*/)
 	{
 		_visible = Visible;
@@ -120,6 +123,9 @@ public:
 		_moveforward = moveforward;
 		_collisionx = collisionx;
 		_collisionz = collisionz;
+
+		_attachingactor = attachingactor;
+		_extramoveY = extramoveY;
 
 		//_file<<","<<IceUtil::Time::now().toDateTime()
 		//	<<","<<_posX
@@ -159,7 +165,7 @@ public:
 					int Model, int Body, int Animation, short color,
 					int	nameR, int	nameG, int	nameB, bool Visible,
 					float sizeX, float sizeY, float sizeZ, bool moveforward, 
-					bool collisionx, bool collisionz) const
+					bool collisionx, bool collisionz, long attachingactor, float extramoveY) const
 	{
 		if(_visible != Visible)
 		{
@@ -222,6 +228,21 @@ public:
 			//_file<<"collisionz";
 			return false;
 		}
+
+		if(_attachingactor != attachingactor)
+		{
+			//_file<<"attachingactor";
+			return false;
+		}
+
+		if(abs(_extramoveY - extramoveY) > 0.01f)
+		{
+			//_file<<"extramoveY";
+			return false;
+		}
+
+
+
 
 		//if(abs(velocityX - _velocityX) > 0.002f)
 		//{
@@ -525,7 +546,7 @@ protected:
 	bool			_chefkiffall;
 	float			_ycheckiffall;
 
-
+	int				_countmovingobj;
 
 	ActorState		_state;
 	float			_keepYfall;
@@ -616,6 +637,7 @@ protected:
 	bool			_iscollisionz;
 
 	float			_cumujumpY;
+	float			_dinomoveY;
 };
 
 #endif

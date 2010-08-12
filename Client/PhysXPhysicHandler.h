@@ -62,6 +62,9 @@ public:
 	// set wether actor is kinematic or not
 	void SetKinematic(bool kinematic);
 
+	// process physci if needed
+	virtual void Process(bool isattached) {}
+
 private:
 	NxActor* controller;
 	bool _savedkinematic;
@@ -88,11 +91,12 @@ public:
 	// check if graphic need to be refresh from physic
 	virtual bool GraphicsNeedUpdate();
 
+	// process physci if needed
+	virtual void Process(bool isattached);
+
 private:
 	NxController*	_controller;
-	float			_lastposX;
-	float			_lastposY;
-	float			_lastposZ;
+	bool			_wasfalling;
 };
 
 
@@ -143,7 +147,7 @@ public:
 	virtual void Render();
 
 	// set if actor is allowed to move objects
-	virtual void SetAllowedMoving(bool allowed);
+	virtual void SetAllowedMoving(bool allowedX, bool allowedZ);
 
 protected:
 
@@ -200,6 +204,7 @@ private:
 	NxController*									_controller;
 	std::vector<NxActor*>							_actors;
 	NxActor*										_map;
+	std::vector<NxController*>						_mactors;
 };
 
 #endif

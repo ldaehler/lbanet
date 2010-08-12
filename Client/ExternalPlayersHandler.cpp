@@ -77,12 +77,14 @@ int ExternalPlayersHandler::Process(double tnow, float tdiff)
 	std::vector<LbaNet::ActorLifeInfo> veclai;
 	std::vector<std::pair<long, LbaNet::LaunchInfo> > mb_vec;
 	std::vector<long> mb_cb_vec;
+	std::vector<LbaNet::GhostActorInfo> veclghost;
 
 	wp->GetExtActorUpdate(vecai);
 	wp->GetQuittedActors(vecq);
 	wp->GetExtActorLifeUpdate(veclai);
 	wp->GetMagicBallPlayed(mb_vec);
 	wp->GetMagicBallComeback(mb_cb_vec);
+	wp->GetExtGhostUpdate(veclghost);
 
 	for(size_t i=0; i<vecai.size(); ++i)
 		UpdateActor(vecai[i]);
@@ -95,6 +97,9 @@ int ExternalPlayersHandler::Process(double tnow, float tdiff)
 		MagicBallComeback(mb_cb_vec[i]);
 	for(size_t i=0; i<mb_vec.size(); ++i)
 		MagicBallPlayed(mb_vec[i].first, mb_vec[i].second);
+
+	for(size_t i=0; i<veclghost.size(); ++i)
+		UpdateGhost(veclghost[i]);
 
 
 	// update actors spped and animation
@@ -130,6 +135,27 @@ void ExternalPlayersHandler::UpdateActor(const LbaNet::ActorInfo & ai)
 		ExternalPlayer * act = new ExternalPlayer(ai, _animationSpeed);
 		_actors.insert(std::pair<long, ExternalPlayer *>(ai.ActorId,act));
 	}
+}
+
+
+/***********************************************************
+if actor already ther - update information
+else add actor to the list
+**********************************************************/
+void ExternalPlayersHandler::UpdateGhost(const LbaNet::GhostActorInfo & ai)
+{
+	if(ai.MapName != _mapName)
+		return;
+
+	if(ai.ControllingPlayerId == ThreadSafeWorkpile::getInstance()->GetPlayerId())
+		return;
+
+	std::map<long, ExternalPlayer *>::iterator it = _actors.find(ai.ControllingPlayerId);
+	if(it != _actors.end())
+	{
+		it->second->UpdateGhost(ai);
+	}
+
 }
 
 
