@@ -354,10 +354,27 @@ public:
 	// actor avtivate other actors
 	virtual void ActorActivateActor(Actor * act) {}
 
+
+	// add attaching actor
+	void AddAttaching(Actor * act);
+
+	// remove attaching actor
+	void RemoveAttaching(Actor * act);
+
+	// clear attaching actor
+	void ClearAttaching();
+
+	// clear attaching actor
+	const std::vector<Actor *> &GetAttaching() const
+	{ return _attachingActors; }
+
+
 protected:
 	//! refresh bounding box
 	void RefreshBB();
 
+	//! update ghost actor
+	void UpdateGhost();
 
 protected:
    long		_ID;						// entity unique ID
@@ -409,12 +426,18 @@ protected:
 
 
    std::vector<Actor *>	_attachedActors;
+   std::vector<Actor *>	_attachingActors;
+
 
    SignalerBase * _signaler;
 
    std::vector<std::pair<long, long> >	_actiontargets;
 
    ActorPositionHandler *	_physposhandler;
+
+
+   int	_linkedghostid;
+   bool _lastattachedPlayer;
 };
 
 #endif

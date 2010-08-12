@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	Constructor
 ***********************************************************/
 ZoneActor::ZoneActor(float zoneSizeX, float zoneSizeY, float zoneSizeZ)
-: _zoneSizeX(zoneSizeX), _zoneSizeY(zoneSizeY), _zoneSizeZ(zoneSizeZ), _activated(false)
+: _zoneSizeX(zoneSizeX), _zoneSizeY(zoneSizeY), _zoneSizeZ(zoneSizeZ)
 {
 
 }
@@ -63,22 +63,24 @@ int ZoneActor::ActivateZone(float PlayerPosX, float PlayerPosY, float PlayerPosZ
 		(PlayerPosY >= (posY)				&& PlayerPosY < (posY+_zoneSizeY)) &&
 		(PlayerPosZ >= (posZ-_zoneSizeZ) && PlayerPosZ < (posZ+_zoneSizeZ)))
 	{
-		if(!_activated)
+		size_t currsize = _activatedactors.size();
+		_activatedactors.insert(_activatingactor);
+		if(currsize == 0)
 		{
 			if(DirectActivation)
 				ProcessActivation(PlayerPosX, PlayerPosY, PlayerPosZ, PlayerRotation);
-			_activated = true;
 			return 1;
 		}
 
 		return 0;
 	}
 
-	if(_activated)
+	size_t currsize = _activatedactors.size();
+	_activatedactors.erase(_activatingactor);
+	if(currsize > 0 && _activatedactors.size() == 0)
 	{
 		if(DirectActivation)
 			ProcessDesactivation(PlayerPosX, PlayerPosY, PlayerPosZ, PlayerRotation);
-		_activated = false;
 		return -1;
 	}
 

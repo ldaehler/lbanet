@@ -72,6 +72,9 @@ public:
 	// return speed Yasociated with animation
 	virtual double GetCurrentSpeedY() {return 0;}
 
+	//! only used form sprites
+	virtual long GetSpriteId() {return 0;}
+
 protected:
    bool Visible;
 
