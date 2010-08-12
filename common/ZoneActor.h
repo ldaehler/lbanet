@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define __LbaNetModel_1_ZoneActor_h
 
 #include "Actor.h"
+#include <set>
 
 /***********************************************************************
  * Module:  ZoneActor.h
@@ -84,7 +85,7 @@ private:
 	float	_zoneSizeY;
 	float	_zoneSizeZ;
 
-	bool	_activated;
+	std::set<long>	_activatedactors;
 };
 
 #endif

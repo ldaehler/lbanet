@@ -694,4 +694,27 @@ public:
 };
 
 
+/*
+************************************************************************************************************************
+*                                                  class AttachActorToActorEvent
+*
+*	AttachActorToActorEvent
+************************************************************************************************************************
+*/
+class AttachActorToActorEvent : public GameEvent
+{
+public:
+	//! constructor
+	AttachActorToActorEvent(Actor * toattach, long attachingid)
+	{
+		_type = 29;	
+		_toattach = toattach;
+		_attachingid = attachingid;
+	}
+
+	Actor * _toattach;
+	long _attachingid;
+
+};
+
 #endif

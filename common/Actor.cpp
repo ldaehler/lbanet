@@ -31,6 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <windows.h>    // Header File For Windows
 #include <GL/gl.h>      // Header File For The OpenGL32 Library
 #include "PhysXPhysicHandler.h"
+#include "ThreadSafeWorkpile.h"
+#include "SynchronizedTimeHandler.h"
 #endif
 
 #include <algorithm>
@@ -47,7 +49,9 @@ Actor::Actor()
 	_attachedsound(-1), _renderertype(0),
 	_AddedVelocityX(0), _AddedVelocityY(0), _AddedVelocityZ(0), 
 	_signaler(NULL), _physposhandler(NULL), _collidable(true),
-	_offsetsizeY(0), _actormoving(false), _isAttached(false), _activatingactor(-1)
+	_offsetsizeY(0), _actormoving(false), _isAttached(false), 
+	_activatingactor(-1), _linkedghostid(-1), 
+	_lastattachedPlayer(false), _actif(false)
 {
 
 }
@@ -64,6 +68,13 @@ Actor::~Actor()
 	if(_physposhandler)
 		delete _physposhandler;
 	#endif
+
+	//clear attached actors
+   for(size_t i=0; i<_attachedActors.size(); ++i)
+	   _attachedActors[i]->RemoveAttaching(this);
+
+   for(size_t j=0; j<_attachingActors.size(); ++j)
+	   _attachingActors[j]->Dettach(this);
 }
 
 /***********************************************************
@@ -102,14 +113,27 @@ int Actor::Process(double tnow, float tdiff)
 	#ifndef _LBANET_SERVER_SIDE_
 	if(_physposhandler)
 	{
+		bool attachedPlayer = false;
+		_physposhandler->Process(_isAttached);
+
 		if(_physposhandler->GraphicsNeedUpdate())
 		{
+			attachedPlayer = true;
 			float x, y, z;
 			_physposhandler->GetPosition(x, y, z);
 			SetPosition(x, y-(_sizeY/2.0f), z, false);
+			if(_linkedghostid < 0)
+				_linkedghostid = ThreadSafeWorkpile::getInstance()->GetNextGhostId();
+		}
+
+		if(_lastattachedPlayer != attachedPlayer)
+		{
+			_lastattachedPlayer = attachedPlayer; 
+			UpdateGhost();
 		}
 	}
 	#endif
+
 
 	if(_Renderer)
 		return _Renderer->Process(tnow, tdiff);
@@ -289,7 +313,9 @@ void Actor::RenderEditor()
 	glTranslated(0,1,0);
 	glRotatef( 40, 0.0, 1.0, 0.0 );
 	glScalef(0.04f, 0.04f, 0.04f);
-	TextWritter::getInstance()->glPrintText(_sid, 0, false);
+	std::stringstream strs;
+	strs<<_sid<<" X:"<<_posX<<" Y:"<<_posY<<" Z:"<<_posZ;
+	TextWritter::getInstance()->glPrintText(strs.str(), 0, false);
 	glPopMatrix();
 
 	glEnable(GL_DEPTH_TEST);
@@ -305,6 +331,7 @@ attach another actor to self
 void Actor::Attach(Actor * act)
 {
 	_attachedActors.push_back(act);
+	act->AddAttaching(this);
 }
 
 /***********************************************************
@@ -312,6 +339,8 @@ dettach another actor from self
 ***********************************************************/
 bool Actor::Dettach(Actor * act)
 {
+	act->RemoveAttaching(this);
+
 	std::vector<Actor *>::iterator it = std::find(_attachedActors.begin(), _attachedActors.end(), act);
 	if(it != _attachedActors.end())
 	{
@@ -320,6 +349,40 @@ bool Actor::Dettach(Actor * act)
 	}
 
 	return false;
+}
+
+
+/***********************************************************
+add attaching actor
+***********************************************************/
+void Actor::AddAttaching(Actor * act)
+{
+	_attachingActors.push_back(act);
+	UpdateGhost();
+}
+
+/***********************************************************
+remove attaching actor
+***********************************************************/
+void Actor::RemoveAttaching(Actor * act)
+{
+	std::vector<Actor *>::iterator it = std::find(_attachingActors.begin(), _attachingActors.end(), act);
+	if(it != _attachingActors.end())
+		_attachingActors.erase(it);
+
+	UpdateGhost();
+}
+
+/***********************************************************
+clear attaching actor
+***********************************************************/
+void Actor::ClearAttaching()
+{
+   for(size_t j=0; j<_attachingActors.size(); ++j)
+	   _attachingActors[j]->Dettach(this);
+
+	_attachingActors.clear();
+	UpdateGhost();
 }
 
 
@@ -410,15 +473,32 @@ set if the main actor is attached
 void Actor::SetAttached(bool attached)
 {
 	_isAttached = attached;
+}
 
-	if(attached)
-	{
-		if(_actif && _physposhandler)
-			_physposhandler->SetKinematic(true);
-	}
-	else
-	{
-		if(_actif && _physposhandler)
-			_physposhandler->SetKinematic(false);
-	}
+/***********************************************************
+update ghost actor
+***********************************************************/
+void Actor::UpdateGhost()
+{
+#ifndef _LBANET_SERVER_SIDE_
+	if(!_actif)
+		return;
+
+	LbaNet::GhostActorInfo gi;
+	gi.GhostId = _linkedghostid;
+	gi.X = _posX;
+	gi.Y = _posY;
+	gi.Z = _posZ;
+	gi.Rotation = _rotation;
+
+	gi.SpriteId = 0;
+	if(_Renderer)
+		gi.SpriteId = _Renderer->GetSpriteId();
+	for(size_t i=0; i<_attachingActors.size(); ++i)
+		gi.AttachedToActors.push_back(_attachingActors[i]->GetId());
+
+	gi.AttachedToPlayer = _lastattachedPlayer;
+	gi.Time = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDouble();
+	ThreadSafeWorkpile::getInstance()->UpdateGhost(gi);
+#endif
 }

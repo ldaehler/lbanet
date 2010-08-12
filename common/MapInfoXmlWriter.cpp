@@ -482,25 +482,28 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 				{
 					ScriptableActor * tmpa = static_cast<ScriptableActor *>(it->second);
 					act->SetAttribute("autoattach", tmpa->GetAutoAttach());		
-
-					TiXmlElement * scripts = new TiXmlElement( "scripts" );
-					act->LinkEndChild(scripts);
-
+					
 					const std::vector<PlayerScriptPart> & scriptsV = tmpa->GetScripts();
-					for(size_t cci=0; cci<scriptsV.size(); ++cci)
+					if(scriptsV.size() > 0)
 					{
-						TiXmlElement * script = new TiXmlElement( "script" );
-						scripts->LinkEndChild(script);
+						TiXmlElement * scripts = new TiXmlElement( "scripts" );
+						act->LinkEndChild(scripts);
 
-						script->SetAttribute("type", scriptsV[cci].Type);
-						script->SetDoubleAttribute("ValueA", scriptsV[cci].ValueA);
-						script->SetDoubleAttribute("ValueB", scriptsV[cci].ValueB);
-						script->SetDoubleAttribute("ValueC", scriptsV[cci].ValueC);
-						script->SetDoubleAttribute("Speed", scriptsV[cci].Speed);
-						script->SetAttribute("Sound", scriptsV[cci].Sound);
-						script->SetAttribute("SoundNum", scriptsV[cci].SoundNum);
-						script->SetAttribute("Animation", scriptsV[cci].Animation);
-						script->SetAttribute("Flag", scriptsV[cci].Flag);
+						for(size_t cci=0; cci<scriptsV.size(); ++cci)
+						{
+							TiXmlElement * script = new TiXmlElement( "script" );
+							scripts->LinkEndChild(script);
+
+							script->SetAttribute("type", scriptsV[cci].Type);
+							script->SetDoubleAttribute("ValueA", scriptsV[cci].ValueA);
+							script->SetDoubleAttribute("ValueB", scriptsV[cci].ValueB);
+							script->SetDoubleAttribute("ValueC", scriptsV[cci].ValueC);
+							script->SetDoubleAttribute("Speed", scriptsV[cci].Speed);
+							script->SetAttribute("Sound", scriptsV[cci].Sound);
+							script->SetAttribute("SoundNum", scriptsV[cci].SoundNum);
+							script->SetAttribute("Animation", scriptsV[cci].Animation);
+							script->SetAttribute("Flag", scriptsV[cci].Flag);
+						}
 					}
 				}
 			}
@@ -526,25 +529,28 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 					act->SetAttribute("NPCType", tmpa->GetNPCType());
 					act->SetDoubleAttribute("activationdistance", tmpa->GetActivationDistance());
 					act->SetAttribute("Name", tmpa->GetName());
-
-					TiXmlElement * scripts = new TiXmlElement( "scripts" );
-					act->LinkEndChild(scripts);
-
+					
 					const std::vector<PlayerScriptPart> & scriptsV = tmpa->GetScripts();
-					for(size_t cci=0; cci<scriptsV.size(); ++cci)
+					if(scriptsV.size() > 0)
 					{
-						TiXmlElement * script = new TiXmlElement( "script" );
-						scripts->LinkEndChild(script);
+						TiXmlElement * scripts = new TiXmlElement( "scripts" );
+						act->LinkEndChild(scripts);
 
-						script->SetAttribute("type", scriptsV[cci].Type);
-						script->SetDoubleAttribute("ValueA", scriptsV[cci].ValueA);
-						script->SetDoubleAttribute("ValueB", scriptsV[cci].ValueB);
-						script->SetDoubleAttribute("ValueC", scriptsV[cci].ValueC);
-						script->SetDoubleAttribute("Speed", scriptsV[cci].Speed);
-						script->SetAttribute("Sound", scriptsV[cci].Sound);
-						script->SetAttribute("SoundNum", scriptsV[cci].SoundNum);
-						script->SetAttribute("Animation", scriptsV[cci].Animation);
-						script->SetAttribute("Flag", scriptsV[cci].Flag);
+						for(size_t cci=0; cci<scriptsV.size(); ++cci)
+						{
+							TiXmlElement * script = new TiXmlElement( "script" );
+							scripts->LinkEndChild(script);
+
+							script->SetAttribute("type", scriptsV[cci].Type);
+							script->SetDoubleAttribute("ValueA", scriptsV[cci].ValueA);
+							script->SetDoubleAttribute("ValueB", scriptsV[cci].ValueB);
+							script->SetDoubleAttribute("ValueC", scriptsV[cci].ValueC);
+							script->SetDoubleAttribute("Speed", scriptsV[cci].Speed);
+							script->SetAttribute("Sound", scriptsV[cci].Sound);
+							script->SetAttribute("SoundNum", scriptsV[cci].SoundNum);
+							script->SetAttribute("Animation", scriptsV[cci].Animation);
+							script->SetAttribute("Flag", scriptsV[cci].Flag);
+						}
 					}
 				}
 			}
