@@ -884,6 +884,17 @@ void LbaNetEngine::HandleGameEvents()
 				}
 			break;
 
+			case 29: // attach actor event
+				{
+					if(m_currentstate == EGaming)
+					{
+						AttachActorToActorEvent * evcs = 
+							static_cast<AttachActorToActorEvent *> (*it);
+
+						m_lbaNetModel.AttachActor(evcs->_toattach, evcs->_attachingid);
+					}
+				}
+			break;
 		}
 
 		delete *it;

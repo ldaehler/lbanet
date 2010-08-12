@@ -68,11 +68,8 @@ class MyContactReport : public NxUserContactReport
 				ActorUserData * acd2 = (ActorUserData *) n2->userData;
 				if(acd1 && acd2)
 				{
-					if((acd1->ActorType >= 0) && acd1->Callback)
-						acd1->Callback->CallbackOnContact(acd2->ActorType, acd2->ActorId);
-
-					if((acd2->ActorType >= 0) && acd2->Callback)
-						acd2->Callback->CallbackOnContact(acd1->ActorType, acd1->ActorId);
+					acd1->CallbackOnContact(acd2->GetActorType(), acd2->GetActorId());
+					acd2->CallbackOnContact(acd1->GetActorType(), acd1->GetActorId());
 				}
 			}
 		} 
@@ -108,11 +105,11 @@ public:
 						if(tmesh->raycast(NxRay(pos, vec), 0.02f, 
 													NX_RAYCAST_FACE_INDEX, hitinfo, false))
 						{
-							if(hitinfo.faceID < mstorage->MaterialsSize)
+							if(hitinfo.faceID < mstorage->GetMaterialsSize())
 							{
 								ActorUserData * characterdata = (ActorUserData *)hit.controller->getActor()->userData;
 								if(characterdata)
-									characterdata->HittedFloorMaterial = mstorage->Materials[hitinfo.faceID];
+									characterdata->SetHittedFloorMaterial(mstorage->GetMaterials(hitinfo.faceID));
 							}
 						}
 					}
@@ -134,13 +131,8 @@ public:
 						ActorUserData * characterdata = (ActorUserData *)hit.controller->getActor()->userData;
 						if(characterdata)
 						{
-							if(characterdata->AllowedMoving)
+							if(characterdata->GetAllowedMovingX() || characterdata->GetAllowedMovingZ())
 							{
-								bool rememberflag = actor.readBodyFlag(NX_BF_KINEMATIC);
-								if(!rememberflag)
-									actor.clearBodyFlag(NX_BF_KINEMATIC);
-
-
 								if(actor.readBodyFlag(NX_BF_KINEMATIC))
 								{
 									actor.moveGlobalPosition(actor.getGlobalPosition() + (hit.length * hit.dir));
@@ -151,25 +143,22 @@ public:
 									NxF32 coeff = actor.getMass() * hit.length * 10.0f;
 									actor.addForceAtLocalPos(hit.dir*coeff, NxVec3(0,0,0), NX_IMPULSE);
 								}
-
-								if(rememberflag)
-									actor.raiseBodyFlag(NX_BF_KINEMATIC);
 							}
 
-							characterdata->MovingObject = true;
+							characterdata->SetMovingObject(true);
 							if(abs(hit.worldNormal.x) > abs(hit.worldNormal.z))
 							{
 								if(hit.worldNormal.x > 0)
-									characterdata->MovingDirection = 2;
+									characterdata->SetMovingDirection(2);
 								else
-									characterdata->MovingDirection = 1;
+									characterdata->SetMovingDirection(1);
 							}
 							else
 							{
 								if(hit.worldNormal.z > 0)
-									characterdata->MovingDirection = 4;
+									characterdata->SetMovingDirection(4);
 								else
-									characterdata->MovingDirection = 3;
+									characterdata->SetMovingDirection(3);
 							}
 						}
 					}
@@ -182,13 +171,54 @@ public:
 
 	virtual NxControllerAction  onControllerHit(const NxControllersHit& hit)
 	{
-		ActorUserData * characterdata = (ActorUserData *)hit.other->getActor()->userData;
-		if(characterdata)
+		NxController* cont = hit.controller;
+		ActorUserData * characterdatamain = (ActorUserData *)cont->getActor()->userData;
+		if(characterdatamain)
 		{
-			characterdata->ShouldUpdate = true;
+			if(characterdatamain->GetAllowedMovingX() || characterdatamain->GetAllowedMovingZ())
+			{
+				float mox, moy, moz;
+				characterdatamain->GetMove(mox, moy, moz);
+				NxVec3 vecmove(mox, moy, moz);
+
+				PhysXEngine::getInstance()->MoveCharacter(hit.other, vecmove, true);
+
+				ActorUserData * characterdata = (ActorUserData *)hit.other->getActor()->userData;
+				if(characterdata)
+					characterdata->SetShouldUpdate(true);
+
+				characterdatamain->SetMovingObject(true);
+			}
+			else
+			{
+				NxExtendedVec3 vecmain = cont->getPosition();
+				NxExtendedVec3 vecother = hit.other->getPosition();
+				NxVec3 diff = (vecother - vecmain);
+
+				//dont move on object corner
+				if(abs(diff.x - diff.z) < 0.1)
+					return NX_ACTION_NONE;
+
+				characterdatamain->SetMovingObject(true);
+				if(abs(diff.x) > abs(diff.z))
+				{
+					if(diff.x < 0)
+						characterdatamain->SetMovingDirection(2);
+					else
+						characterdatamain->SetMovingDirection(1);
+				}
+				else
+				{
+					if(diff.z < 0)
+						characterdatamain->SetMovingDirection(4);
+					else
+						characterdatamain->SetMovingDirection(3);
+				}
+			}
 		}
 
-		return NX_ACTION_PUSH;
+
+		return NX_ACTION_NONE;
 	}
 
 } gControllerHitReport;
@@ -699,8 +729,8 @@ NxActor* PhysXEngine::LoadTriangleMeshFile(const NxVec3 & StartPosition, const s
 	file.read((char*)buffermaterials, sizematerials*sizeof(short));
 
 
-	userdata->MaterialsSize = sizematerials;
-	userdata->Materials =  buffermaterials;
+	userdata->SetMaterialsSize(sizematerials);
+	userdata->SetMaterials(buffermaterials);
 
 	_flooractor = CreateTriangleMesh(StartPosition, buffervertex, sizevertex, bufferindices, sizeindices, 
 											userdata);
@@ -733,7 +763,7 @@ NxActor* PhysXEngine::LoadTriangleMeshFile(const NxVec3 & StartPosition, const s
 		roofact->raiseActorFlag(NX_AF_DISABLE_COLLISION);
 
 		_roofactors.insert(roofact);
-		userdata->InternalActor = roofact;
+		userdata->SetInternalActor(roofact);
 
 		if(buffervertexroof)
 			delete buffervertexroof;
@@ -798,17 +828,19 @@ void PhysXEngine::DestroyActor(NxActor* actor)
 
 	//destroy internal actor if there is one
 	ActorUserData * udata = (ActorUserData *)actor->userData;
-	if(udata)
+	if(udata && !udata->Getreleased())
 	{
-		if(udata->InternalActor)
+		NxActor * internala = udata->GetInternalActor();
+		if(internala)
 		{
-			DestroyActor(udata->InternalActor);
-			std::set<NxActor*>::iterator it = _roofactors.find(udata->InternalActor);
+			std::set<NxActor*>::iterator it = _roofactors.find(internala);
 			if(it != _roofactors.end())
 				_roofactors.erase(it);
+
+			DestroyActor(internala);
 		}
 
-		udata->released = true;
+		udata->Setreleased(true);
 	}
 
 	if(gScene && actor)
@@ -820,6 +852,23 @@ DestroyCharacter
 ***********************************************************/
 void PhysXEngine::DestroyCharacter(NxController* character)
 {
+	//destroy internal actor if there is one
+	ActorUserData * udata = (ActorUserData *)character->getActor()->userData;
+	if(udata && !udata->Getreleased())
+	{
+		NxActor * internala = udata->GetInternalActor();
+		if(internala)
+		{
+			std::set<NxActor*>::iterator it = _roofactors.find(internala);
+			if(it != _roofactors.end())
+				_roofactors.erase(it);
+
+			DestroyActor(internala);
+		}
+
+		udata->Setreleased(true);
+	}
+
 	if(gManager && character)
 		gManager->releaseController(*character);
 }

@@ -858,7 +858,7 @@ int LbaNetModel::Process()
 		break;
 	}
 
-	_camera->Process();
+	_camera->Process(tdiff);
 	_externalPlayers->Process(tnow, tdiff);
 	_localActorsHandler->Process(tnow, tdiff);
 	_externalActorsHandler->Process(tnow, tdiff);
@@ -1246,6 +1246,15 @@ void LbaNetModel::PlayerDie()
 	m_current_main_state = 2;
 }
 
+
+/***********************************************************
+attach an actor to another
+***********************************************************/
+void LbaNetModel::AttachActor(Actor *toattach, long attachingid)
+{
+	_localActorsHandler->ForcedAttach(toattach, attachingid);
+	_externalActorsHandler->ForcedAttach(toattach, attachingid);
+}
 
 
 

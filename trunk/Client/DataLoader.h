@@ -41,6 +41,7 @@ struct WorldDesc
 
 struct entitiesTableStruct;
 class Actor;
+class SpriteRenderer;
 
 
 /***********************************************************************
@@ -164,6 +165,9 @@ public:
 	const std::map<long, ItemInfo> & GetInventory()
 	{return _inventory;}
 
+
+	//! create sprite renderer
+	SpriteRenderer * CreateSpriteRenderer(long sprite);
 
 protected:
 	//! constructor

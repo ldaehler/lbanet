@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Actor.h"
 #include "InventoryHandler.h"
 #include "QuestHandler.h"
+#include "SpriteRenderer.h"
 
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -458,4 +459,26 @@ std::string DataLoader::GetSoundPath(long id)
 	return MapInfoXmlReader::GetSoundPath(_soundfile, id);
 }
 
+
+
+/***********************************************************
+create sprite renderer
+***********************************************************/
+SpriteRenderer * DataLoader::CreateSpriteRenderer(long sprite)
+{
+	SpriteRenderer * rende = NULL;
+	std::vector<SpriteInfo *> vectmp;
+	std::map<long, SpriteInfo>::iterator itsp = _sprites.find(sprite);
+	if(itsp != _sprites.end())
+		vectmp.push_back(&itsp->second);
+
+
+	if(vectmp.size() > 0)
+	{
+		rende = new SpriteRenderer();
+		rende->SetSprites(vectmp);
+	}
+
+	return rende;
+}
 

@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Camera.h"
 #include "Actor.h"
+#include "NxVec3.h"
 
 #include <iostream>
 #include <math.h>
@@ -69,67 +70,51 @@ void Camera::SetAttachedActor(Actor * act)
 /***********************************************************
 process
 ***********************************************************/
-void Camera::Process()
+void Camera::Process(float tdiff)
 {
 	if(_attached_actor)
 	{
 		double actX = _attached_actor->GetPosX();
 		double actY = _attached_actor->GetPosY();
 		double actZ = _attached_actor->GetPosZ();
+		bool moving = _attached_actor->IsMoving();
+
+		NxVec3 direction(actX-_targetx, actY-_targety, actZ-_targetz);
+		float magnitude = abs(direction.magnitude());
+
 
 		// start to move camera only when actor moves a certain distance
-		if(abs(actX - _targetx) > 3 || abs(actY - _targety) > 3 || abs(actZ - _targetz) > 3)
+		if(magnitude > 4)
 		{
-			_speedxema.Reset();
-			_speedyema.Reset();
-			_speedzema.Reset();
 			_movecamera = true;
 		}
 
-		if(abs(actX - _targetx) > 6 || abs(actY - _targety) > 6 || abs(actZ - _targetz) > 6)
-		{
-			ResetPosition();
+		if(!moving)
 			_movecamera = false;
-			return;
-		}
+
+		//if(magnitude > 12)
+		//{
+		//	ResetPosition();
+		//	_movecamera = false;
+		//	return;
+		//}
 
 
 		if(_movecamera)
 		{
-			double speedX = /*_speedxema.Update*/(actX - _lastactX);
-			double speedY = /*_speedyema.Update*/(actY - _lastactY);
-			double speedZ = /*_speedzema.Update*/(actZ - _lastactZ);
-
-			double deltaX = (actX - _targetx);
-			double deltaY = (actY - _targety);
-			double deltaZ = (actZ - _targetz);
-
-			if(deltaX > 0.1)
-				speedX+=deltaX/100;
-			
-			if(deltaY > 0.1)
-				speedY+=deltaY/100;
-			
-			if(deltaZ > 0.1)
-				speedZ+=deltaZ/100;
-
-			//if(abs(speedX) > 0.001)
-				_targetx+= speedX;
-			//if(abs(speedY) > 0.001)
-				_targety+= speedY;
-			//if(abs(speedZ) > 0.001)
-				_targetz+= speedZ;
-
-			if(!_attached_actor->IsMoving())
-			{
-				_movecamera = false;		
-			}
-
+			_targetx += direction.x * tdiff * 0.001;
+			_targety += direction.y * tdiff * 0.001;
+			_targetz += direction.z * tdiff * 0.001;
 		}
-
-		_lastactX = actX;
-		_lastactY = actY;
-		_lastactZ = actZ;
+		else
+		{	
+			if(!moving && magnitude > 1.0f)
+			{
+				_targetx += direction.x * tdiff * 0.002;
+				_targety += direction.y * tdiff * 0.002;
+				_targetz += direction.z * tdiff * 0.002;
+			}
+		}
 	}
 }
 

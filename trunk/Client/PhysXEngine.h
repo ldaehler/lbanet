@@ -37,52 +37,8 @@ class NxActor;
 #include <vector>
 #include <set>
 
-#include "PhysicCallbackBase.h"
+#include "ActorUserData.h"
 
-class ActorUserData
-{
-public:
-	//! constructor
-	ActorUserData(short ActType, long index, PhysicCallbackBase * callback)
-	: ActorType(ActType), Materials(NULL), 
-		MaterialsSize(0),
-		HittedFloorMaterial(0), InternalActor(NULL),
-		released(false), Callback(callback), ActorId(index), MovingObject(false),
-		AllowedMoving(false), ShouldUpdate(false)
-	{}
-
-	//! destructor
-	~ActorUserData()
-	{
-		if(Materials)
-			delete Materials;
-	}
-
-
-	// Actor type
-	// 1 = actor
-	// 2 = terrain
-	// 3 = player
-	// 4 = other
-	short				ActorType;
-	long				ActorId; 
-
-	size_t				MaterialsSize;
-	short *				Materials; 
-	NxActor *			InternalActor;
-
-	short				HittedFloorMaterial;
-
-	bool				released;
-	bool				MovingObject;
-	int					MovingDirection;
-
-	bool				AllowedMoving;
-
-	bool				ShouldUpdate;
-
-	PhysicCallbackBase * Callback;
-};
 
 
 

@@ -43,6 +43,13 @@ void InfosReceiverServant::Quitted(Ice::Long PlayerId, const Ice::Current&)
 }
 
 
+// update ghost object info
+void InfosReceiverServant::UpdatedGhost(const LbaNet::GhostActorInfo& asi, const Ice::Current&)
+{
+	ThreadSafeWorkpile::getInstance()->UpdateGhost(asi);
+}
+
+
 // callback function called when a message is received from IceStorm
 void InfosReceiverServant::ActivatedActor(const LbaNet::ActorActivationInfo &ai, const Ice::Current&)
 {

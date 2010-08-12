@@ -86,7 +86,7 @@ public:
 	virtual void Render() =0;
 
 	// set if actor is allowed to move objects
-	virtual void SetAllowedMoving(bool allowed) = 0;
+	virtual void SetAllowedMoving(bool allowedX, bool allowedZ) = 0;
 };
 
 #endif

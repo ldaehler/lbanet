@@ -45,6 +45,9 @@ public:
 	// callback function called when a message is received from IceStorm
 	virtual void Quitted(Ice::Long PlayerId, const Ice::Current&);
 
+	// update ghost object info
+	virtual void UpdatedGhost(const LbaNet::GhostActorInfo& asi, const Ice::Current&);
+
 
 	// callback function called when a message is received from IceStorm
 	virtual void ActivatedActor(const LbaNet::ActorActivationInfo &ai, const Ice::Current&);

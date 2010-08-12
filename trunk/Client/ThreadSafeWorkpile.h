@@ -188,6 +188,15 @@ public:
 	// get the last update info
 	void GetExtActorUpdate(std::vector<LbaNet::ActorInfo> & vec);
 
+
+	// update actor info
+	void UpdateGhost(const LbaNet::GhostActorInfo & ai);
+
+	// get the last update info
+	void GetExtGhostUpdate(std::vector<LbaNet::GhostActorInfo> & vec);
+
+
+
 	// get the last update info
 	void GetQuittedActors(std::vector<long> & vec);
 
@@ -501,6 +510,14 @@ public:
 	//! get all pm to send
 	void GetPMMarkRead(std::vector<long> &vec);
 
+	//! get next ghost id
+	int GetNextGhostId();
+
+	//! update ghost actor
+	void UpdateIntGhost(LbaNet::GhostActorInfo ginfo);
+
+	//! get last ghost updates
+	void GetIntUpdateGhosts(std::vector<LbaNet::GhostActorInfo> & vec);
 
 protected:
 
@@ -512,7 +529,7 @@ protected:
 			m_world_changed(false), m_player_pos_info_updated(false), m_waiting_container_info(false),
 			m_updated_container(false), m_exchanged_container(false), m_closed_container(false),
 			m_mplayer(NULL), m_explayers(NULL), mb_throwed(false), mb_ended(false), m_drowning(false),
-			m_newfriendlist(false), m_askpms(false)
+			m_newfriendlist(false), m_askpms(false), m_ghostid(0)
 	{
 		m_update_questbook.NeedUpdate = false;
 	}
@@ -576,6 +593,9 @@ private:
 	IceUtil::Mutex								m_mutex_deletepm;
 	IceUtil::Mutex								m_mutex_markreadpm;
 
+	IceUtil::Mutex								m_mutex_ghost;
+	IceUtil::Mutex								m_mutex_ghostid;
+	IceUtil::Mutex								m_mutex_ghostupd;
 
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_irc;
 	IceUtil::Monitor<IceUtil::Mutex>			m_monitor_sending_loop;
@@ -604,8 +624,10 @@ private:
 	MapChangedInformation						m_map_changed_info;								
 
 	std::vector<LbaNet::ActorInfo>				m_ext_info;
-	std::vector<long>					m_quitted_actors;
+	std::vector<long>							m_quitted_actors;
 	std::vector<LbaNet::ActorLifeInfo>			m_ext_life_info;
+	std::vector<LbaNet::GhostActorInfo>			m_ext_ghost_info;
+	std::vector<LbaNet::GhostActorInfo>			m_ghost_updates;
 
 	bool										m_server_on;
 
@@ -693,6 +715,8 @@ private:
 	std::vector<long>							m_pmtomarkread;
 
 	static ThreadSafeWorkpile *					_singletonInstance;
+
+	int											m_ghostid;
 };
 
 #endif

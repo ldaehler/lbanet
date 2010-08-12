@@ -28,16 +28,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <math.h>
 
 #include "MagicBallHandler.h"
+#include <map>
 
 namespace LbaNet
 {
 	struct ActorInfo;
 	struct ActorLifeInfo;
 	struct LaunchInfo;
+	struct GhostActorInfo;
 }
 class Player;
 class ActorUserData;
 class NxActor;
+class Actor;
 
 class ExternalReckon
 {
@@ -131,6 +134,10 @@ public:
 	void Update(const LbaNet::ActorInfo & ainfo);
 
 	// update with external info
+	void UpdateGhost(const LbaNet::GhostActorInfo & ainfo);
+	
+
+	// update with external info
 	void UpdateLife(const LbaNet::ActorLifeInfo & ainfo);
 
 	// draw the object
@@ -152,6 +159,7 @@ private:
 	float 			_velocityX;
 	float 			_velocityY;
 	float 			_velocityZ;
+	float 			_extravelocityY;
 	float 			_velocityR;
 
 	bool			_forward;
@@ -165,6 +173,8 @@ private:
 	NxActor*		_physH;
 
 	MagicBallHandler _magicballH;
+
+	std::map<int, Actor *>	_ghosts;
 };
 
 
