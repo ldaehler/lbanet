@@ -244,7 +244,7 @@
 			<parameter name="instance-name" default="${application}.Glacier2"/>
 			<parameter name="client-endpoints" default="tcp -p 4063"/>   
 			<parameter name="server-endpoints" default="tcp -h 127.0.0.1"/>
-			<parameter name="session-timeout" default="120"/>
+			<parameter name="session-timeout" default="60"/>
 			<parameter name="session-manager"/>   
 			<parameter name="permissions-verifier"/>			
 

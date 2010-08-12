@@ -543,7 +543,14 @@ LbaNet::SavedWorldInfo SessionServant::ChangeWorld(const std::string& WorldName,
 
 	// retrieve info from db
 	_currWorldName = WorldName;
-	LbaNet::SavedWorldInfo swinfo = _dbh.ChangeWorld(WorldName, _userNum);
+	bool success = false;
+	LbaNet::SavedWorldInfo swinfo;
+
+	for(int i=0; i<5 && !success; ++i)
+		swinfo = _dbh.ChangeWorld(WorldName, _userNum, success);
+
+	if(!success)
+		return swinfo;
 
 	if(swinfo.CurrentLife < 0)
 		swinfo.CurrentLife = _STARTING_LIFE_;

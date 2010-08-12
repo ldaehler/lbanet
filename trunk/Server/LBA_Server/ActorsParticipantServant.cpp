@@ -67,7 +67,9 @@ void ActorsParticipantServant::Update(const ActorInfo& asi, const Ice::Current &
 {
     try
     {
-		_publish->UpdatedInfo(asi);
+		ActorInfo asin(asi);
+		asin.ActorId = _actor_id;
+		_publish->UpdatedInfo(asin);
 	}
 	catch(const IceUtil::Exception& ex)
 	{
@@ -80,3 +82,24 @@ void ActorsParticipantServant::Update(const ActorInfo& asi, const Ice::Current &
 }
 
 
+
+/***********************************************************
+update ghost
+***********************************************************/
+void ActorsParticipantServant::UpdateGhost(const GhostActorInfo& asi, const Ice::Current &current)
+{
+    try
+    {
+		GhostActorInfo asin(asi);
+		asin.ControllingPlayerId = _actor_id;
+		_publish->UpdatedGhost(asi);
+	}
+	catch(const IceUtil::Exception& ex)
+	{
+		std::cout<<"Exception updating ghost info: "<<ex.what()<<std::endl;
+	}
+	catch(...)
+	{
+		std::cout<<"Unknown exception updating ghost info. "<<std::endl;
+	}
+}

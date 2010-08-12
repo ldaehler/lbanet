@@ -12,6 +12,9 @@ module LbaNet
 	    void UpdatedInfo(ActorInfo asi);
 	    void Quitted(long PlayerId);
 	    
+	    void UpdatedGhost(GhostActorInfo asi);
+	    
+	    
 	    void ActivatedActor(ActorActivationInfo ai);  
 	    void SignaledActor(ActorSignalInfo ai);	
 	    
@@ -56,6 +59,7 @@ module LbaNet
 	interface ActorsParticipant
 	{
 	    void Update(ActorInfo asi);
+	    void UpdateGhost(GhostActorInfo asi);	    
 	};		
 };
 

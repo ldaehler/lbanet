@@ -51,7 +51,7 @@ public:
 						const std::string user, const std::string password);
 
 	// player has changed world
-	LbaNet::SavedWorldInfo ChangeWorld(const std::string& NewWorldName, long PlayerId);
+	LbaNet::SavedWorldInfo ChangeWorld(const std::string& NewWorldName, long PlayerId, bool &success);
 
 	// player update his current position in the world
 	void UpdatePositionInWorld(const LbaNet::PlayerPosition& Position, 

@@ -3,6 +3,8 @@
 
 module LbaNet
 {
+	sequence<long> AttachedSeq;
+
 	struct ActorInfo
 	{
 		double			Time;
@@ -35,11 +37,38 @@ module LbaNet
 		short			BodyColor;
 
 		// actor velocity
-		float			vX;
-		float			vY;
-		float			vZ;
+		bool			MoveMorward;
+		bool			CollisionX;
+		bool			CollisionZ;
+		float			extravY;
 		float			vRotation;
+		AttachedSeq		AttachedToActor;
 	};
+	
+
+	
+	struct GhostActorInfo
+	{
+		double			Time;
+	
+		long			ControllingPlayerId;
+		int			GhostId;
+		string			MapName;
+		
+		// actor coordinates
+		float			X;
+		float			Y;
+		float			Z;
+		float			Rotation;
+		
+		// actor display
+		long			SpriteId;
+
+		// actor velocity
+		AttachedSeq		AttachedToActors;
+		bool			AttachedToPlayer;
+	};	
+	
 
 	struct ActorActivationInfo
 	{
