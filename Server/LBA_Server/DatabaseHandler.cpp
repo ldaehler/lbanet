@@ -133,8 +133,10 @@ void DatabaseHandler::Connect()
 /***********************************************************
 player has changed world
 ***********************************************************/
-LbaNet::SavedWorldInfo DatabaseHandler::ChangeWorld(const std::string& NewWorldName, long PlayerId)
+LbaNet::SavedWorldInfo DatabaseHandler::ChangeWorld(const std::string& NewWorldName, long PlayerId, 
+													bool &success)
 {
+	success = false;
 	long worldid = -1;
 	LbaNet::SavedWorldInfo resP;
 	resP.ppos.MapName = "";
@@ -218,7 +220,6 @@ LbaNet::SavedWorldInfo DatabaseHandler::ChangeWorld(const std::string& NewWorldN
 					resP.inventory.InventoryStructure[res2[i][1]] = itm;
 				}
 			}
-
 		}
 		else
 		{
@@ -252,6 +253,8 @@ LbaNet::SavedWorldInfo DatabaseHandler::ChangeWorld(const std::string& NewWorldN
 			if(!query.exec())
 				std::cerr<<IceUtil::Time::now().toDateTime()<<": LBA_Server - UPDATE users failed for user id "<<PlayerId<<" : "<<query.error()<<std::endl;
 		}
+
+		success = true;
 	}
 	else
 	{

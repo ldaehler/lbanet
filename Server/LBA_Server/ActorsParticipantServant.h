@@ -47,6 +47,8 @@ public:
 	//! update
 	virtual void Update(const ActorInfo& asi, const Ice::Current &current);
 
+	//! update ghost
+	virtual void UpdateGhost(const GhostActorInfo& asi, const Ice::Current &current);
 
 private:
 	const std::string _room;
