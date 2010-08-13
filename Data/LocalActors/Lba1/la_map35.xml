@@ -1,4 +1,23 @@
+<?xml version="1.0" encoding="UTF8" ?>
 <actors>
-<actor id="0" type="5" posX="48.499" posY="0" posZ="54.999" rotation="0"  zonesizeX="0.499023" zonesizeY="3.99609" zonesizeZ="0.999023" />
-<actor id="1" type="5" posX="49.999" posY="0" posZ="54.999" rotation="0"  zonesizeX="0.999023" zonesizeY="3.99609" zonesizeZ="0.999023" />
+    <actor id="0" type="5" posX="48.499001" posY="0.000000" posZ="54.999001" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" offsetsizeY="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" collidable="1" actif="0" signaltargets="" zonesizeX="0.499023" zonesizeY="3.996090" zonesizeZ="0.999023" activationtype="1">
+        <itemgroup respawnTimeInMs="300000.000000">
+            <item id="1.000000" number="1.000000" probability="0.300000" />
+            <item id="2.000000" number="1.000000" probability="0.300000" />
+            <item id="8.000000" number="2.000000" probability="0.350000" />
+            <item id="3.000000" number="1.000000" probability="0.050000" />
+        </itemgroup>
+    </actor>
+    <actor id="1" type="5" posX="49.999001" posY="0.000000" posZ="54.999001" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" offsetsizeY="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" collidable="1" actif="0" signaltargets="" zonesizeX="0.999023" zonesizeY="3.996090" zonesizeZ="0.999023" activationtype="1">
+        <itemgroup respawnTimeInMs="300000.000000">
+            <item id="1.000000" number="1.000000" probability="0.300000" />
+            <item id="2.000000" number="1.000000" probability="0.300000" />
+            <item id="8.000000" number="2.000000" probability="0.350000" />
+            <item id="3.000000" number="1.000000" probability="0.050000" />
+        </itemgroup>
+    </actor>
+    <actor id="3" type="0" posX="49.000000" posY="0.400000" posZ="35.000000" sizeX="1.000000" sizeY="4.000000" sizeZ="1.000000" offsetsizeY="0.000000" rotation="0.000000" passable="0" depthmask="1" movable="1" outputsignal="-1" attachedsound="-1" collidable="1" actif="1" signaltargets="" renderertype="0" renderertarget="47" />
+    <actor id="4" type="0" posX="47.000000" posY="0.400000" posZ="32.000000" sizeX="1.000000" sizeY="4.000000" sizeZ="1.000000" offsetsizeY="0.000000" rotation="0.000000" passable="0" depthmask="1" movable="1" outputsignal="-1" attachedsound="-1" collidable="1" actif="1" signaltargets="" renderertype="0" renderertarget="47" />
+    <actor id="5" type="0" posX="47.000000" posY="0.400000" posZ="32.000000" sizeX="1.000000" sizeY="4.000000" sizeZ="1.000000" offsetsizeY="0.000000" rotation="0.000000" passable="0" depthmask="1" movable="1" outputsignal="-1" attachedsound="-1" collidable="1" actif="1" signaltargets="" renderertype="0" renderertarget="47" />
+    <actor id="6" type="0" posX="47.000000" posY="0.400000" posZ="32.000000" sizeX="1.000000" sizeY="4.000000" sizeZ="1.000000" offsetsizeY="0.000000" rotation="0.000000" passable="0" depthmask="1" movable="1" outputsignal="-1" attachedsound="-1" collidable="1" actif="1" signaltargets="" renderertype="0" renderertarget="47" />
 </actors>

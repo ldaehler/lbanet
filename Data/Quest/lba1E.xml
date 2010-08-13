@@ -49,6 +49,30 @@
 		<Conditions>
 			<Condition type="7" ObjectId="19" ObjectNumber="1" StrictlyEqual="1" />
 		</Conditions>		
-	</quest>	
+	</quest>
 	
+	<quest Id="4" Visible="0">
+				
+		<Conditions>
+			<Condition type="8" ActorId="7" ActivatingGroup="2" MapName="Map35_1" />
+			<Condition type="8" ActorId="8" ActivatingGroup="2" MapName="Map35_1" />
+			<Condition type="8" ActorId="9" ActivatingGroup="2" MapName="Map35_1" />
+			<Condition type="8" ActorId="10" ActivatingGroup="2" MapName="Map35_1" />			
+		</Conditions>		
+	</quest>
+	
+	<quest Id="5" TitleTextId="7" DescriptionTextId="8" QuestAreaTextId="6">
+		<QuestsStartingAtStart>
+			<quest Id="4" />
+		</QuestsStartingAtStart>	
+		
+		<ObjectsGivenAtEnd>
+			<object Id="12" Number="1" />	
+		</ObjectsGivenAtEnd>
+
+		
+		<Conditions>
+			<Condition type="4" QuestId="4" />
+		</Conditions>		
+	</quest>	
 </quests>

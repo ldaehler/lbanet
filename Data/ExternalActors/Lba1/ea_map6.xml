@@ -15,16 +15,57 @@
             <script type="3" ValueA="-2" ValueB="6" />        
         </scripts>     
     </actor>    
-    <actor id="9" type="12" posX="42.562500" posY="4.000000" posZ="25.468750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="25,0" />
+    <actor id="9" type="12" posX="42.562500" posY="4.000000" posZ="25.468750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="25,0">
+       	<Dialog StandardQuitDialog="194" StandardGoToRootDialog="195"> 
+    		<DialogEntry type="3">
+			<DialogEntry type="1" TextId="39">
+				<Condition type="5" QuestId="5">		
+				</Condition>					
+			</DialogEntry>
+								
+			<DialogEntry type="1" TextId="74">
+				<Condition type="3" QuestId="4">		
+				</Condition>					
+			</DialogEntry>			
+			
+			<DialogEntry type="0" TextId="172">
+			</DialogEntry>
+    		</DialogEntry>
+    		
+       		<DialogTree>	
+        		<PlayerChoice type="1" TextId="191">
+				<Condition type="5" QuestId="5">		
+				</Condition>
+       			       	<DialogTree TextId="193" GoToRootEnabled="0">
+       			       		<QuestToStart Id="3" />
+        			</DialogTree>	       	
+       			</PlayerChoice>        		
+       		
+         		<PlayerChoice type="3" TextId="192">
+				<Condition type="3" QuestId="5">		
+				</Condition>
+				<Condition type="6" QuestId="5">
+				</Condition>				
+       			       	<DialogTree TextId="50" GoToRootEnabled="0">
+					<QuestToTrigger Id="5" />
+        			</DialogTree>
+        			<DialogTree TextId="74">
+        			</DialogTree>       			
+       			</PlayerChoice>	
+    		</DialogTree> 	
+	</Dialog>          
+    </actor>      
+    
+    
     <actor id="10" type="12" posX="49.718750" posY="4.000000" posZ="45.468750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="247.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="16,0" />
     <actor id="11" type="12" posX="56.968750" posY="4.000000" posZ="22.437500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="16,0" />
     <actor id="12" type="12" posX="20.062500" posY="4.000000" posZ="43.375000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="322.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="26,0" />
-    <actor id="13" type="12" Welcome="Welcome to my shop!" NPCType="2" posX="50.375000" posY="4.000000" posZ="23.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="13,0">
+    <actor id="13" type="12" NPCType="2" posX="50.375000" posY="4.000000" posZ="23.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="13,0">
          <items>
         	<item id="12" />           	
         </items>  
         
-       	<Dialog StandardQuitDialog="111" StandardGoToRootDialog="97" TradingDialog="96"> 
+       	<Dialog StandardQuitDialog="194" StandardGoToRootDialog="195" TradingDialog="196"> 
 		<DialogEntry type="0" TextId="9">
 		</DialogEntry>
        	
