@@ -23,12 +23,12 @@
 				</Condition>					
 			</DialogEntry>
 								
-			<DialogEntry type="1" TextId="74">
-				<Condition type="3" QuestId="4">		
+			<DialogEntry type="1" TextId="198">
+				<Condition type="3" QuestId="5">		
 				</Condition>					
 			</DialogEntry>			
 			
-			<DialogEntry type="0" TextId="172">
+			<DialogEntry type="0" TextId="197">
 			</DialogEntry>
     		</DialogEntry>
     		
@@ -37,7 +37,7 @@
 				<Condition type="5" QuestId="5">		
 				</Condition>
        			       	<DialogTree TextId="193" GoToRootEnabled="0">
-       			       		<QuestToStart Id="3" />
+       			       		<QuestToStart Id="5" />
         			</DialogTree>	       	
        			</PlayerChoice>        		
        		
