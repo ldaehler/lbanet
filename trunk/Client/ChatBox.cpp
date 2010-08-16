@@ -527,11 +527,19 @@ set the current map of the game
 ***********************************************************/
 void ChatBox::SetCurrentMap(const std::string & WorldName, const std::string & MapName)
 {
-	_currentWorld = WorldName;
-	_currentMap = MapName;
+	try
+	{
+		_currentWorld = WorldName;
+		_currentMap = MapName;
 
-	CEGUI::WindowManager::getSingleton().getWindow("ChatFrame")->setProperty("Text", "Chat - " + _currentWorld + "/" + _currentMap);
-
+		CEGUI::Window * chatfw = CEGUI::WindowManager::getSingleton().getWindow("ChatFrame");
+		if(chatfw)
+			chatfw->setProperty("Text", "Chat - " + _currentWorld + "/" + _currentMap);
+	}
+	catch(CEGUI::Exception &ex)
+	{
+		LogHandler::getInstance()->LogToFile(std::string("Exception setting map name on chat box: ") + ex.getMessage().c_str());
+	}
 }
 
 

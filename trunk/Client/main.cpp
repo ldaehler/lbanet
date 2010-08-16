@@ -32,13 +32,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "RunApp.h"
 
+#include "LogHandler.h"
+#include "crashrpt.h"
+#pragma comment(lib, "crashrpt.lib")
 
-#include <fstream>
-#include <sstream>
 
+BOOL WINAPI CrashCallback(LPVOID lpvState)
+{
+	AddFile(lpvState, LogHandler::getInstance()->GetFilename().c_str(), "Lbanet general log");
+	AddFile(lpvState, LogHandler::getInstance()->GetGUIFilename().c_str(), "GUI log");
+	return TRUE;
+}
 
 int main(int argc, char *argv[])
 {
+	// init crash reporter
+	LPVOID chandler = Install(CrashCallback, NULL, NULL);
+
+	LogHandler::getInstance()->LogToFile("I will be back!");
+
+	//GenerateErrorReport(chandler, NULL);
+
+	//launch application
 	return RunApp::Run(argc, argv);
 }
 

@@ -128,7 +128,7 @@ void DataLoader::GetAvailableWorlds(std::vector<WorldDesc> & list)
 /***********************************************************
 load world information into memory
 ***********************************************************/
-bool DataLoader::LoadWorld(std::string WorldName)
+bool DataLoader::LoadWorld(std::string WorldName, ActorHandlerBase * actH)
 {
 	CleanUpWolrd();
 	_currentworldfile = WorldName;
@@ -165,7 +165,7 @@ bool DataLoader::LoadWorld(std::string WorldName)
 		// load quests for this world
 		std::map<long, QuestPtr> quests;
 		MapInfoXmlReader::LoadQuests(_questfile, quests, InventoryHandler::getInstance(),
-										QuestHandler::getInstance());
+										QuestHandler::getInstance(), actH);
 		QuestHandler::getInstance()->Initialize(quests);
 
 		_currentMap = _currentWorld.FirstMap;
@@ -261,7 +261,8 @@ void DataLoader::CleanUpWolrd()
 /***********************************************************
 get the current actors of the map
 ***********************************************************/
-bool DataLoader::GetLocalMapActors(std::map<long, Actor *> & vec, float AnimationSpeed)
+bool DataLoader::GetLocalMapActors(std::map<long, Actor *> & vec, float AnimationSpeed, 
+								   ActorHandlerBase * actH)
 {
 	MapInfo * MI = GetMapInfo();
 	std::string file = MI->Files["LocalActors"];
@@ -270,23 +271,26 @@ bool DataLoader::GetLocalMapActors(std::map<long, Actor *> & vec, float Animatio
 
 	return MapInfoXmlReader::LoadActors("Data/" + file, _sprites, _videos, _models, vec, 
 										&_signaler, AnimationSpeed, InventoryHandler::getInstance(),
-										QuestHandler::getInstance());
+										QuestHandler::getInstance(), actH);
 }
 
 
 /***********************************************************
 get the current external actors of the map
 ***********************************************************/
-bool DataLoader::GetExternalMapActors(std::map<long, Actor *> & vec, float AnimationSpeed)
+bool DataLoader::GetExternalMapActors(std::map<long, Actor *> & vec, float AnimationSpeed, 
+									  ActorHandlerBase * actH)
 {
 	MapInfo * MI = GetMapInfo();
 	std::string file = MI->Files["ExternalActors"];
 	if(file == "")
 		return false;
 
+
+
 	return MapInfoXmlReader::LoadActors("Data/" + file, _sprites, _videos, _models, vec, 
 										&_signaler, AnimationSpeed, InventoryHandler::getInstance(),
-										QuestHandler::getInstance());
+										QuestHandler::getInstance(), actH);
 }
 
 

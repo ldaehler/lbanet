@@ -280,3 +280,15 @@ void LocalActorsHandler::ActorActivateActor(Actor * act)
 		it->second->ActorActivateActor(act);
 	}
 }
+
+/***********************************************************
+check if the actor is activated
+***********************************************************/
+bool LocalActorsHandler::ActorActivated(long ActorId, int activatinggroup)
+{
+	std::map<long, Actor *>::iterator it = _actors.find(ActorId);
+	if(it != _actors.end())
+		return it->second->IsActivated(activatinggroup);
+
+	return false;
+}

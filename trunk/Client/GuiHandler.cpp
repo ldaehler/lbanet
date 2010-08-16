@@ -91,7 +91,7 @@ void GuiHandler::Initialize(int screen_size_X, int screen_size_Y, bool ServerOn,
 
 		//new CEGUI::OpenGLRenderer (0, screen_size_X, screen_size_Y);
 
-		CEGUI::System::create( *_gui_renderer );
+		CEGUI::System::create( *_gui_renderer, 0, 0, 0, 0, "", LogHandler::getInstance()->GetGUIFilename().c_str() );
 		//new CEGUI::System (_gui_renderer);
 
 		// initialise the required dirs for the DefaultResourceProvider

@@ -42,7 +42,7 @@ class ExitsHandler;
 #include <string>
 #include <vector>
 #include <map>
-
+#include "ActorHandlerBase.h"
 
 /***********************************************************************
  * Module:  LbaNetModel.h
@@ -50,7 +50,7 @@ class ExitsHandler;
  * Modified: mardi 14 juillet 2009 13:54:52
  * Purpose: Declaration of the class LbaNetModel
  ***********************************************************************/
-class LbaNetModel
+class LbaNetModel : public ActorHandlerBase
 {
 public:
 	//! constructor
@@ -195,6 +195,12 @@ public:
 
 	// attach an actor to another
 	void AttachActor(Actor *toattach, long attachingid);
+
+	//! check if the actor is activated
+	//! activating group is the group that the actiavating agent belows:
+	//! 0 -> everybody;  1 -> player; 2 -> other actors
+	//! mapname gives the map where the actor should be located
+	virtual bool ActorActivated(long ActorId, int activatinggroup, const std::string & MapName);
 
 private:
 	MapRendererBase*		_mapRenderer;

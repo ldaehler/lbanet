@@ -102,6 +102,8 @@ public:
 	// actor avtivate other actors
 	void ActorActivateActor(Actor * act);
 	
+	//! check if the actor is activated
+	bool ActorActivated(long ActorId, int activatinggroup);
 
 protected:
 	std::map<long, Actor *> _actors;

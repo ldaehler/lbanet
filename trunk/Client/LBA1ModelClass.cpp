@@ -36,7 +36,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "LBA1ModelClass.h"
 #include "RotationTable.h"
 #include "HQRlib.h"
-
+#include "LogHandler.h"
 
 #include <windows.h>    // Header File For Windows
 #include <GL/gl.h>      // Header File For The OpenGL32 Library
@@ -124,7 +124,10 @@ LBA1ModelClass::LBA1ModelClass(entitiesTableStruct* entitiesData, const std::str
 	currentBone=0;
 
 	if(!entitiesData) // no entities data, can't load model...
+	{
+		LogHandler::getInstance()->LogToFile("No entity data, can not load the model...");
 		return;
+	}
 
 	localEntry=&(entitiesData->entitiesTable[entityNum]);
 

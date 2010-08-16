@@ -46,9 +46,6 @@ LogHandler * LogHandler::getInstance()
     {
 		return _singletonInstance;
     }
-
-
-
 }
 
 
@@ -56,8 +53,17 @@ LogHandler * LogHandler::getInstance()
 Constructor
 ***********************************************************/
 LogHandler::LogHandler()
-: _logfile("LBAClient.log")
 {
+	char szTempDir[MAX_PATH];
+	GetTempPathA(MAX_PATH, szTempDir);
+	_filename = szTempDir;
+	_filename += "LBAClient.log";
+
+	_guifilename = szTempDir;
+	_guifilename += "CEGUI.log";
+
+	_logfile.open(_filename.c_str());
+
 	_logfile<<std::endl<<std::endl<<"**********************************"<<std::endl;
 	_logfile<<IceUtil::Time::now().toDateTime()<<" - Starting new game."<<std::endl;
 }

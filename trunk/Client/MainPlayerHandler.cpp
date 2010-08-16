@@ -618,7 +618,7 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 	if(_state != Ac_Jumping && _state != Ac_Flying && !_player->IsAttached())
 	{
 		_corrected_velocityY = _GravityFalldown * tdiff;
-		if(_state == Ac_FallingDown)
+		if(_state == Ac_FallingDown && _currentstance != 7) // exception for protopack as there is no falling speed in animation
 			_corrected_velocityY = _player->GetRendererSpeedY();
 	}
 
@@ -630,14 +630,14 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 		_state != Ac_Jumping && _state != Ac_hurt)
 	{
 		//if right key pressed
-		if(_right_key_pressed && _state != Ac_movingobjects)
+		if(_right_key_pressed/* && _state != Ac_movingobjects*/)
 		{
 			_velocityR = -0.15f;
 			_player->SetRotation(_player->GetRotation() - tdiff*0.15f);
 		}
 
 		//if left key pressed
-		if(_left_key_pressed && _state != Ac_movingobjects)
+		if(_left_key_pressed/* && _state != Ac_movingobjects*/)
 		{
 			_velocityR = 0.15f;
 			_player->SetRotation(_player->GetRotation() + tdiff*0.15f);
@@ -696,7 +696,7 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 		if(moveO.MovingObject)
 		{
 			_countmovingobj = 0;
-			SetCharMovingObject(moveO.MovingDirection);
+			SetCharMovingObject(moveO.MovingDirection, moveO.AllowFreeMove);
 		}
 		else
 		{
@@ -1914,7 +1914,7 @@ bool MainPlayerHandler::UseWeapon()
 /***********************************************************
 called when player start moving objects
 ***********************************************************/
-void MainPlayerHandler::SetCharMovingObject(int MovingDirection)
+void MainPlayerHandler::SetCharMovingObject(int MovingDirection, bool Allowfreemove)
 {
 	if(_state != Ac_Normal && _state != Ac_protopack)
 		return;
@@ -1937,24 +1937,28 @@ void MainPlayerHandler::SetCharMovingObject(int MovingDirection)
 		switch(MovingDirection)
 		{
 			case 1:
-				_player->SetRotation(90);
+				//_player->SetRotation(90);
 				moveX = true;
 			break;
 			case 2:
-				_player->SetRotation(270);
+				//_player->SetRotation(270);
 				moveX = true;
 			break;
 			case 3:
-				_player->SetRotation(0);
+				//_player->SetRotation(0);
 				moveZ = true;
 			break;
 			case 4:
-				_player->SetRotation(180);
+				//_player->SetRotation(180);
 				moveZ = true;
 			break;
 		}
 	}
-	_RoomP->SetAllowedMoving(moveX, moveZ);
+	if(Allowfreemove)
+		_RoomP->SetAllowedMoving(true, true);
+	else
+		_RoomP->SetAllowedMoving(moveX, moveZ);
+
 	_state = Ac_movingobjects;
 }
 

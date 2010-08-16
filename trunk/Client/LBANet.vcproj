@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/D _CRT_SECURE_NO_WARNINGS /D MP3_MUSIC"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\dependencies\SDL\include;&quot;$(ICE_HOME)\include&quot;;..\Server\infrastructure\include;..\dependencies\DevIL\include;..\dependencies\tinyxml\include;..\dependencies\fmod\include;..\dependencies\Boost\include;..\dependencies\CEGUI\cegui\include;..\dependencies\libircclient\include;..\dependencies\libconfig\include;..\common;.;..\dependencies\opende\include;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;"
+				AdditionalIncludeDirectories="..\dependencies\SDL\include;&quot;$(ICE_HOME)\include&quot;;..\Server\infrastructure\include;..\dependencies\DevIL\include;..\dependencies\tinyxml\include;..\dependencies\fmod\include;..\dependencies\Boost\include;..\dependencies\CEGUI\cegui\include;..\dependencies\libircclient\include;..\dependencies\libconfig\include;..\common;.;..\dependencies\opende\include;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;;..\dependencies\CrashReport\crashrpt\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;TIXML_USE_STL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -64,7 +64,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="SDLd.lib SDLmaind.lib SDL_ttfd.lib opengl32.lib glu32.lib iced.lib iceutild.lib glacier2d.lib libpng.lib zlib.lib DevIL.lib ILU.lib ILUT.lib tinyxmld_STL.lib fmodex_vc.lib libfreetype.lib CEGUIBase_d.lib CEGUIOpenGLRenderer_d.lib libircclient-static.lib wsock32.lib libconfig++d.lib vfw32.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib winmm.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\dependencies\SDL\lib;&quot;$(ICE_HOME)\lib&quot;;..\dependencies\DevIL\lib;..\dependencies\tinyxml\lib;..\dependencies\fmod\lib;..\dependencies\Boost\lib;..\dependencies\CEGUI\lib;..\dependencies\libircclient\lib;..\dependencies\libconfig\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;"
+				AdditionalLibraryDirectories="..\dependencies\SDL\lib;&quot;$(ICE_HOME)\lib&quot;;..\dependencies\DevIL\lib;..\dependencies\tinyxml\lib;..\dependencies\fmod\lib;..\dependencies\Boost\lib;..\dependencies\CEGUI\lib;..\dependencies\libircclient\lib;..\dependencies\libconfig\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;;..\dependencies\CrashReport\crashrpt\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -120,13 +120,13 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="..\dependencies\SDL\include;&quot;$(ICE_HOME)\include&quot;;..\Server\infrastructure\include;..\dependencies\DevIL\include;..\dependencies\tinyxml\include;..\dependencies\fmod\include;..\dependencies\Boost\include;..\dependencies\CEGUI\cegui\include;..\dependencies\libircclient\include;..\dependencies\libconfig\include;..\common;.;..\dependencies\opende\include;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;"
+				AdditionalIncludeDirectories="..\dependencies\SDL\include;&quot;$(ICE_HOME)\include&quot;;..\Server\infrastructure\include;..\dependencies\DevIL\include;..\dependencies\tinyxml\include;..\dependencies\fmod\include;..\dependencies\Boost\include;..\dependencies\CEGUI\cegui\include;..\dependencies\libircclient\include;..\dependencies\libconfig\include;..\common;.;..\dependencies\opende\include;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Foundation/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Physics/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/Cooking/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/PhysXLoader/include&quot;;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs/NxCharacter/include&quot;;..\dependencies\CrashReport\crashrpt\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;TIXML_USE_STL"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				DebugInformationFormat="0"
+				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -142,8 +142,8 @@
 				AdditionalDependencies="SDL.lib SDLmain.lib opengl32.lib glu32.lib ice.lib iceutil.lib glacier2.lib libpng.lib zlib.lib DevIL.lib ILU.lib ILUT.lib tinyxml_STL.lib fmodex_vc.lib libfreetype.lib CEGUIBase.lib CEGUIOpenGLRenderer.lib libircclient-static.lib wsock32.lib libconfig++.lib vfw32.lib PhysXLoader.lib PhysXCooking.lib NxCharacter.lib winmm.lib"
 				OutputFile="$(OutDir)\LBANetGame.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\dependencies\SDL\lib;&quot;$(ICE_HOME)\lib&quot;;..\dependencies\DevIL\lib;..\dependencies\tinyxml\lib;..\dependencies\fmod\lib;..\dependencies\Boost\lib;..\dependencies\CEGUI\lib;..\dependencies\libircclient\lib;..\dependencies\libconfig\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;"
-				GenerateDebugInformation="false"
+				AdditionalLibraryDirectories="..\dependencies\SDL\lib;&quot;$(ICE_HOME)\lib&quot;;..\dependencies\DevIL\lib;..\dependencies\tinyxml\lib;..\dependencies\fmod\lib;..\dependencies\Boost\lib;..\dependencies\CEGUI\lib;..\dependencies\libircclient\lib;..\dependencies\libconfig\lib;&quot;C:\Program Files\NVIDIA Corporation\NVIDIA PhysX SDK\v2.8.3\SDKs\lib\Win32&quot;;..\dependencies\CrashReport\crashrpt\lib"
+				GenerateDebugInformation="true"
 				AssemblyDebug="0"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -192,6 +192,10 @@
 			</File>
 			<File
 				RelativePath="..\common\Actor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\common\ActorCondition.cpp"
 				>
 			</File>
 			<File
@@ -633,6 +637,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\common\ActorCondition.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\ActorHandlerBase.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ActorUserData.h"
 				>
 			</File>
@@ -725,11 +737,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\Entities.h"
+				RelativePath=".\Entities.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Entities.h"
+				RelativePath="..\common\Entities.h"
 				>
 			</File>
 			<File
@@ -789,11 +801,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\HQRlib.h"
+				RelativePath=".\HQRlib.h"
 				>
 			</File>
 			<File
-				RelativePath=".\HQRlib.h"
+				RelativePath="..\common\HQRlib.h"
 				>
 			</File>
 			<File
@@ -1049,11 +1061,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\StreamReader.h"
+				RelativePath="..\common\StreamReader.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\StreamReader.h"
+				RelativePath=".\StreamReader.h"
 				>
 			</File>
 			<File

@@ -211,7 +211,7 @@ bool MS3DModel::loadModelData( const std::string &filepath )
 
 
 
-void MS3DModel::Render()
+void MS3DModel::Render(float alpha)
 {
 	glTranslatef(m_TransX, m_TransY, m_TransZ);
 
@@ -221,7 +221,7 @@ void MS3DModel::Render()
 
 	glScalef(m_ScaleX, m_ScaleY, m_ScaleZ);
 
-	glColor4f(1,1,1,1);
+	glColor4f(1,1,1,alpha);
 
 	GLboolean texEnabled = glIsEnabled( GL_TEXTURE_2D );
 

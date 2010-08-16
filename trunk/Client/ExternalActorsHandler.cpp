@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ExternalActorsHandler.h"
 #include "PhysicHandler.h"
 #include "ThreadSafeWorkpile.h"
+#include "LogHandler.h"
 
 /***********************************************************
 	Constructor
@@ -107,6 +108,8 @@ cleanup allocated memory
 ***********************************************************/
 void ExternalActorsHandler::Cleanup()
 {
+	LogHandler::getInstance()->LogToFile("Cleaning up old external actor objects...");
+
 	std::map<long, Actor *>::iterator it =  _actors.begin();
 	std::map<long, Actor *>::iterator end =  _actors.end();
 	for(; it != end; ++it)
@@ -351,4 +354,17 @@ void ExternalActorsHandler::ActorActivateActor(Actor * act)
 	{
 		it->second->ActorActivateActor(act);
 	}
+}
+
+
+/***********************************************************
+check if the actor is activated
+***********************************************************/
+bool ExternalActorsHandler::ActorActivated(long ActorId, int activatinggroup)
+{
+	std::map<long, Actor *>::iterator it = _actors.find(ActorId);
+	if(it != _actors.end())
+		return it->second->IsActivated(activatinggroup);
+
+	return false;
 }

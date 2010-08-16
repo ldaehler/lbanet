@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "LBA1ModelClass.h"
 #include "DataFileHandler.h"
 #include "DataLoader.h"
-
+#include "LogHandler.h"
 
 #include <windows.h>    // Header File For Windows
 #include <GL/gl.h>      // Header File For The OpenGL32 Library
@@ -72,7 +72,7 @@ void CharacterRenderer::Clear()
 /***********************************************************
 draw the object
 ***********************************************************/
-void CharacterRenderer::Render()
+void CharacterRenderer::Render(float alpha)
 {
 	if(!_modelRenderer || !Visible)
 		return;
@@ -141,6 +141,12 @@ void CharacterRenderer::changeAnimEntity(int entityNum, int bodyNum, bool forced
 
 	Clear();
 
+
+	std::stringstream strs;
+	strs<<"Loading new lba1 model with entity "<<entityNum<<" and body "<<bodyNum<<std::endl;
+	LogHandler::getInstance()->LogToFile(strs.str());
+
+
 	entitiesTableStruct*  estruct = DataLoader::getInstance()->GetEntitiesInfo();
 	_modelRenderer = new LBA1ModelClass(estruct, DataFileHandler::GetPath("BODY"),
 										DataFileHandler::GetPath("ANIM"), entityNum,
@@ -157,6 +163,8 @@ void CharacterRenderer::changeAnimEntity(int entityNum, int bodyNum, bool forced
 	}
 
 	setActorAnimation(0);
+
+	LogHandler::getInstance()->LogToFile("Model loaded correctly");
 }
 
 

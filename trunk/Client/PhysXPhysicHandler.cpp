@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "NxController.h"
 #include "NxActor.h"
 #include "Actor.h"
+#include "LogHandler.h"
 
 #include <windows.h>    // Header File For Windows
 #include <GL/gl.h>      // Header File For The OpenGL32 Library
@@ -357,6 +358,7 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 					sizey /= 2;
 					posy += sizey;
 					ActorUserData * usdata = new ActorUserData(1, it->first, NULL);
+					usdata->SetAllowFreeMove(it->second->GetAllowFreeMove());
 
 					if(it->second->IsMovable())
 					{
@@ -403,6 +405,8 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 				{
 					sizey /= 2;
 					posy += sizey;
+					ActorUserData * usdata = new ActorUserData(1, it->first, NULL);
+					usdata->SetAllowFreeMove(it->second->GetAllowFreeMove());
 
 					if(it->second->IsMovable())
 					{
@@ -414,7 +418,7 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 					}
 					else
 					{
-						ActorUserData * usdata = new ActorUserData(1, it->first, NULL);
+
 						NxActor* cont = PhysXEngine::getInstance()->CreateBox(NxVec3(posx, posy, posz), 
 																			sizex, sizey, sizez, 1.0, ctype, usdata,
 																			it->second->GetCollidable(), it->second->IsMovable());
@@ -435,18 +439,25 @@ PhysXPhysicHandler::PhysXPhysicHandler(const std::string filename,
 */
 PhysXPhysicHandler::~PhysXPhysicHandler()
 {
+	LogHandler::getInstance()->LogToFile("Destroying physical scene...");
+
 	if(PhysXEngine::getInstance()->IsInitialized())
 	{
 		ActorUserData * mstorage = (ActorUserData *)_map->userData;
 		ActorUserData * characterdata = (ActorUserData *)_controller->getActor()->userData;
 
+		LogHandler::getInstance()->LogToFile("Destroying map...");
 		PhysXEngine::getInstance()->DestroyActor(_map);
+
+		LogHandler::getInstance()->LogToFile("Destroying player...");
 		PhysXEngine::getInstance()->DestroyCharacter(_controller);
 
 		if(mstorage)
 			delete mstorage;
 		if(characterdata)
 			delete characterdata;
+
+		LogHandler::getInstance()->LogToFile("Destroying actors...");
 
 		//destroy actors
 		{
@@ -461,6 +472,8 @@ PhysXPhysicHandler::~PhysXPhysicHandler()
 					delete adata;
 			}
 		}
+
+		LogHandler::getInstance()->LogToFile("Destroying movable actors...");
 
 		//destroy movable actors
 		{
@@ -477,6 +490,8 @@ PhysXPhysicHandler::~PhysXPhysicHandler()
 		}
 		
 	}
+
+	LogHandler::getInstance()->LogToFile("Physical destroyed.");
 }
 
 /*
@@ -500,6 +515,7 @@ MoveOutput PhysXPhysicHandler::MoveActor(long ActorId, const AABB & actorBB,
 	res.Collisionx = false;
 	res.Collisionz = false;
 	res.CollisionUp = false;
+	res.AllowFreeMove = false;
 
 	ActorUserData * characterdata = (ActorUserData *)_controller->getActor()->userData;
 	if(characterdata)
@@ -541,6 +557,7 @@ MoveOutput PhysXPhysicHandler::MoveActor(long ActorId, const AABB & actorBB,
 		res.MovingObject = characterdata->GetMovingObject();
 		characterdata->SetMovingObject(false);
 		res.MovingDirection = characterdata->GetMovingDirection();
+		res.AllowFreeMove = characterdata->GetAllowFreeMove();
 	}
 
 	_lastposX = posX;
