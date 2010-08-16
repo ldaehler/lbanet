@@ -139,3 +139,11 @@ whatever you send in game will also show as PM in the website on the inverse is 
 of Twinsen house.
 
 
+__________________________
+Version 0.92 changes:
+- added movable objects. In order to test it you can go to the temple of Bu or talk to the grobo at the entrance of citadel island harbor warehouse ;-)
+
+- the animation and movement speed are now in sync, you should notice the speed diference (everything looks slower) but it is very close now to how the original game is.
+
+- added a crash reporter. In case you game crashes a dialog will appear asking you to create a zipped report and post it to the MBN forum. If you wish the game to be more stable please post!
+
