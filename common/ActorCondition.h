@@ -29,6 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ConditionBase.h"
 #include "ActorHandlerBase.h"
 
+#include <string>
+
 /***********************************************************************
  * Module:  ActorActivatedCondition.h
  * Author:  vivien
