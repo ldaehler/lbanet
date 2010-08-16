@@ -193,6 +193,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\ActorCondition.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\infrastructure\cpp\ActorInfo.cpp"
 				>
 			</File>

@@ -92,7 +92,7 @@ void ActorsParticipantServant::UpdateGhost(const GhostActorInfo& asi, const Ice:
     {
 		GhostActorInfo asin(asi);
 		asin.ControllingPlayerId = _actor_id;
-		_publish->UpdatedGhost(asi);
+		_publish->UpdatedGhost(asin);
 	}
 	catch(const IceUtil::Exception& ex)
 	{

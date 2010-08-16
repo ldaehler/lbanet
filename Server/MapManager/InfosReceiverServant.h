@@ -98,6 +98,9 @@ public:
 	// refresh PMs list
 	void RefreshPMs(const LbaNet::PMsSeq &, const Ice::Current&){}
 
+	// update ghost
+	void UpdatedGhost(const LbaNet::GhostActorInfo &,const Ice::Current &){}
+
 private:
 	SharedData * _SD;
 };
