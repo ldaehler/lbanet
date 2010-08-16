@@ -78,7 +78,7 @@ void ServerCharacterRenderer::Clear()
 /***********************************************************
 draw the object
 ***********************************************************/
-void ServerCharacterRenderer::Render()
+void ServerCharacterRenderer::Render(float alpha)
 {
 
 }

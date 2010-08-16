@@ -162,3 +162,38 @@ void ZoneActor::RenderEditor()
 #endif
 }
 
+
+
+/***********************************************************
+check if the actor is activated
+activating group is the group that the actiavating agent belows:
+0 -> everybody;  1 -> player; 2 -> other actors
+***********************************************************/
+bool ZoneActor::IsActivated(int activatinggroup)
+{
+	if(_activatedactors.size() > 0)
+	{
+		if(activatinggroup == 0)
+			return true;
+
+		std::set<long>::const_iterator it =	_activatedactors.begin();
+		std::set<long>::const_iterator end =_activatedactors.end();
+		for(; it != end; ++it)
+		{
+			// player gives always -1 as id
+			if(*it == -1)
+			{
+				if(activatinggroup == 1)
+					return true;
+			}
+			else
+			{
+				// else it is another actor that activated
+				if(activatinggroup == 2)
+					return true;
+			}
+		}
+	}
+
+	return false;
+}
