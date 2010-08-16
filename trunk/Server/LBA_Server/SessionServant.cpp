@@ -570,7 +570,7 @@ LbaNet::SavedWorldInfo SessionServant::ChangeWorld(const std::string& WorldName,
 	// reload quest info
 	std::map<long, QuestPtr> quests;
 	MapInfoXmlReader::LoadQuests(_session_world_quest_files[WorldName], quests, 
-									const_cast<SessionServant *>(this), &_QH);
+									const_cast<SessionServant *>(this), &_QH, NULL);
 	_QH.Initialize(quests);
 
 	std::vector<long> questStarted, questFinished;
