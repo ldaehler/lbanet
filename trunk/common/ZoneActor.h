@@ -73,6 +73,10 @@ public:
 	// actor avtivate other actors
 	virtual void ActorActivateActor(Actor * act);
 
+	//! check if the actor is activated
+	//! activating group is the group that the actiavating agent belows:
+	//! 0 -> everybody;  1 -> player; 2 -> other actors
+	virtual bool IsActivated(int activatinggroup);
 
 protected:
 	// used to get the zone center - depend of the actor type

@@ -30,13 +30,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GameEvents.h"
 #include "MusicHandler.h"
 #include "DataLoader.h"
+#include "QuestHandler.h"
 #endif
 
 /***********************************************************
 	Constructor
 ***********************************************************/
-AreaSwitch::AreaSwitch(float zoneSizeX, float zoneSizeY, float zoneSizeZ)
-: ZoneActor(zoneSizeX, zoneSizeY, zoneSizeZ)
+AreaSwitch::AreaSwitch(float zoneSizeX, float zoneSizeY, float zoneSizeZ, long QuestToTriggerEnd)
+: ZoneActor(zoneSizeX, zoneSizeY, zoneSizeZ), _QuestToTriggerEnd(QuestToTriggerEnd)
 {
 
 }
@@ -65,6 +66,14 @@ void AreaSwitch::ProcessActivation(float PlayerPosX, float PlayerPosY, float Pla
 	#endif
 
 	SendSignal(_outputsignal, _targets);
+
+#ifndef _LBANET_SERVER_SIDE_
+	if(_QuestToTriggerEnd >= 0)
+	{
+		if(QuestHandler::getInstance()->QuestConditionFulfilled(_QuestToTriggerEnd))
+			ThreadSafeWorkpile::getInstance()->AddQuestFinished(_QuestToTriggerEnd);
+	}
+#endif
 }
 
 /***********************************************************

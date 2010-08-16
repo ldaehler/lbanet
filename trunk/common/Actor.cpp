@@ -41,7 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /***********************************************************
 	Constructor
 ***********************************************************/
-Actor::Actor()
+Actor::Actor(float alpharender)
 : _posX(0),_posY(0), _posZ(0), _rotation(0),
 	_passable(true), _depthmask(true), _Renderer(NULL),
 	_VelocityX(0), _VelocityY(0), _VelocityZ(0), _movable(false),
@@ -51,7 +51,7 @@ Actor::Actor()
 	_signaler(NULL), _physposhandler(NULL), _collidable(true),
 	_offsetsizeY(0), _actormoving(false), _isAttached(false), 
 	_activatingactor(-1), _linkedghostid(-1), 
-	_lastattachedPlayer(false), _actif(false)
+	_lastattachedPlayer(false), _actif(false), _alpharender(alpharender), _allowfreemove(false)
 {
 
 }
@@ -94,7 +94,7 @@ void Actor::Render(int RoomCut)
 			glTranslated(_posX, _posY/2. + 0.5, _posZ);
 			glRotatef( (float)_rotation, 0.0, 1.0, 0.0 );
 
-			_Renderer->Render();
+			_Renderer->Render(_alpharender);
 		}
 		glPopMatrix();
 
@@ -126,10 +126,25 @@ int Actor::Process(double tnow, float tdiff)
 				_linkedghostid = ThreadSafeWorkpile::getInstance()->GetNextGhostId();
 		}
 
+		if(attachedPlayer == true)
+			_countplayerdetach = 0;
+
 		if(_lastattachedPlayer != attachedPlayer)
 		{
-			_lastattachedPlayer = attachedPlayer; 
-			UpdateGhost();
+			if(attachedPlayer == true)
+			{
+				_lastattachedPlayer = attachedPlayer; 
+				UpdateGhost();
+			}
+			else
+			{
+				++_countplayerdetach;
+				if(_countplayerdetach > 3)
+				{
+					_lastattachedPlayer = attachedPlayer; 
+					UpdateGhost();
+				}
+			}
 		}
 	}
 	#endif
@@ -499,6 +514,6 @@ void Actor::UpdateGhost()
 
 	gi.AttachedToPlayer = _lastattachedPlayer;
 	gi.Time = SynchronizedTimeHandler::getInstance()->GetCurrentTimeDouble();
-	ThreadSafeWorkpile::getInstance()->UpdateGhost(gi);
+	ThreadSafeWorkpile::getInstance()->UpdateIntGhost(gi);
 #endif
 }

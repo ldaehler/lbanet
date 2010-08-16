@@ -312,6 +312,7 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 		act->SetAttribute("attachedsound", it->second->GetAttachedSound());
 		act->SetAttribute("collidable", it->second->GetCollidable());
 		act->SetAttribute("actif", it->second->GetActif());
+		act->SetAttribute("allowfreemove", it->second->GetAllowFreeMove());
 
 		{
 			std::vector<long> vect = it->second->GetTargets();
@@ -460,6 +461,7 @@ void MapInfoXmlWriter::SaveActors(const std::string &Filename, std::map<long, Ac
 					act->SetDoubleAttribute("zonesizeX", tmpa->GetZoneX());
 					act->SetDoubleAttribute("zonesizeY", tmpa->GetZoneY());
 					act->SetDoubleAttribute("zonesizeZ", tmpa->GetZoneZ());
+					act->SetAttribute("QuestToTriggerEnd", tmpa->GetQuestToTriggerEnd());
 				}
 			}
 			break;

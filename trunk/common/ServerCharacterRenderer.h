@@ -49,7 +49,7 @@ public:
 	void Clear();
 
 	//! render object
-	virtual void Render();
+	virtual void Render(float alpha);
 
 	//! render player directly with no check
 	void BlankRender();

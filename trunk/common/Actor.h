@@ -73,7 +73,7 @@ class Actor
 {
 public:
 	//! constructor
-   Actor();
+   Actor(float alpharender = 1.0);
 
    //! destructor
    virtual ~Actor();
@@ -140,6 +140,11 @@ public:
 	bool GetActif() const
 	{return _actif;}
 
+	//! set allowfreemove
+	bool GetAllowFreeMove()
+	{return _allowfreemove;}
+
+
 	// set actor size
 	void SetSize(float  sizeX, float  sizeY, float  sizeZ)
 	{
@@ -172,6 +177,11 @@ public:
 	//! set actif
 	void SetActif(bool actif)
 	{_actif = actif;}
+
+	//! set allowfreemove
+	void SetAllowFreeMove(bool allowfreemove)
+	{_allowfreemove = allowfreemove;}
+
 
 	//! set actor id
 	void SetId(long id)
@@ -368,6 +378,11 @@ public:
 	const std::vector<Actor *> &GetAttaching() const
 	{ return _attachingActors; }
 
+	//! check if the actor is activated
+	//! activating group is the group that the actiavating agent belows:
+	//! 0 -> everybody;  1 -> player; 2 -> other actors
+	virtual bool IsActivated(int activatinggroup)
+	{ return false; }
 
 protected:
 	//! refresh bounding box
@@ -409,6 +424,7 @@ protected:
 	bool	_collidable;
 	bool	_actormoving;
 	bool	_isAttached;
+	bool	_allowfreemove;
 
 	// used when actor activate actor
 	long		_activatingactor;
@@ -438,6 +454,9 @@ protected:
 
    int	_linkedghostid;
    bool _lastattachedPlayer;
+   int	_countplayerdetach;
+
+   float _alpharender;
 };
 
 #endif

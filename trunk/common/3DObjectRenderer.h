@@ -53,7 +53,7 @@ public:
    {return Visible;}
 
    //! render object
-   virtual void Render() = 0;
+   virtual void Render(float alpha) = 0;
 
 	// do all check to be done when idle
 	virtual int Process(double tnow, float tdiff) = 0;

@@ -23,43 +23,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#if !defined(__LbaNetModel_1_AreaSwitch_h)
-#define __LbaNetModel_1_AreaSwitch_h
+#if !defined(__LbaNetModel_1_ActorHandlerBase_h)
+#define __LbaNetModel_1_ActorHandlerBase_h
 
-#include "ZoneActor.h"
 
 /***********************************************************************
- * Module:  DoorActor.h
+ * Module:  ActorHandlerBase.h
  * Author:  vivien
  * Modified: lundi 27 juillet 2009 14:53:50
- * Purpose: Declaration of the class Actor
+ * Purpose: Declaration of the class ActorHandlerBase
  *********************************************************************/
-class AreaSwitch : public ZoneActor
+class ActorHandlerBase
 {
 public:
 	//! constructor
-	AreaSwitch(float zoneSizeX, float zoneSizeY, float zoneSizeZ, long QuestToTriggerEnd);
+	ActorHandlerBase(){}
 
 	//! destructor
-	virtual ~AreaSwitch();
+	virtual ~ActorHandlerBase(){}
 
-	//! accessor
-	long GetQuestToTriggerEnd()
-	{ return _QuestToTriggerEnd; }
+	//! check if the actor is activated
+	//! activating group is the group that the actiavating agent belows:
+	//! 0 -> everybody;  1 -> player; 2 -> other actors
+	//! mapname gives the map where the actor should be located
+	virtual bool ActorActivated(long ActorId, int activatinggroup, 
+									const std::string & MapName) = 0;
 
-protected:
-	//! process zone activation
-	virtual void ProcessActivation(float PlayerPosX, float PlayerPosY, float PlayerPosZ,
-		float PlayerRotation);
-
-	//! process zone desactivation
-	virtual void ProcessDesactivation(float PlayerPosX, float PlayerPosY, float PlayerPosZ,
-		float PlayerRotation);
-
-
-private:
-	// ques to trigger end when activated
-	long _QuestToTriggerEnd;
 };
 
 #endif

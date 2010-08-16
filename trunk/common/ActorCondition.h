@@ -23,43 +23,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#if !defined(__LbaNetModel_1_AreaSwitch_h)
-#define __LbaNetModel_1_AreaSwitch_h
+#if !defined(__LbaNetModel_1_ActorCondition_h)
+#define __LbaNetModel_1_ActorCondition_h
 
-#include "ZoneActor.h"
+#include "ConditionBase.h"
+#include "ActorHandlerBase.h"
 
 /***********************************************************************
- * Module:  DoorActor.h
+ * Module:  ActorActivatedCondition.h
  * Author:  vivien
  * Modified: lundi 27 juillet 2009 14:53:50
- * Purpose: Declaration of the class Actor
+ * Purpose: Declaration of the class InventoryCondition
  *********************************************************************/
-class AreaSwitch : public ZoneActor
+class ActorActivatedCondition : public ConditionBase
 {
 public:
 	//! constructor
-	AreaSwitch(float zoneSizeX, float zoneSizeY, float zoneSizeZ, long QuestToTriggerEnd);
+	//! activating group is the group that the actiavating agent belows:
+	//! 0 -> everybody;  1 -> player; 2 -> other actors
+	//! mapname gives the map where the actor should be located
+	ActorActivatedCondition(long ActorId, int activatinggroup, const std::string & MapName,
+								ActorHandlerBase *  actH)
+		: _ActorId(ActorId), _activatinggroup(activatinggroup), _MapName(MapName), _actH(actH)
+	{}
 
 	//! destructor
-	virtual ~AreaSwitch();
+	virtual ~ActorActivatedCondition(){}
 
-	//! accessor
-	long GetQuestToTriggerEnd()
-	{ return _QuestToTriggerEnd; }
-
-protected:
-	//! process zone activation
-	virtual void ProcessActivation(float PlayerPosX, float PlayerPosY, float PlayerPosZ,
-		float PlayerRotation);
-
-	//! process zone desactivation
-	virtual void ProcessDesactivation(float PlayerPosX, float PlayerPosY, float PlayerPosZ,
-		float PlayerRotation);
-
+	//! check if the condition is true or not
+	virtual bool Passed();
 
 private:
-	// ques to trigger end when activated
-	long _QuestToTriggerEnd;
+	long _ActorId;
+	int _activatinggroup;
+	std::string _MapName;
+	ActorHandlerBase *  _actH;
 };
 
 #endif
