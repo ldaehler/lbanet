@@ -122,7 +122,7 @@ public:
 	bool loadModelData( const std::string &filepath );
 
 	//! render ufnction
-	void Render();
+	void Render(float alpha);
 
 	// do all check to be done when idle
 	virtual int Process(double tnow, float tdiff);

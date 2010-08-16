@@ -84,7 +84,7 @@ void Camera::Process(float tdiff)
 
 
 		// start to move camera only when actor moves a certain distance
-		if(magnitude > 4)
+		if(magnitude > 3)
 		{
 			_movecamera = true;
 		}
@@ -110,9 +110,9 @@ void Camera::Process(float tdiff)
 		{	
 			if(!moving && magnitude > 1.0f)
 			{
-				_targetx += direction.x * tdiff * 0.002;
-				_targety += direction.y * tdiff * 0.002;
-				_targetz += direction.z * tdiff * 0.002;
+				_targetx += direction.x * tdiff * 0.001;
+				_targety += direction.y * tdiff * 0.001;
+				_targetz += direction.z * tdiff * 0.001;
 			}
 		}
 	}

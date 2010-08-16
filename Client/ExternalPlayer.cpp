@@ -38,6 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Actor.h"
 #include "DataLoader.h"
 #include "SpriteRenderer.h"
+#include "LogHandler.h"
 
 #include <math.h>
 
@@ -90,6 +91,8 @@ ExternalPlayer::ExternalPlayer(const LbaNet::ActorInfo & ainfo, float animationS
 ***********************************************************/
 ExternalPlayer::~ExternalPlayer()
 {
+	LogHandler::getInstance()->LogToFile("Destroying external player...");
+
 	if(_physH)
 		PhysXEngine::getInstance()->DestroyActor(_physH);
 
@@ -102,6 +105,8 @@ ExternalPlayer::~ExternalPlayer()
 		for(; itm != endm; ++itm)
 			delete itm->second;
 	}
+
+	LogHandler::getInstance()->LogToFile("External player destroyed.");
 }
 
 
@@ -411,7 +416,7 @@ void ExternalPlayer::UpdateGhost(const LbaNet::GhostActorInfo & ainfo)
 	if(it == _ghosts.end())
 	{
 		//create new actor
-		Actor * tmp = new Actor();
+		Actor * tmp = new Actor(0.6);
 		tmp->SetRenderer(DataLoader ::getInstance()->CreateSpriteRenderer(ainfo.SpriteId));
 
 		tmp->SetPosition(ainfo.X, ainfo.Y, ainfo.Z);

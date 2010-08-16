@@ -36,7 +36,7 @@ ActorUserData::ActorUserData(short ActType, long index, PhysicCallbackBase * cal
 		HittedFloorMaterial(0), InternalActor(NULL),
 		released(false), Callback(callback), ActorId(index), MovingObject(false),
 		AllowedMovingX(false), AllowedMovingZ(false), ShouldUpdate(false),
-		CurrentMoveX(0), CurrentMoveY(0), CurrentMoveZ(0)
+		CurrentMoveX(0), CurrentMoveY(0), CurrentMoveZ(0), AllowFreeMove(false)
 {
 	m_mutex = new IceUtil::RecMutex();
 }
@@ -355,6 +355,26 @@ void				ActorUserData::SetCurrentMoveZ(float newv)
 	CurrentMoveZ = newv;
 }
   
+
+/***********************************************************
+accessor thread safe
+***********************************************************/
+bool				ActorUserData::GetAllowFreeMove()
+{
+	IceUtil::RecMutex::Lock lock(*m_mutex);
+	return AllowFreeMove;
+}
+
+/***********************************************************
+accessor thread safe
+***********************************************************/
+void				ActorUserData::SetAllowFreeMove(bool newv)
+{
+	IceUtil::RecMutex::Lock lock(*m_mutex);
+	AllowFreeMove = newv;
+}
+
+
 
 /***********************************************************
 accessor thread safe

@@ -436,7 +436,7 @@ void LbaNetModel::ChangeWorld(const std::string & NewWorldName, const std::strin
 
 		CleanupWorld();
 
-		if(DataLoader::getInstance()->LoadWorld("./Data/" + NewWorldFileName))
+		if(DataLoader::getInstance()->LoadWorld("./Data/" + NewWorldFileName, this))
 		{
 			_current_world = NewWorldName;
 			_inventoryHandler->SetInventoryDb(DataLoader::getInstance()->GetInventory());
@@ -512,6 +512,8 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float 
 		mci.Z = Z;
 		mci.Rotation = R;
 		ThreadSafeWorkpile::getInstance()->ChangeMap(mci);
+
+		LogHandler::getInstance()->LogToFile("Loading map info from file...");
 		
 		Pause();
 		if(DataLoader::getInstance()->LoadMap(NewMap))
@@ -521,6 +523,9 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float 
 			_exitsH->LoadMap(MI);
 
 			std::string mapN = "Data/" + MI->Files["Maps"];
+
+
+			LogHandler::getInstance()->LogToFile("Loading new map display...");
 
 			PhysicHandler * ph = new PhysicHandler(_localActorsHandler, _externalActorsHandler);
 			_mapRenderer = new MapRenderer(mapN, ph);
@@ -535,13 +540,20 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float 
 			_actor_in_exterior = (MI->Type == "exterior");
 
 
+			LogHandler::getInstance()->LogToFile("Removing old external players...");
+
 			_externalPlayers->ResetActors(_current_map);
+
+
+			LogHandler::getInstance()->LogToFile("Loading new local actors...");
 
 			// load local actors
 			std::map<long, Actor *> vec;
-			DataLoader::getInstance()->GetLocalMapActors(vec, m_AnimationSpeed);
+			DataLoader::getInstance()->GetLocalMapActors(vec, m_AnimationSpeed, this);
 			_localActorsHandler->SetActors(vec);
 			
+			LogHandler::getInstance()->LogToFile("Building list of actif actors...");
+
 			// add actif actors to list
 			{
 				std::map<long, Actor *>::const_iterator itm = vec.begin();
@@ -553,23 +565,34 @@ void LbaNetModel::ChangeMap(const std::string & NewMap, float X, float Y, float 
 				}
 			}
 
+			LogHandler::getInstance()->LogToFile("Loading new external actors...");
+
 			std::map<long, Actor *> vec2;
-			DataLoader::getInstance()->GetExternalMapActors(vec2, m_AnimationSpeed);
+			DataLoader::getInstance()->GetExternalMapActors(vec2, m_AnimationSpeed, this);
+
+			LogHandler::getInstance()->LogToFile("Setting up external actors...");
+
 			_externalActorsHandler->SetActors(vec2);
 			
+
+			LogHandler::getInstance()->LogToFile("Building list of actif actors...");
+
 			// add actif actors to list
 			{
 				std::map<long, Actor *>::const_iterator itm = vec2.begin();
 				std::map<long, Actor *>::const_iterator endm = vec2.end();
 				for(;itm != endm; ++itm)
 				{
-					if(itm->second->GetActif())
+					if(itm->second && itm->second->GetActif())
 						_actifactors.push_back(itm->second);
 				}
 			}
 
+			LogHandler::getInstance()->LogToFile("Informing GUI of new map name...");
 
 			_guiH->SetCurrentMap(_current_world.substr(0, _current_world.find(".xml")), _current_map);
+
+			LogHandler::getInstance()->LogToFile("Loading new physic info...");
 
 			std::string physmap = mapN;
 			physmap.replace(physmap.find(".txt"), 4, ".phy");
@@ -628,8 +651,12 @@ void LbaNetModel::CleanupMap()
 
 
 	_externalPlayers->ResetActors(_current_map);
+
+	LogHandler::getInstance()->LogToFile("Cleaning actor objects...");
 	_localActorsHandler->Cleanup();
 	_externalActorsHandler->Cleanup();
+
+	LogHandler::getInstance()->LogToFile("Map cleaned...");
 }
 
 
@@ -1257,6 +1284,18 @@ void LbaNetModel::AttachActor(Actor *toattach, long attachingid)
 }
 
 
+/***********************************************************
+check if the actor is activated
+***********************************************************/
+bool LbaNetModel::ActorActivated(long ActorId, int activatinggroup, 
+								 const std::string & MapName)
+{
+	if(MapName != _current_map)
+		return false;
+
+	return 	(_localActorsHandler->ActorActivated(ActorId, activatinggroup) ||
+			_externalActorsHandler->ActorActivated(ActorId, activatinggroup));
+}
 
 
 // get a pointer to the actors

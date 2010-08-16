@@ -51,7 +51,7 @@ public:
 	void SetSprites(std::vector<SpriteInfo *> sprites);
 
 	//! Draw function
-	void Render();
+	void Render(float alpha);
 
 	//! Process function
 	virtual int Process(double tnow, float tdiff);

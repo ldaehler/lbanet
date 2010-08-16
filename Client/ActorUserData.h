@@ -109,6 +109,9 @@ public:
 	void				SetCallback(PhysicCallbackBase * newv);
 	void CallbackOnContact(int TouchedActorType, long TouchedActorIdx);
 
+	bool				GetAllowFreeMove();
+	void				SetAllowFreeMove(bool newv);
+
 private:
 	IceUtil::RecMutex *	m_mutex;
 
@@ -139,6 +142,8 @@ private:
 	float				CurrentMoveX;
 	float				CurrentMoveY;
 	float				CurrentMoveZ;
+
+	bool				AllowFreeMove;
 
 
 	PhysicCallbackBase * Callback;

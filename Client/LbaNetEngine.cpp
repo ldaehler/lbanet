@@ -172,6 +172,7 @@ void LbaNetEngine::Initialize(void)
 	float gravity = -1.0;
 	ConfigurationManager::GetInstance()->GetFloat("Physic.GlobalGravity", gravity);
 	PhysXEngine::getInstance()->Init(gravity);
+
 }
 
 

@@ -520,7 +520,7 @@ protected:
 	int GetWeaponAnimation();
 
 	//! called when player start moving objects
-	void SetCharMovingObject(int MovingDirection);
+	void SetCharMovingObject(int MovingDirection, bool Allowfreemove);
 
 	//! called when player should stop moving objects
 	void EndCharMovingObject();

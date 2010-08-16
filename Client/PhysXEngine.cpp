@@ -117,53 +117,53 @@ public:
 			}
 
 
-			NxCollisionGroup group = hit.shape->getGroup();
-			if(group==GROUP_COLLIDABLE_PUSHABLE)
-			{
-				NxActor& actor = hit.shape->getActor();
-				if(actor.isDynamic())
-				{
-					// We only allow horizontal pushes. Vertical pushes when we stand on dynamic objects creates
-					// useless stress on the solver. It would be possible to enable/disable vertical pushes on
-					// particular objects, if the gameplay requires it.
-					if(hit.dir.y==0.0f)
-					{
-						ActorUserData * characterdata = (ActorUserData *)hit.controller->getActor()->userData;
-						if(characterdata)
-						{
-							if(characterdata->GetAllowedMovingX() || characterdata->GetAllowedMovingZ())
-							{
-								if(actor.readBodyFlag(NX_BF_KINEMATIC))
-								{
-									actor.moveGlobalPosition(actor.getGlobalPosition() + (hit.length * hit.dir));
-								}
-								else
-								{
-									//return NX_ACTION_PUSH;
-									NxF32 coeff = actor.getMass() * hit.length * 10.0f;
-									actor.addForceAtLocalPos(hit.dir*coeff, NxVec3(0,0,0), NX_IMPULSE);
-								}
-							}
+			//NxCollisionGroup group = hit.shape->getGroup();
+			//if(group==GROUP_COLLIDABLE_PUSHABLE)
+			//{
+			//	NxActor& actor = hit.shape->getActor();
+			//	if(actor.isDynamic())
+			//	{
+			//		// We only allow horizontal pushes. Vertical pushes when we stand on dynamic objects creates
+			//		// useless stress on the solver. It would be possible to enable/disable vertical pushes on
+			//		// particular objects, if the gameplay requires it.
+			//		if(hit.dir.y==0.0f)
+			//		{
+			//			ActorUserData * characterdata = (ActorUserData *)hit.controller->getActor()->userData;
+			//			if(characterdata)
+			//			{
+			//				if(characterdata->GetAllowedMovingX() || characterdata->GetAllowedMovingZ())
+			//				{
+			//					if(actor.readBodyFlag(NX_BF_KINEMATIC))
+			//					{
+			//						actor.moveGlobalPosition(actor.getGlobalPosition() + (hit.length * hit.dir));
+			//					}
+			//					else
+			//					{
+			//						//return NX_ACTION_PUSH;
+			//						NxF32 coeff = actor.getMass() * hit.length * 10.0f;
+			//						actor.addForceAtLocalPos(hit.dir*coeff, NxVec3(0,0,0), NX_IMPULSE);
+			//					}
+			//				}
 
-							characterdata->SetMovingObject(true);
-							if(abs(hit.worldNormal.x) > abs(hit.worldNormal.z))
-							{
-								if(hit.worldNormal.x > 0)
-									characterdata->SetMovingDirection(2);
-								else
-									characterdata->SetMovingDirection(1);
-							}
-							else
-							{
-								if(hit.worldNormal.z > 0)
-									characterdata->SetMovingDirection(4);
-								else
-									characterdata->SetMovingDirection(3);
-							}
-						}
-					}
-				}
-			}
+			//				characterdata->SetMovingObject(true);
+			//				if(abs(hit.worldNormal.x) > abs(hit.worldNormal.z))
+			//				{
+			//					if(hit.worldNormal.x > 0)
+			//						characterdata->SetMovingDirection(2);
+			//					else
+			//						characterdata->SetMovingDirection(1);
+			//				}
+			//				else
+			//				{
+			//					if(hit.worldNormal.z > 0)
+			//						characterdata->SetMovingDirection(4);
+			//					else
+			//						characterdata->SetMovingDirection(3);
+			//				}
+			//			}
+			//		}
+			//	}
+			//}
 		}
 
 		return NX_ACTION_NONE;
@@ -196,10 +196,13 @@ public:
 				NxVec3 diff = (vecother - vecmain);
 
 				//dont move on object corner
-				if(abs(diff.x - diff.z) < 0.1)
-					return NX_ACTION_NONE;
+				//if(abs(diff.x - diff.z) < 0.1)
+				//	return NX_ACTION_NONE;
 
 				characterdatamain->SetMovingObject(true);
+				ActorUserData * characterdata = (ActorUserData *)hit.other->getActor()->userData;
+				if(characterdata)
+					characterdatamain->SetAllowFreeMove(characterdata->GetAllowFreeMove());
 				if(abs(diff.x) > abs(diff.z))
 				{
 					if(diff.x < 0)
@@ -969,186 +972,186 @@ void PhysXEngine::IgnoreActorContact(NxActor* actor1, NxActor* actor2)
 ***********************************************************/
 void PhysXEngine::RenderActors()
 {
-	glEnable(GL_BLEND);
-	glDisable(GL_TEXTURE_2D);
-	glDisable(GL_DEPTH_TEST);
-	glLineWidth(2.0f);
+	//glEnable(GL_BLEND);
+	//glDisable(GL_TEXTURE_2D);
+	//glDisable(GL_DEPTH_TEST);
+	//glLineWidth(2.0f);
 
-    // Render all the actors in the scene
-    NxU32 nbActors = gScene->getNbActors();
-    NxActor** actors = gScene->getActors();
-    while (nbActors--)
-    {
-        NxActor* actor = *actors++;
+ //   // Render all the actors in the scene
+ //   NxU32 nbActors = gScene->getNbActors();
+ //   NxActor** actors = gScene->getActors();
+ //   while (nbActors--)
+ //   {
+ //       NxActor* actor = *actors++;
 
-		glPushMatrix();
+	//	glPushMatrix();
 
-		glScalef(1, 0.5f, 1);
-		glTranslated(0, 1.0, 0);
-		NxMat34 pose = actor->getShapes()[0]->getGlobalPose();
-		//glTranslated(pose.t.x, pose.t.y/2. + 0.5, pose.t.z);
+	//	glScalef(1, 0.5f, 1);
+	//	glTranslated(0, 1.0, 0);
+	//	NxMat34 pose = actor->getShapes()[0]->getGlobalPose();
+	//	//glTranslated(pose.t.x, pose.t.y/2. + 0.5, pose.t.z);
 
-		float glmat[16];	//4x4 column major matrix for OpenGL.
-		pose.M.getColumnMajorStride4(&(glmat[0]));
-		pose.t.get(&(glmat[12]));
-		//clear the elements we don't need:
-		glmat[3] = glmat[7] = glmat[11] = 0.0f;
-		glmat[15] = 1.0f;
-		glMultMatrixf(&(glmat[0]));
+	//	float glmat[16];	//4x4 column major matrix for OpenGL.
+	//	pose.M.getColumnMajorStride4(&(glmat[0]));
+	//	pose.t.get(&(glmat[12]));
+	//	//clear the elements we don't need:
+	//	glmat[3] = glmat[7] = glmat[11] = 0.0f;
+	//	glmat[15] = 1.0f;
+	//	glMultMatrixf(&(glmat[0]));
 
-		NxBoxShape* boxshap = actor->getShapes()[0]->isBox();
-		if(boxshap)
-		{
-			glColor4f(0.0f,0.0f,1.0f, 1.f);
+	//	NxBoxShape* boxshap = actor->getShapes()[0]->isBox();
+	//	if(boxshap)
+	//	{
+	//		glColor4f(0.0f,0.0f,1.0f, 1.f);
 
-			NxVec3 boxDim = boxshap->getDimensions();
-			glScalef(boxDim.x, boxDim.y, boxDim.z);
+	//		NxVec3 boxDim = boxshap->getDimensions();
+	//		glScalef(boxDim.x, boxDim.y, boxDim.z);
 
-			float _sizeX = 1, _sizeY = 1, _sizeZ = 1;
-			glBegin(GL_LINES);
-				glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
-				glVertex3f(_sizeX,-_sizeY,-_sizeZ);
-				glVertex3f(_sizeX,-_sizeY,-_sizeZ);
-				glVertex3f(_sizeX,-_sizeY,_sizeZ);
-				glVertex3f(_sizeX,-_sizeY,_sizeZ);
-				glVertex3f(-_sizeX,-_sizeY,_sizeZ);
-				glVertex3f(-_sizeX,-_sizeY,_sizeZ);
-				glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+	//		float _sizeX = 1, _sizeY = 1, _sizeZ = 1;
+	//		glBegin(GL_LINES);
+	//			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+	//			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+	//			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+	//			glVertex3f(_sizeX,-_sizeY,_sizeZ);
+	//			glVertex3f(_sizeX,-_sizeY,_sizeZ);
+	//			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+	//			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+	//			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
 
-				glVertex3f(-_sizeX,_sizeY,-_sizeZ);
-				glVertex3f(_sizeX,_sizeY,-_sizeZ);
-				glVertex3f(_sizeX,_sizeY,-_sizeZ);
-				glVertex3f(_sizeX,_sizeY,_sizeZ);
-				glVertex3f(_sizeX,_sizeY,_sizeZ);
-				glVertex3f(-_sizeX,_sizeY,_sizeZ);
-				glVertex3f(-_sizeX,_sizeY,_sizeZ);
-				glVertex3f(-_sizeX,_sizeY,-_sizeZ);
+	//			glVertex3f(-_sizeX,_sizeY,-_sizeZ);
+	//			glVertex3f(_sizeX,_sizeY,-_sizeZ);
+	//			glVertex3f(_sizeX,_sizeY,-_sizeZ);
+	//			glVertex3f(_sizeX,_sizeY,_sizeZ);
+	//			glVertex3f(_sizeX,_sizeY,_sizeZ);
+	//			glVertex3f(-_sizeX,_sizeY,_sizeZ);
+	//			glVertex3f(-_sizeX,_sizeY,_sizeZ);
+	//			glVertex3f(-_sizeX,_sizeY,-_sizeZ);
 
-				glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
-				glVertex3f(-_sizeX,_sizeY,-_sizeZ);
+	//			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+	//			glVertex3f(-_sizeX,_sizeY,-_sizeZ);
 
-				glVertex3f(_sizeX,-_sizeY,-_sizeZ);
-				glVertex3f(_sizeX,_sizeY,-_sizeZ);
+	//			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+	//			glVertex3f(_sizeX,_sizeY,-_sizeZ);
 
-				glVertex3f(_sizeX,-_sizeY,_sizeZ);
-				glVertex3f(_sizeX,_sizeY,_sizeZ);
+	//			glVertex3f(_sizeX,-_sizeY,_sizeZ);
+	//			glVertex3f(_sizeX,_sizeY,_sizeZ);
 
-				glVertex3f(-_sizeX,-_sizeY,_sizeZ);
-				glVertex3f(-_sizeX,_sizeY,_sizeZ);
-			glEnd();
-		}
-		//else
-		//{
-		//	for(int i=1; i<100; ++i)
-		//	{
-		//		glColor4f(1.0f,0.0f,0.0f, 1.f);
-		//		float _sizeX = (float)i, _sizeY = 0, _sizeZ = (float)i;
-		//		glBegin(GL_LINES);
-		//			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
-		//			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
-		//			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
-		//			glVertex3f(_sizeX,-_sizeY,_sizeZ);
-		//			glVertex3f(_sizeX,-_sizeY,_sizeZ);
-		//			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
-		//			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
-		//			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
-		//		glEnd();
-		//	}
-		//}
-
-
+	//			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+	//			glVertex3f(-_sizeX,_sizeY,_sizeZ);
+	//		glEnd();
+	//	}
+	//	//else
+	//	//{
+	//	//	for(int i=1; i<100; ++i)
+	//	//	{
+	//	//		glColor4f(1.0f,0.0f,0.0f, 1.f);
+	//	//		float _sizeX = (float)i, _sizeY = 0, _sizeZ = (float)i;
+	//	//		glBegin(GL_LINES);
+	//	//			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+	//	//			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+	//	//			glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+	//	//			glVertex3f(_sizeX,-_sizeY,_sizeZ);
+	//	//			glVertex3f(_sizeX,-_sizeY,_sizeZ);
+	//	//			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+	//	//			glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+	//	//			glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+	//	//		glEnd();
+	//	//	}
+	//	//}
 
 
 
-		glPopMatrix();
-    }
 
 
-	////if(_sizebuff > 0)
-	////{
-	////	glPushMatrix();
-	////	glScalef(1, 0.5f, 1);
-
-	////	for(int i=0; i<_sizebuff;)
-	////	{
-	////		int id1 = _bufferindiceroof[i++] * 3;
-	////		float p1x =_buffervertexroof[id1];
-	////		float p1y =_buffervertexroof[id1+1];
-	////		float p1z =_buffervertexroof[id1+2];
-
-	////		int id2 = _bufferindiceroof[i++] * 3;
-	////		float p2x =_buffervertexroof[id2];
-	////		float p2y =_buffervertexroof[id2+1];
-	////		float p2z =_buffervertexroof[id2+2];
-
-	////		int id3 = _bufferindiceroof[i++] * 3;
-	////		float p3x =_buffervertexroof[id3];
-	////		float p3y =_buffervertexroof[id3+1];
-	////		float p3z =_buffervertexroof[id3+2];
-
-	////		glColor4f(0.0f,0.0f,1.0f, 1.f);
-	////		glBegin(GL_LINES);
-	////			glVertex3f(p1x,p1y,p1z);
-	////			glVertex3f(p2x,p2y,p2z);
-	////			glVertex3f(p2x,p2y,p2z);
-	////			glVertex3f(p3x,p3y,p3z);
-	////			glVertex3f(p3x,p3y,p3z);
-	////			glVertex3f(p1x,p1y,p1z);
-	////		glEnd();	
-	////	}
-
-	////	glPopMatrix();
-	////}
+	//	glPopMatrix();
+ //   }
 
 
+	//////if(_sizebuff > 0)
+	//////{
+	//////	glPushMatrix();
+	//////	glScalef(1, 0.5f, 1);
 
-	////for(unsigned int i=0; i<gManager->getNbControllers(); ++i)
-	////{
-	////	NxController* ctrl = gManager->getController(i);
-	////	NxExtendedVec3 vec = ctrl->getPosition();
+	//////	for(int i=0; i<_sizebuff;)
+	//////	{
+	//////		int id1 = _bufferindiceroof[i++] * 3;
+	//////		float p1x =_buffervertexroof[id1];
+	//////		float p1y =_buffervertexroof[id1+1];
+	//////		float p1z =_buffervertexroof[id1+2];
 
-	////	glPushMatrix();
-	////	glScalef(1, 0.5f, 1);
-	////	glTranslated(vec.x, vec.y, vec.z);
-	////	glColor4f(1.0f,1.0f,0.0f, 1.f);
+	//////		int id2 = _bufferindiceroof[i++] * 3;
+	//////		float p2x =_buffervertexroof[id2];
+	//////		float p2y =_buffervertexroof[id2+1];
+	//////		float p2z =_buffervertexroof[id2+2];
 
-	////	float _sizeX = 0.4f, _sizeY = 2.5f, _sizeZ = 0.4f;
-	////	glBegin(GL_LINES);
-	////		glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
-	////		glVertex3f(_sizeX,-_sizeY,-_sizeZ);
-	////		glVertex3f(_sizeX,-_sizeY,-_sizeZ);
-	////		glVertex3f(_sizeX,-_sizeY,_sizeZ);
-	////		glVertex3f(_sizeX,-_sizeY,_sizeZ);
-	////		glVertex3f(-_sizeX,-_sizeY,_sizeZ);
-	////		glVertex3f(-_sizeX,-_sizeY,_sizeZ);
-	////		glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+	//////		int id3 = _bufferindiceroof[i++] * 3;
+	//////		float p3x =_buffervertexroof[id3];
+	//////		float p3y =_buffervertexroof[id3+1];
+	//////		float p3z =_buffervertexroof[id3+2];
 
-	////		glVertex3f(-_sizeX,_sizeY,-_sizeZ);
-	////		glVertex3f(_sizeX,_sizeY,-_sizeZ);
-	////		glVertex3f(_sizeX,_sizeY,-_sizeZ);
-	////		glVertex3f(_sizeX,_sizeY,_sizeZ);
-	////		glVertex3f(_sizeX,_sizeY,_sizeZ);
-	////		glVertex3f(-_sizeX,_sizeY,_sizeZ);
-	////		glVertex3f(-_sizeX,_sizeY,_sizeZ);
-	////		glVertex3f(-_sizeX,_sizeY,-_sizeZ);
+	//////		glColor4f(0.0f,0.0f,1.0f, 1.f);
+	//////		glBegin(GL_LINES);
+	//////			glVertex3f(p1x,p1y,p1z);
+	//////			glVertex3f(p2x,p2y,p2z);
+	//////			glVertex3f(p2x,p2y,p2z);
+	//////			glVertex3f(p3x,p3y,p3z);
+	//////			glVertex3f(p3x,p3y,p3z);
+	//////			glVertex3f(p1x,p1y,p1z);
+	//////		glEnd();	
+	//////	}
 
-	////		glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
-	////		glVertex3f(-_sizeX,_sizeY,-_sizeZ);
-
-	////		glVertex3f(_sizeX,-_sizeY,-_sizeZ);
-	////		glVertex3f(_sizeX,_sizeY,-_sizeZ);
-
-	////		glVertex3f(_sizeX,-_sizeY,_sizeZ);
-	////		glVertex3f(_sizeX,_sizeY,_sizeZ);
-
-	////		glVertex3f(-_sizeX,-_sizeY,_sizeZ);
-	////		glVertex3f(-_sizeX,_sizeY,_sizeZ);
-	////	glEnd();
-
-	////	glPopMatrix();
-	////}
+	//////	glPopMatrix();
+	//////}
 
 
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_TEXTURE_2D);
+
+	//////for(unsigned int i=0; i<gManager->getNbControllers(); ++i)
+	//////{
+	//////	NxController* ctrl = gManager->getController(i);
+	//////	NxExtendedVec3 vec = ctrl->getPosition();
+
+	//////	glPushMatrix();
+	//////	glScalef(1, 0.5f, 1);
+	//////	glTranslated(vec.x, vec.y, vec.z);
+	//////	glColor4f(1.0f,1.0f,0.0f, 1.f);
+
+	//////	float _sizeX = 0.4f, _sizeY = 2.5f, _sizeZ = 0.4f;
+	//////	glBegin(GL_LINES);
+	//////		glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+	//////		glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+	//////		glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+	//////		glVertex3f(_sizeX,-_sizeY,_sizeZ);
+	//////		glVertex3f(_sizeX,-_sizeY,_sizeZ);
+	//////		glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+	//////		glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+	//////		glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+
+	//////		glVertex3f(-_sizeX,_sizeY,-_sizeZ);
+	//////		glVertex3f(_sizeX,_sizeY,-_sizeZ);
+	//////		glVertex3f(_sizeX,_sizeY,-_sizeZ);
+	//////		glVertex3f(_sizeX,_sizeY,_sizeZ);
+	//////		glVertex3f(_sizeX,_sizeY,_sizeZ);
+	//////		glVertex3f(-_sizeX,_sizeY,_sizeZ);
+	//////		glVertex3f(-_sizeX,_sizeY,_sizeZ);
+	//////		glVertex3f(-_sizeX,_sizeY,-_sizeZ);
+
+	//////		glVertex3f(-_sizeX,-_sizeY,-_sizeZ);
+	//////		glVertex3f(-_sizeX,_sizeY,-_sizeZ);
+
+	//////		glVertex3f(_sizeX,-_sizeY,-_sizeZ);
+	//////		glVertex3f(_sizeX,_sizeY,-_sizeZ);
+
+	//////		glVertex3f(_sizeX,-_sizeY,_sizeZ);
+	//////		glVertex3f(_sizeX,_sizeY,_sizeZ);
+
+	//////		glVertex3f(-_sizeX,-_sizeY,_sizeZ);
+	//////		glVertex3f(-_sizeX,_sizeY,_sizeZ);
+	//////	glEnd();
+
+	//////	glPopMatrix();
+	//////}
+
+
+	//glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_TEXTURE_2D);
 }

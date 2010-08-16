@@ -129,7 +129,7 @@ int SpriteRenderer::Process(double tnow, float tdiff)
 - Draw function
 ---------------------------------------------------------------------------------------
 */
-void SpriteRenderer::Render()
+void SpriteRenderer::Render(float alpha)
 {
 	if(_sprites.size() <= 0 || !_texture_loaded)
 		return;
@@ -145,7 +145,7 @@ void SpriteRenderer::Render()
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glColor3f(1,1,1);
+	glColor4f(1,1,1, alpha);
 
 	std::vector<QuadImageInfo>::const_iterator it = _sprites[_currIndex]->quadsInfo.begin();
 	std::vector<QuadImageInfo>::const_iterator end = _sprites[_currIndex]->quadsInfo.end();

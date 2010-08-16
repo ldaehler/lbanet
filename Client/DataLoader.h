@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "WorldInfo.h"
 #include "BrickInfoHandler.h"
 #include "ClientSignaler.h"
+#include "ActorHandlerBase.h"
 
 struct WorldDesc
 {
@@ -65,7 +66,7 @@ public:
 	void GetAvailableWorlds(std::vector<WorldDesc> & list);
 
 	//! load world information into memory
-	bool LoadWorld(std::string WorldName);
+	bool LoadWorld(std::string WorldName, ActorHandlerBase * actH);
 
 	//! get the first map of the world
 	std::string GetFirstMapName(std::string & spawning);
@@ -86,10 +87,12 @@ public:
 	entitiesTableStruct* GetEntitiesInfo();
 
 	//! get the current actors of the map
-	bool GetLocalMapActors(std::map<long, Actor *> & vec, float AnimationSpeed);
+	bool GetLocalMapActors(std::map<long, Actor *> & vec, float AnimationSpeed, 
+								ActorHandlerBase * actH);
 
 	//! get the current external actors of the map
-	bool GetExternalMapActors(std::map<long, Actor *> & vec, float AnimationSpeed);
+	bool GetExternalMapActors(std::map<long, Actor *> & vec, float AnimationSpeed, 
+								ActorHandlerBase * actH);
 
 	//! get the text given a text id
 	std::string GetText(long TextId);

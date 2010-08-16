@@ -40,6 +40,7 @@ struct MoveOutput
 	bool	Collisionx;
 	bool	Collisionz;
 	bool	CollisionUp;
+	bool	AllowFreeMove;
 };
 
 

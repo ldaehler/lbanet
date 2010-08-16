@@ -50,9 +50,17 @@ public:
 	// inform the use of something
    void InformUser(const std::string text);
 
+   // get log file name
+   const std::string &GetFilename()
+   { return _filename; }
+
+   const std::string &GetGUIFilename()
+   { return _guifilename; }
 
 private:
 	std::ofstream			_logfile;
+	std::string				_filename;
+	std::string				_guifilename;
 
 	// singleton
 	static LogHandler *		_singletonInstance;

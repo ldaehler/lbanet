@@ -2713,7 +2713,7 @@ bool EditorBox::Handleactoradded(const CEGUI::EventArgs& e)
 			{
 				float zoneSizeX=0, zoneSizeY=0, zoneSizeZ=0;
 
-				act = new AreaSwitch(zoneSizeX, zoneSizeY, zoneSizeZ);
+				act = new AreaSwitch(zoneSizeX, zoneSizeY, zoneSizeZ, -1);
 				act->SetId(newid);
 				act->SetType(idx);
 				(*_Eactors)[newid] = act;
