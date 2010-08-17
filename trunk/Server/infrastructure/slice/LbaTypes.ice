@@ -37,12 +37,10 @@ module LbaNet
 		short			BodyColor;
 
 		// actor velocity
-		bool			MoveMorward;
-		bool			CollisionX;
-		bool			CollisionZ;
-		float			extravY;
+		float			vX;
+		float			vY;
+		float			vZ;
 		float			vRotation;
-		AttachedSeq		AttachedToActor;
 	};
 	
 
