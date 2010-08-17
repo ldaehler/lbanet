@@ -24,7 +24,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Camera.h"
 #include "Actor.h"
-#include "NxVec3.h"
 
 #include <iostream>
 #include <math.h>
@@ -70,51 +69,55 @@ void Camera::SetAttachedActor(Actor * act)
 /***********************************************************
 process
 ***********************************************************/
-void Camera::Process(float tdiff)
+void Camera::Process()
 {
 	if(_attached_actor)
 	{
 		double actX = _attached_actor->GetPosX();
 		double actY = _attached_actor->GetPosY();
 		double actZ = _attached_actor->GetPosZ();
-		bool moving = _attached_actor->IsMoving();
-
-		NxVec3 direction(actX-_targetx, actY-_targety, actZ-_targetz);
-		float magnitude = abs(direction.magnitude());
-
 
 		// start to move camera only when actor moves a certain distance
-		if(magnitude > 3)
-		{
+		if(abs(actX - _targetx) > 3 || abs(actY - _targety) > 3 || abs(actZ - _targetz) > 3)
 			_movecamera = true;
-		}
 
-		if(!moving)
+		if(abs(actX - _targetx) > 5 || abs(actY - _targety) > 5 || abs(actZ - _targetz) > 5)
+		{
+			ResetPosition();
 			_movecamera = false;
-
-		//if(magnitude > 12)
-		//{
-		//	ResetPosition();
-		//	_movecamera = false;
-		//	return;
-		//}
+			return;
+		}
 
 
 		if(_movecamera)
 		{
-			_targetx += direction.x * tdiff * 0.001;
-			_targety += direction.y * tdiff * 0.001;
-			_targetz += direction.z * tdiff * 0.001;
-		}
-		else
-		{	
-			if(!moving && magnitude > 1.0f)
+			double speedX = (actX - _lastactX);
+			double speedY = (actY - _lastactY);
+			double speedZ = (actZ - _lastactZ);
+			SetTarget(_targetx+speedX, _targety+speedY, _targetz+speedZ);
+
+			double deltaX = (actX - _targetx);
+			double deltaY = (actY - _targety);
+			double deltaZ = (actZ - _targetz);
+
+			if(abs(deltaX) > 0.1)
+				_targetx+=deltaX/100;
+			if(abs(deltaY) > 0.1)
+				_targety+=deltaY/100;
+			if(abs(deltaZ) > 0.1)
+				_targetz+=deltaZ/100;
+
+
+			if(actX == _lastactX && actY == _lastactY && actZ == _lastactZ)
 			{
-				_targetx += direction.x * tdiff * 0.001;
-				_targety += direction.y * tdiff * 0.001;
-				_targetz += direction.z * tdiff * 0.001;
+				_movecamera = false;		
 			}
+
 		}
+
+		_lastactX = actX;
+		_lastactY = actY;
+		_lastactZ = actZ;
 	}
 }
 

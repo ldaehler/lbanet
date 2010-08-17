@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _LBANET_CAMERA_H_
 #define _LBANET_CAMERA_H_
 
+
 class Actor;
 
 //*************************************************************************************************
@@ -49,7 +50,7 @@ public:
 	void SetAttachedActor(Actor * act);
 
 	//! process
-	void Process(float tdiff);
+	void Process();
 
 	// accessors
 	void SetTarget(double x, double y, double z);
@@ -90,6 +91,9 @@ private:
 	bool _perpective;
 
 	Actor * _attached_actor;
+	double	_lastactX;
+	double	_lastactY;
+	double	_lastactZ;
 	bool	_movecamera;
 };
 

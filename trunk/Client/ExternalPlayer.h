@@ -151,7 +151,7 @@ public:
 	void MagicBallComeback();
 
 protected:
-	void CalculateVelocity(float rotation);
+	void CalculateVelocity(float rotation, float tdiff);
 
 private:
 	double			_last_update;

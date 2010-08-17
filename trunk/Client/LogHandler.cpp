@@ -57,10 +57,10 @@ LogHandler::LogHandler()
 	char szTempDir[MAX_PATH];
 	GetTempPathA(MAX_PATH, szTempDir);
 	_filename = szTempDir;
-	_filename += "LBAClient.log";
+	_filename = "LBAClient.log";
 
 	_guifilename = szTempDir;
-	_guifilename += "CEGUI.log";
+	_guifilename = "CEGUI.log";
 
 	_logfile.open(_filename.c_str());
 
@@ -79,12 +79,26 @@ LogHandler::~LogHandler()
 
 
 /***********************************************************
+close opened log file
+***********************************************************/
+void LogHandler::CloseFile()
+{
+	if(_logfile.is_open())
+	{
+		_logfile.flush();
+		_logfile.close();
+	}
+}
+
+
+/***********************************************************
 log a text into file
 ***********************************************************/
 void LogHandler::LogToFile(const std::string text, int category)
 {
 	IceUtil::StaticMutex::Lock lock(myStaticMutex);
-	_logfile<<IceUtil::Time::now().toDateTime()<<","<<category<<","<<text<<std::endl;
+	if(_logfile.is_open())
+		_logfile<<IceUtil::Time::now().toDateTime()<<","<<category<<","<<text<<std::endl;
 }
 
 

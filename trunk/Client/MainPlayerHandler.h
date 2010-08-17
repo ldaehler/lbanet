@@ -144,11 +144,15 @@ public:
 	}
 
 	// update reackon on each tick
-	void Update(double timediff)
+	void Update(double timediff, float avx, float avy, float avz )
 	{
 		//_posX += _velocityX*timediff;
 		//_posY += _velocityY*timediff;
 		//_posZ += _velocityZ*timediff;
+
+		_posX += avx;
+		_posY += avy;
+		_posZ += avz;
 
 		_rotation += _velocityR*timediff;
 
@@ -492,7 +496,7 @@ protected:
 
 	// recalculate actor velocity
 	// moveType: 0 - no move, 1 - move upward, -1 - move backward
-	void CalculateVelocity(/*bool MoveForward, bool ManualSpeed=false, float speed=0.0f*/);
+	void CalculateVelocity(float tdiff/*bool MoveForward, bool ManualSpeed=false, float speed=0.0f*/);
 
 	// stop all move an reset all velocities
 	void ResetMove();

@@ -106,6 +106,9 @@ ExternalPlayer::~ExternalPlayer()
 			delete itm->second;
 	}
 
+	if(_renderer)
+		delete _renderer;
+
 	LogHandler::getInstance()->LogToFile("External player destroyed.");
 }
 
@@ -244,7 +247,7 @@ int ExternalPlayer::Process(double tnow, float tdiff)
 	_dr.UpdateRot(tnow);
 
 	// calculate prediction
-	CalculateVelocity(_dr._predicted_rotation);
+	CalculateVelocity(_dr._predicted_rotation, tdiff);
 	_velocityY += _extravelocityY * tdiff;
 
 	float predicted_rotation = _renderer->GetRotation() + (_velocityR*tdiff);
@@ -254,8 +257,8 @@ int ExternalPlayer::Process(double tnow, float tdiff)
 
 
 	// calculate dead reckon
-	_dr.Update(_velocityX, _velocityY, _velocityZ);
-
+	_dr.Update(_velocityX + _renderer->GetAddedvX(), _velocityY+ _renderer->GetAddedvY(), _velocityZ+ _renderer->GetAddedvZ());
+	_renderer->SetAddedVelocity(0, 0, 0);
 
 	//// do interpolation X
 	{
@@ -351,7 +354,7 @@ void ExternalPlayer::MagicBallComeback()
 /***********************************************************
 recalculate actor velocity
 ***********************************************************/
-void ExternalPlayer::CalculateVelocity(float rotation)
+void ExternalPlayer::CalculateVelocity(float rotation, float tdiff)
 {
 	if(!_forward)
 	{
@@ -361,7 +364,7 @@ void ExternalPlayer::CalculateVelocity(float rotation)
 		return;
 	}
 
-	float halfM = -_renderer->GetRendererSpeed();
+	float halfM = -_renderer->GetRendererSpeed() * tdiff;
 	
 	//speed up if dino
 	if(_renderer->GetModel() == 64)
@@ -396,7 +399,7 @@ void ExternalPlayer::CalculateVelocity(float rotation)
 		_velocityZ = sin((float)radA) * -halfM;
 	}
 
-	_velocityY = _renderer->GetRendererSpeedY();
+	_velocityY = _renderer->GetRendererSpeedY() * tdiff;
 
 	if(_collisionx)
 		_velocityX = 0;
@@ -454,7 +457,7 @@ void ExternalPlayer::UpdateGhost(const LbaNet::GhostActorInfo & ainfo)
 			}	
 
 			if(!found)
-				ThreadSafeWorkpile::getInstance()->AddEvent(new AttachActorToActorEvent(_renderer, ainfo.AttachedToActors[i]));
+				ThreadSafeWorkpile::getInstance()->AddEvent(new AttachActorToActorEvent(tmp, ainfo.AttachedToActors[i]));
 		}
 
 		// remove old attached
@@ -471,7 +474,7 @@ void ExternalPlayer::UpdateGhost(const LbaNet::GhostActorInfo & ainfo)
 			}
 			
 			if(!found)
-				_renderer->RemoveAttaching(attachingacts[j]);
+				tmp->RemoveAttaching(attachingacts[j]);
 		}
 
 		if(ainfo.AttachedToPlayer)
