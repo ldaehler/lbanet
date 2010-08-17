@@ -271,7 +271,7 @@ public:
 	void Attach(Actor * act);
 
 	//! dettach another actor from self
-	bool Dettach(Actor * act);
+	bool Dettach(Actor * act, bool inform_attaching = true);
 
 	//! check if the actor should be attached
 	virtual bool CheckAttach(Actor * act)
@@ -369,7 +369,7 @@ public:
 	void AddAttaching(Actor * act);
 
 	// remove attaching actor
-	void RemoveAttaching(Actor * act);
+	void RemoveAttaching(Actor * act, bool inform_attached = true);
 
 	// clear attaching actor
 	void ClearAttaching();
@@ -457,6 +457,7 @@ protected:
    int	_countplayerdetach;
 
    float _alpharender;
+   bool	_firstghostupdate;
 };
 
 #endif

@@ -51,7 +51,8 @@ Actor::Actor(float alpharender)
 	_signaler(NULL), _physposhandler(NULL), _collidable(true),
 	_offsetsizeY(0), _actormoving(false), _isAttached(false), 
 	_activatingactor(-1), _linkedghostid(-1), 
-	_lastattachedPlayer(false), _actif(false), _alpharender(alpharender), _allowfreemove(false)
+	_lastattachedPlayer(false), _actif(false), _alpharender(alpharender), 
+	_allowfreemove(false), _firstghostupdate(true)
 {
 
 }
@@ -71,10 +72,10 @@ Actor::~Actor()
 
 	//clear attached actors
    for(size_t i=0; i<_attachedActors.size(); ++i)
-	   _attachedActors[i]->RemoveAttaching(this);
+	   _attachedActors[i]->RemoveAttaching(this, false);
 
    for(size_t j=0; j<_attachingActors.size(); ++j)
-	   _attachingActors[j]->Dettach(this);
+	   _attachingActors[j]->Dettach(this, false);
 }
 
 /***********************************************************
@@ -346,15 +347,17 @@ attach another actor to self
 void Actor::Attach(Actor * act)
 {
 	_attachedActors.push_back(act);
+
 	act->AddAttaching(this);
 }
 
 /***********************************************************
 dettach another actor from self
 ***********************************************************/
-bool Actor::Dettach(Actor * act)
+bool Actor::Dettach(Actor * act, bool inform_attaching)
 {
-	act->RemoveAttaching(this);
+	if(inform_attaching)
+		act->RemoveAttaching(this, false);
 
 	std::vector<Actor *>::iterator it = std::find(_attachedActors.begin(), _attachedActors.end(), act);
 	if(it != _attachedActors.end())
@@ -379,11 +382,16 @@ void Actor::AddAttaching(Actor * act)
 /***********************************************************
 remove attaching actor
 ***********************************************************/
-void Actor::RemoveAttaching(Actor * act)
+void Actor::RemoveAttaching(Actor * act, bool inform_attached)
 {
 	std::vector<Actor *>::iterator it = std::find(_attachingActors.begin(), _attachingActors.end(), act);
 	if(it != _attachingActors.end())
+	{
+		if(inform_attached)
+			(*it)->Dettach(this, false);
+
 		_attachingActors.erase(it);
+	}
 
 	UpdateGhost();
 }
@@ -394,7 +402,7 @@ clear attaching actor
 void Actor::ClearAttaching()
 {
    for(size_t j=0; j<_attachingActors.size(); ++j)
-	   _attachingActors[j]->Dettach(this);
+	   _attachingActors[j]->Dettach(this, false);
 
 	_attachingActors.clear();
 	UpdateGhost();
@@ -498,6 +506,12 @@ void Actor::UpdateGhost()
 #ifndef _LBANET_SERVER_SIDE_
 	if(!_actif)
 		return;
+
+	if(_firstghostupdate)
+	{
+		_firstghostupdate = false;
+		return;
+	}
 
 	LbaNet::GhostActorInfo gi;
 	gi.GhostId = _linkedghostid;
