@@ -268,9 +268,9 @@ private:
 	unsigned char*	m_paletteRGB;
 
 	double m_currentSpeed;
-	double m_cumuSpeed;
+	//double m_cumuSpeed;
 	double m_currentSpeedY;
-	double m_cumuSpeedY;
+	//double m_cumuSpeedY;
 
 public:
 
