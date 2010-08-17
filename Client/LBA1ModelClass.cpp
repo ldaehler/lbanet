@@ -1732,6 +1732,9 @@ int LBA1ModelClass::ApplyAnim(int animState, char *animPtr, TElements *elements)
 		currentY = ((*(short int *) (keyFramePtrOld + 2)) * eax) / keyFrameLength;
 		currentZ = ((*(short int *) (keyFramePtrOld + 4)) * eax) / keyFrameLength;
 
+		m_currentSpeed = (*(short int *) (keyFramePtrOld + 4) / (keyFrameLength*1000);
+		m_currentSpeedY = (*(short int *) (keyFramePtrOld + 2) / (keyFrameLength*1000);
+
 		/*processActorVar5 = *(short int *) (keyFramePtrOld + 6);
 		processActorSub2Var0 = *(short int *) (keyFramePtrOld + 8);
 		processActorVar6 = *(short int *) (keyFramePtrOld + 10);
@@ -1981,8 +1984,8 @@ void LBA1ModelClass::setAtKeyFrame(int keyframe, bool reset)
 
 bool LBA1ModelClass::AnimateModel(void)
 {
-	m_currentSpeed = 0;
-	m_currentSpeedY = 0;
+	//m_currentSpeed = 0;
+	//m_currentSpeedY = 0;
 
 	long int oldTick;
 
@@ -2018,11 +2021,11 @@ bool LBA1ModelClass::AnimateModel(void)
         currentX = stepX;
        	currentZ = stepY;
 
-		m_currentSpeed = (currentZ /512.) - m_cumuSpeed;
-		m_cumuSpeed = (currentZ /512.);
+		//m_currentSpeed = (currentZ /512.) - m_cumuSpeed;
+		//m_cumuSpeed = (currentZ /512.);
 
-		m_currentSpeedY = (currentY /256.) - m_cumuSpeedY;
-		m_cumuSpeedY = (currentY /256.);
+		//m_currentSpeedY = (currentY /256.) - m_cumuSpeedY;
+		//m_cumuSpeedY = (currentY /256.);
 		
 
         if(m_useAnimSteps)
