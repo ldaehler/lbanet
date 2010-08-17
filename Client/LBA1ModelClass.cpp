@@ -177,8 +177,10 @@ void LBA1ModelClass::LoadAnim(entitiesTableStruct* entitiesData, int animNum)
 	unsigned char* localAnim; // changed unsigned
 
 	m_currentSpeed = 0;
-	m_cumuSpeed = 0;
-	m_cumuSpeedY = 0;
+	m_currentSpeedY = 0;
+	//m_cumuSpeed = 0;
+	//m_cumuSpeedY = 0;
+
 	currentKeyFrame=0;
     animsize = loadResource(m_animPath.c_str(),animNum, &localAnim);
 
@@ -1621,8 +1623,8 @@ int LBA1ModelClass::setAnimAtKeyFrame(int index, unsigned char *anim, TElements 
     short int *ptrToData;
     int i;
 
-	m_cumuSpeed = 0;
-	m_cumuSpeedY = 0;
+	//m_cumuSpeed = 0;
+	//m_cumuSpeedY = 0;
     currentKeyFrame = index;
 
     numOfIndexInAnim = *(short int *) anim;
@@ -1715,6 +1717,7 @@ int LBA1ModelClass::ApplyAnim(int animState, char *animPtr, TElements *elements)
 		currentY = *(short int *) (keyFramePtr + 2);
 		currentZ = *(short int *) (keyFramePtr + 4);
 
+
 		/*processActorVar5 = *(short int *) (keyFramePtr + 6); // is jumping
 		processActorSub2Var0 = *(short int *) (keyFramePtr + 8);
 		processActorVar6 = *(short int *) (keyFramePtr + 10); // modelRotation
@@ -1732,8 +1735,9 @@ int LBA1ModelClass::ApplyAnim(int animState, char *animPtr, TElements *elements)
 		currentY = ((*(short int *) (keyFramePtrOld + 2)) * eax) / keyFrameLength;
 		currentZ = ((*(short int *) (keyFramePtrOld + 4)) * eax) / keyFrameLength;
 
-		m_currentSpeed = (*(short int *) (keyFramePtrOld + 4) / (keyFrameLength*1000);
-		m_currentSpeedY = (*(short int *) (keyFramePtrOld + 2) / (keyFrameLength*1000);
+		//std::cout<<"curr"<<currentX<<" "<<currentY<<" "<<currentZ<<std::endl;
+		m_currentSpeed = (*(short int *) (keyFramePtrOld + 4)) / (keyFrameLength*5000.0f);
+		m_currentSpeedY = (*(short int *) (keyFramePtrOld + 2)) / (keyFrameLength*5000.0f);
 
 		/*processActorVar5 = *(short int *) (keyFramePtrOld + 6);
 		processActorSub2Var0 = *(short int *) (keyFramePtrOld + 8);
@@ -2000,6 +2004,8 @@ bool LBA1ModelClass::AnimateModel(void)
 
  	int keyFrameState=ApplyAnim(currentKeyFrame,(char*)animPtr,Elements);
 
+
+
         // CALCULATE STEP SIZE -----
  	int angle1;
 	int angle2;
@@ -2048,8 +2054,8 @@ bool LBA1ModelClass::AnimateModel(void)
 
         if(keyFrameState)
  	    {
-			m_cumuSpeed = 0;
-			m_cumuSpeedY = 0;
+			//m_cumuSpeed = 0;
+			//m_cumuSpeedY = 0;
   		    currentKeyFrame++;
       		if(currentKeyFrame==getAnimMaxIndex((char*)animPtr))
   	    	{
@@ -2138,8 +2144,8 @@ int LBA1ModelClass::getKeyframe(void)
 
 void LBA1ModelClass::resetKeyframe()
 {
-	m_cumuSpeed = 0;
-	m_cumuSpeedY = 0;
+	//m_cumuSpeed = 0;
+	//m_cumuSpeedY = 0;
 	currentKeyFrame = 0;
 }
 

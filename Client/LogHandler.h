@@ -57,6 +57,9 @@ public:
    const std::string &GetGUIFilename()
    { return _guifilename; }
 
+	//! close opened log file
+   void CloseFile();
+
 private:
 	std::ofstream			_logfile;
 	std::string				_filename;

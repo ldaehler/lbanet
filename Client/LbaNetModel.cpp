@@ -885,7 +885,7 @@ int LbaNetModel::Process()
 		break;
 	}
 
-	_camera->Process(tdiff);
+	_camera->Process(/*tdiff*/);
 	_externalPlayers->Process(tnow, tdiff);
 	_localActorsHandler->Process(tnow, tdiff);
 	_externalActorsHandler->Process(tnow, tdiff);

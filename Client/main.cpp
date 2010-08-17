@@ -39,8 +39,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 BOOL WINAPI CrashCallback(LPVOID lpvState)
 {
+	LogHandler::getInstance()->CloseFile();
 	AddFile(lpvState, LogHandler::getInstance()->GetFilename().c_str(), "Lbanet general log");
-	AddFile(lpvState, LogHandler::getInstance()->GetGUIFilename().c_str(), "GUI log");
+	//AddFile(lpvState, LogHandler::getInstance()->GetGUIFilename().c_str(), "GUI log");
 	return TRUE;
 }
 
@@ -48,8 +49,6 @@ int main(int argc, char *argv[])
 {
 	// init crash reporter
 	LPVOID chandler = Install(CrashCallback, NULL, NULL);
-
-	LogHandler::getInstance()->LogToFile("I will be back!");
 
 	//GenerateErrorReport(chandler, NULL);
 

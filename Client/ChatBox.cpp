@@ -598,15 +598,13 @@ bool ChatBox::HandleEnterKey (const CEGUI::EventArgs& e)
 
 			try
 			{
+				CEGUI::Window *windowchat = CEGUI::WindowManager::getSingleton().getWindow("Chat/edit");
+				std::string text = "";
 				if(_itltext != _lasttexts.end())
-				{
-					CEGUI::WindowManager::getSingleton().getWindow("Chat/edit")->setText(
-														(const unsigned char *)_itltext->c_str());
-				}
-				else
-				{
-					CEGUI::WindowManager::getSingleton().getWindow("Chat/edit")->setText("");
-				}
+					text = *_itltext;
+
+				if(windowchat)
+					windowchat->setText((const unsigned char *)text.c_str());
 			}
 			catch(...){}
 
@@ -638,15 +636,13 @@ bool ChatBox::HandleEnterKey (const CEGUI::EventArgs& e)
 					_itltext = _lasttexts.end();
 			}
 
+			CEGUI::Window *windowchat = CEGUI::WindowManager::getSingleton().getWindow("Chat/edit");
+			std::string text = "";
 			if(_itltext != _lasttexts.end())
-			{
-				CEGUI::WindowManager::getSingleton().getWindow("Chat/edit")->setText(
-													(const unsigned char *)_itltext->c_str());
-			}
-			else
-			{
-				CEGUI::WindowManager::getSingleton().getWindow("Chat/edit")->setText("");
-			}
+				text = *_itltext;
+
+			if(windowchat)
+				windowchat->setText((const unsigned char *)text.c_str());
 
 
 			//--_currSelectedch;
@@ -677,7 +673,7 @@ bool ChatBox::HandleEnterKey (const CEGUI::EventArgs& e)
 		{
 			CEGUI::Editbox * bed = static_cast<CEGUI::Editbox *>
 				(CEGUI::WindowManager::getSingleton().getWindow("Chat/edit"));
-			if(bed->isActive())
+			if(bed && bed->isActive())
 			{
 				if(_text_copyed != "")
 				{

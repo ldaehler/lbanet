@@ -269,9 +269,9 @@ int MainPlayerHandler::PlayScript(double tnow, float tdiff)
 			double diffY = expectedY - currY;
 			double diffZ = expectedZ - currZ;
 
-			CalculateVelocity();
+			CalculateVelocity(tdiff);
 			double stepX = _velocityX;
-			double stepY = _player->GetRendererSpeedY();
+			double stepY = _player->GetRendererSpeedY() * tdiff;
 			double stepZ = _velocityZ;
 
 			if(ps.AutoMoveY)
@@ -319,9 +319,9 @@ int MainPlayerHandler::PlayScript(double tnow, float tdiff)
 		case 2: // animation
 		{
 			//do the move from the animation
-			CalculateVelocity();
+			CalculateVelocity(tdiff);
 			double stepX = _velocityX;
-			double stepY = _player->GetRendererSpeedY();
+			double stepY = _player->GetRendererSpeedY() * tdiff;
 			double stepZ = _velocityZ;
 
 			_corrected_velocityX = (float)stepX;
@@ -589,14 +589,14 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 		//		_corrected_velocityY = -_heightJump * 2 * tdiff;
 		//}
 
-		CalculateVelocity();
+		CalculateVelocity(tdiff);
 		_corrected_velocityX = _velocityX/* * tdiff*/;
 		_corrected_velocityZ = _velocityZ/* * tdiff*/;
-		_corrected_velocityY = _player->GetRendererSpeedY();
+		_corrected_velocityY = _player->GetRendererSpeedY() * tdiff;
 
 		_cumujumpY += _corrected_velocityY;
-		if(_cumujumpY > 2.2)
-			_corrected_velocityY = 0;
+		//if(_cumujumpY > 2.2)
+		//	_corrected_velocityY = 0;
 
 		//if(_corrected_velocityY > 0)
 		//	_corrected_velocityY += 0.08;
@@ -608,7 +608,7 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 	// in case player has been touch and is hurt - make him move backward
 	if(_state == Ac_hurt)
 	{
-		CalculateVelocity(/*false, true, _speedHurt*/);
+		CalculateVelocity(tdiff/*false, true, _speedHurt*/);
 		_corrected_velocityX = _velocityX/* * tdiff*/;
 		_corrected_velocityZ = _velocityZ/* * tdiff*/;
 	}
@@ -617,9 +617,9 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 	// if we are not jumping neither flying we need to add the gravity
 	if(_state != Ac_Jumping && _state != Ac_Flying && !_player->IsAttached())
 	{
-		_corrected_velocityY = _GravityFalldown * tdiff;
-		if(_state == Ac_FallingDown && _currentstance != 7) // exception for protopack as there is no falling speed in animation
-			_corrected_velocityY = _player->GetRendererSpeedY();
+		_corrected_velocityY = _GravityFalldown/10.0f * tdiff;
+		if(_state == Ac_FallingDown && _currentstance != 7 && _currentstance != 5) // exception for protopack and horse as there is no falling speed in animation
+			_corrected_velocityY = _player->GetRendererSpeedY() * tdiff;
 	}
 
 
@@ -664,7 +664,7 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 		{
 			if(_state != Ac_movingobjects || _up_key_pressed)
 			{
-				CalculateVelocity(/*_up_key_pressed*/);
+				CalculateVelocity(tdiff/*_up_key_pressed*/);
 				_corrected_velocityX = _velocityX;// * tdiff;
 				_corrected_velocityZ = _velocityZ;// * tdiff;
 			}
@@ -831,20 +831,24 @@ int MainPlayerHandler::FinishProcess(double tnow, float tdiff, int res)
 
 
 	// if attached - correct velocity
-	//if(_player->IsAttached() || (_state == Ac_scripted))
-	//{
-	//	_corrected_velocityX += _player->GetAddedvX();
-	//	_corrected_velocityY += _player->GetAddedvY();
-	//	_corrected_velocityZ += _player->GetAddedvZ();
+	float avx = _player->GetAddedvX();
+	float avy = _player->GetAddedvY();
+	float avz = _player->GetAddedvZ();
 
-	//	_RoomP->MoveActor(-1, _player->GetBoundingBox(),
-	//									VECTOR	(_player->GetAddedvX(), 
-	//											_player->GetAddedvY(), 
-	//											_player->GetAddedvZ()),
-	//									false);
+	if(_player->IsAttached() || (_state == Ac_scripted))
+	{
+		//_corrected_velocityX += _player->GetAddedvX();
+		//_corrected_velocityY += _player->GetAddedvY();
+		//_corrected_velocityZ += _player->GetAddedvZ();
 
-	//	_player->SetAddedVelocity(0, 0, 0);
-	//}
+		_RoomP->MoveActor(-1, _player->GetBoundingBox(),
+										VECTOR	(avx, 
+												avy, 
+												avz),
+										false);
+
+		_player->SetAddedVelocity(0, 0, 0);
+	}
 
 
 
@@ -853,11 +857,11 @@ int MainPlayerHandler::FinishProcess(double tnow, float tdiff, int res)
 	//double avspz = _averageSpeedZ.Update(_corrected_velocityZ);
 
 	//float extramoveY = _averageSpeedY.Update(_corrected_velocityY);
-	float extramoveY = 0;
-	if((_state != Ac_Jumping) && (_state != Ac_scripted) && (_state != Ac_FallingDown))
-		extramoveY = _averageSpeedY.Update(_corrected_velocityY);
-	else
-		_averageSpeedY.Reset();
+	float extramoveY = _dinomoveY;
+	//if((_state != Ac_Jumping) && (_state != Ac_scripted) && (_state != Ac_FallingDown))
+	//	extramoveY = _averageSpeedY.Update(_corrected_velocityY);
+	//else
+	//	_averageSpeedY.Reset();
 
 	bool fwdR = _isMovingForward || (_state == Ac_Jumping) || (_state == Ac_hurt) 
 				|| (_state == Ac_scripted) || (_state == Ac_FallingDown);
@@ -866,7 +870,7 @@ int MainPlayerHandler::FinishProcess(double tnow, float tdiff, int res)
 
 	const std::vector<Actor *> & vecattaching = _player->GetAttaching();
 
-	_dr.Update(tdiff);
+	_dr.Update(tdiff, avx, avy, avz);
 	if(!_dr.IsOntrack(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ(),
 						_player->GetRotation()/*, avspx, avspy, avspz*/, _velocityR,
 						_player->GetModel(), _player->GetBody(), _player->GetAnimation(),
@@ -1036,7 +1040,8 @@ void MainPlayerHandler::PlayerStopMove(int moveDirection)
 			_isMovingForward = false;
 			_player->SetMoving(false);
 			EndCharMovingObject();
-			_RoomP->SetAllowedMoving(false, false);
+			if(_RoomP)
+				_RoomP->SetAllowedMoving(false, false);
 
 
 			if(_state == Ac_Normal || _state == Ac_Flying || _state == Ac_protopack)
@@ -1414,12 +1419,11 @@ void MainPlayerHandler::StopJump()
 /***********************************************************
 recalculate actor velocity
 ***********************************************************/
-void MainPlayerHandler::CalculateVelocity(/*bool MoveForward, bool ManualSpeed, float speed*/)
+void MainPlayerHandler::CalculateVelocity(float tdiff/*bool MoveForward, bool ManualSpeed, float speed*/)
 {
-	//std::cout<<_player->GetRendererSpeed()<<std::endl;
 
 	//float halfM = GetMovingSpeed() * (MoveForward ? -1.0f : 0.5f);
-	float halfM = -_player->GetRendererSpeed();// / -2.0;
+	float halfM = -_player->GetRendererSpeed()*tdiff;// / -2.0;
 	
 	//speed up if dino
 	if(_currentstance == 6)
