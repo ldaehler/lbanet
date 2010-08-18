@@ -85,7 +85,7 @@ LBA1ModelClass::~LBA1ModelClass()
 
 LBA1ModelClass::LBA1ModelClass(entitiesTableStruct* entitiesData, const std::string &bodyPath,
 								const std::string &animPath, int entityNum,int bodyNum)
-: bodyPtr(NULL), animPtr(NULL), m_currentSpeed(0), m_currentSpeedY(0)
+: bodyPtr(NULL), animPtr(NULL), m_currentSpeed(0), m_currentSpeedY(0), m_animationspeed(1), cumutime(0)
 {
 
 	HQRHandler HQH(DataFileHandler::GetPath("RESS"));
@@ -120,7 +120,7 @@ LBA1ModelClass::LBA1ModelClass(entitiesTableStruct* entitiesData, const std::str
 	lightPosition[1]=40;
 	lightPosition[2]=40;
 
-	globalTime=0;
+	//globalTime=0;
 	currentBone=0;
 
 	if(!entitiesData) // no entities data, can't load model...
@@ -1637,7 +1637,8 @@ int LBA1ModelClass::setAnimAtKeyFrame(int index, unsigned char *anim, TElements 
     ptrToData = (short int *) ((numOfPointInAnim * 8 + 8) * index + anim + 8);
 
 	lastAnimData=(char*)ptrToData;
-	time=globalTime;
+	//time=globalTime;
+	cumutime = 0;
 
 	if (numOfPointInAnim > Elements->NumberOfElements)
 	{
@@ -1675,15 +1676,15 @@ int LBA1ModelClass::ApplyAnim(int animState, char *animPtr, TElements *elements)
 {
     short int animOpcode;
 
-    int eax;
-    int keyFrameLength;
+    //int eax;
+    float keyFrameLength;
     int numOfPointInAnim;
     char *keyFramePtrOld;
 
     numOfPointInAnim = *(short int *) (animPtr + 2);
 
     keyFramePtr = ((numOfPointInAnim * 8 + 8) * animState) + animPtr + 8;
-    keyFrameLength = *(short int *) keyFramePtr;
+    keyFrameLength = (*(short int *) keyFramePtr) * 10.0f * m_animationspeed;
 
 	if (numOfPointInAnim > Elements->NumberOfElements)
 	{
@@ -1691,14 +1692,21 @@ int LBA1ModelClass::ApplyAnim(int animState, char *animPtr, TElements *elements)
 	}
 
 	lastKeyFramePtr=lastAnimData;
-    eax = globalTime - time;
+    //eax = globalTime - time;
 
-    if (eax >= keyFrameLength)
+	//std::cout<<cumutime<<" "<<keyFrameLength<<std::endl;
+
+    if (cumutime >= keyFrameLength)
 	{
 	    short int *sourcePtr;
 		int i;
 
-		time=globalTime;
+		if(cumutime > 2*keyFrameLength)
+			cumutime = 0;
+		else
+			cumutime -= keyFrameLength;
+
+		//time=globalTime;
 		lastAnimData=keyFramePtr;
 
 	    sourcePtr = (short int *) (keyFramePtr + 8);
@@ -1731,13 +1739,13 @@ int LBA1ModelClass::ApplyAnim(int animState, char *animPtr, TElements *elements)
 
 		keyFramePtrOld = keyFramePtr+2;
 
-		currentX = ((*(short int *) keyFramePtrOld) * eax) / keyFrameLength;
-		currentY = ((*(short int *) (keyFramePtrOld + 2)) * eax) / keyFrameLength;
-		currentZ = ((*(short int *) (keyFramePtrOld + 4)) * eax) / keyFrameLength;
+		currentX = ((*(short int *) keyFramePtrOld) * cumutime) / keyFrameLength;
+		currentY = ((*(short int *) (keyFramePtrOld + 2)) * cumutime) / keyFrameLength;
+		currentZ = ((*(short int *) (keyFramePtrOld + 4)) * cumutime) / keyFrameLength;
 
 		//std::cout<<"curr"<<currentX<<" "<<currentY<<" "<<currentZ<<std::endl;
-		m_currentSpeed = (*(short int *) (keyFramePtrOld + 4)) / (keyFrameLength*5000.0f);
-		m_currentSpeedY = (*(short int *) (keyFramePtrOld + 2)) / (keyFrameLength*5000.0f);
+		m_currentSpeed = (*(short int *) (keyFramePtrOld + 4)) / (keyFrameLength*512);
+		m_currentSpeedY = (*(short int *) (keyFramePtrOld + 2)) / (keyFrameLength*256);
 
 		/*processActorVar5 = *(short int *) (keyFramePtrOld + 6);
 		processActorSub2Var0 = *(short int *) (keyFramePtrOld + 8);
@@ -1762,23 +1770,23 @@ int LBA1ModelClass::ApplyAnim(int animState, char *animPtr, TElements *elements)
 				{
 				case 0:
 				   {
-				       ApplyAnimMode0(&Elements->ElementsData[i].RotateX, eax, keyFrameLength);
-				       ApplyAnimMode0(&Elements->ElementsData[i].RotateY, eax, keyFrameLength);
-				       ApplyAnimMode0(&Elements->ElementsData[i].RotateZ, eax, keyFrameLength);
+				       ApplyAnimMode0(&Elements->ElementsData[i].RotateX, cumutime, keyFrameLength);
+				       ApplyAnimMode0(&Elements->ElementsData[i].RotateY, cumutime, keyFrameLength);
+				       ApplyAnimMode0(&Elements->ElementsData[i].RotateZ, cumutime, keyFrameLength);
 				       break;
 				   }
 				case 1:
 				   {
-				       ApplyAnimMode1(&Elements->ElementsData[i].RotateX, eax, keyFrameLength);
-				       ApplyAnimMode1(&Elements->ElementsData[i].RotateY, eax, keyFrameLength);
-				       ApplyAnimMode1(&Elements->ElementsData[i].RotateZ, eax, keyFrameLength);
+				       ApplyAnimMode1(&Elements->ElementsData[i].RotateX, cumutime, keyFrameLength);
+				       ApplyAnimMode1(&Elements->ElementsData[i].RotateY, cumutime, keyFrameLength);
+				       ApplyAnimMode1(&Elements->ElementsData[i].RotateZ, cumutime, keyFrameLength);
 				       break;
 				   }
 				case 2:
 				   {
-				       ApplyAnimMode1(&Elements->ElementsData[i].RotateX, eax, keyFrameLength);
-				       ApplyAnimMode1(&Elements->ElementsData[i].RotateY, eax, keyFrameLength);
-				       ApplyAnimMode1(&Elements->ElementsData[i].RotateZ, eax, keyFrameLength);
+				       ApplyAnimMode1(&Elements->ElementsData[i].RotateX, cumutime, keyFrameLength);
+				       ApplyAnimMode1(&Elements->ElementsData[i].RotateY, cumutime, keyFrameLength);
+				       ApplyAnimMode1(&Elements->ElementsData[i].RotateZ, cumutime, keyFrameLength);
 				       break;
 				   }
 				default:
@@ -1824,7 +1832,7 @@ int LBA1ModelClass::getAnimOpcode(char **ptr)
 
 //---------------------------------------------------------------------------
 
-void LBA1ModelClass::ApplyAnimMode0(short int *ptr, int bp, int bx)
+void LBA1ModelClass::ApplyAnimMode0(short int *ptr, float bp, float bx)
 {
     short int lastAngle;
     short int newAngle;
@@ -1865,7 +1873,7 @@ void LBA1ModelClass::ApplyAnimMode0(short int *ptr, int bp, int bx)
 
 //---------------------------------------------------------------------------
 
-void LBA1ModelClass::ApplyAnimMode1(short int *ptr, int bp, int bx)
+void LBA1ModelClass::ApplyAnimMode1(short int *ptr, float bp, float bx)
 {
     short int lastAngle;
     short int newAngle;
@@ -1986,17 +1994,19 @@ void LBA1ModelClass::setAtKeyFrame(int keyframe, bool reset)
 
 //---------------------------------------------------------------------------
 
-bool LBA1ModelClass::AnimateModel(void)
+bool LBA1ModelClass::AnimateModel(float tdiff)
 {
 	//m_currentSpeed = 0;
 	//m_currentSpeedY = 0;
 
-	long int oldTick;
+	//long int oldTick;
 
-	oldTick = lastTick;
- 	lastTick=clock();
+	//oldTick = lastTick;
+ //	lastTick=clock();
 
-	globalTime += (lastTick - oldTick)/10;
+	//globalTime += (lastTick - oldTick)/10;
+	cumutime += tdiff;
+
 
     lastCurrentX = currentX;
  	lastCurrentY = currentY;

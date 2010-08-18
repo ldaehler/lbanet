@@ -101,9 +101,7 @@ MainPlayerHandler::MainPlayerHandler(float speedNormal, float speedSport,
 	_speedJump(speedJump), _heightJump(heightJump), _speedHurt(speedHurt),
 	_RoomP(NULL), _currentstance(0), 
 	_isDiscrete(false), _needCheck(false), _currentsignal(-1),
-	_touchedground(true), _magicballH(true), _oldtdiff(1),
-	_averageSpeedX(10), _averageSpeedY(10), _averageSpeedZ(10), _waittojump(false),
-	_iscollisionup(false), _iscollisionx(false), _iscollisionz(false)
+	_touchedground(true), _magicballH(true), _oldtdiff(1), _waittojump(false)
 {
 	_player = new Player(animationSpeed, true);
 	_player->DisplayName(true);
@@ -447,11 +445,6 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 	if(_paused)
 		return 0;
 
-	_iscollisionup = false; 
-	_iscollisionx = false; 
-	_iscollisionz = false; 
-	_dinomoveY = 0;
-
 
 	_velocityR = 0;
 	_corrected_velocityX = 0;
@@ -595,8 +588,8 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 		_corrected_velocityY = _player->GetRendererSpeedY() * tdiff;
 
 		_cumujumpY += _corrected_velocityY;
-		//if(_cumujumpY > 2.2)
-		//	_corrected_velocityY = 0;
+		if(_cumujumpY > 2.0)
+			_corrected_velocityY = 0;
 
 		//if(_corrected_velocityY > 0)
 		//	_corrected_velocityY += 0.08;
@@ -617,9 +610,9 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 	// if we are not jumping neither flying we need to add the gravity
 	if(_state != Ac_Jumping && _state != Ac_Flying && !_player->IsAttached())
 	{
-		_corrected_velocityY = _GravityFalldown/10.0f * tdiff;
-		if(_state == Ac_FallingDown && _currentstance != 7 && _currentstance != 5) // exception for protopack and horse as there is no falling speed in animation
-			_corrected_velocityY = _player->GetRendererSpeedY() * tdiff;
+		_corrected_velocityY = _GravityFalldown * tdiff;
+		//if(_state == Ac_FallingDown && _currentstance != 7 && _currentstance != 5) // exception for protopack and horse as there is no falling speed in animation
+		//	_corrected_velocityY = _player->GetRendererSpeedY() * tdiff;
 	}
 
 
@@ -630,14 +623,14 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 		_state != Ac_Jumping && _state != Ac_hurt)
 	{
 		//if right key pressed
-		if(_right_key_pressed/* && _state != Ac_movingobjects*/)
+		if(_right_key_pressed)
 		{
 			_velocityR = -0.15f;
 			_player->SetRotation(_player->GetRotation() - tdiff*0.15f);
 		}
 
 		//if left key pressed
-		if(_left_key_pressed/* && _state != Ac_movingobjects*/)
+		if(_left_key_pressed)
 		{
 			_velocityR = 0.15f;
 			_player->SetRotation(_player->GetRotation() + tdiff*0.15f);
@@ -647,16 +640,10 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 		if(_state == Ac_Flying)
 		{
 			if(_pageup_key_pressed)
-			{
-				_dinomoveY = 0.01f;
 				_corrected_velocityY = 0.01f * tdiff;
-			}
 
 			if(_pagedown_key_pressed)
-			{
-				_dinomoveY = -0.01f;
 				_corrected_velocityY = -0.01f * tdiff;
-			}
 		}
 
 		// if up/down key
@@ -679,10 +666,6 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 		MoveOutput moveO = _RoomP->MoveActor(-1, _player->GetBoundingBox(),
 										VECTOR(_corrected_velocityX, _corrected_velocityY, _corrected_velocityZ));
 
-		_iscollisionup = moveO.CollisionUp; 
-		_iscollisionx = moveO.Collisionx; 
-		_iscollisionz = moveO.Collisionz; 
-
 		// update actor speed
 		_corrected_velocityX = moveO.NewSpeed.x;		
 		_corrected_velocityY = moveO.NewSpeed.y;		
@@ -703,15 +686,10 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 			if(_state == Ac_movingobjects)
 			{
 				++_countmovingobj;
-				if(_countmovingobj >= 20)
+				if(_countmovingobj >= 50)
 					EndCharMovingObject();
 			}
 		}
-
-		if(_dinomoveY > 0 && moveO.CollisionUp)
-			_dinomoveY = 0;
-		if(_dinomoveY < 0 && moveO.TouchingGround)
-			_dinomoveY = 0;
 
 		//if not flying or jumping make a few tests
 		if(_state != Ac_Jumping && _state != Ac_Flying)
@@ -744,7 +722,7 @@ int MainPlayerHandler::Process(double tnow, float tdiff)
 				else
 				{
 					float fallsize = _ycheckiffall - _player->GetPosY();
-					if(fallsize > 0.1)
+					if(fallsize > 0.2)
 					{
 						StartFallDown();
 						_touchedground = false;
@@ -829,63 +807,48 @@ int MainPlayerHandler::FinishProcess(double tnow, float tdiff, int res)
 	_oldtdiff = tdiff;
 
 
-
 	// if attached - correct velocity
-	float avx = _player->GetAddedvX();
-	float avy = _player->GetAddedvY();
-	float avz = _player->GetAddedvZ();
-
 	if(_player->IsAttached() || (_state == Ac_scripted))
 	{
-		//_corrected_velocityX += _player->GetAddedvX();
-		//_corrected_velocityY += _player->GetAddedvY();
-		//_corrected_velocityZ += _player->GetAddedvZ();
+		_corrected_velocityX += _player->GetAddedvX();
+		_corrected_velocityY += _player->GetAddedvY();
+		_corrected_velocityZ += _player->GetAddedvZ();
 
-		_RoomP->MoveActor(-1, _player->GetBoundingBox(),
-										VECTOR	(avx, 
-												avy, 
-												avz),
-										false);
+		if((abs(_player->GetAddedvX()) > 0) ||(abs(_player->GetAddedvY()) > 0) || (abs(_player->GetAddedvZ()) > 0))
+		{
+			if(_RoomP)
+				_RoomP->SetActorPos(-1, VECTOR(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ()));
+
+			// was working before????
+			//if(_RoomP)
+			//	_RoomP->MoveActor(-1, _player->GetBoundingBox(),
+			//								VECTOR	(_player->GetAddedvX(), 
+			//										_player->GetAddedvY(), 
+			//										_player->GetAddedvZ()),
+			//								false);
+		}
 
 		_player->SetAddedVelocity(0, 0, 0);
 	}
 
 
 
-	//double avspx = _averageSpeedX.Update(_corrected_velocityX);
-	//double avspy = _averageSpeedY.Update(_corrected_velocityY);
-	//double avspz = _averageSpeedZ.Update(_corrected_velocityZ);
-
-	//float extramoveY = _averageSpeedY.Update(_corrected_velocityY);
-	float extramoveY = _dinomoveY;
-	//if((_state != Ac_Jumping) && (_state != Ac_scripted) && (_state != Ac_FallingDown))
-	//	extramoveY = _averageSpeedY.Update(_corrected_velocityY);
-	//else
-	//	_averageSpeedY.Reset();
-
-	bool fwdR = _isMovingForward || (_state == Ac_Jumping) || (_state == Ac_hurt) 
-				|| (_state == Ac_scripted) || (_state == Ac_FallingDown);
-
-
-
-	const std::vector<Actor *> & vecattaching = _player->GetAttaching();
-
-	_dr.Update(tdiff, avx, avy, avz);
+	_dr.Update(tdiff);
 	if(!_dr.IsOntrack(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ(),
-						_player->GetRotation()/*, avspx, avspy, avspz*/, _velocityR,
+						_player->GetRotation(), _corrected_velocityX,
+						_corrected_velocityY, _corrected_velocityZ, _velocityR,
 						_player->GetModel(), _player->GetBody(), _player->GetAnimation(),
 						_player->GetBodyColor(), _player->GetNameR(), 
 						_player->GetNameG(), _player->GetNameB(), _player->Visible(),
-						_player->GetSizeX(), _player->GetSizeY(), _player->GetSizeZ(), 
-						fwdR, _iscollisionx, _iscollisionz, vecattaching.size(), extramoveY))
+						_player->GetSizeX(), _player->GetSizeY(), _player->GetSizeZ()))
 	{
 		_dr.Set(_player->GetPosX(), _player->GetPosY(), _player->GetPosZ(),
-						_player->GetRotation()/*, avspx, avspy, avspz*/, _velocityR,
+						_player->GetRotation(), _corrected_velocityX,
+						_corrected_velocityY, _corrected_velocityZ, _velocityR,
 						_player->GetModel(), _player->GetBody(), _player->GetAnimation(),
 						_player->GetBodyColor(), _player->GetNameR(), 
 						_player->GetNameG(), _player->GetNameB(), _player->Visible(),
-						_player->GetSizeX(), _player->GetSizeY(), _player->GetSizeZ(), 
-						fwdR, _iscollisionx, _iscollisionz, vecattaching.size(), extramoveY
+						_player->GetSizeX(), _player->GetSizeY(), _player->GetSizeZ()
 						/*,chexkvx, chexkvy, chexkvz, tdiff*/);
 
 
@@ -904,19 +867,14 @@ int MainPlayerHandler::FinishProcess(double tnow, float tdiff, int res)
 		nai.Body = _player->GetBody();
 		nai.Animation = _player->GetAnimation();
 		nai.BodyColor = _player->GetBodyColor();
-		nai.MoveMorward = fwdR;
-		nai.CollisionX = _iscollisionx;
-		nai.CollisionZ = _iscollisionz;
+		nai.vX = _corrected_velocityX;
+		nai.vY = _corrected_velocityY;
+		nai.vZ = _corrected_velocityZ;
 		nai.vRotation = _velocityR;
 		nai.NameR = _player->GetNameR();
 		nai.NameG = _player->GetNameG();
 		nai.NameB = _player->GetNameB();
 		nai.Visible = _player->Visible();
-
-		for(size_t ai=0; ai< vecattaching.size(); ++ai)
-			nai.AttachedToActor.push_back(vecattaching[ai]->GetId());
-
-		nai.extravY = extramoveY;
 		ThreadSafeWorkpile::getInstance()->UpdateInfo(nai);
 	}
 
@@ -1275,6 +1233,9 @@ Stopstate
 ***********************************************************/
 void MainPlayerHandler::Stopstate()
 {
+	if(_state == Ac_protopack)
+		MusicHandler::getInstance()->StopSample(_sound_proto);
+
 	if(_remembering)
 	{
 		if(_state == Ac_Dying || _state == Ac_Drowning)
@@ -1419,11 +1380,14 @@ void MainPlayerHandler::StopJump()
 /***********************************************************
 recalculate actor velocity
 ***********************************************************/
-void MainPlayerHandler::CalculateVelocity(float tdiff/*bool MoveForward, bool ManualSpeed, float speed*/)
+void MainPlayerHandler::CalculateVelocity(float tdiff, float addedspeed/*bool MoveForward, bool ManualSpeed, float speed*/)
 {
 
 	//float halfM = GetMovingSpeed() * (MoveForward ? -1.0f : 0.5f);
 	float halfM = -_player->GetRendererSpeed()*tdiff;// / -2.0;
+
+	//if(abs(halfM) > 0)
+	//	halfM += (halfM >0) ? (addedspeed*tdiff) : -(addedspeed*tdiff);
 	
 	//speed up if dino
 	if(_currentstance == 6)

@@ -38,7 +38,7 @@ class PhysicHandlerBase;
 #include "GameEvents.h"
 
 #include "MagicBallHandler.h"
-#include "averages.h"
+
 
 
 class DeadReckon
@@ -54,9 +54,9 @@ public:
 	float			_sizeY;
 	float			_sizeZ;
 
-	//float			_velocityX;
-	//float			_velocityY;
-	//float			_velocityZ;
+	float			_velocityX;
+	float			_velocityY;
+	float			_velocityZ;
 	float			_velocityR;
 
 	int				_Model;
@@ -69,31 +69,22 @@ public:
 	int				_nameB;
 
 	bool			_visible;
-	bool			_moveforward;
-	bool			_collisionx;
-	bool			_collisionz;
-	long			_attachingactor;
-	float			_extramoveY;
 
 	//std::ofstream	_file;
 
 
 	DeadReckon()
-		//: _moveforward(false)
 		//: _file("dump2.csv")
 	{}
 
 
 	// set reckon value
 	void Set( float posX, float posY, float posZ,
-				float rotation/*, float velocityX, float velocityY,
-				float velocityZ*/, float velocityR,
+				float rotation, float velocityX, float velocityY,
+				float velocityZ, float velocityR,
 				int Model, int Body, int Animation, short color,
 				int	nameR, int	nameG, int	nameB, bool Visible,
-				float sizeX, float sizeY, float sizeZ, 
-				bool moveforward, bool collisionx, bool collisionz, long attachingactor, 
-				float extramoveY
-				/*, float checkvx, float checkvy, float checkvz, float tdiff*/)
+				float sizeX, float sizeY, float sizeZ/*, float checkvx, float checkvy, float checkvz, float tdiff*/)
 	{
 		_visible = Visible;
 
@@ -106,9 +97,9 @@ public:
 		_sizeY = sizeY;
 		_sizeZ = sizeZ;
 
-		//_velocityX = velocityX;
-		//_velocityY = velocityY;
-		//_velocityZ = velocityZ;
+		_velocityX = velocityX;
+		_velocityY = velocityY;
+		_velocityZ = velocityZ;
 		_velocityR = velocityR;
 
 		_Model = Model;
@@ -119,13 +110,6 @@ public:
 		_nameR = nameR;
 		_nameG = nameG;
 		_nameB = nameB;
-
-		_moveforward = moveforward;
-		_collisionx = collisionx;
-		_collisionz = collisionz;
-
-		_attachingactor = attachingactor;
-		_extramoveY = extramoveY;
 
 		//_file<<","<<IceUtil::Time::now().toDateTime()
 		//	<<","<<_posX
@@ -139,20 +123,19 @@ public:
 		//	<<","<<_velocityY
 		//	<<","<<_velocityZ
 		//	<<","<<_velocityR
-		//	<<","<<_Animation
+		//	<<","<<checkvx
+		//	<<","<<checkvy
+		//	<<","<<checkvz
+		//	<<","<<tdiff
 		//	<<std::endl;
 	}
 
 	// update reackon on each tick
-	void Update(double timediff, float avx, float avy, float avz )
+	void Update(double timediff)
 	{
-		//_posX += _velocityX*timediff;
-		//_posY += _velocityY*timediff;
-		//_posZ += _velocityZ*timediff;
-
-		_posX += avx;
-		_posY += avy;
-		_posZ += avz;
+		_posX += _velocityX*timediff;
+		_posY += _velocityY*timediff;
+		_posZ += _velocityZ*timediff;
 
 		_rotation += _velocityR*timediff;
 
@@ -164,12 +147,11 @@ public:
 
 	// check if reackon is still on track
 	bool IsOntrack( float posX, float posY, float posZ,
-					float rotation/*, float velocityX, float velocityY,
-					float velocityZ*/, float velocityR,
+					float rotation, float velocityX, float velocityY,
+					float velocityZ, float velocityR,
 					int Model, int Body, int Animation, short color,
 					int	nameR, int	nameG, int	nameB, bool Visible,
-					float sizeX, float sizeY, float sizeZ, bool moveforward, 
-					bool collisionx, bool collisionz, long attachingactor, float extramoveY) const
+					float sizeX, float sizeY, float sizeZ) const
 	{
 		if(_visible != Visible)
 		{
@@ -215,56 +197,23 @@ public:
 			return false;
 		}
 
-		if(_moveforward != moveforward)
+		if(abs(velocityX - _velocityX) > 0.001f)
 		{
-			//_file<<"forward";
+			//_file<<"vX";
 			return false;
 		}
 
-		if(_collisionx != collisionx)
+		if(abs(velocityY - _velocityY) > 0.001f)
 		{
-			//_file<<"collisionx";
+			//_file<<"vY";
 			return false;
 		}
 
-		if(_collisionz != collisionz)
+		if(abs(velocityZ - _velocityZ) > 0.001f)
 		{
-			//_file<<"collisionz";
+			//_file<<"vZ";
 			return false;
 		}
-
-		if(_attachingactor != attachingactor)
-		{
-			//_file<<"attachingactor";
-			return false;
-		}
-
-		if(abs(_extramoveY - extramoveY) > 0.01f)
-		{
-			//_file<<"extramoveY";
-			return false;
-		}
-
-
-
-
-		//if(abs(velocityX - _velocityX) > 0.002f)
-		//{
-		//	//_file<<"vX";
-		//	return false;
-		//}
-
-		//if(abs(velocityY - _velocityY) > 0.002f)
-		//{
-		//	//_file<<"vY";
-		//	return false;
-		//}
-
-		//if(abs(velocityZ - _velocityZ) > 0.002f)
-		//{
-		//	//_file<<"vZ";
-		//	return false;
-		//}
 
 		if(abs(velocityR - _velocityR) > 0.1f)
 		{
@@ -496,7 +445,7 @@ protected:
 
 	// recalculate actor velocity
 	// moveType: 0 - no move, 1 - move upward, -1 - move backward
-	void CalculateVelocity(float tdiff/*bool MoveForward, bool ManualSpeed=false, float speed=0.0f*/);
+	void CalculateVelocity(float tdiff, float addedspeed = 0.0f/*bool MoveForward, bool ManualSpeed=false, float speed=0.0f*/);
 
 	// stop all move an reset all velocities
 	void ResetMove();
@@ -606,8 +555,6 @@ protected:
 	std::vector<PlayerScriptPart>	_curr_script;
 	int								_curr_script_position;
 
-	// flag to tell if the main actor is attached to another actor or not
-
 
 	long			_hurtingactorId;
 	bool			_needCheck;
@@ -626,22 +573,14 @@ protected:
 	float			_GravityFalldown;
 
 
-	MA				_averageSpeedX;
-	MA				_averageSpeedY;
-	MA				_averageSpeedZ;
-
 	std::string		_newmap;
 	std::string		_spawning;
 
 	// flag needed so that we can not directly jump after a jump
 	bool			_waittojump;
 
-	bool			_iscollisionup;
-	bool			_iscollisionx;
-	bool			_iscollisionz;
-
 	float			_cumujumpY;
-	float			_dinomoveY;
+
 };
 
 #endif

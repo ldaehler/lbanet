@@ -188,9 +188,10 @@ private:
     unsigned char* bodyPtr;
     unsigned char* bodyHeaderPtr;
 	unsigned char* animPtr;
-	int time;
-	int globalTime;
-	int lastTick;
+	//int time;
+	//int globalTime;
+	//int lastTick;
+
 
 	int X1;
 	int X2;
@@ -243,8 +244,8 @@ private:
 	int getAnimMaxIndex(char *ptr);
    	int getAnimStartIndex(char *ptr);
 	int getAnimOpcode(char **ptr);
-	void ApplyAnimMode0(short int *ptr, int bp, int bx);
-	void ApplyAnimMode1(short int *ptr, int bp, int bx);
+	void ApplyAnimMode0(short int *ptr, float bp, float bx);
+	void ApplyAnimMode1(short int *ptr, float bp, float bx);
 
 	TMatrix matrixList[100];
 
@@ -266,6 +267,10 @@ private:
 	bool m_useAnimSteps;
 
 	unsigned char*	m_paletteRGB;
+
+	float cumutime;
+
+	float m_animationspeed;
 
 	double m_currentSpeed;
 	//double m_cumuSpeed;
@@ -297,7 +302,8 @@ public:
 	int angle;
 
 
-	LBA1ModelClass(entitiesTableStruct* entitiesData, const std::string &bodyPath, const std::string &animPath, int entityNum=0,int bodyNum=0);
+	LBA1ModelClass(entitiesTableStruct* entitiesData, const std::string &bodyPath, 
+					const std::string &animPath, int entityNum=0,int bodyNum=0);
 	~LBA1ModelClass();
 
     void LoadAnim(entitiesTableStruct* entitiesData, int animNum=0);
@@ -344,7 +350,7 @@ public:
     int getFileSize();
     bool canUseAnim();
 
-	bool AnimateModel(void);
+	bool AnimateModel(float tdiff);
     void setModelParamElementFlag(int keyframe, int bone, int value);
 	void setModelParamX(int keyframe, int bone, int X);
 	void setModelParamY(int keyframe, int bone, int Y);
@@ -397,6 +403,10 @@ public:
 
 	double GetCurrentSpeed() { return m_currentSpeed; }
 	double GetCurrentSpeedY() { return m_currentSpeedY; }
+
+	// set the animation speed factor
+	void SetAnimationSpeedFactor(float animationspeed)
+	{m_animationspeed = animationspeed;}
 };
 
 #endif
