@@ -2523,7 +2523,7 @@
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
                 <exit name="exit0" TopRightX="63.998047" TopRightY="5.996094" TopRightZ="41.998047" BottomLeftX="63.000000" BottomLeftY="1.000000" BottomLeftZ="36.000000" newMap="Map70_1" spawning="spawning1" />
-                <exit name="exit1" TopRightX="25.000000" TopRightY="21.000000" TopRightZ="1.000000" BottomLeftX="23.000000" BottomLeftY="13.000000" BottomLeftZ="0.000000" newMap="Map82_1" spawning="spawning0" />
+                <exit name="exit1" TopRightX="25.000000" TopRightY="21.000000" TopRightZ="1.400000" BottomLeftX="23.000000" BottomLeftY="11.000000" BottomLeftZ="0.000000" newMap="Map82_1" spawning="spawning0" />
             </exits>
         </Map>
         <!--Map of Hamalayi Mountains, outside the transporter-->
