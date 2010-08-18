@@ -152,6 +152,8 @@ void CharacterRenderer::changeAnimEntity(int entityNum, int bodyNum, bool forced
 										DataFileHandler::GetPath("ANIM"), entityNum,
 										estruct->entitiesTable[_currModel].bodyList[_currBody].body);
 
+	_modelRenderer->SetAnimationSpeedFactor(_animationSpeed);
+
 	if(_bodyColor >= 0)
 	{
 		short oldc = 66;
@@ -197,8 +199,8 @@ void CharacterRenderer::setActorAnimation(int animNb, bool forced)
 		estruct->entitiesTable[_currModel].animList[_translatedAnimation].index);
 
 
-	for(int k = 1; k<=_modelRenderer->getNumKeyFrames(); ++k)
-		_modelRenderer->setKeyframeLength(k, (short)(_modelRenderer->getKeyframeLength(k)*_animationSpeed));
+	//for(int k = 1; k<=_modelRenderer->getNumKeyFrames(); ++k)
+	//	_modelRenderer->setKeyframeLength(k, (short)(_modelRenderer->getKeyframeLength(k)*_animationSpeed));
 }
 
 
@@ -213,7 +215,7 @@ int CharacterRenderer::Process(double tnow, float tdiff)
 	if(_currModel < 0 || _currAnimation < 0)
 		return 0;
 
-	_animationfinished = _modelRenderer->AnimateModel();
+	_animationfinished = _modelRenderer->AnimateModel(tdiff);
 
 	if(_animationfinished)
 		return 1;	// return 1 if animation is terminated

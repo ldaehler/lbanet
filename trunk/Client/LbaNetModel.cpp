@@ -95,6 +95,7 @@ LbaNetModel::LbaNetModel(GuiHandler*	guiH)
 	cm->GetFloat("Speed.JumpSpeed", JumpSpeed);
 	cm->GetFloat("Speed.JumpHeight", JumpHeight);
 	cm->GetFloat("Speed.AnimationSpeed", m_AnimationSpeed);
+	m_AnimationSpeed = 1.8f;
 
 	LogHandler::getInstance()->LogToFile("Creating main player character...");
 	_mainPlayerHandler = new MainPlayerHandler(NormalSpeed, SportySpeed,
