@@ -1,0 +1,1589 @@
+Group {
+  nodeMask 0xffffffff
+  cullingActive TRUE
+  UpdateCallbacks {
+    osgAnimation::BasicAnimationManager {
+      UniqueID BasicAnimationManager_0
+      num_animations 0
+    }
+  }
+  num_children 1
+  osgAnimation::Skeleton {
+    UniqueID Skeleton_1
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    UpdateCallbacks {
+      osgAnimation::UpdateSkeleton {
+      }
+    }
+    Matrix {
+      1 0 0 0
+      0 1 0 0
+      0 0 1 0
+      0 0 0 1
+    }
+    num_children 2
+    Geode {
+      UniqueID Geode_2
+      nodeMask 0xffffffff
+      cullingActive TRUE
+      num_drawables 1
+      Geometry {
+        DataVariance STATIC
+        useDisplayList FALSE
+        useVertexBufferObjects FALSE
+        PrimitiveSets 9
+        {
+          DrawElementsUInt TRIANGLES 36
+          {
+            100 105 101 100 103 105 102 105 103 104
+            105 102 83 75 81 82 83 81 79 83
+            82 80 83 79 75 105 104 105 75 83
+            83 101 105 80 101 83 
+          }
+          DrawElementsUInt QUADS 8
+          {
+            107 108 106 109 87 86 88 85 
+          }
+          DrawElementsUInt TRIANGLES 6
+          {
+            122 133 114 122 113 132 
+          }
+          DrawElementsUInt TRIANGLES 6
+          {
+            144 133 122 145 122 132 
+          }
+          DrawElementsUInt QUADS 40
+          {
+            112 110 107 109 111 108 107 110 98 106
+            108 111 112 109 106 98 98 111 110 112
+            89 86 87 84 77 84 87 85 90 88
+            86 89 77 85 88 90 90 89 84 77
+          }
+          DrawElementsUInt TRIANGLES 342
+          {
+            22 40 41 26 21 24 23 22 27 22
+            36 40 21 37 24 22 23 36 24 37
+            31 23 28 36 31 37 59 28 44 36
+            22 29 27 26 30 21 21 56 37 21
+            55 56 22 41 29 21 30 55 37 56
+            59 36 44 40 40 44 43 56 57 59
+            31 34 28 55 60 58 41 42 45 41
+            45 29 30 60 55 30 35 60 29 45
+            35 29 35 30 28 34 44 31 59 34
+            59 62 65 44 47 48 44 48 43 57
+            62 59 58 60 63 42 49 45 45 49
+            50 60 64 63 59 65 34 44 34 47
+            34 6 47 65 6 34 47 6 11 65
+            10 6 47 52 48 62 68 65 47 11
+            52 65 68 10 70 78 71 92 99 93
+            93 99 97 70 76 78 7 93 70 7
+            70 9 8 93 7 9 70 71 8 92
+            93 76 80 78 99 101 97 78 80 79
+            99 100 101 49 53 50 64 67 63 50
+            53 19 64 18 67 99 103 100 78 79
+            82 72 78 82 94 103 99 94 102 103
+            72 82 81 69 72 81 69 81 75 92
+            94 99 71 78 72 14 95 92 15 71
+            73 73 71 72 95 94 92 13 73 69
+            73 72 69 8 14 92 9 71 15 13
+            15 73 13 95 14 35 45 39 35 54
+            60 45 50 39 60 54 64 50 19 39
+            54 18 64 54 12 16 39 17 12 54
+            16 18 39 19 17 10 68 67 10 67
+            18 11 53 52 53 11 19 13 69 96
+            13 96 95 96 94 95 96 102 94 96
+            104 102 69 75 104 69 104 96 70 93
+            97 70 97 76 76 97 101 76 101 80
+            35 39 38 35 38 54 38 39 12 38
+            12 54 
+          }
+          DrawElementsUInt QUADS 32
+          {
+            57 56 55 58 42 41 40 43 27 29
+            30 26 24 31 28 23 42 43 48 49
+            58 63 62 57 63 67 68 62 48 52
+            53 49 
+          }
+          DrawElementsUInt TRIANGLES 42
+          {
+            10 14 8 11 9 15 11 15 19 10
+            18 14 19 15 17 16 14 18 16 13
+            14 13 17 15 12 17 13 12 13 16
+            6 8 7 6 7 9 6 9 11 6
+            10 8 
+          }
+          DrawElementsUInt TRIANGLES 180
+          {
+            142 124 141 124 142 140 140 125 124 141
+            124 125 134 141 125 140 135 125 126 119
+            125 119 127 125 135 126 125 127 134 125
+            117 119 126 119 117 127 126 136 117 138
+            127 117 137 139 120 115 120 139 120 118
+            137 118 120 115 136 137 118 115 138 118
+            138 128 127 115 128 138 137 136 129 126
+            129 136 129 131 137 115 130 128 121 139
+            131 130 115 139 137 131 139 135 129 126
+            128 134 127 128 130 144 131 129 145 135
+            145 129 144 134 128 133 144 130 145 132
+            131 133 130 121 131 132 121 142 123 140
+            123 142 141 123 122 145 122 123 144 135
+            140 145 141 134 144 145 140 123 141 144
+            123 121 130 139 114 121 122 122 121 113
+            133 121 114 113 121 132 118 24 23 118
+            23 27 118 26 24 138 26 118 136 118
+            27 136 27 117 117 26 138 117 27 26
+          }
+        }
+        VertexArray Vec3Array 161
+        {
+          0 0 0
+          0 0.201416 0
+          0 3.45459 0.201416
+          0 3.65601 0.201416
+          0.811768 2.64282 0.201416
+          -0.811768 2.64282 0.201416
+          0 3.77808 1.01318
+          0 3.57666 1.01318
+          -0.811768 3.45459 0.811768
+          0.811768 3.45459 0.811768
+          -0.811768 3.65601 0.811768
+          0.811768 3.65601 0.811768
+          0 3.65601 -0.610352
+          0 3.45459 -0.610352
+          -0.811768 3.25317 -0.201416
+          0.811768 3.25317 -0.201416
+          -0.610352 3.45459 -0.408936
+          0.610352 3.45459 -0.408936
+          -0.811768 3.45459 0
+          0.811768 3.45459 0
+          -0.366211 5.88989 0.604248
+          -0.646973 5.93262 0.323486
+          0.646973 5.93262 0.323486
+          0.201416 5.88989 0.604248
+          -0.201416 5.88989 0.604248
+          0 6.17676 0.402832
+          -0.201416 6.09741 0.201416
+          0.201416 6.09741 0.201416
+          0.201416 5.48706 0.811768
+          0.610352 5.68848 -0.164795
+          -0.610352 5.68848 -0.164795
+          -0.201416 5.48706 0.811768
+          0.811768 5.48706 0.201416
+          -0.811768 5.48706 0.201416
+          0 4.66919 1.01318
+          0 5.27954 -0.408936
+          0.811768 5.48706 0.604248
+          -0.811768 5.48706 0.604248
+          0 4.26636 -0.610352
+          0.811768 4.26636 -0.531006
+          1.2146 5.48706 0.402832
+          1.2146 5.48706 0
+          1.42212 5.08423 0
+          1.42212 5.08423 0.402832
+          1.01318 5.08423 0.604248
+          1.01318 5.08423 -0.323486
+          1.2146 4.06494 0.201416
+          1.01318 4.47388 0.604248
+          1.66626 4.26636 0.402832
+          1.66626 4.26636 0
+          1.2146 4.26636 -0.408936
+          1.41602 2.84424 0.201416
+          1.66016 3.25317 0.604248
+          1.66016 3.25317 -0.201416
+          -0.811768 4.26636 -0.531006
+          -1.2146 5.48706 0
+          -1.2146 5.48706 0.402832
+          -1.42212 5.08423 0.402832
+          -1.42212 5.08423 0
+          -1.01318 5.08423 0.604248
+          -1.01318 5.08423 -0.323486
+          -1.2146 4.06494 0.201416
+          -1.66626 4.26636 0.402832
+          -1.66626 4.26636 0
+          -1.2146 4.26636 -0.408936
+          -1.01318 4.47388 0.604248
+          -1.41602 2.84424 0.201416
+          -1.66016 3.25317 -0.201416
+          -1.66016 3.25317 0.604248
+          0.201416 2.03247 -0.811768
+          0.408936 2.64282 1.13525
+          1.2146 2.64282 0.604248
+          1.01318 1.83105 -0.201416
+          1.01318 2.64282 -0.201416
+          0.811768 1.62964 0.201416
+          0.201416 0.408936 -1.01929
+          0.408936 1.62964 1.13525
+          0.610352 0.286865 -0.408936
+          1.30005 1.62964 0.604248
+          1.2146 0.408936 0.604248
+          0.408936 0.408936 1.01318
+          0.811768 0.408936 -0.811768
+          1.2146 0.408936 -0.201416
+          0.408936 0.408936 0
+          0.811768 0.128174 0.604248
+          0.610352 0.00610352 -0.408936
+          0.408936 0.00610352 0.811768
+          0.811768 0.00610352 0.604248
+          0.408936 0.00610352 -0.408936
+          0.408936 0.128174 0.811768
+          0.408936 0.286865 -0.408936
+          -0.811768 1.62964 0.201416
+          -1.2146 2.64282 0.604248
+          -0.408936 2.64282 1.13525
+          -1.01318 1.83105 -0.201416
+          -1.01318 2.64282 -0.201416
+          -0.201416 2.03247 -0.811768
+          -0.408936 1.62964 1.13525
+          -0.610352 0.286865 -0.408936
+          -1.30005 1.62964 0.604248
+          -1.2146 0.408936 0.604248
+          -0.408936 0.408936 1.01318
+          -0.811768 0.408936 -0.811768
+          -1.2146 0.408936 -0.201416
+          -0.201416 0.408936 -1.01929
+          -0.408936 0.408936 0
+          -0.610352 0.00610352 -0.408936
+          -0.408936 0.00610352 0.811768
+          -0.811768 0.00610352 0.604248
+          -0.408936 0.00610352 -0.408936
+          -0.408936 0.128174 0.811768
+          -0.811768 0.128174 0.604248
+          -0.408936 0.286865 -0.408936
+          0.12207 7.03125 0.891113
+          -0.12207 7.03125 0.891113
+          -0.402832 6.50024 0.805664
+          0 7.51953 -0.408936
+          0 6.50024 0.201416
+          0 6.29883 0.604248
+          0 6.70166 0
+          0 6.29883 0.927734
+          0 6.70166 1.2146
+          0 7.18994 1.01318
+          0 7.47681 0.683594
+          0 7.43408 -0.0854492
+          0 7.1106 -0.20752
+          0.402832 6.70166 0.201416
+          -0.402832 6.70166 0.201416
+          -0.567627 6.70166 0.604248
+          0.567627 6.70166 0.604248
+          -0.323486 6.70166 1.01318
+          0.323486 6.70166 1.01318
+          0.280762 7.03125 0.769043
+          -0.280762 7.03125 0.769043
+          -0.610352 7.1106 0.201416
+          0.567627 7.1106 0.201416
+          0.201416 6.50024 0.402832
+          0.402832 6.50024 0.805664
+          -0.201416 6.50024 0.402832
+          0 6.50024 1.17188
+          0.488281 7.39746 0.201416
+          -0.488281 7.39746 0.201416
+          0 7.55615 0.201416
+          0 7.1106 0.604248
+          -0.567627 7.15332 0.683594
+          0.524902 7.15332 0.683594
+          0.280762 7.03125 0.891113
+          -0.280762 7.03125 0.891113
+          0 7.31812 -0.811768
+          0 7.03735 -0.933838
+          -0.244141 5.48706 0.848389
+          0.244141 5.48706 0.848389
+          0.366211 5.88989 0.604248
+          0 5.27954 0.927734
+          0 4.71191 1.0498
+          -0.244141 5.2002 0.927734
+          0.244141 5.2002 0.927734
+          -0.323486 4.99878 0.964355
+          0.323486 4.99878 0.964355
+          0.244141 4.79126 1.00708
+          -0.244141 4.79126 1.00708
+        }
+        NormalBinding PER_VERTEX
+        NormalArray Vec3Array 161
+        {
+          0 0 0
+          0 0 0
+          0 0 0
+          0 0 0
+          0 0 0
+          0 0 0
+          0 0.0665177 0.997785
+          0 0.181516 0.983388
+          -0.701015 0.262404 0.663116
+          0.701015 0.262404 0.663116
+          -0.169531 -0.517749 0.838567
+          0.169531 -0.517749 0.838567
+          0 -0.099189 -0.995069
+          0 0.141323 -0.989964
+          -0.887778 0.273391 -0.370279
+          0.887778 0.273391 -0.370279
+          -0.527522 -0.222483 -0.819891
+          0.527522 -0.222483 -0.819891
+          -0.157841 -0.728459 -0.666659
+          0.157841 -0.728459 -0.666659
+          0 0 0
+          -0.475006 0.867646 0.146832
+          0.475006 0.867646 0.146832
+          0.339253 0.541348 0.769317
+          -0.296359 0.534456 0.791535
+          0 0 0
+          -0.59926 0.717443 -0.355194
+          0.361419 0.744063 -0.561913
+          0.207991 0.267913 0.940724
+          0.173292 0.600562 -0.780574
+          -0.160248 0.606414 -0.778834
+          -0.227743 0.247815 0.941659
+          0 0 0
+          0 0 0
+          0 0.0666022 0.99778
+          0 0.272571 -0.962136
+          0.361157 0.421603 0.831755
+          -0.361157 0.421603 0.831755
+          0 0.123116 -0.992392
+          0.248592 -0.00557248 -0.968592
+          0.685013 0.565832 0.458903
+          0.585802 0.655635 -0.476422
+          0.888035 0.328573 -0.321613
+          0.791829 0.292977 0.535884
+          0.359297 0.102523 0.927575
+          0.357516 0.271632 -0.893531
+          0 0 0
+          0.331038 0.0910952 0.93921
+          0.858467 0.130997 0.495857
+          0.819732 0.179915 -0.543756
+          0.296196 -0.0891576 -0.950957
+          0 0 0
+          0.551424 -0.235868 0.800186
+          0.448968 -0.739369 -0.501758
+          -0.248592 -0.00557248 -0.968592
+          -0.636651 0.643547 -0.42488
+          -0.625307 0.569638 0.533388
+          -0.826283 0.327353 0.458362
+          -0.879959 0.308541 -0.361213
+          -0.359297 0.102523 0.927575
+          -0.357516 0.271632 -0.893531
+          0 0 0
+          -0.742227 0.1733 0.647354
+          -0.902947 0.133436 -0.408511
+          -0.296196 -0.0891576 -0.950957
+          -0.331038 0.0910952 0.93921
+          0 0 0
+          -0.27484 -0.795191 -0.540494
+          -0.682118 -0.207854 0.701079
+          0.388507 0.156402 -0.908075
+          0.296162 0.0646661 0.952946
+          0.95838 0.188835 0.214122
+          0.832187 0.12165 -0.540986
+          0.694619 0.139953 -0.705633
+          0 0 0
+          0.144701 -0.692783 -0.706479
+          0.238694 -0.0620686 0.969109
+          0.842726 0.421363 -0.33506
+          0.85391 0.0105606 0.520314
+          0.624991 -0.661454 0.414567
+          0.303359 -0.499302 0.811585
+          0.615842 -0.14859 -0.773731
+          0.908722 -0.304888 -0.285077
+          0 -1 0
+          0.249502 0.954177 0.165211
+          0.773192 -0.554681 -0.307414
+          -0.686367 -0.723646 0.0723646
+          0.550367 -0.834667 0.0206455
+          -0.437241 -0.887694 -0.14429
+          -0.125333 0.942141 0.310906
+          -0.549873 0.833917 0.0471472
+          0 0 0
+          -0.95838 0.188835 0.214122
+          -0.342647 0.074816 0.93648
+          -0.832187 0.12165 -0.540986
+          -0.694619 0.139953 -0.705633
+          -0.42739 0.158145 -0.890128
+          -0.247132 -0.0434627 0.968007
+          -0.534706 0.843517 -0.0506707
+          -0.85391 0.0105606 0.520314
+          -0.624991 -0.661454 0.414567
+          -0.225889 -0.554587 0.800879
+          -0.615842 -0.14859 -0.773731
+          -0.908722 -0.304888 -0.285077
+          -0.138908 -0.286878 -0.947843
+          0 -1 0
+          -0.369137 -0.902925 -0.220148
+          0.531619 -0.838648 0.118537
+          -0.6929 -0.719221 -0.0510922
+          0.805333 -0.577739 -0.13288
+          0.126648 0.971069 0.202449
+          -0.403128 0.875087 0.267786
+          0.884843 0.442422 -0.145999
+          0.713865 0.26704 0.647369
+          -0.713865 0.26704 0.647369
+          -0.642203 -0.744372 0.182993
+          0 0 0
+          0 -0.393919 -0.919145
+          0 -0.788858 0.614576
+          0 -0.556616 -0.83077
+          0 -0.942428 0.33441
+          0 0.429141 0.903237
+          0 0.448072 0.893997
+          0 0.909621 0.41544
+          0 0.676181 -0.736735
+          0 -0.0801965 -0.996779
+          0.588547 -0.504208 -0.631971
+          -0.571698 -0.524161 -0.631202
+          -0.918565 -0.392957 0.0427072
+          0.940249 -0.337938 0.0415924
+          -0.6547 0.0811815 0.751517
+          0.664353 0.092863 0.741628
+          0.410027 0.359844 0.838087
+          -0.393079 0.34497 0.852341
+          -0.862764 -0.0678492 -0.501034
+          0.87745 -0.0501737 -0.477038
+          0.733186 -0.638761 -0.233287
+          0.642203 -0.744372 0.182993
+          -0.733186 -0.638761 -0.233287
+          0 -0.591192 0.806531
+          0.624433 0.751119 -0.214252
+          -0.59583 0.772123 -0.220938
+          0 0.99846 -0.05547
+          0 0 0
+          -0.72878 0.454137 0.512484
+          0.743433 0.448067 0.496532
+          0 0 0
+          0 0 0
+          0 0 0
+          0 0 0
+          0 0 0
+          0 0 0
+          0 0 0
+          0 0 0
+          0 0 0
+          0 0 0
+          0 0 0
+          0 0 0
+          0 0 0
+          0 0 0
+          0 0 0
+        }
+        ColorBinding PER_PRIMITIVE
+        ColorArray Vec4Array 9
+        {
+          0.0431373 0.0745098 0.152941 1
+          0.247059 0.0588235 0.0588235 1
+          0.686275 0.482353 0.356863 1
+          0.121569 0.341176 0.466667 1
+          0.341176 0.0901961 0.0745098 1
+          0.0588235 0.137255 0.215686 1
+          0.0588235 0.137255 0.215686 1
+          0.45098 0.152941 0.0901961 1
+          0.623529 0.403922 0.294118 1
+        }
+      }
+    }
+    osgAnimation::Bone {
+      UniqueID Bone_3
+      name "bone0"
+      nodeMask 0xffffffff
+      cullingActive TRUE
+      UpdateCallbacks {
+        osgAnimation::UpdateBone {
+          name "bone0"
+          osgAnimation::StackedTranslateElement {
+            name "translate"
+            translate 0 3.25317 0.201416
+          }
+        }
+      }
+      Matrix {
+        1 0 0 0
+        0 1 0 0
+        0 0 1 0
+        0 0 0 1
+      }
+      InvBindMatrixInSkeletonSpace {
+        1 0 0 0
+        0 1 0 0
+        0 0 1 0
+        -0 -0 -0 1
+      }
+      MatrixInSkeletonSpace {
+        1 0 0 0
+        0 1 0 0
+        0 0 1 0
+        0 0 0 1
+      }
+      num_children 3
+      osgAnimation::Bone {
+        UniqueID Bone_4
+        name "bone1"
+        nodeMask 0xffffffff
+        cullingActive TRUE
+        UpdateCallbacks {
+          osgAnimation::UpdateBone {
+            name "bone1"
+            osgAnimation::StackedTranslateElement {
+              name "translate"
+              translate 0 0.201416 0
+            }
+            osgAnimation::StackedRotateAxisElement {
+              name "rotateX"
+              axis 1 0 0
+              angle 0
+            }
+            osgAnimation::StackedRotateAxisElement {
+              name "rotateY"
+              axis 0 1 0
+              angle 0
+            }
+            osgAnimation::StackedRotateAxisElement {
+              name "rotateZ"
+              axis 0 0 1
+              angle 0
+            }
+          }
+        }
+        Matrix {
+          1 0 0 0
+          0 1 0 0
+          0 0 1 0
+          0 0 0 1
+        }
+        InvBindMatrixInSkeletonSpace {
+          1 0 0 0
+          0 1 0 0
+          0 0 1 0
+          -0 -0 -0 1
+        }
+        MatrixInSkeletonSpace {
+          1 0 0 0
+          0 1 0 0
+          0 0 1 0
+          0 0 0 1
+        }
+        num_children 4
+        osgAnimation::Bone {
+          UniqueID Bone_5
+          name "bone2"
+          nodeMask 0xffffffff
+          cullingActive TRUE
+          UpdateCallbacks {
+            osgAnimation::UpdateBone {
+              name "bone2"
+              osgAnimation::StackedTranslateElement {
+                name "translate"
+                translate 0.811768 1.83105 0
+              }
+              osgAnimation::StackedRotateAxisElement {
+                name "rotateX"
+                axis 1 0 0
+                angle 0
+              }
+              osgAnimation::StackedRotateAxisElement {
+                name "rotateY"
+                axis 0 1 0
+                angle 0
+              }
+              osgAnimation::StackedRotateAxisElement {
+                name "rotateZ"
+                axis 0 0 1
+                angle 0
+              }
+            }
+          }
+          Matrix {
+            1 0 0 0
+            0 1 0 0
+            0 0 1 0
+            0 0 0 1
+          }
+          InvBindMatrixInSkeletonSpace {
+            1 0 0 0
+            0 1 0 0
+            0 0 1 0
+            -0 -0 -0 1
+          }
+          MatrixInSkeletonSpace {
+            1 0 0 0
+            0 1 0 0
+            0 0 1 0
+            0 0 0 1
+          }
+          num_children 1
+          osgAnimation::Bone {
+            UniqueID Bone_6
+            name "bone3"
+            nodeMask 0xffffffff
+            cullingActive TRUE
+            UpdateCallbacks {
+              osgAnimation::UpdateBone {
+                name "bone3"
+                osgAnimation::StackedTranslateElement {
+                  name "translate"
+                  translate 0.402832 -1.42212 0
+                }
+                osgAnimation::StackedRotateAxisElement {
+                  name "rotateX"
+                  axis 1 0 0
+                  angle 0
+                }
+                osgAnimation::StackedRotateAxisElement {
+                  name "rotateY"
+                  axis 0 1 0
+                  angle 0
+                }
+                osgAnimation::StackedRotateAxisElement {
+                  name "rotateZ"
+                  axis 0 0 1
+                  angle 0
+                }
+              }
+            }
+            Matrix {
+              1 0 0 0
+              0 1 0 0
+              0 0 1 0
+              0 0 0 1
+            }
+            InvBindMatrixInSkeletonSpace {
+              1 0 0 0
+              0 1 0 0
+              0 0 1 0
+              -0 -0 -0 1
+            }
+            MatrixInSkeletonSpace {
+              1 0 0 0
+              0 1 0 0
+              0 0 1 0
+              0 0 0 1
+            }
+            num_children 1
+            osgAnimation::Bone {
+              UniqueID Bone_7
+              name "bone17"
+              nodeMask 0xffffffff
+              cullingActive TRUE
+              UpdateCallbacks {
+                osgAnimation::UpdateBone {
+                  name "bone17"
+                  osgAnimation::StackedTranslateElement {
+                    name "translate"
+                    translate 0.201416 -1.2207 0
+                  }
+                  osgAnimation::StackedRotateAxisElement {
+                    name "rotateX"
+                    axis 1 0 0
+                    angle 0
+                  }
+                  osgAnimation::StackedRotateAxisElement {
+                    name "rotateY"
+                    axis 0 1 0
+                    angle 0
+                  }
+                  osgAnimation::StackedRotateAxisElement {
+                    name "rotateZ"
+                    axis 0 0 1
+                    angle 0
+                  }
+                }
+              }
+              Matrix {
+                1 0 0 0
+                0 1 0 0
+                0 0 1 0
+                0 0 0 1
+              }
+              InvBindMatrixInSkeletonSpace {
+                1 0 0 0
+                0 1 0 0
+                0 0 1 0
+                -0 -0 -0 1
+              }
+              MatrixInSkeletonSpace {
+                1 0 0 0
+                0 1 0 0
+                0 0 1 0
+                0 0 0 1
+              }
+            }
+          }
+        }
+        osgAnimation::Bone {
+          UniqueID Bone_8
+          name "bone4"
+          nodeMask 0xffffffff
+          cullingActive TRUE
+          UpdateCallbacks {
+            osgAnimation::UpdateBone {
+              name "bone4"
+              osgAnimation::StackedTranslateElement {
+                name "translate"
+                translate -0.811768 1.83105 0
+              }
+              osgAnimation::StackedRotateAxisElement {
+                name "rotateX"
+                axis 1 0 0
+                angle 0
+              }
+              osgAnimation::StackedRotateAxisElement {
+                name "rotateY"
+                axis 0 1 0
+                angle 0
+              }
+              osgAnimation::StackedRotateAxisElement {
+                name "rotateZ"
+                axis 0 0 1
+                angle 0
+              }
+            }
+          }
+          Matrix {
+            1 0 0 0
+            0 1 0 0
+            0 0 1 0
+            0 0 0 1
+          }
+          InvBindMatrixInSkeletonSpace {
+            1 0 0 0
+            0 1 0 0
+            0 0 1 0
+            -0 -0 -0 1
+          }
+          MatrixInSkeletonSpace {
+            1 0 0 0
+            0 1 0 0
+            0 0 1 0
+            0 0 0 1
+          }
+          num_children 1
+          osgAnimation::Bone {
+            UniqueID Bone_9
+            name "bone5"
+            nodeMask 0xffffffff
+            cullingActive TRUE
+            UpdateCallbacks {
+              osgAnimation::UpdateBone {
+                name "bone5"
+                osgAnimation::StackedTranslateElement {
+                  name "translate"
+                  translate -0.402832 -1.42212 0
+                }
+                osgAnimation::StackedRotateAxisElement {
+                  name "rotateX"
+                  axis 1 0 0
+                  angle 0
+                }
+                osgAnimation::StackedRotateAxisElement {
+                  name "rotateY"
+                  axis 0 1 0
+                  angle 0
+                }
+                osgAnimation::StackedRotateAxisElement {
+                  name "rotateZ"
+                  axis 0 0 1
+                  angle 0
+                }
+              }
+            }
+            Matrix {
+              1 0 0 0
+              0 1 0 0
+              0 0 1 0
+              0 0 0 1
+            }
+            InvBindMatrixInSkeletonSpace {
+              1 0 0 0
+              0 1 0 0
+              0 0 1 0
+              -0 -0 -0 1
+            }
+            MatrixInSkeletonSpace {
+              1 0 0 0
+              0 1 0 0
+              0 0 1 0
+              0 0 0 1
+            }
+            num_children 1
+            osgAnimation::Bone {
+              UniqueID Bone_10
+              name "bone18"
+              nodeMask 0xffffffff
+              cullingActive TRUE
+              UpdateCallbacks {
+                osgAnimation::UpdateBone {
+                  name "bone18"
+                  osgAnimation::StackedTranslateElement {
+                    name "translate"
+                    translate -0.201416 -1.2207 0
+                  }
+                  osgAnimation::StackedRotateAxisElement {
+                    name "rotateX"
+                    axis 1 0 0
+                    angle 0
+                  }
+                  osgAnimation::StackedRotateAxisElement {
+                    name "rotateY"
+                    axis 0 1 0
+                    angle 0
+                  }
+                  osgAnimation::StackedRotateAxisElement {
+                    name "rotateZ"
+                    axis 0 0 1
+                    angle 0
+                  }
+                }
+              }
+              Matrix {
+                1 0 0 0
+                0 1 0 0
+                0 0 1 0
+                0 0 0 1
+              }
+              InvBindMatrixInSkeletonSpace {
+                1 0 0 0
+                0 1 0 0
+                0 0 1 0
+                -0 -0 -0 1
+              }
+              MatrixInSkeletonSpace {
+                1 0 0 0
+                0 1 0 0
+                0 0 1 0
+                0 0 0 1
+              }
+            }
+          }
+        }
+        osgAnimation::Bone {
+          UniqueID Bone_11
+          name "bone12"
+          nodeMask 0xffffffff
+          cullingActive TRUE
+          UpdateCallbacks {
+            osgAnimation::UpdateBone {
+              name "bone12"
+              osgAnimation::StackedTranslateElement {
+                name "translate"
+                translate 0 2.52075 0.201416
+              }
+              osgAnimation::StackedRotateAxisElement {
+                name "rotateX"
+                axis 1 0 0
+                angle 0
+              }
+              osgAnimation::StackedRotateAxisElement {
+                name "rotateY"
+                axis 0 1 0
+                angle 0
+              }
+              osgAnimation::StackedRotateAxisElement {
+                name "rotateZ"
+                axis 0 0 1
+                angle 0
+              }
+            }
+          }
+          Matrix {
+            1 0 0 0
+            0 1 0 0
+            0 0 1 0
+            0 0 0 1
+          }
+          InvBindMatrixInSkeletonSpace {
+            1 0 0 0
+            0 1 0 0
+            0 0 1 0
+            -0 -0 -0 1
+          }
+          MatrixInSkeletonSpace {
+            1 0 0 0
+            0 1 0 0
+            0 0 1 0
+            0 0 0 1
+          }
+          num_children 1
+          osgAnimation::Bone {
+            UniqueID Bone_12
+            name "bone13"
+            nodeMask 0xffffffff
+            cullingActive TRUE
+            UpdateCallbacks {
+              osgAnimation::UpdateBone {
+                name "bone13"
+                osgAnimation::StackedTranslateElement {
+                  name "translate"
+                  translate 0 1.34277 -0.811768
+                }
+                osgAnimation::StackedRotateAxisElement {
+                  name "rotateX"
+                  axis 1 0 0
+                  angle 0
+                }
+                osgAnimation::StackedRotateAxisElement {
+                  name "rotateY"
+                  axis 0 1 0
+                  angle 0
+                }
+                osgAnimation::StackedRotateAxisElement {
+                  name "rotateZ"
+                  axis 0 0 1
+                  angle 0
+                }
+              }
+            }
+            Matrix {
+              1 0 0 0
+              0 1 0 0
+              0 0 1 0
+              0 0 0 1
+            }
+            InvBindMatrixInSkeletonSpace {
+              1 0 0 0
+              0 1 0 0
+              0 0 1 0
+              -0 -0 -0 1
+            }
+            MatrixInSkeletonSpace {
+              1 0 0 0
+              0 1 0 0
+              0 0 1 0
+              0 0 0 1
+            }
+            num_children 1
+            osgAnimation::Bone {
+              UniqueID Bone_13
+              name "bone14"
+              nodeMask 0xffffffff
+              cullingActive TRUE
+              UpdateCallbacks {
+                osgAnimation::UpdateBone {
+                  name "bone14"
+                  osgAnimation::StackedTranslateElement {
+                    name "translate"
+                    translate 0 -0.201416 -0.402832
+                  }
+                  osgAnimation::StackedRotateAxisElement {
+                    name "rotateX"
+                    axis 1 0 0
+                    angle 0
+                  }
+                  osgAnimation::StackedRotateAxisElement {
+                    name "rotateY"
+                    axis 0 1 0
+                    angle 0
+                  }
+                  osgAnimation::StackedRotateAxisElement {
+                    name "rotateZ"
+                    axis 0 0 1
+                    angle 0
+                  }
+                }
+              }
+              Matrix {
+                1 0 0 0
+                0 1 0 0
+                0 0 1 0
+                0 0 0 1
+              }
+              InvBindMatrixInSkeletonSpace {
+                1 0 0 0
+                0 1 0 0
+                0 0 1 0
+                -0 -0 -0 1
+              }
+              MatrixInSkeletonSpace {
+                1 0 0 0
+                0 1 0 0
+                0 0 1 0
+                0 0 0 1
+              }
+              num_children 1
+              osgAnimation::Bone {
+                UniqueID Bone_14
+                name "bone21"
+                nodeMask 0xffffffff
+                cullingActive TRUE
+                UpdateCallbacks {
+                  osgAnimation::UpdateBone {
+                    name "bone21"
+                    osgAnimation::StackedTranslateElement {
+                      name "translate"
+                      translate 0 -0.280762 -0.12207
+                    }
+                    osgAnimation::StackedRotateAxisElement {
+                      name "rotateX"
+                      axis 1 0 0
+                      angle 0
+                    }
+                    osgAnimation::StackedRotateAxisElement {
+                      name "rotateY"
+                      axis 0 1 0
+                      angle 0
+                    }
+                    osgAnimation::StackedRotateAxisElement {
+                      name "rotateZ"
+                      axis 0 0 1
+                      angle 0
+                    }
+                  }
+                }
+                Matrix {
+                  1 0 0 0
+                  0 1 0 0
+                  0 0 1 0
+                  0 0 0 1
+                }
+                InvBindMatrixInSkeletonSpace {
+                  1 0 0 0
+                  0 1 0 0
+                  0 0 1 0
+                  -0 -0 -0 1
+                }
+                MatrixInSkeletonSpace {
+                  1 0 0 0
+                  0 1 0 0
+                  0 0 1 0
+                  0 0 0 1
+                }
+              }
+            }
+          }
+        }
+        osgAnimation::Bone {
+          UniqueID Bone_15
+          name "bone15"
+          nodeMask 0xffffffff
+          cullingActive TRUE
+          UpdateCallbacks {
+            osgAnimation::UpdateBone {
+              name "bone15"
+              osgAnimation::StackedTranslateElement {
+                name "translate"
+                translate -0.366211 2.23389 0.402832
+              }
+              osgAnimation::StackedRotateAxisElement {
+                name "rotateX"
+                axis 1 0 0
+                angle 0
+              }
+              osgAnimation::StackedRotateAxisElement {
+                name "rotateY"
+                axis 0 1 0
+                angle 0
+              }
+              osgAnimation::StackedRotateAxisElement {
+                name "rotateZ"
+                axis 0 0 1
+                angle 0
+              }
+            }
+          }
+          Matrix {
+            1 0 0 0
+            0 1 0 0
+            0 0 1 0
+            0 0 0 1
+          }
+          InvBindMatrixInSkeletonSpace {
+            1 0 0 0
+            0 1 0 0
+            0 0 1 0
+            -0 -0 -0 1
+          }
+          MatrixInSkeletonSpace {
+            1 0 0 0
+            0 1 0 0
+            0 0 1 0
+            0 0 0 1
+          }
+          num_children 1
+          osgAnimation::Bone {
+            UniqueID Bone_16
+            name "bone16"
+            nodeMask 0xffffffff
+            cullingActive TRUE
+            UpdateCallbacks {
+              osgAnimation::UpdateBone {
+                name "bone16"
+                osgAnimation::StackedTranslateElement {
+                  name "translate"
+                  translate 0.366211 -0.610352 0.323486
+                }
+                osgAnimation::StackedRotateAxisElement {
+                  name "rotateX"
+                  axis 1 0 0
+                  angle 0
+                }
+                osgAnimation::StackedRotateAxisElement {
+                  name "rotateY"
+                  axis 0 1 0
+                  angle 0
+                }
+                osgAnimation::StackedRotateAxisElement {
+                  name "rotateZ"
+                  axis 0 0 1
+                  angle 0
+                }
+              }
+            }
+            Matrix {
+              1 0 0 0
+              0 1 0 0
+              0 0 1 0
+              0 0 0 1
+            }
+            InvBindMatrixInSkeletonSpace {
+              1 0 0 0
+              0 1 0 0
+              0 0 1 0
+              -0 -0 -0 1
+            }
+            MatrixInSkeletonSpace {
+              1 0 0 0
+              0 1 0 0
+              0 0 1 0
+              0 0 0 1
+            }
+            num_children 1
+            osgAnimation::Bone {
+              UniqueID Bone_17
+              name "bone22"
+              nodeMask 0xffffffff
+              cullingActive TRUE
+              UpdateCallbacks {
+                osgAnimation::UpdateBone {
+                  name "bone22"
+                  osgAnimation::StackedTranslateElement {
+                    name "translate"
+                    translate 0 -0.567627 0.12207
+                  }
+                  osgAnimation::StackedRotateAxisElement {
+                    name "rotateX"
+                    axis 1 0 0
+                    angle 0
+                  }
+                  osgAnimation::StackedRotateAxisElement {
+                    name "rotateY"
+                    axis 0 1 0
+                    angle 0
+                  }
+                  osgAnimation::StackedRotateAxisElement {
+                    name "rotateZ"
+                    axis 0 0 1
+                    angle 0
+                  }
+                }
+              }
+              Matrix {
+                1 0 0 0
+                0 1 0 0
+                0 0 1 0
+                0 0 0 1
+              }
+              InvBindMatrixInSkeletonSpace {
+                1 0 0 0
+                0 1 0 0
+                0 0 1 0
+                -0 -0 -0 1
+              }
+              MatrixInSkeletonSpace {
+                1 0 0 0
+                0 1 0 0
+                0 0 1 0
+                0 0 0 1
+              }
+            }
+          }
+        }
+      }
+      osgAnimation::Bone {
+        UniqueID Bone_18
+        name "bone6"
+        nodeMask 0xffffffff
+        cullingActive TRUE
+        UpdateCallbacks {
+          osgAnimation::UpdateBone {
+            name "bone6"
+            osgAnimation::StackedTranslateElement {
+              name "translate"
+              translate 0.811768 -0.811768 0
+            }
+            osgAnimation::StackedRotateAxisElement {
+              name "rotateX"
+              axis 1 0 0
+              angle 0
+            }
+            osgAnimation::StackedRotateAxisElement {
+              name "rotateY"
+              axis 0 1 0
+              angle 0
+            }
+            osgAnimation::StackedRotateAxisElement {
+              name "rotateZ"
+              axis 0 0 1
+              angle 0
+            }
+          }
+        }
+        Matrix {
+          1 0 0 0
+          0 1 0 0
+          0 0 1 0
+          0 0 0 1
+        }
+        InvBindMatrixInSkeletonSpace {
+          1 0 0 0
+          0 1 0 0
+          0 0 1 0
+          -0 -0 -0 1
+        }
+        MatrixInSkeletonSpace {
+          1 0 0 0
+          0 1 0 0
+          0 0 1 0
+          0 0 0 1
+        }
+        num_children 1
+        osgAnimation::Bone {
+          UniqueID Bone_19
+          name "bone7"
+          nodeMask 0xffffffff
+          cullingActive TRUE
+          UpdateCallbacks {
+            osgAnimation::UpdateBone {
+              name "bone7"
+              osgAnimation::StackedTranslateElement {
+                name "translate"
+                translate 0 -1.01318 0
+              }
+              osgAnimation::StackedRotateAxisElement {
+                name "rotateX"
+                axis 1 0 0
+                angle 0
+              }
+              osgAnimation::StackedRotateAxisElement {
+                name "rotateY"
+                axis 0 1 0
+                angle 0
+              }
+              osgAnimation::StackedRotateAxisElement {
+                name "rotateZ"
+                axis 0 0 1
+                angle 0
+              }
+            }
+          }
+          Matrix {
+            1 0 0 0
+            0 1 0 0
+            0 0 1 0
+            0 0 0 1
+          }
+          InvBindMatrixInSkeletonSpace {
+            1 0 0 0
+            0 1 0 0
+            0 0 1 0
+            -0 -0 -0 1
+          }
+          MatrixInSkeletonSpace {
+            1 0 0 0
+            0 1 0 0
+            0 0 1 0
+            0 0 0 1
+          }
+          num_children 1
+          osgAnimation::Bone {
+            UniqueID Bone_20
+            name "bone8"
+            nodeMask 0xffffffff
+            cullingActive TRUE
+            UpdateCallbacks {
+              osgAnimation::UpdateBone {
+                name "bone8"
+                osgAnimation::StackedTranslateElement {
+                  name "translate"
+                  translate -0.201416 -1.34277 -0.610352
+                }
+                osgAnimation::StackedRotateAxisElement {
+                  name "rotateX"
+                  axis 1 0 0
+                  angle 0
+                }
+                osgAnimation::StackedRotateAxisElement {
+                  name "rotateY"
+                  axis 0 1 0
+                  angle 0
+                }
+                osgAnimation::StackedRotateAxisElement {
+                  name "rotateZ"
+                  axis 0 0 1
+                  angle 0
+                }
+              }
+            }
+            Matrix {
+              1 0 0 0
+              0 1 0 0
+              0 0 1 0
+              0 0 0 1
+            }
+            InvBindMatrixInSkeletonSpace {
+              1 0 0 0
+              0 1 0 0
+              0 0 1 0
+              -0 -0 -0 1
+            }
+            MatrixInSkeletonSpace {
+              1 0 0 0
+              0 1 0 0
+              0 0 1 0
+              0 0 0 1
+            }
+            num_children 1
+            osgAnimation::Bone {
+              UniqueID Bone_21
+              name "bone19"
+              nodeMask 0xffffffff
+              cullingActive TRUE
+              UpdateCallbacks {
+                osgAnimation::UpdateBone {
+                  name "bone19"
+                  osgAnimation::StackedTranslateElement {
+                    name "translate"
+                    translate 0.201416 -0.158691 1.01318
+                  }
+                  osgAnimation::StackedRotateAxisElement {
+                    name "rotateX"
+                    axis 1 0 0
+                    angle 0
+                  }
+                  osgAnimation::StackedRotateAxisElement {
+                    name "rotateY"
+                    axis 0 1 0
+                    angle 0
+                  }
+                  osgAnimation::StackedRotateAxisElement {
+                    name "rotateZ"
+                    axis 0 0 1
+                    angle 0
+                  }
+                }
+              }
+              Matrix {
+                1 0 0 0
+                0 1 0 0
+                0 0 1 0
+                0 0 0 1
+              }
+              InvBindMatrixInSkeletonSpace {
+                1 0 0 0
+                0 1 0 0
+                0 0 1 0
+                -0 -0 -0 1
+              }
+              MatrixInSkeletonSpace {
+                1 0 0 0
+                0 1 0 0
+                0 0 1 0
+                0 0 0 1
+              }
+            }
+          }
+        }
+      }
+      osgAnimation::Bone {
+        UniqueID Bone_22
+        name "bone9"
+        nodeMask 0xffffffff
+        cullingActive TRUE
+        UpdateCallbacks {
+          osgAnimation::UpdateBone {
+            name "bone9"
+            osgAnimation::StackedTranslateElement {
+              name "translate"
+              translate -0.811768 -0.811768 0
+            }
+            osgAnimation::StackedRotateAxisElement {
+              name "rotateX"
+              axis 1 0 0
+              angle 0
+            }
+            osgAnimation::StackedRotateAxisElement {
+              name "rotateY"
+              axis 0 1 0
+              angle 0
+            }
+            osgAnimation::StackedRotateAxisElement {
+              name "rotateZ"
+              axis 0 0 1
+              angle 0
+            }
+          }
+        }
+        Matrix {
+          1 0 0 0
+          0 1 0 0
+          0 0 1 0
+          0 0 0 1
+        }
+        InvBindMatrixInSkeletonSpace {
+          1 0 0 0
+          0 1 0 0
+          0 0 1 0
+          -0 -0 -0 1
+        }
+        MatrixInSkeletonSpace {
+          1 0 0 0
+          0 1 0 0
+          0 0 1 0
+          0 0 0 1
+        }
+        num_children 1
+        osgAnimation::Bone {
+          UniqueID Bone_23
+          name "bone10"
+          nodeMask 0xffffffff
+          cullingActive TRUE
+          UpdateCallbacks {
+            osgAnimation::UpdateBone {
+              name "bone10"
+              osgAnimation::StackedTranslateElement {
+                name "translate"
+                translate 0 -1.01318 0
+              }
+              osgAnimation::StackedRotateAxisElement {
+                name "rotateX"
+                axis 1 0 0
+                angle 0
+              }
+              osgAnimation::StackedRotateAxisElement {
+                name "rotateY"
+                axis 0 1 0
+                angle 0
+              }
+              osgAnimation::StackedRotateAxisElement {
+                name "rotateZ"
+                axis 0 0 1
+                angle 0
+              }
+            }
+          }
+          Matrix {
+            1 0 0 0
+            0 1 0 0
+            0 0 1 0
+            0 0 0 1
+          }
+          InvBindMatrixInSkeletonSpace {
+            1 0 0 0
+            0 1 0 0
+            0 0 1 0
+            -0 -0 -0 1
+          }
+          MatrixInSkeletonSpace {
+            1 0 0 0
+            0 1 0 0
+            0 0 1 0
+            0 0 0 1
+          }
+          num_children 1
+          osgAnimation::Bone {
+            UniqueID Bone_24
+            name "bone11"
+            nodeMask 0xffffffff
+            cullingActive TRUE
+            UpdateCallbacks {
+              osgAnimation::UpdateBone {
+                name "bone11"
+                osgAnimation::StackedTranslateElement {
+                  name "translate"
+                  translate 0.201416 -1.34277 -0.610352
+                }
+                osgAnimation::StackedRotateAxisElement {
+                  name "rotateX"
+                  axis 1 0 0
+                  angle 0
+                }
+                osgAnimation::StackedRotateAxisElement {
+                  name "rotateY"
+                  axis 0 1 0
+                  angle 0
+                }
+                osgAnimation::StackedRotateAxisElement {
+                  name "rotateZ"
+                  axis 0 0 1
+                  angle 0
+                }
+              }
+            }
+            Matrix {
+              1 0 0 0
+              0 1 0 0
+              0 0 1 0
+              0 0 0 1
+            }
+            InvBindMatrixInSkeletonSpace {
+              1 0 0 0
+              0 1 0 0
+              0 0 1 0
+              -0 -0 -0 1
+            }
+            MatrixInSkeletonSpace {
+              1 0 0 0
+              0 1 0 0
+              0 0 1 0
+              0 0 0 1
+            }
+            num_children 1
+            osgAnimation::Bone {
+              UniqueID Bone_25
+              name "bone20"
+              nodeMask 0xffffffff
+              cullingActive TRUE
+              UpdateCallbacks {
+                osgAnimation::UpdateBone {
+                  name "bone20"
+                  osgAnimation::StackedTranslateElement {
+                    name "translate"
+                    translate 0 -0.280762 0
+                  }
+                  osgAnimation::StackedRotateAxisElement {
+                    name "rotateX"
+                    axis 1 0 0
+                    angle 0
+                  }
+                  osgAnimation::StackedRotateAxisElement {
+                    name "rotateY"
+                    axis 0 1 0
+                    angle 0
+                  }
+                  osgAnimation::StackedRotateAxisElement {
+                    name "rotateZ"
+                    axis 0 0 1
+                    angle 0
+                  }
+                }
+              }
+              Matrix {
+                1 0 0 0
+                0 1 0 0
+                0 0 1 0
+                0 0 0 1
+              }
+              InvBindMatrixInSkeletonSpace {
+                1 0 0 0
+                0 1 0 0
+                0 0 1 0
+                -0 -0 -0 1
+              }
+              MatrixInSkeletonSpace {
+                1 0 0 0
+                0 1 0 0
+                0 0 1 0
+                0 0 0 1
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
