@@ -1,6 +1,8 @@
 <?xml version="1.0" ?>
 <World name="Colozen" firstmap="Map0_1" firstsparea="FirstSpawning">
-    <description>Expansion of the LBA1 original world. Made by DarkOnistar.</description>
+    <description>Welcome to Colozen, a new colony inhabited by Techlones, Colobees and Magilonies.
+    	You are a clone waking up into a new world where you discover your fate and the fate of others.
+	- World by DarkOnistar.</description>
     <!--Define the place it is possible to teleport to, the first place is the place where we arrive in the world-->
     <teleports>     
     </teleports>
@@ -37,7 +39,7 @@
         
         
 	 <!--Colobee Caverns-->
-        <Map name="Colobee_Caverns" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Colobee_Caverns" type="interior" music="Music/JADPCM04.mp3" repeatmusic="0">
             <description>Colobee Caverns</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -55,7 +57,7 @@
 	        
         
 	<!--Cloning Chamber-->
-        <Map name="Cloning_Chamber" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Cloning_Chamber" type="interior" music="Music/JADPCM11.mp3" repeatmusic="0">
             <description>Cloning Chamber</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -73,7 +75,7 @@
 	        
         
 	<!--Colobee Cave-->
-        <Map name="Colobee_Cave" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Colobee_Cave" type="interior" music="Music/JADPCM03.mp3" repeatmusic="0">
             <description>Colobee Cave</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -91,7 +93,7 @@
 	        
         
 	<!--Colobee Village-->
-        <Map name="Colobee_Village" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Colobee_Village" type="interior" music="Music/LBA1-Track3.mp3" repeatmusic="0">
             <description>Colobee Village</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -109,7 +111,7 @@
 	        
         
 	<!--Colobee Village Square-->
-        <Map name="Colobee_Village_Square" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Colobee_Village_Square" type="interior" music="Music/LBA1-Track3.mp3" repeatmusic="0">
             <description>Colobee Village Square</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -127,7 +129,7 @@
 	        
         
 	<!--Colobee House-->
-        <Map name="Colobee_House" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Colobee_House" type="interior" music="Music/LBA1-Track3.mp3" repeatmusic="0">
             <description>Colobee House</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -145,7 +147,7 @@
 	        
         
 	<!--Colobee Quest Center-->
-        <Map name="Colobee_Quest_Center" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Colobee_Quest_Center" type="interior" music="Music/LBA1-Track3.mp3" repeatmusic="0">
             <description>Colobee Quest Center</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -163,7 +165,7 @@
 	        
         
 	<!--Colobee Royal Court-->
-        <Map name="Colobee_Royal_Court" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Colobee_Royal_Court" type="interior" music="Music/LBA1-Track3.mp3" repeatmusic="0">
             <description>Colobee Royal Court</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -181,7 +183,7 @@
 	        
         
 	<!--Colobee School-->
-        <Map name="Colobee_School" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Colobee_School" type="interior" music="Music/LBA1-Track3.mp3" repeatmusic="0">
             <description>Colobee School</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -199,7 +201,7 @@
 	        
         
 	<!--Colobee Shop-->
-        <Map name="Colobee_Shop" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Colobee_Shop" type="interior" music="Music/LBA1-Track3.mp3" repeatmusic="0">
             <description>Colobee Shop</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -217,7 +219,7 @@
 	        
         
 	<!--Makers House-->
-        <Map name="Makers_House" type="exterior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Makers_House" type="exterior" music="Music/LBA1-Track2.mp3" repeatmusic="0">
             <description>Makers House</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -235,7 +237,7 @@
 	        
         
 	<!--Tech-Island Research Centre-->
-        <Map name="Tech-Island_Research_Centre" type="exterior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Tech-Island_Research_Centre" type="exterior" music="Music/LBA1-Track2.mp3" repeatmusic="0">
             <description>Tech-Island Research Centre</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -253,7 +255,7 @@
 	        
         
 	<!--Party beach-->
-        <Map name="Party_beach" type="exterior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Party_beach" type="exterior" music="Music/LBA1-Track2.mp3" repeatmusic="0">
             <description>Party beach</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -271,7 +273,7 @@
 	        
         
 	<!--The Trading Platform-->
-        <Map name="The_Trading_Platform" type="exterior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="The_Trading_Platform" type="exterior" music="Music/LBA1-Track2.mp3" repeatmusic="0">
             <description>The Trading Platform</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -289,7 +291,7 @@
 	        
         
 	<!--The Granite Cave (above)-->
-        <Map name="Above_Granite_Cave" type="exterior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Above_Granite_Cave" type="exterior" music="Music/LBA1-Track2.mp3" repeatmusic="0">
             <description>The Granite Cave (above)</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -307,7 +309,7 @@
 	        
         
 	<!--The Shipping Lane-->
-        <Map name="The_Shipping_Lane" type="exterior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="The_Shipping_Lane" type="exterior" music="Music/LBA1-Track2.mp3" repeatmusic="0">
             <description>The Shipping Lane</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -325,7 +327,7 @@
 	        
         
 	<!--Tech-Island Docks-->
-        <Map name="Tech-Island_Docks" type="exterior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Tech-Island_Docks" type="exterior" music="Music/JADPCM05.mp3" repeatmusic="0">
             <description>Tech-Island Docks</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -343,7 +345,7 @@
 	        
         
 	<!--Solidirity Park-->
-        <Map name="Solidirity_Park" type="exterior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Solidirity_Park" type="exterior" music="Music/JADPCM07.mp3" repeatmusic="0">
             <description>Solidirity Park</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -361,7 +363,7 @@
 	        
         
 	<!--Colobee Mountain Peak-->
-        <Map name="Colobee_Mountain_Peak" type="exterior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Colobee_Mountain_Peak" type="exterior" music="Music/LBA1-Track5.mp3" repeatmusic="0">
             <description>Colobee Mountain Peak</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -379,7 +381,7 @@
 	        
         
 	<!--Tinker Town-->
-        <Map name="Tinker_Town" type="exterior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Tinker_Town" type="exterior" music="Music/JADPCM08.mp3" repeatmusic="0">
             <description>Tinker Town</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -397,7 +399,7 @@
 	        
         
 	<!--Techside River-->
-        <Map name="Techside_River" type="exterior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Techside_River" type="exterior" music="Music/LBA1-Track2.mp3" repeatmusic="0">
             <description>Techside River</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -415,7 +417,7 @@
 	        
         
 	<!--The Tinkers Cafe-->
-        <Map name="The_Tinkers_Cafe" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="The_Tinkers_Cafe" type="interior" music="Music/JADPCM18.mp3" repeatmusic="0">
             <description>The Tinkers Cafe</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -433,7 +435,7 @@
 	        
         
 	<!--Dtech Industries-->
-        <Map name="Dtech_Industries" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Dtech_Industries" type="interior" music="Music/JADPCM17.mp3" repeatmusic="0">
             <description>Dtech Industries</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -451,7 +453,7 @@
 	        
         
 	<!--The Innovation house-->
-        <Map name="The_Innovation_house" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="The_Innovation_house" type="interior" music="Music/LBA1-Track9.mp3" repeatmusic="0">
             <description>The Innovation house</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -469,7 +471,7 @@
 	        
         
 	<!--The Makers House (Indoors)-->
-        <Map name="Inside_Makers_House" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Inside_Makers_House" type="interior" music="Music/LBA1-Track8.mp3" repeatmusic="0">
             <description>The Makers House (Indoors)</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -487,7 +489,7 @@
 	        
         
 	<!--Colozen Museum-->
-        <Map name="Colozen_Museum" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Colozen_Museum" type="interior" music="Music/JADPCM18.mp3" repeatmusic="0">
             <description>Colozen Museum</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -505,7 +507,7 @@
 	        
         
 	<!--Tinker-Town Police Station-->
-        <Map name="Tinker-Town_Police_Station" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Tinker-Town_Police_Station" type="interior" music="Music/JADPCM09.mp3" repeatmusic="0">
             <description>Tinker-Town Police Station</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -523,7 +525,7 @@
 	        
         
 	<!--Dtech fuel supplies-->
-        <Map name="Dtech_fuel_supplies" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Dtech_fuel_supplies" type="interior" music="Music/LBA1-Track7.mp3" repeatmusic="0">
             <description>Dtech fuel supplies</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -541,7 +543,7 @@
 	        
         
 	<!--Dtech Research Facility-->
-        <Map name="Dtech_Research_Facility" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Dtech_Research_Facility" type="interior" music="Music/JADPCM05.mp3" repeatmusic="0">
             <description>Dtech Research Facility</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -559,7 +561,7 @@
 	        
         
 	<!--The Granite Cave-->
-        <Map name="The_Granite_Cave" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="The_Granite_Cave" type="interior" music="Music/JADPCM14.mp3" repeatmusic="0">
             <description>The Granite Cave</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -577,7 +579,7 @@
 	        
         
 	<!--Tinker-Town Shop-->
-        <Map name="Tinker-Town_Shop" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Tinker-Town_Shop" type="interior" music="Music/JADPCM10.mp3" repeatmusic="0">
             <description>Tinker-Town Shop</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -595,7 +597,7 @@
 	        
         
 	<!--Tinker-town Sewers-->
-        <Map name="Tinker-town_Sewers" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Tinker-town_Sewers" type="interior" music="Music/LBA1-Track8.mp3" repeatmusic="0">
             <description>Tinker-town Sewers</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -613,7 +615,7 @@
 	        
         
 	<!--Tinker's Tunnel -->
-        <Map name="Tinkers_Tunnel" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+        <Map name="Tinkers_Tunnel" type="interior" music="Music/JADPCM03.mp3" repeatmusic="0">
             <description>Tinker's Tunnel</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
