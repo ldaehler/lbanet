@@ -1,0 +1,633 @@
+<?xml version="1.0" ?>
+<World name="Colozen" firstmap="Map0_1" firstsparea="FirstSpawning">
+    <description>Expansion of the LBA1 original world. Made by DarkOnistar.</description>
+    <!--Define the place it is possible to teleport to, the first place is the place where we arrive in the world-->
+    <teleports>     
+    </teleports>
+    <files>
+        <file name="bricks" path="Data/lba_brick_info.txt" />
+        <file name="inventory" path="Data/Inventory/Colozen_inventory.xml" />
+        <file name="sprites" path="Data/Sprites/sprites.xml" />
+        <file name="videos" path="Data/Sprites/videos.xml" />
+        <file name="sounds" path="Data/Samples/sounds.xml" />      
+        <file name="models" path="Data/Models/models.xml" />
+        <file name="quests" path="Data/Quest/Colozen.xml" />        
+        <file name="inventorytext" path="Data/Texts/Colozen/inventory.xml" />      
+        <file name="questtext" path="Data/Texts/Colozen/quest.xml" />        
+    </files>
+    <maps>
+        <!--Map of Citadel Island, Prison-->
+        <Map name="Map0_1" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Citadel Island, Prison</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="ExternalActors/Lba1/ea_map0.xml" />
+                <file name="LocalActors" path="LocalActors/Lba1/la_map0.xml" />
+                <file name="Maps" path="Maps/Lba1/map0.txt" />
+                <file name="Texts" path="Texts/Lba1/text3.xml" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+                <sparea name="FirstSpawning" posX="34.000000" posY="4.000000" posZ="34.000000" RotationAtArrival="0" />
+            </spareas>
+        </Map>
+        
+        
+        
+	 <!--Colobee Caverns-->
+        <Map name="Colobee_Caverns" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Colobee Caverns</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/ColobeeMountain/Royalpeak1.gr2" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--Cloning Chamber-->
+        <Map name="Cloning_Chamber" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Cloning Chamber</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/ColobeeMountain/start1.gr2" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--Colobee Cave-->
+        <Map name="Colobee_Cave" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Colobee Cave</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/ColobeeMountain/start-village2-1.gr2" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--Colobee Village-->
+        <Map name="Colobee_Village" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Colobee Village</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/ColobeeMountain/Village1-1.gr2" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--Colobee Village Square-->
+        <Map name="Colobee_Village_Square" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Colobee Village Square</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/ColobeeMountain/Village2-simple1.gr2" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--Colobee House-->
+        <Map name="Colobee_House" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Colobee House</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/ColobeeMountain/VillageHouse1.gr2" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--Colobee Quest Center-->
+        <Map name="Colobee_Quest_Center" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Colobee Quest Center</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/ColobeeMountain/VillageMail1.gr2" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--Colobee Royal Court-->
+        <Map name="Colobee_Royal_Court" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Colobee Royal Court</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/ColobeeMountain/VillageRoyal1.gr2" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--Colobee School-->
+        <Map name="Colobee_School" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Colobee School</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/ColobeeMountain/VillageSchool1.gr2" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--Colobee Shop-->
+        <Map name="Colobee_Shop" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Colobee Shop</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/ColobeeMountain/VillageShop1.gr2" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--Makers House-->
+        <Map name="Makers_House" type="exterior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Makers House</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/Island/Outside1.3.gr1" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--Tech-Island Research Centre-->
+        <Map name="Tech-Island_Research_Centre" type="exterior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Tech-Island Research Centre</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/Island/OutsideResearch1.gr1" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--Party beach-->
+        <Map name="Party_beach" type="exterior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Party beach</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/Island/sea1-path1.gr1" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--The Trading Platform-->
+        <Map name="The_Trading_Platform" type="exterior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>The Trading Platform</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/Island/sea2-path1.gr1" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--The Granite Cave (above)-->
+        <Map name="Above_Granite_Cave" type="exterior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>The Granite Cave (above)</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/Island/sea3-path1.gr1" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--The Shipping Lane-->
+        <Map name="The_Shipping_Lane" type="exterior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>The Shipping Lane</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/Island/sea4-path1.gr1" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--Tech-Island Docks-->
+        <Map name="Tech-Island_Docks" type="exterior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Tech-Island Docks</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/Island/TheDocks1.gr1" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--Solidirity Park-->
+        <Map name="Solidirity_Park" type="exterior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Solidirity Park</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/Island/TheGardens1.gr1" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--Colobee Mountain Peak-->
+        <Map name="Colobee_Mountain_Peak" type="exterior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Colobee Mountain Peak</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/Island/ThePeak1.gr1" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--Tinker Town-->
+        <Map name="Tinker_Town" type="exterior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Tinker Town</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/Island/Town1.gr1" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--Techside River-->
+        <Map name="Techside_River" type="exterior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Techside River</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/Island/TunnelEntrance1.gr1" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--The Tinkers Cafe-->
+        <Map name="The_Tinkers_Cafe" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>The Tinkers Cafe</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/Island/Indoors/Cafe1.gr1" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--Dtech Industries-->
+        <Map name="Dtech_Industries" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Dtech Industries</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/Island/Indoors/Factory1.gr1" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--The Innovation house-->
+        <Map name="The_Innovation_house" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>The Innovation house</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/Island/Indoors/flower1.gr1" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--The Makers House (Indoors)-->
+        <Map name="Inside_Makers_House" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>The Makers House (Indoors)</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/Island/Indoors/makershouse1.gr1" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--Colozen Museum-->
+        <Map name="Colozen_Museum" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Colozen Museum</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/Island/Indoors/Museum1.gr1" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--Tinker-Town Police Station-->
+        <Map name="Tinker-Town_Police_Station" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Tinker-Town Police Station</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/Island/Indoors/PoliceStation1.gr1" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--Dtech fuel supplies-->
+        <Map name="Dtech_fuel_supplies" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Dtech fuel supplies</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/Island/Indoors/Research1-1.gr2" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--Dtech Research Facility-->
+        <Map name="Dtech_Research_Facility" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Dtech Research Facility</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/Island/Indoors/Research2-1.gr2" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--The Granite Cave-->
+        <Map name="The_Granite_Cave" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>The Granite Cave</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/Island/Indoors/sea-cave1.gr1" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--Tinker-Town Shop-->
+        <Map name="Tinker-Town_Shop" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Tinker-Town Shop</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/Island/Indoors/Shop1.gr1" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--Tinker-town Sewers-->
+        <Map name="Tinker-town_Sewers" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Tinker-town Sewers</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/Island/Indoors/town-sewers1.gr1" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+	        
+        
+	<!--Tinker's Tunnel -->
+        <Map name="Tinkers_Tunnel" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
+            <description>Tinker's Tunnel</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="" />
+                <file name="LocalActors" path="" />
+                <file name="Maps" path="Maps/Colozen/Island/Indoors/Tunnel1.gr2" />
+                <file name="Texts" path="" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+            </spareas>
+        </Map>
+   
+    </maps>
+</World>
