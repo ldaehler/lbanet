@@ -46,7 +46,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/ColobeeMountain/Royalpeak1.gr2" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -64,7 +64,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/ColobeeMountain/start1.gr2" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -82,7 +82,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/ColobeeMountain/start-village2-1.gr2" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -100,7 +100,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/ColobeeMountain/Village1-1.gr2" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -118,7 +118,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/ColobeeMountain/Village2-simple1.gr2" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -136,7 +136,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/ColobeeMountain/VillageHouse1.gr2" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -154,7 +154,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/ColobeeMountain/VillageMail1.gr2" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -172,7 +172,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/ColobeeMountain/VillageRoyal1.gr2" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -190,7 +190,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/ColobeeMountain/VillageSchool1.gr2" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -208,7 +208,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/ColobeeMountain/VillageShop1.gr2" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -226,7 +226,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/Island/Outside1.3.gr1" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -244,7 +244,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/Island/OutsideResearch1.gr1" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -262,7 +262,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/Island/sea1-path1.gr1" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -280,7 +280,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/Island/sea2-path1.gr1" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -298,7 +298,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/Island/sea3-path1.gr1" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -316,7 +316,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/Island/sea4-path1.gr1" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -334,7 +334,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/Island/TheDocks1.gr1" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -352,7 +352,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/Island/TheGardens1.gr1" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -370,7 +370,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/Island/ThePeak1.gr1" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -388,7 +388,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/Island/Town1.gr1" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -406,7 +406,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/Island/TunnelEntrance1.gr1" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -424,7 +424,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/Island/Indoors/Cafe1.gr1" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -442,7 +442,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/Island/Indoors/Factory1.gr1" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -460,7 +460,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/Island/Indoors/flower1.gr1" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -478,7 +478,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/Island/Indoors/makershouse1.gr1" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -496,7 +496,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/Island/Indoors/Museum1.gr1" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -514,7 +514,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/Island/Indoors/PoliceStation1.gr1" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -532,7 +532,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/Island/Indoors/Research1-1.gr2" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -550,7 +550,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/Island/Indoors/Research2-1.gr2" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -568,7 +568,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/Island/Indoors/sea-cave1.gr1" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -586,7 +586,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/Island/Indoors/Shop1.gr1" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -604,7 +604,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/Island/Indoors/town-sewers1.gr1" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
@@ -622,7 +622,7 @@
                 <file name="ExternalActors" path="" />
                 <file name="LocalActors" path="" />
                 <file name="Maps" path="Maps/Colozen/Island/Indoors/Tunnel1.gr2" />
-                <file name="Texts" path="" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
