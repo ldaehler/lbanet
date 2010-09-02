@@ -259,6 +259,39 @@ MapInfo MapInfoXmlReader::LoadMap(TiXmlElement* pElem)
 		{
 			res.Files[pElem->Attribute("name")] = pElem->Attribute("path");
 		}
+
+		if(res.Files["ExternalActors"] == "")
+		{
+			std::string newfile(res.Files["Maps"]);
+			newfile = newfile.substr(4);
+			newfile = "ExternalActors" + newfile;
+			newfile.replace(newfile.size() - 3, 3, "xml");
+			if(!std::ifstream(("Data/"+newfile).c_str()))
+			{
+				std::ofstream file(("Data/"+newfile).c_str())	;
+				file<<"<actors>"<<std::endl<<"</actors>"<<std::endl;
+				file.close();
+			}
+
+			res.Files["ExternalActors"] = newfile;
+		}
+
+
+		if(res.Files["LocalActors"] == "")
+		{
+			std::string newfile(res.Files["Maps"]);
+			newfile = newfile.substr(4);
+			newfile = "LocalActors" + newfile;
+			newfile.replace(newfile.size() - 3, 3, "xml");
+			if(!std::ifstream(("Data/"+newfile).c_str()))
+			{
+				std::ofstream file(("Data/"+newfile).c_str())	;
+				file<<"<actors>"<<std::endl<<"</actors>"<<std::endl;
+				file.close();
+			}
+
+			res.Files["LocalActors"] = newfile;
+		}
 	}
 
 	// block: lights
