@@ -293,12 +293,11 @@ void LbaNetModel::Draw()
 
 
 #ifdef _LBANET_SET_EDITOR_
-	// render editor stuff
-	//if(_mapRenderer)
-	//	_mapRenderer->RenderEditor();
-
 	_localActorsHandler->RenderEditor();
 	_externalActorsHandler->RenderEditor();
+
+	// draw exits
+	_exitsH->RenderEditor();
 #endif
 
 	// reset opengl
