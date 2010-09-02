@@ -1,2 +1,6 @@
+<?xml version="1.0" encoding="UTF8" ?>
 <actors>
+    <actor id="0" type="1" posX="27.600000" posY="0.000000" posZ="20.400000" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" offsetsizeY="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" collidable="1" actif="0" allowfreemove="0" signaltargets="1" activationdistance="4.000000" textid="1" activationtype="1" />
+    <actor id="1" type="1" posX="49.000000" posY="0.000000" posZ="60.000000" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" offsetsizeY="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" collidable="1" actif="0" allowfreemove="0" signaltargets="" activationdistance="3.000000" textid="0" activationtype="1" />
+    <actor id="2" type="1" posX="15.000000" posY="0.000000" posZ="50.000000" sizeX="0.000000" sizeY="0.000000" sizeZ="0.000000" offsetsizeY="0.000000" rotation="0.000000" passable="1" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" collidable="1" actif="0" allowfreemove="0" signaltargets="" activationdistance="4.000000" textid="0" activationtype="1" />
 </actors>

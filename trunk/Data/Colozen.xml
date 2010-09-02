@@ -17,6 +17,28 @@
         <file name="videos" path="Data/Sprites/videos.xml" />
     </files>
     <maps>
+        <!--Map of Above_Granite_Cave-->
+        <Map name="Above_Granite_Cave" type="exterior" music="Music/LBA1-Track2.mp3" repeatmusic="0">
+            <description>Above_Granite_Cave</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="ExternalActors/Colozen/Island/sea3-path1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/Island/sea3-path1.xml" />
+                <file name="Maps" path="Maps/Colozen/Island/sea3-path1.txt" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+                <sparea name="Admin Teleport" posX="41.000000" posY="5.000000" posZ="18.000000" RotationAtArrival="0" />
+                <sparea name="FromGraniteCave" posX="41.000000" posY="4.000000" posZ="26.000000" RotationAtArrival="0" />
+            </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="ToGraniteCave" TopRightX="40.000000" TopRightY="9.000000" TopRightZ="28.000000" BottomLeftX="39.000000" BottomLeftY="4.000000" BottomLeftZ="26.000000" newMap="The_Granite_Cave" spawning="FromAboveGraniteCave" />
+            </exits>
+        </Map>
         <!--Map of Cloning Chamber-->
         <Map name="Cloning_Chamber" type="interior" music="Music/JADPCM11.mp3" repeatmusic="0">
             <description>Cloning Chamber</description>
@@ -53,13 +75,13 @@
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
-                <sparea name="door1" posX="52.000000" posY="2.000000" posZ="33.000000" RotationAtArrival="0" />
+                <sparea name="door1" posX="52.000000" posY="2.000000" posZ="32.000000" RotationAtArrival="0" />
                 <sparea name="ladder" posX="37.000000" posY="2.000000" posZ="22.000000" RotationAtArrival="0" />
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
-                <exit name="door1ex" TopRightX="55.000000" TopRightY="9.000000" TopRightZ="35.000000" BottomLeftX="54.000000" BottomLeftY="3.000000" BottomLeftZ="33.000000" newMap="Cloning_Chamber" spawning="door1" />
-                <exit name="ladder" TopRightX="38.000000" TopRightY="10.000000" TopRightZ="21.000000" BottomLeftX="36.000000" BottomLeftY="8.000000" BottomLeftZ="20.000000" newMap="Colobee_Village_Square" spawning="laddercave" />
+                <exit name="door1ex" TopRightX="55.000000" TopRightY="9.000000" TopRightZ="36.000000" BottomLeftX="54.000000" BottomLeftY="3.000000" BottomLeftZ="32.000000" newMap="Cloning_Chamber" spawning="door1" />
+                <exit name="ladder" TopRightX="38.000000" TopRightY="12.000000" TopRightZ="21.000000" BottomLeftX="36.000000" BottomLeftY="10.000000" BottomLeftZ="20.000000" newMap="Colobee_Village_Square" spawning="laddercave" />
             </exits>
         </Map>
         <!--Map of Colobee Caverns-->
@@ -77,7 +99,7 @@
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
                 <sparea name="frompeak" posX="48.000000" posY="16.000000" posZ="14.000000" RotationAtArrival="0" />
-                <sparea name="fromroyal" posX="13.000000" posY="11.000000" posZ="22.000000" RotationAtArrival="0" />
+                <sparea name="fromroyal" posX="14.000000" posY="11.000000" posZ="22.000000" RotationAtArrival="0" />
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
@@ -107,7 +129,7 @@
             </exits>
         </Map>
         <!--Map of Colobee Mountain Peak-->
-        <Map name="Colobee_Mountain_Peak" type="exterior" music="Music/LBA1-Track5.mp3" repeatmusic="0">
+        <Map name="Colobee_Mountain_Peak" type="exterior" music="Music/LBA1-Track4.mp3" repeatmusic="0">
             <description>Colobee Mountain Peak</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -193,7 +215,7 @@
             </exits>
         </Map>
         <!--Map of Colobee Shop-->
-        <Map name="Colobee_Shop" type="interior" music="Music/LBA1-Track3.mp3" repeatmusic="0">
+        <Map name="Colobee_Shop" type="interior" music="Music/Midi_mi_win15.midi" repeatmusic="0">
             <description>Colobee Shop</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -229,7 +251,7 @@
             <spareas>
                 <sparea name="fromdock" posX="20.000000" posY="1.000000" posZ="59.000000" RotationAtArrival="0" />
                 <sparea name="fromsquare1" posX="30.000000" posY="5.000000" posZ="5.000000" RotationAtArrival="0" />
-                <sparea name="fromsquare2" posX="37.000000" posY="9.000000" posZ="33.000000" RotationAtArrival="0" />
+                <sparea name="fromsquare2" posX="38.000000" posY="9.000000" posZ="32.000000" RotationAtArrival="0" />
                 <sparea name="fromtech" posX="6.000000" posY="11.000000" posZ="5.000000" RotationAtArrival="0" />
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
@@ -237,7 +259,7 @@
                 <exit name="todock" TopRightX="22.000000" TopRightY="8.000000" TopRightZ="62.000000" BottomLeftX="20.000000" BottomLeftY="2.000000" BottomLeftZ="61.000000" newMap="Tech-Island_Docks" spawning="fromvillage1" />
                 <exit name="tomaker" TopRightX="3.000000" TopRightY="21.000000" TopRightZ="7.000000" BottomLeftX="2.000000" BottomLeftY="15.000000" BottomLeftZ="5.000000" newMap="Makers_House" spawning="fromcolobee" />
                 <exit name="tosquare1" TopRightX="34.000000" TopRightY="12.000000" TopRightZ="7.000000" BottomLeftX="33.000000" BottomLeftY="6.000000" BottomLeftZ="5.000000" newMap="Colobee_Village_Square" spawning="fromvillage1" />
-                <exit name="tosquare2" TopRightX="41.000000" TopRightY="16.000000" TopRightZ="35.000000" BottomLeftX="40.000000" BottomLeftY="10.000000" BottomLeftZ="33.000000" newMap="Colobee_Village_Square" spawning="fromvillage2" />
+                <exit name="tosquare2" TopRightX="41.000000" TopRightY="16.000000" TopRightZ="34.000000" BottomLeftX="40.000000" BottomLeftY="10.000000" BottomLeftZ="32.000000" newMap="Colobee_Village_Square" spawning="fromvillage2" />
             </exits>
         </Map>
         <!--Map of Colobee Village Square-->
@@ -256,19 +278,19 @@
             <spareas>
                 <sparea name="fromhouse" posX="20.000000" posY="7.000000" posZ="37.000000" RotationAtArrival="0" />
                 <sparea name="fromquestc" posX="27.000000" posY="7.000000" posZ="32.000000" RotationAtArrival="0" />
-                <sparea name="fromroyal" posX="44.000000" posY="13.000000" posZ="4.000000" RotationAtArrival="0" />
+                <sparea name="fromroyal" posX="44.058201" posY="14.101001" posZ="5.000000" RotationAtArrival="0" />
                 <sparea name="fromschool" posX="7.000000" posY="7.000000" posZ="42.000000" RotationAtArrival="0" />
                 <sparea name="fromstore" posX="17.000000" posY="2.000000" posZ="17.000000" RotationAtArrival="0" />
                 <sparea name="fromvillage1" posX="7.000000" posY="8.000000" posZ="9.000000" RotationAtArrival="0" />
-                <sparea name="fromvillage2" posX="7.000000" posY="13.000000" posZ="28.000000" RotationAtArrival="0" />
+                <sparea name="fromvillage2" posX="6.000000" posY="13.000000" posZ="28.000000" RotationAtArrival="0" />
                 <sparea name="laddercave" posX="46.000000" posY="1.000000" posZ="43.000000" RotationAtArrival="0" />
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
-                <exit name="ladderdown" TopRightX="47.500000" TopRightY="5.000000" TopRightZ="45.000000" BottomLeftX="44.500000" BottomLeftY="1.000000" BottomLeftZ="44.000000" newMap="Colobee_Cave" spawning="ladder" />
+                <exit name="ladderdown" TopRightX="47.500000" TopRightY="5.000000" TopRightZ="46.000000" BottomLeftX="44.500000" BottomLeftY="1.000000" BottomLeftZ="44.000000" newMap="Colobee_Cave" spawning="ladder" />
                 <exit name="tohouse" TopRightX="19.299999" TopRightY="14.000000" TopRightZ="39.000000" BottomLeftX="18.299999" BottomLeftY="8.000000" BottomLeftZ="37.000000" newMap="Colobee_House" spawning="fromsquare" />
                 <exit name="toquestc" TopRightX="26.200001" TopRightY="14.000000" TopRightZ="34.000000" BottomLeftX="25.200001" BottomLeftY="8.000000" BottomLeftZ="32.000000" newMap="Colobee_Quest_Center" spawning="fromsquare" />
-                <exit name="toroyal" TopRightX="48.000000" TopRightY="19.000000" TopRightZ="4.000000" BottomLeftX="44.000000" BottomLeftY="14.000000" BottomLeftZ="3.000000" newMap="Colobee_Royal_Court" spawning="villagesquare" />
+                <exit name="toroyal" TopRightX="47.458202" TopRightY="20.000999" TopRightZ="3.345510" BottomLeftX="43.458202" BottomLeftY="14.001000" BottomLeftZ="2.345510" newMap="Colobee_Royal_Court" spawning="villagesquare" />
                 <exit name="toschool" TopRightX="6.100000" TopRightY="14.000000" TopRightZ="44.000000" BottomLeftX="5.100000" BottomLeftY="8.000000" BottomLeftZ="42.000000" newMap="Colobee_School" spawning="fromsquare" />
                 <exit name="tostore" TopRightX="16.000000" TopRightY="9.000000" TopRightZ="19.000000" BottomLeftX="15.000000" BottomLeftY="3.000000" BottomLeftZ="17.000000" newMap="Colobee_Shop" spawning="fromsquare" />
                 <exit name="tovillage1" TopRightX="6.000000" TopRightY="15.000000" TopRightZ="11.000000" BottomLeftX="5.000000" BottomLeftY="9.000000" BottomLeftZ="9.000000" newMap="Colobee_Village" spawning="fromsquare1" />
@@ -293,7 +315,7 @@
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
-                <exit name="toout" TopRightX="19.000000" TopRightY="10.000000" TopRightZ="57.000000" BottomLeftX="13.000000" BottomLeftY="3.000000" BottomLeftZ="56.000000" newMap="Tinker_Town" spawning="frommuseum" />
+                <exit name="toout" TopRightX="16.000000" TopRightY="10.000000" TopRightZ="57.000000" BottomLeftX="13.000000" BottomLeftY="3.000000" BottomLeftZ="56.000000" newMap="Tinker_Town" spawning="frommuseum" />
             </exits>
         </Map>
         <!--Map of Dtech Industries-->
@@ -314,7 +336,7 @@
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
-                <exit name="toout" TopRightX="26.000000" TopRightY="20.000000" TopRightZ="54.000000" BottomLeftX="22.000000" BottomLeftY="13.000000" BottomLeftZ="53.000000" newMap="Tinker_Town" spawning="fromfactory" />
+                <exit name="toout" TopRightX="25.000000" TopRightY="20.000000" TopRightZ="54.000000" BottomLeftX="22.000000" BottomLeftY="13.000000" BottomLeftZ="53.000000" newMap="Tinker_Town" spawning="fromfactory" />
             </exits>
         </Map>
         <!--Map of Dtech Research Facility-->
@@ -331,17 +353,17 @@
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
-                <sparea name="fromout" posX="55.000000" posY="5.000000" posZ="20.000000" RotationAtArrival="0" />
+                <sparea name="fromout" posX="56.000000" posY="5.000000" posZ="19.000000" RotationAtArrival="0" />
                 <sparea name="toresearch1" posX="22.000000" posY="5.000000" posZ="54.000000" RotationAtArrival="0" />
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
-                <exit name="toout" TopRightX="58.000000" TopRightY="13.000000" TopRightZ="24.000000" BottomLeftX="57.000000" BottomLeftY="6.000000" BottomLeftZ="20.000000" newMap="Tech-Island_Research_Centre" spawning="from research2" />
+                <exit name="toout" TopRightX="58.000000" TopRightY="13.000000" TopRightZ="24.000000" BottomLeftX="57.000000" BottomLeftY="6.000000" BottomLeftZ="19.000000" newMap="Tech-Island_Research_Centre" spawning="from research2" />
                 <exit name="toresearch1" TopRightX="25.000000" TopRightY="14.000000" TopRightZ="56.000000" BottomLeftX="22.000000" BottomLeftY="6.000000" BottomLeftZ="55.000000" newMap="Dtech_fuel_supplies" spawning="fromresearch2" />
             </exits>
         </Map>
         <!--Map of Dtech fuel supplies-->
-        <Map name="Dtech_fuel_supplies" type="interior" music="Music/LBA1-Track7.mp3" repeatmusic="0">
+        <Map name="Dtech_fuel_supplies" type="interior" music="Music/JADPCM13.mp3" repeatmusic="0">
             <description>Dtech fuel supplies</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -354,17 +376,17 @@
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
-                <sparea name="fromout" posX="56.000000" posY="4.000000" posZ="35.000000" RotationAtArrival="0" />
+                <sparea name="fromout" posX="56.000000" posY="4.000000" posZ="34.000000" RotationAtArrival="0" />
                 <sparea name="fromresearch2" posX="12.000000" posY="17.000000" posZ="7.000000" RotationAtArrival="0" />
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
-                <exit name="toout" TopRightX="58.000000" TopRightY="12.000000" TopRightZ="38.000000" BottomLeftX="57.000000" BottomLeftY="5.000000" BottomLeftZ="35.000000" newMap="Tech-Island_Research_Centre" spawning="fromresearch1" />
+                <exit name="toout" TopRightX="58.000000" TopRightY="12.000000" TopRightZ="39.000000" BottomLeftX="57.000000" BottomLeftY="5.000000" BottomLeftZ="34.000000" newMap="Tech-Island_Research_Centre" spawning="fromresearch1" />
                 <exit name="toresearch2" TopRightX="15.000000" TopRightY="26.000000" TopRightZ="6.000000" BottomLeftX="12.000000" BottomLeftY="18.000000" BottomLeftZ="5.000000" newMap="Dtech_Research_Facility" spawning="toresearch1" />
             </exits>
         </Map>
         <!--Map of The Makers House (Indoors)-->
-        <Map name="Inside_Makers_House" type="interior" music="Music/LBA1-Track8.mp3" repeatmusic="0">
+        <Map name="Inside_Makers_House" type="interior" music="Music/LBA2-Track1.mp3" repeatmusic="0">
             <description>The Makers House (Indoors)</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -385,7 +407,7 @@
             </exits>
         </Map>
         <!--Map of Makers House-->
-        <Map name="Makers_House" type="exterior" music="Music/LBA2-Track1.mp3" repeatmusic="0">
+        <Map name="Makers_House" type="exterior" music="Music/LBA1-Track2.mp3" repeatmusic="0">
             <description>Makers House</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -422,7 +444,9 @@
             <!--Describe the lights present in the scene-->
             <lights />
             <!--Describe the possible spawning areas of the main character-->
-            <spareas />
+            <spareas>
+                <sparea name="Admin Teleport" posX="34.000000" posY="0.000000" posZ="25.000000" RotationAtArrival="0" />
+            </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits />
         </Map>
@@ -484,7 +508,7 @@
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
-                <sparea name="from research2" posX="33.000000" posY="8.000000" posZ="26.000000" RotationAtArrival="0" />
+                <sparea name="from research2" posX="32.000000" posY="8.000000" posZ="26.000000" RotationAtArrival="0" />
                 <sparea name="frommaker" posX="30.000000" posY="0.000000" posZ="3.000000" RotationAtArrival="0" />
                 <sparea name="frompark" posX="3.000000" posY="0.000000" posZ="30.000000" RotationAtArrival="0" />
                 <sparea name="fromresearch1" posX="31.000000" posY="4.000000" posZ="46.000000" RotationAtArrival="0" />
@@ -539,9 +563,14 @@
             <!--Describe the lights present in the scene-->
             <lights />
             <!--Describe the possible spawning areas of the main character-->
-            <spareas />
+            <spareas>
+                <sparea name="Admin Teleport" posX="40.000000" posY="8.001000" posZ="37.000000" RotationAtArrival="0" />
+                <sparea name="FromAboveGraniteCave" posX="53.000000" posY="13.000000" posZ="37.000000" RotationAtArrival="0" />
+            </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
-            <exits />
+            <exits>
+                <exit name="ToAboveGraniteCave" TopRightX="56.000000" TopRightY="19.000999" TopRightZ="39.000000" BottomLeftX="55.000000" BottomLeftY="12.001000" BottomLeftZ="37.000000" newMap="Above_Granite_Cave" spawning="FromGraniteCave" />
+            </exits>
         </Map>
         <!--Map of The Innovation house-->
         <Map name="The_Innovation_house" type="interior" music="Music/LBA1-Track9.mp3" repeatmusic="0">
@@ -577,7 +606,9 @@
             <!--Describe the lights present in the scene-->
             <lights />
             <!--Describe the possible spawning areas of the main character-->
-            <spareas />
+            <spareas>
+                <sparea name="Admin Teleport" posX="40.000000" posY="1.001000" posZ="24.000000" RotationAtArrival="0" />
+            </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits />
         </Map>
@@ -615,7 +646,9 @@
             <!--Describe the lights present in the scene-->
             <lights />
             <!--Describe the possible spawning areas of the main character-->
-            <spareas />
+            <spareas>
+                <sparea name="Admin Teleport" posX="31.000000" posY="1.000000" posZ="11.000000" RotationAtArrival="0" />
+            </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits />
         </Map>
@@ -637,7 +670,7 @@
             </spareas>
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
-                <exit name="toout" TopRightX="58.000000" TopRightY="20.000000" TopRightZ="32.000000" BottomLeftX="57.000000" BottomLeftY="13.000000" BottomLeftZ="27.000000" newMap="Tinker_Town" spawning="frompolice" />
+                <exit name="toout" TopRightX="58.000000" TopRightY="20.000000" TopRightZ="31.000000" BottomLeftX="57.000000" BottomLeftY="13.000000" BottomLeftZ="27.000000" newMap="Tinker_Town" spawning="frompolice" />
             </exits>
         </Map>
         <!--Map of Tinker-Town Shop-->
@@ -685,7 +718,7 @@
             </exits>
         </Map>
         <!--Map of Tinker Town-->
-        <Map name="Tinker_Town" type="exterior" music="Music/JADPCM08.mp3" repeatmusic="0">
+        <Map name="Tinker_Town" type="exterior" music="Music/JADPCM16.mp3" repeatmusic="0">
             <description>Tinker Town</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
@@ -743,7 +776,7 @@
             <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
             <exits>
                 <exit name="todock" TopRightX="58.000000" TopRightY="7.000000" TopRightZ="25.000000" BottomLeftX="56.000000" BottomLeftY="1.000000" BottomLeftZ="24.000000" newMap="Tech-Island_Docks" spawning="fromtunnel" />
-                <exit name="totown" TopRightX="11.000000" TopRightY="20.000000" TopRightZ="61.000000" BottomLeftX="9.000000" BottomLeftY="14.000000" BottomLeftZ="60.000000" newMap="Techside_River" spawning="fromtunnel" />
+                <exit name="totown" TopRightX="13.000000" TopRightY="20.000000" TopRightZ="61.000000" BottomLeftX="9.000000" BottomLeftY="14.000000" BottomLeftZ="60.000000" newMap="Techside_River" spawning="fromtunnel" />
             </exits>
         </Map>
     </maps>
