@@ -36,6 +36,7 @@ MapManagerServant::MapManagerServant(const Ice::CommunicatorPtr& communicator,
 	worlds.push_back("GiantPrincipalWorld");
 	worlds.push_back("Lba1Expanded");
 	worlds.push_back("Lba1OriginalWorld");
+	worlds.push_back("Colozen");
 
 	for(size_t i=0; i<worlds.size(); ++i)
 	{

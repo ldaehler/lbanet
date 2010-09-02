@@ -54,12 +54,14 @@ SessionServant::SessionServant(const std::string& userId, const RoomManagerPrx& 
 	_session_world_inventory_files["Lba1Expanded"] = "Data/Inventory/lba1E_inventory.xml";
 	_session_world_inventory_files["GiantCitadel"] = "Data/Inventory/lba1_inventory.xml";
 	_session_world_inventory_files["GiantPrincipal"] = "Data/Inventory/lba1_inventory.xml";
+	_session_world_inventory_files["Colozen"] = "Data/Inventory/Colozen_inventory.xml";
 
 
 	_session_world_quest_files["Lba1Original"] = "Data/Quest/lba1.xml";
 	_session_world_quest_files["Lba1Expanded"] = "Data/Quest/lba1E.xml";
 	_session_world_quest_files["GiantCitadel"] = "Data/Quest/lba1.xml";
 	_session_world_quest_files["GiantPrincipal"] = "Data/Quest/lba1.xml";
+	_session_world_quest_files["Colozen"] = "Data/Quest/Colozen.xml";
 }
 
 
