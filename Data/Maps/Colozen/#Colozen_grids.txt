@@ -1,0 +1,33 @@
+./Colozen/ColobeeMountain/Royalpeak1.gr2,-1,Colobee Caverns,inside
+./Colozen/ColobeeMountain/start1.gr2,-1,Cloning Chamber,inside
+./Colozen/ColobeeMountain/start-village2-1.gr2,-1,Colobee Cave,inside
+./Colozen/ColobeeMountain/Village1-1.gr2,-1,Colobee Village,inside
+./Colozen/ColobeeMountain/Village2-simple1.gr2,-1,Colobee Village Square,inside
+./Colozen/ColobeeMountain/VillageHouse1.gr2,-1,Colobee House,inside
+./Colozen/ColobeeMountain/VillageMail1.gr2,-1,Colobee Quest Center,inside
+./Colozen/ColobeeMountain/VillageRoyal1.gr2,-1,Colobee Royal Court,inside
+./Colozen/ColobeeMountain/VillageSchool1.gr2,-1,Colobee School,inside
+./Colozen/ColobeeMountain/VillageShop1.gr2,-1,Colobee Shop,inside
+./Colozen/Island/Outside1.3.gr1,12,Makers House,outside
+./Colozen/Island/OutsideResearch1.gr1,12,Tech-Island Research Centre,outside
+./Colozen/Island/sea1-path1.gr1,116,Party beach,outside
+./Colozen/Island/sea2-path1.gr1,1,The Trading Platform,outside
+./Colozen/Island/sea3-path1.gr1,1,The Granite Cave (above),outside
+./Colozen/Island/sea4-path1.gr1,1,The Shipping Lane,outside
+./Colozen/Island/TheDocks1.gr1,12,Tech-Island Docks,outside
+./Colozen/Island/TheGardens1.gr1,12,Solidirity Park,outside
+./Colozen/Island/ThePeak1.gr1,93,Colobee Mountain Peak,outside
+./Colozen/Island/Town1.gr1,12,Tinker Town,outside
+./Colozen/Island/TunnelEntrance1.gr1,12,Techside River,outside
+./Colozen/Island/Indoors/Cafe1.gr1,7,The Tinkers Cafe,inside
+./Colozen/Island/Indoors/Factory1.gr1,0,Dtech Industries,inside
+./Colozen/Island/Indoors/flower1.gr1,5,The Innovation house,inside
+./Colozen/Island/Indoors/makershouse1.gr1,5,The Makers House (Indoors),inside
+./Colozen/Island/Indoors/Museum1.gr1,7,Colozen Museum,inside
+./Colozen/Island/Indoors/PoliceStation1.gr1,0,Tinker-Town Police Station,inside
+./Colozen/Island/Indoors/Research1-1.gr2,-1,Dtech fuel supplies,inside
+./Colozen/Island/Indoors/Research2-1.gr2,-1,Dtech Research Facility,inside
+./Colozen/Island/Indoors/sea-cave1.gr1,34,The Granite Cave,inside
+./Colozen/Island/Indoors/Shop1.gr1,5,Tinker-Town Shop,inside
+./Colozen/Island/Indoors/town-sewers1.gr1,34,Tinker-town Sewers,inside
+./Colozen/Island/Indoors/Tunnel1.gr2,-1,Tinker's Tunnel,inside

@@ -1,68 +1,29 @@
 <?xml version="1.0" ?>
-<World name="Colozen" firstmap="Map0_1" firstsparea="FirstSpawning">
-    <description>Welcome to Colozen, a new colony inhabited by Techlones, Colobees and Magilonies.
-    	You are a clone waking up into a new world where you discover your fate and the fate of others.
-	- World by DarkOnistar.</description>
+<World name="Colozen" firstmap="Cloning_Chamber" firstsparea="Firstspawning">
+    <description>Welcome to Colozen, a new colony inhabited by Techlones, Colobees and Magilonies. You are a clone waking up into a new world where you discover your fate and the fate of others. - World by DarkOnistar.</description>
     <!--Define the place it is possible to teleport to, the first place is the place where we arrive in the world-->
-    <teleports>     
+    <teleports>
+        <teleport name="Cloning Chamber" map="Cloning_Chamber" sparea="Firstspawning" />
     </teleports>
     <files>
         <file name="bricks" path="Data/lba_brick_info.txt" />
         <file name="inventory" path="Data/Inventory/Colozen_inventory.xml" />
+        <file name="inventorytext" path="Data/Texts/Colozen/inventory.xml" />
+        <file name="models" path="Data/Models/models.xml" />
+        <file name="quests" path="Data/Quest/Colozen.xml" />
+        <file name="questtext" path="Data/Texts/Colozen/quest.xml" />
+        <file name="sounds" path="Data/Samples/sounds.xml" />
         <file name="sprites" path="Data/Sprites/sprites.xml" />
         <file name="videos" path="Data/Sprites/videos.xml" />
-        <file name="sounds" path="Data/Samples/sounds.xml" />      
-        <file name="models" path="Data/Models/models.xml" />
-        <file name="quests" path="Data/Quest/Colozen.xml" />        
-        <file name="inventorytext" path="Data/Texts/Colozen/inventory.xml" />      
-        <file name="questtext" path="Data/Texts/Colozen/quest.xml" />        
     </files>
     <maps>
-        <!--Map of Citadel Island, Prison-->
-        <Map name="Map0_1" type="interior" music="Music/Midi_mi_win18.midi" repeatmusic="0">
-            <description>Citadel Island, Prison</description>
-            <!--Give the path of the files containing the island information to be loaded-->
-            <files>
-                <file name="ExternalActors" path="ExternalActors/Lba1/ea_map0.xml" />
-                <file name="LocalActors" path="LocalActors/Lba1/la_map0.xml" />
-                <file name="Maps" path="Maps/Lba1/map0.txt" />
-                <file name="Texts" path="Texts/Lba1/text3.xml" />
-            </files>
-            <!--Describe the lights present in the scene-->
-            <lights />
-            <!--Describe the possible spawning areas of the main character-->
-            <spareas>
-                <sparea name="FirstSpawning" posX="34.000000" posY="4.000000" posZ="34.000000" RotationAtArrival="0" />
-            </spareas>
-        </Map>
-        
-        
-        
-	 <!--Colobee Caverns-->
-        <Map name="Colobee_Caverns" type="interior" music="Music/JADPCM04.mp3" repeatmusic="0">
-            <description>Colobee Caverns</description>
-            <!--Give the path of the files containing the island information to be loaded-->
-            <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
-                <file name="Maps" path="Maps/Colozen/ColobeeMountain/Royalpeak1.txt" />
-                <file name="Texts" path="Texts/Colozen/text.xml" />
-            </files>
-            <!--Describe the lights present in the scene-->
-            <lights />
-            <!--Describe the possible spawning areas of the main character-->
-            <spareas>
-            </spareas>
-        </Map>
-	        
-        
-	<!--Cloning Chamber-->
+        <!--Map of Cloning Chamber-->
         <Map name="Cloning_Chamber" type="interior" music="Music/JADPCM11.mp3" repeatmusic="0">
             <description>Cloning Chamber</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
+                <file name="ExternalActors" path="ExternalActors/Colozen/ColobeeMountain/start1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/ColobeeMountain/start1.xml" />
                 <file name="Maps" path="Maps/Colozen/ColobeeMountain/start1.txt" />
                 <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
@@ -70,17 +31,21 @@
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
+                <sparea name="Firstspawning" posX="31.000000" posY="9.000000" posZ="27.000000" RotationAtArrival="0" />
+                <sparea name="door1" posX="1.000000" posY="3.000000" posZ="42.000000" RotationAtArrival="0" />
             </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="door1ex" TopRightX="1.000000" TopRightY="11.000000" TopRightZ="46.000000" BottomLeftX="0.000000" BottomLeftY="3.000000" BottomLeftZ="42.000000" newMap="Colobee_Cave" spawning="door1" />
+            </exits>
         </Map>
-	        
-        
-	<!--Colobee Cave-->
+        <!--Map of Colobee Cave-->
         <Map name="Colobee_Cave" type="interior" music="Music/JADPCM03.mp3" repeatmusic="0">
             <description>Colobee Cave</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
+                <file name="ExternalActors" path="ExternalActors/Colozen/ColobeeMountain/start-village2-1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/ColobeeMountain/start-village2-1.xml" />
                 <file name="Maps" path="Maps/Colozen/ColobeeMountain/start-village2-1.txt" />
                 <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
@@ -88,53 +53,45 @@
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
+                <sparea name="door1" posX="52.000000" posY="2.000000" posZ="33.000000" RotationAtArrival="0" />
+                <sparea name="ladder" posX="37.000000" posY="2.000000" posZ="22.000000" RotationAtArrival="0" />
             </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="door1ex" TopRightX="55.000000" TopRightY="9.000000" TopRightZ="35.000000" BottomLeftX="54.000000" BottomLeftY="3.000000" BottomLeftZ="33.000000" newMap="Cloning_Chamber" spawning="door1" />
+                <exit name="ladder" TopRightX="38.000000" TopRightY="10.000000" TopRightZ="21.000000" BottomLeftX="36.000000" BottomLeftY="8.000000" BottomLeftZ="20.000000" newMap="Colobee_Village_Square" spawning="laddercave" />
+            </exits>
         </Map>
-	        
-        
-	<!--Colobee Village-->
-        <Map name="Colobee_Village" type="interior" music="Music/LBA1-Track3.mp3" repeatmusic="0">
-            <description>Colobee Village</description>
+        <!--Map of Colobee Caverns-->
+        <Map name="Colobee_Caverns" type="interior" music="Music/JADPCM04.mp3" repeatmusic="0">
+            <description>Colobee Caverns</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
-                <file name="Maps" path="Maps/Colozen/ColobeeMountain/Village1-1.txt" />
+                <file name="ExternalActors" path="ExternalActors/Colozen/ColobeeMountain/Royalpeak1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/ColobeeMountain/Royalpeak1.xml" />
+                <file name="Maps" path="Maps/Colozen/ColobeeMountain/Royalpeak1.txt" />
                 <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
+                <sparea name="frompeak" posX="48.000000" posY="16.000000" posZ="14.000000" RotationAtArrival="0" />
+                <sparea name="fromroyal" posX="13.000000" posY="11.000000" posZ="22.000000" RotationAtArrival="0" />
             </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="topeak" TopRightX="48.000000" TopRightY="25.000000" TopRightZ="16.000000" BottomLeftX="46.000000" BottomLeftY="22.000000" BottomLeftZ="14.000000" newMap="Colobee_Mountain_Peak" spawning="frommoutain" />
+                <exit name="toroyal" TopRightX="12.000000" TopRightY="18.000000" TopRightZ="25.000000" BottomLeftX="11.000000" BottomLeftY="12.000000" BottomLeftZ="21.000000" newMap="Colobee_Royal_Court" spawning="frompeak" />
+            </exits>
         </Map>
-	        
-        
-	<!--Colobee Village Square-->
-        <Map name="Colobee_Village_Square" type="interior" music="Music/LBA1-Track3.mp3" repeatmusic="0">
-            <description>Colobee Village Square</description>
-            <!--Give the path of the files containing the island information to be loaded-->
-            <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
-                <file name="Maps" path="Maps/Colozen/ColobeeMountain/Village2-simple1.txt" />
-                <file name="Texts" path="Texts/Colozen/text.xml" />
-            </files>
-            <!--Describe the lights present in the scene-->
-            <lights />
-            <!--Describe the possible spawning areas of the main character-->
-            <spareas>
-            </spareas>
-        </Map>
-	        
-        
-	<!--Colobee House-->
+        <!--Map of Colobee House-->
         <Map name="Colobee_House" type="interior" music="Music/LBA1-Track3.mp3" repeatmusic="0">
             <description>Colobee House</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
+                <file name="ExternalActors" path="ExternalActors/Colozen/ColobeeMountain/VillageHouse1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/ColobeeMountain/VillageHouse1.xml" />
                 <file name="Maps" path="Maps/Colozen/ColobeeMountain/VillageHouse1.txt" />
                 <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
@@ -142,233 +99,20 @@
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
+                <sparea name="fromsquare" posX="61.000000" posY="4.000000" posZ="35.000000" RotationAtArrival="0" />
             </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="tosquare" TopRightX="63.000000" TopRightY="10.000000" TopRightZ="37.000000" BottomLeftX="62.000000" BottomLeftY="4.000000" BottomLeftZ="35.000000" newMap="Colobee_Village_Square" spawning="fromhouse" />
+            </exits>
         </Map>
-	        
-        
-	<!--Colobee Quest Center-->
-        <Map name="Colobee_Quest_Center" type="interior" music="Music/LBA1-Track3.mp3" repeatmusic="0">
-            <description>Colobee Quest Center</description>
-            <!--Give the path of the files containing the island information to be loaded-->
-            <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
-                <file name="Maps" path="Maps/Colozen/ColobeeMountain/VillageMail1.txt" />
-                <file name="Texts" path="Texts/Colozen/text.xml" />
-            </files>
-            <!--Describe the lights present in the scene-->
-            <lights />
-            <!--Describe the possible spawning areas of the main character-->
-            <spareas>
-            </spareas>
-        </Map>
-	        
-        
-	<!--Colobee Royal Court-->
-        <Map name="Colobee_Royal_Court" type="interior" music="Music/LBA1-Track3.mp3" repeatmusic="0">
-            <description>Colobee Royal Court</description>
-            <!--Give the path of the files containing the island information to be loaded-->
-            <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
-                <file name="Maps" path="Maps/Colozen/ColobeeMountain/VillageRoyal1.txt" />
-                <file name="Texts" path="Texts/Colozen/text.xml" />
-            </files>
-            <!--Describe the lights present in the scene-->
-            <lights />
-            <!--Describe the possible spawning areas of the main character-->
-            <spareas>
-            </spareas>
-        </Map>
-	        
-        
-	<!--Colobee School-->
-        <Map name="Colobee_School" type="interior" music="Music/LBA1-Track3.mp3" repeatmusic="0">
-            <description>Colobee School</description>
-            <!--Give the path of the files containing the island information to be loaded-->
-            <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
-                <file name="Maps" path="Maps/Colozen/ColobeeMountain/VillageSchool1.txt" />
-                <file name="Texts" path="Texts/Colozen/text.xml" />
-            </files>
-            <!--Describe the lights present in the scene-->
-            <lights />
-            <!--Describe the possible spawning areas of the main character-->
-            <spareas>
-            </spareas>
-        </Map>
-	        
-        
-	<!--Colobee Shop-->
-        <Map name="Colobee_Shop" type="interior" music="Music/LBA1-Track3.mp3" repeatmusic="0">
-            <description>Colobee Shop</description>
-            <!--Give the path of the files containing the island information to be loaded-->
-            <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
-                <file name="Maps" path="Maps/Colozen/ColobeeMountain/VillageShop1.txt" />
-                <file name="Texts" path="Texts/Colozen/text.xml" />
-            </files>
-            <!--Describe the lights present in the scene-->
-            <lights />
-            <!--Describe the possible spawning areas of the main character-->
-            <spareas>
-            </spareas>
-        </Map>
-	        
-        
-	<!--Makers House-->
-        <Map name="Makers_House" type="exterior" music="Music/LBA1-Track2.mp3" repeatmusic="0">
-            <description>Makers House</description>
-            <!--Give the path of the files containing the island information to be loaded-->
-            <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
-                <file name="Maps" path="Maps/Colozen/Island/Outside1.3.txt" />
-                <file name="Texts" path="Texts/Colozen/text.xml" />
-            </files>
-            <!--Describe the lights present in the scene-->
-            <lights />
-            <!--Describe the possible spawning areas of the main character-->
-            <spareas>
-            </spareas>
-        </Map>
-	        
-        
-	<!--Tech-Island Research Centre-->
-        <Map name="Tech-Island_Research_Centre" type="exterior" music="Music/LBA1-Track2.mp3" repeatmusic="0">
-            <description>Tech-Island Research Centre</description>
-            <!--Give the path of the files containing the island information to be loaded-->
-            <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
-                <file name="Maps" path="Maps/Colozen/Island/OutsideResearch1.txt" />
-                <file name="Texts" path="Texts/Colozen/text.xml" />
-            </files>
-            <!--Describe the lights present in the scene-->
-            <lights />
-            <!--Describe the possible spawning areas of the main character-->
-            <spareas>
-            </spareas>
-        </Map>
-	        
-        
-	<!--Party beach-->
-        <Map name="Party_beach" type="exterior" music="Music/LBA1-Track2.mp3" repeatmusic="0">
-            <description>Party beach</description>
-            <!--Give the path of the files containing the island information to be loaded-->
-            <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
-                <file name="Maps" path="Maps/Colozen/Island/sea1-path1.txt" />
-                <file name="Texts" path="Texts/Colozen/text.xml" />
-            </files>
-            <!--Describe the lights present in the scene-->
-            <lights />
-            <!--Describe the possible spawning areas of the main character-->
-            <spareas>
-            </spareas>
-        </Map>
-	        
-        
-	<!--The Trading Platform-->
-        <Map name="The_Trading_Platform" type="exterior" music="Music/LBA1-Track2.mp3" repeatmusic="0">
-            <description>The Trading Platform</description>
-            <!--Give the path of the files containing the island information to be loaded-->
-            <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
-                <file name="Maps" path="Maps/Colozen/Island/sea2-path1.txt" />
-                <file name="Texts" path="Texts/Colozen/text.xml" />
-            </files>
-            <!--Describe the lights present in the scene-->
-            <lights />
-            <!--Describe the possible spawning areas of the main character-->
-            <spareas>
-            </spareas>
-        </Map>
-	        
-        
-	<!--The Granite Cave (above)-->
-        <Map name="Above_Granite_Cave" type="exterior" music="Music/LBA1-Track2.mp3" repeatmusic="0">
-            <description>The Granite Cave (above)</description>
-            <!--Give the path of the files containing the island information to be loaded-->
-            <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
-                <file name="Maps" path="Maps/Colozen/Island/sea3-path1.txt" />
-                <file name="Texts" path="Texts/Colozen/text.xml" />
-            </files>
-            <!--Describe the lights present in the scene-->
-            <lights />
-            <!--Describe the possible spawning areas of the main character-->
-            <spareas>
-            </spareas>
-        </Map>
-	        
-        
-	<!--The Shipping Lane-->
-        <Map name="The_Shipping_Lane" type="exterior" music="Music/LBA1-Track2.mp3" repeatmusic="0">
-            <description>The Shipping Lane</description>
-            <!--Give the path of the files containing the island information to be loaded-->
-            <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
-                <file name="Maps" path="Maps/Colozen/Island/sea4-path1.txt" />
-                <file name="Texts" path="Texts/Colozen/text.xml" />
-            </files>
-            <!--Describe the lights present in the scene-->
-            <lights />
-            <!--Describe the possible spawning areas of the main character-->
-            <spareas>
-            </spareas>
-        </Map>
-	        
-        
-	<!--Tech-Island Docks-->
-        <Map name="Tech-Island_Docks" type="exterior" music="Music/JADPCM05.mp3" repeatmusic="0">
-            <description>Tech-Island Docks</description>
-            <!--Give the path of the files containing the island information to be loaded-->
-            <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
-                <file name="Maps" path="Maps/Colozen/Island/TheDocks1.txt" />
-                <file name="Texts" path="Texts/Colozen/text.xml" />
-            </files>
-            <!--Describe the lights present in the scene-->
-            <lights />
-            <!--Describe the possible spawning areas of the main character-->
-            <spareas>
-            </spareas>
-        </Map>
-	        
-        
-	<!--Solidirity Park-->
-        <Map name="Solidirity_Park" type="exterior" music="Music/JADPCM07.mp3" repeatmusic="0">
-            <description>Solidirity Park</description>
-            <!--Give the path of the files containing the island information to be loaded-->
-            <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
-                <file name="Maps" path="Maps/Colozen/Island/TheGardens1.txt" />
-                <file name="Texts" path="Texts/Colozen/text.xml" />
-            </files>
-            <!--Describe the lights present in the scene-->
-            <lights />
-            <!--Describe the possible spawning areas of the main character-->
-            <spareas>
-            </spareas>
-        </Map>
-	        
-        
-	<!--Colobee Mountain Peak-->
+        <!--Map of Colobee Mountain Peak-->
         <Map name="Colobee_Mountain_Peak" type="exterior" music="Music/LBA1-Track5.mp3" repeatmusic="0">
             <description>Colobee Mountain Peak</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
+                <file name="ExternalActors" path="ExternalActors/Colozen/Island/ThePeak1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/Island/ThePeak1.xml" />
                 <file name="Maps" path="Maps/Colozen/Island/ThePeak1.txt" />
                 <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
@@ -376,125 +120,168 @@
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
+                <sparea name="frommoutain" posX="39.000000" posY="15.000000" posZ="42.000000" RotationAtArrival="0" />
             </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="tomoutain" TopRightX="42.000000" TopRightY="24.000000" TopRightZ="44.000000" BottomLeftX="41.000000" BottomLeftY="16.000000" BottomLeftZ="42.000000" newMap="Colobee_Caverns" spawning="frompeak" />
+            </exits>
         </Map>
-	        
-        
-	<!--Tinker Town-->
-        <Map name="Tinker_Town" type="exterior" music="Music/JADPCM08.mp3" repeatmusic="0">
-            <description>Tinker Town</description>
+        <!--Map of Colobee Quest Center-->
+        <Map name="Colobee_Quest_Center" type="interior" music="Music/LBA1-Track3.mp3" repeatmusic="0">
+            <description>Colobee Quest Center</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
-                <file name="Maps" path="Maps/Colozen/Island/Town1.txt" />
+                <file name="ExternalActors" path="ExternalActors/Colozen/ColobeeMountain/VillageMail1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/ColobeeMountain/VillageMail1.xml" />
+                <file name="Maps" path="Maps/Colozen/ColobeeMountain/VillageMail1.txt" />
                 <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
+                <sparea name="fromsquare" posX="61.000000" posY="4.000000" posZ="35.000000" RotationAtArrival="0" />
             </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="tosquare" TopRightX="63.000000" TopRightY="10.000000" TopRightZ="37.000000" BottomLeftX="62.000000" BottomLeftY="4.000000" BottomLeftZ="35.000000" newMap="Colobee_Village_Square" spawning="fromquestc" />
+            </exits>
         </Map>
-	        
-        
-	<!--Techside River-->
-        <Map name="Techside_River" type="exterior" music="Music/LBA1-Track2.mp3" repeatmusic="0">
-            <description>Techside River</description>
+        <!--Map of Colobee Royal Court-->
+        <Map name="Colobee_Royal_Court" type="interior" music="Music/LBA1-Track3.mp3" repeatmusic="0">
+            <description>Colobee Royal Court</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
-                <file name="Maps" path="Maps/Colozen/Island/TunnelEntrance1.txt" />
+                <file name="ExternalActors" path="ExternalActors/Colozen/ColobeeMountain/VillageRoyal1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/ColobeeMountain/VillageRoyal1.xml" />
+                <file name="Maps" path="Maps/Colozen/ColobeeMountain/VillageRoyal1.txt" />
                 <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
+                <sparea name="frompeak" posX="54.000000" posY="9.000000" posZ="22.000000" RotationAtArrival="0" />
+                <sparea name="villagesquare" posX="20.000000" posY="7.000000" posZ="60.000000" RotationAtArrival="0" />
             </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="topeak" TopRightX="57.500000" TopRightY="16.000000" TopRightZ="25.000000" BottomLeftX="56.500000" BottomLeftY="10.000000" BottomLeftZ="23.000000" newMap="Colobee_Caverns" spawning="fromroyal" />
+                <exit name="tosquare" TopRightX="24.000000" TopRightY="14.000000" TopRightZ="62.000000" BottomLeftX="20.000000" BottomLeftY="8.000000" BottomLeftZ="61.000000" newMap="Colobee_Village_Square" spawning="fromroyal" />
+            </exits>
         </Map>
-	        
-        
-	<!--The Tinkers Cafe-->
-        <Map name="The_Tinkers_Cafe" type="interior" music="Music/JADPCM18.mp3" repeatmusic="0">
-            <description>The Tinkers Cafe</description>
+        <!--Map of Colobee School-->
+        <Map name="Colobee_School" type="interior" music="Music/LBA1-Track3.mp3" repeatmusic="0">
+            <description>Colobee School</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
-                <file name="Maps" path="Maps/Colozen/Island/Indoors/Cafe1.txt" />
+                <file name="ExternalActors" path="ExternalActors/Colozen/ColobeeMountain/VillageSchool1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/ColobeeMountain/VillageSchool1.xml" />
+                <file name="Maps" path="Maps/Colozen/ColobeeMountain/VillageSchool1.txt" />
                 <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
+                <sparea name="fromsquare" posX="60.000000" posY="3.000000" posZ="35.000000" RotationAtArrival="0" />
             </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="tosquare" TopRightX="63.000000" TopRightY="10.000000" TopRightZ="37.000000" BottomLeftX="62.000000" BottomLeftY="4.000000" BottomLeftZ="35.000000" newMap="Colobee_Village_Square" spawning="fromschool" />
+            </exits>
         </Map>
-	        
-        
-	<!--Dtech Industries-->
-        <Map name="Dtech_Industries" type="interior" music="Music/JADPCM17.mp3" repeatmusic="0">
-            <description>Dtech Industries</description>
+        <!--Map of Colobee Shop-->
+        <Map name="Colobee_Shop" type="interior" music="Music/LBA1-Track3.mp3" repeatmusic="0">
+            <description>Colobee Shop</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
-                <file name="Maps" path="Maps/Colozen/Island/Indoors/Factory1.txt" />
+                <file name="ExternalActors" path="ExternalActors/Colozen/ColobeeMountain/VillageShop1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/ColobeeMountain/VillageShop1.xml" />
+                <file name="Maps" path="Maps/Colozen/ColobeeMountain/VillageShop1.txt" />
                 <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
+                <sparea name="fromsquare" posX="61.000000" posY="4.000000" posZ="35.000000" RotationAtArrival="0" />
             </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="tosquare" TopRightX="63.000000" TopRightY="10.000000" TopRightZ="37.000000" BottomLeftX="62.000000" BottomLeftY="4.000000" BottomLeftZ="35.000000" newMap="Colobee_Village_Square" spawning="fromstore" />
+            </exits>
         </Map>
-	        
-        
-	<!--The Innovation house-->
-        <Map name="The_Innovation_house" type="interior" music="Music/LBA1-Track9.mp3" repeatmusic="0">
-            <description>The Innovation house</description>
+        <!--Map of Colobee Village-->
+        <Map name="Colobee_Village" type="interior" music="Music/LBA1-Track3.mp3" repeatmusic="0">
+            <description>Colobee Village</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
-                <file name="Maps" path="Maps/Colozen/Island/Indoors/flower1.txt" />
+                <file name="ExternalActors" path="ExternalActors/Colozen/ColobeeMountain/Village1-1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/ColobeeMountain/Village1-1.xml" />
+                <file name="Maps" path="Maps/Colozen/ColobeeMountain/Village1-1.txt" />
                 <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
+                <sparea name="fromdock" posX="20.000000" posY="1.000000" posZ="59.000000" RotationAtArrival="0" />
+                <sparea name="fromsquare1" posX="30.000000" posY="5.000000" posZ="5.000000" RotationAtArrival="0" />
+                <sparea name="fromsquare2" posX="37.000000" posY="9.000000" posZ="33.000000" RotationAtArrival="0" />
+                <sparea name="fromtech" posX="6.000000" posY="11.000000" posZ="5.000000" RotationAtArrival="0" />
             </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="todock" TopRightX="22.000000" TopRightY="8.000000" TopRightZ="62.000000" BottomLeftX="20.000000" BottomLeftY="2.000000" BottomLeftZ="61.000000" newMap="Tech-Island_Docks" spawning="fromvillage1" />
+                <exit name="tomaker" TopRightX="3.000000" TopRightY="21.000000" TopRightZ="7.000000" BottomLeftX="2.000000" BottomLeftY="15.000000" BottomLeftZ="5.000000" newMap="Makers_House" spawning="fromcolobee" />
+                <exit name="tosquare1" TopRightX="34.000000" TopRightY="12.000000" TopRightZ="7.000000" BottomLeftX="33.000000" BottomLeftY="6.000000" BottomLeftZ="5.000000" newMap="Colobee_Village_Square" spawning="fromvillage1" />
+                <exit name="tosquare2" TopRightX="41.000000" TopRightY="16.000000" TopRightZ="35.000000" BottomLeftX="40.000000" BottomLeftY="10.000000" BottomLeftZ="33.000000" newMap="Colobee_Village_Square" spawning="fromvillage2" />
+            </exits>
         </Map>
-	        
-        
-	<!--The Makers House (Indoors)-->
-        <Map name="Inside_Makers_House" type="interior" music="Music/LBA1-Track8.mp3" repeatmusic="0">
-            <description>The Makers House (Indoors)</description>
+        <!--Map of Colobee Village Square-->
+        <Map name="Colobee_Village_Square" type="interior" music="Music/LBA1-Track3.mp3" repeatmusic="0">
+            <description>Colobee Village Square</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
-                <file name="Maps" path="Maps/Colozen/Island/Indoors/makershouse1.txt" />
+                <file name="ExternalActors" path="ExternalActors/Colozen/ColobeeMountain/Village2-simple1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/ColobeeMountain/Village2-simple1.xml" />
+                <file name="Maps" path="Maps/Colozen/ColobeeMountain/Village2-simple1.txt" />
                 <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
+                <sparea name="fromhouse" posX="20.000000" posY="7.000000" posZ="37.000000" RotationAtArrival="0" />
+                <sparea name="fromquestc" posX="27.000000" posY="7.000000" posZ="32.000000" RotationAtArrival="0" />
+                <sparea name="fromroyal" posX="44.000000" posY="13.000000" posZ="4.000000" RotationAtArrival="0" />
+                <sparea name="fromschool" posX="7.000000" posY="7.000000" posZ="42.000000" RotationAtArrival="0" />
+                <sparea name="fromstore" posX="17.000000" posY="2.000000" posZ="17.000000" RotationAtArrival="0" />
+                <sparea name="fromvillage1" posX="7.000000" posY="8.000000" posZ="9.000000" RotationAtArrival="0" />
+                <sparea name="fromvillage2" posX="7.000000" posY="13.000000" posZ="28.000000" RotationAtArrival="0" />
+                <sparea name="laddercave" posX="46.000000" posY="1.000000" posZ="43.000000" RotationAtArrival="0" />
             </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="ladderdown" TopRightX="47.500000" TopRightY="5.000000" TopRightZ="45.000000" BottomLeftX="44.500000" BottomLeftY="1.000000" BottomLeftZ="44.000000" newMap="Colobee_Cave" spawning="ladder" />
+                <exit name="tohouse" TopRightX="19.299999" TopRightY="14.000000" TopRightZ="39.000000" BottomLeftX="18.299999" BottomLeftY="8.000000" BottomLeftZ="37.000000" newMap="Colobee_House" spawning="fromsquare" />
+                <exit name="toquestc" TopRightX="26.200001" TopRightY="14.000000" TopRightZ="34.000000" BottomLeftX="25.200001" BottomLeftY="8.000000" BottomLeftZ="32.000000" newMap="Colobee_Quest_Center" spawning="fromsquare" />
+                <exit name="toroyal" TopRightX="48.000000" TopRightY="19.000000" TopRightZ="4.000000" BottomLeftX="44.000000" BottomLeftY="14.000000" BottomLeftZ="3.000000" newMap="Colobee_Royal_Court" spawning="villagesquare" />
+                <exit name="toschool" TopRightX="6.100000" TopRightY="14.000000" TopRightZ="44.000000" BottomLeftX="5.100000" BottomLeftY="8.000000" BottomLeftZ="42.000000" newMap="Colobee_School" spawning="fromsquare" />
+                <exit name="tostore" TopRightX="16.000000" TopRightY="9.000000" TopRightZ="19.000000" BottomLeftX="15.000000" BottomLeftY="3.000000" BottomLeftZ="17.000000" newMap="Colobee_Shop" spawning="fromsquare" />
+                <exit name="tovillage1" TopRightX="6.000000" TopRightY="15.000000" TopRightZ="11.000000" BottomLeftX="5.000000" BottomLeftY="9.000000" BottomLeftZ="9.000000" newMap="Colobee_Village" spawning="fromsquare1" />
+                <exit name="tovillage2" TopRightX="5.000000" TopRightY="20.000000" TopRightZ="30.000000" BottomLeftX="4.000000" BottomLeftY="14.000000" BottomLeftZ="28.000000" newMap="Colobee_Village" spawning="fromsquare2" />
+            </exits>
         </Map>
-	        
-        
-	<!--Colozen Museum-->
+        <!--Map of Colozen Museum-->
         <Map name="Colozen_Museum" type="interior" music="Music/JADPCM18.mp3" repeatmusic="0">
             <description>Colozen Museum</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
+                <file name="ExternalActors" path="ExternalActors/Colozen/Island/Indoors/Museum1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/Island/Indoors/Museum1.xml" />
                 <file name="Maps" path="Maps/Colozen/Island/Indoors/Museum1.txt" />
                 <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
@@ -502,53 +289,41 @@
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
+                <sparea name="fromout" posX="13.000000" posY="2.000000" posZ="55.000000" RotationAtArrival="0" />
             </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="toout" TopRightX="19.000000" TopRightY="10.000000" TopRightZ="57.000000" BottomLeftX="13.000000" BottomLeftY="3.000000" BottomLeftZ="56.000000" newMap="Tinker_Town" spawning="frommuseum" />
+            </exits>
         </Map>
-	        
-        
-	<!--Tinker-Town Police Station-->
-        <Map name="Tinker-Town_Police_Station" type="interior" music="Music/JADPCM09.mp3" repeatmusic="0">
-            <description>Tinker-Town Police Station</description>
+        <!--Map of Dtech Industries-->
+        <Map name="Dtech_Industries" type="interior" music="Music/JADPCM17.mp3" repeatmusic="0">
+            <description>Dtech Industries</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
-                <file name="Maps" path="Maps/Colozen/Island/Indoors/PoliceStation1.txt" />
+                <file name="ExternalActors" path="ExternalActors/Colozen/Island/Indoors/Factory1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/Island/Indoors/Factory1.xml" />
+                <file name="Maps" path="Maps/Colozen/Island/Indoors/Factory1.txt" />
                 <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
+                <sparea name="fromout" posX="22.000000" posY="12.000000" posZ="52.000000" RotationAtArrival="0" />
             </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="toout" TopRightX="26.000000" TopRightY="20.000000" TopRightZ="54.000000" BottomLeftX="22.000000" BottomLeftY="13.000000" BottomLeftZ="53.000000" newMap="Tinker_Town" spawning="fromfactory" />
+            </exits>
         </Map>
-	        
-        
-	<!--Dtech fuel supplies-->
-        <Map name="Dtech_fuel_supplies" type="interior" music="Music/LBA1-Track7.mp3" repeatmusic="0">
-            <description>Dtech fuel supplies</description>
-            <!--Give the path of the files containing the island information to be loaded-->
-            <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
-                <file name="Maps" path="Maps/Colozen/Island/Indoors/Research1-1.txt" />
-                <file name="Texts" path="Texts/Colozen/text.xml" />
-            </files>
-            <!--Describe the lights present in the scene-->
-            <lights />
-            <!--Describe the possible spawning areas of the main character-->
-            <spareas>
-            </spareas>
-        </Map>
-	        
-        
-	<!--Dtech Research Facility-->
+        <!--Map of Dtech Research Facility-->
         <Map name="Dtech_Research_Facility" type="interior" music="Music/JADPCM05.mp3" repeatmusic="0">
             <description>Dtech Research Facility</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
+                <file name="ExternalActors" path="ExternalActors/Colozen/Island/Indoors/Research2-1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/Island/Indoors/Research2-1.xml" />
                 <file name="Maps" path="Maps/Colozen/Island/Indoors/Research2-1.txt" />
                 <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
@@ -556,35 +331,322 @@
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
+                <sparea name="fromout" posX="55.000000" posY="5.000000" posZ="20.000000" RotationAtArrival="0" />
+                <sparea name="toresearch1" posX="22.000000" posY="5.000000" posZ="54.000000" RotationAtArrival="0" />
             </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="toout" TopRightX="58.000000" TopRightY="13.000000" TopRightZ="24.000000" BottomLeftX="57.000000" BottomLeftY="6.000000" BottomLeftZ="20.000000" newMap="Tech-Island_Research_Centre" spawning="from research2" />
+                <exit name="toresearch1" TopRightX="25.000000" TopRightY="14.000000" TopRightZ="56.000000" BottomLeftX="22.000000" BottomLeftY="6.000000" BottomLeftZ="55.000000" newMap="Dtech_fuel_supplies" spawning="fromresearch2" />
+            </exits>
         </Map>
-	        
-        
-	<!--The Granite Cave-->
-        <Map name="The_Granite_Cave" type="interior" music="Music/JADPCM14.mp3" repeatmusic="0">
-            <description>The Granite Cave</description>
+        <!--Map of Dtech fuel supplies-->
+        <Map name="Dtech_fuel_supplies" type="interior" music="Music/LBA1-Track7.mp3" repeatmusic="0">
+            <description>Dtech fuel supplies</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
-                <file name="Maps" path="Maps/Colozen/Island/Indoors/sea-cave1.txt" />
+                <file name="ExternalActors" path="ExternalActors/Colozen/Island/Indoors/Research1-1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/Island/Indoors/Research1-1.xml" />
+                <file name="Maps" path="Maps/Colozen/Island/Indoors/Research1-1.txt" />
                 <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
             <!--Describe the lights present in the scene-->
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
+                <sparea name="fromout" posX="56.000000" posY="4.000000" posZ="35.000000" RotationAtArrival="0" />
+                <sparea name="fromresearch2" posX="12.000000" posY="17.000000" posZ="7.000000" RotationAtArrival="0" />
             </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="toout" TopRightX="58.000000" TopRightY="12.000000" TopRightZ="38.000000" BottomLeftX="57.000000" BottomLeftY="5.000000" BottomLeftZ="35.000000" newMap="Tech-Island_Research_Centre" spawning="fromresearch1" />
+                <exit name="toresearch2" TopRightX="15.000000" TopRightY="26.000000" TopRightZ="6.000000" BottomLeftX="12.000000" BottomLeftY="18.000000" BottomLeftZ="5.000000" newMap="Dtech_Research_Facility" spawning="toresearch1" />
+            </exits>
         </Map>
-	        
-        
-	<!--Tinker-Town Shop-->
+        <!--Map of The Makers House (Indoors)-->
+        <Map name="Inside_Makers_House" type="interior" music="Music/LBA1-Track8.mp3" repeatmusic="0">
+            <description>The Makers House (Indoors)</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="ExternalActors/Colozen/Island/Indoors/makershouse1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/Island/Indoors/makershouse1.xml" />
+                <file name="Maps" path="Maps/Colozen/Island/Indoors/makershouse1.txt" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+                <sparea name="frommaker" posX="57.000000" posY="7.000000" posZ="27.000000" RotationAtArrival="0" />
+            </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="tomaker" TopRightX="59.000000" TopRightY="15.000000" TopRightZ="30.000000" BottomLeftX="58.000000" BottomLeftY="8.000000" BottomLeftZ="27.000000" newMap="Makers_House" spawning="frommakerinside" />
+            </exits>
+        </Map>
+        <!--Map of Makers House-->
+        <Map name="Makers_House" type="exterior" music="Music/LBA2-Track1.mp3" repeatmusic="0">
+            <description>Makers House</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="ExternalActors/Colozen/Island/Outside1.3.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/Island/Outside1.3.xml" />
+                <file name="Maps" path="Maps/Colozen/Island/Outside1.3.txt" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+                <sparea name="fromcolobee" posX="7.000000" posY="0.000000" posZ="14.000000" RotationAtArrival="0" />
+                <sparea name="frommakerinside" posX="9.000000" posY="0.000000" posZ="29.000000" RotationAtArrival="0" />
+                <sparea name="fromtown" posX="13.000000" posY="0.000000" posZ="59.000000" RotationAtArrival="0" />
+            </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="tocolobee" TopRightX="9.000000" TopRightY="7.000000" TopRightZ="13.400000" BottomLeftX="7.000000" BottomLeftY="1.000000" BottomLeftZ="12.400000" newMap="Colobee_Village" spawning="fromtech" />
+                <exit name="tomakerinside" TopRightX="8.000000" TopRightY="8.000000" TopRightZ="32.000000" BottomLeftX="7.000000" BottomLeftY="1.000000" BottomLeftZ="29.000000" newMap="Inside_Makers_House" spawning="frommaker" />
+                <exit name="totown" TopRightX="17.000000" TopRightY="9.000000" TopRightZ="61.000000" BottomLeftX="13.000000" BottomLeftY="1.000000" BottomLeftZ="60.000000" newMap="Tech-Island_Research_Centre" spawning="frommaker" />
+            </exits>
+        </Map>
+        <!--Map of Party beach-->
+        <Map name="Party_beach" type="exterior" music="Music/LBA1-Track2.mp3" repeatmusic="0">
+            <description>Party beach</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="ExternalActors/Colozen/Island/sea1-path1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/Island/sea1-path1.xml" />
+                <file name="Maps" path="Maps/Colozen/Island/sea1-path1.txt" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas />
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits />
+        </Map>
+        <!--Map of Solidirity Park-->
+        <Map name="Solidirity_Park" type="exterior" music="Music/JADPCM07.mp3" repeatmusic="0">
+            <description>Solidirity Park</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="ExternalActors/Colozen/Island/TheGardens1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/Island/TheGardens1.xml" />
+                <file name="Maps" path="Maps/Colozen/Island/TheGardens1.txt" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+                <sparea name="fromvillage" posX="61.000000" posY="0.000000" posZ="31.000000" RotationAtArrival="0" />
+            </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="tovillage" TopRightX="63.000000" TopRightY="9.000000" TopRightZ="35.000000" BottomLeftX="62.000000" BottomLeftY="1.000000" BottomLeftZ="31.000000" newMap="Tech-Island_Research_Centre" spawning="frompark" />
+            </exits>
+        </Map>
+        <!--Map of Tech-Island Docks-->
+        <Map name="Tech-Island_Docks" type="exterior" music="Music/JADPCM05.mp3" repeatmusic="0">
+            <description>Tech-Island Docks</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="ExternalActors/Colozen/Island/TheDocks1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/Island/TheDocks1.xml" />
+                <file name="Maps" path="Maps/Colozen/Island/TheDocks1.txt" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+                <sparea name="fromtunnel" posX="14.000000" posY="0.000000" posZ="38.000000" RotationAtArrival="0" />
+                <sparea name="fromvillage1" posX="3.000000" posY="11.000000" posZ="52.000000" RotationAtArrival="0" />
+            </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="totunnel" TopRightX="16.000000" TopRightY="7.000000" TopRightZ="37.599998" BottomLeftX="14.000000" BottomLeftY="1.000000" BottomLeftZ="36.599998" newMap="Tinkers_Tunnel" spawning="fromdocks" />
+                <exit name="tovillage" TopRightX="5.000000" TopRightY="17.000000" TopRightZ="51.400002" BottomLeftX="3.000000" BottomLeftY="11.000000" BottomLeftZ="50.400002" newMap="Colobee_Village" spawning="fromdock" />
+            </exits>
+        </Map>
+        <!--Map of Tech-Island Research Centre-->
+        <Map name="Tech-Island_Research_Centre" type="exterior" music="Music/LBA1-Track2.mp3" repeatmusic="0">
+            <description>Tech-Island Research Centre</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="ExternalActors/Colozen/Island/OutsideResearch1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/Island/OutsideResearch1.xml" />
+                <file name="Maps" path="Maps/Colozen/Island/OutsideResearch1.txt" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+                <sparea name="from research2" posX="33.000000" posY="8.000000" posZ="26.000000" RotationAtArrival="0" />
+                <sparea name="frommaker" posX="30.000000" posY="0.000000" posZ="3.000000" RotationAtArrival="0" />
+                <sparea name="frompark" posX="3.000000" posY="0.000000" posZ="30.000000" RotationAtArrival="0" />
+                <sparea name="fromresearch1" posX="31.000000" posY="4.000000" posZ="46.000000" RotationAtArrival="0" />
+                <sparea name="fromriver" posX="2.000000" posY="0.000000" posZ="3.000000" RotationAtArrival="0" />
+                <sparea name="fromtown" posX="2.000000" posY="0.000000" posZ="61.000000" RotationAtArrival="0" />
+                <sparea name="fromtown2" posX="47.000000" posY="0.000000" posZ="60.000000" RotationAtArrival="0" />
+            </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="tomaker" TopRightX="34.000000" TopRightY="9.000000" TopRightZ="2.000000" BottomLeftX="30.000000" BottomLeftY="1.000000" BottomLeftZ="1.000000" newMap="Makers_House" spawning="fromtown" />
+                <exit name="topark" TopRightX="2.000000" TopRightY="9.000000" TopRightZ="34.000000" BottomLeftX="1.000000" BottomLeftY="1.000000" BottomLeftZ="30.000000" newMap="Solidirity_Park" spawning="fromvillage" />
+                <exit name="toresearch1" TopRightX="30.000000" TopRightY="12.000000" TopRightZ="51.000000" BottomLeftX="29.000000" BottomLeftY="5.000000" BottomLeftZ="46.000000" newMap="Dtech_fuel_supplies" spawning="fromout" />
+                <exit name="toresearch2" TopRightX="31.000000" TopRightY="16.000000" TopRightZ="31.000000" BottomLeftX="30.000000" BottomLeftY="9.000000" BottomLeftZ="25.000000" newMap="Dtech_Research_Facility" spawning="fromout" />
+                <exit name="toriver" TopRightX="6.000000" TopRightY="9.000000" TopRightZ="2.000000" BottomLeftX="2.000000" BottomLeftY="1.000000" BottomLeftZ="1.000000" newMap="Techside_River" spawning="fromvillage" />
+                <exit name="totown1" TopRightX="6.000000" TopRightY="9.000000" TopRightZ="63.000000" BottomLeftX="2.000000" BottomLeftY="1.000000" BottomLeftZ="62.000000" newMap="Tinker_Town" spawning="fromout1" />
+                <exit name="totown2" TopRightX="51.000000" TopRightY="9.000000" TopRightZ="62.000000" BottomLeftX="47.000000" BottomLeftY="1.000000" BottomLeftZ="61.000000" newMap="Tinker_Town" spawning="fromout2" />
+            </exits>
+        </Map>
+        <!--Map of Techside River-->
+        <Map name="Techside_River" type="exterior" music="Music/LBA1-Track2.mp3" repeatmusic="0">
+            <description>Techside River</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="ExternalActors/Colozen/Island/TunnelEntrance1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/Island/TunnelEntrance1.xml" />
+                <file name="Maps" path="Maps/Colozen/Island/TunnelEntrance1.txt" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+                <sparea name="fromtunnel" posX="21.000000" posY="0.000000" posZ="19.000000" RotationAtArrival="0" />
+                <sparea name="fromvillage" posX="43.000000" posY="0.000000" posZ="61.000000" RotationAtArrival="0" />
+            </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="totunnel" TopRightX="25.000000" TopRightY="7.000000" TopRightZ="18.000000" BottomLeftX="21.000000" BottomLeftY="1.000000" BottomLeftZ="17.000000" newMap="Tinkers_Tunnel" spawning="fromtown" />
+                <exit name="tovillage" TopRightX="47.000000" TopRightY="9.000000" TopRightZ="63.000000" BottomLeftX="43.000000" BottomLeftY="1.000000" BottomLeftZ="62.000000" newMap="Tech-Island_Research_Centre" spawning="fromriver" />
+            </exits>
+        </Map>
+        <!--Map of The Granite Cave-->
+        <Map name="The_Granite_Cave" type="interior" music="Music/JADPCM14.mp3" repeatmusic="0">
+            <description>The Granite Cave</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="ExternalActors/Colozen/Island/Indoors/sea-cave1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/Island/Indoors/sea-cave1.xml" />
+                <file name="Maps" path="Maps/Colozen/Island/Indoors/sea-cave1.txt" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas />
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits />
+        </Map>
+        <!--Map of The Innovation house-->
+        <Map name="The_Innovation_house" type="interior" music="Music/LBA1-Track9.mp3" repeatmusic="0">
+            <description>The Innovation house</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="ExternalActors/Colozen/Island/Indoors/flower1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/Island/Indoors/flower1.xml" />
+                <file name="Maps" path="Maps/Colozen/Island/Indoors/flower1.txt" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+                <sparea name="fromout" posX="53.000000" posY="8.000000" posZ="35.000000" RotationAtArrival="0" />
+            </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="toout" TopRightX="55.000000" TopRightY="16.000000" TopRightZ="38.000000" BottomLeftX="54.000000" BottomLeftY="9.000000" BottomLeftZ="35.000000" newMap="Tinker_Town" spawning="fromflower" />
+            </exits>
+        </Map>
+        <!--Map of The Shipping Lane-->
+        <Map name="The_Shipping_Lane" type="exterior" music="Music/LBA1-Track2.mp3" repeatmusic="0">
+            <description>The Shipping Lane</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="ExternalActors/Colozen/Island/sea4-path1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/Island/sea4-path1.xml" />
+                <file name="Maps" path="Maps/Colozen/Island/sea4-path1.txt" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas />
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits />
+        </Map>
+        <!--Map of The Tinkers Cafe-->
+        <Map name="The_Tinkers_Cafe" type="interior" music="Music/JADPCM18.mp3" repeatmusic="0">
+            <description>The Tinkers Cafe</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="ExternalActors/Colozen/Island/Indoors/Cafe1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/Island/Indoors/Cafe1.xml" />
+                <file name="Maps" path="Maps/Colozen/Island/Indoors/Cafe1.txt" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+                <sparea name="fromout" posX="50.000000" posY="7.000000" posZ="33.000000" RotationAtArrival="0" />
+            </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="toout" TopRightX="52.000000" TopRightY="15.000000" TopRightZ="36.000000" BottomLeftX="51.000000" BottomLeftY="8.000000" BottomLeftZ="33.000000" newMap="Tinker_Town" spawning="fromcafe" />
+            </exits>
+        </Map>
+        <!--Map of The Trading Platform-->
+        <Map name="The_Trading_Platform" type="exterior" music="Music/LBA1-Track2.mp3" repeatmusic="0">
+            <description>The Trading Platform</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="ExternalActors/Colozen/Island/sea2-path1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/Island/sea2-path1.xml" />
+                <file name="Maps" path="Maps/Colozen/Island/sea2-path1.txt" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas />
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits />
+        </Map>
+        <!--Map of Tinker-Town Police Station-->
+        <Map name="Tinker-Town_Police_Station" type="interior" music="Music/JADPCM09.mp3" repeatmusic="0">
+            <description>Tinker-Town Police Station</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="ExternalActors/Colozen/Island/Indoors/PoliceStation1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/Island/Indoors/PoliceStation1.xml" />
+                <file name="Maps" path="Maps/Colozen/Island/Indoors/PoliceStation1.txt" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+                <sparea name="fromout" posX="56.000000" posY="12.000000" posZ="27.000000" RotationAtArrival="0" />
+            </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="toout" TopRightX="58.000000" TopRightY="20.000000" TopRightZ="32.000000" BottomLeftX="57.000000" BottomLeftY="13.000000" BottomLeftZ="27.000000" newMap="Tinker_Town" spawning="frompolice" />
+            </exits>
+        </Map>
+        <!--Map of Tinker-Town Shop-->
         <Map name="Tinker-Town_Shop" type="interior" music="Music/JADPCM10.mp3" repeatmusic="0">
             <description>Tinker-Town Shop</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
+                <file name="ExternalActors" path="ExternalActors/Colozen/Island/Indoors/Shop1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/Island/Indoors/Shop1.xml" />
                 <file name="Maps" path="Maps/Colozen/Island/Indoors/Shop1.txt" />
                 <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
@@ -592,17 +654,20 @@
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
+                <sparea name="fromout" posX="27.000000" posY="3.000000" posZ="52.000000" RotationAtArrival="0" />
             </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="toout" TopRightX="30.000000" TopRightY="11.000000" TopRightZ="54.000000" BottomLeftX="27.000000" BottomLeftY="4.000000" BottomLeftZ="53.000000" newMap="Tinker_Town" spawning="fromshop" />
+            </exits>
         </Map>
-	        
-        
-	<!--Tinker-town Sewers-->
+        <!--Map of Tinker-town Sewers-->
         <Map name="Tinker-town_Sewers" type="interior" music="Music/LBA1-Track8.mp3" repeatmusic="0">
             <description>Tinker-town Sewers</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
+                <file name="ExternalActors" path="ExternalActors/Colozen/Island/Indoors/town-sewers1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/Island/Indoors/town-sewers1.xml" />
                 <file name="Maps" path="Maps/Colozen/Island/Indoors/town-sewers1.txt" />
                 <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
@@ -610,17 +675,61 @@
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
+                <sparea name="fromout1" posX="26.000000" posY="4.000000" posZ="52.000000" RotationAtArrival="0" />
+                <sparea name="fromout2" posX="56.000000" posY="4.000000" posZ="33.000000" RotationAtArrival="0" />
             </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="toout1" TopRightX="28.000000" TopRightY="13.000000" TopRightZ="54.000000" BottomLeftX="26.000000" BottomLeftY="7.000000" BottomLeftZ="53.000000" newMap="Tinker_Town" spawning="fromsewer" />
+                <exit name="toout2" TopRightX="59.000000" TopRightY="13.000000" TopRightZ="35.000000" BottomLeftX="58.000000" BottomLeftY="7.000000" BottomLeftZ="33.000000" newMap="Tinker_Town" spawning="fromsewer2" />
+            </exits>
         </Map>
-	        
-        
-	<!--Tinker's Tunnel -->
-        <Map name="Tinkers_Tunnel" type="interior" music="Music/JADPCM03.mp3" repeatmusic="0">
-            <description>Tinker's Tunnel</description>
+        <!--Map of Tinker Town-->
+        <Map name="Tinker_Town" type="exterior" music="Music/JADPCM08.mp3" repeatmusic="0">
+            <description>Tinker Town</description>
             <!--Give the path of the files containing the island information to be loaded-->
             <files>
-                <file name="ExternalActors" path="" />
-                <file name="LocalActors" path="" />
+                <file name="ExternalActors" path="ExternalActors/Colozen/Island/Town1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/Island/Town1.xml" />
+                <file name="Maps" path="Maps/Colozen/Island/Town1.txt" />
+                <file name="Texts" path="Texts/Colozen/text.xml" />
+            </files>
+            <!--Describe the lights present in the scene-->
+            <lights />
+            <!--Describe the possible spawning areas of the main character-->
+            <spareas>
+                <sparea name="fromcafe" posX="25.000000" posY="5.000000" posZ="17.000000" RotationAtArrival="0" />
+                <sparea name="fromfactory" posX="31.000000" posY="6.000000" posZ="11.000000" RotationAtArrival="0" />
+                <sparea name="fromflower" posX="35.000000" posY="3.000000" posZ="33.000000" RotationAtArrival="0" />
+                <sparea name="frommuseum" posX="14.000000" posY="3.000000" posZ="57.000000" RotationAtArrival="0" />
+                <sparea name="fromout1" posX="4.000000" posY="3.000000" posZ="2.000000" RotationAtArrival="0" />
+                <sparea name="fromout2" posX="48.000000" posY="3.000000" posZ="3.000000" RotationAtArrival="0" />
+                <sparea name="frompolice" posX="7.000000" posY="3.000000" posZ="23.000000" RotationAtArrival="0" />
+                <sparea name="fromsewer" posX="20.500000" posY="3.000000" posZ="27.000000" RotationAtArrival="0" />
+                <sparea name="fromsewer2" posX="49.000000" posY="3.000000" posZ="15.500000" RotationAtArrival="0" />
+                <sparea name="fromshop" posX="41.000000" posY="5.000000" posZ="21.000000" RotationAtArrival="0" />
+            </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="tocafe" TopRightX="24.000000" TopRightY="13.000000" TopRightZ="20.000000" BottomLeftX="23.000000" BottomLeftY="6.000000" BottomLeftZ="17.000000" newMap="The_Tinkers_Cafe" spawning="fromout" />
+                <exit name="tofactory" TopRightX="34.000000" TopRightY="14.000000" TopRightZ="10.000000" BottomLeftX="31.000000" BottomLeftY="7.000000" BottomLeftZ="9.000000" newMap="Dtech_Industries" spawning="fromout" />
+                <exit name="toflower" TopRightX="34.000000" TopRightY="11.000000" TopRightZ="36.000000" BottomLeftX="33.000000" BottomLeftY="4.000000" BottomLeftZ="33.000000" newMap="The_Innovation_house" spawning="fromout" />
+                <exit name="tomuseum" TopRightX="17.000000" TopRightY="11.000000" TopRightZ="56.000000" BottomLeftX="14.000000" BottomLeftY="4.000000" BottomLeftZ="55.000000" newMap="Colozen_Museum" spawning="fromout" />
+                <exit name="toout1" TopRightX="8.000000" TopRightY="12.000000" TopRightZ="2.000000" BottomLeftX="4.000000" BottomLeftY="4.000000" BottomLeftZ="1.000000" newMap="Tech-Island_Research_Centre" spawning="fromtown" />
+                <exit name="toout2" TopRightX="52.000000" TopRightY="12.000000" TopRightZ="2.000000" BottomLeftX="48.000000" BottomLeftY="4.000000" BottomLeftZ="1.000000" newMap="Tech-Island_Research_Centre" spawning="fromtown2" />
+                <exit name="topolice" TopRightX="6.000000" TopRightY="11.000000" TopRightZ="27.000000" BottomLeftX="5.000000" BottomLeftY="4.000000" BottomLeftZ="23.000000" newMap="Tinker-Town_Police_Station" spawning="fromout" />
+                <exit name="tosewer1" TopRightX="23.000000" TopRightY="7.000000" TopRightZ="25.000000" BottomLeftX="20.000000" BottomLeftY="4.000000" BottomLeftZ="24.000000" newMap="Tinker-town_Sewers" spawning="fromout1" />
+                <exit name="tosewer2" TopRightX="47.000000" TopRightY="7.000000" TopRightZ="18.000000" BottomLeftX="46.000000" BottomLeftY="4.000000" BottomLeftZ="15.000000" newMap="Tinker-town_Sewers" spawning="fromout2" />
+                <exit name="toshop" TopRightX="44.000000" TopRightY="12.000000" TopRightZ="19.000000" BottomLeftX="41.000000" BottomLeftY="5.000000" BottomLeftZ="18.000000" newMap="Tinker-Town_Shop" spawning="fromout" />
+            </exits>
+        </Map>
+        <!--Map of Tinker's Tunnel-->
+        <Map name="Tinkers_Tunnel" type="interior" music="Music/JADPCM03.mp3" repeatmusic="0">
+            <description>Tinker&apos;s Tunnel</description>
+            <!--Give the path of the files containing the island information to be loaded-->
+            <files>
+                <file name="ExternalActors" path="ExternalActors/Colozen/Island/Indoors/Tunnel1.xml" />
+                <file name="LocalActors" path="LocalActors/Colozen/Island/Indoors/Tunnel1.xml" />
                 <file name="Maps" path="Maps/Colozen/Island/Indoors/Tunnel1.txt" />
                 <file name="Texts" path="Texts/Colozen/text.xml" />
             </files>
@@ -628,8 +737,14 @@
             <lights />
             <!--Describe the possible spawning areas of the main character-->
             <spareas>
+                <sparea name="fromdocks" posX="56.000000" posY="0.000000" posZ="23.000000" RotationAtArrival="0" />
+                <sparea name="fromtown" posX="9.000000" posY="13.000000" posZ="59.000000" RotationAtArrival="0" />
             </spareas>
+            <!--Describe the possible map exit places using square areas from TopLeft point to BottomRight point-->
+            <exits>
+                <exit name="todock" TopRightX="58.000000" TopRightY="7.000000" TopRightZ="25.000000" BottomLeftX="56.000000" BottomLeftY="1.000000" BottomLeftZ="24.000000" newMap="Tech-Island_Docks" spawning="fromtunnel" />
+                <exit name="totown" TopRightX="11.000000" TopRightY="20.000000" TopRightZ="61.000000" BottomLeftX="9.000000" BottomLeftY="14.000000" BottomLeftZ="60.000000" newMap="Techside_River" spawning="fromtunnel" />
+            </exits>
         </Map>
-   
     </maps>
 </World>
