@@ -315,6 +315,9 @@ public:
 	// start drawning
 	void Startdying();
 
+	// check if dying
+	bool IsDying();
+
 	// return true if the player is in activation mode
 	bool ActivationMode(bool ForcedNormalAction);
 

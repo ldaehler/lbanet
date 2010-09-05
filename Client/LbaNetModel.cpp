@@ -990,6 +990,10 @@ replace main actor and camera to the starting point of the current room
 ***********************************************************/
 void LbaNetModel::ReplaceMain()
 {
+	// dont allow if dying
+	if(_mainPlayerHandler->IsDying())
+		return;
+
 	_mainPlayerHandler->Stopstate();
 
 	_mainPlayerHandler->SetPosition(	m_main_actor_starting_X,
