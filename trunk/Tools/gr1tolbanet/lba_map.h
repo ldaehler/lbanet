@@ -128,7 +128,7 @@ class LBA_GRID
 {
 public:
 	// constructor
-    LBA_GRID(LBA_PACK *pack_grid,LBA_PACK *pack_layout,int n,bool LBA2);
+    LBA_GRID(LBA_PACK *pack_grid,LBA_PACK *pack_layout,int n,bool LBA2, bool forcelayout);
 
 	// destructor
     ~LBA_GRID();
@@ -148,7 +148,7 @@ class LBA_MAP
 {
 public:
 	// constructor
-	LBA_MAP(bool LBA2, const std::string &grfile, int layoutused);
+	LBA_MAP(bool LBA2, const std::string &grfile, int layoutused, bool forcelayout = false);
 
 	// destructor
     ~LBA_MAP();

@@ -326,7 +326,7 @@ LBA_LAYOUT::~LBA_LAYOUT()
 /***********************************************************
 constructor
 ***********************************************************/
-LBA_GRID::LBA_GRID(LBA_PACK *pack_grid,LBA_PACK *pack_layout,int n,bool LBA2)
+LBA_GRID::LBA_GRID(LBA_PACK *pack_grid,LBA_PACK *pack_layout,int n,bool LBA2, bool forcelayout)
 {
     int i=0,j=0,k=0,l=0;
     LBA_LAYOUT *layout;
@@ -337,7 +337,7 @@ LBA_GRID::LBA_GRID(LBA_PACK *pack_grid,LBA_PACK *pack_layout,int n,bool LBA2)
 	//std::cout<<"LBA_GRID"<<std::endl;
     LBA_ENTRY *entry=new LBA_ENTRY(pack_grid->data,pack_grid->datalenght);
 
-    if(LBA2)
+    if(!forcelayout && LBA2)
 		n=entry->data[0]+180-1;
 
     layout=new LBA_LAYOUT(pack_layout,n);
@@ -461,7 +461,7 @@ LBA_GRID::~LBA_GRID()
 /***********************************************************
 constructor
 ***********************************************************/
-LBA_MAP::LBA_MAP(bool LBA2, const std::string &grfile, int layoutused)
+LBA_MAP::LBA_MAP(bool LBA2, const std::string &grfile, int layoutused, bool forcelayout)
 {
 	//std::cout<<"LBA_MAP "<<n<<std::endl;
 
@@ -491,7 +491,7 @@ LBA_MAP::LBA_MAP(bool LBA2, const std::string &grfile, int layoutused)
 	pack_grid=new LBA_PACK(grfile);
 
     palet=new LBA_PALET(pack_ress);
-    grid=new LBA_GRID(pack_grid,pack_layout,layoutused,LBA2);
+    grid=new LBA_GRID(pack_grid,pack_layout,layoutused,LBA2, forcelayout);
 
 
     printf("%d ",number_brick);
@@ -660,10 +660,10 @@ LBA_MAP::LBA_MAP(bool LBA2, const std::string &grfile, int layoutused)
 
 	std::sort(brick_list.begin(), brick_list.end());
 
-	std::stringstream filename;
-	filename << grfile << ".txt";
+	std::string tmpfile = grfile;
+	tmpfile.replace(tmpfile.size() - 3, 3, "txt");
 
-	std::ofstream file(filename.str().c_str());
+	std::ofstream file(tmpfile.c_str());
 	file<<64<<" "<<25<<" "<<64<<std::endl;
 	file<<number_brick<<std::endl<<std::endl;
 	for(int cc=0;cc<number_brick;++cc)

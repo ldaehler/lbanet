@@ -2,7 +2,51 @@
 #include <map>
 #include <set>
 
+#include "lba_map_gl.h"
+#include "PhysicHandler.h"
 
+
+static void Trim(std::string& str)
+{
+	std::string::size_type pos = str.find_last_not_of(' ');
+	if(pos != std::string::npos)
+	{
+		str.erase(pos + 1);
+		pos = str.find_first_not_of(' ');
+
+		if(pos != std::string::npos)
+			str.erase(0, pos);
+	}
+	else
+		str.clear();
+
+}
+
+static void Tokenize(const std::string& str,
+										std::vector<std::string>& tokens,
+										const std::string& delimiters)
+{
+	// Skip delimiters at beginning.
+	std::string::size_type lastPos = str.find_first_not_of(delimiters, 0);
+	// Find first "non-delimiter".
+	std::string::size_type pos     = str.find_first_of(delimiters, lastPos);
+
+
+
+	while (std::string::npos != pos || std::string::npos != lastPos)
+	{
+		// Found a token, add it to the vector.
+		std::string tmp = str.substr(lastPos, pos - lastPos);
+		Trim(tmp);
+		tokens.push_back(tmp);
+
+		// Skip delimiters.  Note the "not_of"
+		lastPos = str.find_first_not_of(delimiters, pos);
+
+		// Find next "non-delimiter"
+		pos = str.find_first_of(delimiters, lastPos);
+	}
+}
 
 int main(int argc, char** argv)
 {
@@ -12,7 +56,67 @@ int main(int argc, char** argv)
 	int layout = 0;
 	bool lba2 = true;
 
+	PhysicHandler phH(NULL, NULL);
+
 	std::string extension = file.substr(file.size() - 3);
+	if(extension == "txt") // batch file
+	{
+		// parse the file
+		std::ifstream txtfile(file.c_str());
+		if (txtfile.fail())  
+		{ 
+			std::cout << "File not found" <<std::endl;
+			return 0; 
+		}
+
+		std::string line;
+		while(std::getline(txtfile, line)  && txtfile.good() )
+		{
+			std::vector<std::string> tokens;
+			Tokenize(line, tokens, ",");
+
+			file = tokens[0];
+			layout = atoi(tokens[1].c_str());
+			lba2 = true;
+			extension = file.substr(file.size() - 3);
+			if(extension == "gr1")
+				lba2 = false;
+
+			bool forcelayout = false;
+			if(lba2 && layout >= 0)
+				forcelayout = true;
+
+			//convert data
+			LBA_MAP mp(lba2, file, layout, forcelayout);
+
+			// create physic
+			{
+				std::string physmap = file;
+				physmap.replace(physmap.size() - 3, 3, "phy");
+				std::string txtsmap = file;
+				txtsmap.replace(txtsmap.size() - 3, 3, "txt");
+
+				LBA_MAP_GL mapgl(txtsmap, &phH);
+				phH.SearchFloors();
+				phH.SearchWallX();
+				phH.SearchWallZ();
+				phH.SearchStairs();
+				phH.MakeSurroundingPlanes();
+
+				if(tokens[3] == "inside")
+					phH.SearchRoof();
+
+				phH.SavePlanes(physmap);
+			}
+		}
+		txtfile.close();
+
+
+		//terminate
+		return 0;
+	}
+
+
 	if(extension == "gr1")
 	{
 		lba2 = false;
