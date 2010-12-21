@@ -1,17 +1,243 @@
 <?xml version="1.0" encoding="UTF8" ?>
 <actors>
-    <actor id="0" type="12" posX="34.000000" posY="2.000000" posZ="38.875000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="66,0" />
-    <actor id="1" type="12" posX="35.062500" posY="2.000000" posZ="41.562500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="221.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="65,0" />
-    <actor id="2" type="12" posX="52.437500" posY="0.000000" posZ="63.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="177.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="22,0" />
-    <actor id="3" type="12" posX="41.000000" posY="0.000000" posZ="33.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="565.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="62,0" />
-    <actor id="4" type="12" posX="38.750000" posY="0.000000" posZ="45.375000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="265.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="61,0" />
-    <actor id="5" type="12" posX="45.000000" posY="0.000000" posZ="37.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="433.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="25,0" />
-    <actor id="6" type="12" posX="44.125000" posY="0.000000" posZ="43.500000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="465.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="21,0" />
-    <actor id="7" type="12" posX="45.000000" posY="0.000000" posZ="39.468750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="433.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="37,0" />
-    <actor id="8" type="12" posX="38.937500" posY="0.000000" posZ="55.718750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="37,0" />
-    <actor id="9" type="12" posX="49.906250" posY="0.000000" posZ="55.937500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="15,0" />
-    <actor id="10" type="12" posX="33.437500" posY="0.000000" posZ="55.218750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="39,0" />
-    <actor id="11" type="12" posX="38.312500" posY="0.000000" posZ="33.437500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="105.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="81,0" />
-    <actor id="12" type="12" posX="32.000000" posY="0.000000" posZ="52.156250" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="281.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="46,0" />
-    <actor id="13" type="12" posX="47.531250" posY="0.000000" posZ="19.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="49,0" />
+    <actor id="0" type="12" posX="34.000000" posY="2.000000" posZ="38.875000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="90.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="66,0">
+        <scripts>
+            <script type="2" Animation="1"/>         
+            <script type="5" ValueA="1000.000000" Animation="1"/>        
+            <script type="5" ValueA="10000.000000" Animation="2"/>                   
+        </scripts>   
+        
+       	<Dialog StandardQuitDialog="23" StandardGoToRootDialog="24"> 
+		<DialogEntry type="0" TextId="27">
+		</DialogEntry>
+       	
+       		<DialogTree>
+    		</DialogTree> 		
+	</Dialog>   
+    </actor>  
+
+
+    <actor id="1" type="12" posX="35.062500" posY="2.000000" posZ="41.562500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="90.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="65,0">
+        <scripts>
+            <script type="5" ValueA="1000.000000" Animation="6"/>        
+            <script type="2" Animation="4"/>        
+            <script type="5" ValueA="10000.000000" Animation="6"/>        
+            <script type="2" Animation="4"/>
+            <script type="5" ValueA="10000.000000" Animation="6"/>        
+            <script type="2" Animation="4"/>  
+            <script type="5" ValueA="10000.000000" Animation="6"/>                      
+        </scripts>    
+        
+       	<Dialog StandardQuitDialog="23" StandardGoToRootDialog="24"> 
+		<DialogEntry type="0" TextId="28">
+		</DialogEntry>
+       	
+       		<DialogTree>
+    		</DialogTree> 		
+	</Dialog>     
+    </actor>      
+    
+    
+    <actor id="3" type="12" posX="41.000000" posY="0.000000" posZ="33.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="290.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="62,0">
+        <scripts>
+             <script type="5" ValueA="800.000000" Animation="1"/>        
+            <script type="5" ValueA="10000.000000" Animation="0"/> 
+            <script type="5" ValueA="800.000000" Animation="1"/>              
+            <script type="5" ValueA="10000.000000" Animation="0"/>        
+        </scripts>        
+        
+       	<Dialog StandardQuitDialog="23" StandardGoToRootDialog="24"> 
+		<DialogEntry type="0" TextId="29">
+		</DialogEntry>
+       	
+       		<DialogTree>
+    		</DialogTree> 		
+	</Dialog> 
+    </actor>     
+    
+    <actor id="4" type="12" posX="38.750000" posY="0.000000" posZ="45.375000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="265.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="61,0">
+        <scripts>
+             <script type="5" ValueA="1000.000000" Animation="1"/>       
+            <script type="2" Animation="2"/>         
+            <script type="5" ValueA="10000.000000" Animation="1"/>        
+            <script type="2" Animation="2"/>
+            <script type="5" ValueA="10000.000000" Animation="1"/>        
+            <script type="2" Animation="2"/>  
+            <script type="5" ValueA="10000.000000" Animation="1"/>                    
+        </scripts>    
+        
+       	<Dialog StandardQuitDialog="23" StandardGoToRootDialog="24"> 
+		<DialogEntry type="0" TextId="30">
+		</DialogEntry>
+       	
+       		<DialogTree>
+    		</DialogTree> 		
+	</Dialog>     
+    </actor>   
+   
+   
+    <actor id="6" type="12" Name="Zoe" posX="44.125000" posY="0.000000" posZ="43.500000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="270.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="22,0">
+        <scripts>
+            <script type="5" ValueA="1000.000000" Animation="17"/>        
+            <script type="2" Animation="11"/>        
+            <script type="5" ValueA="10000.000000" Animation="17"/>        
+            <script type="2" Animation="11"/>
+            <script type="5" ValueA="10000.000000" Animation="17"/>        
+            <script type="2" Animation="11"/>
+            <script type="5" ValueA="10000.000000" Animation="17"/>       
+        </scripts>      
+        
+       	<Dialog StandardQuitDialog="23" StandardGoToRootDialog="24"> 
+		<DialogEntry type="0" TextId="31">
+		</DialogEntry>
+       	
+       		<DialogTree>
+    		</DialogTree> 		
+	</Dialog>   
+    </actor>     
+    
+    <actor id="7" type="12" Name="Funfrock" posX="45.000000" posY="0.000000" posZ="39.468750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="270.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="69,0">
+        <scripts>
+            <script type="5" ValueA="1000.000000" Animation="12"/>          
+            <script type="2" Animation="14"/>        
+            <script type="5" ValueA="10000.000000" Animation="12"/>        
+            <script type="2" Animation="14"/>
+            <script type="5" ValueA="10000.000000" Animation="12"/>        
+            <script type="2" Animation="14"/>
+            <script type="5" ValueA="10000.000000" Animation="12"/>            
+        </scripts>       
+        
+       	<Dialog StandardQuitDialog="23" StandardGoToRootDialog="24"> 
+		<DialogEntry type="0" TextId="32">
+		</DialogEntry>
+       	
+       		<DialogTree>
+    		</DialogTree> 		
+	</Dialog>  
+    </actor>     
+    
+    
+    
+    
+    <actor id="8" type="12" posX="38.937500" posY="0.000000" posZ="55.718750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="200.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="62,1">
+        <scripts>
+             <script type="5" ValueA="800.000000" Animation="1"/>        
+            <script type="5" ValueA="10000.000000" Animation="0"/>  
+            <script type="5" ValueA="800.000000" Animation="1"/>             
+            <script type="5" ValueA="10000.000000" Animation="0"/>        
+        </scripts>      
+        
+       	<Dialog StandardQuitDialog="23" StandardGoToRootDialog="24"> 
+		<DialogEntry type="0" TextId="33">
+		</DialogEntry>
+       	
+       		<DialogTree>
+    		</DialogTree> 		
+	</Dialog>   
+    </actor>     
+    
+    
+    <actor id="9" NPCType="2" type="12" posX="49.906250" posY="0.000000" posZ="55.937500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="15,0">
+         <items>
+        	<item id="13" /> 
+          	<item id="14" />      
+          	<item id="15" />
+          	<item id="16" />          	
+        </items>     
+        
+       	<Dialog StandardQuitDialog="23" StandardGoToRootDialog="24" TradingDialog="25"> 
+		<DialogEntry type="0" TextId="34">
+		</DialogEntry>
+       	
+       		<DialogTree>
+    		</DialogTree> 		
+	</Dialog>    
+    </actor>      
+    
+    
+    <actor id="10" type="12" posX="33.437500" posY="0.000000" posZ="55.218750" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="200.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="62,0">
+         <scripts>
+             <script type="5" ValueA="800.000000" Animation="1"/>         
+            <script type="5" ValueA="10000.000000" Animation="0"/>
+            <script type="5" ValueA="800.000000" Animation="1"/>            
+            <script type="5" ValueA="10000.000000" Animation="0"/>        
+        </scripts>      
+        
+       	<Dialog StandardQuitDialog="23" StandardGoToRootDialog="24"> 
+		<DialogEntry type="0" TextId="35">
+		</DialogEntry>
+       	
+       		<DialogTree>
+    		</DialogTree> 		
+	</Dialog>      
+    </actor>    
+    
+    <actor id="11" type="12" posX="38.312500" posY="0.000000" posZ="33.437500" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="105.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="81,0">
+         <scripts>
+             <script type="5" ValueA="800.000000" Animation="1"/>         
+            <script type="5" ValueA="10000.000000" Animation="0"/>  
+            <script type="5" ValueA="800.000000" Animation="1"/>             
+            <script type="5" ValueA="10000.000000" Animation="0"/>        
+        </scripts>        
+        
+       	<Dialog StandardQuitDialog="23" StandardGoToRootDialog="24"> 
+		<DialogEntry type="0" TextId="36">
+		</DialogEntry>
+       	
+       		<DialogTree>
+    		</DialogTree> 		
+	</Dialog>    
+    </actor>    
+    
+    <actor id="12" type="12" posX="32.000000" posY="0.000000" posZ="52.156250" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="200.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="62,0">
+        <scripts>
+             <script type="5" ValueA="800.000000" Animation="1"/>        
+            <script type="5" ValueA="10000.000000" Animation="0"/>        
+            <script type="5" ValueA="800.000000" Animation="1"/>             
+            <script type="5" ValueA="10000.000000" Animation="0"/>        
+        </scripts>         
+        
+       	<Dialog StandardQuitDialog="23" StandardGoToRootDialog="24"> 
+		<DialogEntry type="0" TextId="37">
+		</DialogEntry>
+       	
+       		<DialogTree>
+    		</DialogTree> 		
+	</Dialog>   
+    </actor>    
+   
+    <actor id="13"Name="Joe" type="12" posX="47.531250" posY="0.000000" posZ="19.000000" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="25.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="49,0">
+        <scripts>    
+            <script type="5" ValueA="1000.000000" Animation="0"/>             
+            <script type="5" ValueA="10000.000000" Animation="0"/>        
+        </scripts>        
+        
+       	<Dialog StandardQuitDialog="23" StandardGoToRootDialog="24"> 
+		<DialogEntry type="0" TextId="38">
+		</DialogEntry>
+       	
+       		<DialogTree>
+    		</DialogTree> 		
+	</Dialog>    
+    </actor> 
+    
+    <actor id="14" type="12" posX="38.937500" posY="0.000000" posZ="52.156250" sizeX="0.600000" sizeY="5.000000" sizeZ="0.600000" rotation="200.000000" passable="0" depthmask="1" movable="0" outputsignal="-1" attachedsound="-1" signaltargets="" renderertype="3" renderertarget="62,1">
+        <scripts>
+             <script type="5" ValueA="800.000000" Animation="1"/>        
+            <script type="5" ValueA="10000.000000" Animation="0"/> 
+            <script type="5" ValueA="800.000000" Animation="1"/>             
+            <script type="5" ValueA="10000.000000" Animation="0"/>        
+        </scripts>        
+        
+       	<Dialog StandardQuitDialog="23" StandardGoToRootDialog="24"> 
+		<DialogEntry type="0" TextId="39">
+		</DialogEntry>
+       	
+       		<DialogTree>
+    		</DialogTree> 		
+	</Dialog>    
+    </actor> 
+
+
 </actors>
+
