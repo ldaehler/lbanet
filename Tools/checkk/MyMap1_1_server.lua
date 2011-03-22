@@ -1,6 +1,6 @@
 function InitMap(environment)
 	Spawn_1 = Spawn(1)
-	Spawn_1:SetPosX(8.5)
+	Spawn_1:SetPosX(6.5)
 	Spawn_1:SetPosY(0.01)
 	Spawn_1:SetPosZ(8)
 	Spawn_1:SetName("spawning0")
@@ -38,6 +38,7 @@ function InitMap(environment)
 	Actor_1.PhysicDesc.SizeX = 0
 	Actor_1.PhysicDesc.SizeY = 0
 	Actor_1.PhysicDesc.SizeZ = 0
+	Actor_1.PhysicDesc.AllowFreeMove = true
 	Actor_1.PhysicDesc.Filename = "Worlds/Lba1Expanded/Grids/Lbae_map3.phy"
 	Actor_1:SetPhysicalActorType(1)
 	Actor_1:SetPhysicalShape(5)
@@ -54,6 +55,7 @@ function InitMap(environment)
 	Trigger_1 = ZoneTrigger(Trigger_1_info, 2, 4.5, 2, true)
 	Trigger_1:SetPosition(3, 0, 8)
 	Trigger_1:SetStayUpdateFrequency(-1)
+	Trigger_1:SetActivateOnJump(true)
 	Trigger_1_act1 = TeleportAction()
 	Trigger_1_act1:SetMapName("Map018_2")
 	Trigger_1_act1:SetSpawning(1)
@@ -64,6 +66,7 @@ function InitMap(environment)
 	Trigger_2 = ZoneTrigger(Trigger_2_info, 4, 5, 1, true)
 	Trigger_2:SetPosition(6, -1, 10.5)
 	Trigger_2:SetStayUpdateFrequency(-1)
+	Trigger_2:SetActivateOnJump(true)
 	Trigger_2_act1 = TeleportAction()
 	Trigger_2_act1:SetMapName("Map019_1")
 	Trigger_2_act1:SetSpawning(4)

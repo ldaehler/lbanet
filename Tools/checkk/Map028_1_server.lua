@@ -38,6 +38,7 @@ function InitMap(environment)
 	Actor_1.PhysicDesc.SizeX = 0
 	Actor_1.PhysicDesc.SizeY = 0
 	Actor_1.PhysicDesc.SizeZ = 0
+	Actor_1.PhysicDesc.AllowFreeMove = true
 	Actor_1.PhysicDesc.Filename = "Worlds/Lba1Original/Grids/Map28.phy"
 	Actor_1:SetPhysicalActorType(1)
 	Actor_1:SetPhysicalShape(5)
@@ -82,6 +83,7 @@ function InitMap(environment)
 	Actor_6.PhysicDesc.SizeX = 0.2
 	Actor_6.PhysicDesc.SizeY = 4
 	Actor_6.PhysicDesc.SizeZ = 3
+	Actor_6.PhysicDesc.AllowFreeMove = true
 	Actor_6.PhysicDesc.Filename = ""
 	Actor_6:SetPhysicalActorType(2)
 	Actor_6:SetPhysicalShape(2)
@@ -134,6 +136,7 @@ function InitMap(environment)
 	Actor_7.PhysicDesc.SizeX = 1
 	Actor_7.PhysicDesc.SizeY = 5
 	Actor_7.PhysicDesc.SizeZ = 1
+	Actor_7.PhysicDesc.AllowFreeMove = true
 	Actor_7.PhysicDesc.Filename = ""
 	Actor_7:SetPhysicalActorType(2)
 	Actor_7:SetPhysicalShape(2)
@@ -183,6 +186,7 @@ function InitMap(environment)
 	Actor_8.PhysicDesc.SizeX = 0.5
 	Actor_8.PhysicDesc.SizeY = 2
 	Actor_8.PhysicDesc.SizeZ = 0.6
+	Actor_8.PhysicDesc.AllowFreeMove = true
 	Actor_8.PhysicDesc.Filename = ""
 	Actor_8:SetPhysicalActorType(2)
 	Actor_8:SetPhysicalShape(2)
@@ -204,6 +208,7 @@ function InitMap(environment)
 	Trigger_1 = ZoneTrigger(Trigger_1_info, 1, 3.5, 3, true)
 	Trigger_1:SetPosition(63.5, 1, 59.5)
 	Trigger_1:SetStayUpdateFrequency(-1)
+	Trigger_1:SetActivateOnJump(true)
 	Trigger_1_act1 = TeleportAction()
 	Trigger_1_act1:SetMapName("Map013_1")
 	Trigger_1_act1:SetSpawning(11)
@@ -211,9 +216,10 @@ function InitMap(environment)
 	environment:AddTrigger(Trigger_1)
 
 	Trigger_2_info = TriggerInfo(2, "exit1", true, false, false)
-	Trigger_2 = ZoneTrigger(Trigger_2_info, 1, 2.5, 3, true)
-	Trigger_2:SetPosition(49.5, 3, 58.5)
+	Trigger_2 = ZoneTrigger(Trigger_2_info, 1, 4.5, 3, true)
+	Trigger_2:SetPosition(50.5, 1, 58.5)
 	Trigger_2:SetStayUpdateFrequency(-1)
+	Trigger_2:SetActivateOnJump(true)
 	Trigger_2_act1 = TeleportAction()
 	Trigger_2_act1:SetMapName("Map027_1")
 	Trigger_2_act1:SetSpawning(2)
@@ -294,6 +300,7 @@ function InitMap(environment)
 	Trigger_7 = ZoneTrigger(Trigger_7_info, 0, 0, 0, false)
 	Trigger_7:SetPosition(51, 3, 58.5)
 	Trigger_7:SetStayUpdateFrequency(-1)
+	Trigger_7:SetActivateOnJump(true)
 	Trigger_7_act1 = OpenDoorAction()
 	Trigger_7_act1:SetActorId(6)
 	Trigger_7:SetAction1(Trigger_7_act1)
