@@ -1,0 +1,1 @@
+This project is a multiplayer game based on Little Big Adventure. The game engine has been written from scratch however most of the arts, sounds, dialogs are provided by the original LBA1 and LBA2 game.
